@@ -32,7 +32,6 @@
         var hdfIdCliente;
         var tipoEntrega;
         var idCliente;
-        var numProd = <%= GetNumeroProdutos() %>;
         var usarTabelaDescontoAcrescimoPedidoAVista = <%=(Glass.Configuracoes.PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista).ToString().ToLower() %>;
 
         function mensagemProdutoComDesconto(editar)
@@ -528,32 +527,6 @@
                 drpFuncionario.value = dados[9];
         }
 
-        function openProdutos(idProd, editar)
-        {
-            var tipoEntrega = FindControl("ddlTipoEntrega", "select");
-            if (tipoEntrega != null)
-                tipoEntrega = tipoEntrega.value;
-            else
-                tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
-
-            if (tipoEntrega == "")
-            {
-                alert("Selecione o tipo de entrega antes de inserir um produto.");
-                return false;
-            }
-
-            var ambiente = FindControl("hdfIdAmbienteOrca", "input") != null ? FindControl("hdfIdAmbienteOrca", "input").value : "";
-            if (ambiente != "") ambiente = "&idAmbiente=" + ambiente;
-
-            var idCliente = FindControl("hdfIdCliente", "input").value;
-
-            openWindow(screen.height, screen.width, 'CadProdutoOrcamento.aspx?IdOrca=<%= Request["IdOrca"] %>&IdProd=' + idProd +
-                "&TipoEntrega=" + tipoEntrega + ambiente + (editar ? "&editar=true" : "") +
-                "&idCliente=" + idCliente + "&orcamentoRapido=false");
-
-            return false;
-        }
-
         function openProjeto(idProd)
         {
             var tipoEntrega = FindControl("ddlTipoEntrega", "select");
@@ -569,13 +542,9 @@
             }
 
             var idCliente = FindControl("hdfIdCliente", "input").value;
-
-            var ambiente = FindControl("hdfIdAmbienteOrca", "input") != null ? FindControl("hdfIdAmbienteOrca", "input").value : "";
-            if (ambiente != "")
-                ambiente = "&idAmbienteOrca=" + ambiente;
-
+            
             openWindow(screen.height, screen.width, '../Cadastros/Projeto/CadProjetoAvulso.aspx?IdOrcamento=<%= Request["IdOrca"] %>' +
-                "&IdProdOrca=" + idProd + "&idCliente=" + idCliente + "&TipoEntrega=" + tipoEntrega + ambiente);
+                "&IdProdOrca=" + idProd + "&idCliente=" + idCliente + "&TipoEntrega=" + tipoEntrega);
 
             return false;
         }
@@ -1828,101 +1797,6 @@
                 &nbsp;
             </td>
         </tr>
-        <tr runat="server" id="linhaAmbiente">
-            <td align="center">
-                <asp:GridView GridLines="None" ID="grdAmbiente" runat="server" AutoGenerateColumns="False"
-                    DataSourceID="odsAmbiente" DataKeyNames="IdAmbienteOrca" OnRowCommand="grdAmbiente_RowCommand"
-                    ShowFooter="True" AllowPaging="True" AllowSorting="True" OnRowDataBound="grdAmbiente_RowDataBound"
-                    CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
-                    EditRowStyle-CssClass="edit" OnRowDeleted="grdAmbiente_RowDeleted">
-                    <Columns>
-                        <asp:TemplateField>
-                            <EditItemTemplate>
-                                <asp:ImageButton ID="imbAtualizar" runat="server" CommandName="Update" ImageUrl="~/Images/ok.gif" />
-                                <asp:ImageButton ID="imbCancelar" runat="server" CausesValidation="False" CommandName="Cancel"
-                                    ImageUrl="~/Images/ExcluirGrid.gif" />
-                                <asp:HiddenField ID="hdfIdOrcamento" runat="server" Value='<%# Bind("IdOrcamento") %>' />
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:ImageButton ID="imbNovo" runat="server" ImageUrl="~/Images/Insert.gif" OnClientClick="addAmbiente(true); return false;" />
-                            </FooterTemplate>
-                            <ItemTemplate>
-                                <asp:ImageButton ID="imbEditar" runat="server" CommandName="Edit" ImageUrl="~/Images/EditarGrid.gif" />
-                                <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                                    OnClientClick="return confirm(&quot;Deseja excluir este ambiente?&quot;)" />
-                                <asp:LinkButton ID="lnkProdutos" runat="server" CommandArgument='<%# Eval("IdAmbienteOrca") %>'
-                                    CommandName="Produtos">Produtos</asp:LinkButton>
-                                <asp:HiddenField ID="hdfIdAmbiente" runat="server" Value='<%# Eval("IdAmbienteOrca") %>' />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Ambiente" SortExpression="Ambiente">
-                            <EditItemTemplate>
-                                <asp:TextBox ID="TextBox2" runat="server" MaxLength="50" Text='<%# Bind("Ambiente") %>'></asp:TextBox>
-                                <asp:RequiredFieldValidator ID="rfvAmbiente" runat="server" ControlToValidate="TextBox2"
-                                    Display="Dynamic" ErrorMessage="*"></asp:RequiredFieldValidator>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:TextBox ID="txtAmbienteIns" runat="server" MaxLength="50" Style="display: none"></asp:TextBox>
-                                <asp:RequiredFieldValidator ID="rfvAmbiente" runat="server" ControlToValidate="txtAmbienteIns"
-                                    Display="Dynamic" ErrorMessage="*" ValidationGroup="inserirAmbiente"></asp:RequiredFieldValidator>
-                            </FooterTemplate>
-                            <ItemTemplate>
-                                <asp:Label ID="Label2" runat="server" Text='<%# Bind("Ambiente") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Descrição" SortExpression="Descricao">
-                            <EditItemTemplate>
-                                <asp:TextBox ID="txtDescricao" runat="server" Columns="50" MaxLength="1000" Rows="5"
-                                    Text='<%# Bind("Descricao") %>' TextMode="MultiLine"></asp:TextBox>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:TextBox ID="txtDescricaoIns" runat="server" Columns="50" MaxLength="1000" Rows="5"
-                                    TextMode="MultiLine" Style="display: none"></asp:TextBox>
-                            </FooterTemplate>
-                            <ItemTemplate>
-                                <asp:Label ID="Label1" runat="server" Text='<%# Bind("Descricao") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Valor Produtos" SortExpression="ValorProdutos">
-                            <EditItemTemplate>
-                                <asp:Label ID="Label3" runat="server" Text='<%# Eval("ValorProdutos", "{0:C}") %>'></asp:Label>
-                            </EditItemTemplate>
-                            <ItemTemplate>
-                                <asp:Label ID="Label3" runat="server" Text='<%# Bind("ValorProdutos", "{0:C}") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <FooterTemplate>
-                                <asp:ImageButton ID="imbInserir" runat="server" ImageUrl="~/Images/ok.gif" OnClick="imbInserir_Click"
-                                    Style="display: none" ValidationGroup="inserirAmbiente" />
-                            </FooterTemplate>
-                        </asp:TemplateField>
-                    </Columns>
-                </asp:GridView>
-                <br />
-                <asp:Label ID="lblAmbiente" runat="server" CssClass="subtitle1"></asp:Label>
-                <br />
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsAmbiente" runat="server" SelectMethod="GetList" TypeName="Glass.Data.DAL.AmbienteOrcamentoDAO"
-                    DataObjectTypeName="Glass.Data.Model.AmbienteOrcamento" DeleteMethod="Delete"
-                    EnablePaging="True" MaximumRowsParameterName="pageSize" SelectCountMethod="GetListCount"
-                    SortParameterName="sortExpression" StartRowIndexParameterName="startRow" UpdateMethod="Update">
-                    <SelectParameters>
-                        <asp:QueryStringParameter Name="idOrca" QueryStringField="IdOrca" Type="UInt32" />
-                    </SelectParameters>
-                </colo:VirtualObjectDataSource>
-
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoVenda" runat="server" SelectMethod="GetTipoVendaOrcamento"
-                    TypeName="Glass.Data.Helper.DataSources">
-                </colo:VirtualObjectDataSource>
-
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoPedido" runat="server" SelectMethod="GetTipoPedido"
-                    TypeName="Glass.Data.Helper.DataSources">
-                </colo:VirtualObjectDataSource>
-
-                <asp:HiddenField ID="hdfIdAmbienteOrca" runat="server" />
-                <br />
-            </td>
-        </tr>
         <tr>
             <td align="center">
                 <asp:LinkButton ID="lnkProduto" OnClientClick="return openProdutos('', false);" runat="server"> Incluir Produto</asp:LinkButton>&nbsp;&nbsp;&nbsp;
@@ -2180,18 +2054,6 @@
                         <asp:QueryStringParameter Name="idOrca" QueryStringField="idorca" Type="UInt32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsProdXOrc" runat="server" DataObjectTypeName="Glass.Data.Model.ProdutosOrcamento"
-                    DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize"
-                    OnDeleted="odsProdXOrc_Deleted" SelectCountMethod="GetCount" SelectMethod="GetList"
-                    SortParameterName="sortExpression" StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ProdutosOrcamentoDAO"
-                    InsertMethod="Insert" UpdateMethod="UpdateComTransacao" OnUpdated="odsProdXOrc_Updated">
-                    <SelectParameters>
-                        <asp:QueryStringParameter Name="idOrca" QueryStringField="idOrca" Type="UInt32" />
-                        <asp:ControlParameter ControlID="hdfIdAmbienteOrca" Name="idAmbiente" PropertyName="Value"
-                            Type="UInt32" />
-                        <asp:Parameter DefaultValue="false" Name="showChildren" Type="Boolean" />
-                    </SelectParameters>
-                </colo:VirtualObjectDataSource>
                 <asp:HiddenField ID="hdfComissaoVisible" runat="server" />
                 <asp:HiddenField ID="hdfNaoVendeVidro" runat="server" />
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsSituacao" runat="server" SelectMethod="GetSituacaoOrcamento"
@@ -2219,20 +2081,7 @@
         var loading = true;
         if (hdfComissaoVisible != null && tbComissionado != null && hdfComissaoVisible.value == "false")
             tbComissionado.style.display = "none";
-
-        // Esconde colunas do ambiente
-        var grdAmbiente = document.getElementById("<%= grdAmbiente.ClientID %>");
-        if (grdAmbiente != null)
-        {
-            for (i = 0; i < grdAmbiente.rows.length; i++)
-            {
-                if (i == (grdAmbiente.rows.length - 1) && grdAmbiente.rows[i].cells.length == 1)
-                    continue;
-
-                grdAmbiente.rows[i].cells[2].style.display = "none";
-            }
-        }
-
+        
         var tbProd = FindControl("grdProdutos", "table");
         if (FindControl("hdfNaoVendeVidro", "input").value == "true" && tbProd != null)
         {

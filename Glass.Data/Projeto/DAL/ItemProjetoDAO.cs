@@ -573,7 +573,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Confirma o projeto.
         /// </summary>
-        public void Confirmar(ItemProjeto itemProjeto, uint idOrcamento, uint idPedido, uint idPedidoEsp, uint idAmbienteOrca,
+        public void Confirmar(ItemProjeto itemProjeto, uint idOrcamento, uint idPedido, uint idPedidoEsp,
             uint idAmbientePedido, uint idAmbientePedidoEsp, string ambiente, bool pecasAlteradas, bool alterarMedidasPecas,
             bool visualizar, ref System.Web.UI.WebControls.Table tbPecaModelo, ref System.Web.UI.WebControls.Table tbMedInst,
             out string retornoValidacao, ref bool medidasAlteradas, bool ecommerce)
@@ -592,10 +592,6 @@ namespace Glass.Data.DAL
                     /* Chamado 48676. */
                     if (itemProjeto == null)
                         throw new Exception("Não foi possível recuperar o projeto. Atualize a tela e confirme o projeto novamente.");
-
-                    // Chamado 49342 - O ambiente do orçamento estava sendo excluido durante a inserção e depois não era possível editar os produtos.
-                    if (idAmbienteOrca > 0 && !AmbienteOrcamentoDAO.Instance.AmbienteOrcamentoExiste(transaction, idAmbienteOrca))
-                        throw new Exception("O ambiente do orçamento foi excluído durante a inserção desse projeto, volte a tela do orçamento, insira um novo ambiente e então insira o projeto novamente.");
 
                     //Busca o modelo de Projeto.
                     var modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(transaction, itemProjeto.IdProjetoModelo);
@@ -742,7 +738,7 @@ namespace Glass.Data.DAL
                     }
 
                     if (idOrcamento > 0)
-                        idAmbienteNovo = ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(transaction, idOrcamento, idAmbienteOrca, itemProjeto);
+                        idAmbienteNovo = ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(transaction, idOrcamento, itemProjeto);
 
                     if (idPedido > 0)
                     {
@@ -836,12 +832,17 @@ namespace Glass.Data.DAL
 
                     /* Chamado 16164.
                      * Log criado para identificar a causa do problema, caso ocorra novamente. */
-                    ErroDAO.Instance.InserirFromException(string.Format("Confirmar Projeto - IdItemProjeto: {0} IdOrcamento: {1} " +
-                        "IdPedido: {2} IdPedidoEsp: {3} IdAmbienteOrca: {4} IdAmbientePedido: {5} IdAmbientePedidoEsp: {6} " +
-                        "Ambiente: {7} PecasAlteradas: {8} AlterarMedidasPecas: {9} Visualizar: {10}",
-                        itemProjeto != null ? itemProjeto.IdItemProjeto.ToString() : "null", idOrcamento, idPedido, idPedidoEsp,
-                        idAmbienteOrca, idAmbientePedido, idAmbientePedidoEsp, ambiente != null ? ambiente : "null",
-                        pecasAlteradas.ToString(), alterarMedidasPecas.ToString(), visualizar.ToString()), ex);
+                    ErroDAO.Instance.InserirFromException(
+                        $@"Confirmar Projeto - IdItemProjeto: {itemProjeto?.IdItemProjeto}
+                        IdOrcamento: {idOrcamento} 
+                        IdPedido: {idPedido}
+                        IdPedidoEsp: {idPedidoEsp}
+                        IdAmbientePedido: {idAmbientePedido}
+                        IdAmbientePedidoEsp: {idAmbientePedidoEsp}
+                        Ambiente: {ambiente}
+                        PecasAlteradas: {pecasAlteradas}
+                        AlterarMedidasPecas: {alterarMedidasPecas}
+                        Visualizar: {visualizar}", ex);
 
                     throw ex;
                 }
@@ -987,7 +988,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cria um novo item de projeto
         /// </summary>
-        public ItemProjeto NovoItemProjetoVazioComTransacao(uint? idProjeto, uint? idOrcamento, uint? idAmbienteOrca, uint? idPedido,
+        public ItemProjeto NovoItemProjetoVazioComTransacao(uint? idProjeto, uint? idOrcamento, uint? idPedido,
             uint? idAmbientePedido, uint? idPedidoEsp, uint? idAmbientePedidoEsp, uint idProjetoModelo, int? espessuraVidro,
             uint idCorVidro, uint idCorAluminio, uint idCorFerragem, bool apenasVidros, bool medidaExata, bool inserirProdutos)
         {
@@ -999,7 +1000,7 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
-                        var itemProjeto = NovoItemProjetoVazio(transaction, idProjeto, idOrcamento, idAmbienteOrca, idPedido, idAmbientePedido, idPedidoEsp,
+                        var itemProjeto = NovoItemProjetoVazio(transaction, idProjeto, idOrcamento, idPedido, idAmbientePedido, idPedidoEsp,
                             idAmbientePedidoEsp, idProjetoModelo, espessuraVidro, idCorVidro, idCorAluminio, idCorFerragem, apenasVidros, medidaExata, inserirProdutos);
 
                         transaction.Commit();
@@ -1020,7 +1021,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cria um novo item de projeto
         /// </summary>
-        public ItemProjeto NovoItemProjetoVazio(GDASession session, uint? idProjeto, uint? idOrcamento, uint? idAmbienteOrca, uint? idPedido,
+        public ItemProjeto NovoItemProjetoVazio(GDASession session, uint? idProjeto, uint? idOrcamento, uint? idPedido,
             uint? idAmbientePedido, uint? idPedidoEsp, uint? idAmbientePedidoEsp, uint idProjetoModelo, int? espessuraVidro,
             uint idCorVidro, uint idCorAluminio, uint idCorFerragem, bool apenasVidros, bool medidaExata, bool inserirProdutos)
         {
@@ -1139,7 +1140,7 @@ namespace Glass.Data.DAL
             {
                 // Insere/Atualiza produto no orçamento/pedido/pedido espelho
                 if (idOrcamento > 0)
-                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(session, idOrcamento.Value, idAmbienteOrca, itemProj);
+                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(session, idOrcamento.Value, itemProj);
 
                 // Insere/Atualiza produto no pedido, caso esteja sendo inserido projeto no pedido
                 if (idPedido > 0)

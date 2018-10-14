@@ -1606,24 +1606,6 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region Duplica os ambientes
-
-                    if (OrcamentoConfig.AmbienteOrcamento)
-                    {
-                        foreach (var a in AmbienteOrcamentoDAO.Instance.GetByOrcamento(transaction, idOrcamento))
-                        {
-                            var idAmbiente = a.IdAmbienteOrca;
-
-                            a.IdAmbienteOrca = 0;
-                            a.IdOrcamento = idOrcamentoNovo;
-                            var idAmbienteNovo = AmbienteOrcamentoDAO.Instance.Insert(transaction, a);
-
-                            ambientes.Add(idAmbiente, idAmbienteNovo);
-                        }
-                    }
-
-                    #endregion
-
                     #region Duplica os itens dos projetos
 
                     foreach (var i in ItemProjetoDAO.Instance.GetByOrcamento(transaction, idOrcamento))
@@ -1643,7 +1625,6 @@ namespace Glass.Data.DAL
 
                         p.IdProd = 0;
                         p.IdOrcamento = idOrcamentoNovo;
-                        p.IdAmbienteOrca = p.IdAmbienteOrca > 0 && ambientes.ContainsKey(p.IdAmbienteOrca.Value) ? (uint?) ambientes[p.IdAmbienteOrca.Value] : null;
                         p.IdItemProjeto = p.IdItemProjeto > 0 && itensProjeto.ContainsKey(p.IdItemProjeto.Value) ? (uint?) itensProjeto[p.IdItemProjeto.Value] : null;
                         var idProdutoNovo = ProdutosOrcamentoDAO.Instance.Insert(transaction, p);
 
@@ -1655,7 +1636,6 @@ namespace Glass.Data.DAL
 
                             po.IdProd = 0;
                             po.IdOrcamento = idOrcamentoNovo;
-                            po.IdAmbienteOrca = po.IdAmbienteOrca > 0 && ambientes.ContainsKey(po.IdAmbienteOrca.Value) ? (uint?) ambientes[po.IdAmbienteOrca.Value] : null;
                             po.IdProdParent = idProdutoNovo;
                             var idProdutoChildNovo = ProdutosOrcamentoDAO.Instance.Insert(transaction, po);
 
@@ -2451,20 +2431,8 @@ namespace Glass.Data.DAL
                             // Carrega a descrição do orçamento
                             string descricao = UtilsProjeto.FormataTextoOrcamento(transaction, item);
 
-                            uint? idAmbienteOrca = null;
-                            if (OrcamentoConfig.AmbienteOrcamento)
-                            {
-                                AmbienteOrcamento ambiente = new AmbienteOrcamento();
-                                ambiente.Ambiente = item.Ambiente;
-                                ambiente.Descricao = descricao;
-                                ambiente.IdOrcamento = idOrca;
-
-                                idAmbienteOrca = AmbienteOrcamentoDAO.Instance.Insert(transaction, ambiente);
-                            }
-
                             prodOrca = new ProdutosOrcamento();
                             prodOrca.IdOrcamento = idOrca;
-                            prodOrca.IdAmbienteOrca = idAmbienteOrca;
                             prodOrca.IdItemProjeto = idItemProjeto;
                             prodOrca.Ambiente = item.Ambiente;
                             prodOrca.Descricao = descricao;
@@ -2744,10 +2712,9 @@ namespace Glass.Data.DAL
                 {
                     // Deve ser getelement para buscar o texto do orçamento e não apagar o texto no produto/ambiente
                     var itemProj = ItemProjetoDAO.Instance.GetElement(sessao, id);
-                    uint? idAmbienteOrca = AmbienteOrcamentoDAO.Instance.GetIdByItemProjeto(id);
 
                     var orcamento = GetElementByPrimaryKey(sessao, idOrcamento.Value);
-                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(sessao, orcamento, idAmbienteOrca, itemProj);
+                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(sessao, orcamento, itemProj);
                 }
             }
             else if (idPedido != null)

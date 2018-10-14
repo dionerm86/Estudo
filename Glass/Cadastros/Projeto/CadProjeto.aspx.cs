@@ -341,7 +341,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             try
             {
                 var idItemProjeto = ItemProjetoDAO.Instance.NovoItemProjetoVazioComTransacao(idProjeto.StrParaUint(), null, null,
-                    null, null, null, null, idProjetoModelo.StrParaUint(), espessuraVidro.StrParaIntNullable(), idCorVidro.StrParaUint(),
+                    null, null, null, idProjetoModelo.StrParaUint(), espessuraVidro.StrParaIntNullable(), idCorVidro.StrParaUint(),
                     idCorAluminio.StrParaUint(), idCorFerragem.StrParaUint(), apenasVidros == "true", medidaExata == "true", false).IdItemProjeto;
 
                 if (idItemProjeto == 0)

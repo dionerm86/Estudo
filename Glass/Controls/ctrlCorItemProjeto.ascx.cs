@@ -198,8 +198,7 @@ namespace Glass.UI.Web.Controls
                 {
                     // Deve ser getelement para buscar o texto do orçamento e não apagar o texto no produto/ambiente
                     var itemProj = ItemProjetoDAO.Instance.GetElement(id);
-                    uint? idAmbienteOrca = AmbienteOrcamentoDAO.Instance.GetIdByItemProjeto(id);
-                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(idOrcamento.Value, idAmbienteOrca, itemProj);
+                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(idOrcamento.Value, itemProj);
                 }
             }
             else if (idPedido != null)

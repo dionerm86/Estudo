@@ -38,9 +38,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDPRODUTO")]
         public uint? IdProduto { get; set; }
 
-        [PersistenceProperty("IDAMBIENTEORCA")]
-        public uint? IdAmbienteOrca { get; set; }
-
         [PersistenceProperty("QTDE")]
         public float? Qtde { get; set; }
 

@@ -16898,7 +16898,7 @@ namespace Glass.Data.DAL
                         #region Cria projetos
 
                         var itemProjeto = ItemProjetoDAO.Instance.NovoItemProjetoVazio(transaction, null,
-                            null, null, idPedido, null, null, null, ip.IdProjetoModelo, ip.EspessuraVidro,
+                            null, idPedido, null, null, null, ip.IdProjetoModelo, ip.EspessuraVidro,
                             ip.IdCorVidro, 0, 0, true, ip.MedidaExata, true);
 
                         //// Salva as medidas da área de instalação, com a referência do item de projeto.

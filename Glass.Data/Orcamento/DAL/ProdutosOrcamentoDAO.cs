@@ -24,7 +24,6 @@ namespace Glass.Data.DAL
                 um.codigo as unidade, ip.obs as obsProj, o.idCliente, c.Nome as NomeCliente, ep.codInterno as codProcesso, ea.codInterno as codAplicacao" : "Count(*)";
 
             string orcamento = idOrca != null ? " and po.idOrcamento=" + idOrca.Value : "";
-            string ambiente = idAmbiente != null && OrcamentoConfig.AmbienteOrcamento ? " and po.idAmbienteOrca=" + idAmbiente.Value : "";
             string produto = idProd != null ? " and po.idProd=" + idProd.Value : "";
             string produtoParent = idProdParent != null ? " and po.idProdParent=" + idProdParent.Value : "";
             string child = !showChildren ? " and po.idProdParent is null" : "";
@@ -38,8 +37,8 @@ namespace Glass.Data.DAL
                 Left Join cliente c on(c.Id_Cli=o.idCliente)
                 Left Join etiqueta_processo ep on (po.idProcesso=ep.idProcesso)
                 Left Join etiqueta_aplicacao ea on (po.idAplicacao=ea.idAplicacao)
-                Where 1 " + orcamento + ambiente + produto + produtoParent + child + listaProdutos +
-                    (!temOrdenacao ? " Order By Coalesce(po.idAmbienteOrca, 0), NumSeq, po.IdProd" : "");
+                Where 1 " + orcamento + produto + produtoParent + child + listaProdutos +
+                    (!temOrdenacao ? " Order By NumSeq, po.IdProd" : "");
         }
 
         public ProdutosOrcamento GetElement(uint idProd)
@@ -77,7 +76,6 @@ namespace Glass.Data.DAL
                         {
                             ProdutosOrcamento benef = new ProdutosOrcamento();
                             benef.IdOrcamento = idOrca;
-                            benef.IdAmbienteOrca = p.IdAmbienteOrca;
                             benef.IdItemProjeto = p.IdItemProjeto;
                             benef.Ambiente = p.Ambiente;
                             benef.Qtde = pob.Qtd > 0 ? pob.Qtd : 1;
@@ -99,7 +97,6 @@ namespace Glass.Data.DAL
                         {
                             ProdutosOrcamento benef = new ProdutosOrcamento();
                             benef.IdOrcamento = idOrca;
-                            benef.IdAmbienteOrca = p.IdAmbienteOrca;
                             benef.IdItemProjeto = p.IdItemProjeto;
                             benef.Ambiente = p.Ambiente;
                             benef.Qtde = 0;
@@ -157,7 +154,6 @@ namespace Glass.Data.DAL
                             produto.Custo = m.Custo;
                             produto.DescrProduto = m.DescrProduto;
                             produto.Espessura = m.Espessura;
-                            produto.IdAmbienteOrca = lstProd[i].IdAmbienteOrca;
                             produto.IdOrcamento = lstProd[i].IdOrcamento;
                             produto.IdProdParent = lstProd[i].IdProd;
                             produto.IdProduto = m.IdProd;
@@ -198,7 +194,6 @@ namespace Glass.Data.DAL
                                 {
                                     ProdutosOrcamento benef = new ProdutosOrcamento();
                                     benef.IdOrcamento = idOrca;
-                                    benef.IdAmbienteOrca = produto.IdAmbienteOrca;
                                     benef.IdItemProjeto = produto.IdItemProjeto;
                                     benef.Ambiente = produto.Ambiente;
                                     benef.Qtde = mipb.Qtd > 0 ? mipb.Qtd : 1;
@@ -219,7 +214,6 @@ namespace Glass.Data.DAL
                                 {
                                     ProdutosOrcamento benef = new ProdutosOrcamento();
                                     benef.IdOrcamento = idOrca;
-                                    benef.IdAmbienteOrca = produto.IdAmbienteOrca;
                                     benef.IdItemProjeto = produto.IdItemProjeto;
                                     benef.Ambiente = produto.Ambiente;
                                     benef.Qtde = 0;
@@ -323,40 +317,6 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(Sql(idOrca, null, true, null, null, null, false, true)).ToList();
         }
 
-        public IList<ProdutosOrcamento> GetList(uint idOrca, uint? idAmbiente, bool showChildren, string sortExpression, int startRow, int pageSize)
-        {
-            if (GetCountReal(idOrca, idAmbiente, showChildren) == 0 && Glass.Configuracoes.Geral.NaoVendeVidro())
-                return new[] { new ProdutosOrcamento() };
-
-            // Se a lista de produtos tiver sido ordenada pelo ambiente, salva numSeq de acordo com esta sequência
-            if (sortExpression != null && sortExpression.ToLower().Contains("ambiente") && idOrca > 0)
-            {
-                string sql = "";
-                List<ProdutosOrcamento> lstProdOrca = objPersistence.LoadData("Select * From produtos_orcamento Where idProdParent is null And idOrcamento=" + idOrca + " Order By " + sortExpression);
-                for (int i = 0; i < lstProdOrca.Count; i++)
-                    sql += "Update produtos_orcamento Set numSeq=" + (i + 1) + " Where idProd=" + lstProdOrca[i].IdProd + " Or idProdParent=" + lstProdOrca[i].IdProd + ";";
-
-                // Atualiza o número de sequência dos produtos sem idParent
-                objPersistence.ExecuteCommand(sql);
-            }
-
-            if (String.IsNullOrEmpty(sortExpression))
-                sortExpression = "numSeq";
-
-            return LoadDataWithSortExpression(Sql(idOrca, idAmbiente, showChildren, null, null, null, !String.IsNullOrEmpty(sortExpression), true), sortExpression, startRow, pageSize, null);
-        }
-
-        public int GetCount(uint idOrca, uint? idAmbiente, bool showChildren)
-        {
-            int count = GetCountReal(idOrca, idAmbiente, showChildren);
-            return count > 0 || !Glass.Configuracoes.Geral.NaoVendeVidro() ? count : 1;
-        }
-
-        public int GetCountReal(uint idOrca, uint? idAmbiente, bool showChildren)
-        {
-            return objPersistence.ExecuteSqlQueryCount(Sql(idOrca, idAmbiente, showChildren, null, null, null, false, false), null);
-        }
-
         public IList<ProdutosOrcamento> GetByOrcamento(uint idOrcamento, bool showChildren)
         {
             return GetByOrcamento(null, idOrcamento, showChildren);
@@ -398,17 +358,16 @@ namespace Glass.Data.DAL
         /// Insere/Atualiza Produto de Projeto
         /// </summary>
         /// <param name="idOrcamento"></param>
-        /// <param name="idAmbienteOrca"></param>
         /// <param name="itemProj"></param>
-        public uint InsereAtualizaProdProj(uint idOrcamento, uint? idAmbienteOrca, ItemProjeto itemProj)
+        public uint InsereAtualizaProdProj(uint idOrcamento, ItemProjeto itemProj)
         {
-            return InsereAtualizaProdProj(null, idOrcamento, idAmbienteOrca, itemProj);
+            return InsereAtualizaProdProj(null, idOrcamento, itemProj);
         }
 
-        internal uint InsereAtualizaProdProj(GDASession sessao, uint idOrcamento, uint? idAmbienteOrca, ItemProjeto itemProj)
+        internal uint InsereAtualizaProdProj(GDASession sessao, uint idOrcamento, ItemProjeto itemProj)
         {
             var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(null, idOrcamento);
-            return InsereAtualizaProdProj(sessao, orcamento, idAmbienteOrca, itemProj);
+            return InsereAtualizaProdProj(sessao, orcamento, itemProj);
         }
 
         /// <summary>
@@ -416,9 +375,8 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idOrcamento"></param>
-        /// <param name="idAmbienteOrca"></param>
         /// <param name="itemProj"></param>
-        internal uint InsereAtualizaProdProj(GDASession sessao, Orcamento orcamento, uint? idAmbienteOrca, ItemProjeto itemProj)
+        internal uint InsereAtualizaProdProj(GDASession sessao, Orcamento orcamento, ItemProjeto itemProj)
         {
             try
             {
@@ -458,7 +416,6 @@ namespace Glass.Data.DAL
 
                 ProdutosOrcamento prodOrca = new ProdutosOrcamento();
                 prodOrca.IdOrcamento = orcamento.IdOrcamento;
-                prodOrca.IdAmbienteOrca = idAmbienteOrca;
                 prodOrca.IdItemProjeto = itemProj.IdItemProjeto;
                 prodOrca.Ambiente = itemProj.Ambiente;
 
@@ -537,10 +494,7 @@ namespace Glass.Data.DAL
                 @"Delete from produto_orcamento_benef Where idProd In
                 (Select idProd from produtos_orcamento Where idItemProjeto is not null and idOrcamento=" + idOrcamento + @");
 
-                Delete From produtos_orcamento Where idItemProjeto is not null and idOrcamento=" + idOrcamento + @";
-
-                Delete from ambiente_orcamento Where idOrcamento=" + idOrcamento + @" And idAmbienteOrca not in
-                (Select idAmbienteOrca from produtos_orcamento Where idOrcamento=" + idOrcamento + ");";
+                Delete From produtos_orcamento Where idItemProjeto is not null and idOrcamento=" + idOrcamento + @";";
 
             objPersistence.ExecuteCommand(session, sql);
         }
@@ -1098,10 +1052,6 @@ namespace Glass.Data.DAL
                 if (PedidoConfig.DadosPedido.BloquearItensTipoPedido &&
                     OrcamentoDAO.Instance.ObtemTipoOrcamento(sessao, objInsert.IdOrcamento).GetValueOrDefault() == 0)
                     throw new Exception("Informe o tipo do orçamento antes da inserção de produtos.");
-
-                // Chamado 49342 - O ambiente do orçamento estava sendo excluido durante a inserção e depois não era possível editar os produtos.
-                if (objInsert.IdAmbienteOrca.GetValueOrDefault() > 0 && !AmbienteOrcamentoDAO.Instance.AmbienteOrcamentoExiste(sessao, (uint)objInsert.IdAmbienteOrca))
-                    throw new Exception("O ambiente do orçamento foi excluído durante a inserção desse(s) produto(s), volte a tela do orçamento, insira um novo ambiente e então insira o(s) produto(s) novamente.");
 
                 if (objInsert.ValorProd > 0 && objInsert.Qtde > 0 && objInsert.Total == null || objInsert.Total == 0)
                 {

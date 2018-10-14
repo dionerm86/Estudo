@@ -29,7 +29,6 @@ namespace Glass.UI.Web.Cadastros
                 hdfIdOrca.Value = Request["idOrca"];
                 dtvOrcamento.ChangeMode(DetailsViewMode.ReadOnly);
                 dtvOrcamento.DataBind();
-                grdAmbiente.DataBind();
 
                 var orca = dtvOrcamento.DataItem as Data.Model.Orcamento;
 
@@ -81,12 +80,9 @@ namespace Glass.UI.Web.Cadastros
             }
 
             hdfComissaoVisible.Value = PedidoConfig.Comissao.ComissaoPedido.ToString().ToLower();
-            grdProdutos.Visible = (dtvOrcamento.CurrentMode == DetailsViewMode.ReadOnly) &&
-                (!OrcamentoConfig.AmbienteOrcamento || hdfIdAmbienteOrca.Value != "");
             lnkProduto.Visible = grdProdutos.Visible && !Glass.Configuracoes.Geral.NaoVendeVidro();
             lnkProjeto.Visible = lnkProduto.Visible;
             grdProdutos.ShowFooter = !lnkProduto.Visible;
-            linhaAmbiente.Visible = dtvOrcamento.CurrentMode == DetailsViewMode.ReadOnly && OrcamentoConfig.AmbienteOrcamento;
 
             grdProdutos.Columns[7].Visible = !grdProdutos.ShowFooter && OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento;
             grdProdutos.Columns[8].Visible = !grdProdutos.ShowFooter && OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento;
@@ -157,40 +153,6 @@ namespace Glass.UI.Web.Cadastros
                 Response.Redirect("CadOrcamento.aspx?IdOrca=" + hdfIdOrca.Value + (relatorio > 0 ? "&relatorio=" + relatorio : ""));
         }
 
-        protected void odsProdXOrc_Deleted(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
-        {
-            if (e.Exception != null)
-            {
-                Glass.MensagemAlerta.ErrorMsg(null, e.Exception, Page);
-                e.ExceptionHandled = true;
-            }
-            else
-            {
-                dtvOrcamento.DataBind();
-                grdAmbiente.DataBind();
-            }
-        }
-
-        protected void odsProdXOrc_Updated(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
-        {
-            if (e.Exception != null)
-            {
-                Glass.MensagemAlerta.ErrorMsg(null, e.Exception, Page);
-                e.ExceptionHandled = true;
-            }
-            else
-            {
-                dtvOrcamento.DataBind();
-                grdAmbiente.DataBind();
-            }
-        }
-
-        protected void grdProdutos_RowDeleted(object sender, GridViewDeletedEventArgs e)
-        {
-            dtvOrcamento.DataBind();
-            grdAmbiente.DataBind();
-        }
-
         protected void ImageButton1_DataBinding(object sender, EventArgs e)
         {
             GridViewRow linha = ((ImageButton)sender).Parent.Parent as GridViewRow;
@@ -212,45 +174,6 @@ namespace Glass.UI.Web.Cadastros
             ((ImageButton)sender).OnClientClick = "return openProdutos('" + item.IdProd + "', false);";
         }
 
-        protected void grdAmbiente_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            if (e.CommandName == "Produtos" && Glass.Conversoes.StrParaUint(e.CommandArgument.ToString()) > 0)
-            {
-                hdfIdAmbienteOrca.Value = e.CommandArgument.ToString();
-                lblAmbiente.Text = AmbienteOrcamentoDAO.Instance.ObtemAmbiente(Glass.Conversoes.StrParaUint(e.CommandArgument.ToString()));
-
-                lnkProduto.Visible = true;
-                lnkProjeto.Visible = true;
-                grdProdutos.Visible = true;
-                linhaAmbiente.Visible = true;
-                grdProdutos.ShowFooter = Glass.Configuracoes.Geral.NaoVendeVidro();
-
-                grdProdutos.Columns[7].Visible = !grdProdutos.ShowFooter && OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento;
-                grdProdutos.Columns[8].Visible = !grdProdutos.ShowFooter && OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento;
-            }
-        }
-
-        protected void imbInserir_Click(object sender, ImageClickEventArgs e)
-        {
-            string ambiente = ((TextBox)grdAmbiente.FooterRow.FindControl("txtAmbienteIns")).Text;
-            string descricao = ((TextBox)grdAmbiente.FooterRow.FindControl("txtDescricaoIns")).Text;
-            uint idOrca = Glass.Conversoes.StrParaUint(Request["idOrca"]);
-
-            if (ambiente == String.Empty)
-            {
-                Glass.MensagemAlerta.ShowMsg("Informe o ambiente.", Page);
-                return;
-            }
-
-            AmbienteOrcamento novo = new AmbienteOrcamento();
-            novo.Ambiente = ambiente;
-            novo.Descricao = descricao;
-            novo.IdOrcamento = idOrca;
-
-            AmbienteOrcamentoDAO.Instance.Insert(novo);
-            grdAmbiente.DataBind();
-        }
-
         protected void grdAmbiente_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.Cells[0].FindControl("hdfIdAmbiente") != null)
@@ -259,16 +182,6 @@ namespace Glass.UI.Web.Cadastros
                 if (idAmbiente == 0)
                     e.Row.Visible = false;
             }
-        }
-
-        protected void txtAmbiente_Load(object sender, EventArgs e)
-        {
-            ((TextBox)sender).Visible = !OrcamentoConfig.AmbienteOrcamento;
-        }
-
-        protected void Label6_Load(object sender, EventArgs e)
-        {
-            ((Label)sender).Visible = OrcamentoConfig.AmbienteOrcamento;
         }
 
         protected void ctrlParcelasSelecionar1_Load(object sender, EventArgs e)
@@ -343,7 +256,6 @@ namespace Glass.UI.Web.Cadastros
             lnkProduto.Visible = false;
             lnkProjeto.Visible = false;
             grdProdutos.Visible = false;
-            linhaAmbiente.Visible = false;
         }
 
         protected void chkNegociar_CheckedChanged(object sender, EventArgs e)
@@ -604,18 +516,6 @@ namespace Glass.UI.Web.Cadastros
             grdProdutos.ShowFooter = Glass.Configuracoes.Geral.NaoVendeVidro() && e.CommandName != "Edit";
         }
 
-        protected void grdProdutos_DataBound(object sender, EventArgs e)
-        {
-            if (!Glass.Configuracoes.Geral.NaoVendeVidro() || grdProdutos.Rows.Count != 1)
-                return;
-
-            uint idOrca = Glass.Conversoes.StrParaUint(Request["idOrca"]);
-            uint? idAmbienteOrca = OrcamentoConfig.AmbienteOrcamento && !String.IsNullOrEmpty(hdfIdAmbienteOrca.Value) ?
-                (uint?)Glass.Conversoes.StrParaUint(hdfIdAmbienteOrca.Value) : null;
-
-            grdProdutos.Rows[0].Visible = ProdutosOrcamentoDAO.Instance.GetCountReal(idOrca, idAmbienteOrca, false) != 0;
-        }
-
         protected void imagemProdutoOrca_Load(object sender, EventArgs e)
         {
             Control div = sender as Control;
@@ -641,12 +541,6 @@ namespace Glass.UI.Web.Cadastros
                 File.Delete(Data.Helper.Utils.GetProdutosOrcamentoPath + idProd + ".jpg");
 
             imb.Visible = false;
-        }
-
-        protected int GetNumeroProdutos()
-        {
-            uint idOrca = 0;
-            return uint.TryParse(Request["idOrca"], out idOrca) ? ProdutosOrcamentoDAO.Instance.GetCountReal(idOrca, null, false) : 0;
         }
 
         protected void lnkMedicaoDef_Click(object sender, EventArgs e)

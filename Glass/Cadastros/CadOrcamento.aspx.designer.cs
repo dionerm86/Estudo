@@ -22,69 +22,6 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.DetailsView dtvOrcamento;
         
         /// <summary>
-        /// linhaAmbiente control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow linhaAmbiente;
-        
-        /// <summary>
-        /// grdAmbiente control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdAmbiente;
-        
-        /// <summary>
-        /// lblAmbiente control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblAmbiente;
-        
-        /// <summary>
-        /// odsAmbiente control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsAmbiente;
-        
-        /// <summary>
-        /// odsTipoVenda control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoVenda;
-        
-        /// <summary>
-        /// odsTipoPedido control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoPedido;
-        
-        /// <summary>
-        /// hdfIdAmbienteOrca control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfIdAmbienteOrca;
-        
-        /// <summary>
         /// lnkProduto control.
         /// </summary>
         /// <remarks>
@@ -137,15 +74,6 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsOrcamento;
-        
-        /// <summary>
-        /// odsProdXOrc control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsProdXOrc;
         
         /// <summary>
         /// hdfComissaoVisible control.

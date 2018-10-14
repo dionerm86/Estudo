@@ -427,23 +427,11 @@ namespace Glass.UI.Web.Listas
                 orca.ImprimirProdutosOrcamento = true;
                 OrcamentoDAO.Instance.Update(orca);
 
-                uint? idAmbienteOrca = null;
-                if (OrcamentoConfig.AmbienteOrcamento)
-                {
-                    AmbienteOrcamento rapido = new AmbienteOrcamento();
-                    rapido.Ambiente = "Orçamento rápido";
-                    rapido.Descricao = "Ambiente gerado pelo orçamento rápido.";
-                    rapido.IdOrcamento = idOrca;
-
-                    idAmbienteOrca = AmbienteOrcamentoDAO.Instance.Insert(rapido);
-                }
-
                 uint? idProdParent = null;
                 prodOrca = new ProdutosOrcamento();
                 prodOrca.Ambiente = "Orçamento rápido";
                 prodOrca.Descricao = "Produto gerado pelo orçamento rápido";
                 prodOrca.IdOrcamento = idOrca;
-                prodOrca.IdAmbienteOrca = idAmbienteOrca;
                 prodOrca.Qtde = 1;
 
                 idProdParent = ProdutosOrcamentoDAO.Instance.Insert(prodOrca);
@@ -461,7 +449,6 @@ namespace Glass.UI.Web.Listas
 
                     prodOrca = new ProdutosOrcamento();
                     prodOrca.IdOrcamento = idOrca;
-                    prodOrca.IdAmbienteOrca = idAmbienteOrca;
                     prodOrca.IdProdParent = idProdParent;
                     prodOrca.IdProduto = Glass.Conversoes.StrParaUint(dadosProd[0]);
                     prodOrca.Descricao = dadosProd[9];
@@ -543,7 +530,6 @@ namespace Glass.UI.Web.Listas
                 prodOrca.IdProduto = Glass.Conversoes.StrParaUint(dadosProd[0]);
                 prodOrca.NumSeq = prodParent.NumSeq;
                 prodOrca.Ambiente = prodParent.Ambiente;
-                prodOrca.IdAmbienteOrca = prodParent.IdAmbienteOrca;
                 prodOrca.Descricao = !String.IsNullOrEmpty(dadosProd[9]) ? (dadosProd[9].Length > 500 ? dadosProd[9].Substring(0, 500) : dadosProd[9]) : String.Empty;
                 prodOrca.Total = decimal.Parse(dadosProd[2].Replace('.', ','), System.Globalization.NumberStyles.AllowDecimalPoint);
                 prodOrca.Qtde = float.Parse(dadosProd[3].Replace('.', ','));

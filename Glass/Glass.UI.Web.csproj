@@ -645,7 +645,6 @@
     <Content Include="Cadastros\CadPlanoConta.aspx" />
     <Content Include="Cadastros\CadPrecoProduto.aspx" />
     <Content Include="Cadastros\CadProduto.aspx" />
-    <Content Include="Cadastros\CadProdutoOrcamento.aspx" />
     <Content Include="Cadastros\CadProprietarioVeiculo.aspx" />
     <Content Include="Cadastros\CadQuitarDebitoFunc.aspx" />
     <Content Include="Cadastros\CadQuitarParcCartao.aspx" />
@@ -4284,13 +4283,6 @@
     </Compile>
     <Compile Include="Cadastros\CadProduto.aspx.designer.cs">
       <DependentUpon>CadProduto.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Cadastros\CadProdutoOrcamento.aspx.cs">
-      <DependentUpon>CadProdutoOrcamento.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Cadastros\CadProdutoOrcamento.aspx.designer.cs">
-      <DependentUpon>CadProdutoOrcamento.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\CadProprietarioVeiculo.aspx.cs">
       <DependentUpon>CadProprietarioVeiculo.aspx</DependentUpon>
