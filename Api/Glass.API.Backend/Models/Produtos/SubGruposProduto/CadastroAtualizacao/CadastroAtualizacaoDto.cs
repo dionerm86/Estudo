@@ -219,7 +219,7 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("idsLojaAssociadas")]
-        public int[] IdsLojaAssociadas
+        public IEnumerable<int> IdsLojaAssociadas
         {
             get { return this.ObterValor(c => c.IdsLojaAssociadas); }
             set { this.AdicionarValor(c => c.IdsLojaAssociadas, value); }

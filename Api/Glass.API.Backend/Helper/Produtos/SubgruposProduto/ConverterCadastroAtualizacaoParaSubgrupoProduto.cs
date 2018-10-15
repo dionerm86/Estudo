@@ -65,7 +65,9 @@ namespace Glass.API.Backend.Helper.Produtos.SubgruposProduto
             destino.DiaSemanaEntrega = this.cadastro.ObterValorNormalizado(c => c.DiaSemanaEntrega, destino.DiaSemanaEntrega);
             destino.LiberarPendenteProducao = this.cadastro.ObterValorNormalizado(c => c.LiberarPendenteProducao, destino.LiberarPendenteProducao);
             destino.PermitirItemRevendaNaVenda = this.cadastro.ObterValorNormalizado(c => c.PermitirItemRevendaNaVenda, destino.PermitirItemRevendaNaVenda);
-            destino.IdsLojaAssociacao = this.cadastro.ObterValorNormalizado(c => c.IdsLojaAssociadas, destino.IdsLojaAssociacao);
+
+            var idsLojaAssociacao = this.cadastro.ObterValorNormalizado(c => c.IdsLojaAssociadas, destino.IdsLojaAssociacao);
+            destino.IdsLojaAssociacao = idsLojaAssociacao != null ? idsLojaAssociacao.ToArray() : null;
         }
     }
 }
