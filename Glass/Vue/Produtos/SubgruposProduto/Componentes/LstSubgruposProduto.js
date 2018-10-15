@@ -111,6 +111,22 @@ const app = new Vue({
     },
 
     /**
+     * Retorna os nomes das lojas associadas ao subgrupo de produto informado.
+     * @param {Object} subgrupoProduto O subgrupo de produto que terá as lojas listadas.
+     * @returns {string} Os nomes das lojas associadas do subgrupo de produto.
+     */
+    obterNomesLojasAssociadas: function(subgrupoProduto) {
+      if (!subgrupoProduto || !subgrupoProduto.lojasAssociadas) {
+        return '';
+      }
+
+      return subgrupoProduto.lojasAssociadas.slice()
+        .map(s => s.nome)
+        .sort()
+        .join(', ');
+    },
+
+    /**
      * Inicia o cadastro de subgrupo de produto.
      */
     iniciarCadastro: function () {
@@ -257,7 +273,7 @@ const app = new Vue({
         diaSemanaEntrega: subgrupoProduto && subgrupoProduto.entrega && subgrupoProduto.entrega.diaSemana ? subgrupoProduto.entrega.diaSemana.id : null,
         liberarPendenteProducao: subgrupoProduto ? subgrupoProduto.liberarPendenteProducao : null,
         permitirItemRevendaNaVenda: subgrupoProduto ? subgrupoProduto.permitirItemRevendaNaVenda : null,
-        idsLojaAssociadas: subgrupoProduto && subgrupoProduto.idsLojaAssociadas ? subgrupoProduto.idsLojaAssociadas.map(f => f.id) : null
+        idsLojasAssociadas: subgrupoProduto && subgrupoProduto.lojasAssociadas ? subgrupoProduto.lojasAssociadas.map(f => f.id) : null
       };
 
       this.subgrupoProdutoOriginal = this.clonar(this.subgrupoProduto);

@@ -1,4 +1,4 @@
-<%@ Page Title="Subgrupos de Produto" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" 
+<%@ Page Title="Subgrupos de Produto" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="CadSubgrupoProduto.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadSubgrupoProduto" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
@@ -100,7 +100,7 @@
                     <td v-if="item.entrega && item.entrega.diaSemana">{{ item.entrega.diaSemana.nome }}</td>
                     <td v-if="item.tipo">{{ item.tipo.nome }}</td>
                     <td v-if="item.cliente">{{ item.cliente.nome }}</td>
-                    <td v-if="item.lojasAssociadas">{{ item.lojasAssociadas.map(f => f.nome).toString() }}</td>
+                    <td v-if="item.lojasAssociadas">{{ obterNomesLojasAssociadas(item) }}</td>
                     <td>
                         <log-alteracao tabela="SubgrupoProduto" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logAlteracoes"></log-alteracao>
                     </td>
@@ -179,7 +179,7 @@
                         <campo-busca-cliente :cliente.sync="clienteAtual" :exibir-informacoes-compra="false"></campo-busca-cliente>
                     </td>
                     <td>
-                        <lista-selecao-multipla v-bind:ids-selecionados.sync="subgrupoProduto.idsLojaAssociadas" texto-selecionar="Selecione as lojas" v-bind:funcao-recuperar-itens="obterItensLojas"
+                        <lista-selecao-multipla v-bind:ids-selecionados.sync="subgrupoProduto.idsLojasAssociadas" texto-selecionar="Selecione as lojas" v-bind:funcao-recuperar-itens="obterItensLojas"
                             v-bind:ordenar="false" campo-id="id" campo-descricao="nome"></lista-selecao-multipla>
                     </td>
                     <td></td>
@@ -261,7 +261,7 @@
                         <campo-busca-cliente :cliente.sync="clienteAtual" :exibir-informacoes-compra="false" v-if="inserindo"></campo-busca-cliente>
                     </td>
                     <td>
-                        <lista-selecao-multipla v-bind:ids-selecionados.sync="subgrupoProduto.idsLojaAssociadas" texto-selecionar="Selecione as lojas" v-bind:funcao-recuperar-itens="obterItensLojas"
+                        <lista-selecao-multipla v-bind:ids-selecionados.sync="subgrupoProduto.idsLojasAssociadas" texto-selecionar="Selecione as lojas" v-bind:funcao-recuperar-itens="obterItensLojas"
                             v-bind:ordenar="false" campo-id="id" campo-descricao="nome" v-if="inserindo"></lista-selecao-multipla>
                     </td>
                     <td></td>

@@ -218,11 +218,11 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.CadastroAtualizacao
         /// Obtém ou define as lojas associadas à este subgrupo.
         /// </summary>
         [DataMember]
-        [JsonProperty("idsLojaAssociadas")]
-        public IEnumerable<int> IdsLojaAssociadas
+        [JsonProperty("idsLojasAssociadas")]
+        public IEnumerable<int> IdsLojasAssociadas
         {
-            get { return this.ObterValor(c => c.IdsLojaAssociadas); }
-            set { this.AdicionarValor(c => c.IdsLojaAssociadas, value); }
+            get { return this.ObterValor(c => c.IdsLojasAssociadas); }
+            set { this.AdicionarValor(c => c.IdsLojasAssociadas, value); }
         }
     }
 }
