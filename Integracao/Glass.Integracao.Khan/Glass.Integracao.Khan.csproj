@@ -30,12 +30,44 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Business.1.0.0\lib\net40\Colosoft.Business.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Core.1.0.0.272\lib\net40\Colosoft.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Net, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6b4df30fccf43e6b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Net.1.0.0\lib\net40\Colosoft.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EditorConfig.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=fe6ce3ea283749f2, processorArchitecture=MSIL">
       <HintPath>..\..\packages\editorconfig.0.12.1\lib\net45\EditorConfig.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentScheduler, Version=5.3.0.0, Culture=neutral, PublicKeyToken=b76503528a14ebd1, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentScheduler.5.3.0\lib\net40\FluentScheduler.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
@@ -47,6 +79,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -58,9 +91,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfiguracaoKhan.cs" />
+    <Compile Include="ConversorNotaFiscalPedido.cs" />
     <Compile Include="IntegradorKhan.cs" />
+    <Compile Include="IntegradorScheculerRegistry.cs" />
+    <Compile Include="MonitorIndicadoresFinanceiros.cs" />
+    <Compile Include="MonitorNotaFiscal.cs" />
+    <Compile Include="MonitorProdutos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service References\KhanIntegrador\Reference.cs">
+    <Compile Include="Seguranca\KhanClientMessageInspector.cs" />
+    <Compile Include="Seguranca\KhanEndpointBehavior.cs" />
+    <Compile Include="Service References\KhanIndicadoresServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\KhanPedidoServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\KhanProdutosServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -69,14 +120,43 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="Service References\KhanIntegrador\ProdutosService.wsdl" />
-    <None Include="Service References\KhanIntegrador\ProdutosService.xsd">
+    <None Include="Service References\KhanIndicadoresServiceReference\Glass.Integracao.Khan.KhanIndicadoresServiceReference.Indicadores.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\KhanIndicadoresServiceReference\IndicadoresService.wsdl" />
+    <None Include="Service References\KhanIndicadoresServiceReference\IndicadoresService.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\KhanIntegrador\ProdutosService1.xsd">
+    <None Include="Service References\KhanIndicadoresServiceReference\IndicadoresService1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\KhanIntegrador\ProdutosService2.xsd">
+    <None Include="Service References\KhanIndicadoresServiceReference\IndicadoresService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\KhanPedidoServiceReference\Glass.Integracao.Khan.KhanPedidoServiceReference.Pedido.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\KhanPedidoServiceReference\PedidoService.wsdl" />
+    <None Include="Service References\KhanPedidoServiceReference\PedidoService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\KhanPedidoServiceReference\PedidoService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\KhanPedidoServiceReference\PedidoService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\KhanProdutosServiceReference\Glass.Integracao.Khan.KhanProdutosServiceReference.Produtos.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\KhanProdutosServiceReference\ProdutosService.wsdl" />
+    <None Include="Service References\KhanProdutosServiceReference\ProdutosService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\KhanProdutosServiceReference\ProdutosService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\KhanProdutosServiceReference\ProdutosService2.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -96,32 +176,69 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Service References\KhanIntegrador\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\KhanIntegrador\ProdutosService.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\KhanIntegrador\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\KhanIntegrador\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\KhanIntegrador\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Glass.Data\Glass.Data.csproj">
       <Project>{4f2eaa30-6616-4d69-8355-44557e20c398}</Project>
       <Name>Glass.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Negocios\Glass.Negocios.Entidades\Glass.Negocios.Entidades.csproj">
+      <Project>{de1a9b49-0710-4fa1-bbfb-1c83f9e9533c}</Project>
+      <Name>Glass.Negocios.Entidades</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Negocios\Glass.Negocios\Glass.Negocios.csproj">
+      <Project>{a607c634-74af-4c32-b0b1-3d72b642b859}</Project>
+      <Name>Glass.Negocios</Name>
     </ProjectReference>
     <ProjectReference Include="..\Glass.Integracao\Glass.Integracao.csproj">
       <Project>{eddba46b-4412-433b-a587-c481ba2831fd}</Project>
       <Name>Glass.Integracao</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\KhanIndicadoresServiceReference\" />
+    <WCFMetadataStorage Include="Service References\KhanPedidoServiceReference\" />
+    <WCFMetadataStorage Include="Service References\KhanProdutosServiceReference\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\KhanProdutosServiceReference\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\KhanProdutosServiceReference\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\KhanProdutosServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\KhanIndicadoresServiceReference\IndicadoresService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\KhanIndicadoresServiceReference\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\KhanIndicadoresServiceReference\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\KhanIndicadoresServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\KhanPedidoServiceReference\PedidoService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\KhanPedidoServiceReference\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\KhanPedidoServiceReference\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\KhanPedidoServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

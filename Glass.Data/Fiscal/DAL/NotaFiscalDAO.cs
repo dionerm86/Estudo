@@ -1313,6 +1313,9 @@ namespace Glass.Data.DAL
                             }
                         }
 
+                        Colosoft.Domain.DomainEvents.Instance.GetEvent<Domain.NotaFiscalGerada>()
+                            .Publish(new Domain.NotaFiscalEventoArgs(transaction, nf));
+
                         transaction.Commit();
                         transaction.Close();
                     }
@@ -1322,7 +1325,7 @@ namespace Glass.Data.DAL
                         transaction.Close();
 
                         ErroDAO.Instance.InserirFromException("GerarNotaFiscal NF: " + nf.NumeroNFe, ex);
-                        throw ex;
+                        throw;
                     }
                 }
             }

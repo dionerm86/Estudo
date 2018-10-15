@@ -4669,9 +4669,6 @@ namespace Glass.Data.DAL
             LogAlteracaoDAO.Instance.LogProduto(objUpdate, LogAlteracaoDAO.SequenciaObjeto.Novo);
             var resultado = base.Update(session, objUpdate);
 
-            Colosoft.Domain.DomainEvents.Instance.GetEvent<Domain.ProdutoAtualizado>()
-                .Publish(new Domain.ProdutoEventoArgs(session, objUpdate));
-
             return resultado;
         }
 

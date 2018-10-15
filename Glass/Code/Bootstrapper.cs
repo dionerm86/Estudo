@@ -77,7 +77,7 @@ namespace Glass.UI.Web
 
         protected override void ConfigureGDAListeners()
         {
-            GDA.GDAConnectionManager.Listeners.Add(new Glass.Dados.MySql.MySqlConnectionListener());
+            GDA.GDAConnectionManager.Listeners.Add(new Dados.MySql.MySqlConnectionListener());
         }
     }
 }

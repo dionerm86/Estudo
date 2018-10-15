@@ -20,7 +20,7 @@ namespace Glass.Data.Domain
         /// Inicia uma nova instância da classe <see cref="EventoComSessaoArgs"/>.
         /// </summary>
         /// <param name="sessao">Sessão associada com o evento.</param>
-        public EventoComSessaoArgs(GDA.GDASession sessao)
+        protected EventoComSessaoArgs(GDA.GDASession sessao)
         {
             this.Sessao = sessao;
         }

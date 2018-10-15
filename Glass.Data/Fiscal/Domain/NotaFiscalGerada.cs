@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace Glass.Data.Domain
 {
     /// <summary>
-    /// Representa o evento de atualização do produto.
+    /// Representa o evento acionado quando a nota fiscal for gerada.
     /// </summary>
-    public class ProdutoAtualizado : Colosoft.Domain.CompositeDomainEvent<ProdutoEventoArgs>
+    public sealed class NotaFiscalGerada : Colosoft.Domain.CompositeDomainEvent<NotaFiscalEventoArgs>
     {
     }
 }

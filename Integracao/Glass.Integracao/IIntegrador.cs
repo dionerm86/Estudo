@@ -9,7 +9,7 @@ namespace Glass.Integracao
     /// <summary>
     /// Assinatura do integrador de um integrador do sistema.
     /// </summary>
-    public interface IIntegrador
+    public interface IIntegrador : IDisposable
     {
         /// <summary>
         /// Obtém o nome do integrador.
@@ -24,7 +24,7 @@ namespace Glass.Integracao
         /// <summary>
         /// Obtém ou define um valor que indica se o integrador está ativo.
         /// </summary>
-        bool Ativo { get; set; }
+        bool Ativo { get; }
 
         /// <summary>
         /// Realiza o setup do integrador.

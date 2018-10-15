@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/KnIntegracao.Services" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/KnIntegracao.Services" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="Pedido">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Itens" nillable="true" type="tns:ArrayOfItemPedido" />
+      <xs:element minOccurs="0" name="Parcelas" nillable="true" type="tns:ArrayOfParcelaPedido" />
+      <xs:element minOccurs="0" name="QtdItem" type="xs:int" />
+      <xs:element minOccurs="0" name="Token" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="autoriz_comercial" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="baient" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="baifat" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="cepent" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="cepfat" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="cident" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="cidfat" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="codTipoEnvio" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="codcad" type="xs:int" />
+      <xs:element minOccurs="0" name="codempresa" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="codven" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="contrato" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="cp_terminal" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="datped" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="email" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="endent" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="endent_complemento" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="endent_num" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="endfat" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="endfat_complemento" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="endfat_num" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="estent" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="estfat" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="foneddd" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="fonenum" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="nf_chave" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="nf_contingencia" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="nf_dat_cancelamento" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="nf_data_contingencia" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="nf_justif_contingencia" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="nf_numprotocolo" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="nf_numprotocolo_Can" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="nf_operador_caixa" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="nomcad" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="numdoc1" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="numdoc2" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="numitens" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="numnf" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="numnf_origem" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="numpar" type="xs:int" />
+      <xs:element minOccurs="0" name="numped" type="xs:int" />
+      <xs:element minOccurs="0" name="numped_int" type="xs:int" />
+      <xs:element minOccurs="0" name="numpedc" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="obsvint" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="seqped" type="xs:int" />
+      <xs:element minOccurs="0" name="seqped_int" type="xs:int" />
+      <xs:element minOccurs="0" name="serie" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="statusw" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="tipes" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="tipoEnvio" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="tipodoc1" type="xs:int" />
+      <xs:element minOccurs="0" name="tipodoc2" type="xs:int" />
+      <xs:element minOccurs="0" name="tipos" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="tippag" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="tippag_obs" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="xml" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Pedido" nillable="true" type="tns:Pedido" />
+  <xs:complexType name="ArrayOfItemPedido">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ItemPedido" nillable="true" type="tns:ItemPedido" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfItemPedido" nillable="true" type="tns:ArrayOfItemPedido" />
+  <xs:complexType name="ItemPedido">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="NUMBICO" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NUMTICKET_TROCA" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NUM_ABASTECIMENTO" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NUM_SEQ_ABASTECIMENTO" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PCOFINS" type="xs:float" />
+      <xs:element minOccurs="0" name="PICMS" type="xs:float" />
+      <xs:element minOccurs="0" name="PICMSSUB" type="xs:float" />
+      <xs:element minOccurs="0" name="PIPI" type="xs:float" />
+      <xs:element minOccurs="0" name="PPIS" type="xs:float" />
+      <xs:element minOccurs="0" name="SITTRIB" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SITTRIB_COFINS" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SITTRIB_IPI" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SITTRIB_PIS" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TANQUE" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="codbar" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="codempresa" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="codpro" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="idt" type="xs:int" />
+      <xs:element minOccurs="0" name="lote" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="numped_int" type="xs:int" />
+      <xs:element minOccurs="0" name="obsvint" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="prunit" type="xs:float" />
+      <xs:element minOccurs="0" name="qtdpro" type="xs:float" />
+      <xs:element minOccurs="0" name="seq" type="xs:int" />
+      <xs:element minOccurs="0" name="seqped_int" type="xs:int" />
+      <xs:element minOccurs="0" name="vdesc" type="xs:float" />
+      <xs:element minOccurs="0" name="vfrete" type="xs:float" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ItemPedido" nillable="true" type="tns:ItemPedido" />
+  <xs:complexType name="ArrayOfParcelaPedido">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ParcelaPedido" nillable="true" type="tns:ParcelaPedido" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfParcelaPedido" nillable="true" type="tns:ArrayOfParcelaPedido" />
+  <xs:complexType name="ParcelaPedido">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Parcelas" type="xs:int" />
+      <xs:element minOccurs="0" name="TipoPagamento" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Transacao" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="codempresa" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="data_transacao" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="datvenc" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="numped_int" type="xs:int" />
+      <xs:element minOccurs="0" name="seq" type="xs:int" />
+      <xs:element minOccurs="0" name="seqped_int" type="xs:int" />
+      <xs:element minOccurs="0" name="statustransacao" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="valor" type="xs:float" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ParcelaPedido" nillable="true" type="tns:ParcelaPedido" />
+</xs:schema>
