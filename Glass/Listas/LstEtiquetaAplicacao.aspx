@@ -1,9 +1,7 @@
-<%@ Page Title="Aplicações" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
-    CodeBehind="LstEtiquetaAplicacao.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEtiquetaAplicacao" %>
+﻿<%@ Page Title="Aplicações" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+    CodeBehind="LstEtiquetaAplicacao.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEtiquetaAplicacao" EnableViewState="false" EnableViewStateMac="false" %>
 
-<%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-
     <div id="app">
         <section>
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum processo encontrado"
@@ -140,6 +138,7 @@
                             :funcao-recuperar-itens="obterSituacoes" required v-if="inserindo"></lista-selecao-id-valor>
                     </td>
                     <td></td>
+                </template>
             </lista-paginada>
         </section>
     </div>

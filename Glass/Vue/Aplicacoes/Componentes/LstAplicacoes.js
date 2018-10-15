@@ -10,19 +10,28 @@ const app = new Vue({
     configuracoes: {},
     numeroLinhaEdicao: -1,
     inserindo: false,
-    aplicacao: {}
+    aplicacao: {},
+    aplicacaoOriginal: {},
+    situacaoAtual: null
   },
 
   methods: {
-
+    /**
+     * Recupera a lista de aplicações (etiqueta) para uso no controle de busca.
+     * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+     * @param {number} pagina O número da página de resultados a ser exibida.
+     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+     * @param {string} ordenacao A ordenação para o resultado.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
       return Servicos.Aplicacoes.obter(filtro, pagina, numeroRegistros, ordenacao);
     },
 
     /**
-    * Realiza a ordenação da lista de aplicacoes.
-    * @param {string} campo O nome do campo pelo qual o resultado será ordenado.
-    */
+     * Realiza a ordenação da lista de aplicacoes.
+     * @param {string} campo O nome do campo pelo qual o resultado será ordenado.
+     */
     ordenar: function (campo) {
       if (campo !== this.dadosOrdenacao_.campo) {
         this.dadosOrdenacao_.campo = campo;
@@ -33,10 +42,10 @@ const app = new Vue({
     },
 
     /**
-    * Cria a descrição para os tipos de pedidos que serão exibidos na listagem.
-    * @param {Object} aplicacao O objeto com a aplicação que será exibida.
-    * @returns {string} O texto com a descrição dos tipos de pedidos.
-    */
+     * Cria a descrição para os tipos de pedidos que serão exibidos na listagem.
+     * @param {Object} aplicacao O objeto com a aplicação que será exibida.
+     * @returns {string} O texto com a descrição dos tipos de pedidos.
+     */
     obterDescricaoTiposPedidos: function (aplicacao) {
       if (!aplicacao.tiposPedidos || !aplicacao.tiposPedidos.length) {
         return null;
@@ -55,8 +64,8 @@ const app = new Vue({
     },
 
     /**
-    * Inicia o cadastro de aplicações de etiqueta.
-    */
+     * Inicia o cadastro de aplicações de etiqueta.
+     */
     iniciarCadastro: function () {
       this.iniciarCadastroOuAtualizacao_();
       this.inserindo = true;
@@ -229,10 +238,13 @@ const app = new Vue({
     atualizarLista: function () {
       this.$refs.lista.atualizar();
     }
-
   },
 
   computed: {
+    /**
+     * Propriedade computada para controlar a ordenação da Lista.
+     * @type {string}
+     */
     ordenacao: function () {
       var direcao = this.dadosOrdenacao_.direcao ? ' ' + this.dadosOrdenacao_.direcao : '';
       return this.dadosOrdenacao_.campo + direcao;
