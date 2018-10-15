@@ -93,7 +93,7 @@
      */
     verificarOrigemCliente: function () {
       var idCliente = GetQueryString('idCliente');
-      return !!!idCliente;
+      return !idCliente;
     },
 
     /**
