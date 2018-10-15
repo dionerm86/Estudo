@@ -341,9 +341,9 @@ namespace Glass.UI.Web.WebGlassParceiros
                 bool isPedidoMaoObra = pedidoMaoObra.ToLower() == "true";
                 bool isPedidoProducao = pedidoProducao.ToLower() == "true";
                 bool isAmbienteMaoObra = ambienteMaoObra.ToLower() == "true";
-                
+
                 prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
-    
+
                 if (prod == null)
                     return "Erro;Não existe produto com o código informado.";
                 else if (prod.Situacao == Glass.Situacao.Inativo)
@@ -749,7 +749,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             prodPed.Qtde = float.Parse(((TextBox)grdProdutos.FooterRow.FindControl("txtQtdeIns")).Text.Replace('.', ','));
             prodPed.ValorVendido = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIns")).Text); ;
             prodPed.PercDescontoQtde = ((Controls.ctrlDescontoQtde)grdProdutos.FooterRow.FindControl("ctrlDescontoQtde")).PercDescontoQtde;
-            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, false, reposicao, prodPed.PercDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), null, null);
+            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, false, reposicao, prodPed.PercDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), null, null, altura);
             prodPed.Altura = altura;
             prodPed.AlturaReal = alturaReal;
             prodPed.Largura = largura;
@@ -873,7 +873,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
                 int tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
                 bool isRevenda = ClienteDAO.Instance.IsRevenda(PedidoDAO.Instance.ObtemIdCliente(null, idPedido));
-    
+
                 // Verifica qual valor será utilizado
                 if (isRevenda) // Se for cliente revenda, valor de atacado
                     return "1";
@@ -910,7 +910,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             if (!String.IsNullOrEmpty(Request["idPedido"]))
             {
                 DateTime? dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(null, Glass.Conversoes.StrParaUint(Request["idPedido"]));
-    
+
                 return dataEntrega != null ? dataEntrega.Value.ToString("dd/MM/yyyy") : "";
             }
             else
@@ -1082,8 +1082,8 @@ namespace Glass.UI.Web.WebGlassParceiros
             uint? idPedido = Request["idPedido"] != null ? (uint?)Glass.Conversoes.StrParaUint(Request["idPedido"]) : null;
             uint idCli = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(null, idPedido.Value) : 0;
             DateTime dataMinima, dataFastDelivery;
-    
-            if ((!IsPostBack || dtvPedido.CurrentMode == DetailsViewMode.Edit) && 
+
+            if ((!IsPostBack || dtvPedido.CurrentMode == DetailsViewMode.Edit) &&
                 PedidoDAO.Instance.GetDataEntregaMinima(null, idCli, idPedido, null, null, out dataMinima, out dataFastDelivery))
             {
                 ((HiddenField)((TextBox)sender).Parent.FindControl("hdfDataEntregaFD")).Value = dataFastDelivery.ToString("dd/MM/yyyy");

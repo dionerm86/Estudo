@@ -94,17 +94,17 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sql).ToList().ToArray();
         }
 
-        public override int Delete(CorVidro objDelete)
+        public override int DeleteByPrimaryKey(GDASession sessao, int key)
         {
             // Verifica se existem produtos associados à esta cor
-            if (objPersistence.ExecuteSqlQueryCount("Select * From produto where idCorVidro=" + objDelete.IdCorVidro) > 0)
+            if (objPersistence.ExecuteSqlQueryCount("Select * From produto where idCorVidro=" + key) > 0)
                 throw new Exception("Existem produtos associados à esta cor de vidro, exclua os mesmos antes de excluir esta cor.");
-            
+
             // Verifica se existem cálculos de projeto associados à esta cor
-            if (objPersistence.ExecuteSqlQueryCount("Select * From item_projeto where idCorVidro=" + objDelete.IdCorVidro) > 0)
+            if (objPersistence.ExecuteSqlQueryCount("Select * From item_projeto where idCorVidro=" + key) > 0)
                 throw new Exception("Esta cor não pode ser excluída, pois existem cálculos de projeto associados à mesma.");
 
-            return base.Delete(objDelete);
+            return base.DeleteByPrimaryKey(sessao, key);
         }
-	}
+    }
 }

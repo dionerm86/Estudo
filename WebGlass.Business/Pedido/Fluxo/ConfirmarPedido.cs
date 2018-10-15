@@ -1,93 +1,114 @@
-﻿using System;
-using Glass.Data.DAL;
-using Glass.Data.Helper;
+﻿using Glass.Data.DAL;
 using Glass.Data.Exceptions;
+using Glass.Data.Helper;
+using System;
+using System.Collections.Generic;
 
 namespace WebGlass.Business.Pedido.Fluxo
 {
+    /// <summary>
+    /// Classe de confirmação de pedido.
+    /// </summary>
     public sealed class ConfirmarPedido : BaseFluxo<ConfirmarPedido>
     {
+        /// <summary>
+        /// Ajax.
+        /// </summary>
+        private static Ajax.IConfirmar ajax;
+
+        /// <summary>
+        /// Inicia uma nova instância da classe <see cref="ConfirmarPedido"/>.
+        /// </summary>
         private ConfirmarPedido() { }
 
-        #region Ajax
-
-        private static Ajax.IConfirmar _ajax;
-
+        /// <summary>
+        /// Obtém Ajax.
+        /// </summary>
         public static Ajax.IConfirmar Ajax
         {
-            get { return _ajax ?? (_ajax = new Ajax.Confirmar()); }
+            get { return ajax ?? (ajax = new Ajax.Confirmar()); }
         }
 
-        #endregion
-
-        public void ConfirmarPedidoLiberacao(string idsPedidos, bool alterarDataEntrega, DateTime? dataEntrega,
-            bool gerarEspelho, out string scriptExecutar)
+        /// <summary>
+        /// Confirmação de pedido em sistema de liberação.
+        /// </summary>
+        /// <param name="idsPedido">IDs dos pedidos que serão confirmados.</param>
+        /// <param name="alterarDataEntrega">Informa se a data de entrega deverá ser alterada.</param>
+        /// <param name="dataEntrega">Nova data de entrega, usada somente se o parâmetro alterarDataEntrega for true.</param>
+        /// <param name="gerarEspelho">Define se o PCP do pedido deverá ser gerado, após a confirmação do comercial.</param>
+        /// <param name="scriptExecutar">Script que será executado após a confirmação do pedido (montado dentro do método, de acordo com o resultado da confirmação do pedido).</param>
+        public void ConfirmarPedidoLiberacao(List<int> idsPedido, bool alterarDataEntrega, DateTime? dataEntrega, bool gerarEspelho, out string scriptExecutar)
         {
-            var idsPedidosErro = string.Empty;
-            var idsOrcamentoGerados = string.Empty;
+            var idsPedidoErro = new List<int>();
+            var idsOrcamentoGerados = new List<int>();
             var erroConferencia = string.Empty;
 
             try
             {
-                if (idsPedidos.Length == 0)
+                if (idsPedido.Count == 0)
+                {
                     throw new Exception("Informe os pedidos que serão confirmados.");
-                
-                // Motivo da retirada: É mais seguro utilizar o método TrimStart ao invés do Substring
-                // com o substring o primeiro número do pedido estava sendo desconsiderado
-                // isto porque a variável já havia sido tratada onde este método foi chamado.
-                // idsPedidos = idsPedidos.Substring(1);
-                idsPedidos = idsPedidos.TrimStart(',');
+                }
 
                 Exception erroConf = null;
 
                 try
                 {
-                    PedidoDAO.Instance.ConfirmarLiberacaoPedidoComTransacao(idsPedidos, out idsPedidos, out idsPedidosErro, false, false);
+                    PedidoDAO.Instance.ConfirmarLiberacaoPedidoComTransacao(idsPedido, out idsPedido, out idsPedidoErro, false, false);
                 }
                 catch (ValidacaoPedidoFinanceiroException ex)
                 {
                     if (!ex.Message.Contains("demais pedidos"))
+                    {
                         throw;
-                    
-                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, ex.IdsPedidos, Glass.MensagemAlerta.FormatErrorMsg("", ex));
+                    }
+
+                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, ex.IdsPedido, Glass.MensagemAlerta.FormatErrorMsg("", ex));
                 }
                 catch (Exception ex1)
                 {
                     if (!ex1.Message.Contains("demais pedidos"))
+                    {
                         throw;
-                    
+                    }
+
                     erroConf = ex1;
                 }
 
                 // Altera a data de entrega dos pedidos antes de enviá-los para conferência,
                 // para que a data de entrega da fábrica fique correta
                 if (alterarDataEntrega && dataEntrega != null)
-                    PedidoDAO.Instance.AlteraDataEntrega(idsPedidos, dataEntrega.Value);
+                {
+                    PedidoDAO.Instance.AlteraDataEntrega(string.Join(",", idsPedido), dataEntrega.Value);
+                }
 
                 // Se estiver marcado para gerar espelho, gera conferência já finalizada deste pedido
                 if (gerarEspelho)
                 {
-                    var ids = idsPedidos.Split(',');
-                    foreach (var s in ids)
+                    foreach (var idPedido in idsPedido)
                     {
                         try
                         {
-                            var idPedido = Glass.Conversoes.StrParaUint(s);
-                            PedidoEspelhoDAO.Instance.GeraEspelhoComTransacao(idPedido);
-
-                            if (ids.Length > 1 || Glass.Configuracoes.PedidoConfig.TelaConfirmaPedidoLiberacao.FinalizarPedidoAoGerarEspelho ||
-                                (Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra) && !Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas)))
+                            if (idPedido > 0)
                             {
-                                var idOrcamento = PedidoEspelhoDAO.Instance.FinalizarPedidoComTransacao(idPedido);
+                                PedidoEspelhoDAO.Instance.GeraEspelhoComTransacao((uint)idPedido);
 
-                                if (idOrcamento > 0)
-                                    idsOrcamentoGerados += idOrcamento + ",";
-                            }
-                            else
-                            {
-                                scriptExecutar = "redirectUrl('../Cadastros/CadPedidoEspelho.aspx?idPedido=" + idPedido +
-                                                 "');";
-                                return;
+                                if (idsPedido.Count > 1 || Glass.Configuracoes.PedidoConfig.TelaConfirmaPedidoLiberacao.FinalizarPedidoAoGerarEspelho ||
+                                    (Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra) && !Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas)))
+                                {
+                                    var idOrcamento = PedidoEspelhoDAO.Instance.FinalizarPedidoComTransacao((uint)idPedido);
+
+                                    if (idOrcamento > 0)
+                                    {
+                                        idsOrcamentoGerados.Add((int)idOrcamento);
+                                    }
+                                }
+                                else
+                                {
+                                    scriptExecutar = "redirectUrl('../Cadastros/CadPedidoEspelho.aspx?idPedido=" + idPedido +
+                                                     "');";
+                                    return;
+                                }
                             }
                         }
                         catch (ValidacaoPedidoFinanceiroException f)
@@ -96,21 +117,33 @@ namespace WebGlass.Business.Pedido.Fluxo
                         }
                         catch (Exception ex)
                         {
-                            erroConferencia += string.Format("{0}, {1} {2}", s, ex.Message, ex.InnerException);                            
+                            erroConferencia += string.Format("{0}, {1} {2}", idPedido, ex.Message, ex.InnerException);
                         }
                     }
                 }
 
-                var mensagemFinal = erroConf == null ? string.Format("Pedidos confirmados. {0}",
-                    string.IsNullOrEmpty(erroConferencia) ? "" : string.Format(" Erro com os seguintes pedidos: {0}", erroConferencia)) :
-                    Glass.MensagemAlerta.FormatErrorMsg("", erroConf, false);
+                var mensagemFinal = string.Empty;
 
-                if (!string.IsNullOrEmpty(idsOrcamentoGerados))
-                    mensagemFinal += " Orçamento(s) gerado(s): " + idsOrcamentoGerados.TrimEnd(',');
+                if (erroConf == null)
+                {
+                    mensagemFinal = $"Pedidos confirmados. { (string.IsNullOrWhiteSpace(erroConferencia) ? string.Empty : $" Erro com os seguintes pedidos: { erroConferencia }") }";
+                }
+                else
+                {
+                    mensagemFinal = Glass.MensagemAlerta.FormatErrorMsg(string.Empty, erroConf, false);
+                }
 
-                scriptExecutar = @"
-                    alert('" + mensagemFinal + @"');
-                    openRptConf('" + idsPedidos + "');";
+                if (idsOrcamentoGerados.Count > 0)
+                {
+                    mensagemFinal += $" Orçamento(s) gerado(s): { string.Join(", ", idsOrcamentoGerados) }";
+                }
+
+                scriptExecutar = $"alert('{ mensagemFinal }');";
+
+                if (idsPedido.Count > 0)
+                {
+                    scriptExecutar += $"openRptConf('{ string.Join(",", idsPedido) }');";
+                }
             }
             catch (ValidacaoPedidoFinanceiroException f)
             {
@@ -123,14 +156,16 @@ namespace WebGlass.Business.Pedido.Fluxo
                 ErroDAO.Instance.InserirFromException("Gerar conferência", ex);
 
                 var mensagemFinal = Glass.MensagemAlerta.FormatErrorMsg("Falha ao finalizar pedido.", ex);
-                uint idPedido = uint.TryParse(idsPedidosErro.Split(',')[0], out idPedido) ? idPedido : 0;
-                var isSinal = PedidoDAO.Instance.TemSinalReceber(null, idPedido);
+                var idPedidoErro = idsPedidoErro.Count == 1 ? idsPedidoErro[0] : 0;
+                var pedidoTemSinalReceber = PedidoDAO.Instance.TemSinalReceber(null, (uint)idPedidoErro);
 
-                scriptExecutar = "alert('" + mensagemFinal + "');";
+                scriptExecutar = $"alert('{ mensagemFinal }');";
 
                 if (UserInfo.GetUserInfo.IsFinanceiroReceb)
-                    scriptExecutar += "if (" + idPedido + " > 0 && confirm('Deseja receber o " + (isSinal ? "sinal" : "pagamento antecipado") + @" do pedido " + idPedido + @"?'))
-                    redirectUrl('../Cadastros/CadReceberSinal.aspx?idPedido=" + idPedido + (!isSinal ? "&antecipado=1" : "") + "');\n";
+                {
+                    scriptExecutar += $@"if ({ idPedidoErro } > 0 && confirm('Deseja receber o { (pedidoTemSinalReceber ? "sinal" : "pagamento antecipado") } do pedido { idPedidoErro }?'))
+                    redirectUrl('../Cadastros/CadReceberSinal.aspx?idPedido={ idPedidoErro }{ (!pedidoTemSinalReceber ? "&antecipado=1" : string.Empty) }');\n";
+                }
             }
         }
     }

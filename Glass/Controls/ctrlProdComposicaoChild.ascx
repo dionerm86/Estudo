@@ -10,7 +10,7 @@
     var qtdEstoqueComposicaoChild = 0;
     var exibirMensagemEstoqueComposicaoChild = false;
     var qtdEstoqueMensagemComposicaoChild = 0;
-    
+    var pedidoReposicao = <%= VerificaPedidoReposicao() %>;
     var insertingComposicaoChild = false;
     var produtoAmbienteComposicaoChild = false;
     var aplAmbienteComposicaoChild = false;
@@ -44,16 +44,16 @@
             return false;
 
         var table = buscaTableChild(control);
-        
-        var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;        
+
+        var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
         var txtValor = FindControl("txtChild_ValorComposicaoIns", "input", table);
-        
-        var verificaProduto = CadPedido.IsProdutoObra(idPedido, codInterno).value.split(";");        
+
+        var verificaProduto = CadPedido.IsProdutoObra(idPedido, codInterno).value.split(";");
         if (verificaProduto[0] == "Erro")
         {
             if (FindControl("txtChild_CodProdComposicao", "input", table) != null)
                 FindControl("txtChild_CodProdComposicao", "input", table).value = "";
-                    
+
             alert("Esse produto não pode ser usado no pedido. " + verificaProduto[1]);
             return false;
         }
@@ -61,55 +61,55 @@
         {
             if (txtValor != null)
                 txtValor.disabled = true;
-            
+
             // Se for edição de produto, chamad o método padrão de cálculo da metragem máxima permitida
             if (FindControl("hdfChild_ProdPedComposicao", "input", table) != null)
                 calculaTamanhoMaximoComposicaoChild(table);
-            else if (FindControl("hdfChild_TamanhoMaximoObraComposicao", "input", table) != null)    
+            else if (FindControl("hdfChild_TamanhoMaximoObraComposicao", "input", table) != null)
                 FindControl("hdfChild_TamanhoMaximoObraComposicao", "input", table).value = verificaProduto[2];
         }
         else
         {
             if (txtValor != null)
                 txtValor.disabled = verificaProduto[3] == "false";
-            
-            if (FindControl("hdfChild_TamanhoMaximoObraComposicao", "input", table) != null)    
+
+            if (FindControl("hdfChild_TamanhoMaximoObraComposicao", "input", table) != null)
                 FindControl("hdfChild_TamanhoMaximoObraComposicao", "input", table).value = "0";
         }
 
         try {
-            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
             var percComissao = getPercComissao();
             var tipoPedido = FindControl("hdfTipoPedido", "input").value;
             var tipoVenda = FindControl("hdfTipoVenda", "input").value;
             percComissao = percComissao == null ? 0 : percComissao.toString().replace('.', ',');
-            
-            var controleDescQtde = null; 
+
+            var controleDescQtde = null;
             var percDescontoQtde = 0;
-            
+
             if (FindControl("_divDescontoQtde", "div", table) != null)
             {
                 controleDescQtde = FindControl("_divDescontoQtde", "div", table).id;
                 controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-                if (controleDescQtde != null) 
+                if (controleDescQtde != null)
                     percDescontoQtde = controleDescQtde.PercDesconto();
             }
-            
-            var retorno = CadPedido.GetProduto(idPedido, codInterno, tipoEntrega, cliRevenda, idCliente, 
+
+            var retorno = CadPedido.GetProduto(idPedido, codInterno, tipoEntrega, cliRevenda, idCliente,
                 percComissao, tipoPedido, tipoVenda, produtoAmbienteComposicaoChild, percDescontoQtde, FindControl("hdfLoja", "input").value, true).value.split(';');
-            
+
             if (retorno[0] == "Erro") {
                 alert(retorno[1]);
                 if (!produtoAmbienteComposicaoChild)
                     FindControl("txtChild_CodProdComposicao", "input", table).value = "";
                 else
                     FindControl("txtChild_CodAmbComposicao", "input", table).value = "";
-                
+
                 return false;
             }
-            
+
             else if (!produtoAmbienteComposicaoChild)
             {
                 if (retorno[0] == "Prod") {
@@ -119,26 +119,26 @@
                     var tipoPedido = FindControl("hdfTipoPedido", "input").value;
 
                     alterarValor = alterarValor === false ? false : true;
-                                    
+
                     if (verificaProduto[1] != "0") // Exibe no cadastro o valor mínimo do produto
                         txtValor.value = alterarValor ? verificaProduto[1] : txtValor.value;
                         // O valor do produto deve ser atualizado sempre, para que caso seja buscado um produto, preenchendo automaticamente
                         // o valor unitário e o usuário resolva buscar outro produto sem ter inserido o primeiro, garanta que será buscado o valor deste
-                    else 
+                    else
                         txtValor.value = alterarValor ? retorno[3] : txtValor.value;
-                    
+
                     FindControl("hdfChild_IsVidroComposicao", "input", table).value = retorno[4]; // Informa se o produto é vidro
                     FindControl("hdfChild_M2MinimoComposicao", "input", table).value = retorno[5]; // Informa se o produto possui m² mínimo
                     FindControl("hdfChild_TipoCalcComposicao", "input", table).value = retorno[7]; // Verifica como deve ser calculado o produto
-                    
+
                     // Se o campo do valor estiver desativado não precisa calcular o valor mínimo, tendo em vista que o usuário não poderá alterar.
                     if (!txtValor.disabled)
                         atualizaValMinComposicaoChild(table);
-                    
+
                     qtdEstoqueComposicaoChild = retorno[6]; // Pega a quantidade disponível em estoque deste produto
                     exibirMensagemEstoqueComposicaoChild = retorno[14] == "true";
                     qtdEstoqueMensagemComposicaoChild = retorno[15];
-                    
+
                     var tipoCalc = retorno[7];
 
                     // Se o produto não for vidro, desabilita os textboxes largura e altura,
@@ -151,35 +151,35 @@
                     // var larguraAmbiente = FindControl("hdf_LarguraAmbienteComposicao", "input", table).value;
                     cAltura.disabled = CalcProd_DesabilitarAltura(tipoCalc);
                     cLargura.disabled = CalcProd_DesabilitarLargura(tipoCalc);
-                    
+
                     var nomeControle = getNomeControleBenefComposicaoChild(table);
 
                     // Zera o campo qtd para evitar que produtos calculados por mҠfiquem com quantidade decimal por exemplo (chamado 11010)
                     var txtQtdProd = FindControl("txtChild_QtdeComposicaoIns", "input", table);
                     if (txtQtdProd != null && !loadingComposicaoChild)
                         txtQtdProd.value = "";
-                    
+
                     if (nomeControle != null && nomeControle != undefined) {
                         // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
                         if (retorno[4] == "true" && exibirControleBenef(nomeControle) && FindControl("lnkChild_BenefComposicao", "input", table) != null) {
                             FindControl("txtChild_EspessuraComposicao", "input", table).value = retorno[8];
                             FindControl("txtChild_EspessuraComposicao", "input", table).disabled = retorno[8] != "" && retorno[8] != "0";
                         }
-                    
+
                         if (FindControl("lnkChild_BenefComposicao", "input", table) != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1)
                             FindControl("lnkChild_BenefComposicao", "input", table).style.display = exibirControleBenef(nomeControle) ? "" : "none";
                     }
-                        
+
                     FindControl("hdfChild_AliquotaIcmsProdComposicao", "input", table).value = retorno[9].replace('.', ',');
-                    
-                    // O campo altura e largura devem sempre ser atribuídos pois caso seja selecionado um box e logo após seja selecionado um kit 
+
+                    // O campo altura e largura devem sempre ser atribuídos pois caso seja selecionado um box e logo após seja selecionado um kit
                     // por exemplo, ao inserí-lo ele estava ficando com o campo altura, largura e m² preenchidos apesar de ser calculado por qtd
                     if (retorno[10] != "" || retorno[4] == "false") {
                         FindControl("txtChild_AlturaComposicao", "input", table).value = retorno[10];
                         FindControl("hdfChild_AlturaRealComposicao", "input", table).value = retorno[10];
                     }
                     if (retorno[11] != "" || retorno[4] == "false") FindControl("txt_LarguraComposicao", "input", table).value = retorno[11];
-                        
+
                     if (cAltura.disabled && FindControl("hdfChild_AlturaRealComposicao", "input", table) != null)
                         FindControl("hdfChild_AlturaRealComposicao", "input", table).value = cAltura.value;
 
@@ -187,10 +187,10 @@
 
                     if (retorno[16] != "")
                         setAplComposicaoChild(retorno[16], retorno[17], idProdPed);
-                    
+
                     if (retorno[18] != "")
                         setProcComposicaoChild(retorno[18], retorno[19], null, idProdPed);
-                    
+
                     FindControl("hdfChild_CustoProdComposicao", "input", table).value = retorno[20];
 
                     var cPodeEditarComposicao = FindControl("hdfChild_PodeEditarComposicao","input", table);
@@ -219,7 +219,7 @@
         catch (err) {
             alert(err);
         }
-        
+
         produtoAmbienteComposicaoChild = false;
     }
 
@@ -229,15 +229,15 @@
             return;
 
         var table = buscaTableChild(control);
-            
+
         var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
         var codInterno = FindControl("lblChild_CodProdComposicaoIns", "span", table).innerHTML;
         var totM2 = FindControl("llbChild_TotM2ComposicaoIns", "span", table).innerHTML;
         var idProdPed = FindControl("hdfChild_ProdPedComposicao", "input", table) != null ? FindControl("hdfChild_ProdPedComposicao", "input", table).value : 0;
-        
+
         var tamanhoMaximo = CadPedido.GetTamanhoMaximoProduto(idPedido, codInterno, totM2, idProdPed).value.split(";");
         tamanhoMaximo = tamanhoMaximo[0] == "Ok" ? parseFloat(tamanhoMaximo[1].replace(",", ".")) : 0;
-        
+
         FindControl("hdfChild_TamanhoMaximoObraComposicao", "input", table).value = tamanhoMaximo;
     }
 
@@ -249,23 +249,23 @@
         {
             var codInterno = FindControl("txtChild_CodProdComposicaoIns", "input", table);
             codInterno = codInterno != null ? codInterno.value : FindControl("lblChild_CodProdComposicaoIns", "span", table).innerHTML;
-            
+
             var idPedido = '<%= Request["idPedido"] %>';
             var tipoPedido = FindControl("hdfTipoPedido", "input").value;
-            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
             var tipoVenda = FindControl("hdfTipoVenda", "input").value;
-            
+
             var idProdPed = FindControl("hdfChild_ProdPedComposicao", "input", table);
             idProdPed = idProdPed != null ? idProdPed.value : "";
-            
+
             var controleDescQtde = FindControl("_divDescontoQtde", "div", table).id;
             controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-            
+
             var percDescontoQtde = controleDescQtde.PercDesconto();
-            
-            FindControl("hdfChild_ValMinComposicao", "input", table).value = CadPedido.GetValorMinimo(codInterno, tipoPedido, tipoEntrega, tipoVenda, 
+
+            FindControl("hdfChild_ValMinComposicao", "input", table).value = CadPedido.GetValorMinimo(codInterno, tipoPedido, tipoEntrega, tipoVenda,
                 idCliente, cliRevenda, idProdPed, percDescontoQtde, idPedido).value;
         }
         else
@@ -287,7 +287,7 @@
             FindControl("txtChild_AmbAplComposicaoIns", "input", tr).value = codInterno;
             FindControl("hdf_AmbIdAplicacaoComposicao", "input", tr).value = idAplicacao;
         }
-        
+
         aplAmbienteComposicaoChild = false;
     }
 
@@ -301,7 +301,7 @@
             setAplComposicaoChild("", "", idProdPed);
             return false;
         }
-    
+
         try {
             var response = MetodosAjax.GetEtiqAplicacao(codInterno).value;
 
@@ -312,7 +312,7 @@
             }
 
             response = response.split("\t");
-            
+
             if (response[0] == "Erro") {
                 alert(response[1]);
                 setAplComposicaoChild("", "", idProdPed);
@@ -332,7 +332,7 @@
         var codAplicacaoAtual = "";
 
         var tr = FindControl("prodPedChild_" + idProdPed, "tr");
-        
+
         var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfChild_IdProdComposicao", "input", tr).value);
         var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
 
@@ -344,7 +344,7 @@
         }
 
         var verificaEtiquetaProc = MetodosAjax.VerificaEtiquetaProcesso(idProcesso, FindControl("hdfIdPedido", "input").value);
-        
+
         if(verificaEtiquetaProc.error != null){
 
             if (!procAmbienteComposicao && FindControl("txtChild_ProcComposicaoIns", "input", tr) != null)
@@ -363,29 +363,29 @@
             alert(verificaEtiquetaProc.error.description);
             return false;
         }
-        
+
 
         if (!procAmbienteComposicaoChild)
         {
             FindControl("txtChild_ProcComposicaoIns", "input", tr).value = codInterno;
             FindControl("hdfChild_IdProcessoComposicao", "input", tr).value = idProcesso;
-            
+
             if (FindControl("txtChild_CodProdComposicaoIns", "input", tr) != null)
                 codInternoProd = FindControl("txtChild_CodProdComposicaoIns", "input", tr).value;
             else
                 codInternoProd = FindControl("lblChild_CodProdComposicaoIns", "span", tr).innerHTML;
-                
+
             codAplicacaoAtual = FindControl("txtChild_AplComposicaoIns", "input", tr).value;
         }
         else
         {
             FindControl("txtChild_AmbProcComposicaoIns", "input", tr).value = codInterno;
             FindControl("hdfChild_AmbIdProcessoComposicao", "input", tr).value = idProcesso;
-            
+
             codInternoProd = FindControl("txtChild_CodAmbComposicao", "input", tr).value;
             codAplicacaoAtual = FindControl("txtChild_AmbAplComposicaoIns", "input", tr).value;
         }
-        
+
         if (((codAplicacao && codAplicacao != "") ||
             (codInternoProd != "" && CadPedido.ProdutoPossuiAplPadrao(codInternoProd).value == "false")) &&
             (codAplicacaoAtual == null || codAplicacaoAtual == ""))
@@ -393,7 +393,7 @@
             aplAmbienteComposicaoChild = procAmbienteComposicaoChild;
             loadAplComposicaoChild(tr, codAplicacao);
         }
-        
+
         procAmbienteComposicaoChild = false;
     }
 
@@ -418,7 +418,7 @@
             }
 
             response = response.split("\t");
-            
+
             if (response[0] == "Erro") {
                 alert(response[1]);
                 setProcComposicaoChild("", "", "", idProdPed);
@@ -453,11 +453,11 @@
             var idProd = FindControl("hdfChild_IdProdComposicao", "input", table).value;
             var altura = FindControl("txtChild_AlturaComposicaoIns", "input", table).value;
             var largura = FindControl("txtChild_LarguraComposicaoIns", "input", table).value;
-            
+
             var qtde = FindControl("txtChild_QtdeComposicaoIns", "input", table).value;
             var isVidro = FindControl("hdfChild_IsVidroComposicao", "input", table).value == "true";
             var tipoCalc = FindControl("hdfChild_TipoCalcComposicao", "input", table).value;
-            
+
             if (altura == "" || largura == "" || qtde == "" || altura == "0" || (tipoCalc != 2 && tipoCalc != 10 && !usarBenefTodosGrupos)) {
                 if (qtde != "" && qtde != "0")
                     calcTotalProdComposicaoChild(table);
@@ -465,10 +465,10 @@
                 return false;
             }
 
-            var redondo = FindControl("Redondo_chkSelecao", "input", table) != null && FindControl("Redondo_chkSelecao", "input", table).checked;                          
+            var redondo = FindControl("Redondo_chkSelecao", "input", table) != null && FindControl("Redondo_chkSelecao", "input", table).checked;
             var numBenef = "";
-            
-            if (FindControl("Redondo_chkSelecao", "input", table) != null) 
+
+            if (FindControl("Redondo_chkSelecao", "input", table) != null)
             {
                 numBenef = FindControl("Redondo_chkSelecao", "input", table).id
                 numBenef = numBenef.substr(0, numBenef.lastIndexOf("_"));
@@ -477,10 +477,10 @@
             }
 
             var esp = FindControl("txtChild_EspessuraComposicao", "input", table) != null ? FindControl("txtChild_EspessuraComposicao", "input", table).value : 0;
-            
+
             // Calcula metro quadrado
             var idCliente = FindControl("hdfIdCliente", "input").value;
-            
+
             if ((idProd != dadoscalcM2ProdComposicaoChildChild.IdProd && idProd > 0) || (altura != dadoscalcM2ProdComposicaoChildChild.Altura && altura > 0) ||
                 (largura != dadoscalcM2ProdComposicaoChildChild.Largura) || (qtde != dadoscalcM2ProdComposicaoChildChild.Qtde && qtde > 0) ||
                 (tipoCalc != dadoscalcM2ProdComposicaoChildChild.TipoCalc && tipoCalc > 0) || (idCliente != dadoscalcM2ProdComposicaoChildChild.Cliente) || (redondo != dadoscalcM2ProdComposicaoChildChild.Redondo) ||
@@ -490,12 +490,12 @@
                 FindControl("hdfChild_TotM2CalcComposicao", "input", table).value = MetodosAjax.CalcM2Calculo(idCliente, tipoCalc, altura, largura, qtde, idProd, redondo, esp, numBenef, "false").value;
                 FindControl("hdf_TotM2CalcSemChapaComposicao", "input", table).value = MetodosAjax.CalcM2CalculoSemChapa(idCliente, tipoCalc, altura, largura, qtde, idProd, redondo, esp, numBenef, "false").value;
                 FindControl("lbl_TotM2CalcComposicao", "span", table).innerHTML = FindControl("hdfChild_TotM2CalcComposicao", "input", table).value.replace('.', ',');
-                
+
                 if (FindControl("hdfChild_TotM2ComposicaoIns", "input", table) != null)
                     FindControl("hdfChild_TotM2ComposicaoIns", "input", table).value = FindControl("llbChild_TotM2ComposicaoIns", "span", table).innerHTML.replace(',', '.');
                 else if (FindControl("hdfChild_TotMComposicao", "input", table) != null)
                     FindControl("hdfChild_TotMComposicao", "input", table).value = FindControl("llbChild_TotM2ComposicaoIns", "span", table).innerHTML.replace(',', '.');
-                
+
                 dadoscalcM2ProdComposicaoChildChild = {
                     IdProd: idProd,
                     Altura: altura,
@@ -507,12 +507,27 @@
                     NumBenef: numBenef
                 };
             }
-            
+
             calcTotalProdComposicaoChild(table);
         }
         catch (err) {
             alert(err);
         }
+    }
+
+    function GetAdicionalAlturaChapa(){
+        var idPedido = FindControl("hdfIdPedido", "input").value;
+        var idProd = FindControl("hdfChild_IdProdComposicao", "input", table).value;
+        var altura = FindControl("txtChild_AlturaComposicaoIns", "input", table).value;
+        var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
+        var idCliente = FindControl("hdfIdCliente", "input").value;
+        var cliRevenda = FindControl("hdfCliRevenda", "input").value;
+        var controleDescQtde = FindControl("_divDescontoQtde", "div", table).id;
+        controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
+        var percDescontoQtde = controleDescQtde.PercDesconto();
+
+        FindControl("txtChild_ValorComposicaoIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, cliRevenda,
+                pedidoReposicao, percDescontoQtde, idPedido, "", "", altura).value.replace(".", ",");
     }
 
     // Calcula em tempo real o valor total do produto
@@ -533,13 +548,13 @@
             var largura = new Number(FindControl("txtChild_LarguraComposicaoIns", "input", table).value.replace(',', '.'));
             var tipoCalc = FindControl("hdfChild_TipoCalcComposicao", "input", table).value;
             var m2Minimo = FindControl("hdfChild_M2MinimoComposicao", "input", table).value;
-            
+
             var controleDescQtde = FindControl("_divDescontoQtde", "div", table).id;
             controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-            
+
             var percDesconto = controleDescQtde.PercDesconto();
             var percDescontoAtual = controleDescQtde.PercDescontoAtual();
-            
+
             var retorno = CalcProd_CalcTotalProd(valorIns, totM2, totM2Calc, m2Minimo, total, qtde, altura, FindControl("txtAlturaIns", "input"), largura, true, tipoCalc, 0, 0, percDescontoAtual, percDesconto);
             if (retorno != "")
                 FindControl("lbl_TotalComposicaoIns", "span", table).innerHTML = retorno;
@@ -562,18 +577,18 @@
         var totM2 = FindControl("llbChild_TotM2ComposicaoIns", "span", table).innerHTML;
         var isCalcAluminio = tipoCalc == 4 || tipoCalc == 6 || tipoCalc == 7 || tipoCalc == 9;
         var isCalcM2 = tipoCalc == 2 || tipoCalc == 10;
-    
+
         // Se for cálculo por barra de 6m, multiplica a qtd pela altura
         if (isCalcAluminio)
             txtQtd = parseInt(txtQtd) * parseFloat(txtAltura.toString().replace(',', '.'));
         else if (isCalcM2)
         {
-            if (totM2 == "") 
+            if (totM2 == "")
                 return;
-            
+
             txtQtd = totM2;
         }
-    
+
         var estoqueMenor = txtQtd != "" && parseInt(txtQtd) > parseInt(qtdEstoqueComposicaoChild);
         if (estoqueMenor)
         {
@@ -581,10 +596,10 @@
                 alert("Não há nenhuma peça deste produto no estoque.");
             else
                 alert("Há apenas " + qtdEstoqueComposicaoChild + " " + (isCalcM2 ? "m²" : isCalcAluminio ? "ml (" + parseFloat(qtdEstoqueComposicaoChild / 6).toFixed(2) + " barras)" : "peça(s)") + " deste produto no estoque.");
-            
+
                 FindControl("txtChild_QtdeComposicaoIns", "input", table).value = "";
         }
-        
+
         var exibirPopup = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ExibePopupVidrosEstoque.ToString().ToLower() %>;
         if (exibirPopup && exibirMensagemEstoqueComposicaoChild && (qtdEstoqueMensagemComposicaoChild <= 0 || estoqueMenor))
             openWindow(400, 600, "../Utils/DadosEstoque.aspx?idProd=" + FindControl("hdfChild_IdProdComposicao", "input", table).value + "&idPedido=" + idPedido);
@@ -655,7 +670,7 @@
         var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
         var isVidroBenef = getNomeControleBenef() != null ? exibirControleBenef(getNomeControleBenef()) && dadosProduto.Grupo == 1 : false;
         var isVidroRoteiro = dadosProduto.Grupo == 1 && <%= UtilizarRoteiroProducao().ToString().ToLower() %>;
-        
+
         if (dadosProduto.IsChapaVidro)
             return true;
 
@@ -671,7 +686,7 @@
                 alert("Informe a aplicação.");
                 return false;
             }
-            
+
             if (FindControl("txtChild_ProcComposicaoIns", "input", table) != null && FindControl("txtChild_ProcComposicaoIns", "input", table).value == "")
             {
                 if (isVidroRoteiro && !isObrigarProcApl) {
@@ -683,7 +698,7 @@
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -693,7 +708,7 @@
 
         var tamanhoMaximo = parseFloat(FindControl("hdfChild_TamanhoMaximoObraComposicao", "input", table).value.replace(",", "."));
         if (tamanhoMaximo > 0)
-        {        
+        {
             var totM2 = parseFloat(FindControl("llbChild_TotM2ComposicaoIns", "span", table).innerHTML.replace(",", "."));
             if (totM2 > tamanhoMaximo)
             {
@@ -701,7 +716,7 @@
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -711,16 +726,16 @@
     function onSaveProdComposicaoChild(control, idTbConfigVidro) {
         if (!validate("produtoComposicaoChild"))
             return false;
-            
+
         if (saveProdComposicaoClickedChild == true)
             return false;
-            
+
         saveProdComposicaoClickedChild = true;
-        
+
         var tr = buscaTableChild(control);
 
         atualizaValMinComposicaoChild(tr);
-    
+
         var codProd = FindControl("txtChild_CodProdComposicaoIns", "input", tr).value;
         var idProd = FindControl("hdfChild_IdProdComposicao", "input", tr).value;
         var valor = FindControl("txtChild_ValorComposicaoIns", "input", tr).value;
@@ -736,33 +751,33 @@
             saveProdComposicaoClickedChild = false;
             return false;
         }
-        
+
         // Verifica se foi clicado no aplicar na telinha de beneficiamentos
         if (FindControl("tb_ConfigVidroComposicao_" + idTbConfigVidro, "table").style.display == "block")
         {
             alert("Aplique as alterações no beneficiamento antes de salvar o item.");
             return false;
         }
-        
+
         if ( tipoVenda != 3 && tipoVenda != 4 && (valor == "" || parseFloat(valor.replace(",", ".")) == 0)) {
             alert("Informe o valor vendido.");
             saveProdComposicaoClickedChild = false;
             return false;
         }
-        
+
         if (qtde == "0" || qtde == "") {
             alert("Informe a quantidade.");
             saveProdComposicaoClickedChild = false;
             return false;
         }
-        
+
         valMin = new Number(valMin.replace(',', '.'));
         if (!FindControl("txtChild_ValorComposicaoIns", "input", tr).disabled && new Number(valor.replace(',', '.')) < valMin) {
             alert("Valor especificado abaixo do valor mínimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
             saveProdComposicaoClickedChild = false;
             return false;
         }
-        
+
         if (FindControl("txtChild_AlturaComposicaoIns", "input", tr).disabled == false) {
             if (altura == "" || parseFloat(altura.replace(",", ".")) == 0) {
                 alert("Informe a altura.");
@@ -774,42 +789,42 @@
                 alert("A altura deve ser no máximo " + comprimentoMaxAluminio + "ml.");
                 saveProdComposicaoClickedChild = false;
                 return false;
-            }            
+            }
         }
-        
+
         // Se o textbox da largura estiver habilitado, deverá ser informada
         if (FindControl("txtChild_LarguraComposicaoIns", "input", tr).disabled == false && largura == "") {
             alert("Informe a largura.");
             saveProdComposicaoClickedChild = false;
             return false;
         }
-        
+
         if (!obrigarProcAplComposicaoChild(tr))
         {
             saveProdComposicaoClickedChild = false;
             return false;
         }
-        
+
         if (!validaTamanhoMaxComposicaoChild(tr))
         {
             saveProdComposicaoClickedChild = false;
             return false;
         }
-        
+
         // Calcula o ICMS do produto
         var aliquota = FindControl("hdfChild_AliquotaIcmsProdComposicao", "input", tr);
         var icms = FindControl("hdfChild_ValorIcmsProdComposicao", "input", tr);
         icms.value = aliquota.value > 0 ? parseFloat(valor) * (parseFloat(aliquota.value) / 100) : 0;
         icms.value = icms.value.toString().replace('.', ',');
-        
+
         if (FindControl("txtChild_EspessuraComposicao", "input", tr) != null)
             FindControl("txtChild_EspessuraComposicao", "input", tr).disabled = false;
-        
+
         FindControl("txtChild_AlturaComposicaoIns", "input", tr).disabled = false;
         FindControl("txtChild_LarguraComposicaoIns", "input", tr).disabled = false;
         FindControl("txtChild_ValorComposicaoIns", "input", tr).disabled = false;
         FindControl("txtChild_QtdeComposicaoIns", "input", tr).disabled = false;
-        
+
         return true;
     }
 
@@ -817,11 +832,11 @@
     function onUpdateProdComposicaoChild(control, idTbConfigVidro) {
         if (!validate("produtoComposicaoChild"))
             return false;
-        
+
         var table = buscaTableChild(control);
 
         atualizaValMinComposicaoChild(table);
-    
+
         var valor = FindControl("txtChild_ValorComposicaoIns", "input", table).value;
         var qtde = FindControl("txtChild_QtdeComposicaoIns", "input", table).value;
         var altura = FindControl("txtChild_AlturaComposicaoIns", "input", table).value;
@@ -846,8 +861,8 @@
 
         var tipoPedido = FindControl("hdfTipoPedido", "input").value;
         var subgrupoProdComposto = CadPedido.SubgrupoProdComposto(idProd).value;
-        
-        if (tipoVenda != 3 && tipoVenda != 4 && (valor == "" || parseFloat(valor.replace(",", ".")) == 0) && !(tipoPedido == 1 && subgrupoProdComposto)) 
+
+        if (tipoVenda != 3 && tipoVenda != 4 && (valor == "" || parseFloat(valor.replace(",", ".")) == 0) && !(tipoPedido == 1 && subgrupoProdComposto))
         {
             alert("Informe o valor vendido.");
             return false;
@@ -867,13 +882,13 @@
                 return false;
             }
         }
-        
+
         if (!obrigarProcAplComposicaoChild(table))
             return false;
-        
+
         if (!validaTamanhoMaxComposicaoChild(table))
             return false;
-        
+
         // Calcula o ICMS do produto
         var aliquota = FindControl("hdfChild_AliquotaIcmsProdComposicao", "input", table);
         var icms = FindControl("hdfChild_ValorIcmsProdComposicao", "input", table);
@@ -882,12 +897,12 @@
 
         if (FindControl("txtChild_EspessuraComposicao", "input", table) != null)
             FindControl("txtChild_EspessuraComposicao", "input", table).disabled = false;
-        
+
         FindControl("txtChild_AlturaComposicaoIns", "input", table).disabled = false;
         FindControl("txtChild_LarguraComposicaoIns", "input", table).disabled = false;
         FindControl("txtChild_ValorComposicaoIns", "input", table).disabled = false;
         FindControl("txtChild_QtdeComposicaoIns", "input", table).disabled = false;
-            
+
         return true;
     }
 
@@ -1311,7 +1326,7 @@
 </colo:VirtualObjectDataSource>
 
 <script type="text/javascript">
-    
+
     $(document).ready(function(){
         if (FindControl("imb_AtualizarComposicao", "input") != null && FindControl("lblChild_CodProdComposicaoIns", "span") != null)
             loadProdutoComposicaoChild(FindControl("lblChild_CodProdComposicaoIns", "span").innerHTML, FindControl("imb_AtualizarComposicao", "input"), false);

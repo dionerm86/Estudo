@@ -202,7 +202,7 @@ namespace Glass.UI.Web.Cadastros
                 prodNf.Altura = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAlturaIns")).Text);
                 prodNf.Largura = Conversoes.StrParaInt(((TextBox)grdProdutos.FooterRow.FindControl("txtLarguraIns")).Text);
                 prodNf.TotM = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtTotM2Ins")).Text);
-                
+
                 if (!string.IsNullOrWhiteSpace(prodNf.Cst))
                 {
                     prodNf.PercRedBcIcms = ((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcms")).Text.StrParaFloat();
@@ -282,7 +282,7 @@ namespace Glass.UI.Web.Cadastros
 
                 /* string cstCofins = ((ctrlSelPopup)grdProdutos.FooterRow.FindControl("selCstCofins")).Valor;
                 prodNf.CstCofins = Glass.Conversoes.StrParaIntNullable(cstCofins);
-    
+
                 prodNf.BcCofinsString = ((TextBox)grdProdutos.FooterRow.FindControl("txtBcCofins")).Text; */
                 prodNf.AliqCofins = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqCofins")).Text);
                 prodNf.ValorCofins = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorCofins")).Text);
@@ -592,8 +592,8 @@ namespace Glass.UI.Web.Cadastros
                     Response.Redirect("CadNotaFiscal.aspx?idNf=" + idNf + "&tipo=2");
 
                     return;
-                }                
-                
+                }
+
                 var retornoEmissao = NotaFiscalDAO.Instance.EmitirNf(Glass.Conversoes.StrParaUint(Request["idNf"]), false, false);
                 if (retornoEmissao != "Lote processado.")
                 {
@@ -962,7 +962,7 @@ namespace Glass.UI.Web.Cadastros
                 (int)NotaFiscal.TipoDoc.NotaCliente
             }.ConvertAll(x => x.ToString());
 
-            // Habilita o campo para preencher o número da nota fiscal se for entrada de terceiros 
+            // Habilita o campo para preencher o número da nota fiscal se for entrada de terceiros
             // ou se for a primeira nota de saída
             ((WebControl)sender).Enabled = tipos.Contains(Request["tipo"]) ||
                 !NotaFiscalDAO.Instance.ExisteNotaSaida(null, Glass.Conversoes.StrParaUint(Request["idNf"]));

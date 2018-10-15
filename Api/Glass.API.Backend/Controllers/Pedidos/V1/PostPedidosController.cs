@@ -11,6 +11,7 @@ using Glass.Data.DAL;
 using Glass.Data.Exceptions;
 using Swashbuckle.Swagger.Annotations;
 using System;
+using System.Collections.Generic;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Pedidos.V1
@@ -50,7 +51,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                     if (PedidoConfig.LiberarPedido && Geral.SistemaLite && !Geral.ControlePCP)
                     {
                         string script;
-                        WebGlass.Business.Pedido.Fluxo.ConfirmarPedido.Instance.ConfirmarPedidoLiberacao(id.ToString(), false, null, false, out script);
+                        WebGlass.Business.Pedido.Fluxo.ConfirmarPedido.Instance.ConfirmarPedidoLiberacao(new List<int> { id }, false, null, false, out script);
                     }
 
                     sessao.Commit();
@@ -98,9 +99,10 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                     if (PedidoDAO.Instance.ObtemSituacao(sessao, (uint)id) != Data.Model.Pedido.SituacaoPedido.ConfirmadoLiberacao)
                     {
-                        var idPedidotmp = string.Empty;
-                        var idPedidoErrotmp = string.Empty;
-                        PedidoDAO.Instance.ConfirmarLiberacaoPedido(sessao, id.ToString(), out idPedidotmp, out idPedidoErrotmp, false, false);
+                        var idsPedidoOk = new List<int>();
+                        var idsPedidoErro = new List<int>();
+
+                        PedidoDAO.Instance.ConfirmarLiberacaoPedido(sessao, new List<int> { id }, out idsPedidoOk, out idsPedidoErro, false, false);
                     }
 
                     if (PedidoDAO.Instance.GetTipoPedido(sessao, (uint)id) != Data.Model.Pedido.TipoPedidoEnum.Revenda)

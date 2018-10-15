@@ -25,17 +25,17 @@
             if (campo != null)
                 campo.value = valor;
         }
-        
+
         function marcarReposicao()
         {
             var reposicao = FindControl("chkUsarPedidoReposicao", "input");
             if (!reposicao)
                 return;
-            
+
             var tipo = FindControl("drpTipoTroca", "select");
             if (!tipo)
                 return;
-            
+
             if (reposicao.checked)
             {
                 tipo.disabled = true;
@@ -46,7 +46,7 @@
         }
 
         var clicouInserir = false;
-        
+
         function onInsert()
         {
             if(clicouInserir)
@@ -67,7 +67,7 @@
                 clicouInserir = false;
                 return false;
             }
-            
+
             var obs = Trim(FindControl("txtDescricao", "textarea").value);
             if (obs == "")
             {
@@ -75,13 +75,13 @@
                 clicouInserir = false;
                 return false;
             }
-            
+
             var tipo = FindControl("drpTipoTroca", "select");
             if (tipo) tipo.disabled = false;
-            
+
             return true;
         }
-    
+
         function onUpdate()
         {
             if (FindControl("ctrlTipoPerda1_drpTipoPerda", "select").value == "")
@@ -95,17 +95,17 @@
                 alert("Informe o pedido.");
                 return false;
             }
-            
+
             var obs = Trim(FindControl("txtDescricao", "textarea").value);
             if (obs == "")
             {
                 alert("Digite a observação.");
                 return false;
             }
-            
+
             return true;
         }
-        
+
         function atualizaTipo(tipo)
         {
             if (typeof tipo == "number")
@@ -115,37 +115,37 @@
             else
                 return "Novo_";
         }
-        
+
         function getControleDescQtde(tipo)
         {
             tipo = atualizaTipo(tipo);
-            
+
             var controleDescQtde = FindControl(tipo + "ctrlDescontoQtde", "div").id;
             controleDescQtde = controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_"));
-                
+
             return eval(controleDescQtde);
         }
-        
+
         function atualizaValMin(tipo)
         {
             tipo = atualizaTipo(tipo);
-        
+
             var codInterno = FindControl(tipo + "txtCodProdIns", "input");
             codInterno = codInterno != null ? codInterno.value : FindControl(tipo + "lblCodProdIns", "span").innerHTML;
-            
-            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
+
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
-            
+
             var id = tipo != "Troca_" ? FindControl("hdfIdProdTrocaDev", "input") : FindControl("hdfIdProdTrocado", "input");
             id = id != null ? id.value : "";
-            
+
             var controleDescQtde = getControleDescQtde(tipo);
             var percDescontoQtde = controleDescQtde.PercDesconto();
-            
+
             FindControl(tipo + "hdfValMin", "input").value = CadTrocaDev.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, id, percDescontoQtde, tipo, FindControl("lblIdPedido", "span").innerHTML).value;
         }
-        
+
         function getCli(idCli)
         {
             var retorno = MetodosAjax.GetCli(idCli).value.split(';');
@@ -155,32 +155,32 @@
                 FindControl("txtNomeCliente", "input").value = "";
                 return false;
             }
-            
+
             FindControl("txtNumCli", "input").value = idCli;
             FindControl("txtNomeCliente", "input").value = retorno[1];
         }
-    
+
         function exibirBenef(botao, tipo)
         {
             tipo = atualizaTipo(tipo);
-            
+
             for (iTip = 0; iTip < 2; iTip++)
             {
-                TagToTip(tipo + 'tbConfigVidro', FADEIN, 300, COPYCONTENT, false, TITLE, 'Beneficiamento', CLOSEBTN, true, 
-                    CLOSEBTNTEXT, 'Aplicar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, true, 
+                TagToTip(tipo + 'tbConfigVidro', FADEIN, 300, COPYCONTENT, false, TITLE, 'Beneficiamento', CLOSEBTN, true,
+                    CLOSEBTNTEXT, 'Aplicar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, true,
                     FIX, [botao, 9-getTableWidth(tipo + 'tbConfigVidro'), -41-getTableHeight(tipo + 'tbConfigVidro')]);
             }
         }
-        
+
         function getPedido()
-        {        
+        {
             openWindow(500, 700, "../Utils/SelPedido.aspx");
         }
-        
+
         function setPedido(idPedido)
         {
             var pedidoReposicao = FindControl("chkUsarPedidoReposicao", "input").parentNode;
-            
+
             FindControl("txtIdPedido", "input").value = idPedido;
             if (idPedido == "")
             {
@@ -190,100 +190,100 @@
 
             var idTrocaDev = '<%= Request["idTrocaDev"] %>';
             var dadosPedido = CadTrocaDev.GetDadosPedido(idPedido, idTrocaDev).value.split(";");
-            
+
             if (dadosPedido[0] == "Erro")
             {
                 FindControl("txtIdPedido", "input").value = "";
                 alert(dadosPedido[1]);
                 return;
             }
-            
+
             if (dadosPedido[2] != "")
                 alert("Atenção: Já foram geradas as seguintes trocas/devoluções para este pedido: " + dadosPedido[2]);
-                
+
             pedidoReposicao.style.display = dadosPedido[3] == "true" ? "" : "none";
-            
+
             getCli(dadosPedido[1]);
         }
-    
+
         function selProdutoTroca()
         {
             var idPedido = FindControl("lblIdPedido", "span").innerHTML;
             openWindow(600, 800, "../Utils/SelProdutoTroca.aspx?idPedido=" + idPedido);
         }
-        
+
         function setProdutoTroca(idProdPed, qtde, etiquetas)
         {
             var idTrocaDev = FindControl("lblIdTrocaDev", "span").innerHTML;
             var resposta = CadTrocaDev.AddProdutoTroca(idTrocaDev, idProdPed, qtde, etiquetas).value.split(';');
-            
+
             if (resposta[0] == "Erro")
             {
                 alert(resposta[1]);
                 return false;
             }
-            
+
             redirectUrl(window.location.href);
         }
-    
+
         function selProdutoNovo()
         {
             var idPedido = FindControl("lblIdPedido", "span").innerHTML;
             openWindow(600, 800, "../Utils/SelProdutoNovoTroca.aspx?idPedido=" + idPedido);
         }
-        
+
         function setProdutoNovo(idProdPed, qtde)
         {
             var idTrocaDev = FindControl("lblIdTrocaDev", "span").innerHTML;
             var resposta = CadTrocaDev.AddProdutoNovo(idTrocaDev, idProdPed, qtde).value.split(';');
-            
+
             if (resposta[0] == "Erro")
             {
                 alert(resposta[1]);
                 return false;
             }
-            
+
             redirectUrl(window.location.href);
         }
-        
+
         function setValorTotalTroca(valor, custo)
         {
             setValorTotal(valor, custo, 1);
         }
-        
+
         function getNomeControleBenef(tipo)
         {
             tipo = atualizaTipo(tipo);
-            
+
             var nomeControle = tipo == "Troca_" ? "<%= NomeControleBenefTrocado() %>" : "<%= NomeControleBenefNovo() %>";
             nomeControle = FindControl(nomeControle + "_tblBenef", "table");
-            
+
             if (nomeControle == null)
                 return null;
-            
+
             nomeControle = nomeControle.id;
             return nomeControle.substr(0, nomeControle.lastIndexOf("_"));
         }
-        
+
         function setValorTotal(valor, custo, tipo)
         {
             tipo = atualizaTipo(tipo);
-            
+
             if (exibirControleBenef(getNomeControleBenef(tipo)))
             {
                 var lblValorBenef = FindControl(tipo + "lblValorBenef", "span");
                 lblValorBenef.innerHTML = "R$ " + valor.toFixed(2).replace('.', ',');
             }
         }
-        
+
         var tipoProd = "";
-        
+
         function getProduto(tipo)
         {
             tipoProd = atualizaTipo(tipo);
             openWindow(450, 700, '../Utils/SelProd.aspx');
         }
-        
+
         // Função chamada após selecionar produto pelo popup
         function setProduto(codInterno) {
             try {
@@ -295,21 +295,21 @@
 
             }
         }
-        
+
         // Carrega dados do produto com base no código do produto passado
         function loadProduto(codInterno, tipo) {
             debugger;
             if (codInterno == "")
                 return false;
-                
+
             tipo = atualizaTipo(tipo);
-            
+
             try {
                 var controleDescQtde = getControleDescQtde(tipo);
                 var percDescontoQtde = controleDescQtde.PercDesconto();
                 var retorno = CadTrocaDev.GetProduto(codInterno, FindControl("hdfTipoEntrega", "input").value, FindControl("hdfCliRevenda", "input").value, FindControl("hdfIdCliente", "input").value,
                     percDescontoQtde, FindControl("hdfIdLoja", "input").value, FindControl("lblIdPedido", "span").innerHTML).value.split(';');
-                
+
                 if (retorno[0] == "Erro") {
                     alert(retorno[1]);
                     FindControl(tipo + "txtCodProd", "input").value = "";
@@ -322,9 +322,9 @@
                     FindControl(tipo + "hdfM2Minimo", "input").value = retorno[5]; // Informa se o produto possui m² mínimo
                     FindControl(tipo + "hdfTipoCalc", "input").value = retorno[7]; // Verifica como deve ser calculado o produto
                     FindControl(tipo + "hdfCustoProd", "input").value = retorno[13];
-                    
+
                     atualizaValMin(tipo);
-                    
+
                     qtdEstoque = retorno[6]; // Pega a quantidade disponível em estoque deste produto
                     var tipoCalc = retorno[7];
 
@@ -337,20 +337,20 @@
                     cLargura.disabled = CalcProd_DesabilitarLargura(tipoCalc);
                     cAltura.value = "";
                     cLargura.value = "";
-                        
+
                     // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
                     if (retorno[4] == "true" && FindControl(tipo + "txtEspessura", "input") != null) {
                         FindControl(tipo + "txtEspessura", "input").value = retorno[8];
                         FindControl(tipo + "txtEspessura", "input").disabled = retorno[8] != "" && retorno[8] != "0";
                     }
-                    
+
                     var nomeControle = getNomeControleBenef(tipo);
-                    
+
                     if (FindControl(tipo + "lnkBenef", "a") != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1)
                         FindControl(tipo + "lnkBenef", "a").style.display = exibirControleBenef(nomeControle) ? "" : "none";
-                        
+
                     FindControl(tipo + "hdfAliquotaIcmsProd", "input").value = retorno[9];
-                    
+
                     //if (FindControl(tipo + "hdfPedidoProducao", "input").value == "true")
                     {
                         FindControl(tipo + "txtAltura", "input").value = retorno[10];
@@ -369,21 +369,21 @@
         // do produto existe no estoque
         function verificaEstoque(tipo) {
             tipo = atualizaTipo(tipo);
-            
+
             var txtQtd = FindControl(tipo + "txtQtdeIns", "input").value;
-        
+
             if (txtQtd != "" && parseInt(txtQtd) > parseInt(qtdEstoque))
             {
                 if (qtdEstoque == 0)
                     alert("Não há nenhuma peça deste produto no estoque.");
                 else
                     alert("Há apenas " + qtdEstoque + " peça(s) deste produto no estoque.");
-                
+
                 FindControl(tipo + "txtQtdeIns", "input").value = "";
                 return false;
             }
         }
-        
+
         var tipoApl = "";
 
         // Função chamada pelo popup de escolha da Aplicação do produto
@@ -403,18 +403,18 @@
 
             FindControl(tipoApl + "txtAplIns", "input").value = codInterno;
             FindControl(tipoApl + "hdfIdAplicacao", "input").value = idAplicacao;
-            
+
             tipoApl = "";
         }
 
         function loadApl(codInterno, tipo) {
             tipoApl = tipo;
-            
+
             if (codInterno == "") {
                 setApl("", "");
                 return false;
             }
-        
+
             try {
                 var response = MetodosAjax.GetEtiqAplicacao(codInterno).value;
 
@@ -425,7 +425,7 @@
                 }
 
                 response = response.split("\t");
-                
+
                 if (response[0] == "Erro") {
                     alert(response[1]);
                     setApl("", "");
@@ -438,7 +438,7 @@
                 alert(err);
             }
         }
-        
+
         var tipoProc = "";
 
         // Função chamada pelo popup de escolha do Processo do produto
@@ -460,16 +460,16 @@
 
             FindControl(tipoProc + "txtProcIns", "input").value = codInterno;
             FindControl(tipoProc + "hdfIdProcesso", "input").value = idProcesso;
-            
+
             if (codAplicacao != "")
                 loadApl(codAplicacao, tipoProc);
-            
+
             tipoProc = "";
         }
 
         function loadProc(codInterno, tipo) {
             tipoProc = tipo;
-            
+
             if (codInterno == "") {
                 setProc("", "", "");
                 return false;
@@ -485,7 +485,7 @@
                 }
 
                 response = response.split("\t");
-                
+
                 if (response[0] == "Erro") {
                     alert(response[1]);
                     setProc("", "", "");
@@ -498,15 +498,15 @@
                 alert(err);
             }
         }
-        
+
         // Chamado quando um produto está para ser inserido no pedido
         function onSaveProd(tipo) {
             if (!validate("produto"))
                 return false;
-            
+
             tipo = atualizaTipo(tipo);
             atualizaValMin(tipo);
-            
+
             var codProd = FindControl(tipo + "txtCodProdIns", "input").value;
             var valor = FindControl(tipo + "txtValorIns", "input").value;
             var qtde = FindControl(tipo + "txtQtdeIns", "input").value;
@@ -535,14 +535,14 @@
                 if (altura == "") {
                     alert("Informe a altura.");
                     return false;
-                }    
+                }
             }
             // Se o textbox da largura estiver habilitado, deverá ser informada
             else if (FindControl(tipo + "txtLarguraIns", "input").disabled == false && largura == "") {
                 alert("Informe a largura.");
                 return false;
             }
-            
+
             /*
             // Calcula o ICMS do produto
             var aliquota = FindControl(tipo + "hdfAliquotaIcmsProd", "input");
@@ -552,10 +552,10 @@
 
             if (FindControl(tipo + "txtEspessura", "input") != null)
                 FindControl(tipo + "txtEspessura", "input").disabled = false;
-            
+
             FindControl(tipo + "txtAlturaIns", "input").disabled = false;
             FindControl(tipo + "txtLarguraIns", "input").disabled = false;
-            
+
             return true;
         }
 
@@ -563,20 +563,20 @@
         function onUpdateProd(tipo) {
             if (!validate("produto"))
                 return false;
-            
+
             tipo = atualizaTipo(tipo);
             atualizaValMin(tipo);
-            
+
             if (FindControl(tipo + "txtValorIns", "input") == null)
                 return true;
-            
+
             return true;
         }
-        
+
         // Calcula em tempo real a metragem quadrada do produto
         function calcM2Prod(tipo) {
             tipo = atualizaTipo(tipo);
-            
+
             try {
                 var idProd = FindControl(tipo + "hdfIdProd", "input").value;
                 var altura = FindControl(tipo + "txtAlturaIns", "input") != null ? FindControl(tipo + "txtAlturaIns", "input").value : FindControl(tipo + "lblAlturaIns", "span").innerHTML;
@@ -584,7 +584,7 @@
                 var qtde = FindControl(tipo + "txtQtdeIns", "input").value;
                 var isVidro = FindControl(tipo + "hdfIsVidro", "input").value == "true";
                 var tipoCalc = FindControl(tipo + "hdfTipoCalc", "input").value;
-                
+
                 if (altura == "" || largura == "" || qtde == "" || altura == "0" || (tipoCalc != 2 && tipoCalc != 10)) {
                     if (qtde != "" && qtde != "0")
                         calcTotalProd(tipo);
@@ -599,15 +599,15 @@
                     parseInt(altura) > 0 && parseInt(largura) > 0 &&
                     parseInt(altura) != parseInt(largura) && redondo) {
                     alert('O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.');
-                                        
+
                     if (FindControl("Redondo_chkSelecao", "input") != null && FindControl("Redondo_chkSelecao", "input").checked)
                         FindControl("Redondo_chkSelecao", "input").checked = false;
-                                        
+
                     return false;
                 }
 
                 var numBenef = "";
-                
+
                 if (FindControl("Redondo_chkSelecao", "input") != null) {
                     numBenef = FindControl("Redondo_chkSelecao", "input").id;
                     numBenef = numBenef.substr(0, numBenef.lastIndexOf("_"));
@@ -616,29 +616,44 @@
                 }
 
                 var esp = FindControl(tipo + "txtEspessura", "input") != null ? FindControl("txtEspessura", "input").value : 0;
-                
+
                 // Calcula metro quadrado
                 var idCliente = FindControl("hdfIdCliente", "input").value;
                 FindControl(tipo + "lblTotM2Ins", "span").innerHTML = MetodosAjax.CalcM2(tipoCalc, altura, largura, qtde, idProd, redondo, esp, "false").value;
                 FindControl(tipo + "hdfTotM2Calc", "input").value = MetodosAjax.CalcM2Calculo(idCliente, tipoCalc, altura, largura, qtde, idProd, redondo, esp, numBenef, "false").value;
                 FindControl(tipo + "hdfTotM2CalcSemChapa", "input").value = MetodosAjax.CalcM2CalculoSemChapa(idCliente, tipoCalc, altura, largura, qtde, idProd, redondo, esp, numBenef, "false").value;
                 FindControl(tipo + "lblTotM2CalcIns", "span").innerHTML = FindControl(tipo + "hdfTotM2Calc", "input").value.replace('.', ',');
-                
+
                 calcTotalProd(tipo);
             }
             catch (err) {
                 alert(err);
             }
         }
-        
+
         function calcTotalProdTroca() {
             calcTotalProd(1);
+        }
+
+        function GetAdicionalAlturaChapa(tipo){
+            tipo = atualizaTipo(tipo);
+            var idCliente = FindControl("hdfIdCliente", "input").value;
+            var idProd = FindControl(tipo + "hdfIdProd", "input").value
+            var altura = FindControl(tipo + "txtAlturaIns", "input").value;
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
+            var revenda = FindControl("hdfCliRevenda", "input").value;
+            var controleDescQtde = getControleDescQtde(tipo);
+            var percDescontoQtde = controleDescQtde.PercDesconto();
+            var idPedido = FindControl("lblIdPedido", "span").innerHTML;
+
+            FindControl(tipo + "txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, revenda, false,
+                percDescontoQtde, idPedido, "", "", altura).value.replace(".", ",");
         }
 
         // Calcula em tempo real o valor total do produto
         function calcTotalProd(tipo) {
             tipo = atualizaTipo(tipo);
-            
+
             try {
                 var valorIns = FindControl(tipo + "txtValorIns", "input");
                 if (valorIns == null)
@@ -651,7 +666,7 @@
                 }
                 else
                     valorIns = valorIns.value;
-                    
+
                 if (valorIns == "")
                     return;
 
@@ -664,7 +679,7 @@
                 var controleDescQtde = getControleDescQtde(tipo);
                 var percDesconto = controleDescQtde.PercDesconto();
                 var percDescontoAtual = controleDescQtde.PercDescontoAtual();
-                
+
                 var altura = FindControl(tipo + "txtAlturaIns", "input");
                 if (altura != null)
                 {
@@ -676,7 +691,7 @@
                     altura = 0;
                     var largura = 0;
                 }
-                
+
                 var retorno = CalcProd_CalcTotalProd(valorIns, totM2, totM2Calc, m2Minimo, total, qtde, altura, FindControl(tipo + "txtAlturaIns", "input"), largura, true, tipoCalc, 2, 2, percDescontoAtual, percDesconto);
                 if (retorno != "")
                     FindControl(tipo + "lblTotalIns", "span").innerHTML = retorno;
@@ -685,18 +700,18 @@
 
             }
         }
-        
+
         function receber(control)
         {
             if (!validate())
                 return false;
-            
+
             var btnCancelarReceb = FindControl("btnCancelarReceb", "input");
             control.disabled = true;
             btnCancelarReceb.disabled = true;
-            
+
             document.getElementById("load").style.visibility = "visible";
-            
+
             var controle = <%= ctrlFormaPagto1.ClientID %>;
             var idTrocaDev = <%= Request["idTrocaDev"] != null ? Request["idTrocaDev"] : "0" %>;
             var valoresReceb = controle.Valores();
@@ -715,7 +730,7 @@
             var depositoNaoIdentificado = controle.DepositosNaoIdentificados();
             var numAutCartao = controle.NumeroAutCartao();
             var CNI = controle.CartoesNaoIdentificados();
-            
+
             var resposta = CadTrocaDev.Finalizar(idTrocaDev, valoresReceb, formasPagto, contasBanco, depositoNaoIdentificado, CNI, tiposCartao,
                 tiposBoleto, txAntecip, juros, recebParcial, gerarCreditoControle, creditoUtilizadoControle,
                 numAutConstrucard, numParcCartoes, chequesPagto, numAutCartao).value.split(";");
@@ -728,13 +743,13 @@
                 document.getElementById("load").style.visibility = "hidden";
                 return false;
             }
-            
+
             alert("Troca/devolução finalizada! " + resposta[1]);
             redirectUrl(resposta[2]);
             return false;
             //voltaLstTrocaDev();
         }
-        
+
         function voltaLstTrocaDev()
         {
             redirectUrl(FindControl("hdfUrlRetorno", "input").value);
@@ -866,16 +881,16 @@
                                     </tr>
                                     <tr>
                                         <td class="dtvHeader">
-                                            <asp:Label ID="Label25" runat="server" Text='Origem da Troca / Devolução' 
+                                            <asp:Label ID="Label25" runat="server" Text='Origem da Troca / Devolução'
                                                 onload="ddlOrigem_Load"></asp:Label>
                                         </td>
                                         <td align="left" colspan="3">
-                                            <asp:DropDownList ID="ddlOrigem" runat="server" DataSourceID="odsOrigem" 
-                                                DataTextField="Descricao" DataValueField="idOrigemTrocaDesconto" 
+                                            <asp:DropDownList ID="ddlOrigem" runat="server" DataSourceID="odsOrigem"
+                                                DataTextField="Descricao" DataValueField="idOrigemTrocaDesconto"
                                                 onload="ddlOrigem_Load" SelectedValue='<%# Bind("IdOrigemTrocaDevolucao") %>' AppendDataBoundItems="true">
                                                  <asp:ListItem Selected="True"></asp:ListItem>
                                             </asp:DropDownList>
-                                            <colo:VirtualObjectDataSource ID="odsOrigem" runat="server" Culture="pt-BR" 
+                                            <colo:VirtualObjectDataSource ID="odsOrigem" runat="server" Culture="pt-BR"
                                                 SelectMethod="GetList" TypeName="Glass.Data.DAL.OrigemTrocaDescontoDAO">
                                             </colo:VirtualObjectDataSource>
                                         </td>
@@ -884,7 +899,7 @@
                                                 Observação
                                             </td>
                                             <td align="left" colspan="3">
-                                                <asp:TextBox ID="txtDescricao" runat="server" Columns="50" Rows="3" 
+                                                <asp:TextBox ID="txtDescricao" runat="server" Columns="50" Rows="3"
                                                     Text='<%# Bind("Descricao") %>' TextMode="MultiLine"></asp:TextBox>
                                             </td>
                                         </tr>
@@ -977,11 +992,11 @@
                                     </tr>
                                     <tr>
                                         <td class="dtvHeader">
-                                            <asp:Label ID="Label25" runat="server" Text='Origem da Troca / Devolução' 
+                                            <asp:Label ID="Label25" runat="server" Text='Origem da Troca / Devolução'
                                                 onload="ddlOrigem_Load"></asp:Label>
                                         </td>
                                         <td align="left" colspan="3">
-                                        <asp:Label ID="Label8" runat="server" 
+                                        <asp:Label ID="Label8" runat="server"
                                                 Text='<%# Eval("DescrOrigemTrocaDevolucao") %>' onload="ddlOrigem_Load"></asp:Label>
                                         </td>
                                     </tr>
@@ -990,7 +1005,7 @@
                                             Observação
                                         </td>
                                         <td align="left" colspan="3">
-                                            <asp:TextBox ID="txtDescricao" runat="server" Columns="100" Rows="5" 
+                                            <asp:TextBox ID="txtDescricao" runat="server" Columns="100" Rows="5"
                                                     Text='<%# Bind("Descricao") %>' TextMode="MultiLine" ReadOnly="true"></asp:TextBox>
                                         </td>
                                     </tr>
@@ -1095,17 +1110,17 @@
                                     </tr>
                                     <tr>
                                         <td class="dtvHeader">
-                                        <asp:Label ID="Label24" runat="server" Text='Origem da Troca / Devolução' 
+                                        <asp:Label ID="Label24" runat="server" Text='Origem da Troca / Devolução'
                                                 onload="ddlOrigem_Load"></asp:Label>
-                                            
+
                                         </td>
                                         <td align="left" colspan="3">
-                                            <asp:DropDownList ID="ddlOrigem" runat="server" DataSourceID="odsOrigem" 
-                                                DataTextField="Descricao" DataValueField="idOrigemTrocaDesconto" 
+                                            <asp:DropDownList ID="ddlOrigem" runat="server" DataSourceID="odsOrigem"
+                                                DataTextField="Descricao" DataValueField="idOrigemTrocaDesconto"
                                                 onload="ddlOrigem_Load" SelectedValue='<%# Bind("IdOrigemTrocaDevolucao") %>' AppendDataBoundItems="true">
                                                  <asp:ListItem Selected="True"></asp:ListItem>
                                             </asp:DropDownList>
-                                            <colo:VirtualObjectDataSource ID="odsOrigem" runat="server" Culture="pt-BR" 
+                                            <colo:VirtualObjectDataSource ID="odsOrigem" runat="server" Culture="pt-BR"
                                                 SelectMethod="GetList" TypeName="Glass.Data.DAL.OrigemTrocaDescontoDAO">
                                             </colo:VirtualObjectDataSource>
                                         </td>
@@ -1114,7 +1129,7 @@
                                                 Observação
                                             </td>
                                             <td align="left" colspan="3">
-                                                <asp:TextBox ID="txtDescricao" runat="server" Columns="50" Rows="3" 
+                                                <asp:TextBox ID="txtDescricao" runat="server" Columns="50" Rows="3"
                                                     Text='<%# Bind("Descricao") %>' TextMode="MultiLine"></asp:TextBox>
                                             </td>
                                         </tr>
@@ -1661,13 +1676,13 @@
                                             <asp:Label ID="Label4" runat="server" Text='<%# Bind("AlturaLista") %>'></asp:Label></ItemTemplate>
                                         <EditItemTemplate>
                                             <asp:Label ID="Novo_lblAlturaIns" runat="server" Text='<%# Bind("Altura") %>' Visible='<%# !(bool)Eval("EditarVisible") %>'></asp:Label>
-                                            <asp:TextBox ID="Novo_txtAlturaIns" runat="server" onblur="calcM2Prod();" Text='<%# Bind("Altura") %>'
+                                            <asp:TextBox ID="Novo_txtAlturaIns" runat="server" onblur="GetAdicionalAlturaChapa(); calcM2Prod();" Text='<%# Bind("Altura") %>'
                                                 onchange="FindControl('Novo_hdfAlturaReal', 'input').value = this.value" onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('Novo_hdfTipoCalc', 'input').value), true);"
                                                 Enabled='<%# Eval("AlturaEnabled") %>' Width="50px" Visible='<%# Eval("EditarVisible") %>'></asp:TextBox><asp:HiddenField
                                                     ID="Novo_hdfAlturaReal" runat="server" Value='<%# Bind("AlturaReal") %>' />
                                         </EditItemTemplate>
                                         <FooterTemplate>
-                                            <asp:TextBox ID="Novo_txtAlturaIns" runat="server" onblur="calcM2Prod();" Width="50px"
+                                            <asp:TextBox ID="Novo_txtAlturaIns" runat="server" onblur="GetAdicionalAlturaChapa(); calcM2Prod();" Width="50px"
                                                 onchange="FindControl('Novo_hdfAlturaRealIns', 'input').value = this.value" onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('Novo_hdfTipoCalc', 'input').value), true);"></asp:TextBox><asp:HiddenField
                                                     ID="Novo_hdfAlturaRealIns" runat="server" />
                                         </FooterTemplate>
@@ -1976,48 +1991,17 @@
     </table>
 
     <script type="text/javascript">
-        
+
         // Se a empressa não vende vidros, esconde campos
         if (<%= Glass.Configuracoes.Geral.NaoVendeVidro().ToString().ToLower() %>)
         {
             var tbProdTrocados = FindControl("grdProdutosTrocados", "table");
             var tbProdNovo = FindControl("grdProdutosNovos", "table");
-            
+
             if (tbProdTrocados != null)
             {
                 var rows = tbProdTrocados.children[0].children;
-                
-                if (rows.length > 1)
-                {
-                    var colsTitle = rows[0].getElementsByTagName("th");                
-                    colsTitle[3].style.display = "none";
-                    colsTitle[4].style.display = "none";
-                    colsTitle[5].style.display = "none";
-                    colsTitle[6].style.display = "none";
-                    colsTitle[8].style.display = "none";
-                    colsTitle[9].style.display = "none";
-                    colsTitle[11].style.display = "none";
-                    
-                    var k=0;
-                    for (k=1; k<rows.length; k++) {
-                        if (rows[k].cells[4] == null)
-                            break;
-                            
-                        rows[k].cells[3].style.display = "none";
-                        rows[k].cells[4].style.display = "none";
-                        rows[k].cells[5].style.display = "none";
-                        rows[k].cells[6].style.display = "none";
-                        rows[k].cells[8].style.display = "none";
-                        rows[k].cells[9].style.display = "none";
-                        rows[k].cells[11].style.display = "none";
-                    }
-                }
-            }
-            
-            if (tbProdNovo != null)
-            {
-                var rows = tbProdNovo.children[0].children;
-                
+
                 if (rows.length > 1)
                 {
                     var colsTitle = rows[0].getElementsByTagName("th");
@@ -2028,12 +2012,43 @@
                     colsTitle[8].style.display = "none";
                     colsTitle[9].style.display = "none";
                     colsTitle[11].style.display = "none";
-                    
+
                     var k=0;
                     for (k=1; k<rows.length; k++) {
                         if (rows[k].cells[4] == null)
                             break;
-                            
+
+                        rows[k].cells[3].style.display = "none";
+                        rows[k].cells[4].style.display = "none";
+                        rows[k].cells[5].style.display = "none";
+                        rows[k].cells[6].style.display = "none";
+                        rows[k].cells[8].style.display = "none";
+                        rows[k].cells[9].style.display = "none";
+                        rows[k].cells[11].style.display = "none";
+                    }
+                }
+            }
+
+            if (tbProdNovo != null)
+            {
+                var rows = tbProdNovo.children[0].children;
+
+                if (rows.length > 1)
+                {
+                    var colsTitle = rows[0].getElementsByTagName("th");
+                    colsTitle[3].style.display = "none";
+                    colsTitle[4].style.display = "none";
+                    colsTitle[5].style.display = "none";
+                    colsTitle[6].style.display = "none";
+                    colsTitle[8].style.display = "none";
+                    colsTitle[9].style.display = "none";
+                    colsTitle[11].style.display = "none";
+
+                    var k=0;
+                    for (k=1; k<rows.length; k++) {
+                        if (rows[k].cells[4] == null)
+                            break;
+
                         rows[k].cells[3].style.display = "none";
                         rows[k].cells[4].style.display = "none";
                         rows[k].cells[5].style.display = "none";
@@ -2045,7 +2060,7 @@
                 }
             }
         }
-        
+
     </script>
 
 </asp:Content>

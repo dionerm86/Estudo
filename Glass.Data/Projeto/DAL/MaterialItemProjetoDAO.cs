@@ -16,14 +16,14 @@ namespace Glass.Data.DAL
 
         #region Busca materiais para listagem padrão
 
-        private string Sql(uint idMaterItemProj, uint idItemProjeto, uint idOrcamento, bool selecionar, 
+        private string Sql(uint idMaterItemProj, uint idItemProjeto, uint idOrcamento, bool selecionar,
             out string filtroAdicional)
         {
             filtroAdicional = "";
 
-            string campos = selecionar ? @"mip.*, coalesce(proj.idCliente, coalesce(ped.idCli, coalesce(pedEsp.idCli, orca.idCliente))) as idCliente, 
+            string campos = selecionar ? @"mip.*, coalesce(proj.idCliente, coalesce(ped.idCli, coalesce(pedEsp.idCli, orca.idCliente))) as idCliente,
                 p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd, p.idSubgrupoProd, COALESCE(ncm.ncm, p.ncm) as ncm, p.custoCompra as custoCompraProduto,
-                if(p.AtivarAreaMinima=1, Cast(p.AreaMinima as char), '0') as AreaMinima, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, 
+                if(p.AtivarAreaMinima=1, Cast(p.AreaMinima as char), '0') as AreaMinima, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso,
                 mpm.qtde as qtdModelo, pp.codInterno as codMaterial, mpm.CalculoQtde, mpm.CalculoAltura, ip.Ambiente as Ambiente, ip.IdOrcamento,
                 p.situacao=" + (int)Glass.Situacao.Inativo + " as ProdutoInativo" : "Count(*)";
 
@@ -117,20 +117,20 @@ namespace Glass.Data.DAL
         {
             List<MaterialItemProjeto> itens = GetByItemProjeto(idItemProjeto, false);
 
-            uint idAmbientePedido = (!usarEspelho ? AmbientePedidoDAO.Instance.GetIdByItemProjeto(idItemProjeto) : 
+            uint idAmbientePedido = (!usarEspelho ? AmbientePedidoDAO.Instance.GetIdByItemProjeto(idItemProjeto) :
                 AmbientePedidoEspelhoDAO.Instance.GetIdByItemProjeto(idItemProjeto)).GetValueOrDefault(0);
 
-            string sql = @"select pp.idProdPed from produtos_pedido pp left join produtos_pedido_espelho ppe on (pp.idProdPedEsp=ppe.idProdPed) 
-                where pp{0}.idMaterItemProj=?id or (pp{0}.idAmbientePedido=" + idAmbientePedido + @" and pp{0}.idProd=?idProd and pp{0}.altura=?alt 
+            string sql = @"select pp.idProdPed from produtos_pedido pp left join produtos_pedido_espelho ppe on (pp.idProdPedEsp=ppe.idProdPed)
+                where pp{0}.idMaterItemProj=?id or (pp{0}.idAmbientePedido=" + idAmbientePedido + @" and pp{0}.idProd=?idProd and pp{0}.altura=?alt
                 and pp{0}.largura=?larg and pp{0}.totM=?totM and pp{0}.totM2Calc=?totM2Calc)";
 
             sql = String.Format(sql, !usarEspelho ? "" : "e");
-            
+
             List<uint> idsProdPed = new List<uint>(idsProdutosPedido);
             for (int i = itens.Count - 1; i >= 0; i--)
             {
                 uint idProdPed = ExecuteScalar<uint>(sql, new GDAParameter("?id", itens[i].IdMaterItemProj),
-                    new GDAParameter("?idProd", itens[i].IdProd), new GDAParameter("?alt", itens[i].Altura), 
+                    new GDAParameter("?idProd", itens[i].IdProd), new GDAParameter("?alt", itens[i].Altura),
                     new GDAParameter("?larg", itens[i].Largura), new GDAParameter("?totM", itens[i].TotM),
                     new GDAParameter("?totM2Calc", itens[i].TotM2Calc));
 
@@ -228,7 +228,7 @@ namespace Glass.Data.DAL
             string sql = "Select mip.*, ip.ambiente From material_item_projeto mip " +
                 "Left Join item_projeto ip On (mip.idItemProjeto=ip.idItemProjeto) " +
                 "Left Join produto p On (mip.idProd=p.idProd) Where mip.idItemProjeto In " +
-                "(Select idItemProjeto From item_projeto Where idProjeto=" + idProjeto + ") " + 
+                "(Select idItemProjeto From item_projeto Where idProjeto=" + idProjeto + ") " +
                 "Order By p.idGrupoProd, p.Descricao ";
 
             return objPersistence.LoadData(session, sql).ToList();
@@ -254,11 +254,11 @@ namespace Glass.Data.DAL
                 "Left Join produto_projeto pp On (mpm.idProdProj=pp.idProdProj) " +
                 "Left Join etiqueta_aplicacao apl On (mip.idAplicacao=apl.idAplicacao) " +
                 "Left Join etiqueta_processo prc On (mip.idProcesso=prc.idProcesso) " +
-                "Where mip.idItemProjeto=" + idItemProjeto; 
-            
+                "Where mip.idItemProjeto=" + idItemProjeto;
+
             if (!buscarPecas)
-                sql += " And mip.idPecaItemProj is null "; 
-            
+                sql += " And mip.idPecaItemProj is null ";
+
             sql += " Order By p.idGrupoProd, p.descricao";
 
             List<MaterialItemProjeto> lstMater = objPersistence.LoadData(sql);
@@ -336,17 +336,17 @@ namespace Glass.Data.DAL
         {
             string sql = @"
                 Select mip.*, Cast(Sum(mip.Qtde) as signed) as SumQtde, cast(Sum(mip.Custo) as decimal(12,2)) as SumCusto, cast(Sum(mip.Total) as decimal(12,2)) as SumTotal,
-                    Sum(if(p.IdGrupoProd=3, mip.Altura * mip.Qtde, mip.Altura)) as SumAltura, Sum(mip.TotM) as SumTotM, 
-                    p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd, gp.Descricao as DescrGrupoProd, p.idSubgrupoProd, 
-                    if(p.AtivarAreaMinima=1, Cast(p.AreaMinima as char), '0') as AreaMinima, apl.CodInterno as CodAplicacao, 
-                    prc.CodInterno as CodProcesso, mpm.qtde as qtdModelo, pp.codInterno as codMaterial 
-                From material_item_projeto mip 
-                    Left Join produto p On (mip.idProd=p.idProd) 
-                    Left Join grupo_prod gp On (p.IdGrupoProd=gp.IdGrupoProd) 
-                    Left Join material_projeto_modelo mpm On (mip.idMaterProjMod=mpm.idMaterProjMod) 
-                    Left Join produto_projeto pp On (mpm.idProdProj=pp.idProdProj) 
-                    Left Join etiqueta_aplicacao apl On (mip.idAplicacao=apl.idAplicacao) 
-                    Left Join etiqueta_processo prc On (mip.idProcesso=prc.idProcesso) 
+                    Sum(if(p.IdGrupoProd=3, mip.Altura * mip.Qtde, mip.Altura)) as SumAltura, Sum(mip.TotM) as SumTotM,
+                    p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd, gp.Descricao as DescrGrupoProd, p.idSubgrupoProd,
+                    if(p.AtivarAreaMinima=1, Cast(p.AreaMinima as char), '0') as AreaMinima, apl.CodInterno as CodAplicacao,
+                    prc.CodInterno as CodProcesso, mpm.qtde as qtdModelo, pp.codInterno as codMaterial
+                From material_item_projeto mip
+                    Left Join produto p On (mip.idProd=p.idProd)
+                    Left Join grupo_prod gp On (p.IdGrupoProd=gp.IdGrupoProd)
+                    Left Join material_projeto_modelo mpm On (mip.idMaterProjMod=mpm.idMaterProjMod)
+                    Left Join produto_projeto pp On (mpm.idProdProj=pp.idProdProj)
+                    Left Join etiqueta_aplicacao apl On (mip.idAplicacao=apl.idAplicacao)
+                    Left Join etiqueta_processo prc On (mip.idProcesso=prc.idProcesso)
                 Where mip.idItemProjeto in (Select IdItemProjeto From item_projeto Where ";
 
             if (idProjeto > 0)
@@ -357,7 +357,7 @@ namespace Glass.Data.DAL
                 sql += "idPedido=" + idPedido;
             else if (idPedidoEspelho > 0)
                 sql += "idPedidoEspelho=" + idPedidoEspelho;
-                                                                                                     
+
             sql += ") Group By mip.IdProd";
 
             List<MaterialItemProjeto> lstMater = objPersistence.LoadData(sql);
@@ -506,7 +506,7 @@ namespace Glass.Data.DAL
 
                 if (prod == null && !pecaItemProjeto.IdProd.HasValue && pecaItemProjeto.IdProd.Value > 0)
                     throw new Exception("A peça de vidro está associada a um produto inativo. Informe outro produto, calcule as medidas e confirme o projeto.");
-                
+
                 // Verifica se há fórmula para calcular a qtd de peças
                 var qtdPeca = !string.IsNullOrEmpty(pecasProjetoModelo[i].CalculoQtde) && !itemProjeto.MedidaExata ?
                     (int)UtilsProjeto.CalcExpressao(sessao, pecasProjetoModelo[i].CalculoQtde, itemProjeto, pecasItemProjeto, medidasProjetoModelo, medidasItemProjeto, null) :
@@ -576,8 +576,8 @@ namespace Glass.Data.DAL
 
                 // Antes estava verificando se o valor inserido é maior que o valor de tabela, se fosse mantinha-o, porém
                 // precisou ser mudado porque ao alterar a peça de vidro em "Medidas das Peças", o valor não era alterado
-                material.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, prod.IdProd, tipoEntrega, idCliente, false, false, 0, null, null, null);
-                
+                material.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, prod.IdProd, tipoEntrega, idCliente, false, false, 0, null, null, null, pecaItemProjeto.Altura);
+
                 material.Largura = pecaItemProjeto.Largura;
                 material.Altura = pecaItemProjeto.Altura;
                 material.Qtde = qtdPeca;
@@ -604,7 +604,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Insere peças de vidro calculadas no item projeto
         /// </summary>
-        public void InserePecasVidro(uint? idObra, uint? idCliente, int? tipoEntrega, ItemProjeto itemProjeto, 
+        public void InserePecasVidro(uint? idObra, uint? idCliente, int? tipoEntrega, ItemProjeto itemProjeto,
             ProjetoModelo projModelo, List<PecaProjetoModelo> lstPeca)
         {
             InserePecasVidro(null, idObra, idCliente, tipoEntrega, itemProjeto, projModelo, lstPeca);
@@ -617,7 +617,7 @@ namespace Glass.Data.DAL
             ProjetoModelo projModelo, List<PecaProjetoModelo> lstPeca)
         {
             InserePecasVidro(sessao, idObra, idCliente, tipoEntrega, itemProjeto, projModelo, lstPeca, false);
-        }  
+        }
 
         /// <summary>
         /// Insere peças de vidro calculadas no item projeto
@@ -681,7 +681,7 @@ namespace Glass.Data.DAL
                 }
 
                 #endregion
-                
+
                 // Verifica se há fórmula para calcular a qtd de peças
                 var qtdPeca = !string.IsNullOrEmpty(lstPeca[i].CalculoQtde) && !itemProjeto.MedidaExata ? (int)UtilsProjeto.CalcExpressao(sessao, lstPeca[i].CalculoQtde, itemProjeto) : lstPeca[i].Qtde;
 
@@ -691,7 +691,7 @@ namespace Glass.Data.DAL
                     !string.IsNullOrEmpty(lstPeca[i].CalculoQtde) &&
                     itemProjeto.IdPedidoEspelho.GetValueOrDefault() > 0)
                     qtdPeca = lstPeca[i].Qtde;
-                
+
                 var alturaPeca = lstPeca[i].Altura;
                 var larguraPeca = lstPeca[i].Largura;
 
@@ -856,7 +856,7 @@ namespace Glass.Data.DAL
                 // precisou ser mudado porque ao alterar a peça de vidro em "Medidas das Peças", o valor não era alterado
                 ProdutoObraDAO.DadosProdutoObra dadosObra = idObra > 0 ? ProdutoObraDAO.Instance.IsProdutoObra(sessao, idObra.Value, prod.CodInterno) : null;
                 var valorTabela = dadosObra != null && dadosObra.ProdutoValido ? dadosObra.ValorUnitProduto :
-                    ProdutoDAO.Instance.GetValorTabela(sessao, prod.IdProd, tipoEntrega, idCliente, ClienteDAO.Instance.IsRevenda(sessao ,idCliente), itemProjeto.Reposicao, 0, idPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
+                    ProdutoDAO.Instance.GetValorTabela(sessao, prod.IdProd, tipoEntrega, idCliente, ClienteDAO.Instance.IsRevenda(sessao ,idCliente), itemProjeto.Reposicao, 0, idPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento, alturaPeca + incrementoAltura);
 
                 /* Chamado 53156. */
                 /* Chamado 55446. */
@@ -977,11 +977,11 @@ namespace Glass.Data.DAL
 
                 if (m.IdMaterProjMod != null)
                     UtilsProjeto.CalcMaterial(sessao, ref material, itemProj, modelo, idProdEscova, idProdMaoDeObra);
-                
+
                 // Verifica qual preço deverá ser utilizado
                 ProdutoObraDAO.DadosProdutoObra dadosObra = idObra > 0 ? ProdutoObraDAO.Instance.IsProdutoObra(sessao, idObra.Value, m.IdProd) : null;
                 decimal valorTabela = dadosObra != null && dadosObra.ProdutoValido ? dadosObra.ValorUnitProduto :
-                    ProdutoDAO.Instance.GetValorTabela(sessao, (int)m.IdProd, tipoEntrega, idCliente, ClienteDAO.Instance.IsRevenda(idCliente), itemProj.Reposicao, 0, (int?)itemProj.IdPedido, (int?)itemProj.IdProjeto, (int?)itemProj.IdOrcamento);
+                    ProdutoDAO.Instance.GetValorTabela(sessao, (int)m.IdProd, tipoEntrega, idCliente, ClienteDAO.Instance.IsRevenda(idCliente), itemProj.Reposicao, 0, (int?)itemProj.IdPedido, (int?)itemProj.IdProjeto, (int?)itemProj.IdOrcamento, material.Altura);
 
                 material.Valor = material.Valor > valorTabela ? material.Valor : valorTabela;
 
@@ -1052,9 +1052,9 @@ namespace Glass.Data.DAL
             string ids = ProdutoDAO.Instance.ObtemIds(null, "TUBO ");
 
             string sql = @"
-                Select Count(*) 
-                From material_item_projeto m 
-                    Inner Join produto p On (m.idProd=p.idProd) 
+                Select Count(*)
+                From material_item_projeto m
+                    Inner Join produto p On (m.idProd=p.idProd)
                 Where p.idProd In (" + ids + ") And m.idItemProjeto=" + idItemProjeto;
 
             return Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(sql).ToString()) > 0;
@@ -1079,9 +1079,9 @@ namespace Glass.Data.DAL
         {
             string sql = @"
                 Select Count(*) From (
-                    Select p.idCorVidro 
-                    From material_item_projeto m 
-                        Inner Join produto p On (m.idProd=p.idProd) 
+                    Select p.idCorVidro
+                    From material_item_projeto m
+                        Inner Join produto p On (m.idProd=p.idProd)
                     Where m.idItemProjeto In (Select idItemProjeto From item_projeto Where idOrcamento=" + idOrcamento + @")
                         And p.idGrupoProd=" + (int)NomeGrupoProd.Vidro + @"
                     Group By p.idCorVidro, p.espessura
@@ -1113,7 +1113,7 @@ namespace Glass.Data.DAL
         /// <param name="idItemProjeto"></param>
         public void DeleteByProjeto(uint idProjeto)
         {
-            string sql = "Delete From material_item_projeto Where idItemProjeto In " + 
+            string sql = "Delete From material_item_projeto Where idItemProjeto In " +
                 "(Select idItemProjeto From item_projeto Where idProjeto=" + idProjeto + ")";
 
             objPersistence.ExecuteCommand(sql);
@@ -1147,8 +1147,8 @@ namespace Glass.Data.DAL
         private string SqlCompra(uint idPedido, uint idItemProjeto, bool selecionar)
         {
             string sqlQtdeComprada = @"
-                select cast(coalesce(sum(qtde), 0) as signed integer) 
-                from produtos_compra pc 
+                select cast(coalesce(sum(qtde), 0) as signed integer)
+                from produtos_compra pc
                     left join compra c on (pc.idCompra=c.idCompra)
                 where c.idPedidoEspelho=ped.idPedido and idMaterItemProj=mip.idMaterItemProj
                     and c.situacao<>" + (int)Compra.SituacaoEnum.Cancelada + @"
@@ -1164,14 +1164,14 @@ namespace Glass.Data.DAL
                 where temp.idMaterItemProj=mip.idMaterItemProj";
 
             string sqlQtdeBenefCompra = @"
-                select coalesce(sum(contagem), 0) 
+                select coalesce(sum(contagem), 0)
                 from (" +
                     ProdutosCompraBenefDAO.Instance.SqlProdPedBenef(0, 0, 0, 0, false) + @"
-                ) as temp 
+                ) as temp
                 where temp.idMaterItemProj=mip.idMaterItemProj";
 
-            string campos = @"mip.*, p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd, p.idSubgrupoProd, 
-                if(p.AtivarAreaMinima=1, Cast(p.AreaMinima as char), '0') as AreaMinima, apl.CodInterno as CodAplicacao, 
+            string campos = @"mip.*, p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd, p.idSubgrupoProd,
+                if(p.AtivarAreaMinima=1, Cast(p.AreaMinima as char), '0') as AreaMinima, apl.CodInterno as CodAplicacao,
                 prc.CodInterno as CodProcesso, mpm.qtde as qtdModelo, pp.codInterno as codMaterial, mpm.CalculoQtde,
                 mpm.CalculoAltura, ip.Ambiente as Ambiente, (" + sqlQtdeComprada + ") as QtdeComprada, (" + sqlQtdeBenefCompra + ") as QtdeBenefCompra, " +
                 "(" + sqlQtdeBenefMaterItemProj + ") as QtdeBenefMaterItemProj";
@@ -1215,7 +1215,7 @@ namespace Glass.Data.DAL
         public IList<MaterialItemProjeto> GetForCompra(uint idItemProjeto, bool forRpt)
         {
             var materiais = objPersistence.LoadData(SqlCompra(0, idItemProjeto, true)).ToList();
-            
+
             if (forRpt)
             {
                 var mip = new List<MaterialItemProjeto>();
@@ -1498,7 +1498,7 @@ namespace Glass.Data.DAL
 
             string sql = @"
                 Update material_item_projeto set ValorBenef=(
-                    select sum(coalesce(Valor, 0)) from material_projeto_benef where idMaterItemProj=?id) 
+                    select sum(coalesce(Valor, 0)) from material_projeto_benef where idMaterItemProj=?id)
                         where idMaterItemProj=?id";
 
             objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?id", idMaterItemProj));
@@ -1587,7 +1587,7 @@ namespace Glass.Data.DAL
         private uint Insert(GDASession session, MaterialItemProjeto objInsert, IContainerCalculo container)
         {
             uint returnValue = 0;
-            
+
             try
             {
                 var idProjeto = ItemProjetoDAO.Instance.GetIdProjeto(objInsert.IdItemProjeto);
@@ -1642,7 +1642,7 @@ namespace Glass.Data.DAL
             catch (Exception ex)
             {
                 throw new Exception("Falha ao incluir Material. Erro: " + ex.Message);
-            }            
+            }
 
             return returnValue;
         }
@@ -1748,7 +1748,7 @@ namespace Glass.Data.DAL
         {
             DiferencaCliente.Instance.Calcular(sessao, container, objUpdate);
             ValorBruto.Instance.Calcular(sessao, container, objUpdate);
-            
+
             ItemProjetoDAO.Instance.CalculoNaoConferido(sessao, objUpdate.IdItemProjeto);
             return base.Update(sessao, objUpdate);
         }

@@ -11,7 +11,7 @@
     var qtdEstoqueComposicao = 0;
     var exibirMensagemEstoqueComposicao = false;
     var qtdEstoqueMensagemComposicao = 0;
-    
+    var pedidoReposicao = <%= VerificaPedidoReposicao() %>;
     var insertingComposicao = false;
     var produtoAmbienteComposicao = false;
     var aplAmbienteComposicao = false;
@@ -45,16 +45,16 @@
             return false;
 
         var table = buscaTable(control);
-        
-        var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;        
+
+        var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
         var txtValor = FindControl("txt_ValorComposicaoIns", "input", table);
-        
-        var verificaProduto = CadPedido.IsProdutoObra(idPedido, codInterno, true).value.split(";");        
+
+        var verificaProduto = CadPedido.IsProdutoObra(idPedido, codInterno, true).value.split(";");
         if (verificaProduto[0] == "Erro")
         {
             if (FindControl("txt_CodProdComposicao", "input", table) != null)
                 FindControl("txt_CodProdComposicao", "input", table).value = "";
-                    
+
             alert("Esse produto não pode ser usado no pedido. " + verificaProduto[1]);
             return false;
         }
@@ -62,55 +62,55 @@
         {
             if (txtValor != null)
                 txtValor.disabled = true;
-            
+
             // Se for edição de produto, chamad o método padrão de cálculo da metragem máxima permitida
             if (FindControl("hdf_ProdPedComposicao", "input", table) != null)
                 calculaTamanhoMaximoComposicao(table);
-            else if (FindControl("hdf_TamanhoMaximoObraComposicao", "input", table) != null)    
+            else if (FindControl("hdf_TamanhoMaximoObraComposicao", "input", table) != null)
                 FindControl("hdf_TamanhoMaximoObraComposicao", "input", table).value = verificaProduto[2];
         }
         else
         {
             if (txtValor != null)
                 txtValor.disabled = verificaProduto[3] == "false";
-            
-            if (FindControl("hdf_TamanhoMaximoObraComposicao", "input", table) != null)    
+
+            if (FindControl("hdf_TamanhoMaximoObraComposicao", "input", table) != null)
                 FindControl("hdf_TamanhoMaximoObraComposicao", "input", table).value = "0";
         }
 
         try {
-            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
             var percComissao = getPercComissao();
             var tipoPedido = FindControl("hdfTipoPedido", "input").value;
             var tipoVenda = FindControl("hdfTipoVenda", "input").value;
             percComissao = percComissao == null ? 0 : percComissao.toString().replace('.', ',');
-            
-            var controleDescQtde = null; 
+
+            var controleDescQtde = null;
             var percDescontoQtde = 0;
-            
+
             if (FindControl("_divDescontoQtde", "div", table) != null)
             {
                 controleDescQtde = FindControl("_divDescontoQtde", "div", table).id;
                 controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-                if (controleDescQtde != null) 
+                if (controleDescQtde != null)
                     percDescontoQtde = controleDescQtde.PercDesconto();
             }
-            
-            var retorno = CadPedido.GetProduto(idPedido, codInterno, tipoEntrega, cliRevenda, idCliente, 
+
+            var retorno = CadPedido.GetProduto(idPedido, codInterno, tipoEntrega, cliRevenda, idCliente,
                 percComissao, tipoPedido, tipoVenda, produtoAmbienteComposicao, percDescontoQtde, FindControl("hdfLoja", "input").value, true).value.split(';');
-            
+
             if (retorno[0] == "Erro") {
                 alert(retorno[1]);
                 if (!produtoAmbienteComposicao)
                     FindControl("txt_CodProdComposicao", "input", table).value = "";
                 else
                     FindControl("txt_CodAmbComposicao", "input", table).value = "";
-                
+
                 return false;
             }
-            
+
             else if (!produtoAmbienteComposicao)
             {
                 if (retorno[0] == "Prod") {
@@ -120,26 +120,26 @@
                     var tipoPedido = FindControl("hdfTipoPedido", "input").value;
 
                     alterarValor = alterarValor === false ? false : true;
-                                    
+
                     if (parseFloat(verificaProduto[1].replace(",", ".")) > 0) // Exibe no cadastro o valor mínimo do produto
                         txtValor.value = alterarValor ? verificaProduto[1] : txtValor.value;
                         // O valor do produto deve ser atualizado sempre, para que caso seja buscado um produto, preenchendo automaticamente
                         // o valor unitário e o usuário resolva buscar outro produto sem ter inserido o primeiro, garanta que será buscado o valor deste
-                    else 
+                    else
                         txtValor.value = alterarValor ? retorno[3] : txtValor.value;
-                    
+
                     FindControl("hdf_IsVidroComposicao", "input", table).value = retorno[4]; // Informa se o produto é vidro
                     FindControl("hdf_M2MinimoComposicao", "input", table).value = retorno[5]; // Informa se o produto possui m² mínimo
                     FindControl("hdf_TipoCalcComposicao", "input", table).value = retorno[7]; // Verifica como deve ser calculado o produto
-                    
+
                     // Se o campo do valor estiver desativado não precisa calcular o valor mínimo, tendo em vista que o usuário não poderá alterar.
                     if (!txtValor.disabled)
                         atualizaValMinComposicao(table);
-                    
+
                     qtdEstoqueComposicao = retorno[6]; // Pega a quantidade disponível em estoque deste produto
                     exibirMensagemEstoqueComposicao = retorno[14] == "true";
                     qtdEstoqueMensagemComposicao = retorno[15];
-                    
+
                     var tipoCalc = retorno[7];
 
                     // Se o produto não for vidro, desabilita os textboxes largura e altura,
@@ -152,35 +152,35 @@
                     // var larguraAmbiente = FindControl("hdf_LarguraAmbienteComposicao", "input", table).value;
                     cAltura.disabled = CalcProd_DesabilitarAltura(tipoCalc);
                     cLargura.disabled = CalcProd_DesabilitarLargura(tipoCalc);
-                    
+
                     var nomeControle = getNomeControleBenefComposicao(table);
 
                     // Zera o campo qtd para evitar que produtos calculados por mҠfiquem com quantidade decimal por exemplo (chamado 11010)
                     var txtQtdProd = FindControl("txt_QtdeComposicaoIns", "input", table);
                     if (txtQtdProd != null && !loadingComposicao)
                         txtQtdProd.value = "";
-                    
+
                     if (nomeControle != null && nomeControle != undefined) {
                         // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
                         if (retorno[4] == "true" && exibirControleBenef(nomeControle) && FindControl("lnk_BenefComposicao", "input", table) != null) {
                             FindControl("txt_EspessuraComposicao", "input", table).value = retorno[8];
                             FindControl("txt_EspessuraComposicao", "input", table).disabled = retorno[8] != "" && retorno[8] != "0";
                         }
-                    
+
                         if (FindControl("lnk_BenefComposicao", "input", table) != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1)
                             FindControl("lnk_BenefComposicao", "input", table).style.display = exibirControleBenef(nomeControle) ? "" : "none";
                     }
-                        
+
                     FindControl("hdf_AliquotaIcmsProdComposicao", "input", table).value = retorno[9].replace('.', ',');
-                    
-                    // O campo altura e largura devem sempre ser atribuídos pois caso seja selecionado um box e logo após seja selecionado um kit 
+
+                    // O campo altura e largura devem sempre ser atribuídos pois caso seja selecionado um box e logo após seja selecionado um kit
                     // por exemplo, ao inserí-lo ele estava ficando com o campo altura, largura e m² preenchidos apesar de ser calculado por qtd
                     if (retorno[10] != "" || retorno[4] == "false") {
                         FindControl("txt_AlturaComposicao", "input", table).value = retorno[10];
                         FindControl("hdf_AlturaRealComposicao", "input", table).value = retorno[10];
                     }
                     if (retorno[11] != "" || retorno[4] == "false") FindControl("txt_LarguraComposicao", "input", table).value = retorno[11];
-                        
+
                     if (cAltura.disabled && FindControl("hdf_AlturaRealComposicao", "input", table) != null)
                         FindControl("hdf_AlturaRealComposicao", "input", table).value = cAltura.value;
 
@@ -188,10 +188,10 @@
 
                     if (retorno[16] != "")
                         setAplComposicao(retorno[16], retorno[17], idProdPed);
-                    
+
                     if (retorno[18] != "")
                         setProcComposicao(retorno[18], retorno[19], null, idProdPed);
-                    
+
                     FindControl("hdf_CustoProdComposicao", "input", table).value = retorno[20];
 
                     var cPodeEditarComposicao = FindControl("hdf_PodeEditarComposicao","input", table);
@@ -220,7 +220,7 @@
         catch (err) {
             alert(err);
         }
-        
+
         produtoAmbienteComposicao = false;
     }
 
@@ -230,15 +230,15 @@
             return;
 
         var table = buscaTable(control);
-            
+
         var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
         var codInterno = FindControl("lbl_CodProdComposicaoIns", "span", table).innerHTML;
         var totM2 = FindControl("lbl_TotM2ComposicaoIns", "span", table).innerHTML;
         var idProdPed = FindControl("hdf_ProdPedComposicao", "input", table) != null ? FindControl("hdf_ProdPedComposicao", "input", table).value : 0;
-        
+
         var tamanhoMaximo = CadPedido.GetTamanhoMaximoProduto(idPedido, codInterno, totM2, idProdPed).value.split(";");
         tamanhoMaximo = tamanhoMaximo[0] == "Ok" ? parseFloat(tamanhoMaximo[1].replace(",", ".")) : 0;
-        
+
         FindControl("hdf_TamanhoMaximoObraComposicao", "input", table).value = tamanhoMaximo;
     }
 
@@ -250,23 +250,23 @@
         {
             var codInterno = FindControl("txt_CodProdComposicaoIns", "input", table);
             codInterno = codInterno != null ? codInterno.value : FindControl("lbl_CodProdComposicaoIns", "span", table).innerHTML;
-            
+
             var idPedido = '<%= Request["idPedido"] %>';
             var tipoPedido = FindControl("hdfTipoPedido", "input").value;
-            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
             var tipoVenda = FindControl("hdfTipoVenda", "input").value;
-            
+
             var idProdPed = FindControl("hdf_ProdPedComposicao", "input", table);
             idProdPed = idProdPed != null ? idProdPed.value : "";
-            
+
             var controleDescQtde = FindControl("_divDescontoQtde", "div", table).id;
             controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-            
+
             var percDescontoQtde = controleDescQtde.PercDesconto();
-            
-            FindControl("hdf_ValMinComposicao", "input", table).value = CadPedido.GetValorMinimo(codInterno, tipoPedido, tipoEntrega, tipoVenda, 
+
+            FindControl("hdf_ValMinComposicao", "input", table).value = CadPedido.GetValorMinimo(codInterno, tipoPedido, tipoEntrega, tipoVenda,
                 idCliente, cliRevenda, idProdPed, percDescontoQtde, idPedido).value;
         }
         else
@@ -292,7 +292,7 @@
                 FindControl("txt_AmbAplComposicaoIns", "input", tr).value = codInterno;
                 FindControl("hdf_AmbIdAplicacaoComposicao", "input", tr).value = idAplicacao;
             }
-        
+
             aplAmbienteComposicao = false;
         }
     }
@@ -307,7 +307,7 @@
             setAplComposicao("", "", idProdPed);
             return false;
         }
-    
+
         try {
             var response = MetodosAjax.GetEtiqAplicacao(codInterno).value;
 
@@ -318,7 +318,7 @@
             }
 
             response = response.split("\t");
-            
+
             if (response[0] == "Erro") {
                 alert(response[1]);
                 setAplComposicao("", "", idProdPed);
@@ -354,7 +354,7 @@
             }
 
             var verificaEtiquetaProc = MetodosAjax.VerificaEtiquetaProcesso(idProcesso, FindControl("hdfIdPedido", "input").value);
-        
+
             if(verificaEtiquetaProc.error != null){
 
                 if (!procAmbienteComposicao && FindControl("txt_ProcComposicaoIns", "input", tr) != null)
@@ -378,23 +378,23 @@
             {
                 FindControl("txt_ProcComposicaoIns", "input", tr).value = codInterno;
                 FindControl("hdf_IdProcessoComposicao", "input", tr).value = idProcesso;
-            
+
                 if (FindControl("txt_CodProdComposicaoIns", "input", tr) != null)
                     codInternoProd = FindControl("txt_CodProdComposicaoIns", "input", tr).value;
                 else
                     codInternoProd = FindControl("lbl_CodProdComposicaoIns", "span", tr).innerHTML;
-                
+
                 codAplicacaoAtual = FindControl("txt_AplComposicaoIns", "input", tr).value;
             }
             else
             {
                 FindControl("txt_AmbProcComposicaoIns", "input", tr).value = codInterno;
                 FindControl("hdf_AmbIdProcessoComposicao", "input", tr).value = idProcesso;
-            
+
                 codInternoProd = FindControl("txt_CodAmbComposicao", "input", tr).value;
                 codAplicacaoAtual = FindControl("txt_AmbAplComposicaoIns", "input", tr).value;
             }
-        
+
             if (((codAplicacao && codAplicacao != "") ||
                 (codInternoProd != "" && CadPedido.ProdutoPossuiAplPadrao(codInternoProd).value == "false")) &&
                 (codAplicacaoAtual == null || codAplicacaoAtual == ""))
@@ -402,7 +402,7 @@
                 aplAmbienteComposicao = procAmbienteComposicao;
                 loadAplComposicao(tr, codAplicacao);
             }
-        
+
             procAmbienteComposicao = false;
         }
     }
@@ -428,7 +428,7 @@
             }
 
             response = response.split("\t");
-            
+
             if (response[0] == "Erro") {
                 alert(response[1]);
                 setProcComposicao("", "", "", idProdPed);
@@ -463,11 +463,11 @@
             var idProd = FindControl("hdf_IdProdComposicao", "input", table).value;
             var altura = FindControl("txt_AlturaComposicaoIns", "input", table).value;
             var largura = FindControl("txt_LarguraComposicaoIns", "input", table).value;
-            
+
             var qtde = FindControl("txt_QtdeComposicaoIns", "input", table).value;
             var isVidro = FindControl("hdf_IsVidroComposicao", "input", table).value == "true";
             var tipoCalc = FindControl("hdf_TipoCalcComposicao", "input", table).value;
-            
+
             if (altura == "" || largura == "" || qtde == "" || altura == "0" || (tipoCalc != 2 && tipoCalc != 10 && !usarBenefTodosGrupos)) {
                 if (qtde != "" && qtde != "0")
                     calcTotalProdComposicao(table);
@@ -475,10 +475,10 @@
                 return false;
             }
 
-            var redondo = FindControl("Redondo_chkSelecao", "input", table) != null && FindControl("Redondo_chkSelecao", "input", table).checked;                          
+            var redondo = FindControl("Redondo_chkSelecao", "input", table) != null && FindControl("Redondo_chkSelecao", "input", table).checked;
             var numBenef = "";
-            
-            if (FindControl("Redondo_chkSelecao", "input", table) != null) 
+
+            if (FindControl("Redondo_chkSelecao", "input", table) != null)
             {
                 numBenef = FindControl("Redondo_chkSelecao", "input", table).id
                 numBenef = numBenef.substr(0, numBenef.lastIndexOf("_"));
@@ -487,10 +487,10 @@
             }
 
             var esp = FindControl("txt_EspessuraComposicao", "input", table) != null ? FindControl("txt_EspessuraComposicao", "input", table).value : 0;
-            
+
             // Calcula metro quadrado
             var idCliente = FindControl("hdfIdCliente", "input").value;
-            
+
             if ((idProd != dadosCalcM2ProdComposicao.IdProd && idProd > 0) || (altura != dadosCalcM2ProdComposicao.Altura && altura > 0) ||
                 (largura != dadosCalcM2ProdComposicao.Largura) || (qtde != dadosCalcM2ProdComposicao.Qtde && qtde > 0) ||
                 (tipoCalc != dadosCalcM2ProdComposicao.TipoCalc && tipoCalc > 0) || (idCliente != dadosCalcM2ProdComposicao.Cliente) || (redondo != dadosCalcM2ProdComposicao.Redondo) ||
@@ -500,12 +500,12 @@
                 FindControl("hdf_TotM2CalcComposicao", "input", table).value = MetodosAjax.CalcM2Calculo(idCliente, tipoCalc, altura, largura, qtde, idProd, redondo, esp, numBenef, "false").value;
                 FindControl("hdf_TotM2CalcSemChapaComposicao", "input", table).value = MetodosAjax.CalcM2CalculoSemChapa(idCliente, tipoCalc, altura, largura, qtde, idProd, redondo, esp, numBenef, "false").value;
                 FindControl("lbl_TotM2CalcComposicao", "span", table).innerHTML = FindControl("hdf_TotM2CalcComposicao", "input", table).value.replace('.', ',');
-                
+
                 if (FindControl("hdf_TotM2ComposicaoIns", "input", table) != null)
                     FindControl("hdf_TotM2ComposicaoIns", "input", table).value = FindControl("lbl_TotM2ComposicaoIns", "span", table).innerHTML.replace(',', '.');
                 else if (FindControl("hdf_TotMComposicao", "input", table) != null)
                     FindControl("hdf_TotMComposicao", "input", table).value = FindControl("lbl_TotM2ComposicaoIns", "span", table).innerHTML.replace(',', '.');
-                
+
                 dadosCalcM2ProdComposicao = {
                     IdProd: idProd,
                     Altura: altura,
@@ -517,12 +517,27 @@
                     NumBenef: numBenef
                 };
             }
-            
+
             calcTotalProdComposicao(table);
         }
         catch (err) {
             alert(err);
         }
+    }
+
+    function GetAdicionalAlturaChapa(){
+        var idPedido = FindControl("hdfIdPedido", "input").value;
+        var idProd = FindControl("hdf_IdProdComposicao", "input", table).value;
+        var altura = FindControl("txt_AlturaComposicaoIns", "input", table).value;
+        var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
+        var idCliente = FindControl("hdfIdCliente", "input").value;
+        var cliRevenda = FindControl("hdfCliRevenda", "input").value;
+        var controleDescQtde = FindControl("_divDescontoQtde", "div", table).id;
+        controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
+        var percDescontoQtde = controleDescQtde.PercDesconto();
+
+        FindControl("txt_ValorComposicaoIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente,
+            cliRevenda, pedidoReposicao, percDescontoQtde, idPedido, "", "", altura).value.replace(".", ",");
     }
 
     // Calcula em tempo real o valor total do produto
@@ -543,13 +558,13 @@
             var largura = new Number(FindControl("txt_LarguraComposicaoIns", "input", table).value.replace(',', '.'));
             var tipoCalc = FindControl("hdf_TipoCalcComposicao", "input", table).value;
             var m2Minimo = FindControl("hdf_M2MinimoComposicao", "input", table).value;
-            
+
             var controleDescQtde = FindControl("_divDescontoQtde", "div", table).id;
             controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-            
+
             var percDesconto = controleDescQtde.PercDesconto();
             var percDescontoAtual = controleDescQtde.PercDescontoAtual();
-            
+
             var retorno = CalcProd_CalcTotalProd(valorIns, totM2, totM2Calc, m2Minimo, total, qtde, altura, FindControl("txtAlturaIns", "input"), largura, true, tipoCalc, 0, 0, percDescontoAtual, percDesconto);
             if (retorno != "")
                 FindControl("lbl_TotalComposicaoIns", "span", table).innerHTML = retorno;
@@ -572,18 +587,18 @@
         var totM2 = FindControl("lbl_TotM2ComposicaoIns", "span", table).innerHTML;
         var isCalcAluminio = tipoCalc == 4 || tipoCalc == 6 || tipoCalc == 7 || tipoCalc == 9;
         var isCalcM2 = tipoCalc == 2 || tipoCalc == 10;
-    
+
         // Se for cálculo por barra de 6m, multiplica a qtd pela altura
         if (isCalcAluminio)
             txtQtd = parseInt(txtQtd) * parseFloat(txtAltura.toString().replace(',', '.'));
         else if (isCalcM2)
         {
-            if (totM2 == "") 
+            if (totM2 == "")
                 return;
-            
+
             txtQtd = totM2;
         }
-    
+
         var estoqueMenor = txtQtd != "" && parseInt(txtQtd) > parseInt(qtdEstoqueComposicao);
         if (estoqueMenor)
         {
@@ -591,10 +606,10 @@
                 alert("Não há nenhuma peça deste produto no estoque.");
             else
                 alert("Há apenas " + qtdEstoqueComposicao + " " + (isCalcM2 ? "m²" : isCalcAluminio ? "ml (" + parseFloat(qtdEstoqueComposicao / 6).toFixed(2) + " barras)" : "peça(s)") + " deste produto no estoque.");
-            
+
                 FindControl("txt_QtdeComposicaoIns", "input", table).value = "";
         }
-        
+
         var exibirPopup = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ExibePopupVidrosEstoque.ToString().ToLower() %>;
         if (exibirPopup && exibirMensagemEstoqueComposicao && (qtdEstoqueMensagemComposicao <= 0 || estoqueMenor))
             openWindow(400, 600, "../Utils/DadosEstoque.aspx?idProd=" + FindControl("hdf_IdProdComposicao", "input", table).value + "&idPedido=" + idPedido);
@@ -665,7 +680,7 @@
         var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
         var isVidroBenef = getNomeControleBenef() != null ? exibirControleBenef(getNomeControleBenef()) && dadosProduto.Grupo == 1 : false;
         var isVidroRoteiro = dadosProduto.Grupo == 1 && <%= UtilizarRoteiroProducao().ToString().ToLower() %>;
-        
+
         if (dadosProduto.IsChapaVidro)
             return true;
 
@@ -681,7 +696,7 @@
                 alert("Informe a aplicação.");
                 return false;
             }
-            
+
             if (FindControl("txt_ProcComposicaoIns", "input", table) != null && FindControl("txt_ProcComposicaoIns", "input", table).value == "")
             {
                 if (isVidroRoteiro && !isObrigarProcApl) {
@@ -693,7 +708,7 @@
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -703,7 +718,7 @@
 
         var tamanhoMaximo = parseFloat(FindControl("hdf_TamanhoMaximoObraComposicao", "input", table).value.replace(",", "."));
         if (tamanhoMaximo > 0)
-        {        
+        {
             var totM2 = parseFloat(FindControl("lbl_TotM2ComposicaoIns", "span", table).innerHTML.replace(",", "."));
             if (totM2 > tamanhoMaximo)
             {
@@ -711,7 +726,7 @@
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -721,16 +736,16 @@
     function onSaveProdComposicao(control, idTbConfigVidro) {
         if (!validate("produtoComposicao"))
             return false;
-            
+
         if (saveProdComposicaoClicked == true)
             return false;
-            
+
         saveProdComposicaoClicked = true;
-        
+
         var tr = buscaTable(control);
 
         atualizaValMinComposicao(tr);
-    
+
         var codProd = FindControl("txt_CodProdComposicaoIns", "input", tr).value;
         var idProd = FindControl("hdf_IdProdComposicao", "input", tr).value;
         var valor = FindControl("txt_ValorComposicaoIns", "input", tr).value;
@@ -746,33 +761,33 @@
             saveProdComposicaoClicked = false;
             return false;
         }
-        
+
         // Verifica se foi clicado no aplicar na telinha de beneficiamentos
         if (FindControl("tb_ConfigVidroComposicao_" + idTbConfigVidro, "table").style.display == "block")
         {
             alert("Aplique as alterações no beneficiamento antes de salvar o item.");
             return false;
         }
-        
+
         if ( tipoVenda != 3 && tipoVenda != 4 && (valor == "" || parseFloat(valor.replace(",", ".")) == 0)) {
             alert("Informe o valor vendido.");
             saveProdComposicaoClicked = false;
             return false;
         }
-        
+
         if (qtde == "0" || qtde == "") {
             alert("Informe a quantidade.");
             saveProdComposicaoClicked = false;
             return false;
         }
-        
+
         valMin = new Number(valMin.replace(',', '.'));
         if (!FindControl("txt_ValorComposicaoIns", "input", tr).disabled && new Number(valor.replace(',', '.')) < valMin) {
             alert("Valor especificado abaixo do valor mínimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
             saveProdComposicaoClicked = false;
             return false;
         }
-        
+
         if (FindControl("txt_AlturaComposicaoIns", "input", tr).disabled == false) {
             if (altura == "" || parseFloat(altura.replace(",", ".")) == 0) {
                 alert("Informe a altura.");
@@ -784,42 +799,42 @@
                 alert("A altura deve ser no máximo " + comprimentoMaxAluminio + "ml.");
                 saveProdComposicaoClicked = false;
                 return false;
-            }            
+            }
         }
-        
+
         // Se o textbox da largura estiver habilitado, deverá ser informada
         if (FindControl("txt_LarguraComposicaoIns", "input", tr).disabled == false && largura == "") {
             alert("Informe a largura.");
             saveProdComposicaoClicked = false;
             return false;
         }
-        
+
         if (!obrigarProcAplComposicao(tr))
         {
             saveProdComposicaoClicked = false;
             return false;
         }
-        
+
         if (!validaTamanhoMaxComposicao(tr))
         {
             saveProdComposicaoClicked = false;
             return false;
         }
-        
+
         // Calcula o ICMS do produto
         var aliquota = FindControl("hdf_AliquotaIcmsProdComposicao", "input", tr);
         var icms = FindControl("hdf_ValorIcmsProdComposicao", "input", tr);
         icms.value = aliquota.value > 0 ? parseFloat(valor) * (parseFloat(aliquota.value) / 100) : 0;
         icms.value = icms.value.toString().replace('.', ',');
-        
+
         if (FindControl("txt_EspessuraComposicao", "input", tr) != null)
             FindControl("txt_EspessuraComposicao", "input", tr).disabled = false;
-        
+
         FindControl("txt_AlturaComposicaoIns", "input", tr).disabled = false;
         FindControl("txt_LarguraComposicaoIns", "input", tr).disabled = false;
         FindControl("txt_ValorComposicaoIns", "input", tr).disabled = false;
         FindControl("txt_QtdeComposicaoIns", "input", tr).disabled = false;
-        
+
         return true;
     }
 
@@ -827,11 +842,11 @@
     function onUpdateProdComposicao(control, idTbConfigVidro) {
         if (!validate("produtoComposicao"))
             return false;
-        
+
         var table = buscaTable(control);
 
         atualizaValMinComposicao(table);
-    
+
         var valor = FindControl("txt_ValorComposicaoIns", "input", table).value;
         var qtde = FindControl("txt_QtdeComposicaoIns", "input", table).value;
         var altura = FindControl("txt_AlturaComposicaoIns", "input", table).value;
@@ -856,8 +871,8 @@
 
         var tipoPedido = FindControl("hdfTipoPedido", "input").value;
         var subgrupoProdComposto = CadPedido.SubgrupoProdComposto(idProd).value;
-        
-        if (tipoVenda != 3 && tipoVenda != 4 && (valor == "" || parseFloat(valor.replace(",", ".")) == 0) && !(tipoPedido == 1 && subgrupoProdComposto)) 
+
+        if (tipoVenda != 3 && tipoVenda != 4 && (valor == "" || parseFloat(valor.replace(",", ".")) == 0) && !(tipoPedido == 1 && subgrupoProdComposto))
         {
             alert("Informe o valor vendido.");
             return false;
@@ -877,13 +892,13 @@
                 return false;
             }
         }
-        
+
         if (!obrigarProcAplComposicao(table))
             return false;
-        
+
         if (!validaTamanhoMaxComposicao(table))
             return false;
-        
+
         // Calcula o ICMS do produto
         var aliquota = FindControl("hdf_AliquotaIcmsProdComposicao", "input", table);
         var icms = FindControl("hdf_ValorIcmsProdComposicao", "input", table);
@@ -892,12 +907,12 @@
 
         if (FindControl("txt_EspessuraComposicao", "input", table) != null)
             FindControl("txt_EspessuraComposicao", "input", table).disabled = false;
-        
+
         FindControl("txt_AlturaComposicaoIns", "input", table).disabled = false;
         FindControl("txt_LarguraComposicaoIns", "input", table).disabled = false;
         FindControl("txt_ValorComposicaoIns", "input", table).disabled = false;
         FindControl("txt_QtdeComposicaoIns", "input", table).disabled = false;
-            
+
         return true;
     }
 
@@ -935,7 +950,7 @@
                     OnClientClick='<%# !(bool)Eval("PodeEditar") ? "mensagemProdutoComDesconto(false); return false" : "if (!confirm(\"Deseja remover esse produto do pedido?\")) return false" %>' />
             </ItemTemplate>
             <EditItemTemplate>
-                <asp:ImageButton ID="imb_AtualizarComposicao" runat="server" CommandName="Update" Height="16px" ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" 
+                <asp:ImageButton ID="imb_AtualizarComposicao" runat="server" CommandName="Update" Height="16px" ImageUrl="~/Images/ok.gif" ToolTip="Atualizar"
                     OnClientClick='<%# "if (!onUpdateProdComposicao(this, &#39;" + IdProdPed + "_" + Eval("IdProdPed") + "&#39;)) return false;" %>' />
                 <asp:ImageButton ID="imb_CancelarComposicao" runat="server" CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Cancelar" />
 
@@ -1039,14 +1054,14 @@
                 <asp:Label ID="lbl_alturaComposicao" runat="server" Text='<%# Bind("AlturaLista") %>'></asp:Label>
             </ItemTemplate>
             <EditItemTemplate>
-                <asp:TextBox ID="txt_AlturaComposicaoIns" runat="server" onblur="calcM2ProdComposicao(this); return verificaEstoqueComposicao(this);"
+                <asp:TextBox ID="txt_AlturaComposicaoIns" runat="server" onblur="GetAdicionalAlturaChapa(); calcM2ProdComposicao(this); return verificaEstoqueComposicao(this);"
                     Text='<%# Bind("Altura") %>' onchange="FindControl('hdf_AlturaRealComposicao', 'input').value = this.value"
                     onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdf_TipoCalcComposicao', 'input').value), true);"
                     Enabled='<%# Eval("AlturaEnabled") %>' Width="50px"></asp:TextBox>
                 <asp:HiddenField ID="hdf_AlturaRealComposicao" runat="server" Value='<%# Bind("AlturaReal") %>' />
             </EditItemTemplate>
             <FooterTemplate>
-                <asp:TextBox ID="txt_AlturaComposicaoIns" runat="server" onblur="calcM2ProdComposicao(this); return verificaEstoqueComposicao(this);"
+                <asp:TextBox ID="txt_AlturaComposicaoIns" runat="server" onblur="GetAdicionalAlturaChapa(); calcM2ProdComposicao(this); return verificaEstoqueComposicao(this);"
                     Width="50px" onchange="FindControl('hdf_AlturaRealComposicao', 'input').value = this.value"
                     onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdf_TipoCalcComposicao', 'input').value), true);"></asp:TextBox>
                 <asp:HiddenField ID="hdf_AlturaRealComposicaoIns" runat="server" />
@@ -1360,7 +1375,7 @@
 </colo:VirtualObjectDataSource>
 
 <script type="text/javascript">
-    
+
     $(document).ready(function(){
         if (FindControl("imb_AtualizarComposicao", "input") != null && FindControl("lbl_CodProdComposicaoIns", "span") != null)
             loadProdutoComposicao(FindControl("lbl_CodProdComposicaoIns", "span").innerHTML, FindControl("imb_AtualizarComposicao", "input"), false);

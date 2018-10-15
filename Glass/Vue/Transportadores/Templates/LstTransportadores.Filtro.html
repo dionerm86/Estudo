@@ -1,0 +1,14 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Código</label>
+            <input type="number" v-model.number="filtroAtual.id" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Nome</label>
+            <input type="text" v-model="filtroAtual.nome" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

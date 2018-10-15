@@ -142,7 +142,7 @@ namespace Glass.Data.RelDAL
                 criterio += string.Format("Funcionário: {0}    ", FuncionarioDAO.Instance.GetNome((uint)idFuncionario));
             }
             
-            if (situacoes?.Count() > 0)
+            if (situacoes?.Any(f => f > 0) ?? false)
             {
                 var filtroSituacoes = " AND (0=1 ";
                 var produtoPedidoProducaoFiltroSituacao = new ProdutoPedidoProducao();
@@ -297,7 +297,7 @@ namespace Glass.Data.RelDAL
                 }
             }
 
-            if (tiposPedido?.Count() > 0)
+            if (tiposPedido?.Any(f => f > 0) ?? false)
             {
                 var critetioTipoPedido = new List<string>();
                 var filtroTiposPedido = new List<Pedido.TipoPedidoEnum>();
@@ -375,7 +375,7 @@ namespace Glass.Data.RelDAL
                     (int)Pedido.TipoPedidoEnum.Producao, (int)LiberarPedido.SituacaoLiberarPedido.Cancelado, (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
             }
 
-            if (pecasProducaoCanceladas?.Count() > 0)
+            if (pecasProducaoCanceladas?.Any(f => f > 0) ?? false)
             {
                 var criterioPecasProducaoCanceladas = new List<string>();
                 var filtroSituacoesProducao = new List<ProdutoPedidoProducao.SituacaoEnum>();

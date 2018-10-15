@@ -23,6 +23,12 @@ namespace Glass.UI.Web.Cadastros
             var grupoCliente = new Glass.Global.Negocios.Entidades.GrupoCliente();
             grupoCliente.Descricao = ((TextBox)grdGrupoCliente.FooterRow.FindControl("txtDescricao")).Text;
 
+            if (string.IsNullOrEmpty(grupoCliente.Descricao))
+            {
+                Glass.MensagemAlerta.ShowMsg("A descrição não pode ser vazia.", Page);
+                return;
+            }
+
             var fluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                 .GetInstance<Glass.Global.Negocios.IClienteFluxo>();
 

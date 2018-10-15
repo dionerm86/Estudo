@@ -21,13 +21,14 @@ namespace WebGlass.Business.Boleto.Fluxo
             var contaBancaria = ObtemContaBancaria(codigoContaBancaria, out banco, out convenio);
 
             var bancoInfo = new Banco(banco);
-
-            var idLoja = FuncionarioDAO.Instance.ObtemIdLoja(cr.Usucad);
+            var idLoja = 0;
 
             if (FinanceiroConfig.FinanceiroRec.UsarLojaDoBancoNoBoleto)
-                idLoja = (uint)ContaBancoDAO.Instance.GetElement(codigoContaBancaria).IdLoja;
+                idLoja = ContaBancoDAO.Instance.GetElement(codigoContaBancaria).IdLoja;
+            else
+                idLoja = (int)FuncionarioDAO.Instance.ObtemIdLoja(cr.Usucad);
 
-            var cedente = ObtemCedente(bancoInfo, idLoja, contaBancaria, convenio);
+            var cedente = ObtemCedente(bancoInfo, (uint)idLoja, contaBancaria, convenio);
 
             var numeroDocumento = ArquivoRemessaDAO.Instance.ObtemNumeroDocumento(idContaR, true, bancoInfo.Codigo, true);
             var nossoNumero = ArquivoRemessaDAO.Instance.ObtemNossoNumero(idContaR, banco, Glass.Conversoes.StrParaInt(carteira),
