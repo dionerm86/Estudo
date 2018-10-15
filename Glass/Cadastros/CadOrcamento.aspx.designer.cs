@@ -7,11 +7,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Glass.UI.Web.Cadastros {
-    
-    
-    public partial class CadOrcamento {
-        
+namespace Glass.UI.Web.Cadastros
+{
+
+
+    public partial class CadOrcamento
+    {
+
+        /// <summary>
+        /// mainTable control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTable mainTable;
+
         /// <summary>
         /// dtvOrcamento control.
         /// </summary>
@@ -20,16 +31,7 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DetailsView dtvOrcamento;
-        
-        /// <summary>
-        /// lnkProduto control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkProduto;
-        
+
         /// <summary>
         /// lnkProjeto control.
         /// </summary>
@@ -38,43 +40,88 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lnkProjeto;
-        
+
         /// <summary>
-        /// grdProdutos control.
+        /// divProduto control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdProdutos;
-        
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divProduto;
+
         /// <summary>
-        /// hdfIdOrca control.
+        /// grdProdutosAmbienteOrcamento control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfIdOrca;
-        
+        protected global::System.Web.UI.WebControls.GridView grdProdutosAmbienteOrcamento;
+
         /// <summary>
-        /// odsFuncionario control.
+        /// lblAmbiente control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsFuncionario;
-        
+        protected global::System.Web.UI.WebControls.Label lblAmbiente;
+
         /// <summary>
-        /// odsOrcamento control.
+        /// odsProdutosAmbienteOrcamento control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsOrcamento;
-        
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsProdutosAmbienteOrcamento;
+
+        /// <summary>
+        /// hdfIdProdAmbienteOrcamento control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdfIdProdAmbienteOrcamento;
+
+        /// <summary>
+        /// grdProdutosOrcamento control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView grdProdutosOrcamento;
+
+        /// <summary>
+        /// odsProdutosOrcamento control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsProdutosOrcamento;
+
+        /// <summary>
+        /// hdfIdProduto control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdfIdProduto;
+
+        /// <summary>
+        /// hdfIdOrcamento control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdfIdOrcamento;
+
         /// <summary>
         /// hdfComissaoVisible control.
         /// </summary>
@@ -83,16 +130,34 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdfComissaoVisible;
-        
+
         /// <summary>
-        /// hdfNaoVendeVidro control.
+        /// hdfProdOrcamentoComposicaoSelecionado control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfNaoVendeVidro;
-        
+        protected global::System.Web.UI.WebControls.HiddenField hdfProdOrcamentoComposicaoSelecionado;
+
+        /// <summary>
+        /// odsFuncionario control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsFuncionario;
+
+        /// <summary>
+        /// odsOrcamento control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsOrcamento;
+
         /// <summary>
         /// odsSituacao control.
         /// </summary>
@@ -101,77 +166,5 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsSituacao;
-        
-        /// <summary>
-        /// ctrlBenef1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Glass.UI.Web.Controls.ctrlBenef ctrlBenef1;
-        
-        /// <summary>
-        /// hdfBenefAltura control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfBenefAltura;
-        
-        /// <summary>
-        /// hdfBenefEspessura control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfBenefEspessura;
-        
-        /// <summary>
-        /// hdfBenefLargura control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfBenefLargura;
-        
-        /// <summary>
-        /// hdfBenefIdProd control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfBenefIdProd;
-        
-        /// <summary>
-        /// hdfBenefQtde control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfBenefQtde;
-        
-        /// <summary>
-        /// hdfBenefTotM control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfBenefTotM;
-        
-        /// <summary>
-        /// hdfBenefValorUnit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfBenefValorUnit;
     }
 }

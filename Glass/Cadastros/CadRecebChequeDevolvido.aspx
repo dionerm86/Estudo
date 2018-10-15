@@ -75,7 +75,7 @@
             FindControl("btnReceber", "input").disabled = false;
             return false;
         }
-        debugger;
+
         if (reapresentado)
         {
             if (idCliente == 0 && !financeiroPagto)

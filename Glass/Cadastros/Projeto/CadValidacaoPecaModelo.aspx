@@ -40,7 +40,7 @@
                 alert("Informe a segunda expressão da validação.");
                 return false;
             }
-            debugger;
+
             if (tipoComparador == null || tipoComparador.value == "") {
                 alert("Informe o tipo de comparador da expressão de validação.");
                 return false;

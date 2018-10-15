@@ -88,8 +88,8 @@ namespace Glass.UI.Web.Controls
             }
             else if (idOrcamento > 0)
             {
-                tipoEntrega = OrcamentoDAO.Instance.ObtemTipoEntrega(idOrcamento.Value);
-                idCliente = OrcamentoDAO.Instance.ObtemIdCliente(idOrcamento.Value);
+                tipoEntrega = OrcamentoDAO.Instance.ObterTipoEntrega(null, (int)idOrcamento.Value);
+                idCliente = (uint)OrcamentoDAO.Instance.ObterIdCliente(null, (int)idOrcamento.Value);
             }
             else if (idPedido > 0 || idPedidoEspelho > 0)
             {
@@ -198,7 +198,7 @@ namespace Glass.UI.Web.Controls
                 {
                     // Deve ser getelement para buscar o texto do orçamento e não apagar o texto no produto/ambiente
                     var itemProj = ItemProjetoDAO.Instance.GetElement(id);
-                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(idOrcamento.Value, itemProj);
+                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(null, (int)idOrcamento.Value, null, itemProj, false);
                 }
             }
             else if (idPedido != null)

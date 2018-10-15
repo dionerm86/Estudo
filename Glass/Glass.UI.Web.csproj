@@ -475,6 +475,10 @@
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamento.ascx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
     <Content Include="Vue\Feriados\Componentes\LstFeriados.js" />
@@ -3603,6 +3607,34 @@
     </Compile>
     <Compile Include="Controls\ctrlPesquisaCliente.ascx.designer.cs">
       <DependentUpon>ctrlPesquisaCliente.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChild.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChild.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoAlterarProcApl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoAlterarProcApl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamento.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamento.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamento.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamento.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\ctrlProdComposicaoAlterarProcApl.ascx.cs">
       <DependentUpon>ctrlProdComposicaoAlterarProcApl.ascx</DependentUpon>

@@ -47,7 +47,7 @@ namespace Glass.UI.Web.Listas
                     StringBuilder beneficiamentos = new StringBuilder();
                     StringBuilder idProdOrca = new StringBuilder();
 
-                    foreach (ProdutosOrcamento p in ProdutosOrcamentoDAO.Instance.GetByProdutoOrcamento(Glass.Conversoes.StrParaUint(Request["idProdOrca"])))
+                    foreach (ProdutosOrcamento p in ProdutosOrcamentoDAO.Instance.ObterProdutosOrcamento(null, Glass.Conversoes.StrParaInt(Request["idProdOrca"]), null))
                     {
                         string formatProd = "new Array('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', {8}, '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}')";
                         string formatBenef = "{0};{1};{2};{3}{4}|";
@@ -182,7 +182,7 @@ namespace Glass.UI.Web.Listas
 
                 var subGrupo = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(prod.IdSubgrupoProd.GetValueOrDefault()) ?? new Glass.Data.Model.SubgrupoProd();
 
-                int? tipoOrcamento = String.IsNullOrEmpty(idOrca) ? null : OrcamentoDAO.Instance.ObtemTipoOrcamento(Glass.Conversoes.StrParaUint(idOrca));
+                int? tipoOrcamento = String.IsNullOrEmpty(idOrca) ? null : OrcamentoDAO.Instance.ObterTipoOrcamento(null, Glass.Conversoes.StrParaInt(idOrca));
 
                 if (prod.Situacao == Glass.Situacao.Inativo)
                     return "Erro;Produto inativo." + (!String.IsNullOrEmpty(prod.Obs) ? " Obs: " + prod.Obs : "");
@@ -479,7 +479,7 @@ namespace Glass.UI.Web.Listas
                         prodOrca.Beneficiamentos = benef;
                     }
 
-                    uint idCliente = OrcamentoDAO.Instance.ObtemIdCliente(prodOrca.IdOrcamento).GetValueOrDefault();
+                    uint idCliente = (uint)OrcamentoDAO.Instance.ObterIdCliente(null, (int)prodOrca.IdOrcamento);
                     decimal custo = 0, total = 0;
                     float altura = prodOrca.AlturaCalc, totM2 = 0, totM2Calc = 0;
                     Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(idCliente, (int)prodOrca.IdProduto.Value, prodOrca.Largura, prodOrca.Qtde.Value, 1, prodOrca.ValorProd.Value, prodOrca.Espessura, prodOrca.Redondo, 1, false,
@@ -495,7 +495,7 @@ namespace Glass.UI.Web.Listas
                 }
 
                 // Atualiza o total do orçamento
-                OrcamentoDAO.Instance.UpdateTotaisOrcamento(idOrca);
+                OrcamentoDAO.Instance.UpdateTotaisOrcamento(null, OrcamentoDAO.Instance.GetElementByPrimaryKey(null, idOrca), false, false);
 
                 return "ok\tOrçamento Gerado com sucesso.\t" + idOrca;
             }
@@ -528,7 +528,6 @@ namespace Glass.UI.Web.Listas
                 prodOrca.IdOrcamento = prodParent.IdOrcamento;
                 prodOrca.IdProdParent = idProd;
                 prodOrca.IdProduto = Glass.Conversoes.StrParaUint(dadosProd[0]);
-                prodOrca.NumSeq = prodParent.NumSeq;
                 prodOrca.Ambiente = prodParent.Ambiente;
                 prodOrca.Descricao = !String.IsNullOrEmpty(dadosProd[9]) ? (dadosProd[9].Length > 500 ? dadosProd[9].Substring(0, 500) : dadosProd[9]) : String.Empty;
                 prodOrca.Total = decimal.Parse(dadosProd[2].Replace('.', ','), System.Globalization.NumberStyles.AllowDecimalPoint);
@@ -557,7 +556,7 @@ namespace Glass.UI.Web.Listas
                     prodOrca.Beneficiamentos = benef;
                 }
 
-                uint idCliente = OrcamentoDAO.Instance.ObtemIdCliente(prodOrca.IdOrcamento).GetValueOrDefault();
+                uint idCliente = (uint)OrcamentoDAO.Instance.ObterIdCliente(null, (int)prodOrca.IdOrcamento);
                 decimal custo = 0, total = 0;
                 float altura = prodOrca.AlturaCalc, totM2 = 0, totM2Calc = 0;
                 Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(idCliente, (int)prodOrca.IdProduto.Value, prodOrca.Largura, prodOrca.Qtde.Value, 1, prodOrca.ValorProd.Value,

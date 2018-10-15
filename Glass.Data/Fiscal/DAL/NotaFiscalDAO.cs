@@ -470,7 +470,7 @@ namespace Glass.Data.DAL
 
                         if (FiscalConfig.NotaFiscalConfig.InformarOrcamentoNFe)
                         {
-                            var idsOrcamentos = OrcamentoDAO.Instance.ObtemIdsOrcamento(transaction, idsPedidos);
+                            var idsOrcamentos = OrcamentoDAO.Instance.ObterIdsOrcamento(transaction, idsPedidos);
 
                             if (!string.IsNullOrWhiteSpace(idsOrcamentos))
                             {

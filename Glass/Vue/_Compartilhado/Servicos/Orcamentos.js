@@ -48,7 +48,7 @@ Servicos.Orcamentos = (function(http) {
       if (!idOrcamento) {
         throw new Error('Orçamento é obrigatório.');
       }
-      debugger;
+
       return http().post(API + idOrcamento + '/gerarPedidosAgrupados');
     },
 

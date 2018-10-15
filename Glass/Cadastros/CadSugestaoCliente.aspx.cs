@@ -42,13 +42,13 @@ namespace Glass.UI.Web.Cadastros
             }
             else if (!string.IsNullOrEmpty(Request["idOrcamento"]))
             {
-                var idCliente = Data.DAL.OrcamentoDAO.Instance.ObtemIdCliente(Request["idOrcamento"].StrParaUint());
+                var idCliente = Data.DAL.OrcamentoDAO.Instance.ObterIdCliente(null, Request["idOrcamento"].StrParaInt());
 
-                if (idCliente.GetValueOrDefault() == 0)
+                if (idCliente == 0)
                     lblCliente.Visible = lblInfoNomeCli.Visible = false;
                 else
                 {
-                    lblCliente.Text = Data.DAL.ClienteDAO.Instance.GetNome(idCliente.Value);
+                    lblCliente.Text = Data.DAL.ClienteDAO.Instance.GetNome((uint)idCliente);
                     hdfCliente.Value = Request["idCliente"];
 
                     lblInfoCli.Visible = false;
@@ -89,7 +89,7 @@ namespace Glass.UI.Web.Cadastros
             else if (!string.IsNullOrEmpty(Request["idOrcamento"]))
             {
                 idOrcamento = Request["idOrcamento"].StrParaUint();
-                idCli = (int)Data.DAL.OrcamentoDAO.Instance.ObtemIdCliente(Request["idOrcamento"].StrParaUint()).GetValueOrDefault();
+                idCli = (int)Data.DAL.OrcamentoDAO.Instance.ObterIdCliente(null, (int)Request["idOrcamento"].StrParaUint());
             }
             else
             {

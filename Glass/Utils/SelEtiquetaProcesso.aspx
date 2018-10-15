@@ -8,20 +8,16 @@
     <script type="text/javascript">
 
         function setProc(idProcesso, codInterno, descr, codAplicacao) {
-
-            if (GetQueryString("buscaComPopup") === "true") {
-                var idControle = GetQueryString("id-controle");
-                if (idControle) {
-                    window.opener.Busca.Popup.atualizar(idControle, null, codInterno);
-                    closeWindow();
-                    return;
-                }
+            if (GetQueryString("idProdPed") != "" && GetQueryString("idProdPed") != 'undefined' && GetQueryString("idProdPed") != null) {
+                window.opener.setProcComposicao(idProcesso, codInterno, codAplicacao, GetQueryString("idProdPed"));
+            }
+            else if (GetQueryString("idProdOrcamento") != "" && GetQueryString("idProdOrcamento") != 'undefined' && GetQueryString("idProdOrcamento") != null) {
+                window.opener.setProcComposicao(idProcesso, codInterno, codAplicacao, GetQueryString("idProdOrcamento"));
+            }
+            else {
+                window.opener.setProc(idProcesso, codInterno, codAplicacao, GetQueryString("idControle"));
             }
 
-            if (GetQueryString("idProdPed") != "" && GetQueryString("idProdPed") != 'undefined' && GetQueryString("idProdPed") != null)
-                window.opener.setProcComposicao(idProcesso, codInterno, codAplicacao, GetQueryString("idProdPed"));
-            else
-                window.opener.setProc(idProcesso, codInterno, codAplicacao, GetQueryString("idControle"));
             closeWindow();
         }
 

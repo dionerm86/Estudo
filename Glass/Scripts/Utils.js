@@ -15,9 +15,11 @@ function FindControl(id, tipo, parent)
     parent = typeof parent == "object" ? parent : document;
     var listaControles = parent.getElementsByTagName(tipo);
 
-    for (var i = 0; i < listaControles.length; i++)
-        if (listaControles[i].id.indexOf(id) != -1)
+    for (var i = 0; i < listaControles.length; i++) {
+        if (listaControles[i].id.indexOf(id) != -1 && listaControles[i].id.substring(listaControles[i].id.indexOf(id)) == id) {
             return listaControles[i];
+        }
+    }
 
     return null;
 }

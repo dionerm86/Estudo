@@ -2390,7 +2390,7 @@ namespace Glass.Data.DAL
                     if (PossuiOrcamentoGerado(session, idPedido))
                     {
                         idOrcamento = ObtemIdOrcamentoGerado(session, idPedido);
-                        if (OrcamentoDAO.Instance.ObtemSituacao(session, idOrcamento) == (int)Orcamento.SituacaoOrcamento.EmAberto)
+                        if (OrcamentoDAO.Instance.ObterSituacao(session, (int)idOrcamento) == (int)Orcamento.SituacaoOrcamento.EmAberto)
                             GeraOrcamento(session, idPedido, idOrcamento);
                     }
                     else
@@ -2514,9 +2514,6 @@ namespace Glass.Data.DAL
                         IdOrcamento = idOrcamento.Value,
                         IdProdParent = idProdParent,
                         IdProduto = mip.IdProd,
-                        NumSeq =
-                            ProdutosOrcamentoDAO.Instance.ObtemValorCampo<uint>(sessao, "numSeq",
-                                "idProd=" + idProdParent),
                         Ambiente = ip.Ambiente,
                         Descricao = ProdutoDAO.Instance.GetDescrProduto(sessao, (int)mip.IdProd),
                         Total = mip.Total,

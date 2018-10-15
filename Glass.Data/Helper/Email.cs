@@ -340,9 +340,9 @@ namespace Glass.Data.Helper
         {
             try
             {
-                var idCli = OrcamentoDAO.Instance.ObtemIdCliente(sessao, idOrcamento);
+                var idCli = OrcamentoDAO.Instance.ObterIdCliente(sessao, (int)idOrcamento);
 
-                var email = ClienteDAO.Instance.GetEmail(sessao, idCli.GetValueOrDefault(0));
+                var email = ClienteDAO.Instance.GetEmail(sessao, (uint)idCli);
                 if (string.IsNullOrEmpty(email))
                     return;
 

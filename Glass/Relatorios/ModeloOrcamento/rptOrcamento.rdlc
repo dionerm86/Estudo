@@ -605,10 +605,6 @@
           <DataField>IdProdParent</DataField>
           <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
         </Field>
-        <Field Name="NumSeq">
-          <DataField>NumSeq</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
         <Field Name="Espessura">
           <DataField>Espessura</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>

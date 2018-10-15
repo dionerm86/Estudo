@@ -771,6 +771,7 @@
     <Compile Include="NFeUtils\IRetornoAutorizacao.cs" />
     <Compile Include="NFeUtils\IStatusServico.cs" />
     <Compile Include="Orcamento\DAL\FotosOrcamentoDAO.cs" />
+    <Compile Include="Orcamento\DAL\ProdutosOrcamentoDAO.Ambiente.cs" />
     <Compile Include="Orcamento\Model\OrcamentoRentabilidade.cs" />
     <Compile Include="Orcamento\Model\ProdutoOrcamentoRentabilidade.cs" />
     <Compile Include="Otimizacao\Model\PecaPlanoCorte.cs" />

@@ -65,7 +65,6 @@
             else if (IdAcertoCheque > 0)
                 openWindow(600, 800, "RelBase.aspx?rel=AcertoCheque&idAcertoCheque=" + IdAcertoCheque);
             else if (IdContaR > 0) {
-                debugger;
                 var idAcertoParcial = ListaCredito.ObterIdAcertoParcial(IdContaR);
                 var idObra = ListaCredito.ObterIdObra(IdContaR);
 

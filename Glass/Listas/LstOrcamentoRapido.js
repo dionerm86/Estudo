@@ -703,7 +703,7 @@ function setCliente(idCli, Nome, windowSel) {
     catch (err) {
         alert(err);
     }
-    debugger;
+
     /* Chamado 33666. */
     var windowSelExiste = false;
 

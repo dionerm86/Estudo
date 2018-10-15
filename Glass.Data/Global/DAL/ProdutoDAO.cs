@@ -3121,8 +3121,8 @@ namespace Glass.Data.DAL
             {
                 id = idOrcamento.Value;
                 tipo = ContainerCalculoDTO.TipoContainer.Orcamento;
-                tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, idOrcamento.Value).GetValueOrDefault();
-                idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, idOrcamento.Value).GetValueOrDefault();
+                tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, (int)idOrcamento.Value).GetValueOrDefault();
+                idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, (int)idOrcamento.Value).GetValueOrDefault();
             }
 
             #endregion

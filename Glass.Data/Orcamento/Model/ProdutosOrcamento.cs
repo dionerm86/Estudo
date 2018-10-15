@@ -29,11 +29,17 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDPROD", PersistenceParameterType.IdentityKey)]
         public uint IdProd { get; set; }
 
+        [PersistenceProperty("IDPRODORCAMENTOPARENT")]
+        public int? IdProdOrcamentoParent { get; set; }
+
         [PersistenceProperty("IDORCAMENTO")]
         public uint IdOrcamento { get; set; }
 
         [PersistenceProperty("IDITEMPROJETO")]
         public uint? IdItemProjeto { get; set; }
+
+        [PersistenceProperty("IDMATERITEMPROJ")]
+        public int? IdMaterItemProj { get; set; }
 
         [PersistenceProperty("IDPRODUTO")]
         public uint? IdProduto { get; set; }
@@ -108,8 +114,8 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDPRODPARENT")]
         public uint? IdProdParent { get; set; }
 
-        [PersistenceProperty("NUMSEQ")]
-        public uint NumSeq { get; set; }
+        [PersistenceProperty("IDPRODBAIXAEST")]
+        public int? IdProdBaixaEst { get; set; }
 
         [PersistenceProperty("ESPESSURA")]
         public float Espessura { get; set; }
@@ -135,11 +141,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORIPI")]
         public decimal ValorIpi { get; set; }
 
-        [PersistenceProperty("NEGOCIAR", DirectionParameter.Input)]
+        [PersistenceProperty("NEGOCIAR")]
         public bool Negociar { get; set; }
 
-        [PersistenceProperty("IDPRODPED", DirectionParameter.Input)]
-        public uint? IdProdPed { get; set; }
+        [PersistenceProperty("IDAMBIENTEPEDIDO", DirectionParameter.Input)]
+        public int? IdAmbientePedido { get; set; }
 
         [PersistenceProperty("TIPODESCONTO")]
         public int TipoDesconto { get; set; }
@@ -195,6 +201,165 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDAPLICACAO")]
         public uint? IdAplicacao { get; set; }
 
+        [PersistenceProperty("IDNATUREZAOPERACAO")]
+        public uint? IdNaturezaOperacao { get; set; }
+
+        /// <summary>
+        /// Base de calculo COFINS
+        /// </summary>
+        [PersistenceProperty("BCCOFINS")]
+        public decimal BcCofins { get; set; }
+
+        /// <summary>
+        /// Alíquota CONFINS
+        /// </summary>
+        [PersistenceProperty("ALIQCOFINS")]
+        public float AliqCofins { get; set; }
+
+        /// <summary>
+        /// Valor COFINS
+        /// </summary>
+        [PersistenceProperty("VALORCOFINS")]
+        public decimal ValorCofins { get; set; }
+
+        /// <summary>
+        /// Base de calculo ICMS
+        /// </summary>
+        [PersistenceProperty("BCICMS")]
+        public decimal BcIcms { get; set; }
+
+        /// <summary>
+        /// Valor do ICMS desonerado
+        /// </summary>
+        [PersistenceProperty("VALORICMSDESONERADO")]
+        public decimal ValorIcmsDesonerado { get; set; }
+
+        /// <summary>
+        /// Percentual de crédito base calculo ICMS
+        /// </summary>
+        [PersistenceProperty("PERCREDBCICMS")]
+        public float PercRedBcIcms { get; set; }
+
+        /// <summary>
+        /// Base de calculo ICMSST
+        /// </summary>
+        [PersistenceProperty("BCICMSST")]
+        public decimal BcIcmsSt { get; set; }
+
+        /// <summary>
+        /// Alíquota ICMSST
+        /// </summary>
+        [PersistenceProperty("ALIQICMSST")]
+        public float AliqIcmsSt { get; set; }
+
+        /// <summary>
+        /// Valor do ICMSST
+        /// </summary>
+        [PersistenceProperty("VALORICMSST")]
+        public decimal ValorIcmsSt { get; set; }
+
+        /// <summary>
+        /// Percentual de crédito base calculo ICMSST
+        /// </summary>
+        [PersistenceProperty("PERCREDBCICMSST")]
+        public decimal PercRedBcIcmsSt { get; set; }
+
+        /// <summary>
+        /// Base de calculo PIS
+        /// </summary>
+        [PersistenceProperty("BCPIS")]
+        public decimal BcPis { get; set; }
+
+        /// <summary>
+        /// Aliquota PIS
+        /// </summary>
+        [PersistenceProperty("ALIQPIS")]
+        public float AliqPis { get; set; }
+
+        /// <summary>
+        /// Valor PIS
+        /// </summary>
+        [PersistenceProperty("VALORPIS")]
+        public decimal ValorPis { get; set; }
+
+        /// <summary>
+        /// CST
+        /// </summary>
+        [PersistenceProperty("CST")]
+        public int Cst { get; set; }
+
+        /// <summary>
+        /// CSOSN
+        /// </summary>
+        [PersistenceProperty("CSOSN")]
+        public int Csosn { get; set; }
+
+        /// <summary>
+        /// CST COFINS
+        /// </summary>
+        [PersistenceProperty("CSTCOFINS")]
+        public Sync.Fiscal.Enumeracao.Cst.CstPisCofins? CstCofins { get; set; }
+
+        /// <summary>
+        /// CST PIS
+        /// </summary>
+        [PersistenceProperty("CSTPIS")]
+        public Sync.Fiscal.Enumeracao.Cst.CstPisCofins? CstPis { get; set; }
+
+        /// <summary>
+        /// MVA
+        /// </summary>
+        [PersistenceProperty("MVA")]
+        public float Mva { get; set; }
+
+        /// <summary>
+        /// Código do valor fiscal de ICMS do produto do pedido
+        /// </summary>
+        [PersistenceProperty("CODVALORFISCAL")]
+        public int? CodValorFiscal { get; set; }
+
+        /// <summary>
+        /// Cód de subistituição tributaria do IPI
+        /// </summary>
+        [PersistenceProperty("CSTIPI")]
+        public Sync.Fiscal.Enumeracao.Cst.CstIpi? CstIpi { get; set; }
+
+        /// <summary>
+        /// Base de calc. do FCP ST
+        /// </summary>
+        [PersistenceProperty("BCFCPST")]
+        public decimal BcFcpSt { get; set; }
+
+        /// <summary>
+        /// Aliquota do FCP ST
+        /// </summary>
+        [PersistenceProperty("ALIQFCPST")]
+        public float AliqFcpSt { get; set; }
+
+        /// <summary>
+        /// Valor do FCP ST
+        /// </summary>
+        [PersistenceProperty("VALORFCPST")]
+        public decimal ValorFcpSt { get; set; }
+
+        /// <summary>
+        /// Base de calc. do FCP
+        /// </summary>
+        [PersistenceProperty("BCFCP")]
+        public decimal BcFcp { get; set; }
+
+        /// <summary>
+        /// Aliquota do FCP
+        /// </summary>
+        [PersistenceProperty("ALIQFCP")]
+        public float AliqFcp { get; set; }
+
+        /// <summary>
+        /// Valor do FCP
+        /// </summary>
+        [PersistenceProperty("VALORFCP")]
+        public decimal ValorFcp { get; set; }
+
         /// <summary>
         /// Percentual da rentabilidade.
         /// </summary>
@@ -211,14 +376,17 @@ namespace Glass.Data.Model
 
         #region Propriedades Estendidas
 
+        private decimal _totalProdutos;
+
+        [PersistenceProperty("TOTALPRODUTOS", DirectionParameter.InputOptional)]
+        public decimal TotalProdutos
+        {
+            get { return _totalProdutos - (!PedidoConfig.RatearDescontoProdutos ? ValorDescontoAtualAmbiente : 0); }
+            set { _totalProdutos = value; }
+        }
+
         [PersistenceProperty("NUMCHILD", DirectionParameter.InputOptional)]
         public long? NumChild { get; set; }
-
-        [PersistenceProperty("IDGRUPOPROD", DirectionParameter.InputOptional)]
-        public int? IdGrupoProd { get; set; }
-
-        [PersistenceProperty("IDSUBGRUPOPROD", DirectionParameter.InputOptional)]
-        public int? IdSubgrupoProd { get; set; }
 
         [PersistenceProperty("CODINTERNO", DirectionParameter.InputOptional)]
         public string CodInterno { get; set; }
@@ -252,9 +420,27 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("CODAPLICACAO", DirectionParameter.InputOptional)]
         public string CodAplicacao { get; set; }
-        
+
         [PersistenceProperty("ISBENEFICIAMENTO", DirectionParameter.InputOptional)]
         public bool IsBeneficiamento { get; set; }
+
+        [PersistenceProperty("IDMATERPROJMOD", DirectionParameter.InputOptional)]
+        public int? IdMaterProjMod { get; set; }
+
+        [PersistenceProperty("IDPECAITEMPROJ", DirectionParameter.InputOptional)]
+        public int? IdPecaItemProj { get; set; }
+
+        private string _m2Minimo;
+
+        [PersistenceProperty("AreaMinima", DirectionParameter.InputOptional)]
+        public string M2Minimo
+        {
+            get { return !string.IsNullOrWhiteSpace(_m2Minimo) ? _m2Minimo.ToString().Replace(',', '.') : "0"; }
+            set { _m2Minimo = value; }
+        }
+
+        [PersistenceProperty("CODNATUREZAOPERACAO", DirectionParameter.InputOptional)]
+        public string CodNaturezaOperacao { get; set; }
 
         [XmlIgnore]
         [PersistenceProperty("PecaOtimizada", DirectionParameter.InputOptional)]
@@ -273,6 +459,8 @@ namespace Glass.Data.Model
         #region Propriedades de Suporte
 
         #region Métodos internos estáticos
+
+        #region Produto orçamento
 
         internal static decimal GetTotalSemDesconto(ProdutosOrcamento p)
         {
@@ -309,24 +497,223 @@ namespace Glass.Data.Model
 
         #endregion
 
+        #region Produto ambiente orçamento
+
+        internal static decimal ObterValorDescontoAmbiente(ProdutosOrcamento produtoAmbiente)
+        {
+            return produtoAmbiente.TipoDesconto == 1 ? (decimal)produtoAmbiente._totalProdutos * (produtoAmbiente.Desconto / 100) : produtoAmbiente.Desconto;
+        }
+
+        #endregion
+
+        #endregion
+
+        /// <summary>
+        /// Identificador do processo das peças filhas
+        /// que é informado na insersão do produto no pedido
+        /// </summary>
+        public int? IdProcessoFilhas { get; set; }
+
+        /// <summary>
+        /// Identificador do processo das peças filhas
+        /// que é informado na insersão do produto no pedido
+        /// </summary>
+        public int? IdAplicacaoFilhas { get; set; }
+
+        public bool AplicarBenefComposicao { get; set; }
+
+        public string AlturaLista
+        {
+            get
+            {
+                if (IdGrupoProd != (uint)NomeGrupoProd.Alumínio)
+                {
+                    return Altura.ToString();
+                }
+                else
+                {
+                    return Altura != AlturaCalc ? (AlturaCalc > 0 ? $"{ AlturaCalc.ToString() } ({ Altura.ToString() })" : Altura.ToString()) : Altura.ToString();
+                }
+            }
+        }
+
+        public bool ProjetoVisible
+        {
+            get { return IdItemProjeto > 0 && IdMaterItemProj.GetValueOrDefault() == 0; }
+        }
+
+        public bool PodeEditar
+        {
+            get
+            {
+                if (!PedidoConfig.RatearDescontoProdutos)
+                {
+                    return true;
+                }
+
+                var descontoOrcamento = OrcamentoDAO.Instance.ObterDesconto(null, (int)IdOrcamento);
+                var descontoAmbiente = ProdutosOrcamentoDAO.Instance.ObterDesconto(null, (int)IdProd);
+                return (descontoOrcamento + descontoAmbiente) == 0;
+            }
+        }
+
+        public bool PodeEditarComposicao
+        {
+            get
+            {
+                // Se o produto for composição e tipo subgrupo Vidro Laminado ou a forma de pagamento for Obra.
+                if (IdProdOrcamentoParent > 0 && ProdutosOrcamentoDAO.Instance.VerificarProdutoLaminado(null, IdProdOrcamentoParent.Value))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        public bool DeleteVisible
+        {
+            get
+            {
+                if (IdProdOrcamentoParent > 0 && ProdutosOrcamentoDAO.Instance.VerificarProdutoLaminado(null, IdProdOrcamentoParent.Value))
+                {
+                    return false;
+                }
+
+                if (IdMaterItemProj == null)
+                {
+                    return true;
+                }
+
+                return MaterialItemProjetoDAO.Instance.GetElement((uint)IdMaterItemProj.Value).DeleteVisible;
+            }
+        }
+
+        private int? _idGrupoProd;
+
+        public int? IdGrupoProd
+        {
+            get
+            {
+                if (IdProduto > 0 && _idGrupoProd.GetValueOrDefault() == 0)
+                {
+                    _idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(null, (int)IdProduto);
+                }
+
+                return _idGrupoProd;
+            }
+        }
+
+        private int? _idSubgrupoProd;
+
+        public int? IdSubgrupoProd
+        {
+            get
+            {
+                if (IdProduto > 0 && _idSubgrupoProd.GetValueOrDefault() == 0)
+                {
+                    _idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(null, (int)IdProduto);
+                }
+
+                return _idSubgrupoProd;
+            }
+        }
+
+        public string IsVidro
+        {
+            get { return GrupoProdDAO.Instance.IsVidro(IdGrupoProd.GetValueOrDefault()).ToString().ToLower(); }
+        }
+
+        public string IsAluminio
+        {
+            get { return GrupoProdDAO.Instance.IsAluminio(IdGrupoProd.GetValueOrDefault()).ToString().ToLower(); }
+        }
+
+        private int _tipoCalc;
+
+        public int TipoCalc
+        {
+            get
+            {
+                if (IdProduto > 0 && IdGrupoProd > 0 && _tipoCalc == 0)
+                {
+                    _tipoCalc = GrupoProdDAO.Instance.TipoCalculo(IdGrupoProd.Value, IdSubgrupoProd.Value);
+                }
+
+                return _tipoCalc;
+            }
+        }
+
+        public bool IsProdLamComposicao
+        {
+            get
+            {
+                if (IdProduto > 0)
+                {
+                    var idsSubgrupoComposicao = new List<int>() { (int)TipoSubgrupoProd.VidroLaminado, (int)TipoSubgrupoProd.VidroDuplo };
+
+                    return OrcamentoDAO.Instance.ObterTipoOrcamento(null, (int)IdOrcamento) == (int)Orcamento.TipoOrcamentoEnum.Venda &&
+                        idsSubgrupoComposicao.Contains((int)SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(null, (int)IdProduto));
+                }
+
+                return false;
+            }
+        }
+
+        public bool IsProdLamComposicaoComFilho
+        {
+            get
+            {
+                if (IdProduto > 0)
+                {
+                    var idsSubgrupoComposicao = new List<int>() { (int)TipoSubgrupoProd.VidroLaminado, (int)TipoSubgrupoProd.VidroDuplo };
+
+                    return OrcamentoDAO.Instance.ObterTipoOrcamento(null, (int)IdOrcamento) == (int)Orcamento.TipoOrcamentoEnum.Venda &&
+                        idsSubgrupoComposicao.Contains((int)SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(null, (int)IdProduto)) &&
+                        ProdutosOrcamentoDAO.Instance.VerificarTemFilhoComposicao(null, (int)IdProd) && IdProdOrcamentoParent > 0;
+                }
+
+                return false;
+            }
+        }
+
+        public bool AlturaEnabled
+        {
+            get { return Glass.Calculos.AlturaEnabled(TipoCalc); }
+        }
+
+        public bool LarguraEnabled
+        {
+            get { return Glass.Calculos.LarguraEnabled(TipoCalc); }
+        }
+
+        public bool BenefVisible
+        {
+            get
+            {
+                return (GrupoProdDAO.Instance.IsVidro((int)IdGrupoProd) || Geral.UsarBeneficiamentosTodosOsGrupos) && !Geral.NaoVendeVidro();
+            }
+        }
+
         public string ImagemProjModPath { get; set; }
 
         public string NumItem { get; set; }
 
         public string DadosProdutos { get; set; }
 
-        public bool TemItensProduto
-        {
-            get
-            {
-                return TemItensProdutoSession(null);
-            }
-        }
-
+        /// <summary>
+        /// Obtém um valor que indica se o produto é um ambiente de orçamento.
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <returns>True: o produto é um ambiente; False: o produto não é um ambiente;</returns>
         public bool TemItensProdutoSession(GDASession session)
         {
             if (NumChild == null)
-                NumChild = ProdutosOrcamentoDAO.Instance.ContainsChildItems(session, IdProd) ? 1 : 0;
+            {
+                NumChild = ProdutosOrcamentoDAO.Instance.VerificarPossuiProduto(session, (int)IdProd)
+                    ? 1
+                    : 0;
+            }
 
             return NumChild > 0;
         }
@@ -339,8 +726,7 @@ namespace Glass.Data.Model
             {
                 if (_custoUnit == null && IdProduto != null)
                 {
-                    Produto prod = ProdutoDAO.Instance.GetElement(IdProduto.Value);
-                    _custoUnit = prod.CustoCompra;
+                    _custoUnit = ProdutoDAO.Instance.ObtemCustoCompra(null, (int)IdProduto);
                 }
 
                 return _custoUnit.GetValueOrDefault();
@@ -365,14 +751,9 @@ namespace Glass.Data.Model
             get { return TipoAcrescimo == 1 ? Acrescimo + "%" : Acrescimo.ToString("C"); }
         }
 
-        public decimal ValorDescontoAtual
+        public decimal ValorDescontoAtualAmbiente
         {
-            get { return GetValorDesconto(this); }
-        }
-
-        public decimal ValorAcrescimoAtual
-        {
-            get { return GetValorAcrescimo(this); }
+            get { return ObterValorDescontoAmbiente(this); }
         }
 
         public string DescrObsProj
@@ -404,28 +785,6 @@ namespace Glass.Data.Model
             }
         }
 
-        /// <summary>
-        /// Indica se o produto pode ser editado no orçamento
-        /// (se o pedido não tem desconto, ou se a empresa não rateia o desconto).
-        /// </summary>
-        public bool PodeEditar
-        {
-            get
-            {
-                if (!PedidoConfig.RatearDescontoProdutos)
-                    return true;
-
-                decimal descontoOrcamento = OrcamentoDAO.Instance.ObtemValorCampo<decimal>("desconto", "idOrcamento=" + IdOrcamento);
-                decimal descontoAmbiente = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<decimal>("desconto", "idProd=" + IdProdParent.GetValueOrDefault());
-                return (descontoOrcamento + descontoAmbiente) == 0;
-            }
-        }
-
-        public bool DescontoAcrescimoPermitido
-        {
-            get { return PedidoConfig.DadosPedido.AmbientePedido || IdItemProjeto > 0; }
-        }
-
         public decimal TotalAmbiente
         {
             get
@@ -451,6 +810,26 @@ namespace Glass.Data.Model
         public bool IsVidroEstoqueQtde
         {
             get { return TipoCalculoUsado == (int)TipoCalculoGrupoProd.Qtd && GrupoProdDAO.Instance.IsVidro((int)IdGrupoProd) && SubgrupoProdDAO.Instance.IsProdutoEstoque((int)IdSubgrupoProd); }
+        }
+
+        public string DescricaoProdutoComBenef
+        {
+            get
+            {
+                var retorno = DescrProduto;
+
+                if (Redondo && !BenefConfigDAO.Instance.CobrarRedondo() && !retorno.ToLower().Contains("redondo"))
+                {
+                    retorno += " REDONDO";
+                }
+
+                if (Beneficiamentos != null && Beneficiamentos.Count > 0)
+                {
+                    retorno += string.Format("\n{0}", Beneficiamentos.DescricaoBeneficiamentos);
+                }
+
+                return retorno;
+            }
         }
 
         #endregion

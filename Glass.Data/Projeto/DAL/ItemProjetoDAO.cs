@@ -614,8 +614,8 @@ namespace Glass.Data.DAL
 
                         if (idOrcamento > 0)
                         {
-                            idCliente = OrcamentoDAO.Instance.ObtemIdCliente(transaction, idOrcamento);
-                            tipoEntrega = OrcamentoDAO.Instance.ObtemTipoEntrega(transaction, idOrcamento);
+                            idCliente = (uint?)OrcamentoDAO.Instance.ObterIdCliente(transaction, (int)idOrcamento);
+                            tipoEntrega = OrcamentoDAO.Instance.ObterTipoEntrega(transaction, (int)idOrcamento);
                         }
 
                         if (idPedido > 0)
@@ -659,11 +659,12 @@ namespace Glass.Data.DAL
                             ProjetoDAO.Instance.UpdateTotalProjeto(transaction, idProjeto.Value);
                         else if (_idOrcamento > 0)
                         {
-                            uint idProd = ProdutosOrcamentoDAO.Instance.ObtemIdProdutoPorIdItemProjeto(transaction, itemProjeto.IdItemProjeto);
-                            if (idProd > 0)
-                                ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(transaction, idProd);
+                            var idProd = ProdutosOrcamentoDAO.Instance.ObterIdProdOrcamentoPeloIdItemProjeto(transaction, (int)itemProjeto.IdItemProjeto);
 
-                            OrcamentoDAO.Instance.UpdateTotaisOrcamento(transaction, _idOrcamento.Value);
+                            if (idProd > 0)
+                                ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(transaction, ProdutosOrcamentoDAO.Instance.GetElementByPrimaryKey(transaction, (uint)idProd));
+
+                            OrcamentoDAO.Instance.UpdateTotaisOrcamento(transaction, OrcamentoDAO.Instance.GetElementByPrimaryKey(transaction, _idOrcamento.Value), false, false);
                         }
 
                         #endregion
@@ -690,12 +691,12 @@ namespace Glass.Data.DAL
                             ProjetoDAO.Instance.UpdateTotalProjeto(transaction, idProjeto);
                         else if (idOrcamento > 0)
                         {
-                            var idProd = ProdutosOrcamentoDAO.Instance.ObtemIdProdutoPorIdItemProjeto(transaction, itemProjeto.IdItemProjeto);
+                            var idProd = ProdutosOrcamentoDAO.Instance.ObterIdProdOrcamentoPeloIdItemProjeto(transaction, (int)itemProjeto.IdItemProjeto);
 
                             if (idProd > 0)
-                                ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(transaction, idProd);
+                                ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(transaction, ProdutosOrcamentoDAO.Instance.GetElementByPrimaryKey(transaction, (uint)idProd));
 
-                            OrcamentoDAO.Instance.UpdateTotaisOrcamento(transaction, idOrcamento);
+                            OrcamentoDAO.Instance.UpdateTotaisOrcamento(transaction, OrcamentoDAO.Instance.GetElementByPrimaryKey(transaction, idOrcamento), false, false);
                         }
 
                         #endregion
@@ -738,7 +739,7 @@ namespace Glass.Data.DAL
                     }
 
                     if (idOrcamento > 0)
-                        idAmbienteNovo = ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(transaction, idOrcamento, itemProjeto);
+                        idAmbienteNovo = (uint)ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(transaction, (int)idOrcamento, null, itemProjeto, false);
 
                     if (idPedido > 0)
                     {
@@ -1140,7 +1141,7 @@ namespace Glass.Data.DAL
             {
                 // Insere/Atualiza produto no orçamento/pedido/pedido espelho
                 if (idOrcamento > 0)
-                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(session, idOrcamento.Value, itemProj);
+                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(session, (int)idOrcamento.Value, null, itemProj, false);
 
                 // Insere/Atualiza produto no pedido, caso esteja sendo inserido projeto no pedido
                 if (idPedido > 0)
@@ -1593,7 +1594,7 @@ namespace Glass.Data.DAL
             else if ((idOrcamento = ObtemValorCampo<uint?>(session, "idOrcamento", "idItemProjeto=" + idItemProjeto)) > 0)
             {
                 tipoEntrega = OrcamentoDAO.Instance.ObtemValorCampo<int?>(session, "tipoEntrega", "idOrcamento=" + idOrcamento);
-                idCliente = OrcamentoDAO.Instance.ObtemIdCliente(session, idOrcamento.Value);
+                idCliente = (uint?)OrcamentoDAO.Instance.ObterIdCliente(session, (int)idOrcamento.Value);
                 isReposicao = false;
             }
             else if ((idPedido = ObtemValorCampo<uint?>(session, "idPedido", "idItemProjeto=" + idItemProjeto)) > 0 ||
@@ -1714,7 +1715,7 @@ namespace Glass.Data.DAL
 
                         if (idOrcamento > 0 || itemProjeto.IdOrcamento > 0)
                         {
-                            uint? idProd = ProdutosOrcamentoDAO.Instance.GetIdByIdItemProjeto(transaction, idItemProjeto);
+                            uint? idProd = (uint?)ProdutosOrcamentoDAO.Instance.ObterIdProdOrcamentoPeloIdItemProjeto(transaction, (int)idItemProjeto);
                             if (idProd > 0)
                                 ProdutosOrcamentoDAO.Instance.DeleteByPrimaryKeyExcluirProjeto(transaction, idProd.Value);
                             else
@@ -1895,9 +1896,9 @@ namespace Glass.Data.DAL
             {
                 uint idProd = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<uint>(session, "idProd", "idItemProjeto=" + objUpdate.IdItemProjeto);
                 if (idProd > 0)
-                    ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, idProd);
+                    ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, ProdutosOrcamentoDAO.Instance.GetElementByPrimaryKey(session, idProd));
 
-                OrcamentoDAO.Instance.UpdateTotaisOrcamento(session, objUpdate.IdOrcamento.Value);
+                OrcamentoDAO.Instance.UpdateTotaisOrcamento(session, OrcamentoDAO.Instance.GetElementByPrimaryKey(session, objUpdate.IdOrcamento.Value), false, false);
             }
 
             return ret;

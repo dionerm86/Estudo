@@ -283,11 +283,11 @@ namespace Glass.UI.Web.WebGlassParceiros
                     ProjetoDAO.Instance.UpdateTotalProjeto(idProjeto.Value);
                 else if (idOrc > 0)
                 {
-                    uint idProd = ProdutosOrcamentoDAO.Instance.ObtemIdProdutoPorIdItemProjeto(idItemProjeto);
+                    var idProd = ProdutosOrcamentoDAO.Instance.ObterIdProdOrcamentoPeloIdItemProjeto(null, (int)idItemProjeto);
                     if (idProd > 0)
-                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(idProd);
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(null, ProdutosOrcamentoDAO.Instance.GetElementByPrimaryKey(null, (int)idProd));
     
-                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(idOrc.Value);
+                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(null, OrcamentoDAO.Instance.GetElementByPrimaryKey(null, idOrc.Value), false, false);
                 }
             }
             catch (Exception ex)
@@ -585,7 +585,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         {
             uint idOrcamento = !String.IsNullOrEmpty(idOrcamentoStr) ? Glass.Conversoes.StrParaUint(idOrcamentoStr) : 0;
     
-            return OrcamentoDAO.Instance.ExistsOrcamentoEmAberto(idOrcamento).ToString().ToLower();
+            return OrcamentoDAO.Instance.ExistsOrcamentoEmAberto(null, (int?)idOrcamento).ToString().ToLower();
         }
     
         [Ajax.AjaxMethod()]
@@ -1038,11 +1038,11 @@ namespace Glass.UI.Web.WebGlassParceiros
                     ProjetoDAO.Instance.UpdateTotalProjeto(idProjeto.Value);
                 else if (idOrcamento > 0)
                 {
-                    uint idProd = ProdutosOrcamentoDAO.Instance.ObtemIdProdutoPorIdItemProjeto(idItemProjeto);
+                    var idProd = ProdutosOrcamentoDAO.Instance.ObterIdProdOrcamentoPeloIdItemProjeto(null, (int)idItemProjeto);
                     if (idProd > 0)
-                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(idProd);
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(null, ProdutosOrcamentoDAO.Instance.GetElementByPrimaryKey(null, (uint)idProd));
     
-                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(idOrcamento.Value);
+                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(null, OrcamentoDAO.Instance.GetElementByPrimaryKey(null, idOrcamento.Value), false, false);
                 }
     
                 #endregion
@@ -1131,11 +1131,11 @@ namespace Glass.UI.Web.WebGlassParceiros
                             ProjetoDAO.Instance.UpdateTotalProjeto(idProjeto.Value);
                         else if (idOrcamento > 0)
                         {
-                            uint idProd = ProdutosOrcamentoDAO.Instance.ObtemIdProdutoPorIdItemProjeto(idItemProjeto);
+                            var idProd = ProdutosOrcamentoDAO.Instance.ObterIdItemProjeto(null, (int)idItemProjeto);
                             if (idProd > 0)
-                                ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(idProd);
+                                ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(null, ProdutosOrcamentoDAO.Instance.GetElementByPrimaryKey(null, (uint)idProd));
     
-                            OrcamentoDAO.Instance.UpdateTotaisOrcamento(idOrcamento.Value);
+                            OrcamentoDAO.Instance.UpdateTotaisOrcamento(null, OrcamentoDAO.Instance.GetElementByPrimaryKey(null, idOrcamento.Value), false, false);
                         }
     
                         #endregion
