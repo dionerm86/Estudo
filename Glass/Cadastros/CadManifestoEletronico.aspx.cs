@@ -29,13 +29,13 @@ namespace Glass.UI.Web.Cadastros
                     ((DropDownList)dtvManifestoEletronico.FindControl("drpUfInicio")).SelectedValue = Glass.Data.Helper.UserInfo.GetUserInfo.UfLoja;
                     ((DropDownList)dtvManifestoEletronico.FindControl("drpUfFim")).SelectedValue = Glass.Data.Helper.UserInfo.GetUserInfo.UfLoja;
                     ((DropDownList)dtvManifestoEletronico.FindControl("drpTipoEmitente")).SelectedValue = "TransportadorCargaPropria";
-                    ((DropDownList)dtvManifestoEletronico.FindControl("drpTipoTransportador")).SelectedValue = "TAC";                    
+                    ((DropDownList)dtvManifestoEletronico.FindControl("drpTipoTransportador")).SelectedValue = "TAC";
                 }
             }
 
             // Define que a Grid CidadeDescarga só fica visível após inserir o MDFe porque é necessário seu ID.
             grdCidadeDescarga.Visible = dtvManifestoEletronico.CurrentMode == DetailsViewMode.ReadOnly ||
-                dtvManifestoEletronico.CurrentMode == DetailsViewMode.Edit;                
+                dtvManifestoEletronico.CurrentMode == DetailsViewMode.Edit;
         }
 
         #region Load
@@ -77,7 +77,7 @@ namespace Glass.UI.Web.Cadastros
             var mdfe = Glass.Data.DAL.ManifestoEletronicoDAO.Instance.ObterManifestoEletronicoPeloId(idMDFe.GetValueOrDefault());
             if (mdfe != null)
             {
-                ((Button)sender).Visible = (mdfe.Situacao == Data.Model.SituacaoEnum.Aberto || mdfe.Situacao == Data.Model.SituacaoEnum.FalhaEmitir) && 
+                ((Button)sender).Visible = (mdfe.Situacao == Data.Model.SituacaoEnum.Aberto || mdfe.Situacao == Data.Model.SituacaoEnum.FalhaEmitir) &&
                     mdfe.TipoEmissao == TipoEmissao.Contingencia;
             }
         }
@@ -232,7 +232,7 @@ namespace Glass.UI.Web.Cadastros
                 cidadeDescargaMDFe.IdCidade = idCidade;
 
                 CidadeDescargaMDFeDAO.Instance.Insert(cidadeDescargaMDFe);
-                              
+
             }
             catch (Exception ex)
             {
@@ -242,20 +242,33 @@ namespace Glass.UI.Web.Cadastros
             return "Cidade inserida com sucesso";
         }
 
-        [Ajax.AjaxMethod()]
-        public string InserirNfeCidadeDescarga(string idCidadeDesc, string idNf)
+        [Ajax.AjaxMethod]
+        public string BuscarInfoNfe(string idNf)
+        {
+            var nfe = NotaFiscalDAO.Instance.GetElementByPrimaryKey(idNf.StrParaInt());
+            return $"{nfe.ChaveAcesso}|{nfe.NumeroDocumentoFsda}";
+        }
+
+        [Ajax.AjaxMethod]
+        public string InserirNfeCidadeDescarga(string idCidadeDesc, string idNf, string chaveAcesso, string numeroDocumentoFsdaStr)
         {
             try
             {
                 var idCidadeDescarga = Conversoes.StrParaInt(idCidadeDesc);
-                var idNFe = Conversoes.StrParaInt(idNf);
+                var idNFe = Conversoes.StrParaIntNullable(idNf);
+                var numeroDocumentoFsda = string.IsNullOrWhiteSpace(numeroDocumentoFsdaStr) ? (long?)null : long.Parse(numeroDocumentoFsdaStr);
 
-                if (idCidadeDescarga == 0 || idNFe == 0)
+                if (idCidadeDescarga == 0)
                 {
                     return "Erro|Falha ao recuperar dados da cidade.";
                 }
 
-                if (NFeCidadeDescargaMDFeDAO.Instance.VerificarNfeJaInclusa(idNFe))
+                if (string.IsNullOrWhiteSpace(chaveAcesso) || chaveAcesso.Length != 44)
+                {
+                    return "Erro|A chave de acesso precisa ter 44 caracteres.";
+                }
+
+                if (NFeCidadeDescargaMDFeDAO.Instance.VerificarNfeJaInclusa(chaveAcesso))
                 {
                     return "Erro|Nota Fiscal já inclusa.";
                 }
@@ -263,6 +276,8 @@ namespace Glass.UI.Web.Cadastros
                 var nfeCidadeDescarga = new NFeCidadeDescargaMDFe();
                 nfeCidadeDescarga.IdCidadeDescarga = idCidadeDescarga;
                 nfeCidadeDescarga.IdNFe = idNFe;
+                nfeCidadeDescarga.ChaveAcesso = chaveAcesso;
+                nfeCidadeDescarga.NumeroDocumentoFsda = numeroDocumentoFsda;
                 NFeCidadeDescargaMDFeDAO.Instance.Insert(null, nfeCidadeDescarga);
             }
             catch (Exception ex)
@@ -273,18 +288,32 @@ namespace Glass.UI.Web.Cadastros
             return "OK|Nfe Inserida";
         }
 
-        [Ajax.AjaxMethod()]
-        public string InserirCteCidadeDescarga(string idCidadeDesc, string idCte)
+        [Ajax.AjaxMethod]
+        public string BuscarInfoCte(string idCte)
+        {
+            return Glass.Data.DAL.CTe.ConhecimentoTransporteDAO.Instance.ObtemChaveAcesso(idCte.StrParaUint());
+        }
+
+        [Ajax.AjaxMethod]
+        public string InserirCteCidadeDescarga(string idCidadeDesc, string idCte, string chaveAcesso, string numeroDocumentoFsdaStr)
         {
             try
             {
                 var idCidadeDescarga = Conversoes.StrParaInt(idCidadeDesc);
-                var idCTeDesc = Conversoes.StrParaInt(idCte);
+                var idCTeDesc = Conversoes.StrParaIntNullable(idCte);
+                var numeroDocumentoFsda = string.IsNullOrWhiteSpace(numeroDocumentoFsdaStr) ? (long?)null : long.Parse(numeroDocumentoFsdaStr);
 
-                if (idCidadeDescarga == 0 || idCTeDesc == 0)
+                if (idCidadeDescarga == 0)
+                {
                     return "Erro|Falha ao recuperar dados da cidade.";
+                }
 
-                if (CTeCidadeDescargaMDFeDAO.Instance.VerificarCteJaIncluso(idCTeDesc))
+                if(string.IsNullOrWhiteSpace(chaveAcesso) || chaveAcesso.Length != 44)
+                {
+                    return "Erro|A chave de acesso precisa ter 44 caracteres.";
+                }
+
+                if (CTeCidadeDescargaMDFeDAO.Instance.VerificarCteJaIncluso(chaveAcesso))
                 {
                     return "Erro|Conhecimento de transporte já incluso.";
                 }
@@ -292,6 +321,8 @@ namespace Glass.UI.Web.Cadastros
                 var cteCidadeDescarga = new CTeCidadeDescargaMDFe();
                 cteCidadeDescarga.IdCidadeDescarga = idCidadeDescarga;
                 cteCidadeDescarga.IdCTe = idCTeDesc;
+                cteCidadeDescarga.ChaveAcesso = chaveAcesso;
+                cteCidadeDescarga.NumeroDocumentoFsda = numeroDocumentoFsda;
                 CTeCidadeDescargaMDFeDAO.Instance.Insert(null, cteCidadeDescarga);
             }
             catch (Exception ex)

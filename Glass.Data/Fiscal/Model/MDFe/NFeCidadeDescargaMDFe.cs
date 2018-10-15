@@ -10,20 +10,29 @@ namespace Glass.Data.Model
     {
         #region Propriedades
 
-        [PersistenceProperty("IDCIDADEDESCARGA", PersistenceParameterType.Key)]
+        [PersistenceProperty("IDCIDADEDESCARGAMDFE", PersistenceParameterType.IdentityKey)]
+        public uint IdCidadeDescargaMdfe { get; set; }
+
+        [PersistenceProperty("IDCIDADEDESCARGA")]
         [PersistenceForeignKey(typeof(CidadeDescargaMDFe), "IdCidadeDescarga")]
         public int IdCidadeDescarga { get; set; }
 
-        [PersistenceProperty("IDNFE", PersistenceParameterType.Key)]
+        [PersistenceProperty("IDNFE")]
         [PersistenceForeignKey(typeof(NotaFiscal), "IdNf")]
-        public int IdNFe { get; set; }
+        public int? IdNFe { get; set; }
+
+        [PersistenceProperty("CHAVEACESSO")]
+        public string ChaveAcesso { get; set; }
+
+        [PersistenceProperty("NUMDOCFSDA")]
+        public long? NumeroDocumentoFsda { get; set; }
 
         #endregion
 
         #region Propriedades Estendidas
 
         [PersistenceProperty("NUMERONFE", DirectionParameter.InputOptional)]
-        public int NumeroNFe { get; set; }
+        public int? NumeroNFe { get; set; }
 
         [PersistenceProperty("MODELO", DirectionParameter.InputOptional)]
         public string Modelo { get; set; }
@@ -35,7 +44,7 @@ namespace Glass.Data.Model
         public string NomeEmitente { get; set; }
 
         [PersistenceProperty("DATAEMISSAO", DirectionParameter.InputOptional)]
-        public DateTime DataEmissao { get; set; }
+        public DateTime? DataEmissao { get; set; }
 
         #endregion
 
