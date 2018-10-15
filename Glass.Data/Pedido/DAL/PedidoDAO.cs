@@ -4544,12 +4544,12 @@ namespace Glass.Data.DAL
                 CAST(SUM(pp.qtde) as SIGNED) as QuantidadePecasPedido, COALESCE(vpp.qtde, 0) as QtdePecasVolume, SUM(pp.TotM) as TotMVolume,
                 SUM(pp.peso) as PesoVolume";
 
-            var situacoesPedidoNaoConsiderar = new List<Pedido.SituacaoPedido>
-                {
-                    Pedido.SituacaoPedido.ConfirmadoLiberacao,
-                    Pedido.SituacaoPedido.Confirmado,
-                    Pedido.SituacaoPedido.LiberadoParcialmente
-                };
+            var situacoesPedidoConsiderar = new List<Pedido.SituacaoPedido>
+            {
+                Pedido.SituacaoPedido.ConfirmadoLiberacao,
+                Pedido.SituacaoPedido.Confirmado,
+                Pedido.SituacaoPedido.LiberadoParcialmente
+            };
 
             var sql = $@"
                 SELECT {campos}
@@ -4568,9 +4568,7 @@ namespace Glass.Data.DAL
 	                                    INNER JOIN volume_produtos_pedido vpp1 ON (vpp1.idVolume = v1.idVolume)
                                     GROUP BY v1.idPedido
                              ) vpp ON (p.idPedido = vpp.idPedido)
-                WHERE p.situacao IN({string.Join(",", situacoesPedidoNaoConsiderar.Select(f => (int)f).ToArray())})
-                    AND pp.QtdSaida < pp.Qtde
-                    AND p.SituacaoProducao <> {(int)Pedido.SituacaoProducaoEnum.Entregue}
+                WHERE p.situacao IN ({string.Join(",", situacoesPedidoConsiderar.Select(f => (int)f).ToArray())})
                     AND COALESCE(sgp.GeraVolume, gp.GeraVolume, false) = true
                     AND COALESCE(sgp.TipoSubgrupo, 0) <> {(int)TipoSubgrupoProd.ChapasVidro}";
 
@@ -4580,21 +4578,18 @@ namespace Glass.Data.DAL
             }
             else
             {
-                sql += $@" AND IF(p.TipoEntrega <> {(int)Pedido.TipoEntregaPedido.Balcao},
-                                   TRUE,
-                                   IF(p.SituacaoProducao IN ({(int)Pedido.SituacaoProducaoEnum.Entregue},{(int)Pedido.SituacaoProducaoEnum.Instalado}) AND IFNULL(vpp.IdPedido,0)=0,
-                                      FALSE,
-                                      TRUE))";
+                sql += $@" AND IF(p.TipoEntrega = {(int)Pedido.TipoEntregaPedido.Balcao},
+                     (p.SituacaoProducao NOT IN ({(int)Pedido.SituacaoProducaoEnum.Entregue},{(int)Pedido.SituacaoProducaoEnum.Instalado}) OR IFNULL(vpp.IdPedido, 0) > 0), TRUE)";
             }
 
             if (idPedido > 0)
             {
-                sql += $" AND p.idPedido={idPedido}";
+                sql += $" AND p.IdPedido = {idPedido}";
             }
 
             if (idCli > 0)
             {
-                sql += $" AND p.idcli={idCli}";
+                sql += $" AND p.IdCli = {idCli}";
             }
             else if (!string.IsNullOrEmpty(nomeCli))
             {
@@ -4609,19 +4604,19 @@ namespace Glass.Data.DAL
                     null,
                     0);
 
-                sql += $" AND p.idCli IN({ids})";
+                sql += $" AND p.idCli IN ({ids})";
             }
 
             if (idCliExterno > 0)
             {
-                sql += $" AND p.IdClienteExterno={idCliExterno}";
+                sql += $" AND p.IdClienteExterno = {idCliExterno}";
             }
             else if (!string.IsNullOrEmpty(nomeCliExterno))
             {
                 var ids = ClienteDAO.Instance.ObtemIdsClientesExternos(nomeCliExterno);
 
                 if (!string.IsNullOrEmpty(ids))
-                    sql += $" AND p.IdClienteExterno IN({ids})";
+                    sql += $" AND p.IdClienteExterno IN ({ids})";
             }
 
             if (idLoja > 0)
@@ -4661,7 +4656,7 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(codRota))
             {
-                sql += @" And c.id_Cli In (Select idCliente From rota_cliente Where idRota In 
+                sql += @" And c.id_Cli IN (Select idCliente From rota_cliente Where idRota In 
                     (Select idRota From rota where codInterno like ?codRota))";
             }
 
@@ -4678,7 +4673,7 @@ namespace Glass.Data.DAL
 
             if (tipoEntrega > 0)
             {
-                sql += $" AND p.tipoEntrega={tipoEntrega}";
+                sql += $" AND p.tipoEntrega = {tipoEntrega}";
             }
 
             if (!PCPConfig.UsarConferenciaFluxo)
