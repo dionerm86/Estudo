@@ -127,7 +127,7 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("lojasAssociadas")]
-        public IdNomeDto[] LojasAssociadas { get; set; }
+        public IEnumerable<IdNomeDto> LojasAssociadas { get; set; }
 
         /// <summary>
         /// Obtém ou define dados de entrega do subgrupo de produto.
@@ -157,7 +157,7 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.Lista
         [JsonProperty("permissoes")]
         public PermissoesDto Permissoes { get; set; }
 
-        private IdNomeDto[] ObterLojasAssociadas(int[] idsLojaAssociacao, string lojas)
+        private IEnumerable<IdNomeDto> ObterLojasAssociadas(int[] idsLojaAssociacao, string lojas)
         {
             if (lojas == null)
             {
@@ -177,7 +177,7 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.Lista
                 });
             }
 
-            return retorno.ToArray();
+            return retorno;
         }
     }
 }
