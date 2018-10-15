@@ -1786,7 +1786,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value)*Sum(Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
+                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value * Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                     <Format>C</Format>
@@ -1947,7 +1947,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value)*Sum(Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
+                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value * Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
                                     <FontSize>9pt</FontSize>
@@ -2440,7 +2440,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value)*Sum(Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
+                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value * Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                     <Format>C</Format>
@@ -2598,7 +2598,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value)*Sum(Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
+                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value * Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
                                     <FontSize>9pt</FontSize>
@@ -3086,7 +3086,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value)*Sum(Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
+                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value * Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                     <Format>C</Format>
@@ -3243,7 +3243,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value)*Sum(Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
+                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value * Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
                                     <FontSize>9pt</FontSize>
@@ -3728,7 +3728,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value)*Sum(Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
+                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value * Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                     <Format>C</Format>
@@ -3885,7 +3885,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value)*Sum(Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
+                                  <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value * Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
                                     <FontSize>9pt</FontSize>
@@ -4767,7 +4767,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value)*Sum(Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
+                              <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value * Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                                 <Format>'R$'0.00;('R$'0.00)</Format>
@@ -4792,7 +4792,6 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <rd:FormatSymbolCulture>pt-BR</rd:FormatSymbolCulture>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -5018,7 +5017,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value)*Sum(Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
+                              <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value * Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
                               <Style>
                                 <FontStyle>Italic</FontStyle>
                                 <FontSize>9pt</FontSize>
@@ -5337,7 +5336,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value)*Sum(Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
+                              <Value>=IIF(Fields!TipoCalculo.Value&lt;&gt;1, Sum(Fields!TotM2.Value * Fields!ValorUnit.Value), Sum(Fields!ValorUnit.Value))</Value>
                               <Style>
                                 <FontStyle>Italic</FontStyle>
                                 <FontSize>9pt</FontSize>
@@ -5365,6 +5364,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <rd:FormatSymbolCulture>pt-BR</rd:FormatSymbolCulture>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
