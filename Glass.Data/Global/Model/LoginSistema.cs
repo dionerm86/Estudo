@@ -45,6 +45,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("NOMEFUNC", DirectionParameter.InputOptional)]
         public string NomeFunc { get; set; }
 
+        [PersistenceProperty("Criterio", DirectionParameter.InputOptional)]
+        public string Criterio { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte

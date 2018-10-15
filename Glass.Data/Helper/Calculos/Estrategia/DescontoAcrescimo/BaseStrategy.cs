@@ -1,10 +1,10 @@
-﻿using System;
+﻿using GDA;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
+using Glass.Data.Model;
+using Glass.Pool;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Glass.Data.Model;
-using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
-using Glass.Pool;
-using GDA;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 {
@@ -128,9 +128,9 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
         {
             foreach (var produto in produtos)
             {
-                CalcularTotalBrutoProduto(sessao, produto);
                 RemoverBeneficiamentos(produto);
                 RemoverProduto(produto);
+                CalcularTotalBrutoProduto(sessao, produto);
                 acoesAdicionais(produto);
             }
         }

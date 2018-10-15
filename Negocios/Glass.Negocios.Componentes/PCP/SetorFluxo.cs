@@ -192,7 +192,14 @@ namespace Glass.PCP.Negocios.Componentes
         {
             if (setor.ExistsInStorage)
             {
-                if(setor.Situacao == Situacao.Inativo)
+                //Verifica Situação do setor antes de alterá-lo pois caso caso a alteração for somente no numseq o sistema não precisa verificar se está inativo novamente
+                var setorAtual = SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.Setor>()
+                    .Where("IdSetor=?id").Add("?id", setor.IdSetor)
+                    .ProcessLazyResult<Entidades.Setor>()
+                    .FirstOrDefault();
+
+                if (setorAtual.Situacao != Situacao.Inativo && setor.Situacao == Situacao.Inativo)
                 {
                     if (SourceContext.Instance.CreateQuery()
                         .From<Glass.Data.Model.FuncionarioSetor>("fs")

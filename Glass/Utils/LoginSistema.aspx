@@ -3,6 +3,21 @@
 <%@ Register src="../Controls/ctrlData.ascx" tagname="ctrlData" tagprefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" Runat="Server">
+    <script type="text/javascript">
+
+        function openRpt(exportarExcel) {
+            var idFuncionario = FindControl("drpFuncionario", "select").value;
+            var tipoAtividade = FindControl("drpTipo", "select").value;
+            var periodoIni = FindControl("ctrlDataIni", "input").value;
+            var periodoFim = FindControl("ctrlDataFim", "input").value;
+
+            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=UtilizacaoSistema&idFuncionario=" +
+                idFuncionario + "&tipoAtividade=" + tipoAtividade + "&periodoIni=" + periodoIni + "&periodoFim=" + periodoFim + "&exportarExcel=" + exportarExcel);
+
+            return false;
+        }
+
+    </script>
     <table>
         <tr>
             <td align="center">
@@ -86,6 +101,13 @@
                     <PagerStyle CssClass="pgr" />
                     <AlternatingRowStyle CssClass="alt" />
                 </asp:GridView>
+                <tr>
+                    <td align="center">
+                        <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRpt(false);"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir</asp:LinkButton>
+                        &nbsp;&nbsp;&nbsp;
+                    <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true); return false;"> <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
+                    </td>
+             </tr>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLogin" runat="server" EnablePaging="True" 
                     MaximumRowsParameterName="pageSize" SelectCountMethod="GetCount" 
                     SelectMethod="GetList" SortParameterName="sortExpression" 

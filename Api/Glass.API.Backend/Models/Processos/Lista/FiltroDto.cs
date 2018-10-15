@@ -1,4 +1,4 @@
-﻿// <copyright file="FiltroDto.cs" company="Sync Softwares">
+// <copyright file="FiltroDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -13,7 +13,7 @@ namespace Glass.API.Backend.Models.Processos.Lista
     public class FiltroDto : PaginacaoDto
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FiltroDto"/> class.
+        /// Inicia uma nova instância da classe <see cref="FiltroDto"/>.
         /// </summary>
         public FiltroDto()
             : base(item => new TraducaoOrdenacaoListaProcessos(item.Ordenacao))

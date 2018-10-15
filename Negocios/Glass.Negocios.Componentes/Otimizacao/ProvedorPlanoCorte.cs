@@ -117,7 +117,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
             var planoCorte = (PlanoCorte)peca.Owner;
             etiqueta.ProdutoImpressao.Forma = peca.Forma;
             etiqueta.ProdutoImpressao.PlanoCorte = planoCorte.NumeroEtiqueta;
-            etiqueta.ProdutoImpressao.PosicaoArqOtimiz = peca.Posicao;
+            etiqueta.ProdutoImpressao.PosicaoArqOtimiz = peca.PosicaoGeral;
             etiqueta.ProdutoImpressao.NumSeq = sequencia;
 
             return etiqueta.ProdutoImpressao;

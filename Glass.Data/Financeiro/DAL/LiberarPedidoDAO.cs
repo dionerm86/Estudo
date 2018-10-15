@@ -3758,7 +3758,7 @@ namespace Glass.Data.DAL
                 where (plp.idProdPedProducao is null or " + itemEtiqueta + "<" + item +
                 ") and pp.idProdPed" + (idProdPed > 0 ? "=" + idProdPed : "Esp=" + idProdPedEsp) + ") as temp";
 
-            var idProd = ProdutosPedidoDAO.Instance.ObtemIdProd(sessao, (uint)idProdPed);
+            var idProd = idProdPed != null ? ProdutosPedidoDAO.Instance.ObtemIdProd(sessao, (uint)idProdPed) : ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(sessao, (uint)idProdPedEsp);
             var saidaRevenda = string.IsNullOrWhiteSpace(numEtiqueta) && !ProdutoDAO.Instance.IsProdutoVenda(sessao, (int)idProd);
 
             return ExecuteScalar<int>(sessao, sql) >= item && (numEtiqueta != null || saidaRevenda);
