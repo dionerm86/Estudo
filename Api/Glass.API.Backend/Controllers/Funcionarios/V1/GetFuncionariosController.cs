@@ -260,5 +260,30 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
                 return this.Item(dataTrabalho);
             }
         }
+
+        /// <summary>
+        /// Obtém uma lista de funcionários ativos associados à clientes.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos funcionários ativos associados à clientes.</returns>
+        [HttpGet]
+        [Route("sugestoesCliente")]
+        [SwaggerResponse(200, "Funcionários encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Funcionários não encontrados.")]
+        public IHttpActionResult ObterFuncionariosSugestao()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var funcionarios = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Global.Negocios.IFuncionarioFluxo>()
+                    .ObterFuncionariosSugestao()
+                    .Select(f => new IdNomeDto
+                    {
+                        Id = f.Id,
+                        Nome = f.Name,
+                    });
+
+                return this.Lista(funcionarios);
+            }
+        }
     }
 }

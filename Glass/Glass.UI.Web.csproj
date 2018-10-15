@@ -476,6 +476,9 @@
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\Clientes\Componentes\LstSugestaoCliente.Filtro.js" />
+    <Content Include="Vue\Clientes\Componentes\LstSugestaoCliente.js" />
+    <Content Include="Vue\Clientes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
     <Content Include="Vue\Feriados\Componentes\LstFeriados.js" />
     <Content Include="Vue\Comissionados\Componentes\LstComissionados.Filtro.js" />
@@ -1768,6 +1771,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Liberacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PedidosConferencia.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Caixas.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\SugestaoCliente.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TiposCartao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Rotas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TabelasDescontoAcrescimoCliente.js" />

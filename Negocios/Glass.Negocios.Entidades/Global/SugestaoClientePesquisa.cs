@@ -50,7 +50,7 @@ namespace Glass.Global.Negocios.Entidades
         public bool Cancelada { get; set; }
 
         /// <summary>
-        /// Identifica a descrição da rota do cliente
+        /// Identifica a descrição da rota do cliente.
         /// </summary>
         public string DescricaoRota { get; set; }
 
@@ -58,10 +58,21 @@ namespace Glass.Global.Negocios.Entidades
         /// Id do funcionário de cadastro.
         /// </summary>
         public uint IdFunc { get; set; }
+
         /// <summary>
-        /// Id do pedido 
+        /// Id do pedido .
         /// </summary>
         public uint? IdPedido { get; set; }
+
+        /// <summary>
+        /// Descrição do tipo de sugestão associado.
+        /// </summary>
+        public string DescricaoTipoSugestao { get; set; }
+
+        /// <summary>
+        /// Id do orçamento.
+        /// </summary>
+        public uint? IdOrcamento { get; set; }
 
         #endregion
     }
