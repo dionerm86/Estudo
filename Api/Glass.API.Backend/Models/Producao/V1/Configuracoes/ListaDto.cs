@@ -27,6 +27,7 @@ namespace Glass.API.Backend.Models.Producao.V1.Configuracoes
             this.ExibirSetores = UserInfo.GetUserInfo.TipoUsuario != (int)Utils.TipoFuncionario.Vendedor
                 || !ProducaoConfig.TelaConsulta.EsconderLinksImpressaoParaVendedores;
 
+            this.ExibirRelatorios = this.ExibirSetores;
             this.ExibirNumeroEtiquetaNoInicioDaTabela = ProducaoConfig.TelaConsulta.ExibirNumeroEtiquetaNoInicioDaTabela;
             this.UsarControleDeChapaDeCorte = PCPConfig.Etiqueta.UsarControleChapaCorte;
             this.UsarOrdemDeCarga = OrdemCargaConfig.UsarControleOrdemCarga;
@@ -55,6 +56,13 @@ namespace Glass.API.Backend.Models.Producao.V1.Configuracoes
         [DataMember]
         [JsonProperty("exibirSetores")]
         public bool ExibirSetores { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o usuário atual pode abrir os relatórios.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("exibirRelatorios")]
+        public bool ExibirRelatorios { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se o número de etiqueta da peça será
@@ -154,6 +162,7 @@ namespace Glass.API.Backend.Models.Producao.V1.Configuracoes
                     Id = s.IdSetor,
                     Nome = s.Descricao,
                     Ordem = s.NumeroSequencia,
+                    PertencenteARoteiro = s.SetorPertenceARoteiro,
                 });
         }
 

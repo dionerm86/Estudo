@@ -32,8 +32,17 @@ namespace Glass.API.Backend.Helper.Producao
         {
             switch (campo.ToLowerInvariant())
             {
-                case "":
-                    return "";
+                case "numeroetiquetapeca":
+                    return "coalesce(NumEtqiueta, NumEtiquetaCanc)";
+
+                case "numerocavalete":
+                    return "NumCavalete";
+
+                case "dataperda":
+                case "dataentregafabrica":
+                case "dataliberacaopedido":
+                case "planocorte":
+                    return campo;
 
                 default:
                     return this.OrdenacaoPadrao;

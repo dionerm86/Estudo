@@ -462,6 +462,7 @@
     <Compile Include="Models\Comissionados\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Comissionados\Lista\FiltroDto.cs" />
     <Compile Include="Models\Comissionados\Lista\ListaDto.cs" />
+    <Compile Include="Models\PedidosConferencia\V1\DadosProducao\DadosProducaoDto.cs" />
     <Compile Include="Models\Producao\V1\Composicao\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Configuracoes\SetorDto.cs" />

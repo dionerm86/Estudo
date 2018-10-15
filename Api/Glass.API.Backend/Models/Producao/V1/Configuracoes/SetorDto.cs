@@ -20,5 +20,12 @@ namespace Glass.API.Backend.Models.Producao.V1.Configuracoes
         [DataMember]
         [JsonProperty("ordem")]
         public int Ordem { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o setor pertence a algum roteiro.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("pertencenteARoteiro")]
+        public bool PertencenteARoteiro { get; set; }
     }
 }
