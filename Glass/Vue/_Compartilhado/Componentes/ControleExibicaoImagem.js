@@ -79,7 +79,7 @@
         .replace(/&/g, '@')
         .replace(/\\/g, '!')
 
-      this.abrirJanela(600, 800, '../Utils/ShowFoto.aspx?path=' + urlFormatada);
+      this.abrirJanela(600, 800, this.caminhoRelativo('/Utils/ShowFoto.aspx?path=' + urlFormatada));
     },
   },
 

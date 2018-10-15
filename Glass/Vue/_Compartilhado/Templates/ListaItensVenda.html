@@ -89,10 +89,10 @@
         <template slot="item" slot-scope="{ item, index }">
             <td style="white-space: nowrap">
                 <button v-on:click.prevent="editar_(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
-                    <img src="../Images/Edit.gif">
+                    <img v-bind:src="caminhoRelativo('/Images/Edit.gif')">
                 </button>
                 <button v-on:click.prevent="excluir_(item)" title="Excluir" v-if="item.permissoes.excluir && !inserindo && numeroLinhaEdicao === -1">
-                    <img src="../Images/ExcluirGrid.gif">
+                    <img v-bind:src="caminhoRelativo('/Images/ExcluirGrid.gif')">
                 </button>
                 <slot name="itemIconesEsquerda" v-bind:item="item" v-bind:index="index"></slot>
             </td>
@@ -159,7 +159,7 @@
             <td style="white-space: nowrap">
                 <button v-bind:title="(exibindoFilhos(index) ? 'Esconder' : 'Exibir') + ' Produtos da Composição'" v-if="item.composicao.possuiFilhos && !inserindo && numeroLinhaEdicao === -1"
                     v-on:click.prevent="alternarExibicaoFilhos(index)">
-                    <img src="../Images/box.png">
+                    <img v-bind:src="caminhoRelativo('/Images/box.png')">
                 </button>
                 <slot name="itemIconesDireita" v-bind:item="item" v-bind:index="index"></slot>
             </td>
@@ -200,10 +200,10 @@
         <template slot="itemEditando">
             <td style="white-space: nowrap">
                 <button v-on:click.prevent="atualizar_" title="Atualizar">
-                    <img src="../Images/ok.gif">
+                    <img v-bind:src="caminhoRelativo('/Images/ok.gif')">
                 </button>
                 <button v-on:click.prevent="cancelar" title="Cancelar">
-                    <img src="../Images/ExcluirGrid.gif">
+                    <img v-bind:src="caminhoRelativo('/Images/ExcluirGrid.gif')">
                 </button>
             </td>
             <td>
@@ -310,7 +310,7 @@
                     </span>
                 </template>
                 <span v-bind:style="estiloContainerBeneficiamentos" v-if="vIfControleBeneficiamentos">
-                    <img src="/Images/gear_add.gif" title="Espessura e Beneficiamentos" style="cursor: pointer"
+                    <img v-bind:src="caminhoRelativo('/Images/gear_add.gif')" title="Espessura e Beneficiamentos" style="cursor: pointer"
                         v-on:click="exibirBeneficiamentos = !exibirBeneficiamentos" />
                     <span v-if="exibirBeneficiamentos">
                         <div style="text-align: center">
@@ -341,13 +341,13 @@
         <template slot="itemIncluir">
             <td style="white-space: nowrap">
                 <button v-on:click.prevent="iniciarCadastro" title="Novo produto..." v-if="!inserindo">
-                    <img src="../Images/Insert.gif">
+                    <img v-bind:src="caminhoRelativo('/Images/Insert.gif')">
                 </button>
                 <button v-on:click.prevent="inserir_" title="Inserir" v-if="inserindo">
-                    <img src="../Images/Ok.gif">
+                    <img v-bind:src="caminhoRelativo('/Images/Ok.gif')">
                 </button>
                 <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
-                    <img src="../Images/ExcluirGrid.gif">
+                    <img v-bind:src="caminhoRelativo('/Images/ExcluirGrid.gif')">
                 </button>
             </td>
             <td colspan="2">
@@ -449,7 +449,7 @@
                     </span>
                 </template>
                 <span v-bind:style="estiloContainerBeneficiamentos" v-if="inserindo && vIfControleBeneficiamentos">
-                    <img src="/Images/gear_add.gif" title="Beneficiamentos" style="cursor: pointer"
+                    <img v-bind:src="caminhoRelativo('/Images/gear_add.gif')" title="Beneficiamentos" style="cursor: pointer"
                         v-on:click="exibirBeneficiamentos = !exibirBeneficiamentos" />
                     <span v-if="exibirBeneficiamentos">
                         <div style="text-align: center">
