@@ -47,11 +47,8 @@ namespace Glass.Integracao.Khan
 
         private void NotaFiscalGerada(Data.Domain.NotaFiscalEventoArgs e)
         {
-            var conversor = new ConversorNotaFiscalPedido(e.Sessao, e.NotaFiscal);
-
-            var pedido = conversor.Converter();
-
-            this.Client.SalvarPedido(pedido);
+            // Deve ser feita a chamada do WebService para salvar os dados do pedido
+            System.Diagnostics.Debug.WriteLine($"Integrando pedido");
         }
 
         /// <summary>
