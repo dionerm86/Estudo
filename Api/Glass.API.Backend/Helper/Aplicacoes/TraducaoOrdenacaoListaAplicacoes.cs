@@ -1,19 +1,19 @@
-// <copyright file="TraducaoOrdenacaoListaProcessos.cs" company="Sync Softwares">
+// <copyright file="TraducaoOrdenacaoListaAplicacoes.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-namespace Glass.API.Backend.Helper.Processos
+namespace Glass.API.Backend.Helper.Aplicacoes
 {
     /// <summary>
     /// Classe que realiza a tradução dos campos de ordenação para a lista de processos de etiquetas.
     /// </summary>
-    internal class TraducaoOrdenacaoListaProcessos : BaseTraducaoOrdenacao
+    internal class TraducaoOrdenacaoListaAplicacoes : BaseTraducaoOrdenacao
     {
         /// <summary>
-        /// Inicia uma nova instância da classe <see cref="TraducaoOrdenacaoListaProcessos"/>.
+        /// Inicia uma nova instância da classe <see cref="TraducaoOrdenacaoListaAplicacoes"/>.
         /// </summary>
         /// <param name="ordenacao">A ordenação realizada na tela.</param>
-        public TraducaoOrdenacaoListaProcessos(string ordenacao)
+        public TraducaoOrdenacaoListaAplicacoes(string ordenacao)
             : base(ordenacao)
         {
         }
@@ -32,17 +32,13 @@ namespace Glass.API.Backend.Helper.Processos
                 case "codigo":
                     return "CodInterno";
 
-                case "aplicacao":
-                    return "CodInternoAplicacao";
-
                 case "destacarnaetiqueta":
                     return "DestacarEtiqueta";
 
                 case "descricao":
                 case "gerarformainexistente":
-                case "gerararquivodemesa":
+                case "naopermitirfastdelivery":
                 case "numerodiasuteisdataentrega":
-                case "tipoprocesso":
                 case "situacao":
                     return campo;
 

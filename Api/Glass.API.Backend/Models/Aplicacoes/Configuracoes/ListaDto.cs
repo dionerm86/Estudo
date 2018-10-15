@@ -10,10 +10,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Processos.Configuracoes
+namespace Glass.API.Backend.Models.Aplicacoes.Configuracoes
 {
     /// <summary>
-    /// Classe que encapsula as configurações para a tela de listagem de processos de etiqueta.
+    /// Classe que encapsula as configurações para a tela de listagem de aplicações de etiqueta.
     /// </summary>
     [DataContract(Name = "Configuracoes")]
     public class ListaDto
@@ -37,7 +37,7 @@ namespace Glass.API.Backend.Models.Processos.Configuracoes
         public IEnumerable<Data.Model.Pedido.TipoPedidoEnum> TiposPedidosIgnorar { get; set; }
 
         /// <summary>
-        /// Obtém ou define a situação padrão para o cadastro de processo.
+        /// Obtém ou define a situação padrão para o cadastro de aplicação.
         /// </summary>
         [DataMember]
         [JsonProperty("situacaoPadrao")]

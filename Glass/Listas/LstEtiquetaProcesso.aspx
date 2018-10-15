@@ -1,7 +1,6 @@
 ﻿<%@ Page Title="Processos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
-    CodeBehind="LstEtiquetaProcesso.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEtiquetaProcesso" %>
+    CodeBehind="LstEtiquetaProcesso.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEtiquetaProcesso" EnableViewState="false" EnableViewStateMac="false" %>
 
-<%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <div id="app">
         <section>
@@ -40,7 +39,7 @@
                         <a href="#" @click.prevent="ordenar('tiposPedidos')">Tipo de Pedido</a>
                     </th>
                     <th>
-                        Situação
+                        <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
                     </th>
                     <th></th>
                 </template>
