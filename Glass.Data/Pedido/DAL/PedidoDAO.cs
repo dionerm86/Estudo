@@ -4578,6 +4578,14 @@ namespace Glass.Data.DAL
             {
                 sql += $" And p.tipoEntrega<>{(int)Pedido.TipoEntregaPedido.Balcao}";
             }
+            else
+            {
+                sql += $@" AND IF(p.TipoEntrega <> {(int)Pedido.TipoEntregaPedido.Balcao},
+                                   TRUE,
+                                   IF(p.SituacaoProducao IN ({(int)Pedido.SituacaoProducaoEnum.Entregue},{(int)Pedido.SituacaoProducaoEnum.Instalado}) AND IFNULL(vpp.IdPedido,0)=0,
+                                      FALSE,
+                                      TRUE))";
+            }
 
             if (idPedido > 0)
             {
