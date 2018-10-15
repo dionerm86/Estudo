@@ -1,12 +1,11 @@
-// <copyright file="PatchTiposClienteController.cs" company="Sync Softwares">
+// <copyright file="PatchTabelasDescontoAcrescimoClienteController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Helper.TabelasDescontoAcrescimoCliente;
 using Glass.API.Backend.Helper.Respostas;
+using Glass.API.Backend.Helper.TabelasDescontoAcrescimoCliente;
 using Glass.API.Backend.Models.TabelasDescontoAcrescimoCliente.CadastroAtualizacao;
-using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;
@@ -47,10 +46,10 @@ namespace Glass.API.Backend.Controllers.TabelasDescontoAcrescimoCliente.V1
 
                     var tabelaAtual = fluxo.ObtemTabelaDescontoAcrescimoCliente(id);
 
-                    var tabela = new ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente(dadosParaAlteracao, tabelaAtual)
+                    tabelaAtual = new ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente(dadosParaAlteracao, tabelaAtual)
                         .ConverterParaTabelaDescontoAcrescimoCliente();
 
-                    var resultado = fluxo.SalvarTabelaDescontoAcrescimo(tabela);
+                    var resultado = fluxo.SalvarTabelaDescontoAcrescimo(tabelaAtual);
 
                     if (!resultado)
                     {

@@ -3,6 +3,7 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.TabelasDescontoAcrescimoCliente.Lista;
 using Glass.Data.DAL;
@@ -28,6 +29,7 @@ namespace Glass.API.Backend.Controllers.TabelasDescontoAcrescimoCliente.V1
         [SwaggerResponse(200, "Tabelas de desconto/acréscimo de cliente encontradas sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<ListaDto>))]
         [SwaggerResponse(204, "Tabelas de desconto/acréscimo de cliente não encontradas para o filtro informado.")]
         [SwaggerResponse(206, "Tabelas de desconto/acréscimo de cliente paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<ListaDto>))]
+        [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         public IHttpActionResult ObterLista([FromUri] FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
