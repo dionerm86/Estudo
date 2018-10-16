@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Produtos.Estrategias.Filtro;
-using Glass.API.Backend.Models.Produtos.CalculoTotal;
+using Glass.API.Backend.Models.Produtos.V1.CalculoTotal;
 using Newtonsoft.Json;
 using System;
 using System.Web.Http;

@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.NotasFiscais.Contingencia;
+using Glass.API.Backend.Models.NotasFiscais.V1.Contingencia;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Data.Model;

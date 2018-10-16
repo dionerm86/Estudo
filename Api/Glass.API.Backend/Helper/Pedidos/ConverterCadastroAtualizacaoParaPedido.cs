@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Pedidos.CadastroAtualizacao;
+using Glass.API.Backend.Models.Pedidos.V1.CadastroAtualizacao;
 using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using System;
 using System.Linq;

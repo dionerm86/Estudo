@@ -4,9 +4,9 @@
 
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Beneficiamentos.Filtro;
-using Glass.API.Backend.Models.Beneficiamentos.Total;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Beneficiamentos.V1.Filtro;
+using Glass.API.Backend.Models.Beneficiamentos.V1.Total;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.Beneficiamentos;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;

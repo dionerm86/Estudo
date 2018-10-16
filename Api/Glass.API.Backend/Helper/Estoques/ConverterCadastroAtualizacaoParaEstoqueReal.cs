@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Estoques.CadastroAtualizacao;
+using Glass.API.Backend.Models.Estoques.V1.CadastroAtualizacao;
 using System;
 
 namespace Glass.API.Backend.Helper.Estoques

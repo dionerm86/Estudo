@@ -4,9 +4,9 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas;
-using Glass.API.Backend.Models.Pedidos.CadastroAtualizacao;
-using Glass.API.Backend.Models.Pedidos.ValidarDescontoPedido;
+using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.Pedidos.V1.CadastroAtualizacao;
+using Glass.API.Backend.Models.Pedidos.V1.ValidarDescontoPedido;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
@@ -30,7 +30,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("{id}/configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Pedidos.Configuracoes.DetalheDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Pedidos.V1.Configuracoes.DetalheDto))]
         public IHttpActionResult ObterConfiguracoesDetalhePedido(int id)
         {
             using (var sessao = new GDATransaction())
@@ -39,7 +39,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                     ? (int)PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)id)
                     : (int)UserInfo.GetUserInfo.IdLoja;
 
-                var configuracoes = new Models.Pedidos.Configuracoes.DetalheDto(idLoja);
+                var configuracoes = new Models.Pedidos.V1.Configuracoes.DetalheDto(idLoja);
                 return this.Item(configuracoes);
             }
         }
@@ -51,12 +51,12 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Pedidos.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Pedidos.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaPedidos(bool exibirFinanceiro = false)
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Pedidos.Configuracoes.ListaDto(exibirFinanceiro);
+                var configuracoes = new Models.Pedidos.V1.Configuracoes.ListaDto(exibirFinanceiro);
                 return this.Item(configuracoes);
             }
         }
@@ -68,15 +68,15 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <returns>Uma lista JSON com os dados dos pedidos.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Pedidos sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Pedidos.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Pedidos sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Pedidos.V1.Lista.ListaDto>))]
         [SwaggerResponse(204, "Pedidos não encontrados para o filtro informado.")]
-        [SwaggerResponse(206, "Pedidos paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Pedidos.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Pedidos paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Pedidos.V1.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaPedidos([FromUri] Models.Pedidos.Lista.FiltroDto filtro)
+        public IHttpActionResult ObterListaPedidos([FromUri] Models.Pedidos.V1.Lista.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.Pedidos.Lista.FiltroDto();
+                filtro = filtro ?? new Models.Pedidos.V1.Lista.FiltroDto();
 
                 var pedidos = PedidoDAO.Instance.GetList(
                     (uint)(filtro.Id ?? 0),
@@ -116,7 +116,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                     filtro.ObservacaoLiberacao);
 
                 return this.ListaPaginada(
-                    pedidos.Select(p => new Models.Pedidos.Lista.ListaDto(p)),
+                    pedidos.Select(p => new Models.Pedidos.V1.Lista.ListaDto(p)),
                     filtro,
                     () => PedidoDAO.Instance.GetCount(
                         (uint)(filtro.Id ?? 0),
@@ -162,7 +162,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <returns>Um objeto JSON com os dados do pedido.</returns>
         [HttpGet]
         [Route("{id}")]
-        [SwaggerResponse(200, "Pedido encontrado.", Type = typeof(Models.Pedidos.Detalhe.DetalheDto))]
+        [SwaggerResponse(200, "Pedido encontrado.", Type = typeof(Models.Pedidos.V1.Detalhe.DetalheDto))]
         [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
         public IHttpActionResult ObterPedido(int id)
@@ -185,7 +185,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
-                    return this.Item(new Models.Pedidos.Detalhe.DetalheDto(pedido));
+                    return this.Item(new Models.Pedidos.V1.Detalhe.DetalheDto(pedido));
                 }
                 catch (Exception e)
                 {

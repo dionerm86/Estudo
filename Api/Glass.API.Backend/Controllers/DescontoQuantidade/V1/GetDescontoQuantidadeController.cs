@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.DescontoQuantidade.Dados;
+using Glass.API.Backend.Models.DescontoQuantidade.V1.Dados;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;

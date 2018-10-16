@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Processos;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Processos.CadastroAtualizacao;
+using Glass.API.Backend.Models.Processos.V1.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;

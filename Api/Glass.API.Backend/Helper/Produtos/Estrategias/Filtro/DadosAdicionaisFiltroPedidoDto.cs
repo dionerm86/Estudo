@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Clientes.Filtro;
+using Glass.API.Backend.Models.Clientes.V1.Filtro;
 using Newtonsoft.Json;
 using static Glass.Data.Model.Pedido;
 

@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Pedidos;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Pedidos.EnviarValidacaoFinanceiro;
+using Glass.API.Backend.Models.Pedidos.V1.EnviarValidacaoFinanceiro;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Exceptions;
@@ -252,7 +252,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         [Route("")]
         [SwaggerResponse(201, "Pedido inserido.", Type = typeof(CriadoDto<int>))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        public IHttpActionResult CadastrarPedido([FromBody] Models.Pedidos.CadastroAtualizacao.CadastroAtualizacaoDto dadosParaCadastro)
+        public IHttpActionResult CadastrarPedido([FromBody] Models.Pedidos.V1.CadastroAtualizacao.CadastroAtualizacaoDto dadosParaCadastro)
         {
             using (var sessao = new GDATransaction())
             {
@@ -292,7 +292,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         [SwaggerResponse(202, "Alteração na liberação financeira do pedido feita sem erros.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na liberação financeira do pedido.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado para o filtro informado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AlterarLiberacaoFinanceira(int id, [FromBody] Models.Pedidos.AlterarLiberacaoFinanceiro.EntradaDto dados)
+        public IHttpActionResult AlterarLiberacaoFinanceira(int id, [FromBody] Models.Pedidos.V1.AlterarLiberacaoFinanceiro.EntradaDto dados)
         {
             using (var sessao = new GDATransaction())
             {

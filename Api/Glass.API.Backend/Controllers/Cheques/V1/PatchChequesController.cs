@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Cheques;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Cheques.CadastroAtualizacao;
+using Glass.API.Backend.Models.Cheques.V1.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;

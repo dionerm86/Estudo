@@ -6,8 +6,8 @@ using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Produtos;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Produtos.CalculoAreaM2;
-using Glass.API.Backend.Models.Produtos.CalculoTotal;
+using Glass.API.Backend.Models.Produtos.V1.CalculoAreaM2;
+using Glass.API.Backend.Models.Produtos.V1.CalculoTotal;
 using Swashbuckle.Swagger.Annotations;
 using System.Web.Http;
 
@@ -27,7 +27,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
         [Route("calcularTotal")]
         [SwaggerResponse(200, "Total calculado.", Type = typeof(TotalCalculadoDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        public IHttpActionResult CalcularTotal([FromBody] Models.Produtos.CalculoTotal.DadosProdutoDto dadosProduto)
+        public IHttpActionResult CalcularTotal([FromBody] Models.Produtos.V1.CalculoTotal.DadosProdutoDto dadosProduto)
         {
             if (dadosProduto == null)
             {
@@ -73,7 +73,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
         [Route("calcularAreaM2")]
         [SwaggerResponse(200, "Área calculada.", Type = typeof(AreaCalculadaDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        public IHttpActionResult CalcularAreaM2([FromBody] Models.Produtos.CalculoAreaM2.DadosProdutoDto dadosProduto)
+        public IHttpActionResult CalcularAreaM2([FromBody] Models.Produtos.V1.CalculoAreaM2.DadosProdutoDto dadosProduto)
         {
             if (dadosProduto == null)
             {
@@ -112,7 +112,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
             }
         }
 
-        private double CalcularAreaM2Real(GDASession sessao, Models.Produtos.CalculoAreaM2.DadosProdutoDto dadosProduto)
+        private double CalcularAreaM2Real(GDASession sessao, Models.Produtos.V1.CalculoAreaM2.DadosProdutoDto dadosProduto)
         {
             var areaReal = Global.CalculosFluxo.ArredondaM2(
                 sessao,
@@ -127,7 +127,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
             return areaReal.Arredondar(2);
         }
 
-        private double CalcularAreaM2Calculo(GDASession sessao, Models.Produtos.CalculoAreaM2.DadosProdutoDto dadosProduto, bool usarChapaDeVidro)
+        private double CalcularAreaM2Calculo(GDASession sessao, Models.Produtos.V1.CalculoAreaM2.DadosProdutoDto dadosProduto, bool usarChapaDeVidro)
         {
             var areaCalculada = Global.CalculosFluxo.CalcM2Calculo(
                 sessao,
@@ -146,7 +146,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
             return areaCalculada.Arredondar(2);
         }
 
-        private decimal CalcularTotal(GDASession sessao, Models.Produtos.CalculoTotal.DadosProdutoDto dadosProduto)
+        private decimal CalcularTotal(GDASession sessao, Models.Produtos.V1.CalculoTotal.DadosProdutoDto dadosProduto)
         {
             var total = Global.CalculosFluxo.CalcularTotal(
                 sessao,

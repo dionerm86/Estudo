@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Pedidos.AmbientesPedido.CadastroAtualizacao;
+using Glass.API.Backend.Models.Pedidos.V1.AmbientesPedido.CadastroAtualizacao;
 using Glass.Data.Model;
 using System;
 

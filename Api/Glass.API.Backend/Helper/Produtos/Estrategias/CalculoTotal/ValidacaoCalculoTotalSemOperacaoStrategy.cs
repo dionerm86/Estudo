@@ -3,7 +3,7 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Produtos.CalculoTotal;
+using Glass.API.Backend.Models.Produtos.V1.CalculoTotal;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Helper.Produtos.Estrategias.CalculoTotal

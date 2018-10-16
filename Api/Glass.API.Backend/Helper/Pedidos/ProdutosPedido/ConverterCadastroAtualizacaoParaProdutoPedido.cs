@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Pedidos.ProdutosPedido.CadastroAtualizacao;
+using Glass.API.Backend.Models.Pedidos.V1.ProdutosPedido.CadastroAtualizacao;
 using System;
 
 namespace Glass.API.Backend.Helper.Pedidos.ProdutosPedido
@@ -70,7 +70,7 @@ namespace Glass.API.Backend.Helper.Pedidos.ProdutosPedido
         private void ConverterBeneficiamentos(Data.Model.ProdutosPedido destino)
         {
             var itens = this.cadastro.Beneficiamentos?.Itens
-                ?? new Models.Genericas.ItemBeneficiamentoDto[0];
+                ?? new Models.Genericas.V1.ItemBeneficiamentoDto[0];
 
             destino.ValorBenef = this.cadastro.Beneficiamentos?.Valor ?? destino.ValorBenef;
             destino.AlturaBenef = this.cadastro.Beneficiamentos?.Altura ?? destino.AlturaBenef;

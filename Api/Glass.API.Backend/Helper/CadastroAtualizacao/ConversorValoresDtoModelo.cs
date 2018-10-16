@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Genericas.CadastroAtualizacao;
+using Glass.API.Backend.Models.Genericas.V1.CadastroAtualizacao;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
