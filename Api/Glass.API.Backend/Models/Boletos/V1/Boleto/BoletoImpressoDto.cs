@@ -5,7 +5,7 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.NotasFiscais.V1.V1.Boleto
+namespace Glass.API.Backend.Models.Boletos.V1.Boleto
 {
     /// <summary>
     /// Classe que encapsula os dados de retorno ao verificar se um boleto está impresso.
