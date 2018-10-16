@@ -1661,8 +1661,12 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
         protected string VerificaPedidoReposicao()
         {
-            if (PedidoDAO.Instance.ObtemTipoVenda(null, UInt32.Parse(Request["idPedido"])) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição)
+            var idPedido = Request["idPedido"].StrParaUint();
+
+            if (idPedido > 0 && PedidoDAO.Instance.ObtemTipoVenda(null, idPedido) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição)
+            {
                 return "true";
+            }
 
             return "false";
         }
