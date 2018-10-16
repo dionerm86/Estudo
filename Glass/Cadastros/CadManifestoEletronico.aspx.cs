@@ -271,7 +271,7 @@ namespace Glass.UI.Web.Cadastros
                 if (NFeCidadeDescargaMDFeDAO.Instance.VerificarNfeJaInclusa(chaveAcesso))
                 {
                     var numeroMdfe = NFeCidadeDescargaMDFeDAO.Instance.GetMdfeNfeInclusa(chaveAcesso);
-                    return $"Erro|Nota Fiscal já inclusa no MDFe {numeroMdfe}."
+                    return $"Erro|Nota Fiscal já inclusa no MDFe {numeroMdfe}.";
                 }
 
                 var nfeCidadeDescarga = new NFeCidadeDescargaMDFe();
