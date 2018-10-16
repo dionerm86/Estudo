@@ -1,7 +1,7 @@
 <span>
     <campo-busca-com-popup ref="base" v-bind:id="idProduto" v-bind:nome.sync="codigoInterno" v-bind:item-selecionado.sync="produtoAtual"
         campo-id="id" campo-nome="codigo" v-bind:funcao-buscar-itens="buscarProdutos" style="width: 90px"
-        url-popup="/Utils/SelProd.aspx" v-bind="$attrs"></campo-busca-com-popup>
+        v-bind:url-popup="caminhoRelativo('/Utils/SelProd.aspx')" v-bind="$attrs"></campo-busca-com-popup>
     <div v-if="produtoAtual">
         {{ produtoAtual.descricao }}
     </div>

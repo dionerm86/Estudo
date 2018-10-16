@@ -233,13 +233,22 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Atributos\CacheFilterAttribute.cs" />
+    <Compile Include="Controllers\Aplicacoes\V1\DeleteAplicacoesController.cs" />
+    <Compile Include="Controllers\Aplicacoes\V1\PatchAplicacoesController.cs" />
+    <Compile Include="Controllers\Aplicacoes\V1\PostAplicacoesController.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Sugestoes\GetSugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Sugestoes\DeleteSugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Sugestoes\SugestaoClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\TiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\DeleteTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Fornecedores\V1\FornecedoresController.cs" />
+    <Compile Include="Controllers\Fornecedores\V1\DeleteFornecedoresController.cs" />
+    <Compile Include="Controllers\Fornecedores\V1\GetFornecedoresController.cs" />
     <Compile Include="Controllers\Comissionados\V1\DeleteComissionadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\FeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\DeleteFeriadosController.cs" />
@@ -249,6 +258,9 @@
     <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\GetSetoresController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\SetoresController.cs" />
+    <Compile Include="Controllers\Fornecedores\V1\PostFornecedoresController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GetPlanosContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\PlanosContaController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\DeleteCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PatchCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PostCoresAluminioController.cs" />
@@ -383,6 +395,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
     <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
@@ -391,6 +404,7 @@
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoSvgProjetoStrategy.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
+    <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
@@ -399,6 +413,8 @@
     <Compile Include="Helper\Produtos\CoresAluminio\TraducaoOrdenacaoListaCoresAluminio.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\ConverterCadastroAtualizacaoParaCorFerragem.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\TraducaoOrdenacaoListaCoresFerragem.cs" />
+    <Compile Include="Helper\Aplicacoes\ConverterCadastroAtualizacaoParaAplicacao.cs" />
+    <Compile Include="Helper\Aplicacoes\TraducaoOrdenacaoListaAplicacoes.cs" />
     <Compile Include="Helper\Sinais\TraducaoOrdenacaoListaSinais.cs" />
     <Compile Include="Helper\Caixas\Geral\TraducaoOrdenacaoListaCaixaGeral.cs" />
     <Compile Include="Helper\Caixas\Diario\TraducaoOrdenacaoListaCaixaDiario.cs" />
@@ -487,6 +503,12 @@
     <Compile Include="Models\Producao\V1\Lista\TipoProdutoComposicaoEnum.cs" />
     <Compile Include="Models\Producao\V1\Lista\SituacaoProducaoEnum.cs" />
     <Compile Include="Models\Producao\V1\Lista\TipoSituacaoProducaoEnum.cs" />
+    <Compile Include="Models\Fornecedores\Lista\VendedorDto.cs" />
+    <Compile Include="Models\PlanosConta\Lista\TipoEnum.cs" />
+    <Compile Include="Models\Fornecedores\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Fornecedores\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Fornecedores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Fornecedores\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Veiculos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\Lista\ListaDto.cs" />
@@ -500,9 +522,18 @@
     <Compile Include="Models\Produtos\CoresAluminio\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Produtos\CoresAluminio\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\CoresAluminio\Lista\ListaDto.cs" />
+    <Compile Include="Models\Clientes\SugestoesCliente\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Clientes\SugestoesCliente\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Clientes\SugestoesCliente\Lista\ListaDto.cs" />
+    <Compile Include="Models\Clientes\SugestoesCliente\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Produtos\CoresFerragem\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Produtos\CoresFerragem\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\CoresFerragem\Lista\ListaDto.cs" />
+    <Compile Include="Models\Aplicacoes\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Aplicacoes\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Aplicacoes\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Aplicacoes\Lista\ListaDto.cs" />
+    <Compile Include="Models\Aplicacoes\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Sinais\Lista\FiltroDto.cs" />
     <Compile Include="Models\Sinais\Lista\ListaDto.cs" />
     <Compile Include="Models\Sinais\Lista\PermissoesDto.cs" />

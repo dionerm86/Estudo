@@ -86,7 +86,7 @@ Vue.component('controle-selecao-participante-fiscal', {
         'controle=' + this.uuid
       ].join('&');
 
-      this.abrirJanela(600, 800, this.tipoParticipanteAtual.urlTelaBusca + complementosUrl);
+      this.abrirJanela(600, 800, this.caminhoRelativo(this.tipoParticipanteAtual.urlTelaBusca + complementosUrl));
     }
   },
 

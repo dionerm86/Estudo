@@ -2,9 +2,11 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Helper;
+using Glass.API.Backend.Models.Genericas;
+using Glass.Configuracoes;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -17,15 +19,11 @@ namespace Glass.API.Backend.Models.Processos.Configuracoes
     public class ListaDto
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ListaDto"/> class.
+        /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
         /// </summary>
         public ListaDto()
         {
-            this.TiposPedidosIgnorar = new[]
-            {
-                Data.Model.Pedido.TipoPedidoEnum.Revenda,
-            };
-
+            this.TiposPedidosIgnorar = this.ObterTiposPedidosIgnorar();
             this.SituacaoPadrao = new ConversorEnum<Glass.Situacao>()
                 .ObterTraducao()
                 .FirstOrDefault(s => s.Id == (int)Glass.Situacao.Ativo);
@@ -36,7 +34,7 @@ namespace Glass.API.Backend.Models.Processos.Configuracoes
         /// </summary>
         [DataMember]
         [JsonProperty("tiposPedidosIgnorar")]
-        public Data.Model.Pedido.TipoPedidoEnum[] TiposPedidosIgnorar { get; set; }
+        public IEnumerable<Data.Model.Pedido.TipoPedidoEnum> TiposPedidosIgnorar { get; set; }
 
         /// <summary>
         /// Obtém ou define a situação padrão para o cadastro de processo.
@@ -44,5 +42,20 @@ namespace Glass.API.Backend.Models.Processos.Configuracoes
         [DataMember]
         [JsonProperty("situacaoPadrao")]
         public IdNomeDto SituacaoPadrao { get; set; }
+
+        private IList<Data.Model.Pedido.TipoPedidoEnum> ObterTiposPedidosIgnorar()
+        {
+            var tiposPedidosIgnorar = new List<Data.Model.Pedido.TipoPedidoEnum>
+            {
+                Data.Model.Pedido.TipoPedidoEnum.Revenda,
+            };
+
+            if (!EstoqueConfig.ControlarEstoqueVidrosClientes)
+            {
+                tiposPedidosIgnorar.Add(Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial);
+            }
+
+            return tiposPedidosIgnorar;
+        }
     }
 }

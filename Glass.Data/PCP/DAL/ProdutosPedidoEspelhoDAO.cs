@@ -4311,9 +4311,10 @@ namespace Glass.Data.DAL
                     objUpdate,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
                     objUpdate.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte,
-                    objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao)
+                    objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao),
+                    primeiroCalculo: true
                 );
-
+ 
                 /* Chamado 28687. */
                 if (PedidoDAO.Instance.IsPedidoImportado(sessao, objUpdate.IdPedido) && objUpdate.Obs == null)
                     objUpdate.Obs = ObtemObs(sessao, objUpdate.IdProdPed);
@@ -4323,8 +4324,6 @@ namespace Glass.Data.DAL
                     objUpdate.Espessura = ProdutoDAO.Instance.ObtemEspessura(sessao, (int)objUpdate.IdProd);
 
                 /* Chamado 54462. */
-                objUpdate.ValorDescontoQtde = 0;
-
                 var pedidoEspelho = container as PedidoEspelho ?? PedidoEspelhoDAO.Instance.GetElement(sessao, objUpdate.IdPedido);
 
                 UpdateBase(sessao, objUpdate, container);

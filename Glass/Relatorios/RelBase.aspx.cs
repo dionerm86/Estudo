@@ -165,6 +165,34 @@ namespace Glass.UI.Web.Relatorios
 
                         break;
                     }
+                case "InfoPedidos":
+                    {
+                        report.ReportPath = "Relatorios/rptInfoPedidos.rdlc";
+                        var fastDelivery = Glass.Conversoes.StrParaFloat(Request["fastDelivery"]);
+                        var idPedido = !String.IsNullOrEmpty(Request["idPedido"]) ? Glass.Conversoes.StrParaUint(Request["idPedido"]) : 0;
+                        var idCliente = !String.IsNullOrEmpty(Request["idCliente"]) ? Glass.Conversoes.StrParaUint(Request["idCliente"]) : 0;
+                        var tipo = !String.IsNullOrEmpty(Request["tipo"]) ? Glass.Conversoes.StrParaInt(Request["tipo"]) : 0;
+
+                        lstParam.Add(new ReportParameter("Data", Request["data"]));
+                        lstParam.Add(new ReportParameter("FastDelivery", fastDelivery.ToString()));
+                        lstParam.Add(new ReportParameter("TextoAdicionalProducao", ""));
+
+                        report.DataSources.Add(new ReportDataSource("PedidoRpt", Glass.Data.RelDAL.PedidoRptDAL.Instance.CopiaLista(PedidoDAO.Instance.GetForInfoPedidos(Request["data"],
+                            Request["data"], idPedido, idCliente, Request["nomeCliente"], tipo), PedidoRpt.TipoConstrutor.ListaPedidos, false, login)));
+
+                        break;
+                    }
+                case "InfoPedidosPeriodo":
+                    {
+                        report.ReportPath = "Relatorios/rptInfoPedidosPeriodo.rdlc";
+
+                        report.DataSources.Add(new ReportDataSource("InfoPedidos", Glass.Data.RelDAL.InfoPedidosDAO.Instance.GetInfoPedidos(Request["dataIni"], Request["dataFim"])));
+
+                        lstParam.Add(new ReportParameter("DataInicio", Request["dataIni"]));
+                        lstParam.Add(new ReportParameter("DataFim", Request["dataFim"]));
+
+                        break;
+                    }
                 case "LiberarPedidoMov":
                 case "LiberarPedidoMovSemValor":
                     {
@@ -518,39 +546,35 @@ namespace Glass.UI.Web.Relatorios
                         {
                             lstParam.Add(new ReportParameter("ExibirColunaDataLib", PedidoConfig.LiberarPedido.ToString()));
                             lstParam.Add(new ReportParameter("Agrupar", Request["agrupar"].ToString())); // 1-Cliente, 2-Data Venc, 3-Data Cad, 4-Comissionado
+                            
+                            decimal creditoTotal = 0;
+                            decimal chequeDevolvidoTotal = 0;
+                            var idCliContasRec = new List<uint>();
 
-                            if (report.ReportPath == "Relatorios/rptContasReceber.rdlc" ||
-                                report.ReportPath == "Relatorios/rptContasReceberRetrato.rdlc")
-                            {
-                                decimal creditoTotal = 0;
-                                decimal chequeDevolvidoTotal = 0;
-                                var idCliContasRec = new List<uint>();
+                            foreach (var contaRec in contasReceber)
+                                if (!idCliContasRec.Contains(contaRec.IdCliente))
+                                {
+                                    idCliContasRec.Add(contaRec.IdCliente);
+                                    creditoTotal += contaRec.CreditoCliente;
 
-                                foreach (var contaRec in contasReceber)
-                                    if (!idCliContasRec.Contains(contaRec.IdCliente))
-                                    {
-                                        idCliContasRec.Add(contaRec.IdCliente);
-                                        creditoTotal += contaRec.CreditoCliente;
+                                    var chequesDev = ChequesDAO.Instance.GetDevolvidosPorCliente(contaRec.IdCliente);
+                                    if (chequesDev != null)
+                                        contaRec.TotalChequeDevolvido = chequesDev.Sum(f => f.Valor - f.ValorReceb);
 
-                                        var chequesDev = ChequesDAO.Instance.GetDevolvidosPorCliente(contaRec.IdCliente);
-                                        if (chequesDev != null)
-                                            contaRec.TotalChequeDevolvido = chequesDev.Sum(f => f.Valor - f.ValorReceb);
+                                    chequeDevolvidoTotal += contaRec.TotalChequeDevolvido;
+                                }
 
-                                        chequeDevolvidoTotal += contaRec.TotalChequeDevolvido;
-                                    }
+                            lstParam.Add(new ReportParameter("CreditoTotal", creditoTotal.ToString()));
+                            lstParam.Add(new ReportParameter("ChequeDevolvidoTotal", chequeDevolvidoTotal.ToString()));
+                            lstParam.Add(new ReportParameter("ExibirPedidos", (FinanceiroConfig.RelatorioContasRecebidas.ExibirPedidos).ToString()));
 
-                                lstParam.Add(new ReportParameter("CreditoTotal", creditoTotal.ToString()));
-                                lstParam.Add(new ReportParameter("ChequeDevolvidoTotal", chequeDevolvidoTotal.ToString()));
-                                lstParam.Add(new ReportParameter("ExibirPedidos", (FinanceiroConfig.RelatorioContasRecebidas.ExibirPedidos).ToString()));
+                            var idCli = Request["idCli"].StrParaUintNullable();
+                            var cheques = new List<Cheques>();
 
-                                var idCli = Request["idCli"].StrParaUintNullable();
-                                var cheques = new List<Cheques>();
+                            if (idCli.GetValueOrDefault(0) > 0)
+                                cheques = ChequesDAO.Instance.GetDevolvidosPorCliente(idCli.Value).ToList();
 
-                                if (idCli.GetValueOrDefault(0) > 0)
-                                    cheques = ChequesDAO.Instance.GetDevolvidosPorCliente(idCli.Value).ToList();
-
-                                report.DataSources.Add(new ReportDataSource("Cheques", cheques));
-                            }
+                            report.DataSources.Add(new ReportDataSource("Cheques", cheques));
                         }
                         else
                         {
@@ -3988,6 +4012,14 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("Reimpressao", (Request["reimpressao"] != null && Request["reimpressao"].ToLower() == "true").ToString().ToLower()));
                         report.ReportPath = "Relatorios/rptComprovanteCapptaTef.rdlc";
                         report.DataSources.Add(new ReportDataSource("Transacao", transacoes));
+                        break;
+                    }
+                case "UtilizacaoSistema":
+                    {
+                        var utilizacao = LoginSistemaDAO.Instance.GetForRpt(Request["idFuncionario"].StrParaUint(), Request["tipoAtividade"].StrParaInt(), Request["periodoIni"], Request["periodoFim"]);
+                        report.ReportPath = "Relatorios/rptUtilizacaoSistema.rdlc";
+                        report.DataSources.Add(new ReportDataSource("Utilizacao", utilizacao));
+                        lstParam.Add(new ReportParameter("Criterio",  ""));
                         break;
                     }
 

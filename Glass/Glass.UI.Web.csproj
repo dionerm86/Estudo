@@ -478,6 +478,9 @@
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
+    <Content Include="Vue\Clientes\Componentes\LstSugestaoCliente.Filtro.js" />
+    <Content Include="Vue\Clientes\Componentes\LstSugestaoCliente.js" />
+    <Content Include="Vue\Clientes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
     <Content Include="Vue\Feriados\Componentes\LstFeriados.js" />
     <Content Include="Vue\Comissionados\Componentes\LstComissionados.Filtro.js" />
@@ -490,6 +493,9 @@
     <Content Include="Vue\Producao\Componentes\LstProducao.Pecas.js" />
     <Content Include="Vue\Producao\Templates\LstProducao.Filtros.html" />
     <Content Include="Vue\Producao\Templates\LstProducao.Pecas.html" />
+    <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.Filtro.js" />
+    <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.js" />
+    <Content Include="Vue\Fornecedores\Templates\LstFornecedores.Filtro.html" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />
@@ -497,6 +503,7 @@
     <Content Include="Vue\CoresVidro\Componentes\LstCoresVidro.js" />
     <Content Include="Vue\CoresAluminio\Componentes\LstCoresAluminio.js" />
     <Content Include="Vue\CoresFerragem\Componentes\LstCoresFerragem.js" />
+    <Content Include="Vue\Aplicacoes\Componentes\LstAplicacoes.js" />
     <Content Include="Vue\Sinais\Componentes\LstSinais.Filtro.js" />
     <Content Include="Vue\Sinais\Componentes\LstSinais.js" />
     <Content Include="Vue\Sinais\Templates\LstSinais.Filtro.html" />
@@ -1261,6 +1268,8 @@
     <Content Include="Listas\LstInfoAdicCredito.aspx" />
     <Content Include="Listas\LstInfoAdicNFEExtemporanea.aspx" />
     <Content Include="Listas\LstInfoDiferimento.aspx" />
+    <Content Include="Listas\LstInfoPedidos.aspx" />
+    <Content Include="Listas\LstInfoPedidosPeriodo.aspx" />
     <Content Include="Listas\LstInfoValorAgregado.aspx" />
     <Content Include="Listas\LstInstalacao.aspx" />
     <Content Include="Listas\LstInventarioEstoque.aspx" />
@@ -1743,6 +1752,7 @@
     <Content Include="Vue\_Compartilhado\Filtros\IndicaMarcado.js" />
     <Content Include="Vue\_Compartilhado\Filtros\SimNao.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Beneficiamentos.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\CaminhoRelativo.js" />
     <Content Include="Vue\_Compartilhado\Mixins\CampoBeneficiamento.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Data.js" />
     <Content Include="Vue\_Compartilhado\Mixins\ExecutarTimeout.js" />
@@ -1758,6 +1768,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Sinais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Acertos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />
@@ -1774,6 +1785,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Liberacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PedidosConferencia.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Caixas.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\SugestaoCliente.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TiposCartao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Rotas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TabelasDescontoAcrescimoCliente.js" />
@@ -1796,6 +1808,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Producao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Produtos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Publicos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Fornecedores.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Veiculos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Transportadores.js" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoBisote.html" />
@@ -5905,6 +5918,20 @@
     <Compile Include="Listas\LstInfoDiferimento.aspx.designer.cs">
       <DependentUpon>LstInfoDiferimento.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Listas\LstInfoPedidos.aspx.cs">
+      <DependentUpon>LstInfoPedidos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstInfoPedidos.aspx.designer.cs">
+      <DependentUpon>LstInfoPedidos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstInfoPedidosPeriodo.aspx.cs">
+      <DependentUpon>LstInfoPedidosPeriodo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstInfoPedidosPeriodo.aspx.designer.cs">
+      <DependentUpon>LstInfoPedidosPeriodo.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Listas\LstInfoValorAgregado.aspx.cs">
       <DependentUpon>LstInfoValorAgregado.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -9291,11 +9318,15 @@
     <Content Include="Relatorios\rptProdutosComprar.rdlc" />
     <Content Include="Relatorios\rptProdutosExportacao.rdlc" />
     <Content Include="Relatorios\rptProdutosLiberar.rdlc" />
-    <Content Include="Relatorios\rptProdutosPreco.rdlc" />
+    <Content Include="Relatorios\rptProdutosPreco.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Relatorios\rptResumoDiario.rdlc">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Relatorios\rptRetalhosAssociados.rdlc" />
+    <Content Include="Relatorios\rptRetalhosAssociados.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Relatorios\rptRetalhosProducao.rdlc">
       <SubType>Designer</SubType>
     </Content>
@@ -9337,6 +9368,15 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Relatorios\rptUtilizacaoSistema.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Relatorios\rptInfoPedidos.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptInfoPedidosPeriodo.rdlc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -79,9 +79,9 @@ namespace Glass.Data.DAL
             sql += string.Format(" AND tc.Situacao={0} ", (int)situacao);
 
             if (tipo == 1)
-                sql += " And idTipoCartao In (2,4,6)";
+                sql += $" And Tipo={(int)TipoCartaoEnum.Debito}";
             else if (tipo == 2)
-                sql += " And idTipoCartao In (1,3,5)";
+                sql += $" And Tipo={(int)TipoCartaoEnum.Credito}";
 
             return objPersistence.LoadData(sql + " Order By idTipoCartao").ToList().ToArray();
         }

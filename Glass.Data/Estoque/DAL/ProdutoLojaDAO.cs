@@ -534,8 +534,11 @@ namespace Glass.Data.DAL
         public void ColocarReserva(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
             int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
         {
-            AtualizaReservaLiberacao(sessao, idLoja, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                idPedido, idsPedido, idProdPed, classeMetodo, false, true);
+            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
+            {
+                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
+                    idPedido, idsPedido, idProdPed, classeMetodo, false, true);
+            }
         }
 
         #endregion
@@ -548,8 +551,11 @@ namespace Glass.Data.DAL
         public void TirarReserva(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
             int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
         {
-            AtualizaReservaLiberacao(sessao, idLoja, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                idPedido, idsPedido, idProdPed, classeMetodo, false, false);
+            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
+            {
+                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
+                    idPedido, idsPedido, idProdPed, classeMetodo, false, false);
+            }
         }
 
         #endregion
@@ -562,8 +568,11 @@ namespace Glass.Data.DAL
         public void ColocarLiberacao(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
             int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
         {
-            AtualizaReservaLiberacao(sessao, idLoja, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                idPedido, idsPedido, idProdPed, classeMetodo, true, true);
+            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
+            {
+                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
+                    idPedido, idsPedido, idProdPed, classeMetodo, true, true);
+            }
         }
 
         #endregion
@@ -576,8 +585,11 @@ namespace Glass.Data.DAL
         public void TirarLiberacao(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
             int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
         {
-            AtualizaReservaLiberacao(sessao, idLoja, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                idPedido, idsPedido, idProdPed, classeMetodo, true, false);
+            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
+            {
+                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
+                    idPedido, idsPedido, idProdPed, classeMetodo, true, false);
+            }
         }
 
         #endregion

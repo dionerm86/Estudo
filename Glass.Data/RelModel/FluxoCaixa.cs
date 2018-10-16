@@ -14,18 +14,7 @@ namespace Glass.Data.RelModel
         [PersistenceProperty("DATA")]
         public DateTime Data
         {
-            get
-            {
-                var idTipoCartao = IdConta != null ? Helper.UtilsPlanoConta.ObterTipoCartaoPorConta((uint)IdConta) : null;
-                _data = idTipoCartao == null ? _data.AddDays(1) : _data;
-
-                while (!FuncoesData.DiaUtil(_data))
-                {
-                    _data = _data.AddDays(1);
-                }
-
-                return _data.Date;
-            }
+            get { return _data.Date; }
             set { _data = value; }
         }
 

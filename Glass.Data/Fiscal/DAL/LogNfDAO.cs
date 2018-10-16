@@ -70,9 +70,9 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idNf"></param>
         /// <returns></returns>
-        public int ObtemUltimoCodigo(uint idNf)
+        public int ObtemUltimoCodigo(GDASession session, uint idNf)
         {
-            return ExecuteScalar<int>("Select codigo From log_nf Where idNf=" + idNf + " Order By idLogNf desc Limit 1");
+            return ExecuteScalar<int>(session, $"SELECT Codigo FROM log_nf WHERE idNf={ idNf } ORDER BY IdLogNf DESC LIMIT 1");
         }
 
         /// <summary>

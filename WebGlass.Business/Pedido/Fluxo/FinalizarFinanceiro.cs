@@ -91,23 +91,12 @@ namespace WebGlass.Business.Pedido.Fluxo
                 {
                     transaction.BeginTransaction();
 
+                    bool enviarMensagem = false;
+
                     if (!negado && Glass.Configuracoes.PedidoConfig.LiberarPedido)
                     {
-                        bool enviarMensagem = false;
                         //Recalcula a data de entrega do pedido baseando-se na data de hoje e atualiza a data de entrega do pedido
                         PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(transaction, idPedido, DateTime.Now, out enviarMensagem, false);
-
-                        var idRemetente = UserInfo.GetUserInfo.CodUser;
-                        var idVendedorCad = (int)PedidoDAO.Instance.ObtemIdFuncCad(transaction, idPedido);
-                        var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(null, idPedido);
-
-                        if (enviarMensagem)
-                        {
-                            //Envia uma mensagem para o vendedor informando que a data de entrega foi alterada
-                            Microsoft.Practices.ServiceLocation.ServiceLocator.Current
-                                .GetInstance<Glass.Global.Negocios.IMensagemFluxo>()
-                                .EnviarMensagemVendedorAoAlterarDataEntrega((int)idRemetente, idVendedorCad, (int)idPedido, dataEntrega);
-                        }
 
                         var idsPedidoOk = new List<int>();
                         var idsPediodErro = new List<int>();
@@ -136,6 +125,18 @@ namespace WebGlass.Business.Pedido.Fluxo
                     ObservacaoFinalizacaoFinanceiroDAO.Instance.AtualizaItem(transaction, idPedido, observacao, !negado ?
                         Glass.Data.Model.ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao :
                         Glass.Data.Model.ObservacaoFinalizacaoFinanceiro.MotivoEnum.NegacaoConfirmar);
+
+                    if (enviarMensagem)
+                    {
+                        var idRemetente = UserInfo.GetUserInfo.CodUser;
+                        var idVendedorCad = (int)PedidoDAO.Instance.ObtemIdFuncCad(transaction, idPedido);
+                        var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(null, idPedido);
+
+                        //Envia uma mensagem para o vendedor informando que a data de entrega foi alterada
+                        Microsoft.Practices.ServiceLocation.ServiceLocator.Current
+                            .GetInstance<Glass.Global.Negocios.IMensagemFluxo>()
+                            .EnviarMensagemVendedorAoAlterarDataEntrega((int)idRemetente, idVendedorCad, (int)idPedido, dataEntrega);
+                    }
 
                     transaction.Commit();
                     transaction.Close();

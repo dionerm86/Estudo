@@ -97,13 +97,13 @@ namespace Glass.Data.DAL
                     retorno += "inner join produtos_liberar_pedido plp on (pnf.idPedido=plp.idPedido)";
                     campo = "plp.idLiberarPedido";
                     campoContasReceber = "idLiberarPedido";
-                    where = "Where 1" + (!usarJoin ? " and plp.idLiberarPedido={0}.idLiberarPedido" : "");
+                    where = "Where 1" + (!usarJoin ? " AND nf.situacao <> " + (int)NotaFiscal.SituacaoEnum.Cancelada + " and plp.idLiberarPedido={0}.idLiberarPedido" : "");
                 }
 
                 if (usarJoin && numeroNFe > 0)
                 {
                     var idsNf = string.Join(",", NotaFiscalDAO.Instance.ExecuteMultipleScalar<string>(session,
-                        string.Format("Select Cast(idNf as char) From nota_fiscal Where numeroNfe={0}{1}{2}", numeroNFe,
+                        string.Format("Select Cast(idNf as char) From nota_fiscal Where numeroNfe={0}{1}{2} AND situacao <> " + (int)NotaFiscal.SituacaoEnum.Cancelada, numeroNFe,
                             idLoja > 0 ? " AND IdLoja=" + idLoja : string.Empty, !string.IsNullOrEmpty(modelo) ? " AND modelo=?modelo" : string.Empty),
                         new GDAParameter("?modelo", modelo)));
                     where += " And nf.idNf In (" + (string.IsNullOrEmpty(idsNf) ? "0" : idsNf) + ")";
@@ -968,9 +968,10 @@ namespace Glass.Data.DAL
                         // Tipo de cartão.
                         (f.IdTipoCartao > 0 ? " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(session, (int)f.IdTipoCartao) : string.Empty) +
                         // Número de parcelas
-                        (f.IdFormaPagto == 5 && ObterNumParcMaxContaR(session, f.IdContaR) > 0 ? " " + ObterNumParcMaxContaR(session, f.IdContaR) + " parcela(s)" : string.Empty) +
+                        (f.IdFormaPagto == 5 && TipoCartaoCreditoDAO.Instance.ObterTipoCartao(session, (int)f.IdTipoCartao) == TipoCartaoEnum.Debito ? " " :
+                        (f.IdFormaPagto == 5 && ObterNumParcMaxContaR(session, f.IdContaR) > 0 ? " " + ObterNumParcMaxContaR(session, f.IdContaR) + " parcela(s) " : string.Empty)) +
                         // Valor.
-                        " R$ " + f.ValorPagto.ToString("C") + 
+                        f.ValorPagto.ToString("C") +
                         // Descrição conta bancária.
                         (f.IdContaBanco > 0 ? " " + ContaBancoDAO.Instance.GetDescricao(session, (uint)f.IdContaBanco) : string.Empty)).ToList());
 

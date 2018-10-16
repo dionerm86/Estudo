@@ -1229,7 +1229,7 @@ namespace Glass.Data.DAL
                                 }
                             }
 
-                            if (contasReceber?.Any(f => f.IdContaR > 0) ?? false)
+                            if ((contasReceber?.Count()).GetValueOrDefault() == 0)
                             {
                                 var idsNotaFiscal = PedidosNotaFiscalDAO.Instance.ObterIdsNf(transaction, idsLiberarPedidos?.Split(',')?.Select(f => (f?.StrParaInt()).GetValueOrDefault())?.ToList() ?? new List<int>(),
                                     idsPedidos?.Split(',')?.Select(f => (f?.StrParaInt()).GetValueOrDefault())?.ToList(), NotaFiscal.SituacaoEnum.Autorizada);
@@ -1270,7 +1270,7 @@ namespace Glass.Data.DAL
                                 }
                             }
 
-                            if (nf.DatasParcelas?.Any(f => f > DateTime.MinValue) ?? false)
+                            if ((nf.DatasParcelas?.Count()).GetValueOrDefault() == 0)
                             {
                                 nf.NumParc = 1;
                                 nf.DatasParcelas = new DateTime[1];
@@ -9286,11 +9286,11 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idNf"></param>
         /// <returns></returns>
-        public bool PodeEditar(uint idNf)
+        public bool PodeEditar(GDASession session, uint idNf)
         {
-            int situacao = ObtemSituacao(idNf);
+            int situacao = ObtemSituacao(session, idNf);
             LoginUsuario login = UserInfo.GetUserInfo;
-            int ultCodEvento = LogNfDAO.Instance.ObtemUltimoCodigo(idNf);
+            int ultCodEvento = LogNfDAO.Instance.ObtemUltimoCodigo(session, idNf);
 
             // Códigos de retorno da receita que não pode permitir edição de NFe, pela possibilidade da mesma já estar autorizada
             List<int> lstCodNaoEditavel = new List<int>() { 100, 101, 102, 103, 104, 105, 108, 110, 204, 205, 206, 218, 219, 220, 221, 256, 420, 563 };
@@ -9299,7 +9299,7 @@ namespace Glass.Data.DAL
                 (situacao == (int)NotaFiscal.SituacaoEnum.FalhaEmitir && !lstCodNaoEditavel.Contains(ultCodEvento));
 
             bool flagManual = (situacao == (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros ||
-                (situacao == (int)NotaFiscal.SituacaoEnum.Autorizada && NotaFiscalDAO.Instance.ExisteCartaCorrecaoRegistrada(null, idNf))) &&
+                (situacao == (int)NotaFiscal.SituacaoEnum.Autorizada && NotaFiscalDAO.Instance.ExisteCartaCorrecaoRegistrada(session, idNf))) &&
                 Config.PossuiPermissao(Config.FuncaoMenuFiscal.AlteracaoManualNFe);
 
             return (flagSituacao || flagManual);
