@@ -14014,7 +14014,7 @@ namespace Glass.Data.DAL
             {
                 var incluirS = idsPedidoSinal.Count > 1 ? "s" : string.Empty;
 
-                mensagemErro.Add($"O{ incluirS } pedido{ incluirS } { string.Join(",", idsPedidoSinal) } tem sinal a receber.\n");
+                mensagemErro.Add($"O{ incluirS } pedido{ incluirS } { string.Join(", ", idsPedidoSinal) } tem sinal a receber.\n");
             }
 
             if (idsPedidoPagtoAntecipado?.Any(f => f > 0) ?? false)

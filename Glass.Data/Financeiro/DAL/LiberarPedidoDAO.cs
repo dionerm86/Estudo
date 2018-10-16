@@ -1795,7 +1795,7 @@ namespace Glass.Data.DAL
 
             if (!PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, idsPedido?.Split(',')?.Select(f => f.StrParaInt())?.ToList(), out mensagem))
             {
-                throw new Exception("Falha ao liberar pedidos. Erro: " + string.Join(",", mensagem));
+                throw new Exception("Falha ao liberar pedidos. Erro: " + string.Join(", ", mensagem));
             }
 
             // Verifica se cliente possui limite disponível para liberar os pedidos, desde que os mesmos já não estejam debitando do limite
