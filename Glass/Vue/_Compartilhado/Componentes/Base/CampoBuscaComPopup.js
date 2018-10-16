@@ -180,7 +180,7 @@ Vue.component('campo-busca-com-popup', {
         return;
       }
 
-      const url = this.urlPopup
+      const url = this.caminhoRelativo(this.urlPopup)
         + (this.urlPopup.indexOf('?') > -1 ? '&' : '?')
         + 'buscaComPopup=true&id-controle=' + this.uuid;
 
