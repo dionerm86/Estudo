@@ -448,9 +448,10 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda,
-            string reposicao, string tipoPedido, string idMaterItemProjStr, string percDescontoQtdeStr, string idPedido)
+            string reposicao, string tipoPedido, string idMaterItemProjStr, string percDescontoQtdeStr, string idPedido, string alturaStr)
         {
-            float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
+            float percDescontoQtde = !String.IsNullOrWhiteSpace(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
+            float altura = !string.IsNullOrWhiteSpace(alturaStr) ? float.Parse(alturaStr.Replace(".", ",")) : 0;
             uint idMaterItemProj;
 
             if (uint.TryParse(idMaterItemProjStr, out idMaterItemProj))
@@ -459,7 +460,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     return MaterialItemProjetoDAO.Instance.ObtemValor(idMaterItemProj).ToString(CultureInfo.InvariantCulture);
                 else
                     return ProdutoDAO.Instance.GetValorMinimo(idMaterItemProj, ProdutoDAO.TipoBuscaValorMinimo.MaterialItemProjeto, revenda.ToLower() == "true",
-                        percDescontoQtde, idPedido.StrParaIntNullable(), null, null).ToString(CultureInfo.InvariantCulture);
+                        percDescontoQtde, idPedido.StrParaIntNullable(), null, null, altura).ToString(CultureInfo.InvariantCulture);
             }
             else
             {
@@ -467,7 +468,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 return ProdutoDAO.Instance.GetValorMinimo(ProdutoDAO.Instance.ObtemIdProd(codInterno), tipoEntr, idCli, revenda == "true",
-                    reposicao == "true", percDescontoQtde, idPedido.StrParaIntNullable(), null, null).ToString(CultureInfo.InvariantCulture);
+                    reposicao == "true", percDescontoQtde, idPedido.StrParaIntNullable(), null, null, altura).ToString(CultureInfo.InvariantCulture);
             }
         }
 

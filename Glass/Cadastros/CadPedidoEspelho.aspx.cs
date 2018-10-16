@@ -312,10 +312,10 @@ namespace Glass.UI.Web.Cadastros
 
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string tipoPedido, string tipoEntrega, string idCliente, string revenda,
-            string reposicao, string idProdPedStr, string percDescontoQtdeStr, string idPedido)
+            string reposicao, string idProdPedStr, string percDescontoQtdeStr, string idPedido, string altura)
         {
             return WebGlass.Business.Produto.Fluxo.Valor.Ajax.GetValorMinimoPcp(codInterno, tipoPedido, tipoEntrega, idCliente,
-                revenda, reposicao, idProdPedStr, percDescontoQtdeStr, idPedido);
+                revenda, reposicao, idProdPedStr, percDescontoQtdeStr, idPedido, altura);
         }
 
         /// <summary>

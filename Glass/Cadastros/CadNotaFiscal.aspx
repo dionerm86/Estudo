@@ -723,6 +723,10 @@
             FindControl("hdfIsAluminio", "input").value = retorno[3]; // Informa se o produto é vidro
             FindControl("hdfM2Minimo", "input").value = retorno[4]; // Informa se o produto possui m² mínimo
 
+            if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != "") {
+                GetAdicionalAlturaChapa();
+            }
+
             var tipoCalc = eval(nomeControle).DadosProduto().TipoCalculo;
 
             if (retorno[5] != "" && FindControl("drpCst", "select") != null)
@@ -960,7 +964,36 @@
         var idCliente = FindControl("hdfIdFornec", "input").value;
         var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
 
-        FindControl("txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, false, false, 0, "", "", "", altura).value.replace(".", ",");
+        var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, false, false, 0, "", "", "", altura);
+
+        if (retorno.error != null) {
+            alert(retorno.error.description);
+            return;
+        }
+        else if(retorno == null){
+            alert("Erro na recuperação do valor de tabela do produto.");
+            return;
+        }
+
+        var valMin = FindControl("hdfValMin", "input");
+
+        if(valMin != null) {
+            valMin.value = retorno.value.replace(".", ",");
+        }
+        else{
+            alert("Não foi possível encontrar o controle 'hdfValMin'");
+            return false;
+        }
+
+        var valorIns = FindControl("txtValorIns", "input");
+
+        if(valorIns != null){
+            valorIns.value = retorno.value.replace(".", ",");
+        }
+        else{
+            alert("Não foi possível encontrar o controle 'txtValorIns'");
+            return false;
+        }
     }
 
     // Calcula em tempo real a metragem quadrada do produto

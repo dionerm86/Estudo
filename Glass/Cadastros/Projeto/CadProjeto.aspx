@@ -307,6 +307,10 @@
                     FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como produto é calculado
                     var tipoCalc = retorno[7];
 
+                    if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != "") {
+                        GetAdicionalAlturaChapa();
+                    }
+
                     var nomeControle = getNomeControleBenef();
 
                     // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
@@ -464,7 +468,37 @@
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
 
-            FindControl("txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCli, false, false, 0, "", idProjeto, "", altura).value.replace(".", ",");
+            var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCli, false, false, 0, "", idProjeto, "", altura);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            else if(retorno == null){
+                alert("Erro na recuperação do valor de tabela do produto.");
+                return;
+            }
+
+            var valMin = FindControl("hdfValMin", "input");
+
+            if(valMin != null) {
+                valMin.value = retorno.replace(".", ",");
+            }
+            else{
+                alert("Não foi possível encontrar o controle 'hdfValMin'");
+                return false;
+            }
+
+            var valorIns = FindControl("txtValorIns", "input");
+
+            if(valorIns != null){
+                valorIns.value = retorno.replace(".", ",");
+            }
+            else{
+                alert("Não foi possível encontrar o controle 'txtValorIns'");
+                return false;
+            }
+
         }
 
         // Calcula em tempo real a metragem quadrada do produto
