@@ -233,6 +233,9 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Atributos\CacheFilterAttribute.cs" />
+    <Compile Include="Controllers\Aplicacoes\V1\DeleteAplicacoesController.cs" />
+    <Compile Include="Controllers\Aplicacoes\V1\PatchAplicacoesController.cs" />
+    <Compile Include="Controllers\Aplicacoes\V1\PostAplicacoesController.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
     <Compile Include="Controllers\Clientes\V1\Sugestoes\GetSugestaoClienteController.cs" />
@@ -264,6 +267,10 @@
     <Compile Include="Controllers\Produtos\V1\CoresVidro\DeleteCoresVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresVidro\PatchCoresVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresVidro\PostCoresVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GruposProduto\DeleteGruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GruposProduto\PatchGruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GruposProduto\PostGruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\PatchProdutosController.cs" />
     <Compile Include="Controllers\Sinais\V1\SinaisController.cs" />
     <Compile Include="Controllers\Sinais\V1\GetSinaisController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
@@ -401,6 +408,8 @@
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\TraducaoOrdenacaoListaTabelasDescontoAcrescimoCliente.cs" />
+    <Compile Include="Helper\Produtos\GruposProduto\ConverterCadastroAtualizacaoParaGrupoProduto.cs" />
+    <Compile Include="Helper\Produtos\GruposProduto\TraducaoOrdenacaoListaGruposProduto.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
@@ -409,6 +418,8 @@
     <Compile Include="Helper\Produtos\CoresAluminio\TraducaoOrdenacaoListaCoresAluminio.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\ConverterCadastroAtualizacaoParaCorFerragem.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\TraducaoOrdenacaoListaCoresFerragem.cs" />
+    <Compile Include="Helper\Aplicacoes\ConverterCadastroAtualizacaoParaAplicacao.cs" />
+    <Compile Include="Helper\Aplicacoes\TraducaoOrdenacaoListaAplicacoes.cs" />
     <Compile Include="Helper\Sinais\TraducaoOrdenacaoListaSinais.cs" />
     <Compile Include="Helper\Caixas\Geral\TraducaoOrdenacaoListaCaixaGeral.cs" />
     <Compile Include="Helper\Caixas\Diario\TraducaoOrdenacaoListaCaixaDiario.cs" />
@@ -481,6 +492,14 @@
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\Lista\FiltroDto.cs" />
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\CadastroAtualizacao\SituacaoDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Lista\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Lista\TiposCalculoDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Lista\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\Lista\ListaDto.cs" />
@@ -501,6 +520,11 @@
     <Compile Include="Models\Produtos\CoresFerragem\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Produtos\CoresFerragem\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\CoresFerragem\Lista\ListaDto.cs" />
+    <Compile Include="Models\Aplicacoes\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Aplicacoes\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Aplicacoes\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Aplicacoes\Lista\ListaDto.cs" />
+    <Compile Include="Models\Aplicacoes\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Sinais\Lista\FiltroDto.cs" />
     <Compile Include="Models\Sinais\Lista\ListaDto.cs" />
     <Compile Include="Models\Sinais\Lista\PermissoesDto.cs" />

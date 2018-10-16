@@ -1324,7 +1324,8 @@ namespace Glass.Data.DAL
         public CaixaDiario[] GetByObra(GDASession sessao, uint idObra)
         {
             string sql = "Select * From caixa_diario where idObra=" + idObra + " And idConta In (" + UtilsPlanoConta.ContasAVista() +
-                "," + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado) + ") Order By idCaixaDiario Desc";
+                "," + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado) +
+                "," + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecObraCredito) + ") Order By idCaixaDiario Desc";
 
             return objPersistence.LoadData(sessao, sql).ToList().ToArray();
         }

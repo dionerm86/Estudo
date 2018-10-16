@@ -564,10 +564,10 @@ namespace Glass.UI.Web.Cadastros
 
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda,
-            string idProdOrcaStr, string percDescontoQtdeStr, string idOrcamento)
+            string idProdOrcaStr, string percDescontoQtdeStr, string idOrcamento, string altura)
         {
             return WebGlass.Business.Produto.Fluxo.Valor.Ajax.GetValorMinimoOrca(codInterno, tipoEntrega,
-                idCliente, revenda, idProdOrcaStr, percDescontoQtdeStr, idOrcamento);
+                idCliente, revenda, idProdOrcaStr, percDescontoQtdeStr, idOrcamento, altura);
         }
 
         /// <summary>

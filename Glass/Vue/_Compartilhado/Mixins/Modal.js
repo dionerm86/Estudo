@@ -12,7 +12,7 @@ Vue.mixin({
      * @param {?boolean} [exibirBotaoFechar=true] Para os modais, deve-se exibir o botão de 'fechar'?
      */
     abrirJanela: function (altura, largura, url, opener, exibirBotaoFechar) {
-      openWindow(altura, largura, url, opener, exibirBotaoFechar);
+      openWindow(altura, largura, this.caminhoRelativo(url), opener, exibirBotaoFechar);
     }
   }
 });

@@ -38,6 +38,8 @@
         <indicador-sistema-ocupado></indicador-sistema-ocupado>
     </div>
     <script type="text/javascript">
+        const caminhoAbsolutoSite = '<%= ObterCaminhoAbsoluto() %>';
+
         Vue.prototype.$http = axios.create({
             baseURL: '<%= ConfigurationManager.AppSettings["backendUrl"] %>',
             headers: {
