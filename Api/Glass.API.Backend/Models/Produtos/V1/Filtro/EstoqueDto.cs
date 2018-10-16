@@ -18,14 +18,14 @@ namespace Glass.API.Backend.Models.Produtos.V1.Filtro
         /// </summary>
         [DataMember]
         [JsonProperty("quantidadeReal")]
-        public double QuantidadeReal { get; set; }
+        public decimal QuantidadeReal { get; set; }
 
         /// <summary>
         /// Obtém ou define o estoque atual.
         /// </summary>
         [DataMember]
         [JsonProperty("quantidadeAtual")]
-        public double QuantidadeAtual { get; set; }
+        public decimal QuantidadeAtual { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador da loja.

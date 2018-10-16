@@ -42,7 +42,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.AmbientesPedido.CadastroAtualizaca
         /// </summary>
         [DataMember]
         [JsonProperty("quantidade")]
-        public double? Quantidade
+        public decimal? Quantidade
         {
             get { return this.ObterValor(c => c.Quantidade); }
             set { this.AdicionarValor(c => c.Quantidade, value); }
@@ -53,7 +53,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.AmbientesPedido.CadastroAtualizaca
         /// </summary>
         [DataMember]
         [JsonProperty("altura")]
-        public double? Altura
+        public decimal? Altura
         {
             get { return this.ObterValor(c => c.Altura); }
             set { this.AdicionarValor(c => c.Altura, value); }

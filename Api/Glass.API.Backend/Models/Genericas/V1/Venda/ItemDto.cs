@@ -39,7 +39,7 @@ namespace Glass.API.Backend.Models.Genericas.V1.Venda
         /// </summary>
         [DataMember]
         [JsonProperty("quantidade")]
-        public double Quantidade { get; set; }
+        public decimal Quantidade { get; set; }
 
         /// <summary>
         /// Obtém ou define a quantidade do ambiente para o produto de venda.
@@ -123,7 +123,7 @@ namespace Glass.API.Backend.Models.Genericas.V1.Venda
         /// </summary>
         [DataMember]
         [JsonProperty("percentualComissao")]
-        public double PercentualComissao { get; set; }
+        public decimal PercentualComissao { get; set; }
 
         /// <summary>
         /// Obtém ou define os dados de composição do produto.

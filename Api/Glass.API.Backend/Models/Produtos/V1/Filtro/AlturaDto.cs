@@ -18,6 +18,6 @@ namespace Glass.API.Backend.Models.Produtos.V1.Filtro
         /// </summary>
         [DataMember]
         [JsonProperty("fatorArredondamento")]
-        public double? FatorArredondamento { get; set; }
+        public decimal? FatorArredondamento { get; set; }
     }
 }

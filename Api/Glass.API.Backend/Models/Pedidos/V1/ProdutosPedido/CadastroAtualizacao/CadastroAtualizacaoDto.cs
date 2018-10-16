@@ -43,7 +43,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.ProdutosPedido.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("quantidade")]
-        public double Quantidade
+        public decimal Quantidade
         {
             get { return this.ObterValor(c => c.Quantidade); }
             set { this.AdicionarValor(c => c.Quantidade, value); }

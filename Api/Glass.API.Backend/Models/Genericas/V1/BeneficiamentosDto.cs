@@ -40,7 +40,7 @@ namespace Glass.API.Backend.Models.Genericas.V1
         /// </summary>
         [DataMember]
         [JsonProperty("espessura")]
-        public double? Espessura { get; set; }
+        public decimal? Espessura { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se o produto é redondo.

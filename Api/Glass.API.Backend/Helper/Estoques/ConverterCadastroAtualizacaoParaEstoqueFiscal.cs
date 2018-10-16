@@ -46,8 +46,8 @@ namespace Glass.API.Backend.Helper.Estoques
 
         private void ConverterDtoParaModelo(Data.Model.ProdutoLoja destino)
         {
-            destino.EstoqueFiscal = this.cadastro.ObterValorNormalizado(c => c.QuantidadeEstoqueFiscal, destino.EstoqueFiscal);
-            destino.QtdePosseTerceiros = this.cadastro.ObterValorNormalizado(c => c.QuantidadePosseTerceiros, destino.QtdePosseTerceiros);
+            destino.EstoqueFiscal = (double)this.cadastro.ObterValorNormalizado(c => c.QuantidadeEstoqueFiscal, (decimal)destino.EstoqueFiscal);
+            destino.QtdePosseTerceiros = (double)this.cadastro.ObterValorNormalizado(c => c.QuantidadePosseTerceiros, (decimal)destino.QtdePosseTerceiros);
 
             this.ConverterParticipante(destino);
         }

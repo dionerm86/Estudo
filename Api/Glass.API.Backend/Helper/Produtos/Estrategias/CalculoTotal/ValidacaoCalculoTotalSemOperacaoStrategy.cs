@@ -26,7 +26,7 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.CalculoTotal
         }
 
         /// <inheritdoc/>
-        public double ObterPercentualDescontoQuantidade(string dadosAdicionaisValidacao)
+        public decimal ObterPercentualDescontoQuantidade(string dadosAdicionaisValidacao)
         {
             return 0;
         }

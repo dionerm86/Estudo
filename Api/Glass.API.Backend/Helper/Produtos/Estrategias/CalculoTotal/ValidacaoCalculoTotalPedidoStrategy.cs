@@ -56,7 +56,7 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.CalculoTotal
         }
 
         /// <inheritdoc/>
-        public double ObterPercentualDescontoQuantidade(string dadosAdicionaisValidacao)
+        public decimal ObterPercentualDescontoQuantidade(string dadosAdicionaisValidacao)
         {
             var dadosAdicionais = JsonConvert.DeserializeObject<DadosAdicionaisFiltroPedidoDto>(dadosAdicionaisValidacao);
             return dadosAdicionais.PercentualDescontoPorQuantidade;

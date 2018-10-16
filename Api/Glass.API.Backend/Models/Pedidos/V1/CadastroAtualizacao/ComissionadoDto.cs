@@ -25,6 +25,6 @@ namespace Glass.API.Backend.Models.Pedidos.V1.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("percentualComissao")]
-        public float PercentualComissao { get; set; }
+        public decimal PercentualComissao { get; set; }
     }
 }

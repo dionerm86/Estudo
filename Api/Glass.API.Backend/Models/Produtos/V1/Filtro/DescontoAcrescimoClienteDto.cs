@@ -18,7 +18,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.Filtro
         /// </summary>
         [DataMember]
         [JsonProperty("percentual")]
-        public double Percentual { get; set; }
+        public decimal Percentual { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se o desconto ou acréscimo também

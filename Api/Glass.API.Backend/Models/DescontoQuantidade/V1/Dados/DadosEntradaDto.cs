@@ -46,6 +46,6 @@ namespace Glass.API.Backend.Models.DescontoQuantidade.V1.Dados
         /// </summary>
         [DataMember]
         [JsonProperty("quantidade")]
-        public double Quantidade { get; set; }
+        public decimal Quantidade { get; set; }
     }
 }

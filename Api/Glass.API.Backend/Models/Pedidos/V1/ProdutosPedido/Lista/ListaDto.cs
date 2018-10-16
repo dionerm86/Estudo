@@ -33,30 +33,30 @@ namespace Glass.API.Backend.Models.Pedidos.V1.ProdutosPedido.Lista
                 Codigo = produtoPedido.CodInterno,
                 Descricao = produtoPedido.DescrProduto,
                 DescricaoComBeneficiamentos = produtoPedido.DescricaoProdutoComBenef,
-                Espessura = produtoPedido.Espessura,
+                Espessura = (decimal)produtoPedido.Espessura,
                 Vidro = produtoPedido.IsVidro == "true",
             };
 
-            this.Quantidade = produtoPedido.Qtde;
+            this.Quantidade = (decimal)produtoPedido.Qtde;
             this.QuantidadeAmbiente = produtoPedido.QtdeAmbiente;
             this.DescontoPorQuantidade = new DescontoQuantidadeDto
             {
-                Percentual = produtoPedido.PercDescontoQtde,
+                Percentual = (decimal)produtoPedido.PercDescontoQtde,
                 Valor = produtoPedido.ValorDescontoQtde,
             };
 
             this.Largura = produtoPedido.Largura;
             this.Altura = new AlturaDto
             {
-                Real = produtoPedido.AlturaReal,
-                ParaCalculo = produtoPedido.Altura,
+                Real = (decimal)produtoPedido.AlturaReal,
+                ParaCalculo = (decimal)produtoPedido.Altura,
                 ParaExibirNaLista = produtoPedido.AlturaLista,
             };
 
             this.AreaEmM2 = new AreaDto
             {
-                Real = produtoPedido.TotM,
-                ParaCalculo = produtoPedido.TotM2Calc,
+                Real = (decimal)produtoPedido.TotM,
+                ParaCalculo = (decimal)produtoPedido.TotM2Calc,
                 ParaCalculoSemChapa = produtoPedido.TotalM2CalcSemChapaString,
             };
 
@@ -70,13 +70,13 @@ namespace Glass.API.Backend.Models.Pedidos.V1.ProdutosPedido.Lista
                 Valor = produtoPedido.ValorBenef,
                 Altura = produtoPedido.AlturaBenef,
                 Largura = produtoPedido.LarguraBenef,
-                Espessura = produtoPedido.EspessuraBenef,
+                Espessura = (decimal?)produtoPedido.EspessuraBenef,
                 Redondo = produtoPedido.Redondo,
                 Itens = produtoPedido.Beneficiamentos?.ObterListaBeneficiamentos(),
             };
 
             this.Observacao = produtoPedido.Obs;
-            this.PercentualComissao = (double)produtoPedido.PercComissao;
+            this.PercentualComissao = (decimal)produtoPedido.PercComissao;
             this.Composicao = new ComposicaoDto
             {
                 PossuiFilhos = produtoPedido.IsProdLamComposicao,

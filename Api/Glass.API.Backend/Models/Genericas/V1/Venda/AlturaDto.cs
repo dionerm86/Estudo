@@ -17,14 +17,14 @@ namespace Glass.API.Backend.Models.Genericas.V1.Venda
         /// </summary>
         [DataMember]
         [JsonProperty("paraCalculo")]
-        public double ParaCalculo { get; set; }
+        public decimal ParaCalculo { get; set; }
 
         /// <summary>
         /// Obtém ou define a altura real do produto.
         /// </summary>
         [DataMember]
         [JsonProperty("real")]
-        public double Real { get; set; }
+        public decimal Real { get; set; }
 
         /// <summary>
         /// Obtém ou define a altura para exibição na lista do produto.

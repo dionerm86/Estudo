@@ -25,6 +25,6 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Detalhe
         /// </summary>
         [DataMember]
         [JsonProperty("taxa")]
-        public double Taxa { get; set; }
+        public decimal Taxa { get; set; }
     }
 }

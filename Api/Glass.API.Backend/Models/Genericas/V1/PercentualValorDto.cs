@@ -18,7 +18,7 @@ namespace Glass.API.Backend.Models.Genericas.V1
         /// </summary>
         [DataMember]
         [JsonProperty("percentual")]
-        public double? Percentual { get; set; }
+        public decimal? Percentual { get; set; }
 
         /// <summary>
         /// Obtém ou define o valor monetário.

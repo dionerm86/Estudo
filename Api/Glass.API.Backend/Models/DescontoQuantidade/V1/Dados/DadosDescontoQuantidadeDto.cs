@@ -18,13 +18,13 @@ namespace Glass.API.Backend.Models.DescontoQuantidade.V1.Dados
         /// </summary>
         [DataMember]
         [JsonProperty("percentualDescontoPorQuantidade")]
-        public double PercentualDescontoPorQuantidade { get; set; }
+        public decimal PercentualDescontoPorQuantidade { get; set; }
 
         /// <summary>
         /// Obtém ou define o percentual de desconto de tabela do cliente.
         /// </summary>
         [DataMember]
         [JsonProperty("percentualDescontoTabela")]
-        public double PercentualDescontoTabela { get; set; }
+        public decimal PercentualDescontoTabela { get; set; }
     }
 }

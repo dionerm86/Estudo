@@ -46,7 +46,7 @@ namespace Glass.API.Backend.Helper.Pedidos.ProdutosPedido
             destino.IdAmbientePedido = (uint?)this.cadastro.ObterValorNormalizado(c => c.IdAmbiente, (int?)destino.IdAmbientePedido);
             destino.IdProd = this.cadastro.Produto != null ? (uint)this.cadastro.Produto.Id : destino.IdProd;
             destino.Espessura = this.cadastro.Produto != null ? (float)this.cadastro.Produto.Espessura : destino.Espessura;
-            destino.Qtde = (float)this.cadastro.ObterValorNormalizado(c => c.Quantidade, (double)destino.Qtde);
+            destino.Qtde = (float)this.cadastro.ObterValorNormalizado(c => c.Quantidade, (decimal)destino.Qtde);
             destino.PercDescontoQtde = this.cadastro.DescontoPorQuantidade != null ? (float)this.cadastro.DescontoPorQuantidade.Percentual.GetValueOrDefault() : destino.PercDescontoQtde;
             destino.ValorDescontoQtde = this.cadastro.DescontoPorQuantidade != null ? this.cadastro.DescontoPorQuantidade.Valor.GetValueOrDefault() : destino.ValorDescontoQtde;
             destino.Largura = this.cadastro.ObterValorNormalizado(c => c.Largura, destino.Largura);

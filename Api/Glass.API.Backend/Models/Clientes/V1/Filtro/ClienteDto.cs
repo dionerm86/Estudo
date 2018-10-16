@@ -45,7 +45,7 @@ namespace Glass.API.Backend.Models.Clientes.V1.Filtro
             };
 
             this.PagamentoAntecipado = cliente.PagamentoAntesProducao;
-            this.PercentualMinimoSinal = cliente.PercSinalMinimo;
+            this.PercentualMinimoSinal = (decimal?)cliente.PercSinalMinimo;
             this.IdVendedor = this.ObterIdVendedorCliente(cliente);
             this.Comissionado = !cliente.IdComissionado.HasValue
                 ? null
@@ -53,10 +53,10 @@ namespace Glass.API.Backend.Models.Clientes.V1.Filtro
                 {
                     Id = cliente.IdComissionado.Value,
                     Nome = ComissionadoDAO.Instance.GetNome((uint)cliente.IdComissionado.Value),
-                    Percentual = ComissionadoDAO.Instance.ObtemPercentual((uint)cliente.IdComissionado.Value),
+                    Percentual = (decimal)ComissionadoDAO.Instance.ObtemPercentual((uint)cliente.IdComissionado.Value),
                 };
 
-            this.PercentualComissao = cliente.PercentualComissao;
+            this.PercentualComissao = (decimal)cliente.PercentualComissao;
             this.IdLoja = this.ObterIdLojaCliente(cliente);
             this.IdTransportador = cliente.IdTransportador;
             this.EnderecoEntrega = this.ObterEnderecoEntrega(cliente);
@@ -111,7 +111,7 @@ namespace Glass.API.Backend.Models.Clientes.V1.Filtro
         /// </summary>
         [DataMember]
         [JsonProperty("percentualMinimoSinal")]
-        public double? PercentualMinimoSinal { get; set; }
+        public decimal? PercentualMinimoSinal { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador do vendedor associado ao cliente.
@@ -132,7 +132,7 @@ namespace Glass.API.Backend.Models.Clientes.V1.Filtro
         /// </summary>
         [DataMember]
         [JsonProperty("percentualComissao")]
-        public double? PercentualComissao { get; set; }
+        public decimal? PercentualComissao { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador da loja do cliente.

@@ -18,7 +18,7 @@ namespace Glass.API.Backend.Models.Genericas.V1.Venda
         /// </summary>
         [DataMember]
         [JsonProperty("percentual")]
-        public double Percentual { get; set; }
+        public decimal Percentual { get; set; }
 
         /// <summary>
         /// Obtém ou define o valor de desconto por quantidade.

@@ -133,7 +133,7 @@ namespace Glass.API.Backend.Helper.Pedidos
             if (this.cadastro.Comissionado != null)
             {
                 destino.IdComissionado = (uint?)this.cadastro.Comissionado.Id;
-                destino.PercComissao = this.cadastro.Comissionado.PercentualComissao;
+                destino.PercComissao = (float)this.cadastro.Comissionado.PercentualComissao;
             }
         }
 

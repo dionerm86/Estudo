@@ -19,7 +19,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("quantidadeEstoqueFiscal")]
-        public double QuantidadeEstoqueFiscal
+        public decimal QuantidadeEstoqueFiscal
         {
             get { return this.ObterValor(c => c.QuantidadeEstoqueFiscal); }
             set { this.AdicionarValor(c => c.QuantidadeEstoqueFiscal, value); }
@@ -30,7 +30,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("quantidadePosseTerceiros")]
-        public double QuantidadePosseTerceiros
+        public decimal QuantidadePosseTerceiros
         {
             get { return this.ObterValor(c => c.QuantidadePosseTerceiros); }
             set { this.AdicionarValor(c => c.QuantidadePosseTerceiros, value); }

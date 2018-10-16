@@ -18,14 +18,14 @@ namespace Glass.API.Backend.Models.Genericas.V1.Venda
         /// </summary>
         [DataMember]
         [JsonProperty("paraCalculo")]
-        public double ParaCalculo { get; set; }
+        public decimal ParaCalculo { get; set; }
 
         /// <summary>
         /// Obtém ou define a área real.
         /// </summary>
         [DataMember]
         [JsonProperty("real")]
-        public double Real { get; set; }
+        public decimal Real { get; set; }
 
         /// <summary>
         /// Obtém ou define a área para cálculo, sem chapa.

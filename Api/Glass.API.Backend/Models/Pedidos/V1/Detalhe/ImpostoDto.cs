@@ -18,7 +18,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Detalhe
         /// </summary>
         [DataMember]
         [JsonProperty("aliquota")]
-        public float Aliquota { get; set; }
+        public decimal Aliquota { get; set; }
 
         /// <summary>
         /// Obtém ou define o valor do imposto.

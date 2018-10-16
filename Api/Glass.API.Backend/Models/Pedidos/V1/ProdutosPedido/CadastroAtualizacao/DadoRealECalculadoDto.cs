@@ -19,7 +19,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.ProdutosPedido.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("real")]
-        public double Real
+        public decimal Real
         {
             get { return this.ObterValor(c => c.Real); }
             set { this.AdicionarValor(c => c.Real, value); }
@@ -30,7 +30,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.ProdutosPedido.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("paraCalculo")]
-        public double ParaCalculo
+        public decimal ParaCalculo
         {
             get { return this.ObterValor(c => c.ParaCalculo); }
             set { this.AdicionarValor(c => c.ParaCalculo, value); }

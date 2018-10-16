@@ -30,18 +30,18 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Detalhe
                 Nome = pedido.NomeCli,
                 Revenda = pedido.CliRevenda,
                 ExigePagamentoAntecipado = pedido.ClientePagaAntecipado,
-                PercentualSinalMinimo = pedido.PercSinalMinCliente ?? 0,
+                PercentualSinalMinimo = (decimal?)pedido.PercSinalMinCliente ?? 0,
                 Telefone = pedido.RptTelContCli,
                 Endereco = pedido.EnderecoCompletoCliente,
                 Observacao = pedido.ObsCliente,
             };
 
-            this.PercentualComissao = pedido.PercentualComissao;
+            this.PercentualComissao = (decimal)pedido.PercentualComissao;
             this.DataPedido = pedido.DataPedido;
             this.FastDelivery = new FastDeliveryDto
             {
                 Aplicado = pedido.FastDelivery,
-                Taxa = pedido.TaxaFastDelivery,
+                Taxa = (decimal)pedido.TaxaFastDelivery,
             };
 
             this.CodigoPedidoCliente = pedido.CodCliente;
@@ -162,7 +162,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Detalhe
                     Nome = pedido.NomeComissionado,
                     Comissao = new PercentualValorDto
                     {
-                        Percentual = pedido.PercComissao,
+                        Percentual = (decimal)pedido.PercComissao,
                         Valor = pedido.ValorComissao,
                     },
                 };
@@ -187,7 +187,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Detalhe
                 ? null
                 : new ImpostoDto
                 {
-                    Aliquota = pedido.AliquotaIcms,
+                    Aliquota = (decimal)pedido.AliquotaIcms,
                     Valor = pedido.ValorIcms,
                 };
 
@@ -195,7 +195,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Detalhe
                 ? null
                 : new ImpostoDto
                 {
-                    Aliquota = pedido.AliquotaIpi,
+                    Aliquota = (decimal)pedido.AliquotaIpi,
                     Valor = pedido.ValorIpi,
                 };
 
@@ -228,7 +228,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Detalhe
                 ? null
                 : new PercentualValorDto
                 {
-                    Percentual = (double)pedido.PercentualRentabilidade,
+                    Percentual = (decimal)pedido.PercentualRentabilidade,
                     Valor = pedido.RentabilidadeFinanceira,
                 };
 
@@ -262,7 +262,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Detalhe
         /// </summary>
         [DataMember]
         [JsonProperty("percentualComissao")]
-        public double PercentualComissao { get; set; }
+        public decimal PercentualComissao { get; set; }
 
         /// <summary>
         /// Obtém ou define a data de emissão do pedido.

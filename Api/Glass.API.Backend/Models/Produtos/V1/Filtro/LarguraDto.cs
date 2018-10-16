@@ -25,6 +25,6 @@ namespace Glass.API.Backend.Models.Produtos.V1.Filtro
         /// </summary>
         [DataMember]
         [JsonProperty("valor")]
-        public double? Valor { get; set; }
+        public decimal? Valor { get; set; }
     }
 }

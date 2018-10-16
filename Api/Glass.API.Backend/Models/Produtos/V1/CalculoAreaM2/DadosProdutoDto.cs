@@ -32,7 +32,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.CalculoAreaM2
         /// </summary>
         [DataMember]
         [JsonProperty("altura")]
-        public double Altura { get; set; }
+        public decimal Altura { get; set; }
 
         /// <summary>
         /// Obtém ou define a largura do produto.
@@ -46,7 +46,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.CalculoAreaM2
         /// </summary>
         [DataMember]
         [JsonProperty("quantidade")]
-        public double Quantidade { get; set; }
+        public decimal Quantidade { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se o produto é redondo.
@@ -60,7 +60,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.CalculoAreaM2
         /// </summary>
         [DataMember]
         [JsonProperty("espessura")]
-        public double Espessura { get; set; }
+        public decimal Espessura { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se o cálculo deve considerar múltiplo de 5.

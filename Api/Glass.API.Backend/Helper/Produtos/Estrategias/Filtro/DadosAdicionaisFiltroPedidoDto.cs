@@ -65,18 +65,18 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
         /// Obtém ou define o percentual de desconto por quantidade do produto.
         /// </summary>
         [JsonProperty("percentualDescontoPorQuantidade")]
-        public double PercentualDescontoPorQuantidade { get; set; }
+        public decimal PercentualDescontoPorQuantidade { get; set; }
 
         /// <summary>
         /// Obtém ou define a área, em m², que será desconsiderada no cálculo do tamanho máximo da obra.
         /// </summary>
         [JsonProperty("areaM2DesconsiderarObra")]
-        public double? AreaEmM2DesconsiderarObra { get; set; }
+        public decimal? AreaEmM2DesconsiderarObra { get; set; }
 
         /// <summary>
         /// Obtém ou define a altura do produto.
         /// </summary>
         [JsonProperty("altura")]
-        public double? Altura { get; set; }
+        public decimal? Altura { get; set; }
     }
 }

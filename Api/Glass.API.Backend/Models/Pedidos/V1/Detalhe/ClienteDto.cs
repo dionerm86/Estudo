@@ -26,7 +26,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Detalhe
         /// </summary>
         [DataMember]
         [JsonProperty("percentualSinalMinimo")]
-        public float PercentualSinalMinimo { get; set; }
+        public decimal PercentualSinalMinimo { get; set; }
 
         /// <summary>
         /// Obtém ou define o telefone de contato do cliente.

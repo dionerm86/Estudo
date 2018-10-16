@@ -112,9 +112,9 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
             }
         }
 
-        private double CalcularAreaM2Real(GDASession sessao, Models.Produtos.V1.CalculoAreaM2.DadosProdutoDto dadosProduto)
+        private decimal CalcularAreaM2Real(GDASession sessao, Models.Produtos.V1.CalculoAreaM2.DadosProdutoDto dadosProduto)
         {
-            var areaReal = Global.CalculosFluxo.ArredondaM2(
+            var areaReal = (decimal)Global.CalculosFluxo.ArredondaM2(
                 sessao,
                 dadosProduto.Largura,
                 (int)dadosProduto.Altura,
@@ -127,9 +127,9 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
             return areaReal.Arredondar(2);
         }
 
-        private double CalcularAreaM2Calculo(GDASession sessao, Models.Produtos.V1.CalculoAreaM2.DadosProdutoDto dadosProduto, bool usarChapaDeVidro)
+        private decimal CalcularAreaM2Calculo(GDASession sessao, Models.Produtos.V1.CalculoAreaM2.DadosProdutoDto dadosProduto, bool usarChapaDeVidro)
         {
-            var areaCalculada = Global.CalculosFluxo.CalcM2Calculo(
+            var areaCalculada = (decimal)Global.CalculosFluxo.CalcM2Calculo(
                 sessao,
                 (uint)dadosProduto.IdCliente,
                 (int)dadosProduto.Altura,
@@ -152,14 +152,14 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                 sessao,
                 dadosProduto.IdCliente,
                 dadosProduto.IdProduto,
-                dadosProduto.Altura,
+                (double)dadosProduto.Altura,
                 dadosProduto.Largura,
-                dadosProduto.Quantidade,
+                (double)dadosProduto.Quantidade,
                 dadosProduto.QuantidadeAmbiente,
-                dadosProduto.AreaM2,
-                dadosProduto.AreaCalculadaM2,
+                (double)dadosProduto.AreaM2,
+                (double)dadosProduto.AreaCalculadaM2,
                 dadosProduto.ValorUnitario,
-                dadosProduto.PercentualDescontoPorQuantidade,
+                (double)dadosProduto.PercentualDescontoPorQuantidade,
                 dadosProduto.CalcularMultiploDe5,
                 dadosProduto.NumeroBeneficiamentosParaAreaMinima);
 

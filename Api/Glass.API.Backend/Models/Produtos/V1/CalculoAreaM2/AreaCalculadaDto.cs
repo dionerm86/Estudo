@@ -14,20 +14,20 @@ namespace Glass.API.Backend.Models.Produtos.V1.CalculoAreaM2
         /// </summary>
         [DataMember]
         [JsonProperty("areaM2")]
-        public double AreaM2 { get; set; }
+        public decimal AreaM2 { get; set; }
 
         /// <summary>
         /// Obtém ou define a área (para cálculo) em m².
         /// </summary>
         [DataMember]
         [JsonProperty("areaM2Calculo")]
-        public double AreaM2Calculo { get; set; }
+        public decimal AreaM2Calculo { get; set; }
 
         /// <summary>
         /// Obtém ou define a área (para cálculo, desconsiderando a chapa de vidro) em m².
         /// </summary>
         [DataMember]
         [JsonProperty("areaM2CalculoSemChapaDeVidro")]
-        public double AreaM2CalculoSemChapaDeVidro { get; set; }
+        public decimal AreaM2CalculoSemChapaDeVidro { get; set; }
     }
 }

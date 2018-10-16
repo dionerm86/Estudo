@@ -37,7 +37,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.Filtro
             this.IdGrupo = produto.IdGrupoProd;
             this.IdSubgrupo = produto.IdSubgrupoProd;
             this.IdCor = produto.IdCorVidro ?? produto.IdCorAluminio ?? produto.IdCorFerragem;
-            this.Espessura = produto.Espessura;
+            this.Espessura = (decimal)produto.Espessura;
             this.Altura = this.ObterAltura(produto, tipoCalculo);
             this.Largura = this.ObterLargura(produto);
             this.Quantidade = this.ObterQuantidade(tipoCalculo);
@@ -88,7 +88,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.Filtro
         /// </summary>
         [DataMember]
         [JsonProperty("espessura")]
-        public double Espessura { get; set; }
+        public decimal Espessura { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor com informações sobre a altura do produto.
@@ -172,7 +172,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.Filtro
         /// </summary>
         [DataMember]
         [JsonProperty("tamanhoMaximoObra")]
-        public double? TamanhoMaximoObra { get; set; }
+        public decimal? TamanhoMaximoObra { get; set; }
 
         /// <summary>
         /// Obtém ou define os dados de estoque do produto.
@@ -192,11 +192,11 @@ namespace Glass.API.Backend.Models.Produtos.V1.Filtro
         {
             var tiposCalculoAlturaDecimal = new[]
             {
-                new { TipoCalculo = TipoCalculoGrupoProd.ML, Arredondamento = (double?)null },
-                new { TipoCalculo = TipoCalculoGrupoProd.MLAL0, Arredondamento = (double?)null },
-                new { TipoCalculo = TipoCalculoGrupoProd.MLAL05, Arredondamento = (double?)0.5 },
-                new { TipoCalculo = TipoCalculoGrupoProd.MLAL1, Arredondamento = (double?)1 },
-                new { TipoCalculo = TipoCalculoGrupoProd.MLAL6, Arredondamento = (double?)6 },
+                new { TipoCalculo = TipoCalculoGrupoProd.ML, Arredondamento = (decimal?)null },
+                new { TipoCalculo = TipoCalculoGrupoProd.MLAL0, Arredondamento = (decimal?)null },
+                new { TipoCalculo = TipoCalculoGrupoProd.MLAL05, Arredondamento = (decimal?)0.5 },
+                new { TipoCalculo = TipoCalculoGrupoProd.MLAL1, Arredondamento = (decimal?)1 },
+                new { TipoCalculo = TipoCalculoGrupoProd.MLAL6, Arredondamento = (decimal?)6 },
             };
 
             var tiposCalculoAlturaNaoEditavel = new[]

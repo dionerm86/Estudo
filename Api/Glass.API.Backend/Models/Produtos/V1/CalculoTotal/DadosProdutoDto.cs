@@ -25,14 +25,14 @@ namespace Glass.API.Backend.Models.Produtos.V1.CalculoTotal
         /// </summary>
         [DataMember]
         [JsonProperty("areaM2")]
-        public double AreaM2 { get; set; }
+        public decimal AreaM2 { get; set; }
 
         /// <summary>
         /// Obtém ou define a quantidade do ambiente.
         /// </summary>
         [DataMember]
         [JsonProperty("areaCalculadaM2")]
-        public double AreaCalculadaM2 { get; set; }
+        public decimal AreaCalculadaM2 { get; set; }
 
         /// <summary>
         /// Obtém ou define o valor unitário para o produto.
@@ -46,6 +46,6 @@ namespace Glass.API.Backend.Models.Produtos.V1.CalculoTotal
         /// </summary>
         [DataMember]
         [JsonProperty("percentualDescontoPorQuantidade")]
-        public double PercentualDescontoPorQuantidade { get; set; }
+        public decimal PercentualDescontoPorQuantidade { get; set; }
     }
 }
