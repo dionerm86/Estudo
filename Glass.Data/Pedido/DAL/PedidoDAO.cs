@@ -4540,7 +4540,7 @@ namespace Glass.Data.DAL
             string nomeCliExterno, string codRotaExterna, bool selecionar)
         {
             var campos = @"p.*, c.nomeFantasia as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja,
-                (SELECT r.codInterno FROM rota r WHERE r.idRota IN (Select rc.idRota From rota_cliente rc Where rc.idCliente=p.idCli)) As codRota,
+                (SELECT r.codInterno FROM rota r WHERE r.idRota IN (Select rc.idRota From rota_cliente rc Where rc.idCliente=p.idCli)) As codRota, 
                 CAST(SUM(pp.qtde) as SIGNED) as QuantidadePecasPedido, COALESCE(vpp.qtde, 0) as QtdePecasVolume, SUM(pp.TotM) as TotMVolume,
                 SUM(pp.peso) as PesoVolume";
 
@@ -4548,7 +4548,7 @@ namespace Glass.Data.DAL
             {
                 Pedido.SituacaoPedido.ConfirmadoLiberacao,
                 Pedido.SituacaoPedido.Confirmado,
-                Pedido.SituacaoPedido.LiberadoParcialmente
+                Pedido.SituacaoPedido.LiberadoParcialmente,
             };
 
             var sql = $@"
@@ -4563,24 +4563,24 @@ namespace Glass.Data.DAL
                     LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd 
                         AND (sgp.PermitirItemRevendaNaVenda IS NULL OR sgp.PermitirItemRevendaNaVenda = 0))
                     LEFT JOIN (
-                                    SELECT v1.idPedido, SUM(vpp1.qtde) as qtde
-                                    FROM volume v1
-	                                    INNER JOIN volume_produtos_pedido vpp1 ON (vpp1.idVolume = v1.idVolume)
-                                    GROUP BY v1.idPedido
-                             ) vpp ON (p.idPedido = vpp.idPedido)
+                        SELECT v1.idPedido, SUM(vpp1.qtde) AS qtde
+                        FROM volume v1
+	                        INNER JOIN volume_produtos_pedido vpp1 ON (vpp1.idVolume = v1.idVolume)
+                        GROUP BY v1.idPedido) vpp ON (p.idPedido = vpp.idPedido)
                 WHERE p.situacao IN ({string.Join(",", situacoesPedidoConsiderar.Select(f => (int)f).ToArray())})
                     AND COALESCE(sgp.GeraVolume, gp.GeraVolume, false) = true
                     AND COALESCE(sgp.TipoSubgrupo, 0) <> {(int)TipoSubgrupoProd.ChapasVidro}";
 
             if (OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega)
             {
-                sql += $" And p.tipoEntrega<>{(int)Pedido.TipoEntregaPedido.Balcao}";
+                sql += $" AND p.TipoEntrega<>{(int)Pedido.TipoEntregaPedido.Balcao}";
             }
             else
             {
                 sql += $@" AND IF(p.TipoEntrega = {(int)Pedido.TipoEntregaPedido.Balcao},
                      (p.SituacaoProducao NOT IN ({(int)Pedido.SituacaoProducaoEnum.Entregue},{(int)Pedido.SituacaoProducaoEnum.Instalado}) OR IFNULL(vpp.IdPedido, 0) > 0), TRUE)";
             }
+
 
             if (idPedido > 0)
             {
@@ -4616,7 +4616,10 @@ namespace Glass.Data.DAL
                 var ids = ClienteDAO.Instance.ObtemIdsClientesExternos(nomeCliExterno);
 
                 if (!string.IsNullOrEmpty(ids))
+                {
                     sql += $" AND p.IdClienteExterno IN ({ids})";
+                }
+
             }
 
             if (idLoja > 0)
@@ -4637,21 +4640,21 @@ namespace Glass.Data.DAL
             if (!string.IsNullOrEmpty(dataLibIni))
             {
                 sql += @" AND p.IdPedido IN (
-                                SELECT IdPedido FROM 
-                                produtos_liberar_pedido WHERE 
-                                IdLiberarPedido IN (
-                                    SELECT IdLiberarPedido FROM
-                                    liberarpedido WHERE DataLiberacao>=?dataLibIni))";
+                    SELECT IdPedido
+                    FROM produtos_liberar_pedido 
+                    WHERE IdLiberarPedido IN (
+                        SELECT IdLiberarPedido 
+                        FROM liberarpedido WHERE DataLiberacao>=?dataLibIni))";
             }
 
             if (!string.IsNullOrEmpty(dataLibFim))
             {
                 sql += @" AND p.IdPedido IN (
-                                SELECT IdPedido FROM 
-                                produtos_liberar_pedido WHERE
-                                IdLiberarPedido IN (
-                                    SELECT IdLiberarPedido FROM
-                                    liberarpedido WHERE DataLiberacao<=?dataLibFim))";
+                    SELECT IdPedido
+                    FROM produtos_liberar_pedido 
+                    WHERE IdLiberarPedido IN (
+                        SELECT IdLiberarPedido 
+                        FROM liberarpedido WHERE DataLiberacao<=?dataLibFim))";
             }
 
             if (!string.IsNullOrEmpty(codRota))
@@ -4662,7 +4665,8 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(codRotaExterna))
             {
-                var rotas = string.Join(",",
+                var rotas = string.Join(
+                    ",",
                     codRotaExterna
                     .Split(',')
                     .Select(f => "'" + f + "'")
@@ -4711,13 +4715,8 @@ namespace Glass.Data.DAL
                 ? $"WHERE {string.Join(" OR ", filtroSituacao.ToArray())}"
                 : string.Empty;
 
-            if (!OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega)
-            {
-                filtroExterno += $" AND IdPedido NOT IN ({string.Join(",", ObterIdsPedidosBalcaoJaEntregueSemVolume(null))})"; 
-            }
-
-            string select = selecionar 
-                ? "*" 
+            string select = selecionar
+                ? "*"
                 : "COUNT(*)";
 
             return $@"
@@ -4743,26 +4742,6 @@ namespace Glass.Data.DAL
                 GetParametersVolume(dataEntIni, dataEntFim, dataLibIni, dataLibFim, codRota, idsRotasExternas)).ToArray();
 
             return pedidos;
-        }
-
-        /// <summary>
-        /// Verifica se o Pedido da lista recuperada pode ser removidos
-        /// </summary>
-        /// <param name="session">Sessao do GDA</param>
-        /// <param name="idPedido">Pedido a ser verificado</param>
-        /// <returns>Retorna se o pedido é Balcão e já foi entregue sem volumes</returns>
-        private List<int> ObterIdsPedidosBalcaoJaEntregueSemVolume(GDASession session)
-        {
-            var sql = $@"SELECT 
-                        	p.IdPedido
-                        FROM pedido p
-                        WHERE
-                        	p.SituacaoProducao IN ({(int)Pedido.SituacaoProducaoEnum.Entregue},{(int)Pedido.SituacaoProducaoEnum.Instalado})
-                            AND p.TipoEntrega = {(int)Pedido.TipoEntregaPedido.Balcao}
-                        	AND p.IdPedido NOT IN 
-                        		(SELECT DISTINCT IdPedido FROM volume) ORDER BY p.IdPedido DESC;";
-
-            return ExecuteMultipleScalar<int>(session, sql);
         }
 
         /// <summary>
