@@ -14014,7 +14014,7 @@ namespace Glass.Data.DAL
             {
                 var incluirS = idsPedidoSinal.Count > 1 ? "s" : string.Empty;
 
-                mensagemErro.Add($"O{ incluirS } pedido{ incluirS } { idsPedidoSinal } tem sinal a receber.\n");
+                mensagemErro.Add($"O{ incluirS } pedido{ incluirS } { string.Join(", ", idsPedidoSinal) } tem sinal a receber.\n");
             }
 
             if (idsPedidoPagtoAntecipado?.Any(f => f > 0) ?? false)
@@ -15243,7 +15243,10 @@ namespace Glass.Data.DAL
             objUpdate.TipoVenda = objUpdate.TipoVenda.GetValueOrDefault((int)Pedido.TipoVendaPedido.AVista);
             objUpdate.IdProjeto = ped.IdProjeto;
 
-            objUpdate.GeradoParceiro = ped.GeradoParceiro;
+            if (!objUpdate.GeradoParceiro)
+            {
+                objUpdate.GeradoParceiro = ped.GeradoParceiro;
+            }
 
             if (ped.Situacao == Pedido.SituacaoPedido.Confirmado)
             {

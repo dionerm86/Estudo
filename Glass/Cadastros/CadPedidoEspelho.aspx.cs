@@ -312,10 +312,10 @@ namespace Glass.UI.Web.Cadastros
 
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string tipoPedido, string tipoEntrega, string idCliente, string revenda,
-            string reposicao, string idProdPedStr, string percDescontoQtdeStr, string idPedido)
+            string reposicao, string idProdPedStr, string percDescontoQtdeStr, string idPedido, string altura)
         {
             return WebGlass.Business.Produto.Fluxo.Valor.Ajax.GetValorMinimoPcp(codInterno, tipoPedido, tipoEntrega, idCliente,
-                revenda, reposicao, idProdPedStr, percDescontoQtdeStr, idPedido);
+                revenda, reposicao, idProdPedStr, percDescontoQtdeStr, idPedido, altura);
         }
 
         /// <summary>
@@ -898,8 +898,12 @@ namespace Glass.UI.Web.Cadastros
 
         protected string VerificaPedidoReposicao()
         {
-            if(PedidoDAO.Instance.ObtemTipoVenda(null, UInt32.Parse(Request["idPedido"])) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição)
+            var idPedido = Request["idPedido"].StrParaUint();
+
+            if (idPedido > 0 && PedidoDAO.Instance.ObtemTipoVenda(null, idPedido) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição)
+            {
                 return "true";
+            }
 
             return "false";
         }

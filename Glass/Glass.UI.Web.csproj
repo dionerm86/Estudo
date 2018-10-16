@@ -22,6 +22,7 @@
     <TargetFrameworkProfile />
     <UseGlobalApplicationHostFile />
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -476,6 +477,9 @@
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\Clientes\Componentes\LstSugestaoCliente.Filtro.js" />
+    <Content Include="Vue\Clientes\Componentes\LstSugestaoCliente.js" />
+    <Content Include="Vue\Clientes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
     <Content Include="Vue\GruposProduto\Componentes\LstGruposProduto.js" />
     <Content Include="Vue\Feriados\Componentes\LstFeriados.js" />
@@ -493,6 +497,7 @@
     <Content Include="Vue\CoresVidro\Componentes\LstCoresVidro.js" />
     <Content Include="Vue\CoresAluminio\Componentes\LstCoresAluminio.js" />
     <Content Include="Vue\CoresFerragem\Componentes\LstCoresFerragem.js" />
+    <Content Include="Vue\Aplicacoes\Componentes\LstAplicacoes.js" />
     <Content Include="Vue\Sinais\Componentes\LstSinais.Filtro.js" />
     <Content Include="Vue\Sinais\Componentes\LstSinais.js" />
     <Content Include="Vue\Sinais\Templates\LstSinais.Filtro.html" />
@@ -1736,6 +1741,7 @@
     <Content Include="Vue\_Compartilhado\Filtros\Percentual.js" />
     <Content Include="Vue\_Compartilhado\Filtros\IndicaMarcado.js" />
     <Content Include="Vue\_Compartilhado\Filtros\SimNao.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\CaminhoRelativo.js" />
     <Content Include="Vue\_Compartilhado\Mixins\CampoBeneficiamento.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Clonar.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Comparar.js" />
@@ -1769,6 +1775,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Liberacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PedidosConferencia.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Caixas.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\SugestaoCliente.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TiposCartao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Rotas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TabelasDescontoAcrescimoCliente.js" />

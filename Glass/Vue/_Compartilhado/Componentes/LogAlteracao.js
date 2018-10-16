@@ -97,9 +97,9 @@ Vue.component('log-alteracao', {
      */
     abrirLogAlteracoes: function() {
       var filtroCampo = this.campo ? '&campo=' + this.campo : '';
-      const url = '../Utils/ShowLogAlteracao.aspx?tabela=' + this.itemTabela.id + '&id=' + this.idItem + filtroCampo;
+      const url = '/Utils/ShowLogAlteracao.aspx?tabela=' + this.itemTabela.id + '&id=' + this.idItem + filtroCampo;
 
-      this.abrirJanela(500, 700, url);
+      this.abrirJanela(500, 700, this.caminhoRelativo(url));
     }
   },
 

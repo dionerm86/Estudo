@@ -317,7 +317,8 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
                 (float)dadosAdicionais.PercentualDescontoPorQuantidade,
                 dadosAdicionais.IdPedido,
                 null,
-                null);
+                null,
+                (float)dadosAdicionais.Altura.GetValueOrDefault());
         }
 
         private decimal ObterValorTabelaProduto(GDASession sessao, DadosAdicionaisFiltroPedidoDto dadosAdicionais, Produto produto)

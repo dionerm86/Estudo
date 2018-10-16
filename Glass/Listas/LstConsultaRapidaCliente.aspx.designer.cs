@@ -724,6 +724,24 @@ namespace Glass.UI.Web.Listas {
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsSugestao;
         
         /// <summary>
+        /// lblVendas control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblVendas;
+        
+        /// <summary>
+        /// grdVendas control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView grdVendas;
+        
+        /// <summary>
         /// lnkImprimir control.
         /// </summary>
         /// <remarks>
