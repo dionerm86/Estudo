@@ -423,16 +423,23 @@ namespace Glass.Global.Negocios.Entidades
             }
             set
             {
-                foreach (var loja in value)
+                if (value == null || value.Length == 0)
                 {
-                    if (SubgruposProdLoja.Any(f => f.IdLoja == loja && f.IdSubgrupoProd == IdSubgrupoProd))
-                        continue;
+                    SubgruposProdLoja.Clear();
+                }
+                else
+                {
+                    foreach (var loja in value)
+                    {
+                        if (SubgruposProdLoja.Any(f => f.IdLoja == loja && f.IdSubgrupoProd == IdSubgrupoProd))
+                            continue;
 
-                    var novo = new SubgrupoProdLoja();
-                    novo.IdSubgrupoProd = IdSubgrupoProd;
-                    novo.IdLoja = loja;
+                        var novo = new SubgrupoProdLoja();
+                        novo.IdSubgrupoProd = IdSubgrupoProd;
+                        novo.IdLoja = loja;
 
-                    SubgruposProdLoja.Add(novo);
+                        SubgruposProdLoja.Add(novo);
+                    }
                 }
             }
         }
