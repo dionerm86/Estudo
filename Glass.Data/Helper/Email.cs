@@ -745,18 +745,48 @@ namespace Glass.Data.Helper
                             }
                         }
 
-                        var totalRecebidoDia = RecebimentoDAO.Instance.GetRecebimentosTipo(DateTime.Now.ToString("dd/MM/yyyy"), DateTime.Now.ToString("dd/MM/yyyy"), 0, 0).Where(f => f.Descricao == "TOTAL").First().Valor;
-                        var totalRecebidoMes = RecebimentoDAO.Instance.GetRecebimentosTipo(DateTime.Now.ObtemPrimeiroDiaMesAtual().ToString("dd/MM/yyyy"), DateTime.Now.ToString("dd/MM/yyyy"), 0, 0).Where(f => f.Descricao == "TOTAL").First().Valor;
+                        decimal totalRecebidoDia = 0;
+                        decimal totalRecebidoMes = 0;
 
-                        string mensagem =
-                            "\nPedidos emitidos " + textoDiaConsiderado + ": " + totalPedidosDia.ToString("C") + " (" + totMPedidosDia.ToString("0.##") + " m2) (Todos pedidos cadastrados hoje que não estejam cancelados e não sejam de produção)." +
-                            "\nPedidos emitidos no mês: " + totalPedidosMes.ToString("C") + " (" + totMPedidosMes.ToString("0.##") + " m2)." +
-                            "\n\nM2 pronto " + textoDiaConsiderado + ": " + totMProntoDia.ToString("0.##") + " m2." +
-                            "\nM2 pronto no mês: " + totMProntoMes.ToString("0.##") + " m2." +
-                            "\n\nTotal faturado " + textoDiaConsiderado + ": " + totalLiberadosDia.ToString("C") + "(Soma de todas liberações realizadas " + textoDiaConsiderado + ")." +
-                            "\nTotal faturado no mês: " + totalLiberadosMes.ToString("C") + "." +
-                            "\nTotal recebido no dia: " + totalRecebidoDia.ToString("C") + "." +
-                            "\nTotal recebido no mês: " + totalRecebidoMes.ToString("C") + ".";
+                        var textoPadrao = Geral.TextoEmailAdministradores;
+
+                        if (textoPadrao.Contains("{9}"))
+                        {
+                            totalRecebidoDia = RecebimentoDAO.Instance.GetRecebimentosTipo(DateTime.Now.ToString("dd/MM/yyyy"), DateTime.Now.ToString("dd/MM/yyyy"), 0, 0).Where(f => f.Descricao == "TOTAL").First().Valor;
+                        }
+
+                        if (textoPadrao.Contains("{10}"))
+                        {
+                            totalRecebidoMes = RecebimentoDAO.Instance.GetRecebimentosTipo(DateTime.Now.ObtemPrimeiroDiaMesAtual().ToString("dd/MM/yyyy"), DateTime.Now.ToString("dd/MM/yyyy"), 0, 0).Where(f => f.Descricao == "TOTAL").First().Valor;
+                        }
+
+                        /*{0}: Texto do dia considerado (HOJE, AMANHÃ).
+                          {1}: Total dos pedidos do dia.
+                          {2}: Total da metragem dos pedidos do dia.
+                          {3}: Total dos pedidos do mês.
+                          {4}: Total de metragem dos pedidos do mês.
+                          {5}: Total de metragem pronta no dia.
+                          {6}: Total de metragem pronta no mês.
+                          {7}: Total liberado no dia.
+                          {8}: Total liberado no mês.
+                          {9}: Total recebido no dia (Baseado no relatório de recebimentos por tipo).
+                          {10}: Total Recebido no mês (Baseado no relatório de recebimentos por tipo).*/
+                        var parametros = new string[]
+                        {
+                            textoDiaConsiderado,
+                            totalPedidosDia.ToString("C"),
+                            totMPedidosDia.ToString("0.##"),
+                            totalPedidosMes.ToString("C"),
+                            totMPedidosMes.ToString("0.##"),
+                            totMProntoDia.ToString("0.##"),
+                            totMProntoMes.ToString("0.##"),
+                            totalLiberadosDia.ToString("C"),
+                            totalLiberadosMes.ToString("C"),
+                            totalRecebidoDia.ToString("C"),
+                            totalRecebidoMes.ToString("C"),
+                        };
+
+                        string mensagem = string.Format("\n" + Geral.TextoEmailAdministradores, parametros);
 
                         // Verifica mais uma vez se pode enviar email
                         if (!FilaEmailDAO.Instance.PodeEnviarEmailAdmin())
