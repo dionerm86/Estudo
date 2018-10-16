@@ -318,7 +318,7 @@ const app = new Vue({
     Servicos.Produtos.Subgrupos.obterConfiguracoesLista()
       .then(function (resposta) {
         vm.configuracoes = resposta.data;
-        vm.grupoVidro = vm.idGrupoProduto == vm.configuracoes.idGrupoVidro;
+        vm.grupoVidro = vm.idGrupoProduto === vm.configuracoes.idGrupoVidro;
       });
   },
 

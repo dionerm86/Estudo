@@ -46,12 +46,10 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.SubgruposProduto
 
                     var subgrupoAtual = fluxo.ObtemSubgrupoProduto(id);
 
-                    var subgrupo = new ConverterCadastroAtualizacaoParaSubgrupoProduto(dadosParaAlteracao, subgrupoAtual)
+                    subgrupoAtual = new ConverterCadastroAtualizacaoParaSubgrupoProduto(dadosParaAlteracao, subgrupoAtual)
                         .ConverterParaSubgrupoProduto();
 
-                    subgrupo.IdSubgrupoProd = id;
-
-                    var resultado = fluxo.SalvarSubgrupoProduto(subgrupo);
+                    var resultado = fluxo.SalvarSubgrupoProduto(subgrupoAtual);
 
                     if (!resultado)
                     {
