@@ -45,6 +45,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     PedidoDAO.Instance.FinalizarPedido(sessao, (uint)id, false);
 
                     // caso a empresa use liberação e seja LITE confirma o pedido automaticamente
@@ -95,6 +97,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     PedidoDAO.Instance.FinalizarPedido(sessao, (uint)id, false);
 
                     if (PedidoDAO.Instance.ObtemSituacao(sessao, (uint)id) != Data.Model.Pedido.SituacaoPedido.ConfirmadoLiberacao)
@@ -157,6 +161,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(sessao, (uint)id, dadosEntrada.Mensagem);
 
                     sessao.Commit();
@@ -194,6 +200,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     var idPedidoProducao = PedidoDAO.Instance.CriarPedidoProducaoPedidoRevenda(sessao, PedidoDAO.Instance.GetElementByPrimaryKey(id));
                     sessao.Commit();
 
@@ -230,6 +238,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     PedidoDAO.Instance.Reabrir(sessao, (uint)id);
                     sessao.Commit();
 
@@ -265,10 +275,12 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     var pedido = new ConverterCadastroAtualizacaoParaPedido(dadosParaCadastro)
                         .ConverterParaPedido();
 
-                    var idPedido = PedidoDAO.Instance.Insert(pedido);
+                    var idPedido = PedidoDAO.Instance.Insert(sessao, pedido);
                     sessao.Commit();
 
                     return this.Criado(string.Format("Pedido {0} inserido com sucesso!", idPedido), idPedido);
@@ -315,6 +327,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     PedidoDAO.Instance.AlteraLiberarFinanc(sessao, (uint)id, dados.Liberar.Value);
                     sessao.Commit();
 
@@ -356,16 +370,22 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
-                    // Cria um registro na tabela em conferencia para este pedido
+                    sessao.BeginTransaction();
+
+                    var recebeuSinal = PedidoDAO.Instance.ObtemIdSinal(sessao, (uint)id) > 0;
+
                     PedidoConferenciaDAO.Instance.NovaConferencia(
                         sessao,
                         (uint)id,
-                        PedidoDAO.Instance.ObtemIdSinal(sessao, (uint)id) > 0);
+                        recebeuSinal);
+
+                    sessao.Commit();
 
                     return this.Aceito($"Conferência do pedido {id} gerada com sucesso.");
                 }
                 catch (Exception ex)
                 {
+                    sessao.Rollback();
                     return this.ErroValidacao($"Erro ao gerar conferência do pedido {id}.", ex);
                 }
             }

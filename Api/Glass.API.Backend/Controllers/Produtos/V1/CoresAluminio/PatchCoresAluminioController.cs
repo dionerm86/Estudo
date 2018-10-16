@@ -45,6 +45,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresAluminio
                     corAluminio = new ConverterCadastroAtualizacaoParaCorAluminio(dadosParaAlteracao, corAluminio)
                         .ConverterParaCorAluminio();
 
+                    sessao.BeginTransaction();
+
                     CorAluminioDAO.Instance.Update(sessao, corAluminio);
                     sessao.Commit();
 

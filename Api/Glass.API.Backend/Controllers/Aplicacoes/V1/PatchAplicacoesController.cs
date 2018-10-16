@@ -52,6 +52,8 @@ namespace Glass.API.Backend.Controllers.Aplicacoes.V1
                     aplicacao = new ConverterCadastroAtualizacaoParaAplicacao(dadosParaAlteracao, aplicacao)
                         .ConverterParaAplicacao();
 
+                    sessao.BeginTransaction();
+
                     EtiquetaAplicacaoDAO.Instance.Update(sessao, aplicacao);
                     sessao.Commit();
 

@@ -45,6 +45,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.AmbientesPedido
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     ambiente = new ConverterCadastroAtualizacaoParaAmbientePedido(dadosParaAtualizacao, ambiente)
                         .ConverterParaAmbientePedido();
 

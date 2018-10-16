@@ -45,6 +45,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.ProdutosPedido
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     produto = new ConverterCadastroAtualizacaoParaProdutoPedido(dadosParaAtualizacao, produto)
                         .ConverterParaProdutoPedido();
 
@@ -87,6 +89,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.ProdutosPedido
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     ProdutosPedidoDAO.Instance.AtualizaObs(sessao, (uint)id, dadosEntrada?.Observacao);
                     sessao.Commit();
 

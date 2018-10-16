@@ -36,6 +36,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresVidro
                     var corVidro = new ConverterCadastroAtualizacaoParaCorVidro(dadosParaCadastro)
                         .ConverterParaCorVidro();
 
+                    sessao.BeginTransaction();
+
                     var idCorVidro = CorVidroDAO.Instance.Insert(sessao, corVidro);
                     sessao.Commit();
 

@@ -39,6 +39,8 @@ namespace Glass.API.Backend.Controllers.Processos.V1
                         return validacao;
                     }
 
+                    sessao.BeginTransaction();
+
                     EtiquetaProcessoDAO.Instance.DeleteByPrimaryKey(sessao, id);
                     sessao.Commit();
 

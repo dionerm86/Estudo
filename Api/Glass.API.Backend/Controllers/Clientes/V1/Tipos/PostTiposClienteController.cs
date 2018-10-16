@@ -36,6 +36,8 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
                     var tipo = new ConverterCadastroAtualizacaoParaTipo(dadosParaCadastro)
                         .ConverterParaTipo();
 
+                    sessao.BeginTransaction();
+
                     var idTipoCliente = TipoClienteDAO.Instance.Insert(sessao, tipo);
                     sessao.Commit();
 

@@ -120,6 +120,8 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     NotaFiscalDAO.Instance.ReabrirNotaEntradaTerceiros((uint)id);
                     sessao.Commit();
 
@@ -156,6 +158,8 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     var idNf = NotaFiscalDAO.Instance.GeraNFeComplementar((uint)id);
                     sessao.Commit();
 
@@ -192,6 +196,8 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     var retorno = NotaFiscalDAO.Instance.EmitirNfFS((uint)id);
                     sessao.Commit();
 
@@ -229,6 +235,8 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     NotaFiscalDAO.Instance.EnviarEmailXml(sessao, NotaFiscalDAO.Instance.GetElement(sessao, (uint)id), cancelamento);
                     sessao.Commit();
 
@@ -265,6 +273,8 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     var tipoDocumento = NotaFiscalDAO.Instance.GetTipoDocumento(sessao, (uint)id);
 
                     if (tipoDocumento == (int)NotaFiscal.TipoDoc.Saída)
@@ -320,6 +330,8 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     var tipoDocumento = NotaFiscalDAO.Instance.GetTipoDocumento(sessao, (uint)id);
 
                     if (tipoDocumento == (int)NotaFiscal.TipoDoc.Saída)
@@ -368,7 +380,9 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
-                    var retornoEmissao = NotaFiscalDAO.Instance.EmitirNfcOffline((uint)id);
+                    sessao.BeginTransaction();
+
+                    var retornoEmissao = NotaFiscalDAO.Instance.EmitirNf((uint)id, false, true, false);
                     sessao.Commit();
 
                     return this.Aceito(retornoEmissao);
@@ -382,7 +396,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         }
 
         /// <summary>
-        /// Emite um NFC-e em modo offlines.
+        /// Emite um NFC-e em modo offline.
         /// </summary>
         /// <param name="id">O identificador da nota fiscal.</param>
         /// <returns>Um status HTTP indicando se a emissão da NFC-e foi realizada.</returns>
@@ -404,7 +418,9 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
-                    var retornoEmissao = NotaFiscalDAO.Instance.EmitirNf((uint)id, false, true, false);
+                    sessao.BeginTransaction();
+
+                    var retornoEmissao = NotaFiscalDAO.Instance.EmitirNfcOffline((uint)id);
                     sessao.Commit();
 
                     return this.Aceito(retornoEmissao);
@@ -432,6 +448,8 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
             {
                 try
                 {
+                    sessao.BeginTransaction();
+
                     ConfigDAO.Instance.SetValue(Config.ConfigEnum.ContingenciaNFe, UserInfo.GetUserInfo.IdLoja, (int)entrada.TipoContingencia);
                     sessao.Commit();
 

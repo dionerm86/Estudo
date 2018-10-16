@@ -49,6 +49,8 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
                         return this.NaoEncontrado($"Cheque não encontrado.");
                     }
 
+                    sessao.BeginTransaction();
+
                     cheque = new ConverterCadastroAtualizacaoParaCheque(dadosEntrada, cheque)
                         .ConverterParaCheque();
 

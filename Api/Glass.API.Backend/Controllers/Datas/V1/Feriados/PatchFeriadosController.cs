@@ -45,6 +45,8 @@ namespace Glass.API.Backend.Controllers.Datas.V1.Feriados
                     feriado = new ConverterCadastroAtualizacaoParaFeriado(dadosParaAlteracao, feriado)
                         .ConverterParaFeriado();
 
+                    sessao.BeginTransaction();
+
                     FeriadoDAO.Instance.Update(sessao, feriado);
                     sessao.Commit();
 

@@ -42,6 +42,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.AmbientesPedido
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     AmbientePedidoDAO.Instance.DeleteByPrimaryKey(sessao, id);
                     sessao.Commit();
 

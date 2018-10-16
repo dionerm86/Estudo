@@ -42,6 +42,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresFerragem
                         return this.NaoEncontrado($"Cor de ferragem {id} não encontrada.");
                     }
 
+                    sessao.BeginTransaction();
+
                     corFerragem = new ConverterCadastroAtualizacaoParaCorFerragem(dadosParaAlteracao, corFerragem)
                         .ConverterParaCorFerragem();
 

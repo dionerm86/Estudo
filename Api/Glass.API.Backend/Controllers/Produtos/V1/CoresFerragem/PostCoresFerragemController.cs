@@ -36,6 +36,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresFerragem
                     var corFerragem = new ConverterCadastroAtualizacaoParaCorFerragem(dadosParaCadastro)
                         .ConverterParaCorFerragem();
 
+                    sessao.BeginTransaction();
+
                     var idCorFerragem = CorFerragemDAO.Instance.Insert(sessao, corFerragem);
                     sessao.Commit();
 

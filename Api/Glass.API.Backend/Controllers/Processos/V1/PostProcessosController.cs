@@ -43,6 +43,8 @@ namespace Glass.API.Backend.Controllers.Processos.V1
                     var processo = new ConverterCadastroAtualizacaoParaProcesso(dadosParaCadastro)
                         .ConverterParaProcesso();
 
+                    sessao.BeginTransaction();
+
                     var idProcesso = EtiquetaProcessoDAO.Instance.Insert(sessao, processo);
                     sessao.Commit();
 

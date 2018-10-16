@@ -52,6 +52,8 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
                     contaRecebida = new ConverterCadastroAtualizacaoParaContaRecebida(dadosParaAlteracao, contaRecebida)
                         .ConverterParaContaRecebida();
 
+                    sessao.BeginTransaction();
+
                     ContasReceberDAO.Instance.Update(sessao, contaRecebida);
                     sessao.Commit();
 
