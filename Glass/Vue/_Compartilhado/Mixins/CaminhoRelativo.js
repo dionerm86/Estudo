@@ -13,12 +13,19 @@ Vue.mixin({
         throw new Error('URL é obrigatória para o cálculo do caminho relativo.');
       }
 
-      const urlFinal = url.replace(/^\/*/, '');
-
       // O caminho absoluto do site está definido no arquivo Layout.master,
       // como variável global (solução temporária para o ASP.net)
+      const caminhoSite = caminhoAbsolutoSite.trim();
+      url = url.trim();
+
+      if (url.startsWith(caminhoSite)) {
+        return url;
+      }
+
+      const urlFinal = url.replace(/^\/*/, '');
+
       return url !== urlFinal
-        ? caminhoAbsolutoSite + urlFinal
+        ? caminhoSite + urlFinal
         : url;
     }
   }
