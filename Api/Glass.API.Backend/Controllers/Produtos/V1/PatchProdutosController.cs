@@ -1,4 +1,4 @@
-// <copyright file="PatchProdutosController.cs" company="Sync Softwares">
+﻿// <copyright file="PatchProdutosController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -27,8 +27,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
         [Route("alterarSituacao/grupo/{id}")]
         [SwaggerResponse(202, "Situação dos produtos do grupo de produto alterada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(404, "Grupo de produto não encontrado para o `id` informado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AlterarSituacaoPorGrupo(int id, [FromBody] SituacaoDto situacao)
+        [SwaggerResponse(404, "Grupo de produto não encontrado para o id informado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult AlterarSituacao(int id, [FromBody] SituacaoDto situacao)
         {
             using (var sessao = new GDATransaction())
             {

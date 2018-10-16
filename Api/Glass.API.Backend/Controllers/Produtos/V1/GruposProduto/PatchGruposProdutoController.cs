@@ -46,12 +46,10 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.GruposProduto
 
                     var grupoAtual = fluxo.ObtemGrupoProduto(id);
 
-                    var grupo = new ConverterCadastroAtualizacaoParaGrupoProduto(dadosParaAlteracao, grupoAtual)
+                    grupoAtual = new ConverterCadastroAtualizacaoParaGrupoProduto(dadosParaAlteracao, grupoAtual)
                         .ConverterParaGrupoProduto();
 
-                    grupo.IdGrupoProd = id;
-
-                    var resultado = fluxo.SalvarGrupoProduto(grupo);
+                    var resultado = fluxo.SalvarGrupoProduto(grupoAtual);
 
                     if (!resultado)
                     {
