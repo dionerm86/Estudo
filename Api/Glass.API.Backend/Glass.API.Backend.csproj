@@ -267,6 +267,10 @@
     <Compile Include="Controllers\Produtos\V1\CoresVidro\DeleteCoresVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresVidro\PatchCoresVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresVidro\PostCoresVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GruposProduto\DeleteGruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GruposProduto\PatchGruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GruposProduto\PostGruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\PatchProdutosController.cs" />
     <Compile Include="Controllers\Sinais\V1\SinaisController.cs" />
     <Compile Include="Controllers\Sinais\V1\GetSinaisController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
@@ -399,6 +403,8 @@
     <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
+    <Compile Include="Helper\Produtos\GruposProduto\ConverterCadastroAtualizacaoParaGrupoProduto.cs" />
+    <Compile Include="Helper\Produtos\GruposProduto\TraducaoOrdenacaoListaGruposProduto.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
@@ -478,6 +484,14 @@
     <Compile Include="Models\Fornecedores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Fornecedores\Lista\ListaDto.cs" />
     <Compile Include="Models\Fornecedores\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Produtos\CadastroAtualizacao\SituacaoDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Lista\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Lista\TiposCalculoDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\GruposProduto\Lista\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\Lista\ListaDto.cs" />
