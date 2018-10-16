@@ -708,6 +708,7 @@
     <Compile Include="Models\Produtos\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Produtos\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Negociacoes\JsonContentNegotiator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
