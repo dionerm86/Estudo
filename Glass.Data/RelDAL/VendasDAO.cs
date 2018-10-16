@@ -66,33 +66,33 @@ namespace Glass.Data.RelDAL
 
             var sql =
                 string.Format(@"
-                    Select IdCliente, NomeCliente, ValorMediaIni, ValorMediaFim, IdComissionado, NomeComissionado, IdFuncionario, NomeFuncionario, IdFuncPed, NomeFuncPed, 
+                    Select IdCliente, NomeCliente, ValorMediaIni, ValorMediaFim, IdComissionado, NomeComissionado, IdFuncionario, NomeFuncionario, IdFuncPed, NomeFuncPed,
                         MesVenda, AnoVenda, Sum(Valor) as Valor, Criterio, idTipoCLiente, idLoja, SUM(totM2) as totM2, SUM(totalItens) as totalItens, IdTabelaDesconto, DescricaoTabelaDescontoAcrescimo
                     From (
-                        Select IdCliente, NomeCliente, ValorMediaIni, valorMediaFim, idComissionado, IdFuncionario, idFuncPed, NomeFuncionario, NomeFuncPed, 
-                            NomeComissionado, MesVenda, AnoVenda, Sum(Valor) as Valor, Criterio, SituacaoCliente, TipoFiscalCliente, IdTipoCliente, IdLoja, 
+                        Select IdCliente, NomeCliente, ValorMediaIni, valorMediaFim, idComissionado, IdFuncionario, idFuncPed, NomeFuncionario, NomeFuncPed,
+                            NomeComissionado, MesVenda, AnoVenda, Sum(Valor) as Valor, Criterio, SituacaoCliente, TipoFiscalCliente, IdTipoCliente, IdLoja,
                             Sum(totM2) as totM2, Sum(totalItens) as totalItens, IdTabelaDesconto, DescricaoTabelaDescontoAcrescimo
                         From (
                             Select p.IdPedido, p.IdCli As IdCliente, " + (Liberacao.RelatorioLiberacaoPedido.TipoNomeExibirRelatorioPedido == Helper.DataSources.TipoNomeExibirRelatorioPedido.NomeFantasia ?
                                 "COALESCE(c.NomeFantasia, c.Nome) As NomeCliente, " : "COALESCE(c.Nome, c.NomeFantasia) As NomeCliente, ") + @"
                                 c.valorMediaIni, c.valorMediaFim, p.idComissionado, c.IdFunc As IdFuncionario, p.idFunc as idFuncPed,
-                                f.Nome As NomeFuncionario, fped.Nome As NomeFuncPed, cm.Nome As NomeComissionado, Month(Coalesce({0} p.DataPedido, p.DataCad)) As MesVenda, 
+                                f.Nome As NomeFuncionario, fped.Nome As NomeFuncPed, cm.Nome As NomeComissionado, Month(Coalesce({0} p.DataPedido, p.DataCad)) As MesVenda,
                                 Year(Coalesce({0} p.DataPedido, p.DataCad)) As AnoVenda, {1}, '$$$' As Criterio, c.situacao as situacaoCliente,
                                 c.tipoFiscal as tipoFiscalCliente, c.idTipoCliente, {2} as idLoja,
                                 pp.totM as totM2,
                                 If(prod.IdGrupoProd={3}, pp.qtde, 0) as totalItens, tdac.IdTabelaDesconto, tdac.Descricao AS DescricaoTabelaDescontoAcrescimo
                             From pedido p
                                 Left Join produtos_pedido pp On (pp.IdPedido=p.IdPedido)
-                                Left Join produto prod On (pp.IdProd=prod.IdProd) 
+                                Left Join produto prod On (pp.IdProd=prod.IdProd)
                                 {4}
                                 Left Join cliente c On (p.IdCli=c.Id_Cli)
                                 LEFT JOIN tabela_desconto_acrescimo_cliente tdac ON (c.IdTabelaDesconto=tdac.IdTabelaDesconto)
-                                Left Join funcionario f On (c.IdFunc=f.IdFunc) 
-                                Left Join funcionario fped On (p.IdFunc=fped.IdFunc) 
+                                Left Join funcionario f On (c.IdFunc=f.IdFunc)
+                                Left Join funcionario fped On (p.IdFunc=fped.IdFunc)
                                 Left Join comissionado cm On (p.IdComissionado=cm.IdComissionado)
                                 Where {5} And p.idPedido In ({6}) {7} And coalesce(pp.invisivelFluxo, 0)=0 group by pp.idProdPed
                         ) as tbl Group By idpedido
-                    ) As vendas1 
+                    ) As vendas1
                     Where 1", campoData, total, (lojaCliente ? "c.id_loja" : "p.idLoja"), (int)NomeGrupoProd.Vidro,
                     (isLiberarPedido ? @"
                         Left Join pedido_espelho pe On (p.idPedido=pe.idPedido)
@@ -104,7 +104,7 @@ namespace Glass.Data.RelDAL
                             LEFT JOIN
                         grupo_prod g ON (prod.IdGrupoProd = g.IdGrupoProd)
                             LEFT JOIN
-                        (SELECT 
+                        (SELECT
                             idpedido,
                                 SUM(total + COALESCE(valorBenef, 0)) AS totalProd,
                                 SUM(custoProd) AS custoProd
@@ -126,7 +126,7 @@ namespace Glass.Data.RelDAL
                         campoData, mesInicio, anoInicio, mesFim, anoFim));
 
             criterio += "Mês/ano início: " + mesInicio + "/" + anoInicio + "    Mês/ano fim: " + mesFim + "/" + anoFim + "    ";
-            
+
             if (tipoVendas == 0)
             {
                 if (idCliente > 0)
@@ -308,7 +308,7 @@ namespace Glass.Data.RelDAL
             string idsFuncionarioAssocCliente, string nomeFuncionario)
         {
             List<GDAParameter> retorno = new List<GDAParameter>();
-            
+
             if (!String.IsNullOrEmpty(nomeCliente))
                 retorno.Add(new GDAParameter("?nomeCliente", "%" + nomeCliente + "%"));
 
@@ -332,7 +332,7 @@ namespace Glass.Data.RelDAL
             decimal valorMinimo, decimal valorMaximo, int situacaoCliente, int tipoFiscalCliente, uint idLoja, bool lojaCliente, string tipoCliente, int idTabelaDescontoAcrescimo, string tipoPedido)
         {
             return LoadDataWithSortExpression(Sql(idCliente, nomeCliente, 0, idsRota, revenda, idComissionado, nomeComissionado, mesInicio,
-                anoInicio, mesFim, anoFim, ordenar, tipoMedia, tipoVendas, idsFuncionario, nomeFuncionario, idsFuncAssociaCliente, valorMinimo, valorMaximo, 
+                anoInicio, mesFim, anoFim, ordenar, tipoMedia, tipoVendas, idsFuncionario, nomeFuncionario, idsFuncAssociaCliente, valorMinimo, valorMaximo,
                 situacaoCliente, tipoFiscalCliente, idLoja, lojaCliente, tipoCliente, idTabelaDescontoAcrescimo, tipoPedido, true), null, 0, int.MaxValue,
                 GetParams(nomeCliente, nomeComissionado, idsFuncionario, idsFuncAssociaCliente, nomeFuncionario));
         }
@@ -376,7 +376,7 @@ namespace Glass.Data.RelDAL
         }
 
         public string[] GetMesesVenda(uint idCliente, string nomeCliente, string idsRota, bool revenda, uint idComissionado, string nomeComissionado,
-            int mesInicio, int anoInicio, int mesFim, int anoFim, string tipoMedia, int tipoVendas, string idsFuncionario, string nomeFuncionario, 
+            int mesInicio, int anoInicio, int mesFim, int anoFim, string tipoMedia, int tipoVendas, string idsFuncionario, string nomeFuncionario,
             uint idLoja, bool lojaCliente, string tipoCliente, int idTabelaDescontoAcrescimo, int situacaoCliente, string tipoPedido)
         {
             string sql = "select group_concat(concat(cast(MesVenda as char), concat('/', cast(AnoVenda as char)))) from (select distinct MesVenda, AnoVenda from (" +
