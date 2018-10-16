@@ -1,14 +1,11 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('id', 'asc')],
 
   data: {
-    dadosOrdenacao_: {
-      campo: 'id',
-      direcao: 'asc'
-    },
     configuracoes: {},
-    filtro: {}
+    filtro: {},
+    cliente: null
   },
 
   methods: {
@@ -24,32 +21,12 @@
       return Servicos.SugestaoCliente.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
 
+    /**
+     * Retorna o link para voltar à lista de clientes.
+     * @returns {string} A URL da lista de clientes.
+     */
     voltar: function(){
-      return '../../LstCliente.aspx';
-    },
-
-    /**
-     * Obtém o título da página caso tenha sido aberta a partir de um pedido ou orçamento.
-     */
-    obterTitulo: function(){
-      var idCliente = GetQueryString('idCliente');
-
-      if (idCliente) {
-        return 'Cliente: ';
-      }
-    },
-
-    /**
-     * Realiza a ordenação da lista de sugestões de pedidos.
-     * @param {string} campo O nome do campo pelo qual o resultado será ordenado.
-     */
-    ordenar: function (campo) {
-      if (campo !== this.dadosOrdenacao_.campo) {
-        this.dadosOrdenacao_.campo = campo;
-        this.dadosOrdenacao_.direcao = '';
-      } else {
-        this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
-      }
+      return window.location.assign('LstCliente.aspx');
     },
 
     /**
@@ -83,17 +60,11 @@
      * Exibe o relatório da listagem de sugestões
      */
     abrirListaSugestoes: function (exportarExcel) {
-      var url = '../Relatorios/RelBase.aspx?rel=ListaSugestaoCliente' + this.formatarFiltros_() + '&exportarExcel=' + exportarExcel;
+      var url = '../Relatorios/RelBase.aspx?rel=ListaSugestaoCliente'
+        + this.formatarFiltros_()
+        + '&exportarExcel=' + exportarExcel;
 
       this.abrirJanela(600, 800, url);
-    },
-
-    /**
-     * Recupera se a tela foi aberta a partir de um Cliente
-     */
-    verificarOrigemCliente: function () {
-      var idCliente = GetQueryString('idCliente');
-      return !idCliente;
     },
 
     /**
@@ -138,7 +109,7 @@
       return filtros.length
         ? '&' + filtros.join('&')
         : '';
-    },
+    }
   },
 
   mounted: function() {
@@ -148,17 +119,14 @@
       .then(function (resposta) {
         vm.configuracoes = resposta.data;
       });
-  },
 
-  computed: {
-    /**
-     * Propriedade computada que indica a ordenação para a lista.
-     * @type {string}
-     */
-    ordenacao: function () {
-      var direcao = this.dadosOrdenacao_.direcao ? ' ' + this.dadosOrdenacao_.direcao : '';
-      return this.dadosOrdenacao_.campo + direcao;
+    var idCliente = GetQueryString('idCliente');
+
+    if (idCliente) {
+      Servicos.Clientes.obterParaControle(idCliente)
+        .then(function (resposta) {
+          vm.cliente = resposta.data[0];
+        });
     }
-  },
-
+  }
 });

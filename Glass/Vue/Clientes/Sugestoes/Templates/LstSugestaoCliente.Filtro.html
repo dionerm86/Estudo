@@ -18,7 +18,7 @@
         </span>
     </div>
     <div>
-        <span class="form-group">
+        <span class="form-group" v-if="exibirFiltroCliente">
             <label for="idCliente">Cliente</label>
             <input id="idCliente" type="number" v-model.number="filtroAtual.idCliente" style="width: 50px" />
             <input id="nomeCliente" type="text" v-model="filtroAtual.nomeCliente" style="width: 200px" />
@@ -37,12 +37,12 @@
         </span>
     </div>
     <div>
-        <span class="form-group" v-if="verificarOrigemPedido()" >
+        <span class="form-group" v-if="exibirFiltroPedido" >
             <label for="idPedido">Pedido</label>
             <input id="idPedido" type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group" v-if="verificarOrigemOrcamento()">
+        <span class="form-group" v-if="exibirFiltroOrcamento">
             <label for="idOrcamento">Orçamento</label>
             <input id="idOrcamento" type="number" v-model.number="filtroAtual.idOrcamento" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>

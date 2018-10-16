@@ -53,7 +53,7 @@ input[type="time"], input[type="email"], input[type="password"], textarea, selec
   margin: 2px 0;
   line-height: 18px;
   border: 1px solid #a9a9a9;
-  padding: 1px 4px;
+  padding: 1px 0 1px 4px;
 }
 
 input[type="date"], input[type="time"] {
