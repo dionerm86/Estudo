@@ -39,11 +39,11 @@
         </template>
         <template slot="item" slot-scope="{ item, index }">
             <td style="white-space: nowrap">
-                <button v-on:click.prevent="alternarExibicaoFilhos(index)" v-if="item.produtoPedido && item.produtoPedido.composicao">
+                <button v-on:click.prevent="alternarExibicaoFilhos(index)" v-if="item.produtoPedido && item.produtoPedido.composto">
                     <img src="../../Images/mais.gif" v-bind:title="(exibindoFilhos(index) ? 'Esconder' : 'Exibir') + ' Produtos da Composição'" />
                 </button>
                 <button v-on:click.prevent="desfazerUltimaLeituraPeca(item)" v-if="item.permissoes && item.permissoes.desfazerLeitura">
-                    <img src=../../Images/arrow_undo.gif" title="Remover peça desta situação" />
+                    <img src="../../Images/arrow_undo.gif" title="Remover peça desta situação" />
                 </button>
                 <button v-on:click.prevent="abrirRelatorioPedido(item)" v-if="exibirRelatorioPedido(item)">
                     <img src="../../Images/Relatorio.gif" title="Relatório de pedido" />

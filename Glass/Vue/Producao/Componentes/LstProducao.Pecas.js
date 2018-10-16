@@ -165,7 +165,7 @@
         return;
       }
 
-      this.abrirJanela(200, 405, '../../Utils/SetMotivoPararPecaProducao.aspx?popup=true&idProdPedProducao=' + peca.id, null, true, false);
+      this.abrirJanela(200, 405, '../../Utils/SetMotivoPararPecaProducao.aspx?vue=true&popup=true&idProdPedProducao=' + peca.id, null, true, false);
     },
 
     /**
@@ -221,7 +221,14 @@
      */
     numeroColunasLista: function () {
       return this.$refs.lista.numeroColunas();
-    }
+    },
+
+    /**
+     * Força a atualização da lista de peças, com base no filtro atual.
+     */
+    atualizarLista: function () {
+      this.$refs.lista.atualizar();
+    },
   },
 
   computed: {

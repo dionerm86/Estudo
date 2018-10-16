@@ -12,6 +12,13 @@
 
   methods: {
     /**
+     * Força a atualização das peças da tela.
+     */
+    atualizarPecas: function () {
+      this.$refs.pecas.atualizarLista();
+    },
+
+    /**
      * Recupera a lista de peças para a tela de consulta de produção.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de peças.
      * @param {number} pagina O número da página de resultados a ser exibida.
@@ -80,6 +87,10 @@
       this.exibirContagem = numeroItens > 0;
     },
 
+    /**
+     * Abre o relatório geral da tela.
+     * @param {boolean} exportarExcel Indica se o relatório será exportado para o Excel ou se será aberto como PDF.
+     */
     abrirRelatorioGeral: function(exportarExcel) {
       const url = '../../Relatorios/RelBase.aspx?rel=Producao'
         + (this.agruparImpressao == '3' ? 'Contagem' : '');
@@ -87,6 +98,10 @@
       this.abrirJanela(600, 800, url + this.formatarFiltros_(exportarExcel));
     },
 
+    /**
+     * Abre o relatório por setor da tela.
+     * @param {boolean} exportarExcel Indica se o relatório será exportado para o Excel ou se será aberto como PDF.
+     */
     abrirRelatorioSetor: function (exportarExcel) {
       const url = '../../Relatorios/RelBase.aspx?rel=Producao'
         + (this.agruparImpressao == '3' ? 'Contagem' : '');
@@ -94,16 +109,28 @@
       this.abrirJanela(600, 800, url + this.formatarFiltros_(exportarExcel) + '&setorFiltrado=true');
     },
 
+    /**
+     * Abre o relatório por roteiro da tela.
+     * @param {boolean} exportarExcel Indica se o relatório será exportado para o Excel ou se será aberto como PDF.
+     */
     abrirRelatorioRoteiro: function (exportarExcel) {
       const url = '../../Relatorios/RelBase.aspx?rel=ProducaoPassou';
       this.abrirJanela(600, 800, url + this.formatarFiltros_(exportarExcel) + '&setorFiltrado=true');
     },
 
+    /**
+     * Abre o relatório de pedidos da tela.
+     * @param {boolean} exportarExcel Indica se o relatório será exportado para o Excel ou se será aberto como PDF.
+     */
     abrirRelatorioPedidos: function (exportarExcel) {
       const url = '../../Relatorios/RelBase.aspx?rel=ProducaoPedidos';
       this.abrirJanela(600, 800, url + this.formatarFiltros_(exportarExcel) + '&setorFiltrado=true');
     },
 
+    /**
+     * Formata os filtros da tela para exibição dos relatórios.
+     * @param {boolean} exportarExcel Indica se o relatório será exportado para o Excel ou se será aberto como PDF.
+     */
     formatarFiltros_: function (exportarExcel) {
       var filtros = [];
 

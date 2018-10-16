@@ -10,7 +10,7 @@
     %>
     <div id="app">
         <producao-filtros :filtro.sync="filtro" :configuracoes="configuracoes" :agrupar-impressao="agruparImpressao"></producao-filtros>
-        <producao-pecas :filtro="filtro" :configuracoes="configuracoes" :buscar-pecas="buscarPecas" @atualizou-itens="atualizouItens"></producao-pecas>
+        <producao-pecas ref="pecas" :filtro="filtro" :configuracoes="configuracoes" :buscar-pecas="buscarPecas" @atualizou-itens="atualizouItens"></producao-pecas>
         <section style="font-size: medium" v-if="exibirContagem">
             <span>
                 <label style="color: blue; font-weight: bold">Peças Prontas:</label>
