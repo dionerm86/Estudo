@@ -185,7 +185,7 @@
     </div>
      <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
-            <asp:ScriptReference Path="~/Vue/GruposProduto/Componentes/LstGruposProduto.js" />
+            <asp:ScriptReference Path="~/Vue/Produtos/GruposProduto/Componentes/LstGruposProduto.js" />
         </Scripts>
     </asp:ScriptManager>
 </asp:Content>
