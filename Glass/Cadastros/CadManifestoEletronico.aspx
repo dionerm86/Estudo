@@ -190,13 +190,14 @@
             return false;
         }
 
-        //Salva as informações da nota referênciada
+        // Salva as informações da nota referênciada.
         function SalvarNfReferenciada(botaoAdicionar) {
-            var idControle = botaoAdicionar.id.substring(0, botaoAdicionar.id.lastIndexOf("_"));
-            var idCidadeDescarga = FindControl('hdfIdCidadeDescargaNFe', 'input').value;
-            var idNf = FindControl(idControle + '_hdfIdNf', 'input').value;
-            var chaveAcesso = FindControl(idControle + '_txtChaveAcessoNFe', 'input').value;
-            var fsda = FindControl(idControle + '_txtFsdaNFe', 'input').value;
+            var idControleGrdNFeCidadeDescarga = botaoAdicionar.id.substring(0, botaoAdicionar.id.lastIndexOf("_"));
+            var idControleGrdCidadeDescarga = idControleGrdNFeCidadeDescarga.substring(0, idControleGrdNFeCidadeDescarga.lastIndexOf("_grdNFeCidadeDescarga"));
+            var idCidadeDescarga = FindControl(idControleGrdCidadeDescarga + "_hdfIdCidadeDescargaNFe", "input").value;
+            var idNf = FindControl(idControleGrdNFeCidadeDescarga + '_hdfIdNf', 'input').value;
+            var chaveAcesso = FindControl(idControleGrdNFeCidadeDescarga + '_txtChaveAcessoNFe', 'input').value;
+            var fsda = FindControl(idControleGrdNFeCidadeDescarga + '_txtFsdaNFe', 'input').value;
 
             var retorno = CadManifestoEletronico.InserirNfeCidadeDescarga(idCidadeDescarga, idNf, chaveAcesso, fsda);
 
@@ -262,12 +263,13 @@
         }
 
         //Salva as informações de CTe associadas
-        function SalvarCTeReferenciada(botaoAdicionar) {            
-            var idControle = botaoAdicionar.id.substring(0, botaoAdicionar.id.lastIndexOf("_"));
-            var idCidadeDescarga = FindControl('hdfIdCidadeDescargaCTe', 'input').value;
-            var idCTe = FindControl(idControle + 'hdfIdCTe', 'input').value;
-            var chaveAcesso = FindControl(idControle + 'txtChaveAcessoCte', 'input').value;
-            var fsda = FindControl(idControle + 'txtFsdaCTe', 'input').value;
+        function SalvarCTeReferenciada(botaoAdicionar) {
+            var idControleGrdCTeCidadeDescarga = botaoAdicionar.id.substring(0, botaoAdicionar.id.lastIndexOf("_"));
+            var idControleGrdCidadeDescarga = idControleGrdNFeCidadeDescarga.substring(0, idControleGrdNFeCidadeDescarga.lastIndexOf("_grdCTeCidadeDescarga"));
+            var idCidadeDescarga = FindControl(idControleGrdCidadeDescarga + 'hdfIdCidadeDescargaCTe', 'input').value;
+            var idCTe = FindControl(idControleGrdCTeCidadeDescarga + 'hdfIdCTe', 'input').value;
+            var chaveAcesso = FindControl(idControleGrdNFeCidadeDescarga + 'txtChaveAcessoCte', 'input').value;
+            var fsda = FindControl(idControleGrdNFeCidadeDescarga + 'txtFsdaCTe', 'input').value;
 
             var retorno = CadManifestoEletronico.InserirCteCidadeDescarga(idCidadeDescarga, idCTe, chaveAcesso, fsda);
 
