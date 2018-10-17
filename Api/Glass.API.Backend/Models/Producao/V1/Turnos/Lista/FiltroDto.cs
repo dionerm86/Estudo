@@ -5,7 +5,7 @@
 using Glass.API.Backend.Helper.Producao.Turnos;
 using Glass.API.Backend.Models.Genericas.V1;
 
-namespace Glass.API.Backend.Models.Producao.V1.Turno.Lista
+namespace Glass.API.Backend.Models.Producao.V1.Turnos.Lista
 {
     /// <summary>
     /// Classe que encapsula os itens de filtro para a lista de turnos.

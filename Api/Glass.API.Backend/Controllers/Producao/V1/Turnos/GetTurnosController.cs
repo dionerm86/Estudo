@@ -21,22 +21,6 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Turnos
     public partial class TurnosController : BaseController
     {
         /// <summary>
-        /// Recupera as configurações usadas pela tela de listagem de turnos.
-        /// </summary>
-        /// <returns>Um objeto JSON com as configurações da tela.</returns>
-        [HttpGet]
-        [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Producao.V1.Turnos.Configuracoes.ListaDto))]
-        public IHttpActionResult ObterConfiguracoesListaTurnos()
-        {
-            using (var sessao = new GDATransaction())
-            {
-                var configuracoes = new Models.Producao.V1.Turnos.Configuracoes.ListaDto();
-                return this.Item(configuracoes);
-            }
-        }
-
-        /// <summary>
         /// Recupera a lista de turnos.
         /// </summary>
         /// <param name="filtro">Os filtros para a busca dos turnos.</param>

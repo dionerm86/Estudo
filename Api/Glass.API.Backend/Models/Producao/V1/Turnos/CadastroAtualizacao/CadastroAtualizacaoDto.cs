@@ -30,10 +30,10 @@ namespace Glass.API.Backend.Models.Producao.V1.Turnos.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("sequencia")]
-        public string Sequencia
+        public Data.Model.TurnoSequencia Sequencia
         {
             get { return this.ObterValor(c => c.Sequencia); }
-            set { this.AdicionarValor(c => c.Sequencia value); }
+            set { this.AdicionarValor(c => c.Sequencia, value); }
         }
 
         /// <summary>

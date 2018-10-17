@@ -22,17 +22,14 @@ namespace Glass.API.Backend.Models.Producao.V1.Turnos.Lista
         {
             this.Id = turno.IdTurno;
             this.Nome = turno.Descricao;
-            this.Sequencia = Colosoft.Translator.Translate(turno.NumSeq).Format();
             this.Inicio = turno.Inicio;
             this.Termino = turno.Termino;
+            this.Sequencia = new IdNomeDto()
+            {
+                Id = (int)turno.NumSeq,
+                Nome = Colosoft.Translator.Translate(turno.NumSeq).Format(),
+            };
         }
-
-        /// <summary>
-        /// Obtém ou define a sequência turno.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("sequencia")]
-        public string Sequencia { get; set; }
 
         /// <summary>
         /// Obtém ou define o início do turno.
@@ -47,5 +44,12 @@ namespace Glass.API.Backend.Models.Producao.V1.Turnos.Lista
         [DataMember]
         [JsonProperty("termino")]
         public string Termino { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a sequência do turno.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("sequencia")]
+        public IdNomeDto Sequencia { get; set; }
     }
 }
