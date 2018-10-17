@@ -701,23 +701,133 @@ namespace Glass.Data.DAL
             return lstParam.Count > 0 ? lstParam.ToArray() : null;
         }
 
-        public IList<uint> ObterIdsPedidos(uint idPedido, uint idCli, string nomeCli, uint idLoja, uint idFunc, uint idFuncionarioConferente,
-           int situacao, string situacaoPedOri, string idsProcesso, string dataIniEnt, string dataFimEnt, string dataIniFab, string dataFimFab,
-           string dataIniFin, string dataFimFin, string dataIniConf, string dataFimConf, string dataIniEmis, string dataFimEmis, bool soFinalizados,
-           bool pedidosSemAnexo, string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, bool pedidosAComprar, string tipoPedido,
-           string idsRotas, int origemPedido, int pedidosConferidos, int? tipoVenda)
+        /// <summary>
+        /// Busca os ids dos pedidos filtrados na tela.
+        /// </summary>
+        /// <param name="idPedido">Identificador do pedido.</param>
+        /// <param name="idCli">Identificador do cliente.</param>
+        /// <param name="nomeCli">Nome do Cliente.</param>
+        /// <param name="idLoja">Identificador da loja.</param>
+        /// <param name="idFunc">Identificador do funcionário.</param>
+        /// <param name="idFuncionarioConferente">Identificador do funcionário conferente.</param>
+        /// <param name="situacao">Situação do pedido.</param>
+        /// <param name="situacaoPedOri">Situação do pedido original.</param>
+        /// <param name="idsProcesso">ids de etiquetas de processo.</param>
+        /// <param name="dataIniEnt">Data entrada inicial.</param>
+        /// <param name="dataFimEnt">Data Entrada final.</param>
+        /// <param name="dataIniFab">Data fábrica inicial.</param>
+        /// <param name="dataFimFab">Data fábrica final.</param>
+        /// <param name="dataIniFin">Data finalização inicial.</param>
+        /// <param name="dataFimFin">Data finalização final.</param>
+        /// <param name="dataIniConf">Data confirmação inicial.</param>
+        /// <param name="dataFimConf">Data confirmação final.</param>
+        /// <param name="dataIniEmis">Data emissão inicial.</param>
+        /// <param name="dataFimEmis">Data emissão final.</param>
+        /// <param name="pedidosSemAnexo">Indicativo se devem ser buscados pedidos sem anexo.</param>
+        /// <param name="situacaoCnc">Situação CNC.</param>
+        /// <param name="dataIniSituacaoCnc">Data situação CNC inicial.</param>
+        /// <param name="dataFimSituacaoCnc">Data situação CNC final.</param>
+        /// <param name="pedidosAComprar">Indicativo se devem ser buscados pedidos a comprar.</param>
+        /// <param name="tipoPedido">Tipo do pedido.</param>
+        /// <param name="idsRotas">Ids das rotas a serem buscadas.</param>
+        /// <param name="origemPedido">Origem do pedido.</param>
+        /// <param name="pedidosConferidos">Indicativo se devem ser buscados pedidos conferidos.</param>
+        /// <returns>Ids dos pedidos filtrados.</returns>
+        public IList<uint> ObterIdsPedidos(
+            uint idPedido,
+            uint idCli,
+            string nomeCli,
+            uint idLoja,
+            uint idFunc,
+            uint idFuncionarioConferente,
+            int situacao,
+            string situacaoPedOri,
+            string idsProcesso,
+            string dataIniEnt,
+            string dataFimEnt,
+            string dataIniFab,
+            string dataFimFab,
+            string dataIniFin,
+            string dataFimFin,
+            string dataIniConf,
+            string dataFimConf,
+            string dataIniEmis,
+            string dataFimEmis,
+            bool soFinalizados,
+            bool pedidosSemAnexo,
+            string situacaoCnc,
+            string dataIniSituacaoCnc,
+            string dataFimSituacaoCnc,
+            bool pedidosAComprar,
+            string tipoPedido,
+            string idsRotas,
+            int origemPedido,
+            int pedidosConferidos,
+            int? tipoVenda)
         {
-            bool apenasMaoDeObra = !Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) &&
-                Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
+            bool apenasMaoDeObra = !Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) && Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
 
             bool temFiltro;
-            string sql = Sql(idPedido, null, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao, situacaoPedOri, idsProcesso, dataIniEnt,
-                dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, soFinalizados,
-                apenasMaoDeObra, null, pedidosSemAnexo, pedidosAComprar, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas,
-                null, null, 0, false, origemPedido, pedidosConferidos, tipoVenda, true, out temFiltro);
+            string sql = this.Sql(
+                idPedido,
+                null,
+                idCli,
+                nomeCli,
+                idLoja,
+                idFunc,
+                idFuncionarioConferente,
+                situacao,
+                situacaoPedOri,
+                idsProcesso,
+                dataIniEnt,
+                dataFimEnt,
+                dataIniFab,
+                dataFimFab,
+                dataIniFin,
+                dataFimFin,
+                dataIniConf,
+                dataFimConf,
+                dataIniEmis,
+                dataFimEmis,
+                soFinalizados,
+                apenasMaoDeObra,
+                null,
+                pedidosSemAnexo,
+                pedidosAComprar,
+                situacaoCnc,
+                dataIniSituacaoCnc,
+                dataFimSituacaoCnc,
+                tipoPedido,
+                idsRotas,
+                null,
+                null,
+                0,
+                false,
+                origemPedido,
+                pedidosConferidos,
+                tipoVenda,
+                true,
+                out temFiltro);
 
-            var pedidos = objPersistence.LoadData(sql, GetParam(null, nomeCli, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab,
-                dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, dataIniSituacaoCnc, dataFimSituacaoCnc, null, null));
+            var pedidos = this.objPersistence.LoadData(
+                sql,
+                this.GetParam(
+                    null,
+                    nomeCli,
+                    dataIniEnt,
+                    dataFimEnt,
+                    dataIniFab,
+                    dataFimFab,
+                    dataIniFin,
+                    dataFimFin,
+                    dataIniConf,
+                    dataFimConf,
+                    dataIniEmis,
+                    dataFimEmis,
+                    dataIniSituacaoCnc,
+                    dataFimSituacaoCnc,
+                    null,
+                    null));
 
             return pedidos.Select(f => f.IdPedido).ToList();
         }
@@ -3233,38 +3343,25 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Valida se os pedidos importados podem ter arquivo gerado.
         /// </summary>
-        /// <param name="idsPedidos"></param>
-        /// <returns></returns>
-        public string ValidarPedidosConferidos(IEnumerable<uint> idsPedidos)
+        /// <param name="idsPedidos">Identificadores de pedidos.</param>
+        public void ValidarPedidosConferidos(IEnumerable<uint> idsPedidos)
         {
-            var retorno = new List<uint>();
-
-            var pedidos = BuscarPedidosParaValidacao(idsPedidos);
-
-            foreach (var pedido in pedidos)
+            if (!idsPedidos.Any())
             {
-                if (pedido.Importado && !pedido.PedidoConferido)
-                    retorno.Add(pedido.IdPedido);
+                throw new Exception("Nenhum pedido a ser validado.");
             }
 
-            var mensagem = $"Os pedidos {string.Join(",", retorno)} não estão conferidos";
+            List<uint> retorno = this.ExecuteMultipleScalar<uint>(
+                $@"Select pe.IdPedido from pedido_espelho pe
+                left join pedido p on(p.IdPedido = pe.IdPedido)
+                where pe.IdPedido IN ({idsPedidos}) AND
+                p.Importado = 1 AND
+                (pe.PedidoConferido IS NULL OR pe.PedidoConferido = 0)");
 
-            return retorno.Count() > 0 ? mensagem : "true";
-        }
-
-        /// <summary>
-        /// Buscas as informações de Importado e Pedido conferido para validar se pode gerar arquivo para os mesmos.
-        /// </summary>
-        /// <param name="idsPedidos"></param>
-        /// <returns></returns>
-        public IList<PedidoEspelho> BuscarPedidosParaValidacao(IEnumerable<uint> idsPedidos)
-        {
-
-            if (!string.IsNullOrWhiteSpace(idsPedidos))
-                return objPersistence.LoadData($@"Select pe.IdPedido, p.Importado, pe.PedidoConferido from pedido_espelho pe
-                                                   left join pedido p on (p.IdPedido = pe.IdPedido) where pe.IdPedido IN ({idsPedidos})").ToList();
-
-            return new List<PedidoEspelho>();
+            if (retorno.Any())
+            {
+                throw new Exception($"Os pedidos {string.Join(",", retorno)} não estão conferidos");
+            }
         }
 
         #endregion

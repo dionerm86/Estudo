@@ -258,32 +258,23 @@ const app = new Vue({
 
     /**
      * Valida se pode gerar arquivos dos pedidos filtrados.
+     * @returns {Promise} Uma promise com o resultado da busca dos itens.
      */
     validaPodeGerarArquivo: function () {
-
-      var filtroUsar = this.clonar(filtro || {});
+      var filtroUsar = this.clonar(this.filtro || {});
 
       var idPedido = filtroUsar.idPedido;
-      if (idPedido)
-        {
+
+      if (idPedido) {
           if (!this.$refs.lista.$data.itens[0].permissoes.podeGerarArquivo) {
             this.exibirMensagem("O pedido importado ainda não foi conferido, confira o mesmo antes de gerar arquivo");
           return Promise.reject();
           }
 
           return Promise.resolve();
+      } else {
+        return Servicos.PedidosConferencia.podeImprimirImportados(filtroUsar);
       }
-      else {
-        return Servicos.PedidosConferencia.verificarPodeImprimirVariosPedidosImportados(filtroUsar)
-        .then(function (resposta) {
-          vm.atualizarLista();
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
-        }
     },
 
 
@@ -293,27 +284,33 @@ const app = new Vue({
      */
     gerarArquivosMaquina: function (tipoArquivo) {
       var filtros = this.formatarFiltros_();
+      var vm = this;
 
       if (!this.validarFiltrosVazios_(filtros)) {
         return false;
       }
 
       if ((this.filtro.situacao == 0 || this.filtro.situacao == 1) && this.filtro.idPedido == "") {
-        this.exibirMensagem('Validação', 'Estes arquivos só podem ser gerados para pedidos finalizados ou impressos, filtre por alguma destas situações e tente novamente.');
+        vm.exibirMensagem('Validação', 'Estes arquivos só podem ser gerados para pedidos finalizados ou impressos, filtre por alguma destas situações e tente novamente.');
         return false;
       }
 
-      this.validaPodeGerarArquivo().then();
+      this.validaPodeGerarArquivo()
+        .then(function (resposta) {
+          var nomeArquivo = tipoArquivo == 1 ? 'Cnc'
+            : tipoArquivo == 2 ? 'Dxf'
+            : tipoArquivo == 3 ? 'Fml'
+            : tipoArquivo == 3 ? 'SGlass'
+            : tipoArquivo == 3 ? 'Intermac'
+            : '';
 
-
-      var nomeArquivo = tipoArquivo == 1 ? 'Cnc'
-        : tipoArquivo == 2 ? 'Dxf'
-        : tipoArquivo == 3 ? 'Fml'
-        : tipoArquivo == 3 ? 'SGlass'
-        : tipoArquivo == 3 ? 'Intermac'
-        : '';
-
-      this.abrirJanela(200, 200, '../Handlers/Arquivo' + nomeArquivo + '.ashx?a=1' + filtros);
+          vm.abrirJanela(200, 200, '../Handlers/Arquivo' + nomeArquivo + '.ashx?a=1' + filtros);
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
     },
 
     /**

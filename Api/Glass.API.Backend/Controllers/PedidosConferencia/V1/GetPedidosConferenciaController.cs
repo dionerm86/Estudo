@@ -151,7 +151,7 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
         /// </summary>
         /// <returns>Uma lista JSON com os dados das situações encontradas.</returns>
         [HttpGet]
-        [Route("VerificarPodeImprimirVariosPedidos")]
+        [Route("situacoes")]
         [SwaggerResponse(200, "Situações encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Situações não encontradas.")]
         public IHttpActionResult ObterSituacoes()
@@ -170,8 +170,22 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
             }
         }
 
+        /// <summary>
+        /// Valida se os pedidos filtrados podem ser impressos.
+        /// </summary>
+        /// <param name="filtro">Os filtros para a busca dos pedidos.</param>
+        /// <returns>O retorno da validação dos pedidos passados.</returns>
+        [HttpGet]
+        [Route("podeImprimirImportados")]
+        [SwaggerResponse(200, "Pedidos podem ser impressos.")]
+        [SwaggerResponse(400, "Pedidos não podem ser impressos.", Type = typeof(MensagemDto))]
         public IHttpActionResult VerificarPodeImprimirVariosPedidosImportados([FromUri] Models.PedidosConferencia.Lista.FiltroDto filtro)
         {
+            if (!Configuracoes.PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos)
+            {
+                return this.Ok();
+            }
+
             filtro = filtro ?? new Models.PedidosConferencia.Lista.FiltroDto();
 
             var idsPedidos = PedidoEspelhoDAO.Instance.ObterIdsPedidos(
@@ -206,11 +220,13 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
                 filtro.PedidosConferidos,
                 (int?)filtro.TipoVenda);
 
-            if (Glass.Configuracoes.PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos)
+            try
             {
-                var resultado = PedidoEspelhoDAO.Instance.ValidarPedidosConferidos(idsPedidos);
-
-                return resultado == "true" ? this.Ok() : (IHttpActionResult)this.ErroValidacao(resultado);
+                PedidoEspelhoDAO.Instance.ValidarPedidosConferidos(idsPedidos);
+            }
+            catch (System.Exception x)
+            {
+                return this.ErroValidacao(x.Message);
             }
 
             return this.Ok();
