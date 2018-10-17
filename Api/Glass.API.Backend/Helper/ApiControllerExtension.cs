@@ -3,7 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.V1;
 using System;
 using System.Collections.Generic;
 using System.Web.Http;

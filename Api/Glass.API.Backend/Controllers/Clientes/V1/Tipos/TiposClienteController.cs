@@ -11,7 +11,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
     /// <summary>
     /// Controller de tipos de cliente.
     /// </summary>
-    [RoutePrefix("api/v1/cliente/tipos")]
+    [RoutePrefix("api/v1/clientes/tipos")]
     public partial class TiposClienteController : BaseController
     {
         private IHttpActionResult ValidarIdTipoCliente(int idTipoCliente)

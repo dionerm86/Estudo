@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
+﻿using GDA;
 using Glass.Data.Helper;
+using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
-using GDA;
 using System.Linq;
 
 namespace Glass.Data.DAL
@@ -21,7 +21,7 @@ namespace Glass.Data.DAL
 
             string sql = @"
                 Select " + campos + @"
-                From setor s 
+                From setor s
                     Left Join cnc c On (s.idCnc=c.idCnc)
                     " + (agrupar ? "Left Join setor_benef sb On (s.idSetor=sb.idSetor)" : "") + @"
                 Where 1 ";
@@ -67,10 +67,20 @@ namespace Glass.Data.DAL
 
         public Setor[] GetOrdered()
         {
-            return GetOrdered(false);
-         }
- 
+            return GetOrdered(null);
+        }
+
+        public Setor[] GetOrdered(GDASession sessao)
+        {
+            return GetOrdered(sessao, false);
+        }
+
         public Setor[] GetOrdered(bool marcarPeca)
+        {
+            return GetOrdered(null, marcarPeca);
+        }
+
+        public Setor[] GetOrdered(GDASession sessao, bool marcarPeca)
         {
             string sql = SqlList(false, true) + " AND s.Situacao=" + (int)Glass.Situacao.Ativo;
             if (marcarPeca)
@@ -82,9 +92,9 @@ namespace Glass.Data.DAL
 
             sql += " ORDER BY s.NumSeq ASC";
 
-            return objPersistence.LoadData(sql).ToList().ToArray();
+            return objPersistence.LoadData(sessao, sql).ToList().ToArray();
         }
-        
+
         public Setor ObterSetorPorNome(GDASession sessao, string nome)
         {
             string sql = "select s.*, cast(group_concat(sb.idBenefConfig) as char) as benefSetor from setor s Left Join setor_benef sb On (s.idSetor=sb.idSetor) where descricao =?nome";
@@ -110,12 +120,12 @@ namespace Glass.Data.DAL
         {
             int numSeqSetor = ObtemValorCampo<int>("numSeq", "idSetor=" + idSetor);
 
-            // Só troca de posição se houver algum setor abaixo/acima deste para ser trocado, 
+            // Só troca de posição se houver algum setor abaixo/acima deste para ser trocado,
             // lembrando que a posição Impr. Etiqueta não pode ser trocada
             if (numSeqSetor == 1 || (acima && numSeqSetor == 2) ||
                 (!acima && Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select Max(numSeq) From setor").ToString()) == numSeqSetor))
                 return;
-            
+
             // Altera a posição do setor adjacente à este
             objPersistence.ExecuteCommand("Update setor Set numSeq=numSeq" + (acima ? "+1" : "-1") +
                 " Where numSeq=" + (numSeqSetor + (acima ? -1 : 1)));
@@ -209,7 +219,7 @@ namespace Glass.Data.DAL
             uint idProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(numEtiqueta).GetValueOrDefault();
             return ObtemSetoresLidos(idProdPedProducao);
         }
-        
+
         /// <summary>
         /// /// (APAGAR: quando alterar para utilizar transação)
         /// Obtem setores passados
@@ -232,13 +242,13 @@ namespace Glass.Data.DAL
                 return new List<Setor>();
 
             string sql = @"
-                Select s.*, lprod.DataLeitura, f.nome as funcLeitura 
+                Select s.*, lprod.DataLeitura, f.nome as funcLeitura
                 From setor s
                     Inner Join (
-                        Select idSetor, dataLeitura, idFuncLeitura 
-                        From leitura_producao 
+                        Select idSetor, dataLeitura, idFuncLeitura
+                        From leitura_producao
                         Where idProdPedProducao=" + idProdPedProducao + @"
-                    ) lprod On (s.idSetor = lprod.idSetor) 
+                    ) lprod On (s.idSetor = lprod.idSetor)
                     Inner Join funcionario f On (lprod.idFuncLeitura=f.idFunc)
                 order by s.numSeq asc";
 
@@ -269,14 +279,14 @@ namespace Glass.Data.DAL
         public IList<Setor> ObtemSetoresRestantes(uint idProdPedProducao, uint idSetor)
         {
             return ObtemSetoresRestantes(null, idProdPedProducao, idSetor);
-        }        
+        }
 
         /// <summary>
         /// Obtem setores que a peça deve passar
         /// </summary>
         public IList<Setor> ObtemSetoresRestantes(GDASession sessao, uint idProdPedProducao, uint idSetor)
         {
-            var obrigatorios = ObtemSetoresObrigatorios(sessao, idProdPedProducao).Where(x => idSetor > 0 ? 
+            var obrigatorios = ObtemSetoresObrigatorios(sessao, idProdPedProducao).Where(x => idSetor > 0 ?
                 x.NumeroSequencia < Utils.ObtemSetor(idSetor).NumeroSequencia : true);
 
             var lidos = ObtemSetoresLidos(sessao, idProdPedProducao);
@@ -334,11 +344,11 @@ namespace Glass.Data.DAL
             if (idProdPedProducao == 0)
                 return new List<Setor>();
 
-            string idsSetores = String.Join(",", 
+            string idsSetores = String.Join(",",
                 RoteiroProducaoEtiquetaDAO.Instance.ObtemSetoresEtiqueta(idProdPedProducao).
                 Select(x => x.ToString()).ToArray());
 
-            if(string.IsNullOrEmpty(idsSetores))
+            if (string.IsNullOrEmpty(idsSetores))
                 return new List<Setor>();
 
             string sql = "select * from setor where idSetor in (" + idsSetores + ")";
@@ -351,7 +361,7 @@ namespace Glass.Data.DAL
 
             return setores;
         }
-        
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// Obtém os setores não lidos anteriores ao setor passado marcados com impedir avanço
@@ -471,7 +481,7 @@ namespace Glass.Data.DAL
         {
             return ExecuteScalar<uint>(sessao, "SELECT idSetor FROM setor WHERE tipo=" + (int)TipoSetor.ExpCarregamento + " and situacao=" + (int)Glass.Situacao.Ativo);
         }
-        
+
         /// <summary>
         /// Busca os setor marcado como entrega
         /// </summary>
@@ -501,14 +511,14 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Obtém dados do setor
-        
+
         /// <summary>
         /// Verifica se o setor informado é de laminado
         /// </summary>
         public bool IsLaminado(GDASession session, uint idSetor)
         {
             return ObtemValorCampo<bool>(session, "laminado", "idSetor=" + idSetor);
-        }      
+        }
 
         public uint? ObtemIdCnc(uint idSetor)
         {
@@ -550,8 +560,8 @@ namespace Glass.Data.DAL
         public List<uint> ObtemIdsSetoresPainelComercial()
         {
             return ExecuteMultipleScalar<uint>(@"
-                SELECT idSetor 
-                FROM Setor 
+                SELECT idSetor
+                FROM Setor
                 WHERE situacao=" + (int)Glass.Situacao.Ativo + @"
                     AND ExibirPainelComercial
                 ORDER BY numSeq");
@@ -564,8 +574,8 @@ namespace Glass.Data.DAL
         public List<uint> ObtemIdsSetoresPainelProducao()
         {
             return ExecuteMultipleScalar<uint>(@"
-                SELECT idSetor 
-                FROM Setor 
+                SELECT idSetor
+                FROM Setor
                 WHERE situacao=" + (int)Glass.Situacao.Ativo + @"
                     AND Coalesce(ExibirPainelProducao, false)=true
                 ORDER BY numSeq");
@@ -589,15 +599,15 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Setores da classificação 
+        #region Setores da classificação
 
         /// <summary>
         /// Recucpera os setores da classificação de roteiro de produção passada
         /// </summary>
         public List<Setor> GetSetoresClassificacao(int idClassificacao)
         {
-            var sqlSetores = string.Format(@"SELECT * FROM setor WHERE IdSetor IN 
-                (SELECT IdSetor FROM roteiro_producao_setor WHERE IdRoteiroProducao IN 
+            var sqlSetores = string.Format(@"SELECT * FROM setor WHERE IdSetor IN
+                (SELECT IdSetor FROM roteiro_producao_setor WHERE IdRoteiroProducao IN
                     (SELECT IdRoteiroProducao FROM roteiro_producao WHERE IdClassificacaoRoteiroProducao = {0}))", idClassificacao);
 
             return objPersistence.LoadData(sqlSetores).ToList();

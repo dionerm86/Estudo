@@ -24,15 +24,15 @@ namespace Glass.API.Backend.Controllers.Sinais.V1
         /// <returns>Uma lista JSON com os dados dos itens.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Sinais encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Sinais.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Sinais encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Sinais.V1.Lista.ListaDto>))]
         [SwaggerResponse(204, "Sinais não encontrados para o filtro informado.")]
-        [SwaggerResponse(206, "Sinais paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Sinais.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Sinais paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Sinais.V1.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterSinais([FromUri] Models.Sinais.Lista.FiltroDto filtro)
+        public IHttpActionResult ObterSinais([FromUri] Models.Sinais.V1.Lista.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.Sinais.Lista.FiltroDto();
+                filtro = filtro ?? new Models.Sinais.V1.Lista.FiltroDto();
 
                 var sinais = SinalDAO.Instance.GetList(
                     (uint)(filtro.Id ?? 0),
@@ -48,7 +48,7 @@ namespace Glass.API.Backend.Controllers.Sinais.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    sinais.Select(o => new Models.Sinais.Lista.ListaDto(o)),
+                    sinais.Select(o => new Models.Sinais.V1.Lista.ListaDto(o)),
                     filtro,
                     () => SinalDAO.Instance.GetCount(
                         (uint)(filtro.Id ?? 0),

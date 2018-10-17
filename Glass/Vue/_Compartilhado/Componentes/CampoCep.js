@@ -1,6 +1,6 @@
 Vue.component('campo-cep', {
   inheritAttrs: false,
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Endereço buscado pelo controle.

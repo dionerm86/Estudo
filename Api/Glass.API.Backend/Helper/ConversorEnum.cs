@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.V1;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace Glass.API.Backend.Helper
                 throw new ArgumentException("Tipo T precisa ser um Enum.", "T");
             }
 
-            listaIgnorados = new HashSet<T>();
+            this.listaIgnorados = new HashSet<T>();
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Glass.API.Backend.Helper
         {
             foreach (var item in itens)
             {
-                listaIgnorados.Add(item);
+                this.listaIgnorados.Add(item);
             }
 
             return this;
@@ -85,7 +85,7 @@ namespace Glass.API.Backend.Helper
 
         private IEnumerable ObterItens()
         {
-            var validarItensIgnorados = listaIgnorados.Any();
+            var validarItensIgnorados = this.listaIgnorados.Any();
 
             foreach (var item in Enum.GetValues(typeof(T)))
             {
@@ -94,7 +94,7 @@ namespace Glass.API.Backend.Helper
                 if (validarItensIgnorados)
                 {
                     var valorConvertido = (T)item;
-                    retornar = !listaIgnorados.Contains(valorConvertido);
+                    retornar = !this.listaIgnorados.Contains(valorConvertido);
                 }
 
                 if (retornar)

@@ -1,6 +1,6 @@
 ﻿Vue.component('campo-busca-cliente', {
   inheritAttrs: false,
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Cliente selecionado.

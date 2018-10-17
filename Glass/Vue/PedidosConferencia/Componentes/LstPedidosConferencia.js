@@ -1,12 +1,8 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista()],
 
   data: {
-    dadosOrdenacao_: {
-      campo: '',
-      direcao: ''
-    },
     configuracoes: {},
     filtro: {}
   },
@@ -23,19 +19,6 @@ const app = new Vue({
     atualizarPedidosConferencia: function(filtro, pagina, numeroRegistros, ordenacao) {
       var filtroUsar = this.clonar(filtro || {});
       return Servicos.PedidosConferencia.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
-    },
-
-    /**
-     * Realiza a ordenação da lista.
-     * @param {string} campo O nome do campo pelo qual o resultado será ordenado.
-     */
-    ordenar: function(campo) {
-      if (campo !== this.dadosOrdenacao_.campo) {
-        this.dadosOrdenacao_.campo = campo;
-        this.dadosOrdenacao_.direcao = '';
-      } else {
-        this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
-      }
     },
 
     /**
@@ -371,17 +354,6 @@ const app = new Vue({
      */
     atualizarLista: function () {
       this.$refs.lista.atualizar();
-    }
-  },
-
-  computed: {
-    /**
-     * Propriedade computada que indica a ordenação para a lista.
-     * @type {string}
-     */
-    ordenacao: function() {
-      var direcao = this.dadosOrdenacao_.direcao ? ' ' + this.dadosOrdenacao_.direcao : '';
-      return this.dadosOrdenacao_.campo + direcao;
     }
   },
 

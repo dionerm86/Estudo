@@ -5,7 +5,8 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
-            "~/Vue/Pedidos/Templates/LstPedidos.Filtro.html")
+            "~/Vue/Pedidos/Templates/LstPedidos.Filtro.html",
+            "~/Vue/Pedidos/Templates/LstPedidos.FinalizacaoFinanceiro.html")
     %>
 
     <div id="app">
@@ -224,35 +225,8 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                                 {{ item.liberacao.observacao }}
                             </div>
                         </controle-tooltip>
-                        <controle-tooltip v-if="item.permissoes && item.permissoes.finalizacoesFinanceiro">
-                            <template slot="botao">
-                                <img src="../Images/money_hist.gif" title="Finalizações financeiro">
-                            </template>
-
-                            <lista-paginada :funcao-recuperar-itens="buscarObservacoesFinanceiro" :filtro="{ id: item.id }" :ordenacao="ordenacaoObservacoesFinanceiro"
-                                :numero-registros="5">
-                                <template slot="cabecalho">
-                                    <th>
-                                        <a href="#" @click.prevent="ordenarObservacoesFinanceiro('motivo')">Ação</a>
-                                    </th>
-                                    <th>
-                                        <a href="#" @click.prevent="ordenarObservacoesFinanceiro('observacao')">Observação</a>
-                                    </th>
-                                    <th>
-                                        <a href="#" @click.prevent="ordenarObservacoesFinanceiro('cadastro.funcionario')">Funcionário</a>
-                                    </th>
-                                    <th>
-                                        <a href="#" @click.prevent="ordenarObservacoesFinanceiro('cadastro.data')">Data Cadastro</a>
-                                    </th>
-                                </template>
-                                <template slot="item" slot-scope="{ item }">
-                                    <td :style="{ color: item.corLinha }">{{ item.motivo }}</td>
-                                    <td :style="{ color: item.corLinha }">{{ item.observacao }}</td>
-                                    <td :style="{ color: item.corLinha }">{{ item.cadastro.data }}</td>
-                                    <td :style="{ color: item.corLinha }">{{ item.cadastro.funcionario }}</td>
-                                </template>
-                            </lista-paginada>
-                        </controle-tooltip>
+                        <pedido-finalizacao-financeiro v-if="item.permissoes && item.permissoes.finalizacoesFinanceiro"
+                            :pedido="item"></pedido-finalizacao-financeiro>
                         <img src="../Images/carregamento.png" :title="'Ordem de Carga: ' + exibirOrdensDeCarga(item)" v-if="item.idsOrdensDeCarga && item.idsOrdensDeCarga.length > 0"
                             style="width: 16px; height: 16px">
                     </td>
@@ -284,6 +258,7 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
             <asp:ScriptReference Path="~/Vue/Pedidos/Componentes/LstPedidos.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/Pedidos/Componentes/LstPedidos.FinalizacaoFinanceiro.js" />
             <asp:ScriptReference Path="~/Vue/Pedidos/Componentes/LstPedidos.js" />
         </Scripts>
     </asp:ScriptManager>

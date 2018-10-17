@@ -91,6 +91,15 @@ Servicos.PedidosConferencia = (function (http) {
     },
 
     /**
+     * Recupera os dados de produção do pedido em conferência.
+     * @param {?number} id O identificador do pedido em conferência.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    obterDadosProducao: function (id) {
+      return http().get(API + id + '/dadosProducao');
+    },
+
+    /**
      * Recupera o objeto com as situações do pedido em conferência.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
      * @returns {Promise} Uma promise com o resultado da busca.

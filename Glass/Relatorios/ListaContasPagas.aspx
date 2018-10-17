@@ -340,21 +340,17 @@
                          <td nowrap="nowrap">
                             <asp:ImageButton ID="ImageButton7" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar" OnClick="imgPesq_Click" />
                         </td>
-                         <td nowrap="nowrap">
-                            <asp:Label ID="Label25" runat="server" Text="Plano de conta" ForeColor="#0066FF"></asp:Label>
-                        </td>
                         <td nowrap="nowrap">
                             <asp:Label ID="Label1" runat="server" Text="Plano de conta" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td nowrap="nowrap">
                             <asp:TextBox ID="txtPlanoConta" runat="server" Width="150px"></asp:TextBox>
-                                    </td>
-                                    <td nowrap="nowrap">
-                                        <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                            OnClientClick="return openPlanoConta();" ToolTip="Pesquisar"
-                                            OnClick="imgPesq_Click" />
-                                    </td>
-                                    <td nowrap="nowrap">
+                        </td>
+                        <td nowrap="nowrap">
+                            <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                 OnClientClick="return openPlanoConta();" ToolTip="Pesquisar" OnClick="imgPesq_Click" />
+                        </td>
+                        <td nowrap="nowrap">
                             <asp:Label ID="Label21" runat="server" Text="Agrupar impressão por:" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td nowrap="nowrap">

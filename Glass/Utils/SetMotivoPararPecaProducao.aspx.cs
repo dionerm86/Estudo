@@ -1,6 +1,6 @@
+using Glass.Data.DAL;
 using System;
 using System.Web.UI;
-using Glass.Data.DAL;
 
 namespace Glass.UI.Web.Utils
 {
@@ -21,7 +21,7 @@ namespace Glass.UI.Web.Utils
                     Page.Title = "Retornar peça para produção";
             }
         }
-    
+
         protected void btnConfirmar_Click(object sender, EventArgs e)
         {
             try
@@ -34,8 +34,15 @@ namespace Glass.UI.Web.Utils
                 Glass.MensagemAlerta.ErrorMsg(null, ex, Page);
                 return;
             }
-    
-            ClientScript.RegisterClientScriptBlock(this.GetType(), "ok", "window.opener.redirectUrl(window.opener.location.href);closeWindow();", true);
+
+            if (Request["vue"] == "true")
+            {
+                ClientScript.RegisterClientScriptBlock(this.GetType(), "ok", "window.opener.app.__vue__.atualizarPecas(); closeWindow();", true);
+            }
+            else
+            {
+                ClientScript.RegisterClientScriptBlock(this.GetType(), "ok", "window.opener.redirectUrl(window.opener.location.href);closeWindow();", true);
+            }
         }
     }
 }

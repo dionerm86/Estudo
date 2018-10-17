@@ -5,9 +5,9 @@
 using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas;
-using Glass.API.Backend.Models.Processos.Filtro;
-using Glass.API.Backend.Models.Processos.Lista;
+using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.Processos.V1.Filtro;
+using Glass.API.Backend.Models.Processos.V1.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
@@ -59,12 +59,12 @@ namespace Glass.API.Backend.Controllers.Processos.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações encontradas.", Type = typeof(Models.Processos.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações encontradas.", Type = typeof(Models.Processos.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoes()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Processos.Configuracoes.ListaDto();
+                var configuracoes = new Models.Processos.V1.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }

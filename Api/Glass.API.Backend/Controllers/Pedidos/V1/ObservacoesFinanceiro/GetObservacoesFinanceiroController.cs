@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Pedidos.ObservacoesFinanceiro.Lista;
+using Glass.API.Backend.Models.Pedidos.V1.ObservacoesFinanceiro.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;

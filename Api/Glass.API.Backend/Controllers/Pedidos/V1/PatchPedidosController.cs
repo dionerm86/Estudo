@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Pedidos;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Pedidos.CadastroAtualizacao;
+using Glass.API.Backend.Models.Pedidos.V1.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -49,6 +49,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     pedido = new ConverterCadastroAtualizacaoParaPedido(dadosParaAtualizacao, pedido)
                         .ConverterParaPedido();
 
@@ -89,6 +91,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                     {
                         return validacao;
                     }
+
+                    sessao.BeginTransaction();
 
                     PedidoDAO.Instance.AtualizaObs(sessao, (uint)id, dadosEntrada?.Observacao, dadosEntrada?.ObservacaoLiberacao);
                     sessao.Commit();

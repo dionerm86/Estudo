@@ -9,9 +9,9 @@ namespace Glass.Data.Helper
     public static class ControleSistema
     {
         // Dicionário de controle da configuração
-        private static Dictionary<uint, DadosControleSistema> _clienteSistema = 
+        private static Dictionary<uint, DadosControleSistema> _clienteSistema =
             new Dictionary<uint, DadosControleSistema>();
-        
+
         #region Classe de suporte
 
         private class DadosControleSistema
@@ -48,6 +48,7 @@ namespace Glass.Data.Helper
             AmazonExpress,
             AmazonJuazeiro,
             AmazonLojaCE,
+            AmazonMJ,
             AmazonMossoro,
             AmazonRecife,
             AmazonTemperCE,
@@ -67,7 +68,7 @@ namespace Glass.Data.Helper
             #endregion
 
             #region "B"
-            
+
             BeBBox,
             BellTemper,
             BlueHouse,
@@ -183,7 +184,7 @@ namespace Glass.Data.Helper
             #endregion
 
             #region "M"
-            
+
             MarraVidros,
             MatrixVidros,
             MBTemper,
@@ -354,7 +355,7 @@ namespace Glass.Data.Helper
                     {
                         // Recupera a configuração do web.config
                         string site = System.Configuration.ConfigurationManager.AppSettings["sistema"];
-                        
+
                         // Converte para o Enum
                         ClienteSistema cliente;
                         try { cliente = Conversoes.ConverteValor<ClienteSistema>(Enum.Parse(typeof(ClienteSistema), site, true)); }
@@ -374,7 +375,7 @@ namespace Glass.Data.Helper
             }
 
             // Verifica se o valor deve ser lido novamente do arquivo de configuração
-            /* if (DadosControleSistema.MAX_NUMERO_VEZES > 0 && 
+            /* if (DadosControleSistema.MAX_NUMERO_VEZES > 0 &&
                 ++_clienteSistema[idLoja].NumeroVezes == DadosControleSistema.MAX_NUMERO_VEZES)
             {
                 _clienteSistema.Remove(idLoja);

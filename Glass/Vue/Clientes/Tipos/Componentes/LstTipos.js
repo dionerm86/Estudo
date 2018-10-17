@@ -1,12 +1,8 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.Patch],
+  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('id', 'asc')],
 
   data: {
-    dadosOrdenacao_: {
-      campo: 'id',
-      direcao: 'asc'
-    },
     numeroLinhaEdicao: -1,
     inserindo: false,
     tipoCliente: {},
@@ -24,19 +20,6 @@ const app = new Vue({
      */
     obterLista: function(filtro, pagina, numeroRegistros, ordenacao) {
       return Servicos.Clientes.Tipos.obter(filtro, pagina, numeroRegistros, ordenacao);
-    },
-
-    /**
-     * Realiza a ordenação da lista de tipos de cliente.
-     * @param {string} campo O nome do campo pelo qual o resultado será ordenado.
-     */
-    ordenar: function (campo) {
-      if (campo !== this.dadosOrdenacao_.campo) {
-        this.dadosOrdenacao_.campo = campo;
-        this.dadosOrdenacao_.direcao = '';
-      } else {
-        this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
-      }
     },
 
     /**
@@ -163,17 +146,6 @@ const app = new Vue({
      */
     atualizarLista: function () {
       this.$refs.lista.atualizar();
-    }
-  },
-
-  computed: {
-    /**
-     * Propriedade computada que indica a ordenação para a lista.
-     * @type {string}
-     */
-    ordenacao: function () {
-      var direcao = this.dadosOrdenacao_.direcao ? ' ' + this.dadosOrdenacao_.direcao : '';
-      return this.dadosOrdenacao_.campo + direcao;
     }
   }
 });

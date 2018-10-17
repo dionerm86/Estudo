@@ -3,7 +3,7 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Produtos.Filtro;
+using Glass.API.Backend.Models.Produtos.V1.Filtro;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Model;
@@ -317,7 +317,8 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
                 (float)dadosAdicionais.PercentualDescontoPorQuantidade,
                 dadosAdicionais.IdPedido,
                 null,
-                null);
+                null,
+                (float)dadosAdicionais.Altura.GetValueOrDefault());
         }
 
         private decimal ObterValorTabelaProduto(GDASession sessao, DadosAdicionaisFiltroPedidoDto dadosAdicionais, Produto produto)
@@ -371,18 +372,18 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
 
             return new DescontoAcrescimoClienteDto
             {
-                Percentual = (double)(descontoAcrescimoCliente?.PercMultiplicar ?? 1),
+                Percentual = (decimal)(descontoAcrescimoCliente?.PercMultiplicar ?? 1),
                 UsarNosBeneficiamentos = descontoAcrescimoCliente?.AplicarBeneficiamentos ?? false,
             };
         }
 
-        private double? ObterTamanhoMaximoObra(GDASession sessao, DadosAdicionaisFiltroPedidoDto dadosAdicionais, Produto produto)
+        private decimal? ObterTamanhoMaximoObra(GDASession sessao, DadosAdicionaisFiltroPedidoDto dadosAdicionais, Produto produto)
         {
             if (dadosAdicionais.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
             {
                 var tamanhoProduto = dadosAdicionais.AreaEmM2DesconsiderarObra ?? 0;
 
-                var tamanhoProdutos = ProdutosPedidoDAO.Instance.TotalMedidasObra(
+                var tamanhoProdutos = (decimal)ProdutosPedidoDAO.Instance.TotalMedidasObra(
                     sessao,
                     (uint)dadosAdicionais.IdObra.Value,
                     produto.CodInterno,
@@ -394,13 +395,13 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
                     (uint)dadosAdicionais.IdObra.Value,
                     produto.CodInterno);
 
-                var tamanhoMaximoRestante = produtoObra.TamanhoMaximo
+                var tamanhoMaximoRestante = (decimal)produtoObra.TamanhoMaximo
                     - tamanhoProdutos
                     + tamanhoProduto;
 
                 if (produtoObra.TamanhoMaximo > 0 && tamanhoMaximoRestante == 0)
                 {
-                    tamanhoMaximoRestante = 0.01f;
+                    tamanhoMaximoRestante = 0.01m;
                 }
 
                 return tamanhoMaximoRestante;
@@ -413,7 +414,7 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
         {
             var pedidoProducao = dadosAdicionais.TipoPedido == Data.Model.Pedido.TipoPedidoEnum.Producao;
 
-            var estoqueReal = ProdutoLojaDAO.Instance.GetEstoque(
+            var estoqueReal = (decimal)ProdutoLojaDAO.Instance.GetEstoque(
                 sessao,
                 (uint)dadosAdicionais.IdLoja,
                 (uint)produto.IdProd,

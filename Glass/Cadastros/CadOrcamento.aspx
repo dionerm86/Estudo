@@ -106,7 +106,7 @@
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
-
+            var altura = FindControl("hdfAltura", "input").value
             var idProdOrca = FindControl("hdfProdOrca", "input");
             idProdOrca = idProdOrca != null ? idProdOrca.value : "";
 
@@ -115,7 +115,18 @@
 
             var percDescontoQtde = controleDescQtde.PercDesconto();
 
-            FindControl("hdfValMin", "input").value = CadOrcamento.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, idProdOrca, percDescontoQtde, idOrcamento).value;
+            var retorno = CadOrcamento.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, idProdOrca, percDescontoQtde, idOrcamento, altura);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            else if(retorno == null){
+                alert("Erro na recuperação do valor de tabela do produto.");
+                return;
+            }
+
+            FindControl("hdfValMin", "input").value = retorno.value;
         }
 
         // Função chamada após selecionar produto pelo popup
@@ -500,7 +511,7 @@
             }
 
             dados = dados.split("|");
-            setDadosCliente(dados[0], dados[1], dados[2], dados[3], dados[4], dados[5], dados[6], dados[7], idCli.value, dados[8], dados[9], dados[12]);            
+            setDadosCliente(dados[0], dados[1], dados[2], dados[3], dados[4], dados[5], dados[6], dados[7], idCli.value, dados[8], dados[9], dados[12]);
 
             if (usarComissionado)
             {

@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Produtos.CoresAluminio;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Produtos.CoresAluminio.CadastroAtualizacao;
+using Glass.API.Backend.Models.Produtos.V1.CoresAluminio.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -44,6 +44,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresAluminio
 
                     corAluminio = new ConverterCadastroAtualizacaoParaCorAluminio(dadosParaAlteracao, corAluminio)
                         .ConverterParaCorAluminio();
+
+                    sessao.BeginTransaction();
 
                     CorAluminioDAO.Instance.Update(sessao, corAluminio);
                     sessao.Commit();

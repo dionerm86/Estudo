@@ -1,0 +1,29 @@
+﻿<controle-tooltip>
+    <template slot="botao">
+        <img src="../Images/money_hist.gif" title="Finalizações financeiro">
+    </template>
+
+    <lista-paginada v-bind:funcao-recuperar-itens="buscarObservacoesFinanceiro" v-bind:filtro="{ id: pedido.id }" v-bind:ordenacao="ordenacao"
+        v-bind:numero-registros="5">
+        <template slot="cabecalho">
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('motivo')">Ação</a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('observacao')">Observação</a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('cadastro.funcionario')">Funcionário</a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('cadastro.data')">Data Cadastro</a>
+            </th>
+        </template>
+        <template slot="item" slot-scope="{ item }">
+            <td v-bind:style="{ color: item.corLinha }">{{ item.motivo }}</td>
+            <td v-bind:style="{ color: item.corLinha }">{{ item.observacao }}</td>
+            <td v-bind:style="{ color: item.corLinha }">{{ item.cadastro.data }}</td>
+            <td v-bind:style="{ color: item.corLinha }">{{ item.cadastro.funcionario }}</td>
+        </template>
+    </lista-paginada>
+</controle-tooltip>

@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Caixas.Diario.CadastroAtualizacao;
+using Glass.API.Backend.Models.Caixas.V1.Diario.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;

@@ -5,8 +5,8 @@
 using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas;
-using Glass.API.Backend.Models.NotasFiscais.TiposParticipantes;
+using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.NotasFiscais.V1.TiposParticipantes;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
@@ -26,12 +26,12 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.NotasFiscais.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.NotasFiscais.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaNotasFiscais()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.NotasFiscais.Configuracoes.ListaDto();
+                var configuracoes = new Models.NotasFiscais.V1.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }
@@ -43,15 +43,15 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Uma lista JSON com os dados das notas fiscais.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Notas fiscais sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.NotasFiscais.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Notas fiscais sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.NotasFiscais.V1.Lista.ListaDto>))]
         [SwaggerResponse(204, "Notas fiscais não encontradas para o filtro informado.")]
-        [SwaggerResponse(206, "Notas fiscais paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.NotasFiscais.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Notas fiscais paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.NotasFiscais.V1.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaNotasFiscais([FromUri] Models.NotasFiscais.Lista.FiltroDto filtro)
+        public IHttpActionResult ObterListaNotasFiscais([FromUri] Models.NotasFiscais.V1.Lista.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.NotasFiscais.Lista.FiltroDto();
+                filtro = filtro ?? new Models.NotasFiscais.V1.Lista.FiltroDto();
 
                 var notasFiscais = NotaFiscalDAO.Instance.GetListaPadrao(
                     (uint)(filtro.NumeroNfe ?? 0),
@@ -90,7 +90,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    notasFiscais.Select(n => new Models.NotasFiscais.Lista.ListaDto(n)),
+                    notasFiscais.Select(n => new Models.NotasFiscais.V1.Lista.ListaDto(n)),
                     filtro,
                     () => NotaFiscalDAO.Instance.GetCountListaPadrao(
                         (uint)(filtro.NumeroNfe ?? 0),
