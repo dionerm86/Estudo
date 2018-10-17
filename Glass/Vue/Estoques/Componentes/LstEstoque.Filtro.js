@@ -1,5 +1,5 @@
 Vue.component('estoque-filtros', {
-  mixins: [Mixins.Clonar, Mixins.Patch, Mixins.Merge, Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Filtros selecionados para a lista de estoques de produto.
@@ -94,7 +94,7 @@ Vue.component('estoque-filtros', {
      * Atualiza o filtro com os dados selecionados na tela.
      */
     filtrar: function() {
-      var novoFiltro = this.clonar(this.filtroAtual, true);
+      var novoFiltro = this.clonar(this.filtroAtual);
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
       }
@@ -113,7 +113,7 @@ Vue.component('estoque-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroSubgruposProduto: function (filtro) {
-      return Servicos.Produtos.Subgrupos.obterParaControle(filtro);
+      return Servicos.Produtos.Subgrupos.obterParaControle((filtro || {}).idGrupoProduto);
     },
 
     /**

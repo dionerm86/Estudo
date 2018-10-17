@@ -5,6 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.PedidosConferencia.V1.DadosProducao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
@@ -167,6 +168,36 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
                     });
 
                 return this.Lista(situacoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera as situações de pedidos em conferência para o controle de pesquisa.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados das situações encontradas.</returns>
+        [HttpGet]
+        [Route("{id}/dadosProducao")]
+        [SwaggerResponse(200, "Dados de produção encontrados.", Type = typeof(DadosProducaoDto))]
+        [SwaggerResponse(404, "Pedido de conferência não encontrado para o id informado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterDadosProducao(int id)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var validacao = this.ValidarExistenciaIdPedidoConferencia(sessao, id);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
+                var dadosProducao = new DadosProducaoDto
+                {
+                    PedidoProducao = PedidoDAO.Instance.IsProducao(sessao, (uint)id),
+                    QuantidadePecasVidroParaEstoque = ProdutosPedidoEspelhoDAO.Instance.ObtemQtdPecasVidroEstoquePedido((uint)id),
+                    PossuiEtiquetasNaoImpressas = ProdutosPedidoEspelhoDAO.Instance.PossuiPecaASerImpressa((uint)id),
+                };
+
+                return this.Item(dadosProducao);
             }
         }
     }

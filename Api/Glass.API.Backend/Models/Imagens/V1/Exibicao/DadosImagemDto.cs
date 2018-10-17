@@ -1,4 +1,4 @@
-﻿// <copyright file="DadosImagemDto.cs" company="Sync Softwares">
+// <copyright file="DadosImagemDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -19,6 +19,13 @@ namespace Glass.API.Backend.Models.Imagens.V1.Exibicao
         [DataMember]
         [JsonProperty("urlImagem")]
         public string UrlImagem { get; set; }
+
+        /// <summary>
+        /// Obtém ou define os dados de SVG da imagem.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("svgImagem")]
+        public string SvgImagem { get; set; }
 
         /// <summary>
         /// Obtém ou define a legenda da imagem.

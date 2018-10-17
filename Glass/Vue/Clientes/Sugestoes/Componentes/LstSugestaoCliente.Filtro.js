@@ -1,6 +1,5 @@
 ﻿Vue.component('sugestao-cliente-filtros', {
-  mixins: [Mixins.Clonar, Mixins.Merge, Mixins.Comparar],
-
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Filtros selecionados para a lista de pedidos.
@@ -20,7 +19,7 @@
       required: true,
       twoWay: false,
       validator: Mixins.Validacao.validarObjeto
-    },
+    }
   },
 
   data: function () {
@@ -51,7 +50,6 @@
   },
 
   methods: {
-
     /**
      * Atualiza o filtro com os dados selecionados na tela.
      */
@@ -60,24 +58,6 @@
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
       }
-    },
-
-    /**
-     * Recupera se a tela foi aberta a partir de um pedido
-     */
-    verificarOrigemPedido: function () {
-      var idPedido = GetQueryString('idPedido');
-
-      return !!idPedido;
-    },
-
-    /**
-     * Recupera se a tela foi aberta a partir de um orçamento
-     */
-    verificarOrigemOrcamento: function () {
-      var idOrcamento = GetQueryString('idOrcamento');
-
-      return !!idOrcamento;
     },
 
     /**
@@ -123,26 +103,52 @@
 
   mounted: function () {
     var idPedido = GetQueryString('idPedido');
+    var idOrcamento = GetQueryString('idOrcamento');
+    var idCliente = GetQueryString('idCliente');
 
     if (idPedido) {
       this.filtroAtual.idPedido = idPedido;
     }
 
-    var idOrcamento = GetQueryString('idOrcamento');
-
     if (idOrcamento) {
       this.filtroAtual.idOrcamento = idOrcamento;
     }
-
-    var idCliente = GetQueryString('idCliente');
 
     if (idCliente) {
       this.filtroAtual.idCliente = idCliente;
     }
   },
 
-  watch: {
+  computed: {
+    /**
+     * Propriedade computada que indica se o filtro de clientes deve ser exibido.
+     * @type {boolean}
+     */
+    exibirFiltroCliente: function () {
+      var idCliente = GetQueryString('idCliente');
+      return !idCliente;
+    },
 
+    /**
+     * Propriedade computada que indica se o filtro de pedidos deve ser exibido.
+     * @type {boolean}
+     */
+    exibirFiltroPedido: function () {
+      var idPedido = GetQueryString('idPedido');
+      return !idPedido;
+    },
+
+    /**
+     * Propriedade computada que indica se o filtro de orçamentos deve ser exibido.
+     * @type {boolean}
+     */
+    exibirFiltroOrcamento: function () {
+      var idOrcamento = GetQueryString('idOrcamento');
+      return !idOrcamento;
+    },
+  },
+
+  watch: {
     /**
      * Observador para a variável 'funcionario'.
      * Atualiza o filtro com o ID do item selecionado.
@@ -196,7 +202,7 @@
         this.filtroAtual.idVendedorAssociado = atual ? atual.id : null;
       },
       deep: true
-    },
+    }
   },
 
   template: '#LstSugestaoCliente-Filtro-template'

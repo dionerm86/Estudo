@@ -14,7 +14,7 @@ ControleSelecaoParticipanteFiscal.selecionar = function (idControle, id, nome) {
 
 Vue.component('controle-selecao-participante-fiscal', {
   inheritAttrs: false,
-  mixins: [Mixins.Comparar, Mixins.UUID],
+  mixins: [Mixins.Objetos, Mixins.UUID],
   props: {
     /**
      * Participante selecionado no controle.

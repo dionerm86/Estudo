@@ -1,0 +1,19 @@
+﻿<span v-bind:style="estiloGridPrincipal">
+    <span v-for="item in beneficiamentos" v-bind:key="item.id" style="text-align: left">
+        <input type="checkbox" v-model="idsSelecionadosAtuais" v-bind:id="idUnico(item)" v-bind:value="item.id" v-if="!temFilhos(item)" />
+        <input type="checkbox" v-model="pais" v-bind:id="idUnico(item)" v-bind:value="item.id" v-else />
+        <label v-bind:for="idUnico(item)" style="color: initial; margin: 0">
+            {{ item.nome }}
+        </label>
+        <div v-if="temFilhos(item) && pais.indexOf(item.id) > -1" style="margin-left: 14px">
+            <span v-bind:style="estiloGridFilhos">
+                <span v-for="filho in item.filhos" v-bind:key="filho.id" style="text-align: left">
+                    <input type="checkbox" v-model="idsSelecionadosAtuais" v-bind:id="idUnico(filho)" v-bind:value="filho.id" />
+                    <label v-bind:for="idUnico(filho)" style="color: initial; margin: 0">
+                        {{ filho.nome }}
+                    </label>
+                </span>
+            </span>
+        </div>
+    </span>
+</span>

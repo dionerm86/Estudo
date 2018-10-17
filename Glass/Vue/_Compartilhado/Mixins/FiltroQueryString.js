@@ -65,6 +65,12 @@ Mixins.FiltroQueryString = {
         return Formatacao.decimal.format(valor);
       }
 
+      if (typeof valor === 'object') {
+        return Object.keys(valor)
+          .map(v => valor[v])
+          .join(',');
+      }
+
       return valor;
     }
   }
