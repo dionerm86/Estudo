@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Datas.Feriados;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Datas.Feriados.CadastroAtualizacao;
+using Glass.API.Backend.Models.Datas.V1.Feriados.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -44,6 +44,8 @@ namespace Glass.API.Backend.Controllers.Datas.V1.Feriados
 
                     feriado = new ConverterCadastroAtualizacaoParaFeriado(dadosParaAlteracao, feriado)
                         .ConverterParaFeriado();
+
+                    sessao.BeginTransaction();
 
                     FeriadoDAO.Instance.Update(sessao, feriado);
                     sessao.Commit();

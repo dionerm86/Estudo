@@ -1,5 +1,5 @@
 ﻿Vue.component('campo-busca-etiqueta-aplicacao', {
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Aplicação selecionada.

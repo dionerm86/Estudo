@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Cheques;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Cheques.CadastroAtualizacao;
+using Glass.API.Backend.Models.Cheques.V1.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -48,6 +48,8 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
                     {
                         return this.NaoEncontrado($"Cheque não encontrado.");
                     }
+
+                    sessao.BeginTransaction();
 
                     cheque = new ConverterCadastroAtualizacaoParaCheque(dadosEntrada, cheque)
                         .ConverterParaCheque();

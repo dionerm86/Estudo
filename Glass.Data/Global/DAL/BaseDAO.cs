@@ -1,17 +1,17 @@
+Ôªøusing GDA;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using GDA;
-using System.Reflection;
-using MySql.Data.MySqlClient;
 using System.Linq;
+using System.Reflection;
 
 namespace Glass.Data.DAL
 {
     public abstract class BaseDAO<Model, DAO> : GDA.BaseDAO<Model>, IDisposable
         where Model : new()
         where DAO : BaseDAO<Model, DAO>, new()
-    {        
-        #region EnumeraÁıes
+    {
+        #region Enumera√ß√µes
 
         protected enum TipoSql
         {
@@ -21,7 +21,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Vari·veis Locais
+        #region Vari√°veis Locais
 
         protected string _sortExpression;
         protected int _startRow, _pageSize;
@@ -35,27 +35,27 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Inst‚ncia
+        #region Inst√¢ncia
 
         /// <summary>
-        /// Inst‚ncia da DAO.
+        /// Inst√¢ncia da DAO.
         /// </summary>
         public static DAO Instance
         {
             get
             {
                 //return Glass.Pool.PoolableObject<DAO>.Instance;
-                return GDA.GDAOperations.GetDAO<Model, DAO>(); 
+                return GDA.GDAOperations.GetDAO<Model, DAO>();
             }
         }
 
         #endregion
 
-        #region MÈtodos internos
+        #region M√©todos internos
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Executa um SQL e converte o retorno para um tipo especÌfico.
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Executa um SQL e converte o retorno para um tipo espec√≠fico.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="sql"></param>
@@ -67,7 +67,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Executa um SQL e converte o retorno para um tipo especÌfico.
+        /// Executa um SQL e converte o retorno para um tipo espec√≠fico.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="sql"></param>
@@ -80,7 +80,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="campo"></param>
@@ -117,11 +117,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos de busca otimizados
+        #region M√©todos de busca otimizados
 
         /// <summary>
         /// Recupera o SQL com os ids dos primeiros registros encontrados.
-        /// Considera a paginaÁ„o da grid (primeiro registro e n˙mero de registros)
+        /// Considera a pagina√ß√£o da grid (primeiro registro e n√∫mero de registros)
         /// </summary>
         protected string GetSqlWithLimit(string sql, string sort, int startRow, int pageSize, string aliasTabelaOrdenar,
             string where, bool semFiltro, out int numeroRegistros, params GDAParameter[] parameters)
@@ -131,7 +131,7 @@ namespace Glass.Data.DAL
 
         /// <summary>
         /// Recupera o SQL com os ids dos primeiros registros encontrados.
-        /// Considera a paginaÁ„o da grid (primeiro registro e n˙mero de registros)
+        /// Considera a pagina√ß√£o da grid (primeiro registro e n√∫mero de registros)
         /// </summary>
         protected string GetSqlWithLimit(GDASession session, string sql, string sort, int startRow, int pageSize, string aliasTabelaOrdenar,
             string where, bool semFiltro, out int numeroRegistros, params GDAParameter[] parameters)
@@ -141,7 +141,7 @@ namespace Glass.Data.DAL
 
         /// <summary>
         /// Recupera o SQL com os ids dos primeiros registros encontrados.
-        /// Considera a paginaÁ„o da grid (primeiro registro e n˙mero de registros)
+        /// Considera a pagina√ß√£o da grid (primeiro registro e n√∫mero de registros)
         /// </summary>
         protected string GetSqlWithLimit(string sql, string sort, int startRow, int pageSize, string aliasTabelaOrdenar,
             string where, bool semFiltro, bool utilizarSortComFiltro, out int numeroRegistros, params GDAParameter[] parameters)
@@ -151,19 +151,19 @@ namespace Glass.Data.DAL
 
         /// <summary>
         /// Recupera o SQL com os ids dos primeiros registros encontrados.
-        /// Considera a paginaÁ„o da grid (primeiro registro e n˙mero de registros)
+        /// Considera a pagina√ß√£o da grid (primeiro registro e n√∫mero de registros)
         /// </summary>
         protected string GetSqlWithLimit(GDASession session, string sql, string sort, int startRow, int pageSize, string aliasTabelaOrdenar,
             string where, bool semFiltro, bool utilizarSortComFiltro, out int numeroRegistros, params GDAParameter[] parameters)
         {
             bool temp;
-            return GetSqlWithLimit(session, sql, sort, startRow, pageSize, aliasTabelaOrdenar, where, semFiltro, utilizarSortComFiltro, 
+            return GetSqlWithLimit(session, sql, sort, startRow, pageSize, aliasTabelaOrdenar, where, semFiltro, utilizarSortComFiltro,
                 out temp, out numeroRegistros, parameters);
         }
 
         /// <summary>
         /// Recupera o SQL com os ids dos primeiros registros encontrados.
-        /// Considera a paginaÁ„o da grid (primeiro registro e n˙mero de registros)
+        /// Considera a pagina√ß√£o da grid (primeiro registro e n√∫mero de registros)
         /// </summary>
         protected string GetSqlWithLimit(string sql, string sort, int startRow, int pageSize, string aliasTabelaOrdenar,
             string where, bool semFiltro, bool utilizarSortComFiltro, out bool otimizou, out int numeroRegistros, params GDAParameter[] parameters)
@@ -173,18 +173,18 @@ namespace Glass.Data.DAL
 
         /// <summary>
         /// Recupera o SQL com os ids dos primeiros registros encontrados.
-        /// Considera a paginaÁ„o da grid (primeiro registro e n˙mero de registros)
+        /// Considera a pagina√ß√£o da grid (primeiro registro e n√∫mero de registros)
         /// </summary>
         protected string GetSqlWithLimit(GDASession session, string sql, string sort, int startRow, int pageSize, string aliasTabelaOrdenar,
             string where, bool semFiltro, bool utilizarSortComFiltro, out bool otimizou, out int numeroRegistros, params GDAParameter[] parameters)
         {
-            // Monta a string de ordenaÁ„o (se necess·rio)
+            // Monta a string de ordena√ß√£o (se necess√°rio)
             string ordenar = (semFiltro || utilizarSortComFiltro) && !string.IsNullOrEmpty(sort) ? " order by " + sort : string.Empty;
 
-            // Monta a string de limite (se necess·rio)
+            // Monta a string de limite (se necess√°rio)
             string limitar = pageSize > 0 ? " limit " + startRow + "," + pageSize : string.Empty;
 
-            // Recupera as cl·usulas FROM, e GROUP BY do SQL e identifica se j· h· um WHERE no comando
+            // Recupera as cl√°usulas FROM, e GROUP BY do SQL e identifica se j√° h√° um WHERE no comando
             bool temWhere;
             string groupBy;
             string from = From(sql, out temWhere, out groupBy);
@@ -192,8 +192,8 @@ namespace Glass.Data.DAL
             otimizou = false;
             numeroRegistros = 0;
 
-            // SÛ otimiza consultas sem filtro e que devem ser limitadas e ordenadas
-            if (semFiltro && ordenar != string.Empty && limitar != string.Empty)
+            // S√≥ otimiza consultas sem filtro e que devem ser limitadas e ordenadas
+            if (limitar != string.Empty)
             {
                 try
                 {
@@ -201,29 +201,18 @@ namespace Glass.Data.DAL
                     string alias;
                     string tabela = GetTabelaFrom(from, aliasTabelaOrdenar, sort, out alias);
 
-                    // Recupera os campos que compıe a chave prim·ria da tabela principal
+                    // Recupera os campos que comp√µe a chave prim√°ria da tabela principal
                     bool chaveComposta;
                     string campo = GetCampoChave(session, tabela, out chaveComposta);
 
-                    // Formata o WHERE do SQL para ser usado 
-                    string whereInterno = where;
-                    whereInterno = string.IsNullOrEmpty(whereInterno) || (" " + whereInterno.ToLower().Trim()).IndexOf(" and ") == 0 ? whereInterno : " and " + whereInterno.Trim();
-
-                    // Remove o alias do WHERE formatado
-                    if (!string.IsNullOrEmpty(whereInterno))
-                    {
-                        whereInterno = whereInterno.Replace(" " + alias + ".", " ");
-                        whereInterno = whereInterno.Replace("(" + alias + ".", "(");
-                        whereInterno = whereInterno.Replace("=" + alias + ".", "=");
-                    }
-
                     // Recupera os valores dos campos chave usando o WHERE e LIMIT
-                    string retorno = GetValoresCampo(session, "select " + campo + " from " + tabela + " where 1" + whereInterno + 
-                        ordenar.Replace(alias + ".", string.Empty) + limitar, campo, parameters);
+                    string retorno = GetValoresCampo(session, "select " + (!string.IsNullOrWhiteSpace(alias) ? alias + "." : string.Empty) + campo
+                        + sql.Substring(sql.IndexOf(from)) + (!temWhere ? " where 1" : string.Empty)
+                        + where + ordenar + limitar, campo, parameters);
 
                     numeroRegistros = retorno.Split(',').Length;
 
-                    // Coloca um valor padr„o para o retorno (caso nada seja encontrado)
+                    // Coloca um valor padr√£o para o retorno (caso nada seja encontrado)
                     retorno = !string.IsNullOrEmpty(retorno) ? retorno :
                         !chaveComposta ? "0" : "''";
 
@@ -267,7 +256,7 @@ namespace Glass.Data.DAL
             }
             else
             {
-                // AndrÈ: Verifica se n„o tem where e se n„o tem order by porque na lista de feriado havia order by e o where foi colocado
+                // Andr√©: Verifica se n√£o tem where e se n√£o tem order by porque na lista de feriado havia order by e o where foi colocado
                 // depois desse, causando erro.
                 if (string.IsNullOrEmpty(groupBy))
                     return sql + (!temWhere && !sql.ToLower().Contains("order by") ? " where 1" : string.Empty) + where + " " + ordenar + limitar;
@@ -292,7 +281,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna um vetor de itens limitados a um n˙mero e a partir de um registro especÌfico.
+        /// Retorna um vetor de itens limitados a um n√∫mero e a partir de um registro espec√≠fico.
         /// </summary>
         protected IList<Model> LoadDataWithSortExpression(string sql, string sortExpression, int startRow, int pageSize,
             bool temFiltro, params GDAParameter[] parameters)
@@ -301,7 +290,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna um vetor de itens limitados a um n˙mero e a partir de um registro especÌfico.
+        /// Retorna um vetor de itens limitados a um n√∫mero e a partir de um registro espec√≠fico.
         /// </summary>
         protected IList<Model> LoadDataWithSortExpression(GDASession session, string sql, string sortExpression, int startRow, int pageSize,
             bool temFiltro, params GDAParameter[] parameters)
@@ -310,7 +299,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna um vetor de itens limitados a um n˙mero e a partir de um registro especÌfico.
+        /// Retorna um vetor de itens limitados a um n√∫mero e a partir de um registro espec√≠fico.
         /// </summary>
         protected IList<Model> LoadDataWithSortExpression(string sql, string sortExpression, int startRow, int pageSize,
             bool temFiltro, string where, params GDAParameter[] parameters)
@@ -319,20 +308,20 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna um vetor de itens limitados a um n˙mero e a partir de um registro especÌfico.
+        /// Retorna um vetor de itens limitados a um n√∫mero e a partir de um registro espec√≠fico.
         /// </summary>
         protected IList<Model> LoadDataWithSortExpression(GDASession session, string sql, string sortExpression, int startRow, int pageSize,
             bool temFiltro, string where, params GDAParameter[] parameters)
         {
-            // Habilitar para n„o usar a otimizaÁ„o
+            // Habilitar para n√£o usar a otimiza√ß√£o
             // temFiltro = true;
 
-            // Coloca a cl·usula where otimizada no SQL, se houver filtros que n„o permitem otimizaÁ„o
+            // Coloca a cl√°usula where otimizada no SQL, se houver filtros que n√£o permitem otimiza√ß√£o
             sql = sql.Replace(FILTRO_ADICIONAL, temFiltro ? where : string.Empty);
 
-            // Otimiza o SQL e salva as informaÁıes de ordenaÁ„o e paginaÁ„o nas vari·veis privadas
+            // Otimiza o SQL e salva as informa√ß√µes de ordena√ß√£o e pagina√ß√£o nas vari√°veis privadas
             int numeroRegistros;
-            sql = GetSqlWithLimit(session, sql, sortExpression, startRow, pageSize, GetAliasTabela(sql), where, 
+            sql = GetSqlWithLimit(session, sql, sortExpression, startRow, pageSize, GetAliasTabela(sql), where,
                 !temFiltro, out numeroRegistros, parameters);
 
             SetInfoPaging(sortExpression, startRow, pageSize);
@@ -341,7 +330,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza os dados da paginaÁ„o.
+        /// Atualiza os dados da pagina√ß√£o.
         /// </summary>
         /// <param name="startRow"></param>
         /// <param name="pageSize"></param>
@@ -353,8 +342,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o n˙mero de registros de um SQL de seleÁ„o.
-        /// Usado em conjunto com o mÈtodo LoadDataWithSortExpression, ou apÛs chamar SetInfoPaging.
+        /// Retorna o n√∫mero de registros de um SQL de sele√ß√£o.
+        /// Usado em conjunto com o m√©todo LoadDataWithSortExpression, ou ap√≥s chamar SetInfoPaging.
         /// </summary>
         /// <param name="sqlSelecionar"></param>
         /// <param name="startRow"></param>
@@ -365,10 +354,10 @@ namespace Glass.Data.DAL
         {
             return GetCountWithInfoPaging(sqlSelecionar, false, parameters);
         }
-        
+
         /// <summary>
-        /// Retorna o n˙mero de registros de um SQL de seleÁ„o.
-        /// Usado em conjunto com o mÈtodo LoadDataWithSortExpression, ou apÛs chamar SetInfoPaging.
+        /// Retorna o n√∫mero de registros de um SQL de sele√ß√£o.
+        /// Usado em conjunto com o m√©todo LoadDataWithSortExpression, ou ap√≥s chamar SetInfoPaging.
         /// </summary>
         /// <param name="sqlSelecionar"></param>
         /// <param name="startRow"></param>
@@ -381,8 +370,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o n˙mero de registros de um SQL de seleÁ„o.
-        /// Usado em conjunto com o mÈtodo LoadDataWithSortExpression, ou apÛs chamar SetInfoPaging.
+        /// Retorna o n√∫mero de registros de um SQL de sele√ß√£o.
+        /// Usado em conjunto com o m√©todo LoadDataWithSortExpression, ou ap√≥s chamar SetInfoPaging.
         /// </summary>
         protected int GetCountWithInfoPaging(string sqlSelecionar, bool temFiltro, string where, params GDAParameter[] parameters)
         {
@@ -390,8 +379,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o n˙mero de registros de um SQL de seleÁ„o.
-        /// Usado em conjunto com o mÈtodo LoadDataWithSortExpression, ou apÛs chamar SetInfoPaging.
+        /// Retorna o n√∫mero de registros de um SQL de sele√ß√£o.
+        /// Usado em conjunto com o m√©todo LoadDataWithSortExpression, ou ap√≥s chamar SetInfoPaging.
         /// </summary>
         protected int GetCountWithInfoPaging(GDASession session, string sqlSelecionar, bool temFiltro, string where, params GDAParameter[] parameters)
         {
@@ -399,8 +388,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o n˙mero de registros de um SQL de seleÁ„o.
-        /// Usado em conjunto com o mÈtodo LoadDataWithSortExpression, ou apÛs chamar SetInfoPaging.
+        /// Retorna o n√∫mero de registros de um SQL de sele√ß√£o.
+        /// Usado em conjunto com o m√©todo LoadDataWithSortExpression, ou ap√≥s chamar SetInfoPaging.
         /// </summary>
         protected int GetCountWithInfoPaging(string sqlSelecionar, bool temFiltro, string where, bool utilizarSortComFiltro,
             params GDAParameter[] parameters)
@@ -409,18 +398,18 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o n˙mero de registros de um SQL de seleÁ„o.
-        /// Usado em conjunto com o mÈtodo LoadDataWithSortExpression, ou apÛs chamar SetInfoPaging.
+        /// Retorna o n√∫mero de registros de um SQL de sele√ß√£o.
+        /// Usado em conjunto com o m√©todo LoadDataWithSortExpression, ou ap√≥s chamar SetInfoPaging.
         /// </summary>
         protected int GetCountWithInfoPaging(GDASession session, string sqlSelecionar, bool temFiltro, string where, bool utilizarSortComFiltro,
             params GDAParameter[] parameters)
         {
             bool otimizou;
 
-            // Coloca a cl·usula where otimizada no SQL, se houver filtros que n„o permitem otimizaÁ„o
+            // Coloca a cl√°usula where otimizada no SQL, se houver filtros que n√£o permitem otimiza√ß√£o
             string sql = sqlSelecionar.Replace(FILTRO_ADICIONAL, temFiltro ? where : String.Empty);
 
-            // Otimiza o SQL, considerando NUMERO_PAGINAS vezes mais registros que o necess·rio (para garantir esse n˙mero de p·ginas nas grids)
+            // Otimiza o SQL, considerando NUMERO_PAGINAS vezes mais registros que o necess√°rio (para garantir esse n√∫mero de p√°ginas nas grids)
             int numeroRegistros;
             sql = GetSqlWithLimit(session, sql, _sortExpression, _startRow, _pageSize * NUMERO_PAGINAS, GetAliasTabela(sqlSelecionar),
                 where, !temFiltro, utilizarSortComFiltro, out otimizou, out numeroRegistros, parameters);
@@ -446,8 +435,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o n˙mero de registros de um SQL de seleÁ„o.
-        /// Usado em conjunto com o mÈtodo LoadDataWithSortExpression, ou apÛs chamar SetInfoPaging.
+        /// Retorna o n√∫mero de registros de um SQL de sele√ß√£o.
+        /// Usado em conjunto com o m√©todo LoadDataWithSortExpression, ou ap√≥s chamar SetInfoPaging.
         /// </summary>
         protected int GetCountWithInfoPaging(string sqlSelecionar, TipoSql tipoSql, params GDAParameter[] parameters)
         {
@@ -455,14 +444,14 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o n˙mero de registros de um SQL de seleÁ„o.
-        /// Usado em conjunto com o mÈtodo LoadDataWithSortExpression, ou apÛs chamar SetInfoPaging.
+        /// Retorna o n√∫mero de registros de um SQL de sele√ß√£o.
+        /// Usado em conjunto com o m√©todo LoadDataWithSortExpression, ou ap√≥s chamar SetInfoPaging.
         /// </summary>
         protected int GetCountWithInfoPaging(GDASession session, string sqlSelecionar, TipoSql tipoSql, params GDAParameter[] parameters)
         {
             string sql;
 
-            // Recupera as cl·usulas FROM e GROUP BY e verifica se h· um WHERE no SQL
+            // Recupera as cl√°usulas FROM e GROUP BY e verifica se h√° um WHERE no SQL
             bool temWhere;
             string groupBy, from = From(sqlSelecionar, out temWhere, out groupBy);
 
@@ -473,13 +462,13 @@ namespace Glass.Data.DAL
             {
                 if (indexLimit > indexFrom && _pageSize > 0)
                 {
-                    // Altera o LIMIT do SQL para considerar o n˙mero de p·ginas
+                    // Altera o LIMIT do SQL para considerar o n√∫mero de p√°ginas
                     sqlSelecionar = sqlSelecionar.Substring(0, indexLimit) + " limit " + (tipoSql == TipoSql.Otimizado ? 0 : _startRow) + "," +
                         (_pageSize * NUMERO_PAGINAS) + (sqlSelecionar.IndexOf(")", indexLimit) > -1 ?
                         sqlSelecionar.Substring(sqlSelecionar.IndexOf(")", indexLimit)) : String.Empty);
                 }
 
-                // Faz a contagem de registros atravÈs de uma subquery
+                // Faz a contagem de registros atrav√©s de uma subquery
                 sql = "select count(*) + " + _startRow + @"
                     from (" + sqlSelecionar + ") as temp";
             }
@@ -488,7 +477,7 @@ namespace Glass.Data.DAL
                 // Recupera a tabela principal e seu alias
                 string alias, tabela = GetTabelaFrom(from, GetAliasTabela(sqlSelecionar), null, out alias);
 
-                // Recupera os campos que compıe a chave prim·ria da tabela
+                // Recupera os campos que comp√µe a chave prim√°ria da tabela
                 bool chaveComposta;
                 string campo = GetCampoChave(session, tabela, out chaveComposta, alias);
 
@@ -508,7 +497,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos privados
+        #region M√©todos privados
 
         private string GetCampoChave(string nomeTabela, out bool chaveComposta)
         {
@@ -530,7 +519,7 @@ namespace Glass.Data.DAL
             // Formata o alias para ser usado no SQL
             alias = "'" + (!String.IsNullOrEmpty(alias) ? alias.TrimEnd(' ', '.') + "." : "") + "'";
 
-            // Busca os campos que compıe a chave prim·ria da tabela
+            // Busca os campos que comp√µe a chave prim√°ria da tabela
             string campo = "select cast(group_concat(concat(" + alias + @", column_name)) as char) from information_schema.key_column_usage 
                 where table_schema='" + DBUtils.GetDBName + "' and table_name='" + nomeTabela + "' and constraint_name='primary'";
 
@@ -552,7 +541,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         private string GetAliasTabela(string sql)
         {
-            // Recupera as cl·usulas FROM e GROUP BY e verifica se o SQL possui WHERE
+            // Recupera as cl√°usulas FROM e GROUP BY e verifica se o SQL possui WHERE
             bool temWhere;
             string groupBy;
             string from = From(sql, out temWhere, out groupBy);
@@ -602,7 +591,7 @@ namespace Glass.Data.DAL
                 indexes.Add(index, numAbrir - numFechar);
             }
 
-            // Recupera a posiÁ„o do FROM com menor n˙mero de parÍnteses anteriores
+            // Recupera a posi√ß√£o do FROM com menor n√∫mero de par√™nteses anteriores
             int[] keys = new int[indexes.Count];
             indexes.Keys.CopyTo(keys, 0);
 
@@ -615,7 +604,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera a cl·usula From do SQL.
+        /// Recupera a cl√°usula From do SQL.
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="temWhere"></param>
@@ -628,19 +617,19 @@ namespace Glass.Data.DAL
             int iFrom = GetIndex(sql, " from ", out indexFrom);
             string from = sql.Substring(iFrom);
 
-            // Verifica se h· algum WHERE
+            // Verifica se h√° algum WHERE
             Dictionary<int, int> indexWhere;
             int iWhere = GetIndex(from, " where ", out indexWhere);
             iWhere = indexWhere.Count > 0 && indexWhere[iWhere] == indexFrom[iFrom] ? iWhere : -1;
             temWhere = iWhere > -1;
 
-            // Coloca a cl·usula GROUP BY em outra vari·vel (se houver)
+            // Coloca a cl√°usula GROUP BY em outra vari√°vel (se houver)
             Dictionary<int, int> indexGroupBy;
             int iGroupBy = GetIndex(from, "group by ", out indexGroupBy);
             iGroupBy = indexGroupBy.Count > 0 && indexGroupBy[iGroupBy] == indexFrom[iFrom] ? iGroupBy : -1;
             groupBy = iGroupBy > -1 ? " " + from.Substring(iGroupBy) : String.Empty;
 
-            // Remove do FROM a cl·usula WHERE
+            // Remove do FROM a cl√°usula WHERE
             from = temWhere ? from.Substring(0, iWhere) : from.Trim();
 
             return from;
@@ -648,33 +637,19 @@ namespace Glass.Data.DAL
 
         private string GetTabelaFrom(string from, string aliasTabelaOrdenar, string sort, out string alias)
         {
-            // Verifica se h· algum alias no Sort
-            string[] dadosSort = sort != null ? sort.Split('.', ' ') : new string[0];
-            
-            // Define o alias usado
-            alias = sort != null && sort.IndexOf('.') > -1 ? dadosSort[0] : aliasTabelaOrdenar;
-            if (!string.IsNullOrEmpty(alias) && alias.Contains("("))
-                alias = alias.Substring(alias.IndexOf("(") + 1);
+            var dadosFrom = from.Trim().ToLower().Split(' ')
+                .Take(3)
+                .ToList();
 
-            string tabela = objPersistence.TableNameInfo.Name;
+            alias = new[] { "left", "right", "inner", "outer", "join", "where", "order", "group" }.Contains(dadosFrom[2])
+                ? string.Empty
+                : dadosFrom[2];
 
-            // Busca pelo alias no SQL
-            if (from.IndexOf(" " + alias + " ") > -1)
-            {
-                tabela = from.Substring(0, from.IndexOf(" " + alias + " ")).Trim();
-                tabela = tabela.LastIndexOf(' ') > -1 ? tabela.Substring(tabela.LastIndexOf(' ')).Trim() : tabela;
-            }
-            else if (from.IndexOf(" " + alias + "\r\n") > -1)
-            {
-                tabela = from.Substring(0, from.IndexOf(" " + alias + "\r\n")).Trim();
-                tabela = tabela.LastIndexOf(' ') > -1 ? tabela.Substring(tabela.LastIndexOf(' ')).Trim() : tabela;
-            }
-
-            return tabela;
+            return dadosFrom[1];
         }
 
         /// <summary>
-        /// Verifica se o campo È chave na tabela.
+        /// Verifica se o campo √© chave na tabela.
         /// </summary>
         /// <param name="nomeCampo"></param>
         /// <param name="nomeTabela"></param>
@@ -689,7 +664,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atribui o valor da chave identidade ‡ model.
+        /// Atribui o valor da chave identidade √† model.
         /// </summary>
         /// <param name="item"></param>
         /// <param name="id"></param>
@@ -707,7 +682,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos p˙blicos
+        #region M√©todos p√∫blicos
 
         /// <summary>
         /// Retorna o nome da tabela no banco de dados.
@@ -717,7 +692,7 @@ namespace Glass.Data.DAL
         {
             return objPersistence.TableNameInfo.Name;
         }
-        
+
         /// <summary>
         /// Insere os dados no BD.
         /// </summary>
@@ -728,7 +703,7 @@ namespace Glass.Data.DAL
             var cont = 1;
             uint retorno = 0;
 
-            // MÈtodo criado para resolver problema no insert de referÍncia de objeto que ocorre no mysql
+            // M√©todo criado para resolver problema no insert de refer√™ncia de objeto que ocorre no mysql
             while (true)
             {
                 try
@@ -757,7 +732,7 @@ namespace Glass.Data.DAL
         /// Atualiza os dados no BD.
         /// </summary>
         /// <param name="objUpdate">Objeto contendo os dados a serem atualizados.</param>
-        /// <returns>N˙mero de linhas afetadas.</returns>
+        /// <returns>N√∫mero de linhas afetadas.</returns>
         public virtual int Update(Model objUpdate)
         {
             return objPersistence.Update(objUpdate);
@@ -767,7 +742,7 @@ namespace Glass.Data.DAL
         /// Remove os dados no BD.
         /// </summary>
         /// <param name="objDelete">Objeto contendo os dados a serem removidos.</param>
-        /// <returns>N˙mero de linhas afetadas.</returns>
+        /// <returns>N√∫mero de linhas afetadas.</returns>
         public virtual int Delete(Model objDelete)
         {
             return Delete(null, objDelete);
@@ -777,7 +752,7 @@ namespace Glass.Data.DAL
         /// Remove os dados no BD.
         /// </summary>
         /// <param name="objDelete">Objeto contendo os dados a serem removidos.</param>
-        /// <returns>N˙mero de linhas afetadas.</returns>
+        /// <returns>N√∫mero de linhas afetadas.</returns>
         public virtual int Delete(GDASession session, Model objDelete)
         {
             try
@@ -786,9 +761,9 @@ namespace Glass.Data.DAL
             }
             catch (Exception ex)
             {
-                if (ex.InnerException != null && ex.InnerException is MySqlException && 
+                if (ex.InnerException != null && ex.InnerException is MySqlException &&
                     ex.InnerException.Message.ToLower().Contains("cannot delete or update a parent row: a foreign key constraint fails"))
-                    throw new Exception("N„o È possÌvel remover o item: h· outros itens vinculados a ele. Remova-os antes de continuar.", ex.InnerException);
+                    throw new Exception("N√£o √© poss√≠vel remover o item: h√° outros itens vinculados a ele. Remova-os antes de continuar.", ex.InnerException);
 
                 throw new Exception(ex.Message);
             }
@@ -880,8 +855,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Verifica se o registro j· est· cadastrado com base na chave prim·ria.
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Verifica se o registro j√° est√° cadastrado com base na chave prim√°ria.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -891,7 +866,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o registro j· est· cadastrado com base na chave prim·ria.
+        /// Verifica se o registro j√° est√° cadastrado com base na chave prim√°ria.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -901,8 +876,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Verifica se o registro j· est· cadastrado com base na chave prim·ria.
+        /// /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Verifica se o registro j√° est√° cadastrado com base na chave prim√°ria.
         /// </summary>
         /// <param name="Key"></param>
         /// <returns></returns>
@@ -912,7 +887,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o registro j· est· cadastrado com base na chave prim·ria.
+        /// Verifica se o registro j√° est√° cadastrado com base na chave prim√°ria.
         /// </summary>
         /// <param name="Key"></param>
         /// <returns></returns>
@@ -922,8 +897,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Verifica se o registro j· est· cadastrado com base na chave prim·ria.
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Verifica se o registro j√° est√° cadastrado com base na chave prim√°ria.
         /// </summary>
         /// <param name="Key"></param>
         /// <returns></returns>
@@ -933,7 +908,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o registro j· est· cadastrado com base na chave prim·ria.
+        /// Verifica se o registro j√° est√° cadastrado com base na chave prim√°ria.
         /// </summary>
         /// <param name="Key"></param>
         /// <returns></returns>
@@ -954,7 +929,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Se o registro j· existir, atualiza, caso contr·rio insere.
+        /// Se o registro j√° existir, atualiza, caso contr√°rio insere.
         /// </summary>
         /// <param name="objUpdate">Objeto contendo os dados.</param>
         public virtual void InsertOrUpdate(GDASession sessao, Model objUpdate)
@@ -965,10 +940,10 @@ namespace Glass.Data.DAL
             {
                 uint key = GetKey(objUpdate);
                 uint id = Insert(sessao, objUpdate);
-                
+
                 if (key > 0 && id > 0)
                 {
-                    objPersistence.ExecuteCommand(sessao, "update " + objPersistence.TableNameInfo.Name + " set " + 
+                    objPersistence.ExecuteCommand(sessao, "update " + objPersistence.TableNameInfo.Name + " set " +
                         objPersistence.Keys[0].Name + "=" + key + " where " + objPersistence.Keys[0].Name + "=" + id);
                 }
             }
@@ -995,7 +970,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -1005,7 +980,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -1031,7 +1006,7 @@ namespace Glass.Data.DAL
 
             string sql = "select * from " + objPersistence.TableNameInfo.Name +
                          " where " + listKeys[0].Name + "=" + key.ToString();
-            
+
             return objPersistence.LoadOneData(sessao, sql);
         }
 
@@ -1048,7 +1023,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera os valores de um campo formatados como string e separados por vÌrgula.
+        /// Recupera os valores de um campo formatados como string e separados por v√≠rgula.
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="nomeCampoSql"></param>
@@ -1059,7 +1034,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera os valores de um campo formatados como string e separados por vÌrgula.
+        /// Recupera os valores de um campo formatados como string e separados por v√≠rgula.
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="sql"></param>
@@ -1071,7 +1046,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera os valores de um campo formatados como string e separados por vÌrgula.
+        /// Recupera os valores de um campo formatados como string e separados por v√≠rgula.
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="nomeCampoSql"></param>
@@ -1082,7 +1057,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera os valores de um campo formatados como string e separados por vÌrgula.
+        /// Recupera os valores de um campo formatados como string e separados por v√≠rgula.
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="nomeCampoSql"></param>

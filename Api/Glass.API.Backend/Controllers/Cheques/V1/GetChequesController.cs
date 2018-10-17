@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Swashbuckle.Swagger.Annotations;
@@ -25,12 +25,12 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Cheques.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Cheques.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaEstoque()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Cheques.Configuracoes.ListaDto();
+                var configuracoes = new Models.Cheques.V1.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }
@@ -42,15 +42,15 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
         /// <returns>Uma lista JSON com os dados dos cheques.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Cheques sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Cheques.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Cheques sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Cheques.V1.Lista.ListaDto>))]
         [SwaggerResponse(204, "Cheques não encontrados para o filtro informado.")]
-        [SwaggerResponse(206, "Cheques paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Cheques.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Cheques paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Cheques.V1.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaCheques([FromUri] Models.Cheques.Lista.FiltroDto filtro)
+        public IHttpActionResult ObterListaCheques([FromUri] Models.Cheques.V1.Lista.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.Cheques.Lista.FiltroDto();
+                filtro = filtro ?? new Models.Cheques.V1.Lista.FiltroDto();
 
                 var tipo = filtro.Tipo ?? Data.Model.Cheques.TipoCheque.Terceiros;
 
@@ -89,7 +89,7 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    cheques.Select(o => new Models.Cheques.Lista.ListaDto(o)),
+                    cheques.Select(o => new Models.Cheques.V1.Lista.ListaDto(o)),
                     filtro,
                     () => ChequesDAO.Instance.GetCountFilter(
                         (uint)(filtro.IdLoja ?? 0),

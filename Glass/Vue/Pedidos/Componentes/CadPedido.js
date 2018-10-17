@@ -1,6 +1,6 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.Patch, Mixins.ExecutarTimeout],
+  mixins: [Mixins.Objetos, Mixins.ExecutarTimeout],
 
   data: {
     inserindo: false,

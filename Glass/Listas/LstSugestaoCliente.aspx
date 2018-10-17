@@ -1,19 +1,15 @@
 <%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstSugestaoCliente.aspx.cs"
-    EnableEventValidation="false" Inherits="Glass.UI.Web.Listas.LstSugestaoCliente" Title="Sugestões / Reclamações" %>
-
-<%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
-<%@ Register Src="../Controls/ctrlTipoFuncionario.ascx" TagName="ctrlTipoFuncionario"
-    TagPrefix="uc2" %>
-<%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc3" %>
+    EnableEventValidation="false" Inherits="Glass.UI.Web.Listas.LstSugestaoCliente" Title="Sugestões / Reclamações"
+    EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
-            "~/Vue/Clientes/Templates/LstSugestaoCliente.Filtro.html")
+            "~/Vue/Clientes/Sugestoes/Templates/LstSugestaoCliente.Filtro.html")
     %>
     <div id="app">
-        <label v-if="verificarOrigemCliente()">
-            {{ obterTitulo() }}
+        <label v-if="cliente">
+            Cliente: {{ cliente.nome }}
         </label>
         <sugestao-cliente-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></sugestao-cliente-filtros>
         <section v-if="configuracoes.cadastrarSugestaoCliente">
@@ -56,10 +52,10 @@
                 <template slot="item" slot-scope="{ item, index }">
                     <td style="white-space: nowrap">
                         <a href="#" @click.prevent="cancelarSugestao(item)" title="Cancelar" v-if="item.permissoes.cancelar">
-                            <img border="0" src="../Images/ExcluirGrid.gif">
+                            <img src="../Images/ExcluirGrid.gif">
                         </a>
                         <a href="#" @click.prevent="abrirAnexos(item)" title="Anexos">
-                            <img border="0" src="../Images/Clipe.gif">
+                            <img src="../Images/Clipe.gif">
                         </a>
                     </td>
                     <td>{{ item.id }}</td>
@@ -72,25 +68,27 @@
                     <td>{{ item.descricao }}</td>
                     <td>{{ item.situacao }}</td>
                 </template>
-                <span>
-                    <span>
-                        <button @click.prevent="voltar">
-                            Voltar
-                        </button>
-                    </span>
-                </span>
             </lista-paginada>
         </section>
         <section class="links">
             <div>
                 <span>
+                    <button @click.prevent="voltar">
+                        Voltar
+                    </button>
+                </span>
+            </div>
+        </section>
+        <section class="links">
+            <div>
+                <span>
                     <a href="#" @click.prevent="abrirListaSugestoes(false)" title="Imprimir">
-                        <img border="0" src="../Images/printer.png" /> Imprimir
+                        <img src="../Images/printer.png" /> Imprimir
                     </a>
                 </span>
                 <span>
                     <a href="#" @click.prevent="abrirListaSugestoes(true)" title="Exportar para o Excel">
-                        <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel
+                        <img src="../Images/Excel.gif" /> Exportar para o Excel
                     </a>
                 </span>
             </div>
@@ -98,8 +96,8 @@
     </div>
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
-            <asp:ScriptReference Path="~/Vue/Clientes/Componentes/LstSugestaoCliente.Filtro.js" />
-            <asp:ScriptReference Path="~/Vue/Clientes/Componentes/LstSugestaoCliente.js" />
+            <asp:ScriptReference Path="~/Vue/Clientes/Sugestoes/Componentes/LstSugestaoCliente.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/Clientes/Sugestoes/Componentes/LstSugestaoCliente.js" />
         </Scripts>
     </asp:ScriptManager>
 </asp:Content>

@@ -1,6 +1,6 @@
 Vue.component('controle-parcelas', {
   inheritAttrs: false,
-  mixins: [Mixins.Data, Mixins.Comparar, Mixins.Clonar],
+  mixins: [Mixins.Data, Mixins.Objetos],
   props: {
     /**
      * Objeto de parcelas

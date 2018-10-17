@@ -1,74 +1,80 @@
 <%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstTabelaDesconto.aspx.cs"
-    Inherits="Glass.UI.Web.Listas.LstTabelaDesconto" Title="Tabelas de Desconto/Acréscimo Cliente" %>
+    Inherits="Glass.UI.Web.Listas.LstTabelaDesconto" Title="Tabelas de Desconto/Acréscimo Cliente" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-
-    <script type="text/javascript">
-        function openRpt(exportarExcel)
-        {
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ListaTabelaCliente&exportarExcel=" + exportarExcel);
-        }
-    </script>
-
-    <asp:GridView ID="grdTabelaDesconto" runat="server" SkinID="defaultGridView"
-        DataKeyNames="IdTabelaDesconto" DataSourceID="odsTabelaDesconto" OnDataBound="grdTabelaDesconto_DataBound">
-        <Columns>
-            <asp:TemplateField>
-                <EditItemTemplate>
-                    <asp:ImageButton ID="ImageButton1" runat="server" CommandName="Update" ImageUrl="~/Images/Ok.gif" />
-                    <asp:ImageButton ID="ImageButton2" runat="server" CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif" />
-                </EditItemTemplate>
-                <ItemTemplate>
-                    <asp:ImageButton ID="ImageButton1" runat="server" CommandName="Edit" ImageUrl="~/Images/EditarGrid.gif" />
-                    <asp:ImageButton ID="ImageButton2" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                        OnClientClick="if (!confirm(&quot;Deseja excluir essa tabela de desconto/acréscimo?&quot;)) return false" />
-                    <asp:ImageButton ID="ImageButton3" runat="server" ImageUrl="~/Images/money_delete.gif"
-                        OnClientClick='<%# "openWindow(500, 650, \"../Cadastros/CadDescontoAcrescimoCliente.aspx?idTabelaDesconto=" + Eval("IdTabelaDesconto") + "\"); return false" %>' />
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:TemplateField HeaderText="Descrição" SortExpression="Descricao">
-                <EditItemTemplate>
-                    <asp:TextBox ID="txtDescricao" runat="server" MaxLength="45" Text='<%# Bind("Descricao") %>'
-                        Width="200px"></asp:TextBox>
-                </EditItemTemplate>
-                <FooterTemplate>
-                    <asp:TextBox ID="txtDescricao" runat="server" MaxLength="45" Text='<%# Bind("Descricao") %>'
-                        Width="200px"></asp:TextBox>
-                </FooterTemplate>
-                <ItemTemplate>
-                    <asp:Label ID="Label1" runat="server" Text='<%# Bind("Descricao") %>'></asp:Label>
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:TemplateField>
-                <FooterTemplate>
-                    <asp:ImageButton ID="imgAdd" runat="server" ImageUrl="~/Images/Insert.gif" OnClick="imgAdd_Click" />
-                </FooterTemplate>
-            </asp:TemplateField>
-        </Columns>
-        <PagerStyle CssClass="pgr" />
-        <EditRowStyle CssClass="edit" />
-        <AlternatingRowStyle CssClass="alt" />
-    </asp:GridView>
-    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTabelaDesconto" runat="server" 
-        DataObjectTypeName="Glass.Global.Negocios.Entidades.TabelaDescontoAcrescimoCliente"
-        DeleteMethod="ApagarTabelaDescontoAcrescimo" 
-        DeleteStrategy="GetAndDelete"
-        SelectMethod="PesquisarTabelasDescontosAcrescimos" 
-        SelectByKeysMethod="ObtemTabelaDescontoAcrescimoCliente"
-        TypeName="Glass.Global.Negocios.IClienteFluxo"
-        EnablePaging="True" MaximumRowsParameterName="pageSize"
-        SortParameterName="sortExpression"
-        UpdateStrategy="GetAndUpdate"
-        UpdateMethod="SalvarTabelaDescontoAcrescimo">
-    </colo:VirtualObjectDataSource>
-    <div class="imprimir">
-        <span>
-            <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(); return false;"> <img 
-                border="0" src="../Images/Printer.png" /> Imprimir</asp:LinkButton>
-        </span>
-        <span>
-            <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true); return false;"><img border="0" 
-                src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
-        </span>
+    <div id="app">
+        <section>
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma tabela de desconto/acréscimo de cliente encontrada."
+                :numero-registros="15" :exibir-inclusao="true" :linha-editando="numeroLinhaEdicao">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('nome')">Descrição</a>
+                    </th>
+                </template>
+                <template slot="item" slot-scope="{ item, index }">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="editar(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/Edit.gif">
+                        </button>
+                        <button @click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                        <button @click.prevent="abrirDadosTabelaDescontoAcrescimo(item)" title="Lançar desconto/acréscimo" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/money_delete.gif">
+                        </button>
+                    </td>
+                    <td>{{ item.nome }}</td>
+                </template>
+                <template slot="itemEditando">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="atualizar" title="Atualizar">
+                            <img src="../Images/ok.gif">
+                        </button>
+                        <button @click.prevent="cancelar" title="Cancelar">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="tabelaDescontoAcrescimoCliente.nome" maxlength="45" style="width: 150px" required />
+                    </td>
+                </template>
+                <template slot="itemIncluir">
+                    <td style="white-space: nowrap">
+                        <button v-on:click.prevent="iniciarCadastro" title="Nova tabela de desconto/acréscimo de cliente..." v-if="!inserindo">
+                            <img src="../Images/Insert.gif">
+                        </button>
+                        <button v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">
+                            <img src="../Images/Ok.gif">
+                        </button>
+                        <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="tabelaDescontoAcrescimoCliente.nome" maxlength="45" style="width: 150px" v-if="inserindo" required />
+                    </td>
+                </template>
+            </lista-paginada>
+        </section>
+        <section class="links">
+            <div>
+                <span>
+                    <a href="#" @click.prevent="abrirListaTabelasDescontoAcrescimo(false)" title="Imprimir">
+                        <img alt="" border="0" src="../Images/printer.png" /> Imprimir
+                    </a>
+                </span>
+                <span>
+                    <a href="#" @click.prevent="abrirListaTabelasDescontoAcrescimo(true)" title="Exportar para o Excel">
+                        <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel
+                    </a>
+                </span>
+            </div>
+        </section>
     </div>
+     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/TabelasDescontoAcrescimoCliente/Componentes/LstTabelasDescontoAcrescimoCliente.js" />
+        </Scripts>
+    </asp:ScriptManager>
 </asp:Content>

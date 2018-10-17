@@ -22,7 +22,9 @@ namespace Glass.UI.Web.Cadastros
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadVolume));
 
             if(!IsPostBack)
-            {                
+            {
+                ((TextBox)ctrlDataEntIni.FindControl("txtData")).Text = DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy");
+                ((TextBox)ctrlDataEntFim.FindControl("txtData")).Text = DateTime.Now.ToString("dd/MM/yyyy");
                 lblPeriodoLiberacaoPedido.Visible = false;
                 imbPeriodoLiberacaoPedido.Visible = false;
                 ctrlDataLibIni.Visible = false;

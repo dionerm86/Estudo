@@ -18,7 +18,7 @@
     tipoItem: {
       required: true,
       twoWay: false,
-      validator: Mixins.Validacao.validarValores('Produto')
+      validator: Mixins.Validacao.validarValores('Produto', 'PecaProducao', 'SvgProjeto')
     },
 
     /**
@@ -41,6 +41,7 @@
     return {
       uuid: null,
       urlImagem: null,
+      svgImagem: null,
       legenda: null
     }
   },
@@ -58,8 +59,9 @@
 
         Servicos.Imagens.obterDados(this.idItem, this.tipoItem)
           .then(function (resposta) {
-            vm.urlImagem = resposta.data.urlImagem;
-            vm.legenda = resposta.data.legenda;
+            vm.urlImagem = resposta.data ? resposta.data.urlImagem : null;
+            vm.svgImagem = resposta.data ? resposta.data.svgImagem : null;
+            vm.legenda = resposta.data ? resposta.data.legenda : null;
           })
           .catch(function (erro) {
             if (erro && erro.mensagem) {
@@ -73,13 +75,17 @@
      * Exibe um popup com a imagem em tamanho real.
      */
     abrirJanelaImagem: function () {
-      const urlFormatada = this.urlImagem
-        .replace(/..\/..\//g, '../')
-        .replace(/\?/g, '$')
-        .replace(/&/g, '@')
-        .replace(/\\/g, '!')
+      if (this.urlImagem) {
+        const urlFormatada = this.urlImagem
+          .replace(/..\/..\//g, '../')
+          .replace(/\?/g, '$')
+          .replace(/&/g, '@')
+          .replace(/\\/g, '!')
 
-      this.abrirJanela(600, 800, '../Utils/ShowFoto.aspx?path=' + urlFormatada);
+        this.abrirJanela(600, 800, this.caminhoRelativo('/Utils/ShowFoto.aspx?path=' + urlFormatada));
+      } else {
+        this.abrirJanela(600, 800, this.caminhoRelativo('/Handlers/LoadSvg.ashx?idProdPedEsp=' + this.idItem));
+      }
     },
   },
 

@@ -18,7 +18,7 @@
                 FindControl("txtNomeCliente", "input").value = "";
 
                 return false;
-            } 
+            }
 
             FindControl("txtNomeCliente", "input").value = retorno[1];
         }
@@ -537,6 +537,22 @@
                                     <asp:ControlParameter ControlID="drpSituacao" DefaultValue="" Name="situacao" PropertyName="SelectedValue" />
                                 </SelectParameters>
                             </colo:VirtualObjectDataSource>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#D2D2D2" align="center">
+                            <asp:Label ID="lblVendas" runat="server" Text="Compras do Cliente" Font-Bold="True"></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:GridView GridLines="None" ID="grdVendas" runat="server" AllowPaging="False"
+                                AllowSorting="False" AutoGenerateColumns="True" CssClass="gridStyle"
+                                PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit"
+                                EmptyDataText="Nenhuma Compra encontrada" Style="margin-right: 0px" HeaderStyle-HorizontalAlign="Left"
+                                Width="100%">
+                            </asp:GridView>
+
                         </td>
                     </tr>
                     <tr>

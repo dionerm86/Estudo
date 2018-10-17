@@ -1,5 +1,5 @@
 Vue.component('lista-selecao', {
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Item selecionado no controle.
@@ -67,6 +67,17 @@ Vue.component('lista-selecao', {
       twoWay: false,
       default: 'id',
       validator: Mixins.Validacao.validarStringOuVazio
+    },
+
+    /**
+     * Indica se um item 'vazio' será incluído na lista de opções.
+     * @type {boolean}
+     */
+    incluirItemVazio: {
+      required: false,
+      twoWay: false,
+      default: true,
+      validator: Mixins.Validacao.validarBoolean
     }
   },
 

@@ -378,5 +378,15 @@ namespace Glass.UI.Web
             var login = JsonConvert.SerializeObject(loginExpiracao);
             return new Crypto().Encrypt(login);
         }
+
+        protected string ObterCaminhoAbsoluto()
+        {
+            if (HttpContext.Current == null)
+            {
+                return string.Empty;
+            }
+
+            return HttpContext.Current.Request.ApplicationPath;
+        }
     }
 }

@@ -39,6 +39,8 @@ namespace Glass.API.Backend.Controllers.Aplicacoes.V1
                         return validacao;
                     }
 
+                    sessao.BeginTransaction();
+
                     EtiquetaAplicacaoDAO.Instance.DeleteByPrimaryKey(sessao, id);
                     sessao.Commit();
 

@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Aplicacoes;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Aplicacoes.CadastroAtualizacao;
+using Glass.API.Backend.Models.Aplicacoes.V1.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -51,6 +51,8 @@ namespace Glass.API.Backend.Controllers.Aplicacoes.V1
 
                     aplicacao = new ConverterCadastroAtualizacaoParaAplicacao(dadosParaAlteracao, aplicacao)
                         .ConverterParaAplicacao();
+
+                    sessao.BeginTransaction();
 
                     EtiquetaAplicacaoDAO.Instance.Update(sessao, aplicacao);
                     sessao.Commit();

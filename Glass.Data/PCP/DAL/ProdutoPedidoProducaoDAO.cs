@@ -1,13 +1,12 @@
+﻿using GDA;
+using Glass.Configuracoes;
+using Glass.Data.Helper;
+using Glass.Data.Helper.Calculos;
+using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
-using GDA;
-using Glass.Data.Model;
-using Glass.Data.Helper;
 using System.Linq;
 using System.Reflection;
-using Glass.Configuracoes;
-using Microsoft.Practices.ServiceLocation;
-using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -441,14 +440,12 @@ namespace Glass.Data.DAL
 
             if (idProdPedParent > 0)
             {
-                sql += " AND pp.IdProdPedParent =" + idProdPedParent;
-                temFiltro = true;
+                filtroAdicional += " AND pp.IdProdPedParent =" + idProdPedParent;
             }
 
             if (idProdPedProducaoParent > 0)
             {
-                sql += " AND ppp.IdProdPedProducaoParent =" + idProdPedProducaoParent;
-                temFiltro = true;
+                filtroAdicional += " AND ppp.IdProdPedProducaoParent =" + idProdPedProducaoParent;
             }
 
             string descricaoSetor = idSetor > 0 ? Utils.ObtemSetor((uint)idSetor).Descricao :
@@ -731,9 +728,8 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(planoCorte))
             {
-                sql += " AND ppp.PlanoCorte=?planoCorte";
+                filtroAdicional += " AND ppp.PlanoCorte=?planoCorte";
                 criterio += "Plano de corte: " + planoCorte + "    ";
-                temFiltro = true;
             }
 
             if (!String.IsNullOrEmpty(numEtiquetaChapa))
@@ -758,14 +754,12 @@ namespace Glass.Data.DAL
 
             if (pecaParadaProducao)
             {
-                sql += " AND ppp.pecaParadaProducao = true";
-                temFiltro = true;
+                filtroAdicional += " AND ppp.pecaParadaProducao = true";
             }
 
             if (pecasRepostas)
             {
-                sql += " and ppp.pecaReposta";
-                temFiltro = true;
+                filtroAdicional += " and ppp.pecaReposta";
             }
 
             /* Chamado 45622. */
@@ -1771,7 +1765,7 @@ namespace Glass.Data.DAL
 
             #region Filtros
 
-            if (filtrarDataFabrica || dataFabricaInicio > DateTime.MinValue|| dataFabricaFim > DateTime.MinValue)
+            if (filtrarDataFabrica || dataFabricaInicio > DateTime.MinValue || dataFabricaFim > DateTime.MinValue)
             {
                 sql += " LEFT JOIN pedido_espelho pedEsp ON (ped.IdPedido = pedEsp.IdPedido)";
             }
@@ -1980,7 +1974,7 @@ namespace Glass.Data.DAL
             {
                 var redondo = BenefConfigDAO.Instance.TemBenefRedondo(idsBeneficiamento) ? " OR pp.Redondo=1" : string.Empty;
 
-                sql += string.Format(" AND (ppp.IdProdPed IN (SELECT DISTINCT IdProdPed FROM produto_pedido_espelho_benef WHERE IdBenefConfig IN ({0})) {1})", string.Join(",",  idsBeneficiamento),
+                sql += string.Format(" AND (ppp.IdProdPed IN (SELECT DISTINCT IdProdPed FROM produto_pedido_espelho_benef WHERE IdBenefConfig IN ({0})) {1})", string.Join(",", idsBeneficiamento),
                     redondo);
             }
 
@@ -2248,13 +2242,13 @@ namespace Glass.Data.DAL
             if (listaVazia && FiltrosVazios(idCarregamento, (uint)idLiberarPedido, (uint)idPedido, idPedidoImportado.ToString(), (uint)idImpressao,
                 idsRota?.Any(f => f > 0) ?? false ? string.Join(",", idsRota) : string.Empty, codigoPedidoCliente, (uint)idCliente, nomeCliente, codigoEtiqueta,
                 dataLeituraInicio > DateTime.MinValue ? dataLeituraInicio.Value.ToString("dd/MM/yyyy") : string.Empty,
-                dataLeituraFim > DateTime.MinValue ? dataLeituraFim.Value.ToString("dd/MM/yyyy"): string.Empty,
-                dataEntregaInicio > DateTime.MinValue ? dataEntregaInicio.Value.ToString("dd/MM/yyyy"): string.Empty,
-                dataEntregaFim > DateTime.MinValue ? dataEntregaFim.Value.ToString("dd/MM/yyyy"): string.Empty,
-                dataFabricaInicio > DateTime.MinValue ? dataFabricaInicio.Value.ToString("dd/MM/yyyy"): string.Empty,
-                dataFabricaFim > DateTime.MinValue ? dataFabricaFim.Value.ToString("dd/MM/yyyy"): string.Empty,
-                dataConfirmacaoPedidoInicio > DateTime.MinValue ? dataConfirmacaoPedidoInicio.Value.ToString("dd/MM/yyyy"): string.Empty,
-                dataConfirmacaoPedidoFim > DateTime.MinValue ? dataConfirmacaoPedidoFim.Value.ToString("dd/MM/yyyy"): string.Empty,
+                dataLeituraFim > DateTime.MinValue ? dataLeituraFim.Value.ToString("dd/MM/yyyy") : string.Empty,
+                dataEntregaInicio > DateTime.MinValue ? dataEntregaInicio.Value.ToString("dd/MM/yyyy") : string.Empty,
+                dataEntregaFim > DateTime.MinValue ? dataEntregaFim.Value.ToString("dd/MM/yyyy") : string.Empty,
+                dataFabricaInicio > DateTime.MinValue ? dataFabricaInicio.Value.ToString("dd/MM/yyyy") : string.Empty,
+                dataFabricaFim > DateTime.MinValue ? dataFabricaFim.Value.ToString("dd/MM/yyyy") : string.Empty,
+                dataConfirmacaoPedidoInicio > DateTime.MinValue ? dataConfirmacaoPedidoInicio.Value.ToString("dd/MM/yyyy") : string.Empty,
+                dataConfirmacaoPedidoFim > DateTime.MinValue ? dataConfirmacaoPedidoFim.Value.ToString("dd/MM/yyyy") : string.Empty,
                 idSetor, string.Join(",", situacoes), situacaoPedido, tipoSituacao, idsSubgrupo?.Any(f => f > 0) ?? false ? string.Join(",", idsSubgrupo) : string.Empty, (uint)tipoEntrega, pecasProducaoCanceladas,
                 (uint)idFuncionario, tiposPedido.Count() > 0 ? string.Join(",", tiposPedido) : string.Empty, (uint)idCorVidro, altura, largura, espessura,
                 idsProcesso?.Any(f => f > 0) ?? false ? string.Join(",", idsProcesso) : string.Empty, idsAplicacao?.Count() > 0 ? string.Join(",", idsAplicacao) : string.Empty, aguardandoExpedicao,
@@ -2423,17 +2417,24 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<ProdutoPedidoProducao> PesquisarProdutosProducaoFilho(int idProdPedProducaoParent, string sortExpression, int startRow, int pageSize)
         {
-            var sql = string.Empty;
-            var numeroRegistros = 0;
-            ProdutoPedidoProducao[] produtosPedidoProducao;
+            return PesquisarProdutosProducaoFilho(null, idProdPedProducaoParent, sortExpression, startRow, pageSize);
+        }
 
+        /// <summary>
+        /// Consulta que retorna os produtos de produção filhos para a tela de consulta de produção.
+        /// </summary>
+        public IList<ProdutoPedidoProducao> PesquisarProdutosProducaoFilho(GDASession sessao, int idProdPedProducaoParent, string sortExpression, int startRow, int pageSize)
+        {
             // Caso não seja utilizado nenhum filtro, retornar uma listagem vazia, para a tela carregar mais rápido.
             if (idProdPedProducaoParent <= 0)
             {
                 return new List<ProdutoPedidoProducao>();
             }
 
-            produtosPedidoProducao = objPersistence.LoadData(GetSqlWithLimit(SqlProdutosProducaoFilho(idProdPedProducaoParent, true), sortExpression, 0, pageSize, "ppp", string.Empty, false,
+            int numeroRegistros;
+            ProdutoPedidoProducao[] produtosPedidoProducao;
+
+            produtosPedidoProducao = objPersistence.LoadData(sessao, GetSqlWithLimit(SqlProdutosProducaoFilho(idProdPedProducaoParent, true), sortExpression, 0, pageSize, "ppp", string.Empty, false,
                 !string.IsNullOrEmpty(sortExpression), out numeroRegistros)).ToArray();
 
             SetInfoPaging(sortExpression, 0, pageSize);
@@ -2448,13 +2449,21 @@ namespace Glass.Data.DAL
         /// </summary>
         public int PesquisarProdutosProducaoFilhoCount(int idProdPedProducaoParent)
         {
+            return PesquisarProdutosProducaoFilhoCount(null, idProdPedProducaoParent);
+        }
+
+        /// <summary>
+        /// Quantidade de registros retornados através da consulta que retorna os produtos de produção filhos para a tela de consulta de produção.
+        /// </summary>
+        public int PesquisarProdutosProducaoFilhoCount(GDASession sessao, int idProdPedProducaoParent)
+        {
             if (idProdPedProducaoParent <= 0)
             {
                 return 10000;
             }
 
             // Fica muito mais rápido sem usar a otimização (GetCountWithInfoPaging())
-            return objPersistence.ExecuteSqlQueryCount(SqlProdutosProducaoFilho(idProdPedProducaoParent, false));
+            return objPersistence.ExecuteSqlQueryCount(sessao, SqlProdutosProducaoFilho(idProdPedProducaoParent, false));
         }
 
         #endregion
@@ -6644,7 +6653,7 @@ namespace Glass.Data.DAL
                     if (idProdPed.GetValueOrDefault() == 0)
                         throw new Exception(string.Format("Não foi possível recuperar o produto do pedido. Etiqueta: {0}.", ObtemEtiqueta(sessao, idProdPedProducao)));
 
-                    ProdutosPedidoDAO.Instance.EstornoSaida(sessao, (uint)idProdPed, 1, System.Reflection.MethodBase.GetCurrentMethod().Name,ObtemEtiqueta(idProdPedProducao));
+                    ProdutosPedidoDAO.Instance.EstornoSaida(sessao, (uint)idProdPed, 1, System.Reflection.MethodBase.GetCurrentMethod().Name, ObtemEtiqueta(idProdPedProducao));
 
                     EstornarSaidaRevenda(sessao, idPedidoExpedicao, prodPedEsp, ObtemEtiqueta(idProdPedProducao));
 

@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Datas.Feriados.CadastroAtualizacao;
+using Glass.API.Backend.Models.Datas.V1.Feriados.CadastroAtualizacao;
 using System;
 
 namespace Glass.API.Backend.Helper.Datas.Feriados
