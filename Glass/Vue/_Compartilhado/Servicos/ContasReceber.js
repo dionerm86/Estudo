@@ -17,13 +17,8 @@ Servicos.ContasReceber = (function(http) {
        * @returns {Promise} Uma promise com o resultado da busca.
        */
       obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-        filtro = filtro || {};
-        filtro.pagina = pagina;
-        filtro.numeroRegistros = numeroRegistros;
-        filtro.ordenacao = ordenacao;
-
         return http().get(API + 'recebidas', {
-          params: filtro
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
 
