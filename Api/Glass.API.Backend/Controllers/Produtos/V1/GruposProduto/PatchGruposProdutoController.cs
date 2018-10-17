@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Produtos.GruposProduto;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Produtos.GruposProduto.CadastroAtualizacao;
+using Glass.API.Backend.Models.Produtos.V1.GruposProduto.CadastroAtualizacao;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;

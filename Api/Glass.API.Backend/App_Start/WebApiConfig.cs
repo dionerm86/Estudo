@@ -2,7 +2,9 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Negociacoes;
 using System.Configuration;
+using System.Net.Http.Formatting;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
@@ -23,6 +25,8 @@ namespace Glass.API.Backend
             var authorizedUris = ConfigurationManager.AppSettings["authorizedUris"];
             config.EnableCors(new EnableCorsAttribute(authorizedUris, "*", "*"));
 
+            ConfigurarNegociadorDeConteudo(config);
+
             // Web API routes
             config.MapHttpAttributeRoutes();
 
@@ -37,6 +41,30 @@ namespace Glass.API.Backend
                 name: "DefaultApi",
                 routeTemplate: "api/{version}/{controller}/{id}/{action}",
                 defaults: defaults);
+        }
+
+        private static void ConfigurarNegociadorDeConteudo(HttpConfiguration config)
+        {
+            if (PermitirXml())
+            {
+                return;
+            }
+
+            var formatadorJson = new JsonMediaTypeFormatter();
+
+            config.Services.Replace(
+                typeof(IContentNegotiator),
+                new JsonContentNegotiator(formatadorJson));
+        }
+
+        private static bool PermitirXml()
+        {
+            var configuracao = ConfigurationManager.AppSettings["permitirXml"];
+
+            bool resultado;
+            return !string.IsNullOrEmpty(configuracao)
+                && bool.TryParse(configuracao, out resultado)
+                && resultado;
         }
     }
 }

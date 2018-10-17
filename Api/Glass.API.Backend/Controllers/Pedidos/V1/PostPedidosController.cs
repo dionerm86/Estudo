@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Pedidos;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Pedidos.EnviarValidacaoFinanceiro;
+using Glass.API.Backend.Models.Pedidos.V1.EnviarValidacaoFinanceiro;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Exceptions;
@@ -45,6 +45,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     PedidoDAO.Instance.FinalizarPedido(sessao, (uint)id, false);
 
                     // caso a empresa use liberação e seja LITE confirma o pedido automaticamente
@@ -95,6 +97,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     PedidoDAO.Instance.FinalizarPedido(sessao, (uint)id, false);
 
                     if (PedidoDAO.Instance.ObtemSituacao(sessao, (uint)id) != Data.Model.Pedido.SituacaoPedido.ConfirmadoLiberacao)
@@ -157,6 +161,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(sessao, (uint)id, dadosEntrada.Mensagem);
 
                     sessao.Commit();
@@ -194,6 +200,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     var idPedidoProducao = PedidoDAO.Instance.CriarPedidoProducaoPedidoRevenda(sessao, PedidoDAO.Instance.GetElementByPrimaryKey(id));
                     sessao.Commit();
 
@@ -230,6 +238,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     PedidoDAO.Instance.Reabrir(sessao, (uint)id);
                     sessao.Commit();
 
@@ -252,7 +262,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         [Route("")]
         [SwaggerResponse(201, "Pedido inserido.", Type = typeof(CriadoDto<int>))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        public IHttpActionResult CadastrarPedido([FromBody] Models.Pedidos.CadastroAtualizacao.CadastroAtualizacaoDto dadosParaCadastro)
+        public IHttpActionResult CadastrarPedido([FromBody] Models.Pedidos.V1.CadastroAtualizacao.CadastroAtualizacaoDto dadosParaCadastro)
         {
             using (var sessao = new GDATransaction())
             {
@@ -265,10 +275,12 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     var pedido = new ConverterCadastroAtualizacaoParaPedido(dadosParaCadastro)
                         .ConverterParaPedido();
 
-                    var idPedido = PedidoDAO.Instance.Insert(pedido);
+                    var idPedido = PedidoDAO.Instance.Insert(sessao, pedido);
                     sessao.Commit();
 
                     return this.Criado(string.Format("Pedido {0} inserido com sucesso!", idPedido), idPedido);
@@ -292,7 +304,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         [SwaggerResponse(202, "Alteração na liberação financeira do pedido feita sem erros.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na liberação financeira do pedido.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado para o filtro informado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AlterarLiberacaoFinanceira(int id, [FromBody] Models.Pedidos.AlterarLiberacaoFinanceiro.EntradaDto dados)
+        public IHttpActionResult AlterarLiberacaoFinanceira(int id, [FromBody] Models.Pedidos.V1.AlterarLiberacaoFinanceiro.EntradaDto dados)
         {
             using (var sessao = new GDATransaction())
             {
@@ -315,6 +327,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     PedidoDAO.Instance.AlteraLiberarFinanc(sessao, (uint)id, dados.Liberar.Value);
                     sessao.Commit();
 
@@ -356,16 +370,22 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 try
                 {
-                    // Cria um registro na tabela em conferencia para este pedido
+                    sessao.BeginTransaction();
+
+                    var recebeuSinal = PedidoDAO.Instance.ObtemIdSinal(sessao, (uint)id) > 0;
+
                     PedidoConferenciaDAO.Instance.NovaConferencia(
                         sessao,
                         (uint)id,
-                        PedidoDAO.Instance.ObtemIdSinal(sessao, (uint)id) > 0);
+                        recebeuSinal);
+
+                    sessao.Commit();
 
                     return this.Aceito($"Conferência do pedido {id} gerada com sucesso.");
                 }
                 catch (Exception ex)
                 {
+                    sessao.Rollback();
                     return this.ErroValidacao($"Erro ao gerar conferência do pedido {id}.", ex);
                 }
             }

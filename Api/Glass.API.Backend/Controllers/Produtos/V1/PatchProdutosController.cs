@@ -1,10 +1,10 @@
-﻿// <copyright file="PatchProdutosController.cs" company="Sync Softwares">
+// <copyright file="PatchProdutosController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Produtos.CadastroAtualizacao;
+using Glass.API.Backend.Models.Produtos.V1.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -37,7 +37,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                     return this.NaoEncontrado("Grupo de produto não encontrado");
                 }
 
-                if (situacao == null || situacao.situacao == null)
+                if (situacao == null || situacao.Situacao == null)
                 {
                     return this.ErroValidacao("A situação deve ser informada");
                 }
@@ -46,7 +46,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                 {
                     sessao.BeginTransaction();
 
-                    ProdutoDAO.Instance.AlterarSituacaoProduto(situacao.situacao.Value, id, null);
+                    ProdutoDAO.Instance.AlterarSituacaoProduto(situacao.Situacao.Value, id, null);
 
                     sessao.Commit();
 
@@ -80,7 +80,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                     return this.NaoEncontrado("Subgrupo de produto não encontrado.");
                 }
 
-                if (situacao == null || situacao.situacao == null)
+                if (situacao == null || situacao.Situacao == null)
                 {
                     return this.ErroValidacao("A situação deve ser informada.");
                 }
@@ -89,7 +89,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                 {
                     sessao.BeginTransaction();
 
-                    ProdutoDAO.Instance.AlterarSituacaoProduto(situacao.situacao.Value, null, id);
+                    ProdutoDAO.Instance.AlterarSituacaoProduto(situacao.Situacao.Value, null, id);
 
                     sessao.Commit();
 

@@ -3,7 +3,7 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Produtos.CalculoTotal;
+using Glass.API.Backend.Models.Produtos.V1.CalculoTotal;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Helper.Produtos.Estrategias.CalculoTotal
@@ -26,7 +26,7 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.CalculoTotal
         }
 
         /// <inheritdoc/>
-        public double ObterPercentualDescontoQuantidade(string dadosAdicionaisValidacao)
+        public decimal ObterPercentualDescontoQuantidade(string dadosAdicionaisValidacao)
         {
             return 0;
         }

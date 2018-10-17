@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Estoques;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Estoques.CadastroAtualizacao;
+using Glass.API.Backend.Models.Estoques.V1.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -52,6 +52,8 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
 
                     estoque = new ConverterCadastroAtualizacaoParaEstoqueReal(dadosParaAlteracao, estoque)
                         .ConverterParaEstoque();
+
+                    sessao.BeginTransaction();
 
                     ProdutoLojaDAO.Instance.AtualizaEstoque(sessao, estoque);
                     sessao.Commit();
@@ -101,6 +103,8 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
                     estoque = new ConverterCadastroAtualizacaoParaEstoqueFiscal(dadosParaAlteracao, estoque)
                         .ConverterParaEstoque();
 
+                    sessao.BeginTransaction();
+
                     ProdutoLojaDAO.Instance.AtualizaEstoque(sessao, estoque);
                     sessao.Commit();
 
@@ -148,6 +152,8 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
 
                     estoque.QtdEstoque = (double)dadosParaAlteracao.QuantidadeEstoque.GetValueOrDefault();
 
+                    sessao.BeginTransaction();
+
                     ProdutoLojaDAO.Instance.AtualizaEstoque(sessao, estoque);
                     sessao.Commit();
 
@@ -194,6 +200,8 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
                     }
 
                     estoque.EstoqueFiscal = (double)dadosParaAlteracao.QuantidadeEstoqueFiscal.GetValueOrDefault();
+
+                    sessao.BeginTransaction();
 
                     ProdutoLojaDAO.Instance.AtualizaEstoque(sessao, estoque);
                     sessao.Commit();

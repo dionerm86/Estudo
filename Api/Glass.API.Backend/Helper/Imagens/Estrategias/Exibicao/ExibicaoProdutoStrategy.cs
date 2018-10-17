@@ -3,7 +3,7 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Imagens.Exibicao;
+using Glass.API.Backend.Models.Imagens.V1.Exibicao;
 using Glass.Data.DAL;
 using Glass.Global.UI.Web.Process;
 using System.Web.Http;

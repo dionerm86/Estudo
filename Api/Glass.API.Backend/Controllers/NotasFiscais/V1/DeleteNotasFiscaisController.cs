@@ -39,6 +39,8 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     NotaFiscalDAO.Instance.DeleteNotaFiscal(sessao, (uint)id);
                     sessao.Commit();
 

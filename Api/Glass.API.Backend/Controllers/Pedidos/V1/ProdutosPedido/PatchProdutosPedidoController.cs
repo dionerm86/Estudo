@@ -5,8 +5,8 @@
 using GDA;
 using Glass.API.Backend.Helper.Pedidos.ProdutosPedido;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Pedidos.ProdutosPedido.CadastroAtualizacao;
-using Glass.API.Backend.Models.Pedidos.ProdutosPedido.Observacao;
+using Glass.API.Backend.Models.Pedidos.V1.ProdutosPedido.CadastroAtualizacao;
+using Glass.API.Backend.Models.Pedidos.V1.ProdutosPedido.Observacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -45,6 +45,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.ProdutosPedido
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     produto = new ConverterCadastroAtualizacaoParaProdutoPedido(dadosParaAtualizacao, produto)
                         .ConverterParaProdutoPedido();
 
@@ -87,6 +89,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.ProdutosPedido
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     ProdutosPedidoDAO.Instance.AtualizaObs(sessao, (uint)id, dadosEntrada?.Observacao);
                     sessao.Commit();
 
