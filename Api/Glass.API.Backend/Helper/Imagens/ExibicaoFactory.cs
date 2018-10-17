@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Imagens.Estrategias.Exibicao;
-using Glass.API.Backend.Models.Imagens.Exibicao;
+using Glass.API.Backend.Models.Imagens.V1.Exibicao;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Helper.Imagens

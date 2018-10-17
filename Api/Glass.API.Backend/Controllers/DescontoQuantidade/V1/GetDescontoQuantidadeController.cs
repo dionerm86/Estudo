@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.DescontoQuantidade.Dados;
+using Glass.API.Backend.Models.DescontoQuantidade.V1.Dados;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -59,20 +59,20 @@ namespace Glass.API.Backend.Controllers.DescontoQuantidade.V1
             }
         }
 
-        private double ObterPercentualDescontoPorQuantidade(GDASession sessao, DadosEntradaDto dadosEntrada)
+        private decimal ObterPercentualDescontoPorQuantidade(GDASession sessao, DadosEntradaDto dadosEntrada)
         {
             if (!PedidoConfig.Desconto.DescontoPorProduto)
             {
                 return 0;
             }
 
-            return DescontoQtdeDAO.Instance.GetPercDescontoByProd(
+            return (decimal)DescontoQtdeDAO.Instance.GetPercDescontoByProd(
                 sessao,
                 (uint)dadosEntrada.IdProduto,
                 (int)dadosEntrada.Quantidade);
         }
 
-        private double ObterPercentualDescontoTabela(GDASession sessao, DadosEntradaDto dadosEntrada)
+        private decimal ObterPercentualDescontoTabela(GDASession sessao, DadosEntradaDto dadosEntrada)
         {
             var idGrupoProd = dadosEntrada.IdGrupoProduto
                 ?? ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, dadosEntrada.IdProduto);
@@ -89,7 +89,7 @@ namespace Glass.API.Backend.Controllers.DescontoQuantidade.V1
                 null,
                 null);
 
-            return descontoCliente.Desconto;
+            return (decimal)descontoCliente.Desconto;
         }
     }
 }

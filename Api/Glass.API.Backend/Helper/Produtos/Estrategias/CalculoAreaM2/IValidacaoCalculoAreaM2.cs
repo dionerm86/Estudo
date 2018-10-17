@@ -3,7 +3,7 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Produtos.CalculoAreaM2;
+using Glass.API.Backend.Models.Produtos.V1.CalculoAreaM2;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Helper.Produtos.Estrategias.CalculoAreaM2

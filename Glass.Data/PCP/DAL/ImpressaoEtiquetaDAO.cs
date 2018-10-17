@@ -1798,7 +1798,7 @@ namespace Glass.Data.DAL
                             var dataFinalizacaoPCP = PedidoEspelhoDAO.Instance.ObtemDataConf(transaction, prodPed.IdPedido).GetValueOrDefault();
                             var dataUltimaExportacaoEtiqueta = ArquivoOtimizacaoDAO.Instance.ObtemDataUltimaExportacaoEtiqueta(transaction, etiqueta);
 
-                            if (dataUltimaExportacaoEtiqueta != DateTime.MinValue && dataFinalizacaoPCP > dataUltimaExportacaoEtiqueta)
+                            if (dataUltimaExportacaoEtiqueta.GetValueOrDefault() != DateTime.MinValue && dataFinalizacaoPCP > dataUltimaExportacaoEtiqueta.Value)
                             {
                                 pedidosAlteradosAposExportacao.Add((int)prodPed.IdPedido);
                                 continue;

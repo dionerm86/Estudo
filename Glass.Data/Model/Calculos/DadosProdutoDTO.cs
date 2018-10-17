@@ -149,9 +149,9 @@ namespace Glass.Data.Model.Calculos
                     : produto.Value.ValorObra;
             }
 
-            percentualMultiplicar += (decimal)DadosChapaVidro.PercentualAcrescimoAltura();
+            var adicionalAlturaChapaVidro = 1 + (decimal)DadosChapaVidro.PercentualAcrescimoAltura();
 
-            return Math.Round(baseCalculo * percentualMultiplicar, 2);
+            return Math.Round((baseCalculo * percentualMultiplicar) * adicionalAlturaChapaVidro, 2);
         }
 
         private decimal ValorReposicao()

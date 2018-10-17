@@ -1,14 +1,15 @@
-// <copyright file="GetProducaoController.cs" company="Sync Softwares">
+﻿// <copyright file="GetProducaoController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.API.Backend.Models.Producao.V1.ContagemPecas;
 using Glass.API.Backend.Models.Producao.V1.Lista;
 using Glass.Data.DAL;
+using Glass.Data.Helper;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
 using System.Linq;

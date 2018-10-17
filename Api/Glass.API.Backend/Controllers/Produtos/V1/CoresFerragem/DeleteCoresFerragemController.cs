@@ -39,6 +39,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresFerragem
                         return validacao;
                     }
 
+                    sessao.BeginTransaction();
+
                     CorFerragemDAO.Instance.DeleteByPrimaryKey(sessao, id);
                     sessao.Commit();
 

@@ -25,7 +25,7 @@ namespace Glass.UI.Web.Utils
 
             dtvPedido.ChangeMode(DetailsViewMode.ReadOnly);
             bool isMaoDeObra = IsPedidoMaoDeObra();
-            bool isProducao = IsPedidoProducao();            
+            bool isProducao = IsPedidoProducao();
 
             if (isMaoDeObra)
             {
@@ -39,7 +39,7 @@ namespace Glass.UI.Web.Utils
                 grdAmbiente.Columns[8].Visible = true;
 
                 grdProdutos.Columns[9].Visible = false;
-                grdProdutos.Columns[10].Visible = false;                
+                grdProdutos.Columns[10].Visible = false;
             }
 
             if (!OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
@@ -49,15 +49,15 @@ namespace Glass.UI.Web.Utils
                 grdAmbiente.Columns[11].Visible = false;
             }
 
-            
+
 
             // Se a empresa não possuir acesso ao módulo PCP, esconde colunas Apl e Proc
             if (!Geral.ControlePCP)
             {
                 grdProdutos.Columns[9].Visible = false;
                 grdProdutos.Columns[10].Visible = false;
-            }              
-            
+            }
+
             divProduto.Visible = dtvPedido.CurrentMode == DetailsViewMode.ReadOnly;
             grdProdutos.Visible = divProduto.Visible;
 
@@ -72,7 +72,7 @@ namespace Glass.UI.Web.Utils
 
             // Se a empresa trabalha com ambiente de pedido e não houver nenhum ambiente cadastrado, esconde grid de produtos
             bool exibirAmbiente = PedidoConfig.DadosPedido.AmbientePedido || isMaoDeObra;
-            grdProdutos.Visible = (exibirAmbiente && !String.IsNullOrEmpty(hdfIdAmbiente.Value) && hdfIdAmbiente.Value != "0") || !exibirAmbiente;            
+            grdProdutos.Visible = (exibirAmbiente && !String.IsNullOrEmpty(hdfIdAmbiente.Value) && hdfIdAmbiente.Value != "0") || !exibirAmbiente;
 
             // Se a empresa não trabalha com Ambiente no pedido, esconde grdAmbiente
             grdAmbiente.Visible = exibirAmbiente;
@@ -80,27 +80,27 @@ namespace Glass.UI.Web.Utils
             if (!exibirAmbiente && !String.IsNullOrEmpty(Request["idPedido"]) && PedidoDAO.Instance.PossuiCalculoProjeto(Glass.Conversoes.StrParaUint(Request["idPedido"])))
             {
                 grdAmbiente.Visible = true;
-                
-            }            
+
+            }
 
             if (Glass.Configuracoes.Geral.SistemaLite)
             {
                 grdAmbiente.Columns[6].Visible = false;
                 grdAmbiente.Columns[7].Visible = false;
             }
-        }        
+        }
 
         protected void grdProdutos_RowUpdated(object sender, GridViewUpdatedEventArgs e)
         {
             var idPedido = Request["idPedido"].StrParaIntNullable();
-            
+
             dtvPedido.DataBind();
             grdAmbiente.DataBind();
         }
 
         protected void grdProdutos_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            
+
         }
 
         protected void grdProdutos_PreRender(object sender, EventArgs e)
@@ -113,7 +113,7 @@ namespace Glass.UI.Web.Utils
         }
 
         #region Eventos DataSource
-        
+
         protected void odsProdXPed_Updated(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)
@@ -143,7 +143,7 @@ namespace Glass.UI.Web.Utils
         }
 
         /// <summary>
-        /// Retorna o Código/Descrição do produto
+        /// Retorna o Código/Descrição do produto.
         /// </summary>
         [Ajax.AjaxMethod()]
         public string GetProduto(string idPedidoStr, string codInterno, string tipoEntrega, string revenda,
@@ -160,7 +160,7 @@ namespace Glass.UI.Web.Utils
             string revenda, string idProdPedStr, string percDescontoQtdeStr, string idPedido)
         {
             return WebGlass.Business.Produto.Fluxo.Valor.Ajax.GetValorMinimoPedido(codInterno, tipoPedido, tipoEntrega,
-                tipoVenda, idCliente, revenda, idProdPedStr, percDescontoQtdeStr, idPedido);
+                tipoVenda, idCliente, revenda, idProdPedStr, percDescontoQtdeStr, idPedido, string.Empty);
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Glass.UI.Web.Utils
         #region Ambiente
 
         protected void grdAmbiente_RowCommand(object sender, GridViewCommandEventArgs e)
-        {           
+        {
             if (e.CommandName == "ViewProd")
             {
                 // Mostra os produtos relacionado ao ambiente selecionado
@@ -215,7 +215,7 @@ namespace Glass.UI.Web.Utils
                 hdfLarguraAmbiente.Value = !maoDeObra ? "" : ambiente.Largura.Value.ToString();
                 hdfQtdeAmbiente.Value = !maoDeObra ? "1" : ambiente.Qtde.Value.ToString();
                 hdfRedondoAmbiente.Value = !maoDeObra ? "" : ambiente.Redondo.ToString().ToLower();
-            }            
+            }
         }
 
         protected void grdAmbiente_RowUpdated(object sender, GridViewUpdatedEventArgs e)
@@ -241,11 +241,11 @@ namespace Glass.UI.Web.Utils
                 PedidoDAO.Instance.PossuiCalculoProjeto(Request["idPedido"].StrParaUint()))
             {
                 grdAmbiente.Visible = true;
-                
-            }
-        }        
 
-        #endregion 
+            }
+        }
+
+        #endregion
 
         #region Fast Delivery
 
@@ -295,7 +295,7 @@ namespace Glass.UI.Web.Utils
             else
                 return "1";
         }
-        
+
         protected bool IsPedidoMaoDeObra()
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
@@ -443,7 +443,7 @@ namespace Glass.UI.Web.Utils
         protected string NomeControleBenef()
         {
             return grdProdutos.EditIndex == -1 ? "ctrlBenefInserir" : "ctrlBenefEditar";
-        }        
+        }
 
         /// <summary>
         /// Mostra/Esconde campos do total bruto e líquido
@@ -506,13 +506,13 @@ namespace Glass.UI.Web.Utils
         protected bool UtilizarRoteiroProducao()
         {
             return PCPConfig.ControlarProducao && Data.Helper.Utils.GetSetores.Count(x => x.SetorPertenceARoteiro) > 0;
-        }       
+        }
 
         protected void lblObsCliente_Load(object sender, EventArgs e)
         {
             (sender as Label).ForeColor = Color.Red;
         }
-       
+
         protected void txtValorFrete_Load(object sender, EventArgs e)
         {
             if (!PedidoConfig.ExibirValorFretePedido)

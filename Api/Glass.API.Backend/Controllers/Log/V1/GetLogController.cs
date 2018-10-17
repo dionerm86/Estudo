@@ -4,9 +4,9 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas;
-using Glass.API.Backend.Models.Log.Alteracao;
-using Glass.API.Backend.Models.Log.Cancelamento;
+using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.Log.V1.Alteracao;
+using Glass.API.Backend.Models.Log.V1.Cancelamento;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Data.Model;
@@ -31,11 +31,11 @@ namespace Glass.API.Backend.Controllers.Log.V1
         /// <returns>Uma lista JSON com os logs de alteração encontrados.</returns>
         [HttpGet]
         [Route("alteracao/{tabela}/logs/{idItem}")]
-        [SwaggerResponse(200, "Logs sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Log.Alteracao.LogDto>))]
+        [SwaggerResponse(200, "Logs sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Log.V1.Alteracao.LogDto>))]
         [SwaggerResponse(204, "Logs não encontrados para o filtro informado.")]
-        [SwaggerResponse(206, "Logs paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Log.Alteracao.LogDto>))]
+        [SwaggerResponse(206, "Logs paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Log.V1.Alteracao.LogDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        [ResponseType(typeof(IEnumerable<Models.Log.Alteracao.LogDto>))]
+        [ResponseType(typeof(IEnumerable<Models.Log.V1.Alteracao.LogDto>))]
         public IHttpActionResult ObterLogsAlteracao([FromUri] FiltroLogAlteracaoDto filtro)
         {
             using (var sessao = new GDATransaction())
@@ -60,7 +60,7 @@ namespace Glass.API.Backend.Controllers.Log.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    logs.Select(log => new Models.Log.Alteracao.LogDto(log)),
+                    logs.Select(log => new Models.Log.V1.Alteracao.LogDto(log)),
                     filtro,
                     () => LogAlteracaoDAO.Instance.GetCount(
                         (int)filtro.Tabela.Value,
@@ -129,11 +129,11 @@ namespace Glass.API.Backend.Controllers.Log.V1
         /// <returns>Uma lista JSON com os logs de cancelamento encontrados.</returns>
         [HttpGet]
         [Route("cancelamento/{tabela}/logs/{idItem}")]
-        [SwaggerResponse(200, "Logs sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Log.Cancelamento.LogDto>))]
+        [SwaggerResponse(200, "Logs sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Log.V1.Cancelamento.LogDto>))]
         [SwaggerResponse(204, "Logs não encontrados para o filtro informado.")]
-        [SwaggerResponse(206, "Logs paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Log.Cancelamento.LogDto>))]
+        [SwaggerResponse(206, "Logs paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Log.V1.Cancelamento.LogDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        [ResponseType(typeof(IEnumerable<Models.Log.Cancelamento.LogDto>))]
+        [ResponseType(typeof(IEnumerable<Models.Log.V1.Cancelamento.LogDto>))]
         public IHttpActionResult ObterLogsCancelamento([FromUri] FiltroLogCancelamentoDto filtro)
         {
             using (var sessao = new GDATransaction())
@@ -162,7 +162,7 @@ namespace Glass.API.Backend.Controllers.Log.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    logs.Select(log => new Models.Log.Cancelamento.LogDto(log)),
+                    logs.Select(log => new Models.Log.V1.Cancelamento.LogDto(log)),
                     filtro,
                     () => LogCancelamentoDAO.Instance.GetCount(
                         (int)filtro.Tabela.Value,

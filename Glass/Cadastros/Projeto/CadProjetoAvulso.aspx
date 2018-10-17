@@ -38,7 +38,7 @@
                 var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
                 var cliRevenda = FindControl("hdfCliRevenda", "input").value;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
-
+                var altura = FindControl("txtAlturaIns", "input").value;
                 var idMaterItemProj = FindControl("hdfIdMaterItemProj", "input");
                 idMaterItemProj = idMaterItemProj != null ? idMaterItemProj.value : "";
 
@@ -53,7 +53,18 @@
                 var reposicao = FindControl("hdfIsReposicao", "input").value;
                 var tipoPedido = FindControl("hdfTipoPedido", "input").value;
 
-                FindControl("hdfValMin", "input").value = CadProjetoAvulso.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, tipoPedido, idMaterItemProj, "0", idPedido).value;
+                var retorno = CadProjetoAvulso.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, tipoPedido, idMaterItemProj, "0", idPedido, altura);
+
+                if (retorno.error != null) {
+                    alert(retorno.error.description);
+                    return;
+                }
+                else if(retorno == null){
+                    alert("Erro na recuperação do valor de tabela do produto.");
+                    return;
+                }
+
+                FindControl("hdfValMin", "input").value = retorno.value;
             }
             else
             {
@@ -361,6 +372,10 @@
                     FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como produto é calculado
                     var tipoCalc = retorno[7];
 
+                    if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != ""){
+                        GetAdicionalAlturaChapa();
+                    }
+
                     var nomeControle = getNomeControleBenef();
 
                     // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
@@ -638,8 +653,19 @@
             var idCliente = FindControl("hdfIdCliente", "input").value;
             var revenda = FindControl("hdfCliRevenda", "input").value;
 
-            FindControl("txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, revenda,
-                        pedidoReposicao, 0, idPedido, "", "", altura).value.replace(".", ",");
+            var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, revenda,
+                        pedidoReposicao, 0, idPedido, "", "", altura);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            else if(retorno == null){
+                alert("Erro na recuperação do valor de tabela do produto.");
+                return;
+            }
+
+            FindControl("txtValorIns", "input").value = retorno.value.replace(".", ",");
         }
 
         // Calcula em tempo real o valor total do produto

@@ -4,8 +4,8 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Beneficiamentos.Configuracoes;
-using Glass.API.Backend.Models.Beneficiamentos.Filtro;
+using Glass.API.Backend.Models.Beneficiamentos.V1.Configuracoes;
+using Glass.API.Backend.Models.Beneficiamentos.V1.Filtro;
 using Glass.Data.DAL;
 using Glass.Data.Model;
 using Swashbuckle.Swagger.Annotations;

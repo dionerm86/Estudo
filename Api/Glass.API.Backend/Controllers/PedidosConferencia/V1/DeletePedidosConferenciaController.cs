@@ -39,6 +39,8 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     PedidoEspelhoDAO.Instance.CancelarEspelho(sessao, (uint)id);
                     sessao.Commit();
 

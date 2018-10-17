@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Imagens;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Imagens.Exibicao;
+using Glass.API.Backend.Models.Imagens.V1.Exibicao;
 using Swashbuckle.Swagger.Annotations;
 using System.Web.Http;
 

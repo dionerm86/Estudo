@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.API.Backend.Models.PedidosConferencia.V1.DadosProducao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -25,12 +25,12 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.PedidosConferencia.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.PedidosConferencia.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaPedidosConferencia()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.PedidosConferencia.Configuracoes.ListaDto();
+                var configuracoes = new Models.PedidosConferencia.V1.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }
@@ -42,15 +42,15 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
         /// <returns>Uma lista JSON com os dados dos pedidos em conferência.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Pedidos em conferência sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.PedidosConferencia.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Pedidos em conferência sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.PedidosConferencia.V1.Lista.ListaDto>))]
         [SwaggerResponse(204, "Pedidos em conferência não encontradas para o filtro informado.")]
-        [SwaggerResponse(206, "Pedidos em conferência paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.PedidosConferencia.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Pedidos em conferência paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.PedidosConferencia.V1.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaPedidosConferencia([FromUri] Models.PedidosConferencia.Lista.FiltroDto filtro)
+        public IHttpActionResult ObterListaPedidosConferencia([FromUri] Models.PedidosConferencia.V1.Lista.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.PedidosConferencia.Lista.FiltroDto();
+                filtro = filtro ?? new Models.PedidosConferencia.V1.Lista.FiltroDto();
 
                 var notasFiscais = PedidoEspelhoDAO.Instance.GetList(
                     (uint)(filtro.IdPedido ?? 0),
@@ -88,7 +88,7 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    notasFiscais.Select(n => new Models.PedidosConferencia.Lista.ListaDto(n)),
+                    notasFiscais.Select(n => new Models.PedidosConferencia.V1.Lista.ListaDto(n)),
                     filtro,
                     () => PedidoEspelhoDAO.Instance.GetCount(
                         (uint)(filtro.IdPedido ?? 0),

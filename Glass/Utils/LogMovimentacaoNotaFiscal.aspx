@@ -3,7 +3,7 @@
 
 <asp:Content ID="menu" runat="server" ContentPlaceHolderID="Menu"></asp:Content>
 <asp:Content ID="pagina" runat="server" ContentPlaceHolderID="Pagina">
-     
+
     <table>
         <tr>
             <td align="center">
@@ -13,14 +13,14 @@
                         <td align="center">
                             <asp:GridView ID="grdLogNota" DataSourceID="odsLogMovimentacaoNotaFiscal"
                                 GridLines="None"  runat="server" AllowPaging="True"
-                                AllowSorting="True" AutoGenerateColumns="False" 
+                                AllowSorting="True" AutoGenerateColumns="False"
                                 CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
                                 EditRowStyle-CssClass="edit" EmptyDataText="Nenhuma restrição encontrada.">
                                 <Columns>
                                     <asp:BoundField DataField="NumeroNfe" HeaderText="NFE" />
                                     <asp:BoundField DataField="DescricaoProd" HeaderText="Descrição Prod." />
                                     <asp:BoundField DataField="MensagemLog" HeaderText="Mensagem" />
-                                    <asp:BoundField DataField="DataCad" HeaderText="Data Cad. Log." ItemStyle-HorizontalAlign="Center" DataFormatString="{0:d}" />
+                                    <asp:BoundField DataField="DataCad" HeaderText="Data Cad. Log." ItemStyle-HorizontalAlign="Center" />
                                 </Columns>
                                 <PagerStyle />
                                 <EditRowStyle />
@@ -29,7 +29,7 @@
                         </td>
                     </tr>
                 </table>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLogMovimentacaoNotaFiscal" runat="server" 
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLogMovimentacaoNotaFiscal" runat="server"
                     DataObjectTypeName="Glass.Data.Model.LogMovimentacaoNotaFiscal"
                     TypeName="Glass.Data.DAL.LogMovimentacaoNotaFiscalDAO"
                     SelectMethod="ObtemLogsNotaFiscal">
@@ -45,22 +45,22 @@
                         <td align="center">
                             <asp:GridView ID="GridView1" DataSourceID="odsMovEstoquesLog"
                                 GridLines="None"  runat="server" AllowPaging="True"
-                                AllowSorting="True" AutoGenerateColumns="False" DataKeyNames="IdProdNf"  
+                                AllowSorting="True" AutoGenerateColumns="False" DataKeyNames="IdProdNf"
                                 CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
                                 EditRowStyle-CssClass="edit" EmptyDataText="Nenhuma movimentação encontrada.">
                                 <Columns>
-                                    <asp:BoundField DataField="CodProd" HeaderText="Cod." ItemStyle-HorizontalAlign="Center" />
+                                    <asp:BoundField DataField="CodProd" HeaderText="Cód. Estoque" ItemStyle-HorizontalAlign="Center" />
                                     <asp:BoundField DataField="DescricaoProd" HeaderText="Descrição Prod." ItemStyle-HorizontalAlign="Center" />
-                                    
+
                                     <asp:BoundField DataField="MovEstoqueFiscal" HeaderText="Cód. Mov. Fiscal" ItemStyle-HorizontalAlign="Center" />
                                     <asp:BoundField DataField="TipoMovFiscal" HeaderText="Tipo Mov. Fiscal" ItemStyle-HorizontalAlign="Center" />
                                     <asp:BoundField DataField="QtdeMovFiscal" HeaderText="Qtde. Mov. Fiscal" ItemStyle-HorizontalAlign="Center" />
-                                    <asp:BoundField DataField="DataMovFiscal" HeaderText="Data Mov. Fiscal" ItemStyle-HorizontalAlign="Center" DataFormatString="{0:d}" />
-                                    
+                                    <asp:BoundField DataField="DataMovFiscal" HeaderText="Data Mov. Fiscal" ItemStyle-HorizontalAlign="Center" />
+
                                     <asp:BoundField DataField="MovEstoqueReal" HeaderText="Cód. Mov. Real" ItemStyle-HorizontalAlign="Center" />
                                     <asp:BoundField DataField="TipoMovReal" HeaderText="Tipo Mov. Real" ItemStyle-HorizontalAlign="Center" />
                                     <asp:BoundField DataField="QtdeMovReal" HeaderText="Qtde. Mov. Real" ItemStyle-HorizontalAlign="Center" />
-                                    <asp:BoundField DataField="DataMovReal" HeaderText="Data Mov. Real" ItemStyle-HorizontalAlign="Center" DataFormatString="{0:d}" />
+                                    <asp:BoundField DataField="DataMovReal" HeaderText="Data Mov. Real" ItemStyle-HorizontalAlign="Center" />
                                 </Columns>
                                 <PagerStyle />
                                 <EditRowStyle />
@@ -69,7 +69,7 @@
                         </td>
                     </tr>
                 </table>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMovEstoquesLog" runat="server" 
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMovEstoquesLog" runat="server"
                     DataObjectTypeName="Glass.Data.RelModel.MovEstoquesLog"
                     TypeName="Glass.Data.RelDAL.MovEstoquesLogDAO"
                     SelectMethod="ObtemMovEstoquesLogNota">
