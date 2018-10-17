@@ -5,7 +5,7 @@
 namespace Glass.API.Backend.Helper.Producao
 {
     /// <summary>
-    /// Classe que realiza a tradução dos campos de ordenação para a lista de pedidos.
+    /// Classe que realiza a tradução dos campos de ordenação para a consulta de produção.
     /// </summary>
     internal class TraducaoOrdenacaoListaProducao : BaseTraducaoOrdenacao
     {

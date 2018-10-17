@@ -1,4 +1,4 @@
-// <copyright file="GetSetoresController.cs" company="Sync Softwares">
+﻿// <copyright file="GetSetoresController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -41,8 +41,10 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Setores
 
                 if (!incluirSetorImpressao)
                 {
+                    const int ID_SETOR_IMPRESSAO_ETIQUETA = 1;
+
                     setores = setores
-                        .Where(s => s.Id != 1)
+                        .Where(s => s.Id != ID_SETOR_IMPRESSAO_ETIQUETA)
                         .ToList();
                 }
 

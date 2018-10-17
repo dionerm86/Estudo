@@ -1,4 +1,4 @@
-var Mixins = Mixins || {};
+﻿var Mixins = Mixins || {};
 
 /**
  * Objeto com o mixin para com métodos para manipulação de objetos.
@@ -13,7 +13,7 @@ Mixins.Objetos = {
      */
     merge: function(destino, origem) {
       if (!origem) {
-        throw new Error('Ambos os parâmetros são obrigatórios para a função merge.');
+        throw new Error('Dados de origem são obrigatórios para a função merge.');
       }
 
       destino = destino || {};

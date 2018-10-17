@@ -113,6 +113,7 @@ namespace Glass.API.Backend.Models.Producao.V1.Configuracoes
         [DataMember]
         [JsonProperty("empresaControlaCavaletes")]
         public bool EmpresaControlaCavaletes { get; set; }
+
         /// <summary>
         /// Obtém ou define os setores que serão exibidos na tela de consulta de produção.
         /// </summary>
