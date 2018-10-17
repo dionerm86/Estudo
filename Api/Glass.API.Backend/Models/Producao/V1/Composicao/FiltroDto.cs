@@ -3,7 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Helper.Producao;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.V1;
 
 namespace Glass.API.Backend.Models.Producao.V1.Composicao
 {

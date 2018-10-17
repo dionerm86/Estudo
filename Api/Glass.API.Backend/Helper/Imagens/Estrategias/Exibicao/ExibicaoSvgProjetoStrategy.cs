@@ -1,9 +1,9 @@
-// <copyright file="ExibicaoSvgProjetoStrategy.cs" company="Sync Softwares">
+﻿// <copyright file="ExibicaoSvgProjetoStrategy.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Imagens.Exibicao;
+using Glass.API.Backend.Models.Imagens.V1.Exibicao;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using System.IO;
