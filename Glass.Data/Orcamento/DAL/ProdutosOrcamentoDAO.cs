@@ -1275,7 +1275,8 @@ namespace Glass.Data.DAL
                             objUpdate,
                             Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarEAtualizarProduto,
                             true,
-                            0
+                            0,
+                            primeiroCalculo: true
                         );
                     }
                 }
