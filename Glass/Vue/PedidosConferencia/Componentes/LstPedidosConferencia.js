@@ -257,6 +257,37 @@ const app = new Vue({
     },
 
     /**
+     * Valida se pode gerar arquivos dos pedidos filtrados.
+     */
+    validaPodeGerarArquivo: function () {
+
+      var filtroUsar = this.clonar(filtro || {});
+
+      var idPedido = filtroUsar.idPedido;
+      if (idPedido)
+        {
+          if (!this.$refs.lista.$data.itens[0].permissoes.podeGerarArquivo) {
+            this.exibirMensagem("O pedido importado ainda não foi conferido, confira o mesmo antes de gerar arquivo");
+          return Promise.reject();
+          }
+
+          return Promise.resolve();
+      }
+      else {
+        return Servicos.PedidosConferencia.verificarPodeImprimirVariosPedidosImportados(filtroUsar)
+        .then(function (resposta) {
+          vm.atualizarLista();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
+        }
+    },
+
+
+    /**
      * Gera arquivos para máquinas de CNC, a partir dos filtros da tela.
      * @param {number} tipoArquivo O tipo do arquivo (1-CNC, 2-DXF, 3-FML, 4-SGlass, 5-Intermac).
      */
@@ -272,14 +303,8 @@ const app = new Vue({
         return false;
       }
 
-      /*
-      var idPedido = FindControl("txtNumPedido", "input").value;
+      this.validaPodeGerarArquivo().then();
 
-      if (LstPedidosEspelho.PodeImprimirPedidoImportado(idPedido).value.toLowerCase() == "false") {
-          alert("O pedido importado ainda não foi conferido, confira o mesmo antes de gerar arquivo");
-          return false;
-      }
-      */
 
       var nomeArquivo = tipoArquivo == 1 ? 'Cnc'
         : tipoArquivo == 2 ? 'Dxf'

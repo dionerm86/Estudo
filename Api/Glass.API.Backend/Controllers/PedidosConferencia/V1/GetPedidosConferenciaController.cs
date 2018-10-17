@@ -51,7 +51,7 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
             {
                 filtro = filtro ?? new Models.PedidosConferencia.Lista.FiltroDto();
 
-                var notasFiscais = PedidoEspelhoDAO.Instance.GetList(
+                var pedidosEspelho = PedidoEspelhoDAO.Instance.GetList(
                     (uint)(filtro.IdPedido ?? 0),
                     (uint)(filtro.IdCliente ?? 0),
                     filtro.NomeCliente,
@@ -87,7 +87,7 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    notasFiscais.Select(n => new Models.PedidosConferencia.Lista.ListaDto(n)),
+                    pedidosEspelho.Select(n => new Models.PedidosConferencia.Lista.ListaDto(n)),
                     filtro,
                     () => PedidoEspelhoDAO.Instance.GetCount(
                         (uint)(filtro.IdPedido ?? 0),
@@ -151,7 +151,7 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
         /// </summary>
         /// <returns>Uma lista JSON com os dados das situações encontradas.</returns>
         [HttpGet]
-        [Route("situacoes")]
+        [Route("VerificarPodeImprimirVariosPedidos")]
         [SwaggerResponse(200, "Situações encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Situações não encontradas.")]
         public IHttpActionResult ObterSituacoes()
@@ -168,6 +168,52 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
 
                 return this.Lista(situacoes);
             }
+        }
+
+        public IHttpActionResult VerificarPodeImprimirVariosPedidosImportados([FromUri] Models.PedidosConferencia.Lista.FiltroDto filtro)
+        {
+            filtro = filtro ?? new Models.PedidosConferencia.Lista.FiltroDto();
+
+            var idsPedidos = PedidoEspelhoDAO.Instance.ObterIdsPedidos(
+                (uint)(filtro.IdPedido ?? 0),
+                (uint)(filtro.IdCliente ?? 0),
+                filtro.NomeCliente,
+                (uint)(filtro.IdLoja ?? 0),
+                (uint)(filtro.IdVendedor ?? 0),
+                (uint)(filtro.IdConferente ?? 0),
+                (int)(filtro.Situacao ?? 0),
+                filtro.SituacaoPedidoComercial != null && filtro.SituacaoPedidoComercial.Any() ? string.Join(",", filtro.SituacaoPedidoComercial.Select(f => (int)f)) : null,
+                filtro.IdsProcesso != null && filtro.IdsProcesso.Any() ? string.Join(",", filtro.IdsProcesso) : null,
+                filtro.PeriodoEntregaInicio?.ToShortDateString(),
+                filtro.PeriodoEntregaFim?.ToShortDateString(),
+                filtro.PeriodoFabricaInicio?.ToShortDateString(),
+                filtro.PeriodoFabricaFim?.ToShortDateString(),
+                filtro.PeriodoFinalizacaoConferenciaInicio?.ToShortDateString(),
+                filtro.PeriodoFinalizacaoConferenciaFim?.ToShortDateString(),
+                filtro.PeriodoCadastroConferenciaInicio?.ToShortDateString(),
+                filtro.PeriodoCadastroConferenciaFim?.ToShortDateString(),
+                filtro.PeriodoCadastroPedidoInicio?.ToShortDateString(),
+                filtro.PeriodoCadastroPedidoFim?.ToShortDateString(),
+                false,
+                filtro.PedidosSemAnexo,
+                filtro.SituacaoCnc != null && filtro.SituacaoCnc.Any() ? string.Join(",", filtro.SituacaoCnc.Select(f => (int)f)) : null,
+                filtro.PeriodoProjetoCncInicio?.ToShortDateString(),
+                filtro.PeriodoProjetoCncFim?.ToShortDateString(),
+                filtro.PedidosAComprar,
+                filtro.TiposPedido != null && filtro.TiposPedido.Any() ? string.Join(",", filtro.TiposPedido.Select(f => (int)f)) : null,
+                filtro.IdsRota != null && filtro.IdsRota.Any() ? string.Join(",", filtro.IdsRota) : null,
+                filtro.OrigemPedido ?? 0,
+                filtro.PedidosConferidos,
+                (int?)filtro.TipoVenda);
+
+            if (Glass.Configuracoes.PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos)
+            {
+                var resultado = PedidoEspelhoDAO.Instance.ValidarPedidosConferidos(idsPedidos);
+
+                return resultado == "true" ? this.Ok() : (IHttpActionResult)this.ErroValidacao(resultado);
+            }
+
+            return this.Ok();
         }
     }
 }

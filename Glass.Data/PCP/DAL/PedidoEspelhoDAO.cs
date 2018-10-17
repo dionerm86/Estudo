@@ -701,6 +701,27 @@ namespace Glass.Data.DAL
             return lstParam.Count > 0 ? lstParam.ToArray() : null;
         }
 
+        public IList<uint> ObterIdsPedidos(uint idPedido, uint idCli, string nomeCli, uint idLoja, uint idFunc, uint idFuncionarioConferente,
+           int situacao, string situacaoPedOri, string idsProcesso, string dataIniEnt, string dataFimEnt, string dataIniFab, string dataFimFab,
+           string dataIniFin, string dataFimFin, string dataIniConf, string dataFimConf, string dataIniEmis, string dataFimEmis, bool soFinalizados,
+           bool pedidosSemAnexo, string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, bool pedidosAComprar, string tipoPedido,
+           string idsRotas, int origemPedido, int pedidosConferidos, int? tipoVenda)
+        {
+            bool apenasMaoDeObra = !Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) &&
+                Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
+
+            bool temFiltro;
+            string sql = Sql(idPedido, null, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao, situacaoPedOri, idsProcesso, dataIniEnt,
+                dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, soFinalizados,
+                apenasMaoDeObra, null, pedidosSemAnexo, pedidosAComprar, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas,
+                null, null, 0, false, origemPedido, pedidosConferidos, tipoVenda, true, out temFiltro);
+
+            var pedidos = objPersistence.LoadData(sql, GetParam(null, nomeCli, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab,
+                dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, dataIniSituacaoCnc, dataFimSituacaoCnc, null, null));
+
+            return pedidos.Select(f => f.IdPedido).ToList();
+        }
+
         #endregion
 
         #region Busca pedidos com produtos de beneficiamento
@@ -3207,6 +3228,43 @@ namespace Glass.Data.DAL
         {
             string sql = "select PedidoConferido from pedido_espelho where idPedido=" + idPedido;
             return objPersistence.ExecuteScalar(sql).ToString().ToLower() == "true";
+        }
+
+        /// <summary>
+        /// Valida se os pedidos importados podem ter arquivo gerado.
+        /// </summary>
+        /// <param name="idsPedidos"></param>
+        /// <returns></returns>
+        public string ValidarPedidosConferidos(IEnumerable<uint> idsPedidos)
+        {
+            var retorno = new List<uint>();
+
+            var pedidos = BuscarPedidosParaValidacao(idsPedidos);
+
+            foreach (var pedido in pedidos)
+            {
+                if (pedido.Importado && !pedido.PedidoConferido)
+                    retorno.Add(pedido.IdPedido);
+            }
+
+            var mensagem = $"Os pedidos {string.Join(",", retorno)} não estão conferidos";
+
+            return retorno.Count() > 0 ? mensagem : "true";
+        }
+
+        /// <summary>
+        /// Buscas as informações de Importado e Pedido conferido para validar se pode gerar arquivo para os mesmos.
+        /// </summary>
+        /// <param name="idsPedidos"></param>
+        /// <returns></returns>
+        public IList<PedidoEspelho> BuscarPedidosParaValidacao(IEnumerable<uint> idsPedidos)
+        {
+
+            if (!string.IsNullOrWhiteSpace(idsPedidos))
+                return objPersistence.LoadData($@"Select pe.IdPedido, p.Importado, pe.PedidoConferido from pedido_espelho pe
+                                                   left join pedido p on (p.IdPedido = pe.IdPedido) where pe.IdPedido IN ({idsPedidos})").ToList();
+
+            return new List<PedidoEspelho>();
         }
 
         #endregion
