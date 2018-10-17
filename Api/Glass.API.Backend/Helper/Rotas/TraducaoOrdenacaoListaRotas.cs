@@ -32,6 +32,9 @@ namespace Glass.API.Backend.Helper.Rotas
                 case "id":
                     return "IdRota";
 
+                case "nome":
+                    return "descricao";
+
                 case "codigo":
                     return "CodInterno";
 
@@ -41,7 +44,6 @@ namespace Glass.API.Backend.Helper.Rotas
                 case "observacao":
                     return "obs";
 
-                case "descricao":
                 case "situacao":
                 case "distancia":
                 case "diasSemana":

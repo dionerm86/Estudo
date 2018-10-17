@@ -58,7 +58,7 @@ namespace Glass.API.Backend.Models.Rotas.V1.Lista
         /// Obtém ou define a distância da rota.
         /// </summary>
         [DataMember]
-        [JsonProperty("situacao")]
+        [JsonProperty("distancia")]
         public int Distancia { get; set; }
 
         /// <summary>
