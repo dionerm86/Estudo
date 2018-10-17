@@ -8065,7 +8065,12 @@ namespace Glass.Data.DAL
                     new List<decimal> { 0 }, vazio, new List<decimal> { valorRec });
 
                 // Atualiza o campo DataUnica para evitar o índice BLOQUEIO_DUPLICIDADE.
-                objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_geral SET DataUnica=REPLACE(DataUnica, '_0', CONCAT('_', {0})) WHERE IdContaR={1};", contadorDataUnica++, idContaR));
+                var sqlAtualizarDataUnica = $@"UPDATE caixa_geral
+                    SET DataUnica = IF(INSTR(DataUnica, '_0') > 0,
+                        REPLACE(DataUnica, '_0', CONCAT('_', {contadorDataUnica})),
+                        CONCAT('_', {contadorDataUnica++}))
+                    WHERE IdContaR = {idContaR};";
+                objPersistence.ExecuteCommand(sessao, sqlAtualizarDataUnica);
             }
             finally
             {
