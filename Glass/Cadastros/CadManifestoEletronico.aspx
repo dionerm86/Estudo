@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Cadastro MDF-e" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+<%@ Page Title="Cadastro MDF-e" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="CadManifestoEletronico.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadManifestoEletronico" %>
 
 <%@ Register Src="~/Controls/MDFe/ctrlRodoviario.ascx" TagName="ctrlRodoviario" TagPrefix="uc1" %>
@@ -153,17 +153,18 @@
             popUp = openWindow(600, 800, '../Utils/SelNotaFiscalAutorizada.aspx?IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
         }
 
-        //Bloqueia a seleção de notas caso sejam informações externas.
-        function bloquearSelecaoNota(idControle) {
-            FindControl('hdfIdNf', 'input').value = "";
-            var chaveAcesso = FindControl('txtChaveAcesso', 'input').value;
-            var fsda = FindControl('txtFsda', 'input').value;
+        // Bloqueia a seleção de notas caso sejam informações externas.
+        function bloquearSelecaoNota(controle) {
+            var idControle = controle.id.substring(0, controle.id.lastIndexOf("_"));
+            FindControl(idControle + '_hdfIdNf', 'input').value = "";
+            var chaveAcesso = FindControl(idControle + '_txtChaveAcessoNFe', 'input').value;
+            var fsda = FindControl(idControle + '_txtFsdaNFe', 'input').value;
 
             if (chaveAcesso != "" || fsda != "") {
-                FindControl('imbSelNotaFiscal', 'input').style.display = "none";
+                FindControl(idControle + '_imbSelNotaFiscal', 'input').style.display = "none";
             }
             else {
-                FindControl('imbSelNotaFiscal', 'input').style.display = "";
+                FindControl(idControle + '_imbSelNotaFiscal', 'input').style.display = "";
             }
         }
 
@@ -180,21 +181,22 @@
             }
             var resultado = retorno.value.split('|');
 
-            FindControl(idControle + '_txtChaveAcesso', 'input').value = resultado[0];
-            FindControl(idControle + '_txtChaveAcesso', 'input').disabled = true;
+            FindControl(idControle + '_txtChaveAcessoNFe', 'input').value = resultado[0];
+            FindControl(idControle + '_txtChaveAcessoNFe', 'input').disabled = true;
 
-            FindControl(idControle + '_txtFsda', 'input').value = resultado[1];
-            FindControl(idControle + '_txtFsda', 'input').disabled = true;
+            FindControl(idControle + '_txtFsdaNFe', 'input').value = resultado[1];
+            FindControl(idControle + '_txtFsdaNFe', 'input').disabled = true;
 
             return false;
         }
 
         //Salva as informações da nota referênciada
-        function SalvarNfReferenciada() {
+        function SalvarNfReferenciada(botaoAdicionar) {
+            var idControle = botaoAdicionar.id.substring(0, botaoAdicionar.id.lastIndexOf("_"));
             var idCidadeDescarga = FindControl('hdfIdCidadeDescargaNFe', 'input').value;
-            var idNf = FindControl('hdfIdNf', 'input').value;
-            var chaveAcesso = FindControl('txtChaveAcesso', 'input').value;
-            var fsda = FindControl('txtFsda', 'input').value;
+            var idNf = FindControl(idControle + '_hdfIdNf', 'input').value;
+            var chaveAcesso = FindControl(idControle + '_txtChaveAcessoNFe', 'input').value;
+            var fsda = FindControl(idControle + '_txtFsdaNFe', 'input').value;
 
             var retorno = CadManifestoEletronico.InserirNfeCidadeDescarga(idCidadeDescarga, idNf, chaveAcesso, fsda);
 
@@ -221,16 +223,17 @@
         }
 
         //Bloqueia a seleção de notas caso sejam informações externas.
-        function bloquearSelecaoCte(idControle) {
-            FindControl('hdfIdCTe', 'input').value = "";
-            var chaveAcesso = FindControl('txtChaveAcessoCte', 'input').value;
-            var fsda = FindControl('txtFsdaCTe', 'input').value;
+        function bloquearSelecaoCte(controle) {
+            var idControle = controle.id.substring(0, controle.id.lastIndexOf("_"));
+            FindControl(idControle + '_hdfIdCTe', 'input').value = "";
+            var chaveAcesso = FindControl(idControle + '_txtChaveAcessoCte', 'input').value;
+            var fsda = FindControl(idControle + '_txtFsdaCTe', 'input').value;
 
             if (chaveAcesso != "" || fsda != "") {
-                FindControl('imbSelCTe', 'input').style.display = "none";
+                FindControl(idControle + '_imbSelCTe', 'input').style.display = "none";
             }
             else {
-                FindControl('imbSelCTe', 'input').style.display = "";
+                FindControl(idControle + '_imbSelCTe', 'input').style.display = "";
             }
         }
 
@@ -259,11 +262,12 @@
         }
 
         //Salva as informações de CTe associadas
-        function SalvarCTeReferenciada(idControle) {
+        function SalvarCTeReferenciada(botaoAdicionar) {            
+            var idControle = botaoAdicionar.id.substring(0, botaoAdicionar.id.lastIndexOf("_"));
             var idCidadeDescarga = FindControl('hdfIdCidadeDescargaCTe', 'input').value;
-            var idCTe = FindControl('hdfIdCTe', 'input').value;
-            var chaveAcesso = FindControl('txtChaveAcessoCte', 'input').value;
-            var fsda = FindControl('txtFsdaCTe', 'input').value;
+            var idCTe = FindControl(idControle + 'hdfIdCTe', 'input').value;
+            var chaveAcesso = FindControl(idControle + 'txtChaveAcessoCte', 'input').value;
+            var fsda = FindControl(idControle + 'txtFsdaCTe', 'input').value;
 
             var retorno = CadManifestoEletronico.InserirCteCidadeDescarga(idCidadeDescarga, idCTe, chaveAcesso, fsda);
 
@@ -902,7 +906,7 @@
                                     <asp:Label ID="Label8" runat="server" Text="Chave de Acesso *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
-                                    <asp:TextBox ID="txtChaveAcesso" runat="server" MaxLength="44" Width="300px" Enabled="false"
+                                    <asp:TextBox ID="txtChaveAcessoMDFe" runat="server" MaxLength="44" Width="300px" Enabled="false"
                                         Text='<%# Eval("ChaveAcesso") %>' onkeypress="return soNumeros(event, false, true);"></asp:TextBox>
                                 </div>
                             </div>
@@ -1199,7 +1203,7 @@
                                                         <asp:Label ID="lblChaveAcesso" runat="server" Text='<%# Eval("ChaveAcesso") %>'></asp:Label>
                                                     </ItemTemplate>
                                                     <FooterTemplate>
-                                                        <asp:TextBox ID="txtChaveAcesso" runat="server" Columns="45" MaxLength="44" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoNota();" ></asp:TextBox>
+                                                        <asp:TextBox ID="txtChaveAcessoNFe" runat="server" Columns="45" MaxLength="44" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoNota(this);" ></asp:TextBox>
                                                     </FooterTemplate>
                                                 </asp:TemplateField>
                                                 <asp:TemplateField HeaderText="Numero Documento Fsda">
@@ -1207,7 +1211,7 @@
                                                         <asp:Label ID="lblFsda" runat="server" Text='<%# Eval("NumeroDocumentoFsda") %>'></asp:Label>
                                                     </ItemTemplate>
                                                     <FooterTemplate>
-                                                        <asp:TextBox ID="txtFsda" runat="server" Columns="10" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoNota();" ></asp:TextBox>
+                                                        <asp:TextBox ID="txtFsdaNFe" runat="server" Columns="10" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoNota(this);" ></asp:TextBox>
                                                     </FooterTemplate>
                                                 </asp:TemplateField>
                                                 <asp:TemplateField HeaderText="Modelo" SortExpression="Modelo">
@@ -1232,7 +1236,7 @@
                                                 </asp:TemplateField>
                                                 <asp:TemplateField>
                                                     <FooterTemplate>
-                                                        <asp:ImageButton CssClass="img-linha" ID="imgAdicionar" runat="server" ImageUrl="~/Images/Insert.gif" OnClientClick="SalvarNfReferenciada();" />
+                                                        <asp:ImageButton CssClass="img-linha" ID="imgAdicionar" runat="server" ImageUrl="~/Images/Insert.gif" OnClientClick="SalvarNfReferenciada(this);" />
                                                     </FooterTemplate>
                                                 </asp:TemplateField>
                                             </Columns>
@@ -1276,7 +1280,7 @@
                                                         <asp:Label ID="lblChaveAcessoCte" runat="server" Text='<%# Eval("ChaveAcesso") %>'></asp:Label>
                                                     </ItemTemplate>
                                                     <FooterTemplate>
-                                                        <asp:TextBox ID="txtChaveAcessoCte" runat="server" Columns="45" MaxLength="44" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoCte();" ></asp:TextBox>
+                                                        <asp:TextBox ID="txtChaveAcessoCte" runat="server" Columns="45" MaxLength="44" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoCte(this);" ></asp:TextBox>
                                                     </FooterTemplate>
                                                 </asp:TemplateField>
                                                 <asp:TemplateField HeaderText="Numero Documento Fsda">
@@ -1284,7 +1288,7 @@
                                                         <asp:Label ID="lblFsdaCTe" runat="server" Text='<%# Eval("NumeroDocumentoFsda") %>'></asp:Label>
                                                     </ItemTemplate>
                                                     <FooterTemplate>
-                                                        <asp:TextBox ID="txtFsdaCTe" runat="server" Columns="10" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoCte();" ></asp:TextBox>
+                                                        <asp:TextBox ID="txtFsdaCTe" runat="server" Columns="10" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoCte(this);" ></asp:TextBox>
                                                     </FooterTemplate>
                                                 </asp:TemplateField>
                                                 <asp:TemplateField HeaderText="Modelo" SortExpression="Modelo">
