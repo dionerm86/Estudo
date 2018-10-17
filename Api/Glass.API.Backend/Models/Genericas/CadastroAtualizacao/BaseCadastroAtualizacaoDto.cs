@@ -77,7 +77,7 @@ namespace Glass.API.Backend.Models.Genericas.CadastroAtualizacao
 
         private static ConversorValoresDtoModelo<T, U> ObterConversor<U>(Expression<Func<T, U>> campoDto)
         {
-            var id = campoDto.ToString();
+            var id = $"{typeof(T).FullName}-{typeof(U).FullName}-{campoDto.ToString()}";
             var conversorCache = CACHE_CONVERSORES.RecuperarDoCache(id);
 
             if (conversorCache == null)

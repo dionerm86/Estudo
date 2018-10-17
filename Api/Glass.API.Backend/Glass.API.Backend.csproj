@@ -271,6 +271,9 @@
     <Compile Include="Controllers\Produtos\V1\GruposProduto\PatchGruposProdutoController.cs" />
     <Compile Include="Controllers\Produtos\V1\GruposProduto\PostGruposProdutoController.cs" />
     <Compile Include="Controllers\Produtos\V1\PatchProdutosController.cs" />
+    <Compile Include="Controllers\Produtos\V1\SubgruposProduto\DeleteSubgruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\SubgruposProduto\PatchSubgruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\SubgruposProduto\PostSubgruposProdutoController.cs" />
     <Compile Include="Controllers\Sinais\V1\SinaisController.cs" />
     <Compile Include="Controllers\Sinais\V1\GetSinaisController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
@@ -403,6 +406,8 @@
     <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
+    <Compile Include="Helper\Produtos\SubgruposProduto\ConverterCadastroAtualizacaoParaSubgrupoProduto.cs" />
+    <Compile Include="Helper\Produtos\SubgruposProduto\TraducaoOrdenacaoListaSubgruposProduto.cs" />
     <Compile Include="Helper\Produtos\GruposProduto\ConverterCadastroAtualizacaoParaGrupoProduto.cs" />
     <Compile Include="Helper\Produtos\GruposProduto\TraducaoOrdenacaoListaGruposProduto.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
@@ -485,6 +490,13 @@
     <Compile Include="Models\Fornecedores\Lista\ListaDto.cs" />
     <Compile Include="Models\Fornecedores\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Produtos\CadastroAtualizacao\SituacaoDto.cs" />
+    <Compile Include="Models\Produtos\SubGruposProduto\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Produtos\SubGruposProduto\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Produtos\SubGruposProduto\Lista\EntregaDto.cs" />
+    <Compile Include="Models\Produtos\SubGruposProduto\Lista\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\SubGruposProduto\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\SubGruposProduto\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\SubGruposProduto\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Produtos\GruposProduto\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Produtos\GruposProduto\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Produtos\GruposProduto\Lista\EstoqueDto.cs" />

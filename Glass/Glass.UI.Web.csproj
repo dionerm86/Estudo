@@ -481,7 +481,7 @@
     <Content Include="Vue\Clientes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
-    <Content Include="Vue\GruposProduto\Componentes\LstGruposProduto.js" />
+    <Content Include="Vue\Produtos\GruposProduto\Componentes\LstGruposProduto.js" />
     <Content Include="Vue\Feriados\Componentes\LstFeriados.js" />
     <Content Include="Vue\Comissionados\Componentes\LstComissionados.Filtro.js" />
     <Content Include="Vue\Comissionados\Componentes\LstComissionados.js" />
@@ -489,6 +489,7 @@
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.Filtro.js" />
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.js" />
     <Content Include="Vue\Fornecedores\Templates\LstFornecedores.Filtro.html" />
+    <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />

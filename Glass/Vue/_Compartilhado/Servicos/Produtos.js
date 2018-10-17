@@ -117,6 +117,81 @@ Servicos.Produtos = (function(http) {
      */
     Subgrupos: {
       /**
+       * Recupera a lista de subgrupos de produto.
+       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+        filtro = filtro || {};
+        filtro.pagina = pagina;
+        filtro.numeroRegistros = numeroRegistros;
+        filtro.ordenacao = ordenacao;
+
+        return http().get(API + 'subgrupos', {
+          params: filtro
+        });
+      },
+
+      /**
+       * Recupera o objeto com as configurações utilizadas na tela de listagem de subgrupos de produto.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterConfiguracoesLista: function () {
+        return http().get(API + 'subgrupos/configuracoes');
+      },
+
+      /**
+       * Remove um subgrupo de produto.
+       * @param {!number} idSubgrupoProduto O identificador do subgrupo de produto que será excluído.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      excluir: function (idSubgrupoProduto) {
+        if (!idSubgrupoProduto) {
+          throw new Error('Subgrupo de produto é obrigatório.');
+        }
+
+        return http().delete(API + 'subgrupos/' + idSubgrupoProduto);
+      },
+
+      /**
+       * Insere um grupo de produto.
+       * @param {!Object} subgrupoProduto O objeto com os dados do subgrupo de produto a ser inserida.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      inserir: function (subgrupoProduto) {
+        return http().post(API + 'subgrupos', subgrupoProduto);
+      },
+
+      /**
+       * Altera os dados de um subgrupo de produto.
+       * @param {!number} idSubgrupoProduto O identificador do item que será alterado.
+       * @param {!Object} subgrupoProduto O objeto com os dados do item a serem alterados.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      atualizar: function (idSubgrupoProduto, subgrupoProduto) {
+        if (!idSubgrupoProduto) {
+          throw new Error('Subgrupo de produto é obrigatório.');
+        }
+
+        if (!subgrupoProduto || subgrupoProduto === {}) {
+          return Promise.resolve();
+        }
+
+        return http().patch(API + 'subgrupos/' + idSubgrupoProduto, subgrupoProduto);
+      },
+
+      /**
+       * Recupera a lista de tipos de subgrupo de produto para uso no controle de seleção.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterTipos: function () {
+        return http().get(API + 'subgrupos/tipos');
+      },
+
+      /**
        * Recupera a lista de subgrupos de produto para uso no controle de busca.
        * @param {?number} [idGrupoProduto=null] O identificador do grupo de produto que irá filtrar os subgrupos.
        * @returns {Promise} Uma promise com o resultado da operação.
@@ -475,6 +550,22 @@ Servicos.Produtos = (function(http) {
       }
 
       return http().patch(API + 'alterarSituacao/grupo/' + idGrupoProduto, {
+        situacao: situacao
+      });
+    },
+
+    /**
+     * Altera a situação dos produtos pelo subgrupo de produto.
+     * @param {!number} idSubgrupoProduto O identificador do subgrupo de produto.
+     * @param {!number} situacao A situação que será alterada nos produtos.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    alterarSituacaoPorSubgrupoProduto: function (idSubgrupoProduto, situacao) {
+      if (!idSubgrupoProduto) {
+        throw new Error('Subgrupo de produto é obrigatório.');
+      }
+
+      return http().patch(API + 'alterarSituacao/subgrupo/' + idSubgrupoProduto, {
         situacao: situacao
       });
     },
