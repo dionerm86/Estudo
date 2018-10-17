@@ -340,6 +340,9 @@
     <Compile Include="Controllers\Produtos\V1\DeleteProdutosController.cs" />
     <Compile Include="Controllers\Rotas\V1\RotasController.cs" />
     <Compile Include="Controllers\Rotas\V1\GetRotasController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\DeleteTabelasDescontoAcrescimoClienteController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\PatchTabelasDescontoAcrescimoClienteController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\PostTabelasDescontoAcrescimoClienteController.cs" />
     <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\TabelasDescontoAcrescimoClienteController.cs" />
     <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\GetTabelasDescontoAcrescimoClienteController.cs" />
     <Compile Include="Controllers\Obras\V1\ObrasController.cs" />
@@ -412,6 +415,8 @@
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
+    <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
+    <Compile Include="Helper\TabelasDescontoAcrescimoCliente\TraducaoOrdenacaoListaTabelasDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\Produtos\SubgruposProduto\ConverterCadastroAtualizacaoParaSubgrupoProduto.cs" />
     <Compile Include="Helper\Produtos\SubgruposProduto\TraducaoOrdenacaoListaSubgruposProduto.cs" />
     <Compile Include="Helper\Produtos\GruposProduto\ConverterCadastroAtualizacaoParaGrupoProduto.cs" />
@@ -478,6 +483,9 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\PedidosConferencia\V1\DadosProducao\DadosProducaoDto.cs" />
     <Compile Include="Models\Producao\V1\Composicao\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Configuracoes\ListaDto.cs" />
