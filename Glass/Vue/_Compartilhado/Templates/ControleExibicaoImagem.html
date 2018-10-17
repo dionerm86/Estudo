@@ -1,7 +1,7 @@
 ﻿<span v-if="urlImagem" style="padding: 0">
     <controle-tooltip v-on:click.prevent="abrirJanelaImagem">
         <template slot="botao">
-            <img src="../Images/Imagem.gif" />
+            <img v-bind:src="caminhoRelativo('/Images/Imagem.gif')" />
         </template>
 
         <img v-bind:src="urlImagem" v-bind:style="estiloImagem" />

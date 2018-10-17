@@ -231,16 +231,28 @@ namespace Glass.Data.DAL
             return ExecuteScalar<int>(session, sql, GetParams(null, null, 0, numeroEtiqueta)) > 0;
         }
 
-        public DateTime ObtemDataUltimaExportacaoEtiqueta(GDASession session, string numeroEtiqueta)
+        /// <summary>
+        /// Obtém a data da última exportação de otimização da etiqueta informada.
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <param name="numeroEtiqueta">numeroEtiqueta.</param>
+        /// <returns>Retorna a data da última exportação de otimização da etiqueta informada.</returns>
+        public DateTime? ObtemDataUltimaExportacaoEtiqueta(GDASession session, string numeroEtiqueta)
         {
-            bool temFiltro;
-            string filtroAdicional,
-                sql = Sql(0, null, null, (int) ArquivoOtimizacao.DirecaoEnum.Exportar,
-                    0, numeroEtiqueta, out temFiltro, out filtroAdicional, true)
-                    .Replace(FILTRO_ADICIONAL, filtroAdicional);
+            if (string.IsNullOrWhiteSpace(numeroEtiqueta))
+            {
+                return null;
+            }
 
-            return objPersistence.LoadData(session, sql + "ORDER BY DataCad DESC",
-                GetParams(null, null, 0, numeroEtiqueta)).ToList().Select(f => f.DataCad).FirstOrDefault();
+            var sql = $@"SELECT MAX(ao.DataCad)
+                FROM arquivo_otimizacao ao
+                WHERE ao.Direcao = {(int)ArquivoOtimizacao.DirecaoEnum.Exportar} AND
+                    ao.IdArquivoOtimiz IN (
+                        SELECT * FROM (
+                            SELECT IdArquivoOtimiz FROM etiqueta_arquivo_otimizacao
+                            WHERE NumEtiqueta = ?numEtiqueta)
+                        AS temp)";
+            return this.ExecuteScalar<DateTime?>(session, sql, new GDAParameter("numEtiqueta", numeroEtiqueta));
         }
 
         public int NumeroEtiquetasExportadas(uint idProdPed, int qtdeImprimir)

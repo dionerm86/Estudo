@@ -13,7 +13,7 @@
 
     <script type="text/javascript">
         var nomeTabelaChequesOpener = <%= !String.IsNullOrEmpty(Request["tabelaCheque"]) ? Request["tabelaCheque"] : "'tbChequePagto'" %>;
-        var tipoPagto = <%= Request["tipoPagto"] %>;
+        var tipoPagto = '<%= Request["tipoPagto"] %>';
 
         function validar()
         {

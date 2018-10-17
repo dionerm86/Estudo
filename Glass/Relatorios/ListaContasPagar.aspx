@@ -115,6 +115,30 @@
             FindControl("txtNomeTransportadora", "input").value = retorno.value;
         }
 
+        function openPlanoConta() {
+
+            var planoConta = FindControl("txtPlanoConta", "input");
+
+            if (planoConta == null)
+                return false;
+
+            if (planoConta.value.trim() != "")
+                return true;
+
+            openWindow(500, 700, '../Utils/SelPlanoConta.aspx');
+            return false;
+        }
+
+        function setPlanoConta(idConta, descricao) {
+            var planoConta = FindControl("txtPlanoConta", "input");
+
+            if (planoConta == null)
+                return false;
+
+            planoConta.value = descricao.split('-')[descricao.split('-').length - 1].trim();
+            cOnClick("imgPesq");
+        }
+
     </script>
 
     <table>
@@ -265,9 +289,8 @@
                             <asp:TextBox ID="txtPlanoConta" runat="server" Width="150px"></asp:TextBox>
                         </td>
                         <td nowrap="nowrap">
-                            <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClientClick="getCli(FindControl('txtNumCli', 'input'));" ToolTip="Pesquisar"
-                                OnClick="imgPesq_Click" />
+                              <asp:ImageButton ID="ImageButton11" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                   OnClientClick="return openPlanoConta();" ToolTip="Pesquisar" OnClick="imgPesq_Click" />
                         </td>
                         <td nowrap="nowrap">
                             <asp:Label ID="Label20" runat="server" ForeColor="#0066FF" Text="Data Cad."></asp:Label>

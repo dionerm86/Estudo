@@ -3,8 +3,11 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper;
+using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
+using Glass.Data.Model;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +20,56 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.GruposProduto
     /// </summary>
     public partial class GruposProdutoController : BaseController
     {
+        /// <summary>
+        /// Recupera as configurações usadas pela tela de listagem de grupos de produto.
+        /// </summary>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("configuracoes")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Produtos.V1.GruposProduto.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesListaGruposProduto()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.Produtos.V1.GruposProduto.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de grupos de produto.
+        /// </summary>
+        /// <param name="filtro">Os filtros para a busca dos grupos de produto.</param>
+        /// <returns>Uma lista JSON com os dados dos grupos de produto.</returns>
+        [HttpGet]
+        [Route("")]
+        [SwaggerResponse(200, "Grupos de produto sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Produtos.V1.GruposProduto.Lista.ListaDto>))]
+        [SwaggerResponse(204, "Grupos de produto não encontrados para o filtro informado.")]
+        [SwaggerResponse(206, "Grupos de produto paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Produtos.V1.GruposProduto.Lista.ListaDto>))]
+        [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterListaGruposProduto([FromUri] Models.Produtos.V1.GruposProduto.Lista.FiltroDto filtro)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                filtro = filtro ?? new Models.Produtos.V1.GruposProduto.Lista.FiltroDto();
+
+                var gruposProduto = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Global.Negocios.IGrupoProdutoFluxo>()
+                    .PesquisarGruposProduto();
+
+                ((Colosoft.Collections.IVirtualList)gruposProduto).Configure(filtro.NumeroRegistros);
+                ((Colosoft.Collections.ISortableCollection)gruposProduto).ApplySort(filtro.ObterTraducaoOrdenacao());
+
+                return this.ListaPaginada(
+                    gruposProduto
+                        .Skip(filtro.ObterPrimeiroRegistroRetornar())
+                        .Take(filtro.NumeroRegistros)
+                        .Select(c => new Models.Produtos.V1.GruposProduto.Lista.ListaDto(c)),
+                    filtro,
+                    () => gruposProduto.Count);
+            }
+        }
+
         /// <summary>
         /// Recupera os grupos de produto para os controles de filtro das telas.
         /// </summary>
@@ -38,6 +91,52 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.GruposProduto
                     });
 
                 return this.Lista(situacoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de grupo de produto.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos tipos de grupo de produto.</returns>
+        [HttpGet]
+        [Route("tipos")]
+        [SwaggerResponse(200, "Tipos de grupo de produto encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de grupo de produto não encontrados.")]
+        public IHttpActionResult ObterTipos()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = new ConversorEnum<TipoGrupoProd>()
+                    .ObterTraducao();
+
+                return this.Lista(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de cálculo de grupo de produto.
+        /// </summary>
+        /// <param name="notaFiscal">Define se serão buscados tipos de cálculo de nota fiscal, caso false, busca de pedido.</param>
+        /// <returns>Uma lista JSON com os dados básicos dos tipos de cálculo de pedido de grupo de produto.</returns>
+        [HttpGet]
+        [Route("tiposCalculo")]
+        [SwaggerResponse(200, "Tipos de cálculo encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de cálculo não encontrados.")]
+        public IHttpActionResult ObterTiposCalculo(bool notaFiscal)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Global.Negocios.IGrupoProdutoFluxo>()
+                    .ObtemTiposCalculo(true, notaFiscal)
+                    .ToList()
+                    .Select(f => new IdNomeDto()
+                    {
+                        Id = (int)f,
+                        Nome = Colosoft.Translator.Translate(f).Format(),
+                    });
+
+                return this.Lista(tipos);
             }
         }
     }
