@@ -2,13 +2,13 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Helper.Produtos.GruposProduto;
+using Glass.API.Backend.Helper.Producao.Turnos;
 using Glass.API.Backend.Models.Genericas.V1;
 
-namespace Glass.API.Backend.Models.Produtos.V1.GruposProduto.Lista
+namespace Glass.API.Backend.Models.Producao.V1.Turno.Lista
 {
     /// <summary>
-    /// Classe que encapsula os itens de filtro para a lista de grupos de produto.
+    /// Classe que encapsula os itens de filtro para a lista de turnos.
     /// </summary>
     public class FiltroDto : PaginacaoDto
     {
@@ -16,7 +16,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.GruposProduto.Lista
         /// Inicia uma nova instância da classe <see cref="FiltroDto"/>.
         /// </summary>
         public FiltroDto()
-            : base(item => new TraducaoOrdenacaoListaGruposProduto(item.Ordenacao))
+            : base(item => new TraducaoOrdenacaoListaTurnos(item.Ordenacao))
         {
         }
     }

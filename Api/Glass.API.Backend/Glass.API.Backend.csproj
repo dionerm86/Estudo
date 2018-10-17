@@ -256,6 +256,11 @@
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
     <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\DeleteTurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\GetTurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\TurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\PatchTurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\PostTurnosController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\GetSetoresController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\SetoresController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\PostFornecedoresController.cs" />
@@ -413,6 +418,8 @@
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoSvgProjetoStrategy.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
+    <Compile Include="Helper\Producao\Turnos\ConverterCadastroAtualizacaoParaTurno.cs" />
+    <Compile Include="Helper\Producao\Turnos\TraducaoOrdenacaoListaTurnos.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
@@ -483,6 +490,9 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Producao\V1\Turnos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Producao\V1\Turnos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Turnos\Lista\ListaDto.cs" />
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\Lista\ListaDto.cs" />
