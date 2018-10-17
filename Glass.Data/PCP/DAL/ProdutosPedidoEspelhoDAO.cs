@@ -4305,6 +4305,7 @@ namespace Glass.Data.DAL
 
                 objUpdate.PedidoMaoObra = container.MaoDeObra;
 
+                ValorTotal.Instance.PrepararRecalculoAtualizacao(sessao, container, objUpdate);
                 ValorTotal.Instance.Calcular(
                     sessao,
                     container,
