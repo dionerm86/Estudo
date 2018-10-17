@@ -4,8 +4,8 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Comissionados.Lista;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Comissionados.V1.Lista;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
@@ -25,12 +25,12 @@ namespace Glass.API.Backend.Controllers.Comissionados.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Comissionados.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Comissionados.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaComissionados()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Comissionados.Configuracoes.ListaDto();
+                var configuracoes = new Models.Comissionados.V1.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }

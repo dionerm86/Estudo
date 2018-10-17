@@ -66,7 +66,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
         [Route("ativar")]
         [SwaggerResponse(202, "Cliente ativados.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação", Type = typeof(MensagemDto))]
-        public IHttpActionResult Ativar([FromBody] Models.Clientes.Lista.FiltroDto filtro)
+        public IHttpActionResult Ativar([FromBody] Models.Clientes.V1.Lista.FiltroDto filtro)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
         [Route("alterarVendedor")]
         [SwaggerResponse(202, "Vendedor alterado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação", Type = typeof(MensagemDto))]
-        public IHttpActionResult AlterarVendedor([FromBody] Models.Clientes.Lista.FiltroDto filtro)
+        public IHttpActionResult AlterarVendedor([FromBody] Models.Clientes.V1.Lista.FiltroDto filtro)
         {
             try
             {
@@ -172,7 +172,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
         [Route("alterarRota")]
         [SwaggerResponse(202, "Rota alterada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação", Type = typeof(MensagemDto))]
-        public IHttpActionResult AlterarRota([FromBody] Models.Clientes.Lista.FiltroDto filtro)
+        public IHttpActionResult AlterarRota([FromBody] Models.Clientes.V1.Lista.FiltroDto filtro)
         {
             try
             {

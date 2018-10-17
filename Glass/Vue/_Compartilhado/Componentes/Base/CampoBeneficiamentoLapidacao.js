@@ -1,6 +1,6 @@
 Vue.component('campo-beneficiamento-lapidacao', {
   inheritAttrs: false,
-  mixins: [Mixins.Comparar, Mixins.Clonar, Mixins.CampoBeneficiamento],
+  mixins: [Mixins.Objetos, Mixins.CampoBeneficiamento],
   props: {
     /**
      * Beneficiamento que o controle representa.

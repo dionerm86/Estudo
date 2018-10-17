@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.TabelasDescontoAcrescimoCliente.CadastroAtualizacao;
+using Glass.API.Backend.Models.TabelasDescontoAcrescimoCliente.V1.CadastroAtualizacao;
 using Glass.Global.Negocios.Entidades;
 using System;
 

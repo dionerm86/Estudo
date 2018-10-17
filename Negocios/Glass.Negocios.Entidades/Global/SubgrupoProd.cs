@@ -423,6 +423,8 @@ namespace Glass.Global.Negocios.Entidades
             }
             set
             {
+                SubgruposProdLoja.Clear();
+
                 foreach (var loja in value)
                 {
                     if (SubgruposProdLoja.Any(f => f.IdLoja == loja && f.IdSubgrupoProd == IdSubgrupoProd))

@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Produtos.GruposProduto.CadastroAtualizacao;
+using Glass.API.Backend.Models.Produtos.V1.GruposProduto.CadastroAtualizacao;
 using Glass.Global.Negocios.Entidades;
 using System;
 using System.Linq;

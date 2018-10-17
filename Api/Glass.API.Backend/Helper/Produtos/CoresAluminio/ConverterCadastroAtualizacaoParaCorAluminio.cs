@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Produtos.CoresAluminio.CadastroAtualizacao;
+using Glass.API.Backend.Models.Produtos.V1.CoresAluminio.CadastroAtualizacao;
 using System;
 using System.Linq;
 

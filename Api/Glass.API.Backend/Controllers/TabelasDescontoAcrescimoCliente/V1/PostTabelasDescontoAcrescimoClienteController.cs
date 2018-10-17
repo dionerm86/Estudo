@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Helper.TabelasDescontoAcrescimoCliente;
-using Glass.API.Backend.Models.TabelasDescontoAcrescimoCliente.CadastroAtualizacao;
+using Glass.API.Backend.Models.TabelasDescontoAcrescimoCliente.V1.CadastroAtualizacao;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;

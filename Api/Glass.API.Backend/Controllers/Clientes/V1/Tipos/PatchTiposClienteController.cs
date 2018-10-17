@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Clientes.Tipos;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Clientes.Tipos.CadastroAtualizacao;
+using Glass.API.Backend.Models.Clientes.V1.Tipos.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -44,6 +44,8 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
 
                     tipo = new ConverterCadastroAtualizacaoParaTipo(dadosParaAlteracao, tipo)
                         .ConverterParaTipo();
+
+                    sessao.BeginTransaction();
 
                     TipoClienteDAO.Instance.Update(sessao, tipo);
                     sessao.Commit();

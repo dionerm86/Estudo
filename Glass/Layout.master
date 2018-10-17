@@ -10,6 +10,7 @@
         <script type="text/javascript" src="<%= ConfigurationManager.AppSettings["VueJsPath"] %>"></script>
         <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue-text-mask@6.1.1/dist/vueTextMask.min.js"></script>
+        <script type="text/javascript" src="/Scripts/ResizeObserverPolyfill.js"></script>
         <%
             foreach (var estilo in Glass.UI.Web.BundleConfig.Estilos())
             {

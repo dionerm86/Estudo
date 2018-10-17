@@ -409,6 +409,14 @@ Servicos.Pedidos = (function (http) {
     },
 
     /**
+     * Recupera a lista de situações de produção.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterSituacoesProducao: function () {
+      return http().get(API + 'situacoesProducao');
+    },
+
+    /**
      * Retorna os itens para o controle de tipos de pedido.
      * @returns {Promise} Uma promise com o resultado da busca.
      */

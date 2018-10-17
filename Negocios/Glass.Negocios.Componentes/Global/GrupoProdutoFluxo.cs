@@ -235,33 +235,37 @@ namespace Glass.Global.Negocios.Componentes
                           s.LiberarPendenteProducao, s.PermitirItemRevendaNaVenda, s.BloquearEcommerce");
 
             if (idGrupoProd.HasValue && idGrupoProd.Value > 0)
+            {
                 consulta.WhereClause.And("IdGrupoProd=?idGrupoProd").Add("?idGrupoProd", idGrupoProd.Value);
+            }
 
             var retorno = consulta.ToVirtualResultLazy<Entidades.SubgrupoProdPesquisa>();
 
-            if (retorno.Any())
+            retorno.DataPageLoaded += (sender, e) =>
             {
                 var lojasAssociadas = SourceContext.Instance.CreateQuery()
                     .From<Data.Model.SubgrupoProdLoja>("sgpl")
                     .LeftJoin<Data.Model.Loja>("l.IdLoja=sgpl.IdLoja", "l")
                     .Select("sgpl.IdSubgrupoProd, l.NomeFantasia, sgpl.IdLoja")
-                    .Where(string.Format("IdSubgrupoProd IN ({0})", string.Join(", ", retorno.Select(f => f.IdSubgrupoProd))))
+                    .Where(string.Format("IdSubgrupoProd IN ({0})", string.Join(", ", e.Page.Select(f => f.IdSubgrupoProd))))
                     .Execute().Select(f => new
                     {
                         IdSubgrupoProd = f.GetInt32(0),
                         Loja = f.GetString(1),
-                        IdLoja = f.GetInt32(2)
+                        IdLoja = f.GetInt32(2),
                     }).ToList();
 
                 if (lojasAssociadas.Any())
-                    foreach (var item in retorno)
+                {
+                    foreach (var item in e.Page)
                     {
                         item.Lojas = string.Join(",", lojasAssociadas.Where(f => f.IdSubgrupoProd == item.IdSubgrupoProd).Select(f => f.Loja));
                         item.IdsLojaAssociacao = lojasAssociadas.Where(f => f.IdSubgrupoProd == item.IdSubgrupoProd).Select(f => f.IdLoja).ToArray();
                     }
-            }
+                }
+            };
 
-            return retorno.ToList();
+            return retorno;
         }
 
         /// <summary>

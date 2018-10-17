@@ -1,10 +1,11 @@
-﻿<span v-if="urlImagem" style="padding: 0">
+<span v-if="urlImagem" style="padding: 0">
     <controle-tooltip v-on:click.prevent="abrirJanelaImagem">
         <template slot="botao">
             <img v-bind:src="caminhoRelativo('/Images/Imagem.gif')" />
         </template>
 
-        <img v-bind:src="urlImagem" v-bind:style="estiloImagem" />
+        <img v-bind:src="urlImagem" v-bind:style="estiloImagem" v-if="urlImagem" />
+        <div v-html="svgImagem" v-bind:style="estiloImagem" v-else-if="svgImagem"></div>
         <div style="padding-top: 2px" v-if="legenda">
             {{ legenda }}
         </div>

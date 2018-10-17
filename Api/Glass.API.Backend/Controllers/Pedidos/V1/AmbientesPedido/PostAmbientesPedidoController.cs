@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Pedidos.AmbientesPedido;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Pedidos.AmbientesPedido.CadastroAtualizacao;
+using Glass.API.Backend.Models.Pedidos.V1.AmbientesPedido.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -42,6 +42,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.AmbientesPedido
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     var ambiente = new ConverterCadastroAtualizacaoParaAmbientePedido(dadosParaCadastro)
                         .ConverterParaAmbientePedido();
 

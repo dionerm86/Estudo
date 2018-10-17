@@ -3,7 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Datas.Validacao;
+using Glass.API.Backend.Models.Datas.V1.Validacao;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;

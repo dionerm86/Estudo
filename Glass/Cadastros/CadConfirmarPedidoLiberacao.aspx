@@ -116,7 +116,7 @@
             else if (!controle.checked)
                 FindControl("lblTotalM2", "span").innerHTML = (totM2Selecionado - totM2Pedido).toFixed(2);
         }
-    
+
     </script>
 
     <table style="width: 100%">
@@ -216,7 +216,7 @@
                             <asp:Label ID="Label6" runat="server" ForeColor="#0066FF" Text="Tipo"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpTipoPedido" runat="server" 
+                            <asp:DropDownList ID="drpTipoPedido" runat="server"
                                 DataSourceID="odsTipoPedido" DataTextField="Descr" DataValueField="Id" >
                             </asp:DropDownList>
                         </td>
@@ -283,12 +283,20 @@
                         <asp:BoundField DataField="DescricaoTipoPedido" HeaderText="Tipo" >
                             <ItemStyle Wrap="True" />
                         </asp:BoundField>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:Image ID="imgPGSinal" runat="server" ImageUrl="../Images/cifrao.png"
+                                    ToolTip='<%# ((bool)Eval("PagamentoAntecipado") == true && Eval("IdSinal") != null ? "Sinal e Pagamento Antecipado" :
+                                    (bool)Eval("PagamentoAntecipado") == true ? "Pagamento Antecipado" : Eval("IdSinal") != null ? "Sinal" : "") + " (" + string.Format("{0:c}", Eval("TotalRecebSinalPagtoAntecip")) + ")" %>'
+                                    Visible='<%# (bool)Eval("PagamentoAntecipado") == true || Eval("IdSinal") != null ? true : false %>' />
+                            </ItemTemplate>
+                        </asp:TemplateField>
                     </Columns>
                     <PagerStyle CssClass="pgr"></PagerStyle>
                     <EditRowStyle CssClass="edit"></EditRowStyle>
                     <AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
                 </asp:GridView>
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPedido" runat="server" 
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPedido" runat="server"
                     SelectMethod="GetForConfirmation"
                      SortParameterName="sortExpression"
                     TypeName="Glass.Data.DAL.PedidoDAO">

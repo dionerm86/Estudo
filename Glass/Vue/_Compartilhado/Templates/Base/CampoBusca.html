@@ -1,6 +1,6 @@
 <span style='display: inline-block; width: 150px' v-on:focus='exibir()'>
     <input ref="campo" type='search' v-model='nomeAtual' v-on:focus='exibir()' v-on:blur='buscando = false' style="width: 100%" v-bind="$attrs">
-    <div ref="itens" v-show='buscando && itensFiltrados.length !== 1' style='position: absolute; -appearance: searchfield; padding: 1px; margin-top: -2px; background-color: white; z-index: 1'>
+    <div ref="itens" v-show='buscando && itensFiltrados.length !== 1' style='position: absolute; -moz-appearance: textfield; -webkit-appearance: searchfield; padding: 1px; margin-top: -2px; background-color: white; z-index: 1'>
         <div v-for='item in itensFiltrados' style='text-align: left'>
             <a tabindex="-1" href='#' v-on:mousedown.prevent='selecionar(item)' v-on:click.prevent='' style='display: block; padding: 2px'>
                 {{ item[campoNome] }}
