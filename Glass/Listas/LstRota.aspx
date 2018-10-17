@@ -31,7 +31,7 @@
                         <a href="#" @click.prevent="ordenar('diasSemana')">Dias da rota</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('minimoDiasEntrega')">
+                        <a href="#" @click.prevent="ordenar('numeroDiasMinimosParaDataEntrega')">
                             Mínimo dias entrega
                             <label v-if="configuracoes && configuracoes.usarDiasCorridosCalculoRota">(corridos)</label>
                             <label v-else>(úteis)</label>
@@ -57,7 +57,7 @@
                     <td>{{ item.distancia }}</td>
                     <td>{{ item.observacao }}</td>
                     <td>{{ item.diasSemana }}</td>
-                    <td>{{ item.minimoDiasEntrega }}</td>
+                    <td>{{ item.numeroDiasMinimosParaDataEntrega }}</td>
                     <td>
                         <log-alteracao tabela="Rota" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
                     </td>

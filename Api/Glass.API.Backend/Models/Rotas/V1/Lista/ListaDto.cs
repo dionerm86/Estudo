@@ -29,7 +29,7 @@ namespace Glass.API.Backend.Models.Rotas.V1.Lista
             this.Situacao = Translator.Translate(rota.Situacao).Format();
             this.Distancia = rota.Distancia;
             this.DiasSemana = Translator.Translate(rota.DiasSemana).Format();
-            this.MinimoDiasEntrega = rota.NumeroMinimoDiasEntrega;
+            this.NumeroDiasMinimosParaDataEntrega = rota.NumeroMinimoDiasEntrega;
             this.Observacao = rota.Obs;
             this.Permissoes = new PermissoesDto
             {
@@ -72,8 +72,8 @@ namespace Glass.API.Backend.Models.Rotas.V1.Lista
         /// Obtém ou define o mínimo de dias para entrega na rota.
         /// </summary>
         [DataMember]
-        [JsonProperty("minimoDiasEntrega")]
-        public int MinimoDiasEntrega { get; set; }
+        [JsonProperty("numeroDiasMinimosParaDataEntrega")]
+        public int NumeroDiasMinimosParaDataEntrega { get; set; }
 
         /// <summary>
         /// Obtém ou define a observação da rota.

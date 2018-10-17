@@ -38,7 +38,7 @@ namespace Glass.API.Backend.Helper.Rotas
                 case "codigo":
                     return "CodInterno";
 
-                case "minimodiasentrega":
+                case "numerodiasminimosparadataentrega":
                     return "NumeroMinimoDiasEntrega";
 
                 case "observacao":
@@ -46,7 +46,7 @@ namespace Glass.API.Backend.Helper.Rotas
 
                 case "situacao":
                 case "distancia":
-                case "diasSemana":
+                case "diassemana":
                     return campo;
 
                 default:
