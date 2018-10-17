@@ -4856,6 +4856,7 @@ namespace Glass.Data.DAL
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, objUpdate.IdPedido);
                 var calcMult5 = objUpdate.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
+                ValorTotal.Instance.PrepararRecalculoAtualizacao(sessao, pedido, objUpdate);
                 ValorTotal.Instance.Calcular(
                     sessao,
                     pedido,

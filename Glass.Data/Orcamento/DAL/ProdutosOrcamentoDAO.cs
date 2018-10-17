@@ -1269,6 +1269,7 @@ namespace Glass.Data.DAL
 
                     if (objUpdate.IdProduto > 0)
                     {
+                        ValorTotal.Instance.PrepararRecalculoAtualizacao(session, orca, objUpdate);
                         ValorTotal.Instance.Calcular(
                             session,
                             orca,

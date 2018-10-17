@@ -74,6 +74,23 @@ namespace Glass.Data.Helper.Calculos
             this.IncluirDescontoPorQuantidade(produto);
         }
 
+        /// <summary>
+        /// Prepara o recálculo de produtos com desconto por quantidade.
+        /// </summary>
+        public void PrepararRecalculoAtualizacao(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto)
+        {
+            var valorUnitario = produto.ValorUnit;
+
+            try
+            {
+                DescontoAcrescimo.Instance.RemoverDescontoQtde(sessao, container, produto);
+            }
+            finally
+            {
+                produto.ValorUnit = valorUnitario;
+            }
+        }
+
         private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container, int tipoCalc)
         {
             if ((container?.MaoDeObra ?? false) && tipoCalc == (int)TipoCalculoGrupoProd.Perimetro)
