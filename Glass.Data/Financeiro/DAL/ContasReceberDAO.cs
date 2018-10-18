@@ -8080,12 +8080,13 @@ namespace Glass.Data.DAL
 
         /// <summary>
         /// Método que recupera os Identificadores dos planos de conta que 
-        /// devem ser considerados como a prazo para a geração do CNAB
+        /// devem ser considerados como a prazo para a geração do CNAB.
         /// </summary>
-        /// <returns>Retorna uma lista de inteiros com os identificadores dos planos de conta</returns>
+        /// <returns>Retorna uma lista de inteiros com os identificadores dos planos de conta.</returns>
         public List<uint> ObterPlanosContaConsiderarPrazoParaCnab()
         {
-            return new List<uint>{
+            return new List<uint>
+            {
                 UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ParcelamentoObra),
                 UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PrazoCartao)
             };
@@ -8112,7 +8113,7 @@ namespace Glass.Data.DAL
                 if (f == Pagto.FormaPagto.Boleto)
                 {
                     idsFormasPagto += $",{UtilsPlanoConta.ContasTodosTiposBoleto()}";
-                }   
+                }
                 if (f == Pagto.FormaPagto.Prazo)
                 {
                     idsFormasPagto += $",{ UtilsPlanoConta.ContasTodasPorTipo(f)},{string.Join(",", ObterPlanosContaConsiderarPrazoParaCnab().ToArray())}";
@@ -8121,7 +8122,6 @@ namespace Glass.Data.DAL
                 {
                     idsFormasPagto += $",{UtilsPlanoConta.ContasTodasPorTipo(f)}";
                 }
-                    
             }
 
             var criterio = string.Empty;
@@ -8151,16 +8151,16 @@ namespace Glass.Data.DAL
                 sql += $" AND {tipoPeriodoConsiderar} >= ?dataIni";
             }
 
-            if (!string.IsNullOrEmpty(dataFim))
+            if (!string.IsNullOrWhiteSpace(dataFim))
             {
                 sql += $" AND {tipoPeriodoConsiderar} <= ?dataFim";
             }
                 
 
-            if (string.IsNullOrEmpty(tiposConta))
+            if (string.IsNullOrWhiteSpace(tiposConta))
             {
-                sql += !string.IsNullOrEmpty(idsContas) 
-                    ? "" 
+                sql += !string.IsNullOrWhiteSpace(idsContas) 
+                    ? string.Empty 
                     : " AND 0";
             }
             else
@@ -8171,16 +8171,16 @@ namespace Glass.Data.DAL
                     out criterio);
             }
 
-            if (!string.IsNullOrEmpty(idsFormasPagto.Trim(',')))
+            if (!string.IsNullOrWhiteSpace(idsFormasPagto.Trim(',')))
             {
-                sql += $" AND c.idConta in ({idsFormasPagto.Trim(',')})";
+                sql += $" AND c.idConta IN ({idsFormasPagto.Trim(',')})";
             }
 
             if (idCli > 0)
             {
-                sql += $" AND cli.Id_Cli={idCli}";
+                sql += $" AND cli.Id_Cli = {idCli}";
             }
-            else if (!string.IsNullOrEmpty(nomeCli))
+            else if (!String.IsNullOrWhiteSpace(nomeCli))
             {
                 string ids = ClienteDAO.Instance.GetIds(
                     null, 
@@ -8193,12 +8193,12 @@ namespace Glass.Data.DAL
                     null, 
                     0);
 
-                sql += $" AND cli.id_Cli in ({ids})";
+                sql += $" AND cli.Id_Cli IN ({ids})";
             }
 
             if (idLoja > 0)
             {
-                sql += $" AND c.idLoja={idLoja}";
+                sql += $" AND c.IdLoja={idLoja}";
             }
 
             if (idContaBancoCliente > 0)
@@ -8206,7 +8206,7 @@ namespace Glass.Data.DAL
                 sql += $" AND cli.IdContaBanco = {idContaBancoCliente}";
             }
                 
-            if (!string.IsNullOrEmpty(idsContas) && !string.IsNullOrEmpty(idsContas.Trim(',')))
+            if (!string.IsNullOrWhiteSpace(idsContas) && !string.IsNullOrWhiteSpace(idsContas.Trim(',')))
             {
                 sql += $" AND c.IdContaR IN ({idsContas.Trim(',')})";
             }
