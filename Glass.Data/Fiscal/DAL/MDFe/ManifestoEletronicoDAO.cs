@@ -661,7 +661,7 @@ namespace Glass.Data.DAL
 
             try
             {
-                // Lê Xml de retorno do envio do lote                
+                // Lê Xml de retorno do envio do lote
                 var cStat = Conversoes.StrParaInt(xmlRetEvento["infEvento"]["cStat"].InnerText);
                 string xMotivo = xmlRetEvento["infEvento"]["xMotivo"].InnerText;
 
@@ -814,7 +814,7 @@ namespace Glass.Data.DAL
             }
         }
 
-        #endregion  
+        #endregion
 
         #region Gerar XML do MDFe para emissão
 
@@ -1190,7 +1190,7 @@ namespace Glass.Data.DAL
                                 if (!Glass.Validacoes.ValidaCpf(fornec.CpfCnpj))
                                     throw new Exception("O CPF do Fornecedor é inválido. Altere no cadastro de fornecedores.");
                             }
-                            
+
                             if (Formatacoes.TrataStringDocFiscal(fornec.CpfCnpj).Length == 11)
                                 ManipulacaoXml.SetNode(doc, infResp, "CPF", Formatacoes.TrataStringDocFiscal(fornec.CpfCnpj).PadLeft(11, '0'));
                             else if (Formatacoes.TrataStringDocFiscal(fornec.CpfCnpj).Length == 14)
@@ -1243,7 +1243,7 @@ namespace Glass.Data.DAL
 
                     ManipulacaoXml.SetNode(doc, seg, "nApol", Formatacoes.TrataStringDocFiscal(mdfe.NumeroApolice));
 
-                    //Informar as averbações do seguro 
+                    //Informar as averbações do seguro
                     foreach (var averbacaoSeguro in mdfe.AverbacaoSeguro)
                     {
                         ManipulacaoXml.SetNode(doc, seg, "nAver", Formatacoes.TrataStringDocFiscal(averbacaoSeguro.NumeroAverbacao));
@@ -1555,7 +1555,7 @@ namespace Glass.Data.DAL
 
             foreach (var cond in mdfe.Rodoviario.CondutorVeiculo)
             {
-                var condutorVeiculo = FuncionarioDAO.Instance.GetElement((uint)cond.IdCondutor);
+                var condutorVeiculo = CondutoresDAO.Instance.GetElementByPrimaryKey((uint)cond.IdCondutor);
                 XmlElement condutor = doc.CreateElement("condutor");
                 ManipulacaoXml.SetNode(doc, condutor, "xNome", condutorVeiculo.Nome);
                 ManipulacaoXml.SetNode(doc, condutor, "CPF", Formatacoes.TrataStringDocFiscal(condutorVeiculo.Cpf));
@@ -1765,7 +1765,7 @@ namespace Glass.Data.DAL
 
             // Evento de Encerramento
             XmlElement evEncMDFe = xmlEncerramento.CreateElement("evEncMDFe");
-            
+
             ManipulacaoXml.SetNode(xmlEncerramento, evEncMDFe, "descEvento", "Encerramento");
             ManipulacaoXml.SetNode(xmlEncerramento, evEncMDFe, "nProt", protocolo.NumProtocolo);
             var dataEncerramento = DateTimeOffset.Now;
@@ -1842,20 +1842,20 @@ namespace Glass.Data.DAL
 
             XmlElement infEvento = xmlEvento.CreateElement("infEvento");
 
-            //Identificador da TAG a ser assinada, a regra de formação do Id é: 
-            //“ID” + tpEvento +  chave da MDF-e + nSeqEvento 
+            //Identificador da TAG a ser assinada, a regra de formação do Id é:
+            //“ID” + tpEvento +  chave da MDF-e + nSeqEvento
             infEvento.SetAttribute("Id", "ID" + tipoEvento + mdfe.ChaveAcesso + "1".PadLeft(2, '0'));
             eventoMDFe.AppendChild(infEvento);
 
-            // Código do órgão de recepção do Evento. Utilizar a Tabela 
-            // do IBGE, utilizar 90 para identificar o Ambiente Nacional. 
+            // Código do órgão de recepção do Evento. Utilizar a Tabela
+            // do IBGE, utilizar 90 para identificar o Ambiente Nacional.
             XmlElement cOrgao = xmlEvento.CreateElement("cOrgao");
             cOrgao.InnerText = cidadeLojaEmitente.CodIbgeUf;
             infEvento.AppendChild(cOrgao);
 
             // Identificação do Ambiente
-            // 1 - Produção 
-            // 2 – Homologação 
+            // 1 - Produção
+            // 2 – Homologação
             ManipulacaoXml.SetNode(xmlEvento, infEvento, "tpAmb", ((int)ConfigMDFe.TipoAmbiente).ToString());
             //Autor do evento
             ManipulacaoXml.SetNode(xmlEvento, infEvento, "CNPJ", Formatacoes.TrataStringDocFiscal(lojaEmitente.Cnpj));
@@ -1863,7 +1863,7 @@ namespace Glass.Data.DAL
 
             var dataEvento = new DateTimeOffset(DateTime.Now.AddMinutes(-2));
             ManipulacaoXml.SetNode(xmlEvento, infEvento, "dhEvento", dataEvento.ToString("yyyy-MM-ddTHH:mm:sszzz"));
-            // Tipo do Evento: 
+            // Tipo do Evento:
             // 110111 - Cancelamento
             // 110112 – Encerramento
             // 110114 – Inclusão de Condutor
@@ -1896,7 +1896,7 @@ namespace Glass.Data.DAL
 
             // XML do Evento de Consulta Não Encerrados
             XmlDocument xmlConsMDFeNaoEnc = new XmlDocument();
-            
+
             XmlNode declarationNode = xmlConsMDFeNaoEnc.CreateXmlDeclaration("1.0", "UTF-8", null);
             xmlConsMDFeNaoEnc.AppendChild(declarationNode);
 
