@@ -24,12 +24,12 @@ namespace Glass.API.Backend.Controllers.Liberacoes.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Liberacoes.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Liberacoes.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaLiberacoes()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Liberacoes.Configuracoes.ListaDto();
+                var configuracoes = new Models.Liberacoes.V1.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }
@@ -41,15 +41,15 @@ namespace Glass.API.Backend.Controllers.Liberacoes.V1
         /// <returns>Uma lista JSON com os dados das liberações.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Liberações sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Liberacoes.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Liberações sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Liberacoes.V1.Lista.ListaDto>))]
         [SwaggerResponse(204, "Liberações não encontradas para o filtro informado.")]
-        [SwaggerResponse(206, "Liberações paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Liberacoes.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Liberações paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Liberacoes.V1.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaLiberacoes([FromUri] Models.Liberacoes.Lista.FiltroDto filtro)
+        public IHttpActionResult ObterListaLiberacoes([FromUri] Models.Liberacoes.V1.Lista.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.Liberacoes.Lista.FiltroDto();
+                filtro = filtro ?? new Models.Liberacoes.V1.Lista.FiltroDto();
 
                 var liberacoes = LiberarPedidoDAO.Instance.GetList(
                     (uint)(filtro.Id ?? 0),
@@ -70,7 +70,7 @@ namespace Glass.API.Backend.Controllers.Liberacoes.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    liberacoes.Select(o => new Models.Liberacoes.Lista.ListaDto(o)),
+                    liberacoes.Select(o => new Models.Liberacoes.V1.Lista.ListaDto(o)),
                     filtro,
                     () => LiberarPedidoDAO.Instance.GetCount(
                         (uint)(filtro.Id ?? 0),

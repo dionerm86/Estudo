@@ -736,7 +736,7 @@ namespace Glass.Data.Model
                                 {
                                     pos = vetIdSetor.IndexOf(Utils.GetSetores[i].IdSetor.ToString());
                                     if (pos > -1)
-                                        _vetSetorCorte[pos] = posLeitura < vetSetorCorte.Length ? vetSetorCorte[posLeitura++] == "1" : false;
+                                        _vetSetorCorte[pos] = posLeitura < vetSetorCorte.Length ? vetSetorCorte[posLeitura++] == "True" : false;
                                 }
                         }
                     }

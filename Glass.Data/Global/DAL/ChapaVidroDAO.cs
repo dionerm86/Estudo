@@ -185,6 +185,21 @@ namespace Glass.Data.DAL
             Update(chapaVidro);
         }
 
+        /// <summary>
+        /// Recupera o valor adicional de chapas de vidro com base na altura.
+        /// </summary>
+        public float GetAdicionalAlturaChapaVidro(GDASession session, uint idProd, float altura)
+        {
+            var chapaVidro = GetElement(session, idProd);
+
+            if (chapaVidro != null && chapaVidro.AlturaMaxSemAdicional > 0 && altura >= chapaVidro.AlturaMaxSemAdicional)
+            {
+                return chapaVidro.ValorAdicional;
+            }
+
+            return 0;
+        }
+
         #region Métodos sobescritos
 
         public override uint Insert(ChapaVidro objInsert)

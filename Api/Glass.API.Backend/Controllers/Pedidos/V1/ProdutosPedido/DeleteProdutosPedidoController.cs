@@ -41,6 +41,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.ProdutosPedido
 
                 try
                 {
+                    sessao.BeginTransaction();
+
                     ProdutosPedidoDAO.Instance.Delete(sessao, produto, false, true);
                     sessao.Commit();
 

@@ -519,6 +519,9 @@ namespace Glass.UI.Web.Cadastros.Projeto
         protected void drpArquivo_SelectedIndexChanged(object sender, EventArgs e)
         {
             hdfIdArquivoMesaCorte.Value = ((DropDownList)sender).SelectedValue;
+
+            var linha = ((DropDownList)sender).Parent.Parent;
+            ((CheckBoxListDropDown)linha.FindControl("drpFlagArqMesa")).Items.Clear();
         }
 
         protected void drpArquivo_DataBound(object sender, EventArgs e)

@@ -1,6 +1,6 @@
 Vue.component('campo-beneficiamento-selecao-multipla-inclusiva', {
   inheritAttrs: false,
-  mixins: [Mixins.Comparar, Mixins.UUID, Mixins.CampoBeneficiamento],
+  mixins: [Mixins.Objetos, Mixins.UUID, Mixins.CampoBeneficiamento],
   props: {
     /**
      * Beneficiamento que o controle representa.

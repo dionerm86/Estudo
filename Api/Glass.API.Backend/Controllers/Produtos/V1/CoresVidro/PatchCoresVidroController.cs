@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Produtos.CoresVidro;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Produtos.CoresVidro.CadastroAtualizacao;
+using Glass.API.Backend.Models.Produtos.V1.CoresVidro.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -44,6 +44,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresVidro
 
                     corVidro = new ConverterCadastroAtualizacaoParaCorVidro(dadosParaAlteracao, corVidro)
                         .ConverterParaCorVidro();
+
+                    sessao.BeginTransaction();
 
                     CorVidroDAO.Instance.Update(sessao, corVidro);
                     sessao.Commit();

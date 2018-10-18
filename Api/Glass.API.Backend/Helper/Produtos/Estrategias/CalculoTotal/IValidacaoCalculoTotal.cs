@@ -3,7 +3,7 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Produtos.CalculoTotal;
+using Glass.API.Backend.Models.Produtos.V1.CalculoTotal;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Helper.Produtos.Estrategias.CalculoTotal
@@ -35,6 +35,6 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.CalculoTotal
         /// </summary>
         /// <param name="dadosAdicionaisValidacao">Os dados adicionais para a validação do produto, se necessário.</param>
         /// <returns>O percentual de desconto por quantidade, se encontrado.</returns>
-        double ObterPercentualDescontoQuantidade(string dadosAdicionaisValidacao);
+        decimal ObterPercentualDescontoQuantidade(string dadosAdicionaisValidacao);
     }
 }

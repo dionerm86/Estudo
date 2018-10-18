@@ -2,8 +2,8 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Genericas;
-using Glass.API.Backend.Models.NotasFiscais.TiposParticipantes;
+using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.NotasFiscais.V1.TiposParticipantes;
 using Glass.Data.Model;
 using System;
 using System.Linq;

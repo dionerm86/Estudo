@@ -134,7 +134,7 @@
         // Abre popup para cadastrar cheques
         function queryStringCheques() {
             var ctrTipoPagto = FindControl("drpTipoPagto", "select");
-            return "?origem=3&tipoPagto=" + ctrTipoPagto.value;
+            return "?origem=3&IdCli=" + FindControl("txtNumCli","input").value +"&tipoPagto=" + ctrTipoPagto.value;
         }
 
         function tipoPagtoChanged(calcParcelas)

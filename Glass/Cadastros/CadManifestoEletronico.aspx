@@ -151,14 +151,20 @@
         // Abre a tela de associar NFe
         function abrirBuscaNf(botao) {
             popUp = openWindow(600, 800, '../Utils/SelNotaFiscalAutorizada.aspx?IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
+        }
 
-            //Verifica se a tela foi fechada de tempos em tempos e caso tenha sido fechada atualiza a tela principal
-            var timer = setInterval(function() {   
-                if(popUp.closed) {  
-                    clearInterval(timer);  
-                    window.location.reload();
-                }  
-            }, 200); 
+        //Bloqueia a seleção de notas caso sejam informações externas.
+        function bloquearSelecaoNota(idControle) {
+            FindControl('hdfIdNf', 'input').value = "";
+            var chaveAcesso = FindControl('txtChaveAcesso', 'input').value;
+            var fsda = FindControl('txtFsda', 'input').value;
+
+            if (chaveAcesso != "" || fsda != "") {
+                FindControl('imbSelNotaFiscal', 'input').style.display = "none";
+            }
+            else {
+                FindControl('imbSelNotaFiscal', 'input').style.display = "";
+            }
         }
 
         // Seta informações da NFe selecionada no popup.
@@ -166,18 +172,45 @@
             FindControl(idControle + '_txtNumNfIns', 'input').value = numNf;
             FindControl(idControle + '_hdfIdNf', 'input').value = idNf;
 
-            var gridCidade = FindControl(idControle, 'input').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+            var retorno = CadManifestoEletronico.BuscarInfoNfe(idNf);
 
-            var idCidadeDescarga = gridCidade.firstElementChild.value;
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            var resultado = retorno.value.split('|');
 
+            FindControl(idControle + '_txtChaveAcesso', 'input').value = resultado[0];
+            FindControl(idControle + '_txtChaveAcesso', 'input').disabled = true;
 
-            var retorno = CadManifestoEletronico.InserirNfeCidadeDescarga(idCidadeDescarga, idNf).value;
+            FindControl(idControle + '_txtFsda', 'input').value = resultado[1];
+            FindControl(idControle + '_txtFsda', 'input').disabled = true;
 
-            var resultado = retorno.split('|');
+            return false;
+        }
+
+        //Salva as informações da nota referênciada
+        function SalvarNfReferenciada() {
+            var idCidadeDescarga = FindControl('hdfIdCidadeDescargaNFe', 'input').value;
+            var idNf = FindControl('hdfIdNf', 'input').value;
+            var chaveAcesso = FindControl('txtChaveAcesso', 'input').value;
+            var fsda = FindControl('txtFsda', 'input').value;
+
+            var retorno = CadManifestoEletronico.InserirNfeCidadeDescarga(idCidadeDescarga, idNf, chaveAcesso, fsda);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+
+            var resultado = retorno.value.split('|');
 
             if (resultado[0] == "Erro") {
-                popUp.alert(resultado[1]) 
+                alert(resultado[1]);
+                return false;
             }
+
+            alert(resultado[1])
 
             return true;
         }
@@ -185,14 +218,20 @@
         // Abre a tela de associar CTe
         function abrirBuscaCTe(botao) {
             popUp = openWindow(600, 800, '../Utils/SelConhecimentoTransporteAutorizado.aspx?IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
+        }
 
-            //Verifica se a tela foi fechada de tempos em tempos e caso tenha sido fechada atualiza a tela principal
-            var timer = setInterval(function () {
-                if (popUp.closed) {
-                    clearInterval(timer);
-                    window.location.reload();
-                }
-            }, 200);
+        //Bloqueia a seleção de notas caso sejam informações externas.
+        function bloquearSelecaoCte(idControle) {
+            FindControl('hdfIdCTe', 'input').value = "";
+            var chaveAcesso = FindControl('txtChaveAcessoCte', 'input').value;
+            var fsda = FindControl('txtFsdaCTe', 'input').value;
+
+            if (chaveAcesso != "" || fsda != "") {
+                FindControl('imbSelCTe', 'input').style.display = "none";
+            }
+            else {
+                FindControl('imbSelCTe', 'input').style.display = "";
+            }
         }
 
         // Seta informações da CTe selecionada no popup.
@@ -200,20 +239,48 @@
             FindControl(idControle + '_txtNumCTeIns', 'input').value = numCTe;
             FindControl(idControle + '_hdfIdCTe', 'input').value = idCTe;
 
-            var gridCidade = FindControl(idControle, 'input').parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+            var retorno = CadManifestoEletronico.BuscarInfoCte(idCTe);
 
-            var idCidadeDescarga = gridCidade.firstElementChild.value;
-
-
-            var retorno = CadManifestoEletronico.InserirCteCidadeDescarga(idCidadeDescarga, idCTe).value;
-
-            var resultado = retorno.split('|');
-
-            if (resultado[0] == "Erro") {
-                popUp.alert(resultado[1])
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
             }
 
-            popUp.alert(resultado[1])
+            var resultado = retorno.value;
+
+            FindControl(idControle + '_txtChaveAcessoCte', 'input').value = resultado;
+            FindControl(idControle + '_txtChaveAcessoCte', 'input').disabled = true;
+
+            //Utilizar quando implementar FDSA no CTe
+            //FindControl(idControle + '_txtFsdaCTe', 'input').value = retorno;
+            FindControl(idControle + '_txtFsdaCTe', 'input').disabled = true;
+
+            return false;
+        }
+
+        //Salva as informações de CTe associadas
+        function SalvarCTeReferenciada(idControle) {
+            var idCidadeDescarga = FindControl('hdfIdCidadeDescargaCTe', 'input').value;
+            var idCTe = FindControl('hdfIdCTe', 'input').value;
+            var chaveAcesso = FindControl('txtChaveAcessoCte', 'input').value;
+            var fsda = FindControl('txtFsdaCTe', 'input').value;
+
+            var retorno = CadManifestoEletronico.InserirCteCidadeDescarga(idCidadeDescarga, idCTe, chaveAcesso, fsda);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+
+            var resultado = retorno.value.split('|');
+
+            if (resultado[0] == "Erro") {
+                alert(resultado[1]);
+                return false;
+            }
+
+            alert(resultado[1])
+
             return true;
         }
 
@@ -228,7 +295,10 @@
             }
 
             alert(resultado[0])
-            window.location.reload();
+
+            //Realiza o postBack da página.
+            __doPostBack(null, null);
+
             return true;
         }
 
@@ -1104,7 +1174,7 @@
                                     <td colspan="13">
                                         <asp:GridView ID="grdNFeCidadeDescarga" runat="server" AutoGenerateColumns="False" GridLines="None" EnableViewState="false"
                                             Width="100%" class="pos" ShowFooter="True" CellPadding="0" OnDataBound="grdNFeCidadeDescarga_DataBound"
-                                            DataSourceID="odsNFeCidadeDescargaMDFe" DataKeyNames="IdCidadeDescarga, IdNFe" EmptyDataText="Nenhuma NFe referênciada.">
+                                            DataSourceID="odsNFeCidadeDescargaMDFe" DataKeyNames="IdCidadeDescargaMdfe" EmptyDataText="Nenhuma NFe referênciada.">
                                             <Columns>
                                                 <asp:TemplateField>
                                                     <ItemTemplate>
@@ -1122,6 +1192,22 @@
                                                         <asp:HiddenField runat="server" ID="hdfIdNf" />
                                                         <asp:ImageButton ID="imbSelNotaFiscal" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                                             OnClientClick='<%# "abrirBuscaNf(this); return false;" %>' />
+                                                    </FooterTemplate>
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Chave de Acesso">
+                                                    <ItemTemplate>
+                                                        <asp:Label ID="lblChaveAcesso" runat="server" Text='<%# Eval("ChaveAcesso") %>'></asp:Label>
+                                                    </ItemTemplate>
+                                                    <FooterTemplate>
+                                                        <asp:TextBox ID="txtChaveAcesso" runat="server" Columns="45" MaxLength="44" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoNota();" ></asp:TextBox>
+                                                    </FooterTemplate>
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Numero Documento Fsda">
+                                                    <ItemTemplate>
+                                                        <asp:Label ID="lblFsda" runat="server" Text='<%# Eval("NumeroDocumentoFsda") %>'></asp:Label>
+                                                    </ItemTemplate>
+                                                    <FooterTemplate>
+                                                        <asp:TextBox ID="txtFsda" runat="server" Columns="10" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoNota();" ></asp:TextBox>
                                                     </FooterTemplate>
                                                 </asp:TemplateField>
                                                 <asp:TemplateField HeaderText="Modelo" SortExpression="Modelo">
@@ -1144,6 +1230,11 @@
                                                         <asp:Label ID="lblDataEmissao" runat="server" Text='<%# Eval("DataEmissao") %>'></asp:Label>
                                                     </ItemTemplate>
                                                 </asp:TemplateField>
+                                                <asp:TemplateField>
+                                                    <FooterTemplate>
+                                                        <asp:ImageButton CssClass="img-linha" ID="imgAdicionar" runat="server" ImageUrl="~/Images/Insert.gif" OnClientClick="SalvarNfReferenciada();" />
+                                                    </FooterTemplate>
+                                                </asp:TemplateField>
                                             </Columns>
                                         </asp:GridView>
                                         <colo:VirtualObjectDataSource ID="odsNFeCidadeDescargaMDFe" runat="server" Culture="pt-BR" EnablePaging="true"
@@ -1160,7 +1251,7 @@
                                     <td colspan="13">
                                         <asp:GridView ID="grdCTeCidadeDescarga" runat="server" AutoGenerateColumns="False" GridLines="None" EnableViewState="false"
                                             Width="100%" class="pos" ShowFooter="True" CellPadding="0" OnDataBound="grdCTeCidadeDescarga_DataBound"
-                                            DataSourceID="odsCTeCidadeDescargaMDFe" DataKeyNames="IdCidadeDescarga, IdCTe" EmptyDataText="Nenhum CTe referênciado.">
+                                            DataSourceID="odsCTeCidadeDescargaMDFe" DataKeyNames="IdCidadeDescargaMdfe" EmptyDataText="Nenhum CTe referênciado.">
                                             <Columns>
                                                 <asp:TemplateField>
                                                     <ItemTemplate>
@@ -1178,6 +1269,22 @@
                                                         <asp:HiddenField runat="server" ID="hdfIdCTe" />
                                                         <asp:ImageButton ID="imbSelCTe" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                                             OnClientClick='<%# "abrirBuscaCTe(this); return false;" %>' />
+                                                    </FooterTemplate>
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Chave de Acesso">
+                                                    <ItemTemplate>
+                                                        <asp:Label ID="lblChaveAcessoCte" runat="server" Text='<%# Eval("ChaveAcesso") %>'></asp:Label>
+                                                    </ItemTemplate>
+                                                    <FooterTemplate>
+                                                        <asp:TextBox ID="txtChaveAcessoCte" runat="server" Columns="45" MaxLength="44" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoCte();" ></asp:TextBox>
+                                                    </FooterTemplate>
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Numero Documento Fsda">
+                                                    <ItemTemplate>
+                                                        <asp:Label ID="lblFsdaCTe" runat="server" Text='<%# Eval("NumeroDocumentoFsda") %>'></asp:Label>
+                                                    </ItemTemplate>
+                                                    <FooterTemplate>
+                                                        <asp:TextBox ID="txtFsdaCTe" runat="server" Columns="10" onkeypress="return soNumeros(event, true, true);" onblur="bloquearSelecaoCte();" ></asp:TextBox>
                                                     </FooterTemplate>
                                                 </asp:TemplateField>
                                                 <asp:TemplateField HeaderText="Modelo" SortExpression="Modelo">
@@ -1199,6 +1306,11 @@
                                                     <ItemTemplate>
                                                         <asp:Label ID="lblDataEmissao" runat="server" Text='<%# Eval("DataEmissao") %>'></asp:Label>
                                                     </ItemTemplate>
+                                                </asp:TemplateField>
+                                                <asp:TemplateField>
+                                                    <FooterTemplate>
+                                                        <asp:ImageButton CssClass="img-linha" ID="imgAdicionar" runat="server" ImageUrl="~/Images/Insert.gif" OnClientClick="SalvarCTeReferenciada(this);" />
+                                                    </FooterTemplate>
                                                 </asp:TemplateField>
                                             </Columns>
                                         </asp:GridView>

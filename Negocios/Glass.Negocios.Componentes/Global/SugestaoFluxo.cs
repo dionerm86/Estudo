@@ -38,9 +38,10 @@ namespace Glass.Global.Negocios.Componentes
                 .LeftJoin<Data.Model.Cliente>("sc.IdCliente = c.IdCli", "c")
                 .LeftJoin<Data.Model.RotaCliente>("c.IdCli = rc.IdCliente", "rc")
                 .LeftJoin<Data.Model.Rota>("rc.IdRota = r.IdRota", "r")
+                .LeftJoin<Data.Model.TipoSugestaoCliente>("sc.TipoSugestao=tsc.IdTipoSugestaoCliente", "tsc")
                 .Select(string.Format(@"sc.IdSugestao, sc.IdCliente, sc.IdPedido, sc.DataCad, sc.TipoSugestao,
-                          sc.Descricao, sc.Cancelada, f.IdFunc, f.Nome AS Funcionario, 
-                          {0} AS Cliente, r.Descricao as DescricaoRota", descrNomeCliente));
+                          sc.Descricao, sc.Cancelada, f.IdFunc, f.Nome AS Funcionario, sc.IdOrcamento,
+                          {0} AS Cliente, r.Descricao as DescricaoRota, tsc.Descricao AS DescricaoTipoSugestao", descrNomeCliente));
 
             var whereClause = consulta.WhereClause;
 
@@ -136,7 +137,7 @@ namespace Glass.Global.Negocios.Componentes
                                 .FirstOrDefault()));
                 }
 
-                if (situacoes != null && situacoes.Length > 0)
+                if (situacoes != null && situacoes.Length > 0 && situacoes[0] != 0)
                 {
                     whereClause
                         .And(string.Format("Cancelada IN ({0})",
@@ -144,7 +145,7 @@ namespace Glass.Global.Negocios.Componentes
 
                     if (situacoes.Length > 1)
                         whereClause.AddDescription(" Situação: Ativas e Canceladas");
-                    
+
                     else
                     {
                         if (situacoes.Any(f => f == Situacao.Ativo))
@@ -152,13 +153,13 @@ namespace Glass.Global.Negocios.Componentes
                         if (situacoes.Any(f => f == Situacao.Inativo))
                             whereClause.AddDescription(" Situação: Canceladas");
                     }
-
-                    if (idRota.HasValue && idRota.Value > 0)
-                        whereClause
-                        .And("r.IdRota=?idRora")
-                        .Add("?idRora", idRota)
-                        .AddDescription(string.Format("CÃ³d. Rota: {0}", idRota));
                 }
+
+                if (idRota.HasValue && idRota.Value > 0)
+                    whereClause
+                    .And("r.IdRota=?idRora")
+                    .Add("?idRora", idRota)
+                    .AddDescription(string.Format("CÃ³d. Rota: {0}", idRota));
             }
 
             return consulta.ToVirtualResult<Entidades.SugestaoClientePesquisa>();

@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista;
+using Glass.API.Backend.Models.Pedidos.V1.ProdutosPedido.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;

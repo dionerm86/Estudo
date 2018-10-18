@@ -1,5 +1,5 @@
-Vue.component('fornecedor-filtros', {
-  mixins: [Mixins.Clonar, Mixins.Merge, Mixins.Comparar],
+ï»¿Vue.component('fornecedor-filtros', {
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Filtros selecionados para a lista de fornecedores.
@@ -12,7 +12,7 @@ Vue.component('fornecedor-filtros', {
     },
 
     /**
-     * Objeto com as configurações da tela de fornecedores.
+     * Objeto com as configuraÃ§Ãµes da tela de fornecedores.
      * @type {!Object}
      */
     configuracoes: {
@@ -49,14 +49,14 @@ Vue.component('fornecedor-filtros', {
      * Atualiza o filtro com os dados selecionados na tela.
      */
     filtrar: function() {
-      var novoFiltro = this.clonar(this.filtroAtual, true);
+      var novoFiltro = this.clonar(this.filtroAtual);
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
       }
     },
 
     /**
-     * Retorna os itens para o controle de situações de fornecedor.
+     * Retorna os itens para o controle de situaÃ§Ãµes de fornecedor.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroSituacoes: function () {
@@ -82,7 +82,7 @@ Vue.component('fornecedor-filtros', {
 
   watch: {
     /**
-     * Observador para a variável 'situacaoAtual'.
+     * Observador para a variÃ¡vel 'situacaoAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */
     situacaoAtual: {
@@ -93,7 +93,7 @@ Vue.component('fornecedor-filtros', {
     },
 
     /**
-     * Observador para a variável 'parcelaAtual'.
+     * Observador para a variÃ¡vel 'parcelaAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */
     parcelaAtual: {
@@ -104,7 +104,7 @@ Vue.component('fornecedor-filtros', {
     },
 
     /**
-     * Observador para a variável 'planoContaAtual'.
+     * Observador para a variÃ¡vel 'planoContaAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */
     planoContaAtual: {

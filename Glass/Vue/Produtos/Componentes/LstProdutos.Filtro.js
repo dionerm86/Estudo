@@ -1,5 +1,5 @@
 Vue.component('produtos-filtros', {
-  mixins: [Mixins.Clonar, Mixins.Merge, Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Filtros selecionados para a lista de produtos.
@@ -49,7 +49,7 @@ Vue.component('produtos-filtros', {
      * Atualiza o filtro com os dados selecionados na tela.
      */
     filtrar: function () {
-      var novoFiltro = this.clonar(this.filtroAtual, true);
+      var novoFiltro = this.clonar(this.filtroAtual);
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
       }
@@ -65,11 +65,11 @@ Vue.component('produtos-filtros', {
 
     /**
      * Retorna os itens para o controle de subgrupos de produto.
-     * @param {?number} idGrupoProduto O ID do grupo de produto.
+     * @param {?Object} filtro O filtro para a busca de subgrupos de produto.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterItensFiltroSubgrupos: function (idGrupoProduto) {
-      return Servicos.Produtos.Subgrupos.obterParaControle(idGrupoProduto);
+    obterItensFiltroSubgrupos: function (filtro) {
+      return Servicos.Produtos.Subgrupos.obterParaControle((filtro || {}).idGrupoProduto);
     }
   },
 

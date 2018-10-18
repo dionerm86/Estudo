@@ -3,8 +3,8 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Genericas;
-using Glass.API.Backend.Models.Parcelas.Filtro;
+using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.Parcelas.V1.Filtro;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;

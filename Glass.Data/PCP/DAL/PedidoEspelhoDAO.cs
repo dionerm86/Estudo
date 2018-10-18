@@ -1353,6 +1353,7 @@ namespace Glass.Data.DAL
                 // Aplica apenas o desconto, o acréscimo já está aplicado no valor do produto
                 if (!PedidoConfig.RatearDescontoProdutos && ped.Desconto > 0)
                 {
+                    pedEsp.TipoPedido = PedidoDAO.Instance.ObterTipoPedido(transaction, pedEsp.IdPedido);
                     var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(transaction, pedEsp.IdPedido, false, false, true);
                     bool aplicado = AplicarDesconto(transaction, pedEsp, ped.TipoDesconto, ped.Desconto, produtosPedidoEspelho);
                     FinalizarAplicacaoComissaoAcrescimoDesconto(transaction, pedEsp, produtosPedidoEspelho, aplicado);

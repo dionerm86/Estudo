@@ -1,6 +1,6 @@
 ﻿Vue.component('controle-boleto', {
   inheritAttrs: false,
-  mixins: [Mixins.Comparar, Mixins.FiltroQueryString],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString],
   props: {
     /**
      * Identificador da nota fiscal.

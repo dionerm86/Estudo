@@ -63,10 +63,10 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(dataIni))
                 lst.Add(new GDAParameter("?dataIni", DateTime.Parse(dataIni + " 00:00")));
-            
+
             if (!String.IsNullOrEmpty(dataFim))
                 lst.Add(new GDAParameter("?dataFim", DateTime.Parse(dataFim + " 23:59")));
-            
+
             if (!String.IsNullOrEmpty(valor))
                 lst.Add(new GDAParameter("?valor", "%" + valor + "%"));
 
@@ -91,7 +91,7 @@ namespace Glass.Data.DAL
         public int GetCount(int tabela, uint idRegistroCanc, bool exibirAdmin, string campo, uint idFuncCanc,
             string dataIni, string dataFim, string valor, bool buscarVazio)
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(tabela, idRegistroCanc, exibirAdmin, null, campo, idFuncCanc, dataIni, dataFim, valor, 
+            return objPersistence.ExecuteSqlQueryCount(Sql(tabela, idRegistroCanc, exibirAdmin, null, campo, idFuncCanc, dataIni, dataFim, valor,
                 false, buscarVazio), GetParams(campo, dataIni, dataFim, valor));
         }
 
@@ -267,7 +267,7 @@ namespace Glass.Data.DAL
                 log.IdRegistroCanc = (int)id;
                 log.NumEvento = numEvento;
                 log.Motivo = motivo;
-                log.IdFuncCanc = UserInfo.GetByIdFunc(idFunc).CodUser;
+                log.IdFuncCanc = idFunc;
                 log.DataCanc = DateTime.Now;
                 log.CancelamentoManual = manual;
                 log.Campo = p.Atributo.Campo;
@@ -342,7 +342,7 @@ namespace Glass.Data.DAL
         /// <param name="motivo"></param>
         public void LogContaReceber(GDASession sessao, ContasReceber contaReceber, string motivo, bool manual)
         {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.ContasReceber, 
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.ContasReceber,
                 contaReceber.IdContaR, contaReceber, motivo, manual);
         }
 
@@ -353,7 +353,7 @@ namespace Glass.Data.DAL
         /// <param name="motivo"></param>
         public void LogContaPagar(GDASession sessao, ContasPagar contaPagar, string motivo, bool manual)
         {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.ContasPagar, 
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.ContasPagar,
                 contaPagar.IdContaPg, contaPagar, motivo, manual);
         }
 
@@ -384,7 +384,7 @@ namespace Glass.Data.DAL
         /// <param name="motivo"></param>
         public void LogMovimentacaoBancaria(MovBanco movimentacaoBancaria, string motivo, bool manual)
         {
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.MovimentacaoBancaria, 
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.MovimentacaoBancaria,
                 movimentacaoBancaria.IdMovBanco, movimentacaoBancaria, motivo, manual);
         }
 
@@ -401,7 +401,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogImpressaoEtiquetas(GDASession session, uint idFunc, ImpressaoEtiqueta impressaoEtiqueta, string motivo, bool manual)
         {
-            InserirLog(session, idFunc, LogCancelamento.TabelaCancelamento.ImpressaoEtiqueta, 
+            InserirLog(session, idFunc, LogCancelamento.TabelaCancelamento.ImpressaoEtiqueta,
                 impressaoEtiqueta.IdImpressao, impressaoEtiqueta, motivo, manual);
         }
 
@@ -410,7 +410,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void LogPecaProjetoModelo(GDASession session, PecaProjetoModelo pecaProjetoModelo, string motivo, bool manual)
         {
-            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.PecaProjetoModelo, 
+            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.PecaProjetoModelo,
                 pecaProjetoModelo.IdPecaProjMod, pecaProjetoModelo, motivo, manual);
         }
 
@@ -422,7 +422,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogMaterialProjetoModelo(MaterialProjetoModelo materialProjetoModelo, string motivo, bool manual)
         {
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.MaterialProjetoModelo, 
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.MaterialProjetoModelo,
                 materialProjetoModelo.IdMaterProjMod, materialProjetoModelo, motivo, manual);
         }
 
@@ -431,7 +431,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void LogCaixaGeral(GDASession session, CaixaGeral caixaGeral, string motivo, bool manual)
         {
-            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.CaixaGeral, 
+            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.CaixaGeral,
                 caixaGeral.IdCaixaGeral, caixaGeral, motivo, manual);
         }
 
@@ -443,7 +443,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogAcerto(GDASession sessao, Acerto acerto, string motivo, bool manual)
         {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.Acerto, 
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.Acerto,
                 acerto.IdAcerto, acerto, motivo, manual);
         }
 
@@ -467,7 +467,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogTrocaDevolucao(GDASession session, TrocaDevolucao trocaDevolucao, string motivo, bool manual)
         {
-            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.TrocaDevolucao, 
+            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.TrocaDevolucao,
                 trocaDevolucao.IdTrocaDevolucao, trocaDevolucao, motivo, manual);
         }
 
@@ -484,7 +484,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void LogPedido(GDASession session, Pedido pedido, string motivo, bool manual)
         {
-            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.Pedido, 
+            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.Pedido,
                 pedido.IdPedido, pedido, motivo, manual);
         }
 
@@ -496,7 +496,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogLiberarPedido(GDASession sessao, LiberarPedido liberacaoPedido, string motivo, bool manual)
         {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.LiberarPedido, 
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.LiberarPedido,
                 liberacaoPedido.IdLiberarPedido, liberacaoPedido, motivo, manual);
         }
 
@@ -508,7 +508,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogSinal(GDASession sessao, Sinal sinal, string motivo, bool manual)
         {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.Sinal, 
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.Sinal,
                 sinal.IdSinal, sinal, motivo, manual);
         }
 
@@ -520,7 +520,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogAcertoCheque(AcertoCheque acertoCheque, string motivo, bool manual)
         {
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.AcertoCheque, 
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.AcertoCheque,
                 acertoCheque.IdAcertoCheque, acertoCheque, motivo, manual);
         }
 
@@ -544,7 +544,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogObra(GDASession sessao, Obra obra, string motivo, bool manual)
         {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.Obra, 
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.Obra,
                 obra.IdObra, obra, motivo, manual);
         }
 
@@ -556,7 +556,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogDevolucaoPagamento(GDASession sessao, DevolucaoPagto devolucaoPagamento, string motivo, bool manual)
         {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.DevolucaoPagamento, 
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.DevolucaoPagamento,
                 devolucaoPagamento.IdDevolucaoPagto, devolucaoPagamento, motivo, manual);
         }
 
@@ -568,7 +568,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogCreditoFornecedor(CreditoFornecedor creditoFornecedor, string motivo, bool manual)
         {
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.CreditoFornecedor, 
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.CreditoFornecedor,
                 creditoFornecedor.IdCreditoFornecedor, creditoFornecedor, motivo, manual);
         }
 
@@ -580,7 +580,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogMovEstoque(GDASession sessao, MovEstoque movEstoque, string motivo, bool manual)
         {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.MovEstoque, 
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.MovEstoque,
                 movEstoque.IdMovEstoque, movEstoque, motivo, manual);
         }
 
@@ -592,7 +592,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogMovEstoqueFiscal(GDASession sessao, MovEstoqueFiscal movEstoqueFiscal, string motivo, bool manual)
         {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.MovEstoqueFiscal, 
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.MovEstoqueFiscal,
                 movEstoqueFiscal.IdMovEstoqueFiscal, movEstoqueFiscal, motivo, manual);
         }
 
@@ -604,7 +604,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogFinalizacaoInstalacao(Instalacao instalacao, string motivo, bool manual)
         {
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.FinalizacaoInstalacao, 
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.FinalizacaoInstalacao,
                 instalacao.IdInstalacao, instalacao, motivo, manual);
         }
 
@@ -633,7 +633,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogRetalhoProducao(GDASession session, uint idFunc, RetalhoProducao retalho, string motivo, bool manual)
         {
-            InserirLog(session, idFunc, LogCancelamento.TabelaCancelamento.RetalhoProducao, 
+            InserirLog(session, idFunc, LogCancelamento.TabelaCancelamento.RetalhoProducao,
                 (uint)retalho.IdRetalhoProducao, retalho, motivo, manual);
         }
 
@@ -642,7 +642,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void LogSinalCompra(GDASession session, SinalCompra sinalCompra, string motivo, bool manual)
         {
-            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.SinalCompra, 
+            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.SinalCompra,
                 sinalCompra.IdSinalCompra, sinalCompra, motivo, manual);
         }
 
@@ -651,7 +651,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void LogAntecipFornec(GDASession session, AntecipacaoFornecedor antecipFornec, string motivo, bool manual)
         {
-            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.AntecipFornec, 
+            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.AntecipFornec,
                 antecipFornec.IdAntecipFornec, antecipFornec, motivo, manual);
         }
 
@@ -692,7 +692,7 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogDepostioNaoIdentificado(GDASession sessao, DepositoNaoIdentificado depositoNaoIdentificado, string motivo, bool manual)
         {
-            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.DepositoNaoIdentificado, 
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.DepositoNaoIdentificado,
                 depositoNaoIdentificado.IdDepositoNaoIdentificado, depositoNaoIdentificado, motivo, manual);
         }
 

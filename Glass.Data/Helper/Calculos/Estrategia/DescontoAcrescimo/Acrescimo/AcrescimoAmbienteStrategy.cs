@@ -1,5 +1,4 @@
-﻿using System;
-using Glass.Data.Model;
+﻿using Glass.Data.Model;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Acrescimo
 {

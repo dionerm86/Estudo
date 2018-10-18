@@ -165,6 +165,34 @@ namespace Glass.UI.Web.Relatorios
 
                         break;
                     }
+                case "InfoPedidos":
+                    {
+                        report.ReportPath = "Relatorios/rptInfoPedidos.rdlc";
+                        var fastDelivery = Glass.Conversoes.StrParaFloat(Request["fastDelivery"]);
+                        var idPedido = !String.IsNullOrEmpty(Request["idPedido"]) ? Glass.Conversoes.StrParaUint(Request["idPedido"]) : 0;
+                        var idCliente = !String.IsNullOrEmpty(Request["idCliente"]) ? Glass.Conversoes.StrParaUint(Request["idCliente"]) : 0;
+                        var tipo = !String.IsNullOrEmpty(Request["tipo"]) ? Glass.Conversoes.StrParaInt(Request["tipo"]) : 0;
+
+                        lstParam.Add(new ReportParameter("Data", Request["data"]));
+                        lstParam.Add(new ReportParameter("FastDelivery", fastDelivery.ToString()));
+                        lstParam.Add(new ReportParameter("TextoAdicionalProducao", ""));
+
+                        report.DataSources.Add(new ReportDataSource("PedidoRpt", Glass.Data.RelDAL.PedidoRptDAL.Instance.CopiaLista(PedidoDAO.Instance.GetForInfoPedidos(Request["data"],
+                            Request["data"], idPedido, idCliente, Request["nomeCliente"], tipo), PedidoRpt.TipoConstrutor.ListaPedidos, false, login)));
+
+                        break;
+                    }
+                case "InfoPedidosPeriodo":
+                    {
+                        report.ReportPath = "Relatorios/rptInfoPedidosPeriodo.rdlc";
+
+                        report.DataSources.Add(new ReportDataSource("InfoPedidos", Glass.Data.RelDAL.InfoPedidosDAO.Instance.GetInfoPedidos(Request["dataIni"], Request["dataFim"])));
+
+                        lstParam.Add(new ReportParameter("DataInicio", Request["dataIni"]));
+                        lstParam.Add(new ReportParameter("DataFim", Request["dataFim"]));
+
+                        break;
+                    }
                 case "LiberarPedidoMov":
                 case "LiberarPedidoMovSemValor":
                     {
@@ -518,7 +546,7 @@ namespace Glass.UI.Web.Relatorios
                         {
                             lstParam.Add(new ReportParameter("ExibirColunaDataLib", PedidoConfig.LiberarPedido.ToString()));
                             lstParam.Add(new ReportParameter("Agrupar", Request["agrupar"].ToString())); // 1-Cliente, 2-Data Venc, 3-Data Cad, 4-Comissionado
-                            
+
                             decimal creditoTotal = 0;
                             decimal chequeDevolvidoTotal = 0;
                             var idCliContasRec = new List<uint>();
@@ -929,6 +957,17 @@ namespace Glass.UI.Web.Relatorios
                         var debitosCliente = ContasReceberDAO.Instance.GetDebitosList(idCliConsRapida, 0, 0, null, 0, 0, null, null, null, 0, 0);
                         var sugestoes = SugestaoClienteDAO.Instance.GetList(0, idCliConsRapida, 0, null, null, null, null, 0, null, situacaoCliente, null, 0, 0);
 
+                        //Compras
+                        var dataAtual = DateTime.Now;
+
+                        int mesInicio = dataAtual.AddMonths(-5).Month;
+                        int mesFim = dataAtual.Month;
+                        int anoInicio = dataAtual.AddMonths(-5).Year;
+                        int anoFim = dataAtual.Year;
+
+                        var vendas = VendasMesesDAO.Instance.GetVendasMeses(idCliConsRapida, null, null, false, 0, null, mesInicio,
+                            anoInicio, mesFim, anoFim, null, 0, 0, null, null, null, 0, 0, 0, false, null, 0, 0, false, null);
+
                         foreach (var dac in descAcresCliente)
                             lstDacProdutos.AddRange(DescontoAcrescimoClienteDAO.Instance.GetOcorrenciasByClienteGrupoSubgrupo(idCliConsRapida, (uint)dac.IdGrupoProd, (uint)(dac.IdSubgrupoProd ?? 0)));
 
@@ -943,12 +982,13 @@ namespace Glass.UI.Web.Relatorios
                         report.DataSources.Add(new ReportDataSource("Cliente", new Cliente[] { clCons }));
                         report.DataSources.Add(new ReportDataSource("FormaPagto", formasPagtoDisp.ToArray()));
                         report.DataSources.Add(new ReportDataSource("Parcelas", parcelasDisp.ToArray()));
-                        report.DataSources.Add(new ReportDataSource("PedidoRpt", Glass.Data.RelDAL.PedidoRptDAL.Instance.CopiaLista(pedsBloqueioEmissao,
+                        report.DataSources.Add(new ReportDataSource("PedidoRpt", PedidoRptDAL.Instance.CopiaLista(pedsBloqueioEmissao,
                             PedidoRpt.TipoConstrutor.ListaPedidos, false, login)));
                         report.DataSources.Add(new ReportDataSource("DescontoAcrescimoCliente", descAcresCliente.ToArray()));
                         report.DataSources.Add(new ReportDataSource("DacProdutos", lstDacProdutos.ToArray()));
                         report.DataSources.Add(new ReportDataSource("ContasReceber", debitosCliente.ToArray()));
                         report.DataSources.Add(new ReportDataSource("SugestaoCliente", sugestoes.ToArray()));
+                        report.DataSources.Add(new ReportDataSource("VendasMeses", vendas.ToArray()));
 
                         break;
                     }
@@ -3984,6 +4024,14 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("Reimpressao", (Request["reimpressao"] != null && Request["reimpressao"].ToLower() == "true").ToString().ToLower()));
                         report.ReportPath = "Relatorios/rptComprovanteCapptaTef.rdlc";
                         report.DataSources.Add(new ReportDataSource("Transacao", transacoes));
+                        break;
+                    }
+                case "UtilizacaoSistema":
+                    {
+                        var utilizacao = LoginSistemaDAO.Instance.GetForRpt(Request["idFuncionario"].StrParaUint(), Request["tipoAtividade"].StrParaInt(), Request["periodoIni"], Request["periodoFim"]);
+                        report.ReportPath = "Relatorios/rptUtilizacaoSistema.rdlc";
+                        report.DataSources.Add(new ReportDataSource("Utilizacao", utilizacao));
+                        lstParam.Add(new ReportParameter("Criterio",  ""));
                         break;
                     }
 

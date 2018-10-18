@@ -1,4 +1,4 @@
-﻿// <copyright file="TraducaoOrdenacaoListaProcessos.cs" company="Sync Softwares">
+// <copyright file="TraducaoOrdenacaoListaProcessos.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -43,6 +43,7 @@ namespace Glass.API.Backend.Helper.Processos
                 case "gerararquivodemesa":
                 case "numerodiasuteisdataentrega":
                 case "tipoprocesso":
+                case "situacao":
                     return campo;
 
                 case "tipospedidos":

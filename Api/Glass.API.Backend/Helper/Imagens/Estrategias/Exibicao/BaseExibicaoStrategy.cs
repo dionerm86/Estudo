@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Imagens.Exibicao;
+using Glass.API.Backend.Models.Imagens.V1.Exibicao;
 using System;
 using System.IO;
 using System.Web;

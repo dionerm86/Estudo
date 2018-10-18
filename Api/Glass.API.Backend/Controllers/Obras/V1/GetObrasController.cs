@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Obras.Filtro;
+using Glass.API.Backend.Models.Obras.V1.Filtro;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;

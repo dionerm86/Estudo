@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Veiculos.Lista;
+using Glass.API.Backend.Models.Veiculos.V1.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
@@ -24,12 +24,12 @@ namespace Glass.API.Backend.Controllers.Veiculos.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Veiculos.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Veiculos.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaVeiculos()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Veiculos.Configuracoes.ListaDto();
+                var configuracoes = new Models.Veiculos.V1.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }
