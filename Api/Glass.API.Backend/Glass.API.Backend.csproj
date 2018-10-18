@@ -282,6 +282,7 @@
     <Compile Include="Controllers\Produtos\V1\SubgruposProduto\DeleteSubgruposProdutoController.cs" />
     <Compile Include="Controllers\Produtos\V1\SubgruposProduto\PatchSubgruposProdutoController.cs" />
     <Compile Include="Controllers\Produtos\V1\SubgruposProduto\PostSubgruposProdutoController.cs" />
+    <Compile Include="Controllers\Rotas\V1\DeleteRotasController.cs" />
     <Compile Include="Controllers\Sinais\V1\SinaisController.cs" />
     <Compile Include="Controllers\Sinais\V1\GetSinaisController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
@@ -422,6 +423,7 @@
     <Compile Include="Helper\Producao\Turnos\TraducaoOrdenacaoListaTurnos.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
+    <Compile Include="Helper\Rotas\TraducaoOrdenacaoListaRotas.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\TraducaoOrdenacaoListaTabelasDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\Produtos\SubgruposProduto\ConverterCadastroAtualizacaoParaSubgrupoProduto.cs" />
@@ -490,6 +492,10 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Rotas\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Turnos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Producao\V1\Turnos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Turnos\Lista\ListaDto.cs" />

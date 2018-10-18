@@ -16,13 +16,8 @@ Servicos.Orcamentos = (function(http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterLista: function(filtro, pagina, numeroRegistros, ordenacao) {
-      filtro = filtro || {};
-      filtro.pagina = pagina;
-      filtro.numeroRegistros = numeroRegistros;
-      filtro.ordenacao = ordenacao;
-
       return http().get(API.substr(0, API.length - 1), {
-        params: filtro
+        params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
       });
     },
 
@@ -48,7 +43,7 @@ Servicos.Orcamentos = (function(http) {
       if (!idOrcamento) {
         throw new Error('Orçamento é obrigatório.');
       }
-      debugger;
+
       return http().post(API + idOrcamento + '/gerarPedidosAgrupados');
     },
 
