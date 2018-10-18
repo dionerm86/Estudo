@@ -237,9 +237,10 @@ namespace Glass.UI.Web.Utils
             
             foreach (var c in contas)
             {
-                var formaPagto = c.IdConta.Value == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ParcelamentoObra) ?
-                    FormaPagtoDAO.Instance.GetElementByPrimaryKey((uint)Data.Model.Pagto.FormaPagto.Prazo) :
-                    UtilsPlanoConta.GetFormaPagtoByIdConta(c.IdConta.Value);
+                var formaPagto = 
+                    ContasReceberDAO.Instance.ObterPlanosContaConsiderarPrazoParaCnab().Contains(c.IdConta.Value)
+                    ? FormaPagtoDAO.Instance.GetElementByPrimaryKey((uint)Data.Model.Pagto.FormaPagto.Prazo) 
+                    : UtilsPlanoConta.GetFormaPagtoByIdConta(c.IdConta.Value);
 
                 sb.Append(c.IdContaR + "\t");
                 sb.Append(c.Referencia.Replace("\t", "").Replace("\n", "") + "\t");
