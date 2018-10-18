@@ -45,9 +45,7 @@ namespace Glass.Data.Handlers
             var lstParam = new List<ReportParameter>();
 
             var mdfe = ManifestoEletronicoDAO.Instance.ObterManifestoEletronicoPeloId(idMDFe);
-            var damdfe = MDFeDAO.ObterParaDAMDFE(context, mdfe.ChaveAcesso);
-
-            damdfe.InformacoesAdicionaisFisco = mdfe.InformacoesAdicionaisFisco;
+            var damdfe = MDFeDAO.ObterParaDAMDFE(context, mdfe.ChaveAcesso);            
 
             var participanteEmitente = mdfe.Participantes.Where(f => f.TipoParticipante == Model.TipoParticipanteEnum.Emitente).FirstOrDefault();
             var idLojaEmitente = participanteEmitente.IdLoja.GetValueOrDefault(0);
