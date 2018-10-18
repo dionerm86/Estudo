@@ -44,7 +44,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Turnos
                         return this.ErroValidacao($"Falha ao cadastrar turno. {resultado.Message.Format()}");
                     }
 
-                    return this.Criado("Turno cadastrado com sucesso!", 0);
+                    return this.Criado("Turno cadastrado com sucesso!", turno.IdTurno);
                 }
                 catch (Exception ex)
                 {
