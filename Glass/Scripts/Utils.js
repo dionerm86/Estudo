@@ -12,16 +12,27 @@
 //------------------------------------------------------------------------------------
 function FindControl(id, tipo, parent)
 {
-    parent = typeof parent == "object" ? parent : document;
-    var listaControles = parent.getElementsByTagName(tipo);
+  parent = typeof parent == "object" ? parent : document;
+  var listaControles = parent.getElementsByTagName(tipo);
 
-    for (var i = 0; i < listaControles.length; i++) {
-        if (listaControles[i].id.indexOf(id) != -1 && listaControles[i].id.substring(listaControles[i].id.indexOf(id)) == id) {
-            return listaControles[i];
-        }
+  // Percorre os controles até achar o controle que tenha o ID igual ao ID informado por parâmetro.
+  for (var i = 0; i < listaControles.length; i++) {
+    if (listaControles[i].id.indexOf(id) != -1 && listaControles[i].id.substring(listaControles[i].id.indexOf(id)) == id) {
+      return listaControles[i];
     }
+  }
 
-    return null;
+  // Percorre a lista de controles, até achar o controle que tenha o ID semelhante ao ID informado por parâmetro.
+  // Ex.: ao buscar txtNome, caso exista o controle txtNomeCliente, o controle retornado será txtNome ou txtNomeCliente,
+  // ou seja, o controle que o "for" encontrar primeiro.
+  // Obs.: se fosse um comando SQL, a condição seria igual a "listaControles[i].id LIKE 'id%'".
+  for (var i = 0; i < listaControles.length; i++) {
+    if (listaControles[i].id.indexOf(id) != -1) {
+      return listaControles[i];
+    }
+  }
+
+  return null;
 }
 
 //------------------------------------------------------------------------

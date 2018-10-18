@@ -1,4 +1,4 @@
-using Glass.Configuracoes;
+Ôªøusing Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Data.Model;
@@ -40,7 +40,7 @@ namespace Glass.UI.Web.Cadastros
                     return;
                 }
 
-                // Se o usu·rio n„o tiver permiss„o para editar este orÁamento, retorna para listagem de orÁamentos
+                // Se o usu√°rio n√£o tiver permiss√£o para editar este or√ßamento, retorna para listagem de or√ßamentos
                 if (((HiddenField)dtvOrcamento.FindControl("hdfEditVisible"))?.Value?.ToLower() == "false" || !orcamento.EditVisible)
                 {
                     RedirecionarListagemOrcamento();
@@ -115,7 +115,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void ctrlMedicao_Load(object sender, EventArgs e)
         {
-            // Esconde controles relacionados ‡ mediÁ„o
+            // Esconde controles relacionados √† medi√ß√£o
             if (!Geral.ControleMedicao)
             {
                 ((WebControl)sender).Visible = false;
@@ -123,7 +123,7 @@ namespace Glass.UI.Web.Cadastros
         }
 
         /// <summary>
-        /// Mostra/Esconde campos do total bruto e lÌquido
+        /// Mostra/Esconde campos do total bruto e l√≠quido
         /// </summary>
         protected void lblTotalBrutoLiquido_Load(object sender, EventArgs e)
         {
@@ -301,7 +301,7 @@ namespace Glass.UI.Web.Cadastros
 
                     if (cliente == null)
                     {
-                        throw new Exception("Cliente n„o encontrado");
+                        throw new Exception("Cliente n√£o encontrado");
                     }
 
                     orcamento.IdCliente = (uint)cliente.IdCli;
@@ -381,7 +381,7 @@ namespace Glass.UI.Web.Cadastros
                 }
                 catch (Exception ex)
                 {
-                    MensagemAlerta.ErrorMsg("Falha ao gerar mediÁ„o definitiva.", ex, Page);
+                    MensagemAlerta.ErrorMsg("Falha ao gerar medi√ß√£o definitiva.", ex, Page);
                 }
             }
         }
@@ -411,7 +411,7 @@ namespace Glass.UI.Web.Cadastros
 
                     if (cliente == null)
                     {
-                        throw new Exception("Cliente n„o encontrado");
+                        throw new Exception("Cliente n√£o encontrado");
                     }
 
                     orca.IdCliente = (uint)cliente.IdCli;
@@ -521,7 +521,7 @@ namespace Glass.UI.Web.Cadastros
             var idAplicacaoFilha = ((HiddenField)grdProdutosOrcamento.FooterRow.FindControl("hdfIdAplicacaoFilhos"))?.Value?.StrParaInt();
             var aplicarBenefComposicao = ((CheckBox)grdProdutosOrcamento.FooterRow.FindControl("chkAplicarBenefFilhos")).Checked;
 
-            // Cria uma inst‚ncia da classe ProdutosOrcamento.
+            // Cria uma inst√¢ncia da classe ProdutosOrcamento.
             var produtoOrcamento = new ProdutosOrcamento();
 
             produtoOrcamento.IdOrcamento = (uint)idOrcamento;
@@ -554,7 +554,7 @@ namespace Glass.UI.Web.Cadastros
 
             try
             {
-                // Insere o produto orÁamento.
+                // Insere o produto or√ßamento.
                 produtoOrcamento.IdProd = ProdutosOrcamentoDAO.Instance.Insert(produtoOrcamento);
 
                 ((HiddenField)grdProdutosOrcamento.FooterRow.FindControl("hdfAlturaCalcIns")).Value = string.Empty;
@@ -570,7 +570,7 @@ namespace Glass.UI.Web.Cadastros
             }
             catch (Exception ex)
             {
-                MensagemAlerta.ErrorMsg("Falha ao incluir produto no orÁamento.", ex, Page);
+                MensagemAlerta.ErrorMsg("Falha ao incluir produto no or√ßamento.", ex, Page);
                 return;
             }
         }
@@ -625,7 +625,7 @@ namespace Glass.UI.Web.Cadastros
         }
 
         /// <summary>
-        /// Controla se ser· mostrado o label ou a textBox do valor e da qtde
+        /// Controla se ser√° mostrado o label ou a textBox do valor e da qtde
         /// </summary>
         protected void EditarValorQtde_DataBinding(object sender, EventArgs e)
         {
@@ -657,13 +657,13 @@ namespace Glass.UI.Web.Cadastros
             CheckBox chkNegociar = (CheckBox)sender;
             var idProdOrcamento = ((HiddenField)chkNegociar.Parent.FindControl("hdfIdProdOrcamento")).Value.StrParaInt();
 
-            // Marca/desmarca o ambiente como negoci·vel.
+            // Marca/desmarca o ambiente como negoci√°vel.
             ProdutosOrcamentoDAO.Instance.AtualizarNegociar(null, idProdOrcamento, chkNegociar.Checked);
         }
 
         #endregion
 
-        #region MÈtodos Ajax
+        #region M√©todos Ajax
 
         [Ajax.AjaxMethod()]
         public string ObterLojaSubgrupoProd(string codInterno)
@@ -696,13 +696,13 @@ namespace Glass.UI.Web.Cadastros
         }
 
         [Ajax.AjaxMethod]
-        public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda, string idProdOrcaStr, string percDescontoQtdeStr)
+        public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda, string idProdOrcaStr, string percDescontoQtdeStr, string altura)
         {
-            return WebGlass.Business.Produto.Fluxo.Valor.Ajax.GetValorMinimoOrca(codInterno, tipoEntrega, idCliente, revenda, idProdOrcaStr, percDescontoQtdeStr, Request["IdOrca"]);
+            return WebGlass.Business.Produto.Fluxo.Valor.Ajax.GetValorMinimoOrca(codInterno, tipoEntrega, idCliente, revenda, idProdOrcaStr, percDescontoQtdeStr, Request["IdOrca"], altura);
         }
 
         /// <summary>
-        /// Retorna o CÛdigo/DescriÁ„o do produto
+        /// Retorna o C√≥digo/Descri√ß√£o do produto
         /// </summary>
         [Ajax.AjaxMethod()]
         public string GetProduto(string codInterno, string tipoEntrega, string revenda, string idCliente, string percComissao, string percDescontoQtdeStr, string idLoja)
@@ -730,7 +730,7 @@ namespace Glass.UI.Web.Cadastros
 
         #endregion
 
-        #region MÈtodos auxiliares
+        #region M√©todos auxiliares
 
         protected Color GetCorObsCliente()
         {
@@ -747,8 +747,8 @@ namespace Glass.UI.Web.Cadastros
                 if (situacao == (int)Data.Model.Orcamento.SituacaoOrcamento.Negociado)
                 {
                     e.Cancel = true;
-                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", $"alert('O orÁamento est· negociado, n„o È possÌvel alter·-lo!'); redirectUrl('{ CaminhoListagemOrcamento() }');", true);
-                    MensagemAlerta.ShowMsg("O orÁamento est· negociado, n„o È possÌvel alter· - lo.", Page);
+                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", $"alert('O or√ßamento est√° negociado, n√£o √© poss√≠vel alter√°-lo!'); redirectUrl('{ CaminhoListagemOrcamento() }');", true);
+                    MensagemAlerta.ShowMsg("O or√ßamento est√° negociado, n√£o √© poss√≠vel alter√° - lo.", Page);
                 }
             }
         }
@@ -826,7 +826,7 @@ namespace Glass.UI.Web.Cadastros
         {
             if (e.Exception != null)
             {
-                Glass.MensagemAlerta.ErrorMsg("Falha ao cadastrar OrÁamento.", e.Exception, Page);
+                Glass.MensagemAlerta.ErrorMsg("Falha ao cadastrar Or√ßamento.", e.Exception, Page);
                 e.ExceptionHandled = true;
             }
             else
@@ -840,7 +840,7 @@ namespace Glass.UI.Web.Cadastros
         {
             if (e.Exception != null)
             {
-                Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar dados do OrÁamento.", e.Exception, Page);
+                Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar dados do Or√ßamento.", e.Exception, Page);
                 Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "callback", "retornaPagina();", true);
                 e.ExceptionHandled = true;
             }
@@ -942,7 +942,7 @@ namespace Glass.UI.Web.Cadastros
         {
             if (grdProdutosAmbienteOrcamento?.Rows?.Count > 0)
             {
-                // Exibe a primeira linha somente se houver produto ambiente cadastrado para o orÁamento.
+                // Exibe a primeira linha somente se houver produto ambiente cadastrado para o or√ßamento.
                 grdProdutosAmbienteOrcamento.Rows[0].Visible = ProdutosOrcamentoDAO.Instance.PesquisarProdutosAmbienteOrcamentoCount(null, Request["idOrca"].StrParaIntNullable()) > 0;
             }
         }
@@ -965,7 +965,7 @@ namespace Glass.UI.Web.Cadastros
                 grdProdutosOrcamento.Visible = true;
                 grdProdutosOrcamento.DataBind();
 
-                // Mostra no label qual ambiente est· sendo incluido produtos.
+                // Mostra no label qual ambiente est√° sendo incluido produtos.
                 var nomeAmbiente = ProdutosOrcamentoDAO.Instance.ObterNomeAmbiente(null, idProdAmbiente);
                 lblAmbiente.Text = $"<br />{ nomeAmbiente }";
             }
@@ -1002,7 +1002,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 var idProdAmbiente = hdfIdProdAmbienteOrcamento?.Value?.StrParaIntNullable();
 
-                // Exibe a primeira linha somente se houver produto cadastrado para o orÁamento.
+                // Exibe a primeira linha somente se houver produto cadastrado para o or√ßamento.
                 grdProdutosOrcamento.Rows[0].Visible = ProdutosOrcamentoDAO.Instance.PesquisarProdutosOrcamentoCount(null, Request["idOrca"].StrParaInt(), idProdAmbiente) > 0;
             }
         }

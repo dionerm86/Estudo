@@ -130,6 +130,7 @@
             idProdOrcamento = idProdOrcamento > 0 ? idProdOrcamento : 0;
             var codInterno = FindControl("txtCodProdIns", "input");
             codInterno = codInterno != null ? codInterno.value : FindControl("lblCodProdIns", "span").innerHTML;
+            var altura = FindControl("txtAlturaIns", "input").value;
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
@@ -137,7 +138,7 @@
             controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));        
             var percDescontoQtde = controleDescQtde.PercDesconto();
 
-            FindControl("hdfValMin", "input").value = CadOrcamento.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, idProdOrcamento, percDescontoQtde).value;
+            FindControl("hdfValMin", "input").value = CadOrcamento.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, idProdOrcamento, percDescontoQtde, altura).value;
         }
 
         // Função chamada após selecionar produto pelo popup
