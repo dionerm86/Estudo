@@ -10,8 +10,7 @@
 // Retorno:
 //   Um objeto representando o controle, se este for encontrado; caso contrário, nulo.
 //------------------------------------------------------------------------------------
-function FindControl(id, tipo, parent)
-{
+function FindControl(id, tipo, parent) {
   parent = typeof parent == "object" ? parent : document;
   var listaControles = parent.getElementsByTagName(tipo);
 
