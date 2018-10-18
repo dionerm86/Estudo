@@ -1695,7 +1695,7 @@ namespace Glass.Data.DAL
             }
 
             if (idCliente == null)
-                throw new Exception("Login ou senha inválidos.");
+                throw new Exception("Login ou senha inválidos ou cadastro inativado.");
 
             return GetLogin(Glass.Conversoes.StrParaUint(idCliente.ToString()));
         }
