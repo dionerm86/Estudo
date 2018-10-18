@@ -35,7 +35,7 @@ Servicos.Produtos = (function(http) {
 
       /**
        * Remove um grupo de produto.
-       * @param {!number} idCorVidro O identificador da cor de vidro que será excluída.
+       * @param {!number} idGrupoProduto O identificador do grupo de produto que será excluído.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       excluir: function (idGrupoProduto) {
@@ -48,7 +48,7 @@ Servicos.Produtos = (function(http) {
 
       /**
        * Insere um grupo de produto.
-       * @param {!Object} grupoProduto O objeto com os dados do grupo de produto a ser inserida.
+       * @param {!Object} grupoProduto O objeto com os dados do grupo de produto a ser inserido.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       inserir: function (grupoProduto) {

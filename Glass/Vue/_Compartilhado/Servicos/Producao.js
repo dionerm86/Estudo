@@ -28,6 +28,73 @@ Servicos.Producao = (function(http) {
     },
 
     /**
+     * Objeto com os serviços para a API de turnos.
+     */
+    Turnos: {
+      /**
+       * Recupera a lista de turnos.
+       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'turnos', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Remove um turno.
+       * @param {!number} id O identificador do turno que será excluído.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      excluir: function (id) {
+        if (!id) {
+          throw new Error('Turno é obrigatório.');
+        }
+
+        return http().delete(API + 'turnos/' + id);
+      },
+
+      /**
+       * Insere um turno.
+       * @param {!Object} turno O objeto com os dados do turno a ser inserido.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      inserir: function (turno) {
+        return http().post(API + 'turnos', turno);
+      },
+
+      /**
+       * Altera os dados de um turno.
+       * @param {!number} id O identificador do item que será alterado.
+       * @param {!Object} turno O objeto com os dados do item a serem alterados.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      atualizar: function (id, turno) {
+        if (!id) {
+          throw new Error('Turno é obrigatório.');
+        }
+
+        if (!turno || turno === {}) {
+          return Promise.resolve();
+        }
+
+        return http().patch(API + 'turnos/' + id, turno);
+      },
+
+      /**
+       * Recupera a lista de sequências de turno para uso no controle de seleção.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterSequencias: function () {
+        return http().get(API + 'turnos/sequencias');
+      }
+    },
+
+    /**
      * Recupera a lista de peças para a tela de consulta de produção.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de peças.
      * @param {number} pagina O número da página de resultados a ser exibida.
