@@ -101,6 +101,7 @@ namespace Glass.Data.RelModel
             IdPedido = ped.IdPedido;
             NomeCliente = ped.NomeCliente;
             NomeCli = ped.NomeCli;
+            NomeFuncCliente = ped.NomeFuncCliente;
             DescrTipoEntrega = ped.DescrTipoEntrega;
             RptCpfCnpj = ped.RptCpfCnpj;
             RptRgEscinst = ped.RptRgEscinst;
