@@ -638,7 +638,7 @@ namespace Glass.Data.RelDAL
                 }
 
                 /* Chamado 22802. */
-                if (GrupoProdDAO.Instance.ObtemValorCampo<TipoGrupoProd>("TipoGrupo",
+                if (fiscal && GrupoProdDAO.Instance.ObtemValorCampo<TipoGrupoProd>("TipoGrupo",
                     string.Format("IdGrupoProd={0}", ProdutoDAO.Instance.ObtemIdGrupoProd((int)retorno[i].IdProd))) ==
                     TipoGrupoProd.UsoConsumo)
                     retorno.RemoveAt(i);
