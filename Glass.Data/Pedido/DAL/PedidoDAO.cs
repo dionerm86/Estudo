@@ -13514,8 +13514,11 @@ namespace Glass.Data.DAL
                         objUpdate.Desconto = 0;
                     }
 
+                    var descontoAplicado = aplicarDesconto || aplicarAcrescimo || descontoRemovido;
+                    var manterDescontoAdministrador = Geral.ManterDescontoAdministrador && !descontoAplicado;
+
                     FinalizarAplicacaoComissaoAcrescimoDesconto(session, objUpdate, produtosPedido,
-                        aplicarDesconto || aplicarAcrescimo || descontoRemovido);
+                        descontoAplicado, manterDescontoAdministrador);
 
                     #endregion
 
