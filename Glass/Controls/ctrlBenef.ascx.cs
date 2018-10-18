@@ -2057,7 +2057,7 @@ namespace Glass.UI.Web.Controls
                     break;
     
                 case "orçamento": 
-                    redondo = ProdutosOrcamentoDAO.Instance.IsRedondo(idProd);
+                    redondo = ProdutosOrcamentoDAO.Instance.ObterRedondo(null, (int)idProd);
                     break;
     
                 case "material":

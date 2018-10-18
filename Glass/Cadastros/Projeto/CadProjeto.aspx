@@ -640,7 +640,7 @@
             var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfIdProdMater", "input").value);
             var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
 
-            if(idSubgrupo.value != "" && retornoValidacao.value == "False" && FindControl("txtProcIns", "input").value != "")
+            if(idSubgrupo.value != "" && retornoValidacao.value == "false" && FindControl("txtProcIns", "input").value != "")
             {
                 FindControl("txtProcIns", "input").value = "";
                 alert("Este processo não pode ser selecionado para este produto.")

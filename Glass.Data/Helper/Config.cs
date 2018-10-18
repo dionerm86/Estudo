@@ -567,7 +567,6 @@ namespace Glass.Data.Helper
             ExibirMensagemWebGlassParceiros = 1285,
             UploadImagensOrcamento = 1286,
             AlterarOrcamentoVendedor = 1287,
-            AmbienteOrcamento = 1288,
             OrcamentoGeraMedicaoDefinitiva = 1289,
             ApenasAdminImprimeOrcamento = 1292,
             TipoOrcamentoPadrao = 1299,

@@ -119,6 +119,7 @@ namespace Glass.Data.Model
             FaixaRentabilidadeComissao = 108,
             FaixaRentabilidadeLiberacao = 109,
             GrupoCliente,
+            ImagemOrcamento = 111,
         }
 
         public static string GetDescrTabela(int tabela)

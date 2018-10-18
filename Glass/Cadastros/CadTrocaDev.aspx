@@ -309,7 +309,7 @@
 
         // Carrega dados do produto com base no código do produto passado
         function loadProduto(codInterno, tipo) {
-            debugger;
+
             if (codInterno == "")
                 return false;
 

@@ -33,18 +33,18 @@ namespace Glass.Orcamento.Negocios.Entidades
         }
 
         /// <summary>
-        /// Identificador do produto do pedido.
+        /// Identificador do ambiente do pedido.
         /// </summary>
-        public uint IdProdOrcamento
+        public int? IdAmbientePedido
         {
-            get { return DataModel.IdProd; }
+            get { return DataModel.IdAmbientePedido; }
             set
             {
-                if (DataModel.IdProdPed != value &&
-                    RaisePropertyChanging("IdProd", value))
+                if (DataModel.IdAmbientePedido != value &&
+                    RaisePropertyChanging("IdAmbientePedido", value))
                 {
-                    DataModel.IdProdPed = value;
-                    RaisePropertyChanged("IdProd");
+                    DataModel.IdAmbientePedido = value;
+                    RaisePropertyChanged("IdAmbientePedido");
                 }
             }
         }

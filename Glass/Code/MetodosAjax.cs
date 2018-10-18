@@ -74,7 +74,7 @@ namespace Glass.UI.Web
         [Ajax.AjaxMethod()]
         public static string ValidarProcesso(string subgrupoProd, string idProcesso)
         {
-            return Glass.Data.DAL.ClassificacaoSubgrupoDAO.Instance.VerificarAssociacaoExistente(Conversoes.StrParaInt(subgrupoProd), Conversoes.StrParaInt(idProcesso)).ToString();
+            return Glass.Data.DAL.ClassificacaoSubgrupoDAO.Instance.VerificarAssociacaoExistente(Conversoes.StrParaInt(subgrupoProd), Conversoes.StrParaInt(idProcesso)).ToString().ToLower();
         }
 
         /// <summary>
