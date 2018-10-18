@@ -43,7 +43,7 @@ namespace Glass.PCP.Negocios.Componentes
         }
 
         /// <summary>
-        /// Recupera os dados para a expedição balcão
+        /// Recupera os dados para a expedição balcão.
         /// </summary>
         public Entidades.ExpBalcao BuscaParaExpBalcao(int idLiberarPedido, int idPedido, string visualizar)
         {
@@ -73,39 +73,18 @@ namespace Glass.PCP.Negocios.Componentes
                     .InnerJoin<Glass.Data.Model.Pedido>("p.IdPedido = pp.IdPedido", "p")
                     .InnerJoin<ProdutosLiberarPedido>("p.IdPedido = plp.IdPedido", "plp")
                     .InnerJoin<Produto>("pp.IdProd = prod.IdProd", "prod")
-                .Where(@"plp.IdLiberarPedido = ?id 
-                        AND p.TipoEntrega = ?tipoEntrega
+                .Where(@"plp.IdLiberarPedido = ?id
                         AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo=0)
                         AND ppp.Situacao = ?situacaoPPP
                         AND ppp.IdProdPedProducaoParent IS NULL")
                     .Add("?situacaoPPP", ProdutoPedidoProducao.SituacaoEnum.Producao)
                     .Add("?id", idLiberarPedido)
-                    .Add("?tipoEntrega", Glass.Data.Model.Pedido.TipoEntregaPedido.Balcao)
                 .Select(@"p.IdPedido, ppp.IdProdPedProducao, ppp.NumEtiqueta, p.CodCliente as PedCli, pp.IdProdPedEsp, ppp.NumEtiqueta AS PedidoEtiqueta,
                             (pp.Peso / pp.Qtde) as Peso, prod.CodInterno as CodProduto, prod.Descricao as DescProduto, pp.Altura, pp.Largura,
                             (pp.TotM / pp.Qtde) as M2")
                 .GroupBy("ppp.IdProdPedProducao");
 
-            var consultaRevenda = SourceContext.Instance.CreateQuery()
-                .From<ProdutosPedido>("pp")
-                    .InnerJoin<Glass.Data.Model.Pedido>("p.IdPedido = pp.IdPedido", "p")
-                    .InnerJoin<ProdutosLiberarPedido>("p.IdPedido = plp.IdPedido", "plp")
-                    .InnerJoin<Produto>("pp.IdProd = prod.IdProd", "prod")
-                    .LeftJoin<SubgrupoProd>("sgp.IdSubgrupoProd = prod.IdSubgrupoProd", "sgp")
-                .Where(@"plp.IdLiberarPedido = ?id
-                        AND p.TipoEntrega = ?tipoEntrega
-                        AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo=0)
-                        AND (sgp.ProdutosEstoque IS NOT NULL AND sgp.ProdutosEstoque=1)
-                        AND (sgp.GeraVolume IS NULL OR sgp.GeraVolume=0) 
-                        AND (p.GerarPedidoProducaoCorte IS NULL OR p.GerarPedidoProducaoCorte=0)")
-                    .Add("?id", idLiberarPedido)
-                    .Add("?tipoEntrega", Glass.Data.Model.Pedido.TipoEntregaPedido.Balcao)
-                .Select(@"p.IdPedido, pp.IdProd, p.CodCliente as PedCli, pp.Peso, pp.Qtde, pp.QtdSaida, pp.TotM, prod.CodInterno,
-                            prod.Descricao as DescrProduto, pp.Altura, pp.Largura, (sgp.TipoSubgrupo = ?tipoSubGrupo) as ChapaVidro")
-                    .Add("?tipoSubGrupo", TipoSubgrupoProd.ChapasVidro)
-                .GroupBy("pp.IdProdPed")
-                .UnionAll(
-                    SourceContext.Instance.CreateQuery()
+            var unionConsultaRevenda = SourceContext.Instance.CreateQuery()
                     .From<ProdutosPedido>("pp")
                     .InnerJoin<Glass.Data.Model.Pedido>("p.IdPedido=pp.IdPedido", "p")
                     .InnerJoin<ProdutosLiberarPedido>("p.IdPedidoRevenda = plp.IdPedido", "plp")
@@ -114,17 +93,49 @@ namespace Glass.PCP.Negocios.Componentes
                     .Select(@"p.IdPedido, pp.IdProd, p.CodCliente as PedCli, pp.Peso, pp.Qtde, pp.QtdSaida, pp.TotM, prod.CodInterno,
                             prod.Descricao as DescrProduto, pp.Altura, pp.Largura, (sgp.TipoSubgrupo = ?tipoSubGrupo) as ChapaVidro")
                     .Where(string.Format(@"plp.IdLiberarPedido = ?id
-                            AND p.TipoEntrega=?tipoEntrega 
                             AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo=0)
                             AND (sgp.GeraVolume IS NULL OR sgp.GeraVolume=0)
                             AND p.Situacao<>?situacao{0}", idPedido > 0 ? " AND p.IdPedidoRevenda=?idPedidoRevenda" : string.Empty))
                     .Add("?id", idLiberarPedido)
                     .Add("?idPedidoRevenda", idPedido)
                     .Add("?tipoSubGrupo", TipoSubgrupoProd.ChapasVidro)
-                    .Add("?tipoEntrega", Glass.Data.Model.Pedido.TipoEntregaPedido.Balcao)
+
                     .Add("?situacao", Glass.Data.Model.Pedido.SituacaoPedido.Cancelado)
-                    .GroupBy("pp.IdProdPed")
-                );
+                    .GroupBy("pp.IdProdPed");
+
+            var consultaRevenda = SourceContext.Instance.CreateQuery()
+                .From<ProdutosPedido>("pp")
+                    .InnerJoin<Glass.Data.Model.Pedido>("p.IdPedido = pp.IdPedido", "p")
+                    .InnerJoin<ProdutosLiberarPedido>("p.IdPedido = plp.IdPedido", "plp")
+                    .InnerJoin<Produto>("pp.IdProd = prod.IdProd", "prod")
+                    .LeftJoin<SubgrupoProd>("sgp.IdSubgrupoProd = prod.IdSubgrupoProd", "sgp")
+                .Where(@"plp.IdLiberarPedido = ?id
+                        AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo=0)
+                        AND (sgp.ProdutosEstoque IS NOT NULL AND sgp.ProdutosEstoque=1)
+                        AND (sgp.GeraVolume IS NULL OR sgp.GeraVolume=0)
+                        AND (p.GerarPedidoProducaoCorte IS NULL OR p.GerarPedidoProducaoCorte=0)")
+                    .Add("?id", idLiberarPedido)
+                .Select(@"p.IdPedido, pp.IdProd, p.CodCliente as PedCli, pp.Peso, pp.Qtde, pp.QtdSaida, pp.TotM, prod.CodInterno,
+                            prod.Descricao as DescrProduto, pp.Altura, pp.Largura, (sgp.TipoSubgrupo = ?tipoSubGrupo) as ChapaVidro")
+                    .Add("?tipoSubGrupo", TipoSubgrupoProd.ChapasVidro)
+                .GroupBy("pp.IdProdPed")
+                .UnionAll(unionConsultaRevenda);
+
+            //Apenas se o controle de ordem de carga estiver ativo deve -se verificar o tipo entrega dos pedidos da liberação.
+            if (OrdemCargaConfig.UsarControleOrdemCarga)
+            {
+                consultaVenda.WhereClause
+                    .And("p.TipoEntrega = ?tipoEntrega")
+                    .Add("?tipoEntrega", Data.Model.Pedido.TipoEntregaPedido.Balcao);
+
+                consultaRevenda.WhereClause
+                    .And("p.TipoEntrega = ?tipoEntrega")
+                    .Add("?tipoEntrega", Glass.Data.Model.Pedido.TipoEntregaPedido.Balcao);
+
+                unionConsultaRevenda.WhereClause
+                    .And("p.TipoEntrega=?tipoEntrega")
+                    .Add("?tipoEntrega", Glass.Data.Model.Pedido.TipoEntregaPedido.Balcao);
+            }
 
             var consultaRevendaExp = SourceContext.Instance.CreateQuery()
                 .From<ProdutoPedidoProducao>("ppp")
@@ -403,7 +414,7 @@ namespace Glass.PCP.Negocios.Componentes
                     {
                         this.EfetuaLeitura(idFunc, idLiberarPedido, e, idPedidoExp);
                     }
-                    catch 
+                    catch
                     {
                         erroEtq.Add(e);
                     }
@@ -606,7 +617,7 @@ namespace Glass.PCP.Negocios.Componentes
                     }
 
                     #endregion
-                    
+
                     transaction.Commit();
                     transaction.Close();
                 }
@@ -776,7 +787,7 @@ namespace Glass.PCP.Negocios.Componentes
             var prodPed = Glass.Data.DAL.ProdutosPedidoDAO.Instance.GetByPedido(session, (uint)idPedidoExp.Value);
             prodPed = Glass.MetodosExtensao.ToArray(Glass.MetodosExtensao.Agrupar(prodPed, new string[] { "IdProd" }, new string[] { "Qtde" }));
             var mensagemRetorno = new List<string>();
-            
+
             // Percorre os produtos do pedido de expedição que possuem o mesmo ID do produto a ser expedido.
             foreach (var p in prodPed.Where(f => f.IdProd == prodImpressao.IdProd).ToList())
             {
