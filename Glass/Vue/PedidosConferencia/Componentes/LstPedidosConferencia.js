@@ -243,7 +243,7 @@ const app = new Vue({
      * Valida se pode gerar arquivos dos pedidos filtrados.
      * @returns {Promise} Uma promise com o resultado da busca dos itens.
      */
-    validaPodeGerarArquivo: function () {
+    validarPodeGerarArquivo: function () {
       var filtroUsar = this.clonar(this.filtro || {});
 
       var idPedido = filtroUsar.idPedido;
@@ -251,7 +251,7 @@ const app = new Vue({
       if (idPedido) {
           if (!this.$refs.lista.$data.itens[0].permissoes.podeGerarArquivo) {
             this.exibirMensagem("O pedido importado ainda não foi conferido, confira o mesmo antes de gerar arquivo");
-          return Promise.reject();
+            return Promise.reject();
           }
 
           return Promise.resolve();
@@ -278,7 +278,7 @@ const app = new Vue({
         return false;
       }
 
-      this.validaPodeGerarArquivo()
+      this.validarPodeGerarArquivo()
         .then(function (resposta) {
           var nomeArquivo = tipoArquivo == 1 ? 'Cnc'
             : tipoArquivo == 2 ? 'Dxf'

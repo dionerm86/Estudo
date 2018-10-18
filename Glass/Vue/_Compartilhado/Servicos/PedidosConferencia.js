@@ -111,7 +111,6 @@ Servicos.PedidosConferencia = (function (http) {
         params: filtro
       });
     }
-
   };
 })(function () {
   return Vue.prototype.$http;

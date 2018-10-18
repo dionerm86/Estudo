@@ -704,6 +704,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca os ids dos pedidos filtrados na tela.
         /// </summary>
+        /// <param name="session">Transação.</param>
         /// <param name="idPedido">Identificador do pedido.</param>
         /// <param name="idCli">Identificador do cliente.</param>
         /// <param name="nomeCli">Nome do Cliente.</param>
@@ -723,6 +724,7 @@ namespace Glass.Data.DAL
         /// <param name="dataFimConf">Data confirmação final.</param>
         /// <param name="dataIniEmis">Data emissão inicial.</param>
         /// <param name="dataFimEmis">Data emissão final.</param>
+        /// <param name="soFinalizados">Buscar somente pedidos finalizados.</param>
         /// <param name="pedidosSemAnexo">Indicativo se devem ser buscados pedidos sem anexo.</param>
         /// <param name="situacaoCnc">Situação CNC.</param>
         /// <param name="dataIniSituacaoCnc">Data situação CNC inicial.</param>
@@ -732,8 +734,10 @@ namespace Glass.Data.DAL
         /// <param name="idsRotas">Ids das rotas a serem buscadas.</param>
         /// <param name="origemPedido">Origem do pedido.</param>
         /// <param name="pedidosConferidos">Indicativo se devem ser buscados pedidos conferidos.</param>
+        /// <param name="tipoVenda">Tipo venda a ser buscado.</param>
         /// <returns>Ids dos pedidos filtrados.</returns>
-        public IList<uint> ObterIdsPedidos(
+        public IList<int> ObterIdsPedidos(
+            GDATransaction session,
             uint idPedido,
             uint idCli,
             string nomeCli,
@@ -810,6 +814,7 @@ namespace Glass.Data.DAL
                 out temFiltro);
 
             var pedidos = this.objPersistence.LoadData(
+                session,
                 sql,
                 this.GetParam(
                     null,
@@ -829,7 +834,7 @@ namespace Glass.Data.DAL
                     null,
                     null));
 
-            return pedidos.Select(f => f.IdPedido).ToList();
+            return pedidos.Select(f => (int)f.IdPedido).ToList();
         }
 
         #endregion
@@ -3344,20 +3349,22 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Valida se os pedidos importados podem ter arquivo gerado.
         /// </summary>
+        /// <param name="session">Transação.</param>
         /// <param name="idsPedidos">Identificadores de pedidos.</param>
-        public void ValidarPedidosConferidos(IEnumerable<uint> idsPedidos)
+        public void ValidarPedidosConferidos(GDASession session, IEnumerable<int> idsPedidos)
         {
             if (!idsPedidos.Any())
             {
                 throw new Exception("Nenhum pedido a ser validado.");
             }
 
-            List<uint> retorno = this.ExecuteMultipleScalar<uint>(
-                $@"Select pe.IdPedido from pedido_espelho pe
-                left join pedido p on(p.IdPedido = pe.IdPedido)
-                where pe.IdPedido IN ({idsPedidos}) AND
-                p.Importado = 1 AND
-                (pe.PedidoConferido IS NULL OR pe.PedidoConferido = 0)");
+            var sql = $@"
+                SELECT pe.IdPedido
+                FROM pedido_espelho pe
+                    LEFT JOIN pedido p ON (p.IdPedido = pe.IdPedido)
+                WHERE pe.IdPedido IN ({idsPedidos}) AND p.Importado = 1 AND (pe.PedidoConferido IS NULL OR pe.PedidoConferido = 0)";
+
+            List<uint> retorno = this.ExecuteMultipleScalar<uint>(session, sql);
 
             if (retorno.Any())
             {
