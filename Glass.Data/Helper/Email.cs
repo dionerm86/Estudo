@@ -624,6 +624,11 @@ namespace Glass.Data.Helper
                     {
                         var textoPadrao = Geral.TextoEmailAdministradores;
 
+                        if (string.IsNullOrWhiteSpace(textoPadrao))
+                        {
+                            throw new Exception("Nenhum texto especificado para o envio de email.");
+                        }
+
                         if (!FilaEmailDAO.Instance.PodeEnviarEmailAdmin())
                         {
                             trans.Rollback();
