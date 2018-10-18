@@ -622,6 +622,8 @@ namespace Glass.Data.Helper
 
                     lock (SyncRoot)
                     {
+                        var textoPadrao = Geral.TextoEmailAdministradores;
+
                         if (!FilaEmailDAO.Instance.PodeEnviarEmailAdmin())
                         {
                             trans.Rollback();
@@ -640,115 +642,162 @@ namespace Glass.Data.Helper
                         DateTime dataIni = Geral.DataInicioEnvioSMSEmailAdministradores;
                         DateTime dataFim = Geral.DataFimEnvioSMSEmailAdministradores;
 
-                        var lstParam = new List<GDA.GDAParameter>
+                        var lstParam = new List<GDAParameter>
                         {
-                            new GDA.GDAParameter("?dataIni", dataIni),
-                            new GDA.GDAParameter("?dataFim", dataFim)
+                            new GDAParameter("?dataIni", dataIni),
+                            new GDAParameter("?dataFim", dataFim),
                         };
 
-                        var textoDiaConsiderado = dataFim.Day < DateTime.Now.Day ? "ontem" : "hoje";
+                        // Busca os dados para a mensagem, sem considerar pedidos de produção
+                        string sqlMes = string.Format(
+                            "Select Sum({0}) From pedido Where situacao<>{1} And Date_Format(dataCad, '%m, %Y')=Date_Format(now(), '%m, %Y') And tipoPedido<>{2} {3}",
+                            "{0}",
+                            (int)Pedido.SituacaoPedido.Cancelado,
+                            (int)Pedido.TipoPedidoEnum.Producao,
+                            "{1}");
 
                         // Busca os dados para a mensagem, sem considerar pedidos de produção
-                        string sqlMes = string.Format("Select Sum({0}) From pedido Where situacao<>{1} And Date_Format(dataCad, '%m, %Y')=Date_Format(now(), '%m, %Y') And tipoPedido<>{2} {3}",
-                             "{0}", (int)Pedido.SituacaoPedido.Cancelado, (int)Pedido.TipoPedidoEnum.Producao, "{1}");
-
-                        decimal totalPedidosMes = PedidoDAO.Instance.ExecuteScalar<decimal>(trans,
-                            string.Format(sqlMes, "total",
-                                EmailConfig.ConsiderarReposicaoGarantiaTotalPedidosEmitidos ?
-                                    string.Empty :
-                                    string.Format("AND TipoVenda NOT IN ({0},{1})", (int)Pedido.TipoVendaPedido.Garantia, (int)Pedido.TipoVendaPedido.Reposição)));
-
-                        double totMPedidosMes = PedidoDAO.Instance.ExecuteScalar<double>(trans, string.Format(sqlMes, "totM", ""));
-
-                        // Cálculo de peças prontas baseadas em roteiro
-                        var totMProntoMes = ProducaoDAO.Instance.ExecuteScalar<double>(trans, @"
-                            SELECT SUM(ppe.totM/ppe.qtde)
-                            FROM produtos_pedido_espelho ppe
-                            INNER JOIN (
-	                            SELECT ppp.idprodped
-	                            FROM roteiro_producao_etiqueta rpe
-		                            INNER JOIN setor s ON (rpe.idSetor=s.idSetor and ultimosetor=1)
-		                            INNER JOIN leitura_producao lp ON (rpe.idProdPedProducao=lp.idProdPedProducao and rpe.idSetor=lp.idSetor)
-		                            INNER JOIN produto_pedido_producao ppp ON (ppp.idProdPedProducao=lp.idProdPedProducao)
-	                            WHERE DATE_FORMAT(lp.dataLeitura, '%m, %Y')=DATE_FORMAT(NOW(), '%m, %Y')
-                            ) AS tbl ON (ppe.idProdPed=tbl.IdProdPed)");
+                        string sqlDia = string.Format(
+                            "Select Sum({0}) From pedido Where situacao<>{1} and dataCad>=?dataIni and dataCad<=?dataFim And tipoPedido<>{2} {3}",
+                            "{0}",
+                            (int)Pedido.SituacaoPedido.Cancelado,
+                            (int)Pedido.TipoPedidoEnum.Producao,
+                            "{1}");
 
                         // Cálculo de peças prontas baseada em setor pronto (se a empresa tiver)
                         var idsSetorPronto = SetorDAO.Instance.GetValoresCampo(trans, "Select idSetor From setor Where tipo=" + (int)TipoSetor.Pronto, "idSetor");
-                        if (!string.IsNullOrEmpty(idsSetorPronto))
-                            totMProntoMes += ProducaoDAO.Instance.ExecuteScalar<double>(trans, string.Format(@"
-                                SELECT SUM(ppe.totM/ppe.qtde)
-                                FROM produtos_pedido_espelho ppe
-                                INNER JOIN (
-	                                SELECT ppp.idprodped
-	                                FROM leitura_producao lp
-		                                INNER JOIN produto_pedido_producao ppp ON (ppp.idProdPedProducao=lp.idProdPedProducao)
-	                                WHERE DATE_FORMAT(lp.dataLeitura, '%m, %Y')=DATE_FORMAT(NOW(), '%m, %Y')
-		                                AND lp.IdSetor In ({0})
-                                ) AS tbl ON (ppe.idProdPed=tbl.IdProdPed)", idsSetorPronto));
 
-                        decimal totalLiberadosMes = LiberarPedidoDAO.Instance.ExecuteScalar<decimal>(trans, "Select Sum(total) From liberarpedido Where situacao=" +
-                            (int)LiberarPedido.SituacaoLiberarPedido.Liberado + " And Date_Format(dataLiberacao, '%m, %Y')=Date_Format(now(), '%m, %Y')");
+                        var textoDiaConsiderado = dataFim.Day < DateTime.Now.Day ? "ontem" : "hoje";
+                        var totalPedidosDia = 0M;
+                        var totMPedidosDia = 0D;
+                        var totalPedidosMes = 0M;
+                        var totMPedidosMes = 0D;
+                        var totMProntoDia = 0D;
+                        var totMProntoMes = 0D;
+                        var totalLiberadosDia = 0M;
+                        var totalLiberadosMes = 0M;
+                        var totalRecebidoDia = 0M;
+                        var totalRecebidoMes = 0M;
 
-                        // Busca os dados para a mensagem, sem considerar pedidos de produção
-                        string sqlDia = string.Format("Select Sum({0}) From pedido Where situacao<>{1} and dataCad>=?dataIni and dataCad<=?dataFim And tipoPedido<>{2} {3}",
-                            "{0}", (int)Pedido.SituacaoPedido.Cancelado, (int)Pedido.TipoPedidoEnum.Producao, "{1}");
-
-                        // Se houver alteração neste sql, altera também no envio do sms para os administradores
-                        decimal totalPedidosDia = PedidoDAO.Instance.ExecuteScalar<decimal>(trans,
-                            string.Format(sqlDia, "total",
-                                EmailConfig.ConsiderarReposicaoGarantiaTotalPedidosEmitidos ?
-                                    string.Empty :
-                                    string.Format("AND TipoVenda NOT IN ({0},{1})", (int)Pedido.TipoVendaPedido.Garantia, (int)Pedido.TipoVendaPedido.Reposição)), lstParam.ToArray());
-
-                        double totMPedidosDia = PedidoDAO.Instance.ExecuteScalar<double>(trans, String.Format(sqlDia, "totM", ""), lstParam.ToArray());
-
-                        // Cálculo de peças prontas baseadas em roteiro
-                        var totMProntoDia = ProducaoDAO.Instance.ExecuteScalar<double>(trans, @"
-                            SELECT SUM(ppe.totM/ppe.qtde)
-                            FROM produtos_pedido_espelho ppe
-                            INNER JOIN (
-	                            SELECT ppp.idprodped
-	                            FROM roteiro_producao_etiqueta rpe
-		                            INNER JOIN setor s ON (rpe.idSetor=s.idSetor and ultimosetor=1)
-		                            INNER JOIN leitura_producao lp ON (rpe.idProdPedProducao=lp.idProdPedProducao and rpe.idSetor=lp.idSetor)
-		                            INNER JOIN produto_pedido_producao ppp ON (ppp.idProdPedProducao=lp.idProdPedProducao)
-	                            WHERE DATE(lp.dataLeitura)>=?dataIni AND DATE(lp.dataLeitura)<=?dataFim
-                            ) AS tbl ON (ppe.idProdPed=tbl.IdProdPed)", lstParam.ToArray());
-
-                        // Cálculo de peças prontas baseada em setor pronto (se a empresa tiver)
-                        if (!string.IsNullOrEmpty(idsSetorPronto))
-                            totMProntoDia += ProducaoDAO.Instance.ExecuteScalar<double>(trans, string.Format(@"
-                                SELECT SUM(ppe.totM/ppe.qtde)
-                                FROM produtos_pedido_espelho ppe
-                                INNER JOIN (
-	                                SELECT ppp.idprodped
-	                                FROM leitura_producao lp
-		                                INNER JOIN produto_pedido_producao ppp ON (ppp.idProdPedProducao=lp.idProdPedProducao)
-	                                WHERE DATE(lp.dataLeitura)>=?dataIni AND DATE(lp.dataLeitura)<=?dataFim
-		                                AND lp.IdSetor In ({0})
-                                ) AS tbl ON (ppe.idProdPed=tbl.IdProdPed)", idsSetorPronto), lstParam.ToArray());
-
-                        decimal totalLiberadosDia = LiberarPedidoDAO.Instance.ExecuteScalar<decimal>(trans, "Select Sum(total) From liberarpedido Where situacao=" +
-                            (int)LiberarPedido.SituacaoLiberarPedido.Liberado + " and dataLiberacao>=?dataIni and dataLiberacao<=?dataFim", lstParam.ToArray());
-
-                        // Verifica se será enviado e-mail hoje
-                        // Só envia se houver algum dado para enviar
-                        if (totalPedidosDia == 0 && totMPedidosDia == 0 && totMProntoDia == 0 && totalLiberadosDia == 0 &&
-                            totalPedidosMes == 0 && totMPedidosMes == 0 && totMProntoMes == 0 && totalLiberadosMes == 0)
+                        if (textoPadrao.Contains("{1}"))
                         {
-                            FilaEmailDAO.Instance.MarcaNaoEnviar();
+                            // Se houver alteração neste sql, altera também no envio do sms para os administradores
+                            var tipoVendaWhere = EmailConfig.ConsiderarReposicaoGarantiaTotalPedidosEmitidos ?
+                                string.Empty :
+                                string.Format("AND TipoVenda NOT IN ({0},{1})", (int)Pedido.TipoVendaPedido.Garantia, (int)Pedido.TipoVendaPedido.Reposição);
+
+                            totalPedidosDia = PedidoDAO.Instance.ExecuteScalar<decimal>(trans, string.Format(sqlDia, "total", tipoVendaWhere), lstParam.ToArray());
+                        }
+
+                        if (textoPadrao.Contains("{2}"))
+                        {
+                            totMPedidosDia = PedidoDAO.Instance.ExecuteScalar<double>(trans, string.Format(sqlDia, "totM", string.Empty), lstParam.ToArray());
+                        }
+
+                        if (textoPadrao.Contains("{3}"))
+                        {
+                            var tipoVenda = EmailConfig.ConsiderarReposicaoGarantiaTotalPedidosEmitidos ?
+                                string.Empty :
+                                $" AND TipoVenda NOT IN ({(int)Pedido.TipoVendaPedido.Garantia}, {(int)Pedido.TipoVendaPedido.Reposição})";
+
+                            totalPedidosMes = PedidoDAO.Instance.ExecuteScalar<decimal>(trans, string.Format(sqlMes, "total", tipoVenda));
+                        }
+
+                        if (textoPadrao.Contains("{4}"))
+                        {
+                            totMPedidosMes = PedidoDAO.Instance.ExecuteScalar<double>(trans, string.Format(sqlMes, "totM", string.Empty));
+                        }
+
+                        if (textoPadrao.Contains("{5}"))
+                        {
+                            // Cálculo de peças prontas baseadas em roteiro
+                            var sqlTotMProntoDia = @"
+                                SELECT SUM(ppe.totM/ppe.qtde)
+                                FROM produtos_pedido_espelho ppe
+                                    INNER JOIN (
+	                                    SELECT ppp.idprodped
+	                                    FROM roteiro_producao_etiqueta rpe
+		                                    INNER JOIN setor s ON (rpe.idSetor=s.idSetor and ultimosetor=1)
+		                                    INNER JOIN leitura_producao lp ON (rpe.idProdPedProducao=lp.idProdPedProducao and rpe.idSetor=lp.idSetor)
+		                                    INNER JOIN produto_pedido_producao ppp ON (ppp.idProdPedProducao=lp.idProdPedProducao)
+	                                    WHERE DATE(lp.dataLeitura)>=?dataIni AND DATE(lp.dataLeitura)<=?dataFim
+                                    ) AS tbl ON (ppe.idProdPed=tbl.IdProdPed)";
+
+                            totMProntoDia = ProducaoDAO.Instance.ExecuteScalar<double>(trans, sqlTotMProntoDia, lstParam.ToArray());
+
+                            // Cálculo de peças prontas baseada em setor pronto (se a empresa tiver)
+                            if (!string.IsNullOrEmpty(idsSetorPronto))
                             {
-                                trans.Rollback();
-                                trans.Close();
-                                return;
+                                sqlTotMProntoDia = @"
+                                    SELECT SUM(ppe.totM/ppe.qtde)
+                                    FROM produtos_pedido_espelho ppe
+                                        INNER JOIN (
+	                                        SELECT ppp.idprodped
+	                                        FROM leitura_producao lp
+		                                        INNER JOIN produto_pedido_producao ppp ON (ppp.idProdPedProducao=lp.idProdPedProducao)
+	                                        WHERE DATE(lp.dataLeitura)>=?dataIni AND DATE(lp.dataLeitura)<=?dataFim
+		                                        AND lp.IdSetor In ({0})
+                                        ) AS tbl ON (ppe.idProdPed=tbl.IdProdPed)";
+
+                                totMProntoDia += ProducaoDAO.Instance.ExecuteScalar<double>(trans, string.Format(sqlTotMProntoDia, idsSetorPronto), lstParam.ToArray());
                             }
                         }
 
-                        decimal totalRecebidoDia = 0;
-                        decimal totalRecebidoMes = 0;
+                        if (textoPadrao.Contains("{6}"))
+                        {
+                            var sqlTotMProntoMes = @"
+                            SELECT SUM(ppe.totM/ppe.qtde)
+                            FROM produtos_pedido_espelho ppe
+                                INNER JOIN (
+	                                SELECT ppp.idprodped
+	                                FROM roteiro_producao_etiqueta rpe
+		                                INNER JOIN setor s ON (rpe.idSetor=s.idSetor and ultimosetor=1)
+		                                INNER JOIN leitura_producao lp ON (rpe.idProdPedProducao=lp.idProdPedProducao and rpe.idSetor=lp.idSetor)
+		                                INNER JOIN produto_pedido_producao ppp ON (ppp.idProdPedProducao=lp.idProdPedProducao)
+	                                WHERE DATE_FORMAT(lp.dataLeitura, '%m, %Y')=DATE_FORMAT(NOW(), '%m, %Y')
+                                ) AS tbl ON (ppe.idProdPed=tbl.IdProdPed)";
 
-                        var textoPadrao = Geral.TextoEmailAdministradores;
+                            // Cálculo de peças prontas baseadas em roteiro
+                            totMProntoMes = ProducaoDAO.Instance.ExecuteScalar<double>(trans, sqlTotMProntoMes);
+
+                            if (!string.IsNullOrEmpty(idsSetorPronto))
+                            {
+                                sqlTotMProntoMes = $@"
+                                SELECT SUM(ppe.totM/ppe.qtde)
+                                FROM produtos_pedido_espelho ppe
+                                    INNER JOIN (
+	                                    SELECT ppp.idprodped
+	                                    FROM leitura_producao lp
+		                                    INNER JOIN produto_pedido_producao ppp ON (ppp.idProdPedProducao=lp.idProdPedProducao)
+	                                    WHERE DATE_FORMAT(lp.dataLeitura, '%m, %Y')=DATE_FORMAT(NOW(), '%m, %Y')
+		                                    AND lp.IdSetor In ({idsSetorPronto})
+                                    ) AS tbl ON (ppe.idProdPed=tbl.IdProdPed)";
+
+                                totMProntoMes += ProducaoDAO.Instance.ExecuteScalar<double>(trans, sqlTotMProntoMes);
+                            }
+                        }
+
+                        if (textoPadrao.Contains("{7}"))
+                        {
+                            var sqlTotalLiberadosDia = $@"
+                                Select Sum(total)
+                                From liberarpedido
+                                Where situacao={(int)LiberarPedido.SituacaoLiberarPedido.Liberado}
+                                    and dataLiberacao>=?dataIni and dataLiberacao<=?dataFim";
+
+                            totalLiberadosDia = LiberarPedidoDAO.Instance.ExecuteScalar<decimal>(trans, sqlTotalLiberadosDia, lstParam.ToArray());
+                        }
+
+                        if (textoPadrao.Contains("{8}"))
+                        {
+                            var sqlTotalLiberadosMes = $@"
+                                SELECT SUM(total)
+                                FROM liberarpedido
+                                WHERE situacao={(int)LiberarPedido.SituacaoLiberarPedido.Liberado}
+                                    AND Date_Format(dataLiberacao, '%m, %Y')=Date_Format(now(), '%m, %Y')";
+
+                            totalLiberadosMes = LiberarPedidoDAO.Instance.ExecuteScalar<decimal>(trans, sqlTotalLiberadosMes);
+                        }
 
                         if (textoPadrao.Contains("{9}"))
                         {
@@ -758,6 +807,20 @@ namespace Glass.Data.Helper
                         if (textoPadrao.Contains("{10}"))
                         {
                             totalRecebidoMes = RecebimentoDAO.Instance.GetRecebimentosTipo(DateTime.Now.ObtemPrimeiroDiaMesAtual().ToString("dd/MM/yyyy"), DateTime.Now.ToString("dd/MM/yyyy"), 0, 0).Where(f => f.Descricao == "TOTAL").First().Valor;
+                        }
+
+                        // Verifica se será enviado e-mail hoje
+                        // Só envia se houver algum dado para enviar
+                        if (totalPedidosDia == 0 && totMPedidosDia == 0 && totMProntoDia == 0 && totalLiberadosDia == 0 &&
+                            totalPedidosMes == 0 && totMPedidosMes == 0 && totMProntoMes == 0 && totalLiberadosMes == 0 &&
+                            totalRecebidoDia == 0 && totalRecebidoMes == 0)
+                        {
+                            FilaEmailDAO.Instance.MarcaNaoEnviar();
+                            {
+                                trans.Rollback();
+                                trans.Close();
+                                return;
+                            }
                         }
 
                         /*{0}: Texto do dia considerado (HOJE, AMANHÃ).
