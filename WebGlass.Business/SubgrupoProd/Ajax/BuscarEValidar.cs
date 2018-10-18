@@ -14,6 +14,7 @@ namespace WebGlass.Business.SubgrupoProd.Ajax
         string ExibirBenef(string idGrupo, string idSubgrupo);
         string GetSubgrupos(string idGrupo);
         string ExibirAlturaLargura(string idGrupo, string idSubgrupo);
+        string ObrigarAlturaLargura(string idSubgrupo);
         string ObterTipoSubgrupoPeloSubgrupo(string idSubgrupoStr);
     }
 
@@ -160,7 +161,30 @@ namespace WebGlass.Business.SubgrupoProd.Ajax
                 return "false";
             }
         }
+        public string ObrigarAlturaLargura(string idSubgrupo)
+        {
+            try
+            {
+                var subgrupo = !String.IsNullOrEmpty(idSubgrupo) 
+                    ? Glass.Conversoes.StrParaInt(idSubgrupo) 
+                    : 0;
 
+                var isVidroDuplo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupoPorSubgrupo(null, subgrupo) == Glass.Data.Model.TipoSubgrupoProd.VidroDuplo;
+
+                if (isVidroDuplo)
+                {
+                    return "false";
+                }
+                else
+                {
+                    return "true";
+                }                   
+            }
+            catch
+            {
+                return "true";
+            }
+        }
         public string ObterTipoSubgrupoPeloSubgrupo(string idSubgrupoStr)
         {
             try
