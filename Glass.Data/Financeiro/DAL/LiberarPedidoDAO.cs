@@ -13,7 +13,7 @@ namespace Glass.Data.DAL
     public sealed class LiberarPedidoDAO : BaseDAO<LiberarPedido, LiberarPedidoDAO>
     {
         //private LiberarPedidoDAO() { }
-        
+
         #region Listagem de Liberações
 
         private string Sql(uint idLiberarPedido, uint idPedido, int? numeroNfe, uint idFunc, uint idCli, string nomeCli,
@@ -31,18 +31,18 @@ namespace Glass.Data.DAL
             var nomeCliente = Liberacao.DadosLiberacao.UsarRelatorioLiberacao4Vias ? "c.Nome" : ClienteDAO.Instance.GetNomeCliente("c");
             var campos = selecionar ? "lp.*, " + nomeCliente + @" as NomeCliente, c.NomeFantasia as NomeClienteFantasia, ci.NomeCidade as NomeCidadeCliente, f.Nome as NomeFunc, " +
                 (Liberacao.Impostos.CalcularIcmsLiberacao ? "(" + SqlIcms("lp.idLiberarPedido") + ") as ValorIcms, " : "") + "(select cast(group_concat(distinct if(plp1.idFormaPagto=" +
-                (uint)Glass.Data.Model.Pagto.FormaPagto.Obra + ", 'Obra', if(plp1.idFormaPagto=" + (uint)Glass.Data.Model.Pagto.FormaPagto.Credito + 
+                (uint)Glass.Data.Model.Pagto.FormaPagto.Obra + ", 'Obra', if(plp1.idFormaPagto=" + (uint)Glass.Data.Model.Pagto.FormaPagto.Credito +
                 ", 'Crédito', fp.descricao)) SEPARATOR ', ') as char) as DescrFormaPagto from pagto_liberar_pedido plp1 " +
-                @"Left Join formapagto fp on (plp1.idFormaPagto=fp.idFormaPagto) where plp1.idLiberarPedido=lp.idLiberarPedido) as DescrFormaPagto, 
+                @"Left Join formapagto fp on (plp1.idFormaPagto=fp.idFormaPagto) where plp1.idLiberarPedido=lp.idLiberarPedido) as DescrFormaPagto,
                 (select count(*) from rota_cliente where idCliente=c.id_Cli)>0 as isClienteRota, c.Endereco, c.Numero, c.Bairro, c.IdCidade, c.Cep, c.Compl,
                 c.Tel_Cont as Telefone, '$$$' as criterio" : "Count(*)";
 
             var criterio = String.Empty;
 
-            var sql = "Select " + campos + @" From liberarpedido lp 
+            var sql = "Select " + campos + @" From liberarpedido lp
                 Left Join cliente c On (lp.idCliente=c.id_Cli)
                 Left Join cidade ci On (c.idcidade = ci.idcidade)
-                Left Join funcionario f On (lp.IdFunc=f.IdFunc) 
+                Left Join funcionario f On (lp.IdFunc=f.IdFunc)
                 Where lp.Situacao <> " + (int)LiberarPedido.SituacaoLiberarPedido.Processando + " ";
 
             if (idLiberarPedido > 0)
@@ -51,7 +51,7 @@ namespace Glass.Data.DAL
                 criterio += "Liberação: " + idLiberarPedido + "    ";
                 temFiltro = true;
             }
-            
+
             if (idCli > 0)
             {
                 sql += " And lp.IdCliente=" + idCli;
@@ -232,7 +232,7 @@ namespace Glass.Data.DAL
             }
 
             liberar.DescricaoPagto = entrada + liberar.DescrTipoPagto +
-                (!formaPagtoParc && !String.IsNullOrEmpty(liberar.DescrFormaPagto) && (liberar.DescrTipoPagto.IndexOf(liberar.DescrFormaPagto, StringComparison.Ordinal) == -1 || liberar.DescrFormaPagto == null) ? " - " + liberar.DescrFormaPagto : "") + 
+                (!formaPagtoParc && !String.IsNullOrEmpty(liberar.DescrFormaPagto) && (liberar.DescrTipoPagto.IndexOf(liberar.DescrFormaPagto, StringComparison.Ordinal) == -1 || liberar.DescrFormaPagto == null) ? " - " + liberar.DescrFormaPagto : "") +
                 (descrFormasPagto != "" ? " - " + descrFormasPagto.Substring(2) : "");
 
             // Se na descrição da parcela possuir a descrição "na entrega", exibe só esta informação no campo de parcelas
@@ -475,8 +475,8 @@ namespace Glass.Data.DAL
             #region Criação da liberação
 
             // Cadastra a liberação antes da sessão e na situação cancelada para resolver a seguinte situação:
-            // Durante o processamento desta liberação a pessoa pode imprimir a mesma por outra tela, o problema é que 
-            // caso ocorra algum problema, a transação vai desfazer tudo, quando for feita uma nova liberação, 
+            // Durante o processamento desta liberação a pessoa pode imprimir a mesma por outra tela, o problema é que
+            // caso ocorra algum problema, a transação vai desfazer tudo, quando for feita uma nova liberação,
             // ela vai pegar o número dessa, fazendo com que pareça existir duas liberações diferentes com o mesmo número
             var liberarPedido = new LiberarPedido
             {
@@ -529,7 +529,7 @@ namespace Glass.Data.DAL
                 ProdutosLiberarPedidoDAO.Instance.Insert(session, produtoLiberarPedido);
             }
 
-            #endregion            
+            #endregion
 
             #region Cadastro das formas de pagamento
 
@@ -928,7 +928,7 @@ namespace Glass.Data.DAL
 
             #region Verificação da situação das peças
 
-            // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as peças que estão sendo liberadas já foram 
+            // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as peças que estão sendo liberadas já foram
             // liberadas anteriormente e se o valor da liberação é o mesmo. No chamado 6823 um idProdPed de qtd 2 estava bloqueando a liberação
             // porque uma das peças foi liberada parcialmente e ao liberar a outra o sistema bloqueava dizendo que as peças já haviam sido liberadas,
             // para resolver incluímos um filtro pela data da liberação, caso a liberação tenha sido feita há mais de 5 minutos então a peça pode ser liberada,
@@ -936,7 +936,7 @@ namespace Glass.Data.DAL
             if (idsPedidoLiberadosParcialmente != null && idsPedidoLiberadosParcialmente.Count() > 0)
             {
                 var sqlPecasLiberadas = string.Format(@"SELECT COUNT(*) > 0
-                    FROM produtos_liberar_pedido plp 
+                    FROM produtos_liberar_pedido plp
                         INNER JOIN liberarpedido lp ON (plp.IdLiberarPedido = lp.IdLiberarPedido)
                     WHERE lp.Situacao={0} AND IdProdPed=?idProdPed AND Qtde=?qtde AND QtdeCalc=?qtdeCalc
                         AND lp.DataLiberacao > DATE_ADD(NOW(), INTERVAL -5 MINUTE);", (int)LiberarPedido.SituacaoLiberarPedido.Liberado);
@@ -1092,7 +1092,7 @@ namespace Glass.Data.DAL
 
             #region Recebimento da liberação
 
-            // Mesmo que o totalPagar seja 0 (zero), deve entrar neste método, pois caso o totalPago tenha valor, 
+            // Mesmo que o totalPagar seja 0 (zero), deve entrar neste método, pois caso o totalPago tenha valor,
             // terá que ser gerado crédito para o cliente (caso tenha pago um sinal maior que o valor do pedido por exemplo).
             retorno = UtilsFinanceiro.Receber(session, idLojaRecebimento, null, null, liberarPedido, null, null, null, null, null, null, null, string.Join(",", idsPedido), liberarPedido.IdCliente, 0,
                 null, DateTime.Now.ToString("dd/MM/yyyy"), totalPagar > 0 ? totalPagar : 0, totalPago, valoresRecebimento.ToArray(), idsFormaPagamento.Select(f => (uint)f).ToArray(),
@@ -1373,15 +1373,15 @@ namespace Glass.Data.DAL
             var liberacaoPossuiPecasExpedidas = objPersistence.ExecuteSqlQueryCount(session,
                 string.Format(@"SELECT COUNT(*) FROM produto_impressao pi
                     WHERE pi.IdPedidoExpedicao IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido={0})
-                    
+
                     UNION ALL
-                        
+
                     SELECT COUNT(*) FROM produto_pedido_producao ppp
                     WHERE ppp.Situacao={1} AND ppp.SituacaoProducao={2} AND ppp.IdPedidoExpedicao IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido={0})
 
                     UNION ALL
 
-                    SELECT COUNT(*) From produto_pedido_producao ppp 
+                    SELECT COUNT(*) From produto_pedido_producao ppp
                         INNER JOIN produtos_pedido pp ON (ppp.IdProdPed=pp.IdProdPedEsp)
                         INNER JOIN produtos_liberar_pedido plp ON (pp.IdProdPed=plp.IdProdPed)
                     WHERE ppp.Situacao={1} AND ppp.SituacaoProducao={2} AND plp.IdLiberarPedido={0}",
@@ -1468,8 +1468,8 @@ namespace Glass.Data.DAL
             if (idsPedidoLiberacao?.Any(f => f > 0) ?? false)
             {
                 var sqlAtualizarDadosPedido = string.Format(@"UPDATE pedido p SET IdLiberarPedido=NULL, NumAutConstrucard=NULL, Situacao = IF(
-                        (SELECT COUNT(*) FROM liberarpedido lp 
-                            INNER JOIN produtos_liberar_pedido plp ON (plp.IdLiberarPedido=lp.IdLiberarPedido) 
+                        (SELECT COUNT(*) FROM liberarpedido lp
+                            INNER JOIN produtos_liberar_pedido plp ON (plp.IdLiberarPedido=lp.IdLiberarPedido)
                         WHERE plp.IdPedido=p.IdPedido AND lp.Situacao={0}) > 1, {1}, {2})
                     WHERE p.IdPedido IN ({3});",
                     (int)LiberarPedido.SituacaoLiberarPedido.Liberado, (int)Pedido.SituacaoPedido.LiberadoParcialmente, (int)Pedido.SituacaoPedido.ConfirmadoLiberacao,
@@ -1762,7 +1762,7 @@ namespace Glass.Data.DAL
             if (!string.IsNullOrEmpty(idsPedidoSemProducao))
                 throw new Exception("Os pedidos: " + idsPedidoSemProducao + " estão vinculados a um pedido de produção que ainda não foram confirmados.");
 
-            // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as peças que estão sendo liberadas já foram 
+            // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as peças que estão sendo liberadas já foram
             // liberadas anteriormente e se o valor da liberação é o mesmo. No chamado 6823 um idProdPed de qtd 2 estava bloqueando a liberação
             // porque uma das peças foi liberada parcialmente e ao liberar a outra o sistema bloqueava dizendo que as peças já haviam sido liberadas,
             // para resolver incluímos um filtro pela data da liberação, caso a liberação tenha sido feita há mais de 5 minutos então a peça pode ser liberada,
@@ -1772,9 +1772,9 @@ namespace Glass.Data.DAL
             {
                 string sql = @"
                 Select Count(*)>0
-                From produtos_liberar_pedido plp 
+                From produtos_liberar_pedido plp
                     Inner Join liberarpedido lp On (plp.idLiberarPedido=lp.idLiberarPedido)
-                Where lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + @" 
+                Where lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + @"
                     And idProdPed=?idProdPed And qtde=?qtde And qtdeCalc=?qtdeCalc And
                     lp.dataLiberacao > Date_Add(Now(), Interval -5 Minute)";
 
@@ -1795,7 +1795,7 @@ namespace Glass.Data.DAL
 
             if (!PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, idsPedido?.Split(',')?.Select(f => f.StrParaInt())?.ToList(), out mensagem))
             {
-                throw new Exception($"Falha ao liberar pedidos. Erro: { mensagem }");
+                throw new Exception("Falha ao liberar pedidos. Erro: " + string.Join(", ", mensagem));
             }
 
             // Verifica se cliente possui limite disponível para liberar os pedidos, desde que os mesmos já não estejam debitando do limite
@@ -1880,7 +1880,7 @@ namespace Glass.Data.DAL
 
                     if (idLoja == 0)
                         idLoja = idLojaPedido;
-                    
+
                     if (tipoEntregaPedido == 0)
                         tipoEntregaPedido = (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint());
                     else if (tipoEntregaPedido != (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint()))
@@ -1917,7 +1917,7 @@ namespace Glass.Data.DAL
 
                 if (entrada > 0 && idSinal.GetValueOrDefault() == 0 && idPagamentoAntecipado.GetValueOrDefault() == 0)
                     sinalReceber = sinalReceber + string.Format("O pedido {0} tem um sinal de {1} a receber. ", id, entrada);
-                
+
                 /* Chamado 56137. */
                 if (idCliente != idClientePedido)
                     throw new Exception(string.Format("O cliente do pedido {0} é diferente do cliente da liberação.", id));
@@ -1941,8 +1941,8 @@ namespace Glass.Data.DAL
             UtilsFinanceiro.DadosRecebimento retorno = null;
 
             // Cadastra a liberação antes da sessão e na situação cancelada para resolver a seguinte situação:
-            // Durante o processamento desta liberação a pessoa pode imprimir a mesma por outra tela, o problema é que 
-            // caso ocorra algum problema, a transação vai desfazer tudo, quando for feita uma nova liberação, 
+            // Durante o processamento desta liberação a pessoa pode imprimir a mesma por outra tela, o problema é que
+            // caso ocorra algum problema, a transação vai desfazer tudo, quando for feita uma nova liberação,
             // ela vai pegar o número dessa, fazendo com que pareça existir duas liberações diferentes com o mesmo número
             LiberarPedido liberaPed = new LiberarPedido
             {
@@ -2174,7 +2174,7 @@ namespace Glass.Data.DAL
 
                     #endregion
                 }
-                
+
                 #endregion
             }
 
@@ -2255,7 +2255,7 @@ namespace Glass.Data.DAL
                 var idPedido = p.StrParaUint();
                 var situacao = (!Liberacao.DadosLiberacao.LiberarPedidoProdutos && !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente) || IsPedidoLiberado(session, idPedido) ?
                     Pedido.SituacaoPedido.Confirmado : Pedido.SituacaoPedido.LiberadoParcialmente;
-                
+
                 /* Chamado 65135.
                  * Caso a configuração UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada,
                  * impede que o pedido seja liberado com formas de pagamento que não foram selecionadas no pedido.
@@ -2469,7 +2469,7 @@ namespace Glass.Data.DAL
                     if (!string.IsNullOrEmpty(idsPedidoSemProducao))
                         throw new Exception("Os pedidos: " + idsPedidoSemProducao + " estão vinculados a um pedido de produção que ainda não foram confirmados.");
 
-                    // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as peças que estão sendo liberadas já foram 
+                    // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as peças que estão sendo liberadas já foram
                     // liberadas anteriormente e se o valor da liberação é o mesmo. No chamado 6823 um idProdPed de qtd 2 estava bloqueando a liberação
                     // porque uma das peças foi liberada parcialmente e ao liberar a outra o sistema bloqueava dizendo que as peças já haviam sido liberadas,
                     // para resolver incluímos um filtro pela data da liberação, caso a liberação tenha sido feita há mais de 5 minutos então a peça pode ser liberada,
@@ -2479,9 +2479,9 @@ namespace Glass.Data.DAL
                     {
                         var sql =
                             @"Select Count(*)>0
-                            From produtos_liberar_pedido plp 
+                            From produtos_liberar_pedido plp
                                 Inner Join liberarpedido lp On (plp.idLiberarPedido=lp.idLiberarPedido)
-                            Where lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + @" 
+                            Where lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + @"
                                 And idProdPed=?idProdPed And qtde=?qtde And qtdeCalc=?qtdeCalc And
                                 lp.dataLiberacao > Date_Add(Now(), Interval -5 Minute)";
 
@@ -3013,24 +3013,24 @@ namespace Glass.Data.DAL
         {
             // Verifica se esta liberação já foi expedida na produção
             if (objPersistence.ExecuteSqlQueryCount(sessao,
-                    @"Select Count(*) From produto_pedido_producao ppp 
+                    @"Select Count(*) From produto_pedido_producao ppp
                         inner join produtos_pedido pp on (ppp.idProdPed=pp.idProdPedEsp)
                         inner join produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
-                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @" 
+                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @"
                         and ppp.situacaoProducao=" + (int)SituacaoProdutoProducao.Entregue +
                         @" and plp.idLiberarPedido=" + idLiberarPedido) > 0)
             {
-                // Se for ordem de carga parcial, verifica se a quantidade de produtos nesta liberação (provavelmente parcial) não estão entregues, 
+                // Se for ordem de carga parcial, verifica se a quantidade de produtos nesta liberação (provavelmente parcial) não estão entregues,
                 // ao invés de barrar se apenas uma peça estiver entregue
                 if (OrdemCargaConfig.UsarOrdemCargaParcial)
                 {
                     foreach (var prodLib in ProdutosLiberarPedidoDAO.Instance.PesquisarPorLiberacao(sessao, idLiberarPedido).ToList())
                     {
                         var qtdNaoEntregue = ExecuteScalar<int>(sessao,
-                            $@"Select Count(*) From produto_pedido_producao ppp 
+                            $@"Select Count(*) From produto_pedido_producao ppp
                                 inner join produtos_pedido pp on (ppp.idProdPed=pp.idProdPedEsp)
                                 inner join produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
-                            Where ppp.situacao={(int)ProdutoPedidoProducao.SituacaoEnum.Producao} 
+                            Where ppp.situacao={(int)ProdutoPedidoProducao.SituacaoEnum.Producao}
                                 and ppp.situacaoProducao<>{(int)SituacaoProdutoProducao.Entregue}
                                 and plp.idLiberarPedido={idLiberarPedido}
                                 and pp.idProdPed={prodLib.IdProdPed}");
@@ -3049,10 +3049,10 @@ namespace Glass.Data.DAL
 
             // Verifica se esta liberação já foi expedida na produção (pedidos de revenda)
             if (objPersistence.ExecuteSqlQueryCount(sessao,
-                    @"Select Count(*) From produto_pedido_producao ppp 
-                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @" 
+                    @"Select Count(*) From produto_pedido_producao ppp
+                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @"
                         and ppp.situacaoProducao=" + (int)SituacaoProdutoProducao.Entregue +
-                        @" and ppp.idPedidoExpedicao In 
+                        @" and ppp.idPedidoExpedicao In
                             (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
             {
                 throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
@@ -3060,8 +3060,8 @@ namespace Glass.Data.DAL
 
             // Verifica se esta liberação já foi expedida na produção (pedidos de revenda)
             if (objPersistence.ExecuteSqlQueryCount(sessao,
-                    @"Select Count(*) From produto_impressao pi 
-                    Where pi.idPedidoExpedicao In 
+                    @"Select Count(*) From produto_impressao pi
+                    Where pi.idPedidoExpedicao In
                         (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
             {
                 throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
@@ -3133,7 +3133,7 @@ namespace Glass.Data.DAL
 
             // Verifica se algum pedido dessa liberação já tem a comissão paga
             if (objPersistence.ExecuteSqlQueryCount(session,
-                    @"select count(*) from comissao_pedido cp inner join comissao c On (cp.idComissao=c.idComissao) 
+                    @"select count(*) from comissao_pedido cp inner join comissao c On (cp.idComissao=c.idComissao)
                     where cp.idPedido in (select idPedido from produtos_liberar_pedido where idLiberarPedido=" +
                     idLiberarPedido + ") And c.dataCad>?dataLib",
                 new GDAParameter("?dataLib", liberacaoPedido.DataLiberacao)) > 0)
@@ -3180,7 +3180,7 @@ namespace Glass.Data.DAL
             //if (ExecuteScalar<bool>(session, string.Format("SELECT COUNT(*)>0 FROM contas_receber WHERE IdLiberarPedido={0}", idLiberarPedido)))
             //    throw new Exception("A liberação possui contas a receber/recebidas associadas à ela. Cancele os recebimentos antes de efetuar o cancelamento da liberação.");
 
-            lstPedidos = PedidoDAO.Instance.GetByLiberacao(session, idLiberarPedido);            
+            lstPedidos = PedidoDAO.Instance.GetByLiberacao(session, idLiberarPedido);
 
             #region Remove os produtos da liberação
 
@@ -3216,10 +3216,10 @@ namespace Glass.Data.DAL
                 var sqlSit = @"
                                 Update pedido p set IdLiberarPedido=NULL, numAutConstrucard=null, situacao=
                                     if((
-                                        select count(*) 
-                                        from liberarpedido lp 
-                                            inner join produtos_liberar_pedido plp on (plp.idLiberarPedido=lp.idLiberarPedido) 
-                                        where plp.idPedido=p.idPedido 
+                                        select count(*)
+                                        from liberarpedido lp
+                                            inner join produtos_liberar_pedido plp on (plp.idLiberarPedido=lp.idLiberarPedido)
+                                        where plp.idPedido=p.idPedido
                                             and lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado +
                              ") > 1, " +
                              (int)Pedido.SituacaoPedido.LiberadoParcialmente + ", " +
@@ -3411,8 +3411,8 @@ namespace Glass.Data.DAL
                 Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
                 objPersistence.ExecuteCommand(session, @"
                                 Update pedido set situacaoProducao=" + (int)Pedido.SituacaoProducaoEnum.NaoEntregue +
-                                                      @" 
-                                Where tipoPedido=" + (int)Pedido.TipoPedidoEnum.Revenda + @" 
+                                                      @"
+                                Where tipoPedido=" + (int)Pedido.TipoPedidoEnum.Revenda + @"
                                     And situacaoProducao=" + (int)Pedido.SituacaoProducaoEnum.Entregue + @"
                                     And idPedido In (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" +
                                                       idLiberarPedido + ")"
@@ -3655,7 +3655,7 @@ namespace Glass.Data.DAL
                     where qtdeCalc>0 {1}
                     group by idPedido" + (!String.IsNullOrEmpty(idLiberarPedido) ? ", idLiberarPedido" : "") + @"
                 ) as plp, (
-                    select pp.idPedido, sum(if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + 
+                    select pp.idPedido, sum(if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra +
                         @", coalesce(ape.qtde*ppe.qtde, ap.qtde*pp.qtde), pp.qtde)) as qtde
                     from produtos_pedido pp
                         left join ambiente_pedido ap on (pp.idAmbientePedido=ap.idAmbientePedido)
@@ -3730,7 +3730,7 @@ namespace Glass.Data.DAL
             //idProdPed = PedidoReposicaoDAO.Instance.GetProdPedEspOriginal(idProdPed);
 
             //// Se pedido estiver liberado retorna true
-            //string sql = "select count(*) from pedido where idPedido=(select idPedido from produtos_pedido_espelho where idProdPed=" + idProdPed + 
+            //string sql = "select count(*) from pedido where idPedido=(select idPedido from produtos_pedido_espelho where idProdPed=" + idProdPed +
             //    ") and situacao=" + (int)Pedido.SituacaoPedido.Confirmado;
 
             //if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
@@ -3753,7 +3753,7 @@ namespace Glass.Data.DAL
             sql = @"select sum(qtdeCalc) from (
                 select distinct plp.* from produtos_liberar_pedido plp
                 inner join produtos_pedido pp on (plp.idProdPed=pp.idProdPed)
-                left join produto_pedido_producao ppp on (pp.idProdPedEsp=ppp.idProdPed and 
+                left join produto_pedido_producao ppp on (pp.idProdPedEsp=ppp.idProdPed and
                     (ppp.idProdPedProducao is null or ppp.idProdPedProducao=plp.idProdPedProducao))
                 where (plp.idProdPedProducao is null or " + itemEtiqueta + "<" + item +
                 ") and pp.idProdPed" + (idProdPed > 0 ? "=" + idProdPed : "Esp=" + idProdPedEsp) + ") as temp";
@@ -3789,7 +3789,7 @@ namespace Glass.Data.DAL
             if (!PedidoConfig.LiberarPedido)
                 return true;
 
-            string sql = "select count(*) from liberarpedido lp " + 
+            string sql = "select count(*) from liberarpedido lp " +
                 "Inner Join produtos_liberar_pedido plp On (plp.idLiberarPedido=lp.idLiberarPedido) " +
                 "Where plp.idPedido=" + idPedido + " And lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado;
 
@@ -3806,16 +3806,16 @@ namespace Glass.Data.DAL
             string where = !String.IsNullOrEmpty(idLiberarPedido) ? "where lp1.idLiberarPedido=" + idLiberarPedido : "";
 
             return "select " + campos + @"cast(coalesce(round(sum((coalesce(if(p.valorIcms>0 Or (p.valorIcms>0 And c.cobrarIcmsSt),pp.ValorIcms,0),0)/pp.qtde)*
-                    plp.qtdeCalc), 2), 0) as decimal(12,2)) as ValorIcms 
+                    plp.qtdeCalc), 2), 0) as decimal(12,2)) as ValorIcms
                 from liberarpedido lp1
                     inner join cliente c On (lp1.idCliente=c.id_Cli)
-                    left join produtos_liberar_pedido plp on (lp1.idLiberarPedido=plp.idLiberarPedido) 
+                    left join produtos_liberar_pedido plp on (lp1.idLiberarPedido=plp.idLiberarPedido)
                     left join produtos_pedido pp on (plp.idProdPed=pp.idProdPed)
                     left join pedido p On (pp.idPedido=p.idPedido)
                 " + where + @"
                 group by lp1.idLiberarPedido";
         }
-        
+
         /// <summary>
         /// Retorna o valor do ICMS de uma liberação.
         /// </summary>
@@ -3847,12 +3847,12 @@ namespace Glass.Data.DAL
                 return null;
 
             if (objPersistence.ExecuteSqlQueryCount(session, "select count(distinct plp.idLiberarPedido) from produtos_liberar_pedido plp " +
-                "Inner Join liberarpedido lp On (plp.idLiberarPedido=lp.idLiberarPedido) where lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + 
+                "Inner Join liberarpedido lp On (plp.idLiberarPedido=lp.idLiberarPedido) where lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado +
                 " And idPedido in (" + idsPedidos + ")") > 1)
                 return null;
 
             object retorno = objPersistence.ExecuteScalar(session, "select plp.idLiberarPedido from produtos_liberar_pedido plp " +
-                "Inner Join liberarpedido lp On (plp.idLiberarPedido=lp.idLiberarPedido) where lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + 
+                "Inner Join liberarpedido lp On (plp.idLiberarPedido=lp.idLiberarPedido) where lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado +
                 " And idPedido in (" + idsPedidos + ")");
 
             return retorno != null && retorno.ToString() != "" ? retorno.ToString().StrParaUint() : 0;
@@ -3969,20 +3969,20 @@ namespace Glass.Data.DAL
             if (string.IsNullOrEmpty(idsPedido) || string.IsNullOrWhiteSpace(idsPedido))
                 return false;
 
-            // Antes de executar o sql abaixo, verifica pedido a pedido se foram liberados em mais de uma liberação 
+            // Antes de executar o sql abaixo, verifica pedido a pedido se foram liberados em mais de uma liberação
             // e se estão na situação "Liberado", pois se possuirem apenas uma liberação e estiverem confirmados,
             // quer dizer que não foram liberados parcialmente, a idéia é retirar esta verificação depois de fazer o pedido
             // mão de obra funcionar igual pedido de venda e revenda.
             if (ExecuteScalar<bool>(session, @"
-                Select Count(*)>0 From pedido 
+                Select Count(*)>0 From pedido
                 Where idPedido In (" + idsPedido + @")
                     And situacao=" + (int)Pedido.SituacaoPedido.LiberadoParcialmente))
                 return true;
             else if (ExecuteScalar<bool>(session, @"
                 Select Count(*)=1 From liberarpedido
                 Where idLiberarPedido In (
-                    Select idLiberarPedido From produtos_liberar_pedido 
-                    Where idPedido In (" + idsPedido + @") 
+                    Select idLiberarPedido From produtos_liberar_pedido
+                    Where idPedido In (" + idsPedido + @")
                         And qtdeCalc>0
                 )
                     And situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado))
@@ -4059,7 +4059,7 @@ namespace Glass.Data.DAL
 
         public uint ObtemIdLoja(uint idLiberarPedido)
         {
-            return ExecuteScalar<uint>(@"select f.idLoja from liberarpedido lp 
+            return ExecuteScalar<uint>(@"select f.idLoja from liberarpedido lp
                 inner join funcionario f on (lp.idFunc=f.idFunc) where lp.idLiberarPedido=" + idLiberarPedido);
         }
 
@@ -4076,7 +4076,7 @@ namespace Glass.Data.DAL
             if (string.IsNullOrWhiteSpace(idsLiberarPedidos))
                 return string.Empty;
 
-            var sql = string.Format(@"select distinct f.IdLoja as IdLoja from liberarpedido lp 
+            var sql = string.Format(@"select distinct f.IdLoja as IdLoja from liberarpedido lp
                 inner join funcionario f on (lp.idFunc=f.idFunc) where lp.idLiberarPedido in ({0})", idsLiberarPedidos);
 
             var resultado = string.Empty;
@@ -4162,10 +4162,10 @@ namespace Glass.Data.DAL
 
         internal bool ExibirNotaPromissoria(int tipoPagto, int situacao)
         {
-            return PedidoConfig.LiberarPedido && 
-                FinanceiroConfig.DadosLiberacao.NumeroViasNotaPromissoria > 0 && 
-                tipoPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo && 
-                situacao == (int)LiberarPedido.SituacaoLiberarPedido.Liberado && 
+            return PedidoConfig.LiberarPedido &&
+                FinanceiroConfig.DadosLiberacao.NumeroViasNotaPromissoria > 0 &&
+                tipoPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo &&
+                situacao == (int)LiberarPedido.SituacaoLiberarPedido.Liberado &&
                 Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento);
         }
 
@@ -4188,8 +4188,8 @@ namespace Glass.Data.DAL
 
         public string GetTotalLiberado(string dtIni, string dtFim)
         {
-            string sql = @"Select sum(lp.total) From liberarpedido lp 
-                Where 1  And lp.dataLiberacao>=?dataIni 
+            string sql = @"Select sum(lp.total) From liberarpedido lp
+                Where 1  And lp.dataLiberacao>=?dataIni
                 And lp.dataLiberacao<=?dataFim and lp.situacao=1;";
 
             return objPersistence.ExecuteScalar(sql, new GDAParameter("?dataIni", DateTime.Parse(dtIni + " 00:00:00")), new GDAParameter("?dataFim", DateTime.Parse(dtFim + " 23:59:59"))).ToString();
@@ -4197,11 +4197,11 @@ namespace Glass.Data.DAL
 
         public string GetTotalCustoProdutoLiberado(string dtIni, string dtFim)
         {
-            string sql = @"Select sum(p.CustoCompra) From liberarpedido lp 
+            string sql = @"Select sum(p.CustoCompra) From liberarpedido lp
                 inner join produtos_liberar_pedido pl on(lp.IdLiberarPedido=pl.IdLiberarPedido)
                 inner join produtos_pedido pp on(pl.IdProdPed=pp.IdProdPed)
-                inner join produto p on(p.IdProd=pp.IdProd) 
-                Where 1  And lp.dataLiberacao>=?dataIni 
+                inner join produto p on(p.IdProd=pp.IdProd)
+                Where 1  And lp.dataLiberacao>=?dataIni
                 And lp.dataLiberacao<=?dataFim and lp.situacao=1;";
 
             return objPersistence.ExecuteScalar(sql, new GDAParameter("?dataIni", DateTime.Parse(dtIni + " 00:00:00")), new GDAParameter("?dataFim", DateTime.Parse(dtFim + " 23:59:59"))).ToString();
@@ -4299,17 +4299,21 @@ namespace Glass.Data.DAL
             if (!IsLiberacaoAberta(idLiberacao))
                 throw new Exception("A liberação informada esta cancelada.");
 
-            //Verifica se a liberação possui apenas pedidos do tipo entrega balcão
-            var sql = @"
+            //Apenas se o controle de ordem de carga estiver ativo deve-se verificar o tipo entrega dos pedidos da liberação.
+            if (OrdemCargaConfig.UsarControleOrdemCarga)
+            {
+                //Verifica se a liberação possui apenas pedidos do tipo entrega balcão
+                var sql = @"
                 SELECT count(*)
                 FROM liberarPedido lp
 	                INNER JOIN produtos_liberar_pedido plp ON (lp.IdLiberarPedido = plp.IdLiberarPedido)
 	                INNER JOIN pedido p ON (p.IdPedido = plp.IdPedido)
-                WHERE p.tipoEntrega <> " + (int)Pedido.TipoEntregaPedido.Balcao + @" 
+                WHERE p.tipoEntrega <> " + (int)Pedido.TipoEntregaPedido.Balcao + @"
 	                AND lp.IdLiberarPedido = " + idLiberacao;
 
-            if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
-                throw new Exception("A liberação informada não possui apenas pedidos do tipo entrega balcão.");
+                if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
+                    throw new Exception("A liberação informada não possui apenas pedidos do tipo entrega balcão.");
+            }
         }
 
         /// <summary>

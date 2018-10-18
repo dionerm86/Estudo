@@ -221,6 +221,7 @@ namespace Glass.Data.DAL
                     pedido.FastDelivery = projeto.FastDelivery;
                     pedido.ObsLiberacao = projeto.ObsLiberacao;
                     pedido.IdTransportador = projeto.IdTransportador;
+                    pedido.GeradoParceiro = parceiro;
 
                     var descontoEcommerce = ClienteDAO.Instance.ObterPorcentagemDescontoEcommerce(transaction, (int)projeto.IdCliente.Value);
 
@@ -516,7 +517,6 @@ namespace Glass.Data.DAL
                     {
                         pedido.IdFunc = UserInfo.GetUserInfo.IdCliente > 0 ?
                             ClienteDAO.Instance.ObtemIdFunc(transaction, UserInfo.GetUserInfo.IdCliente.Value).GetValueOrDefault() : 0;
-                        pedido.GeradoParceiro = true;
 
                         #region Define a loja do projeto e do pedido
 

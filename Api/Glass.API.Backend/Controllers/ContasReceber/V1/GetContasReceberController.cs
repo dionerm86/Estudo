@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -25,12 +25,12 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes/recebidas")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.ContasReceber.Configuracoes.ListaRecebidasDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.ContasReceber.V1.Configuracoes.ListaRecebidasDto))]
         public IHttpActionResult ObterConfiguracoesListaContasRecebidas()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.ContasReceber.Configuracoes.ListaRecebidasDto();
+                var configuracoes = new Models.ContasReceber.V1.Configuracoes.ListaRecebidasDto();
                 return this.Item(configuracoes);
             }
         }
@@ -42,15 +42,15 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
         /// <returns>Uma lista JSON com os dados das contas recebidas.</returns>
         [HttpGet]
         [Route("recebidas")]
-        [SwaggerResponse(200, "Contas recebidas sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.ContasReceber.ListaRecebidas.ListaDto>))]
+        [SwaggerResponse(200, "Contas recebidas sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.ContasReceber.V1.ListaRecebidas.ListaDto>))]
         [SwaggerResponse(204, "Contas recebidas não encontradas para o filtro informado.")]
-        [SwaggerResponse(206, "Contas recebidas paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.ContasReceber.ListaRecebidas.ListaDto>))]
+        [SwaggerResponse(206, "Contas recebidas paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.ContasReceber.V1.ListaRecebidas.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaContasRecebidas([FromUri] Models.ContasReceber.ListaRecebidas.FiltroDto filtro)
+        public IHttpActionResult ObterListaContasRecebidas([FromUri] Models.ContasReceber.V1.ListaRecebidas.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.ContasReceber.ListaRecebidas.FiltroDto();
+                filtro = filtro ?? new Models.ContasReceber.V1.ListaRecebidas.FiltroDto();
 
                 var buscaArquivoRemessa = filtro.BuscaArquivoRemessa.GetValueOrDefault(2);
                 var buscarContasVinculadas = filtro.BuscarContasVinculadas ?? FinanceiroConfig.FiltroContasVinculadasMarcadoPorPadrao;
@@ -102,7 +102,7 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    contasRecebidas.Select(c => new Models.ContasReceber.ListaRecebidas.ListaDto(c)),
+                    contasRecebidas.Select(c => new Models.ContasReceber.V1.ListaRecebidas.ListaDto(c)),
                     filtro,
                     () => ContasReceberDAO.Instance.GetRptCount(
                         (uint)(filtro.IdPedido ?? 0),

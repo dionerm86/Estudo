@@ -132,7 +132,7 @@
 
             var codInterno = FindControl(tipo + "txtCodProdIns", "input");
             codInterno = codInterno != null ? codInterno.value : FindControl(tipo + "lblCodProdIns", "span").innerHTML;
-
+            var altura = FindControl(tipo + "txtAlturaIns", "input").value;
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
@@ -143,7 +143,18 @@
             var controleDescQtde = getControleDescQtde(tipo);
             var percDescontoQtde = controleDescQtde.PercDesconto();
 
-            FindControl(tipo + "hdfValMin", "input").value = CadTrocaDev.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, id, percDescontoQtde, tipo, FindControl("lblIdPedido", "span").innerHTML).value;
+            var retorno = CadTrocaDev.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, id, percDescontoQtde, tipo, FindControl("lblIdPedido", "span").innerHTML, altura);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            else if(retorno == null){
+                alert("Erro na recuperação do valor de tabela do produto.");
+                return;
+            }
+
+            FindControl(tipo + "hdfValMin", "input").value = retorno.value;
         }
 
         function getCli(idCli)
@@ -324,6 +335,10 @@
                     FindControl(tipo + "hdfCustoProd", "input").value = retorno[13];
 
                     atualizaValMin(tipo);
+
+                    if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != ""){
+                        GetAdicionalAlturaChapa();
+                    }
 
                     qtdEstoque = retorno[6]; // Pega a quantidade disponível em estoque deste produto
                     var tipoCalc = retorno[7];
@@ -646,8 +661,28 @@
             var percDescontoQtde = controleDescQtde.PercDesconto();
             var idPedido = FindControl("lblIdPedido", "span").innerHTML;
 
-            FindControl(tipo + "txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, revenda, false,
-                percDescontoQtde, idPedido, "", "", altura).value.replace(".", ",");
+            var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, revenda, false,
+                percDescontoQtde, idPedido, "", "", altura);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            else if(retorno == null){
+                alert("Erro na recuperação do valor de tabela do produto.");
+                return;
+            }
+
+            var valorIns = FindControl(tipo + "txtValorIns", "input");
+
+            if(valorIns != null){
+                valorIns.value = retorno.value.replace(".", ",");
+            }
+            else{
+                alert("Não foi possível encontrar o controle 'txtValorIns'");
+                return false;
+            }
+
         }
 
         // Calcula em tempo real o valor total do produto

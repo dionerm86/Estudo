@@ -3,7 +3,9 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Helper.Respostas;
+using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.TabelasDescontoAcrescimoCliente.V1.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
@@ -17,6 +19,39 @@ namespace Glass.API.Backend.Controllers.TabelasDescontoAcrescimoCliente.V1
     /// </summary>
     public partial class TabelasDescontoAcrescimoClienteController : BaseController
     {
+        /// <summary>
+        /// Recupera a lista de tabelas de desconto/acréscimo de cliente para a tela de listagem.
+        /// </summary>
+        /// <param name="filtro">O filtro para a busca de tabelas de desconto/acréscimo de cliente.</param>
+        /// <returns>Uma lista JSON com os dados das tabelas de desconto/acréscimo de cliente.</returns>
+        [HttpGet]
+        [Route("")]
+        [SwaggerResponse(200, "Tabelas de desconto/acréscimo de cliente encontradas sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<ListaDto>))]
+        [SwaggerResponse(204, "Tabelas de desconto/acréscimo de cliente não encontradas para o filtro informado.")]
+        [SwaggerResponse(206, "Tabelas de desconto/acréscimo de cliente paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<ListaDto>))]
+        [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterLista([FromUri] FiltroDto filtro)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var fluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Global.Negocios.IClienteFluxo>();
+
+                var tipos = fluxo.PesquisarTabelasDescontosAcrescimos();
+
+                ((Colosoft.Collections.IVirtualList)tipos).Configure(filtro.NumeroRegistros);
+                ((Colosoft.Collections.ISortableCollection)tipos).ApplySort(filtro.ObterTraducaoOrdenacao());
+
+                return this.ListaPaginada(
+                    tipos
+                        .Skip(filtro.ObterPrimeiroRegistroRetornar())
+                        .Take(filtro.NumeroRegistros)
+                        .Select(entidade => new ListaDto(entidade)),
+                    filtro,
+                    () => tipos.Count);
+            }
+        }
+
         /// <summary>
         /// Recupera as tabelas de desconto/acréscimo para os controles de filtro das telas.
         /// </summary>

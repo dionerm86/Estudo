@@ -1,5 +1,5 @@
 Vue.component('pedido-produtos', {
-  mixins: [Mixins.Clonar, Mixins.Patch],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * O ambiente que está selecionado.

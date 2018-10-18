@@ -87,8 +87,9 @@
 
     function callbackSetTotal(valor, custo, isBenef)
     {
-        if (isBenef == "" || isBenef == null)
+        if (isBenef === undefined || isBenef === null || isBenef === "") {
             isBenef = true;
+        }
 
         var valorItem = FindControl("txtValor", "input").value;
         valorItem = valorItem != "" ? parseFloat(valorItem.replace(',', '.')) : 0;

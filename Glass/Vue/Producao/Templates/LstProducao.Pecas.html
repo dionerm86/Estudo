@@ -1,0 +1,175 @@
+<section>
+    <lista-paginada ref="lista" v-bind:funcao-recuperar-itens="buscarPecas" v-bind:ordenacao="ordenacao" v-bind:filtro="filtro" v-on:atualizou-itens="atualizouItens">
+        <template slot="cabecalho">
+            <th></th>
+            <th>Pedido</th>
+            <th>Tipo Ped.</th>
+            <th v-if="configuracoes.exibirNumeroEtiquetaNoInicioDaTabela">
+                <a href="#" v-on:click.prevent="ordenar('numeroEtiquetaPeca')">Etiqueta</a>
+            </th>
+            <th>Pedido Cli.</th>
+            <th>Cliente</th>
+            <th>Produto</th>
+            <th>Apl.</th>
+            <th>Proc.</th>
+            <th v-for="setor in setoresExibir">
+                {{ setor.nome }}
+            </th>
+            <th v-if="!configuracoes.controleReposicaoPorPeca">
+                <a href="#" v-on:click.prevent="ordenar('dataPerda')">Perda</a>
+            </th>
+            <th v-if="configuracoes.usarDataFabrica">
+                <a href="#" v-on:click.prevent="ordenar('dataEntregaFabrica')">Pronto Fábrica</a>
+            </th>
+            <th v-else>
+                <a href="#" v-on:click.prevent="ordenar('dataEntrega')">Prev. Entrega</a>
+            </th>
+            <th v-if="configuracoes.empresaLiberaPedido">
+                <a href="#" v-on:click.prevent="ordenar('dataLiberacaoPedido')">Data Lib.</a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('planoCorte')">Plano Corte</a>
+            </th>
+            <th v-if="!configuracoes.exibirNumeroEtiquetaNoInicioDaTabela">
+                <a href="#" v-on:click.prevent="ordenar('numeroEtiquetaPeca')">Etiqueta</a>
+            </th>
+            <th v-if="configuracoes.empresaControlaCavaletes">
+                <a href="#" v-on:click.prevent="ordenar('numeroCavalete')">Cavalete</a>
+            </th>
+        </template>
+        <template slot="item" slot-scope="{ item, index }">
+            <td style="white-space: nowrap">
+                <button v-on:click.prevent="alternarExibicaoFilhos(index)" v-if="item.produtoPedido && item.produtoPedido.composto">
+                    <img src="../../Images/mais.gif" v-bind:title="(exibindoFilhos(index) ? 'Esconder' : 'Exibir') + ' Produtos da Composição'" />
+                </button>
+                <button v-on:click.prevent="desfazerUltimaLeituraPeca(item)" v-if="item.permissoes && item.permissoes.desfazerLeitura">
+                    <img src="../../Images/arrow_undo.gif" title="Remover peça desta situação" />
+                </button>
+                <button v-on:click.prevent="abrirRelatorioPedido(item)" v-if="exibirRelatorioPedido(item)">
+                    <img src="../../Images/Relatorio.gif" title="Relatório de pedido" />
+                </button>
+                <button v-on:click.prevent="abrirRelatorioPedidoPcp(item)" v-if="exibirRelatorioPedidoPcp(item)">
+                    <img src="../../Images/script_go.gif" title="Relatório de pedido conferência" />
+                </button>
+                <button v-on:click.prevent="abrirAnexosPedido(item)" v-if="item && item.pedido">
+                    <img src="../../Images/Clipe.gif" title="Anexos do pedido" />
+                </button>
+                <controle-exibicao-imagem v-bind:id-item="item.id" tipo-item="PecaProducao" v-if="!item.possuiImagemSvg"></controle-exibicao-imagem>
+                <controle-imagem-projeto v-bind:id-item="item.produtoPedido.id" v-else-if="item.produtoPedido && item.possuiImagemSvg"></controle-imagem-projeto>
+                <log-alteracao v-bind:id-item="item.id" tabela="ProdPedProducao" v-bind:atualizar-ao-alterar="false" v-if="item && item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
+                <button v-on:click.prevent="pararPecaProducao(item)" v-if="item && item.permissoes && item.permissoes.pararPecaProducao">
+                    <img src="../../Images/stop_red.png" title="Retornar peça para produção" style="height: 16px" v-if="item && item.situacaoProducao && item.situacaoProducao.pecaParada" />
+                    <img src="../../Images/stop_blue.png" title="Parar peça na produção" style="height: 16px" v-else />
+                </button>
+                <button v-on:click.prevent="abrirDetalhesReposicao(item)" v-if="item && item.situacaoProducao && item.situacaoProducao.pecaReposta">
+                    <img src="../../Images/Nota.gif" title="Detalhes Reposição Peça" />
+                </button>
+                <button v-on:click.prevent="abrirLogEstornoCarregamento(item)" v-if="item && item.permissoes && item.permissoes.logEstornoCarregamento">
+                    <img src="../../Images/log_delete.jpg" title="Exibir log de estorno de carregamento" />
+                </button>
+                <img src="../../Images/exclamation.gif" title="Essa peça tem leitura em ao menos um setor oculto (Não exibido na consulta)"
+                    v-if="item && item.situacaoProducao && item.situacaoProducao.possuiLeituraSetorOculto" />
+            </td>
+            <td v-bind:style="{ color: item.corLinha }">
+                <template v-if="item.pedido">
+                    {{ item.pedido.idExibir }}
+                </template>
+            </td>
+            <td v-bind:style="{ color: item.corLinha }">
+                <template v-if="item.pedido">
+                    {{ item.pedido.siglaTipoPedido }}
+                </template>
+            </td>
+            <td v-if="configuracoes.exibirNumeroEtiquetaNoInicioDaTabela" v-bind:style="{ color: item.corLinha }">
+                {{ item.numeroEtiqueta }}
+            </td>
+            <td v-bind:style="{ color: item.corLinha }">
+                <template v-if="item.pedido">
+                    {{ item.pedido.codigoPedidoCliente }}
+                </template>
+            </td>
+            <td v-bind:style="{ color: item.corLinha }">
+                <template v-if="item.pedido && item.pedido.cliente">
+                    {{ item.pedido.cliente.id }} - {{ item.pedido.cliente.nome }}
+                </template>
+            </td>
+            <td v-bind:style="{ color: item.corLinha }">
+                <span v-if="item.produtoPedido">
+                    {{ item.produtoPedido.descricao }}
+                    {{ item.produtoPedido.descricaoBeneficiamentos }}
+                </span>
+                <b v-if="configuracoes.empresaTrabalhaComAlturaELargura">
+                    {{ item.altura }}x{{ item.largura }}
+                </b>
+                <b v-else>
+                    {{ item.largura }}x{{ item.altura }}
+                </b>
+                <div v-if="item.situacaoProducao && item.situacaoProducao.perda" style="font-size: 90%">
+                    {{ item.situacaoProducao.perda.tipo }}
+                </div>
+            </td>
+            <td v-bind:style="{ color: item.corLinha }">{{ item.codigoAplicacao }}</td>
+            <td v-bind:style="{ color: item.corLinha }">{{ item.codigoProcesso }}</td>
+            <td v-for="leitura in ordenarLeituras(item)" v-bind:style="{ color: item.corLinha }">
+                <template v-if="leitura.data">
+                    {{ leitura.data | dataHora }}
+                    Func.: {{ leitura.funcionario }}
+                    <div v-if="leitura.chapa && configuracoes.usarControleDeChapaDeCorte">
+                        <b v-if="leitura.chapa.numeroEtiqueta">
+                            Matéria-prima: {{ leitura.chapa.numeroEtiqueta }}
+                        </b>
+                        <i v-if="leitura.chapa.numeroNotaFiscal">
+                            NFe: {{ leitura.chapa.numeroNotaFiscal }}
+                        </i>
+                        <i v-if="leitura.chapa.lote">
+                            Lote: {{ leitura.chapa.lote }}
+                        </i>
+                    </div>
+                </template>
+                <div v-else-if="leitura.setor && !leitura.setor.obrigatorio" style="text-align: center; opacity: 0.5; filter: alpha(opacity=50)">
+                    <img src="../../Images/alerta.png" alt="Setor não faz parte do roteiro de produção"
+                        title="Setor não faz parte do roteiro de produção, portanto não necessita ser lido" />
+                </div>
+            </td>
+            <td v-if="!configuracoes.controleReposicaoPorPeca" v-bind:style="{ color: item.corLinha }">
+                <template v-if="item.situacaoProducao && item.situacaoProducao.perda">
+                    {{ item.situacaoPerda.perda.data | dataHora }}
+                </template>
+            </td>
+            <td v-if="configuracoes.usarDataFabrica" v-bind:style="{ color: item.corLinha }">
+                <template v-if="item.dataEntrega">
+                    {{ item.dataEntrega.fabrica | data }}
+                </template>
+            </td>
+            <td v-else v-bind:style="{ color: item.corLinha }">
+                <template v-if="item.dataEntrega">
+                    {{ item.dataEntrega.exibicao }}
+                </template>
+            </td>
+            <td v-if="configuracoes.empresaLiberaPedido" v-bind:style="{ color: item.corLinha }">
+                <template v-if="item.pedido">
+                    {{ item.pedido.dataLiberacao | data }}
+                </template>
+            </td>
+            <td v-bind:style="{ color: item.corLinha, whiteSpace: 'nowrap' }">
+                {{ item.planoCorte }}
+            </td>
+            <td v-if="!configuracoes.exibirNumeroEtiquetaNoInicioDaTabela" v-bind:style="{ color: item.corLinha, whiteSpace: 'nowrap' }">
+                {{ item.numeroEtiqueta }}
+            </td>
+            <td v-if="configuracoes.empresaControlaCavaletes" v-bind:style="{ color: item.corLinha, whiteSpace: 'nowrap' }">
+                {{ item.numeroCavalete }}
+            </td>
+        </template>
+        <template slot="novaLinhaItem" slot-scope="{ item, index, classe }"
+            v-if="item.produtoPedido && item.produtoPedido.composto && exibindoFilhos(index)">
+            <tr v-bind:class="classe" style="border-top: none">
+                <td></td>
+                <td v-bind:colspan="numeroColunasLista() - 1">
+                    <producao-pecas v-bind:filtro="{ idPecaPai: item.id, item }"
+                        v-bind:configuracoes="configuracoes" v-bind:buscar-pecas="buscarFilhos"></producao-pecas>
+                </td>
+            </tr>
+        </template>
+    </lista-paginada>
+</section>

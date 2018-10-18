@@ -156,15 +156,16 @@ namespace Glass.UI.Web.Listas
         #region Métodos Ajax
 
         [Ajax.AjaxMethod]
-        public string GetValorMinimo(string codInterno, string idClienteStr, string tipoEntrega, string revenda, string percDescontoQtdeStr)
+        public string GetValorMinimo(string codInterno, string idClienteStr, string tipoEntrega, string revenda, string percDescontoQtdeStr, string alturaStr)
         {
-            var percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
+            var percDescontoQtde = !string.IsNullOrWhiteSpace(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
+            float altura = !string.IsNullOrWhiteSpace(alturaStr) ? float.Parse(alturaStr.Replace(".", ",")) : 0;
             var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno);
             var idCliente = Conversoes.StrParaUintNullable(idClienteStr);
 
             // Recupera o valor mínimo do produto
-            int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
-            return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCliente, revenda == "true", false, percDescontoQtde, null, null, null).ToString();
+            int? tipoEntr = !string.IsNullOrWhiteSpace(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
+            return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCliente, revenda == "true", false, percDescontoQtde, null, null, null, altura).ToString();
         }
 
         /// <summary>

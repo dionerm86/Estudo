@@ -4,8 +4,8 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Cidades.Detalhes;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Cidades.V1.Detalhes;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;

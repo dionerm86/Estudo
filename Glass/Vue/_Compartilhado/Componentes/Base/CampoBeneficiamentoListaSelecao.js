@@ -1,5 +1,5 @@
 Vue.component('campo-beneficiamento-lista-selecao', {
-  mixins: [Mixins.Comparar, Mixins.CampoBeneficiamento],
+  mixins: [Mixins.Objetos, Mixins.CampoBeneficiamento],
   props: {
     /**
      * Beneficiamento que o controle representa.

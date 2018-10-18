@@ -8,6 +8,18 @@ Servicos.Funcionarios = (function(http) {
 
   return {
     /**
+     * Busca os funcionários de um tipo específico para o controle de filtro.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterParaControle: function (tipo) {
+      if (tipo === 'Vendedores') {
+        return this.obterVendedores();
+      }
+
+      return Promise.reject();
+    },
+
+    /**
      * Recupera a lista de funcionários vendedores.
      * @param {?number} [idVendedorAtual=null] O identificador do vendedor atual.
      * @param {?boolean} [orcamento=null] Considerar no resultado os emissores de orçamentos?
@@ -76,6 +88,14 @@ Servicos.Funcionarios = (function(http) {
      */
     obterAtivosAssociadosAClientes: function () {
       return http().get(API + 'ativosAssociadosAClientes');
+    },
+
+    /**
+     * Recupera a lista de funcionários associados à sugestões de clientes.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterSugestoesCliente: function () {
+      return http().get(API + 'sugestoesCliente');
     },
 
     /**

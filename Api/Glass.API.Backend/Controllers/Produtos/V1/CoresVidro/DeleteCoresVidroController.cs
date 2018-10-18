@@ -39,6 +39,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresVidro
                         return validacao;
                     }
 
+                    sessao.BeginTransaction();
+
                     CorVidroDAO.Instance.DeleteByPrimaryKey(sessao, id);
                     sessao.Commit();
 

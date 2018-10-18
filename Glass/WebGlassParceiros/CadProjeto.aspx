@@ -35,7 +35,7 @@
             /* Chamado 63268. */
             if ((tipoCalculo != "" && (tipoCalculo == "2" || tipoCalculo == "10")) && isObrigarProcApl && isVidroBenef)
             {
-                if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
+                if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == dControl("txtValorIns", "input").value = retorno.value.repl"")
                 {
                     alert("Informe a aplicação.");
                     return false;
@@ -257,6 +257,10 @@
                     FindControl("hdfM2Minimo", "input").value = retorno[6]; // Informa se o produto possui m² mínimo
                     FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como produto é calculado
                     var tipoCalc = retorno[7];
+
+                    if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != ""){
+                        GetAdicionalAlturaChapa();
+                    }
 
                     // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
                     if (retorno[4] == "true" && FindControl("lnkBenef", "a") != null) {
@@ -485,8 +489,37 @@
             var revenda = FindControl("hdfCliRevenda", "input").value;
             var idProjeto = FindControl("hdfIdProjeto", "input").value;
 
-            FindControl("txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega,
-                idCliente, revenda, false, 0, "", idProjeto, "", altura).value.replace(".", ",");
+            var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega,
+                idCliente, revenda, false, 0, "", idProjeto, "", altura);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            else if (retorno == null) {
+                alert("Erro na recuperação do valor de tabela do produto.");
+                return;
+            }
+
+            var valMin = FindControl("hdfValMin", "input");
+
+            if(valMin != null) {
+                valMin.value = retorno.value.replace(".", ",");
+            }
+            else{
+                alert("Não foi possível encontrar o controle 'hdfValMin'");
+                return false;
+            }
+
+            var valorIns = FindControl("txtValorIns", "input");
+
+            if(valorIns != null) {
+                valorIns.value = retorno.value.replace(".", ",");
+            }
+            else{
+                alert("Não foi possível encontrar o controle 'txtValorIns'");
+                return false;
+            }
         }
 
         // Calcula em tempo real o valor total do produto

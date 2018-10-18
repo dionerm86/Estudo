@@ -24,12 +24,12 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Estoques.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Estoques.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaEstoque()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Estoques.Configuracoes.ListaDto();
+                var configuracoes = new Models.Estoques.V1.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }
@@ -41,15 +41,15 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
         /// <returns>Uma lista JSON com os dados dos estoques.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Estoques de produto sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Estoques.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Estoques de produto sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Estoques.V1.Lista.ListaDto>))]
         [SwaggerResponse(204, "Estoques de produto não encontrados para o filtro informado.")]
-        [SwaggerResponse(206, "Estoques de produto paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Estoques.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Estoques de produto paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Estoques.V1.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaEstoques([FromUri] Models.Estoques.Lista.FiltroDto filtro)
+        public IHttpActionResult ObterListaEstoques([FromUri] Models.Estoques.V1.Lista.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.Estoques.Lista.FiltroDto();
+                filtro = filtro ?? new Models.Estoques.V1.Lista.FiltroDto();
 
                 var situacao = filtro.Situacao.GetValueOrDefault(Situacao.Ativo);
                 var idLoja = filtro.IdLoja.GetValueOrDefault((int)UserInfo.GetUserInfo.IdLoja);
@@ -75,7 +75,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    estoques.Select(o => new Models.Estoques.Lista.ListaDto(o)),
+                    estoques.Select(o => new Models.Estoques.V1.Lista.ListaDto(o)),
                     filtro,
                     () => ProdutoLojaDAO.Instance.GetForEstoqueCount(
                         (uint)idLoja,

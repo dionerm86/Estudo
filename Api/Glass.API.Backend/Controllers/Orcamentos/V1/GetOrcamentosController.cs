@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Swashbuckle.Swagger.Annotations;
@@ -25,12 +25,12 @@ namespace Glass.API.Backend.Controllers.Orcamentos.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Orcamentos.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Orcamentos.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaOrcamentos()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Orcamentos.Configuracoes.ListaDto();
+                var configuracoes = new Models.Orcamentos.V1.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }
@@ -42,15 +42,15 @@ namespace Glass.API.Backend.Controllers.Orcamentos.V1
         /// <returns>Uma lista JSON com os dados dos orçamentos.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Orçamentos sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Orcamentos.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Orçamentos sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Orcamentos.V1.Lista.ListaDto>))]
         [SwaggerResponse(204, "Orçamentos não encontrados para o filtro informado.")]
-        [SwaggerResponse(206, "Orçamentos paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Orcamentos.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Orçamentos paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Orcamentos.V1.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaOrcamentos([FromUri] Models.Orcamentos.Lista.FiltroDto filtro)
+        public IHttpActionResult ObterListaOrcamentos([FromUri] Models.Orcamentos.V1.Lista.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.Orcamentos.Lista.FiltroDto();
+                filtro = filtro ?? new Models.Orcamentos.V1.Lista.FiltroDto();
 
                 var orcamentos = OrcamentoDAO.Instance.GetList(
                     (uint)(filtro.Id ?? 0),
@@ -71,7 +71,7 @@ namespace Glass.API.Backend.Controllers.Orcamentos.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    orcamentos.Select(o => new Models.Orcamentos.Lista.ListaDto(o)),
+                    orcamentos.Select(o => new Models.Orcamentos.V1.Lista.ListaDto(o)),
                     filtro,
                     () => OrcamentoDAO.Instance.GetCount(
                         null,

@@ -22,7 +22,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
         /// <param name="id">O identificador do produto que será excluído.</param>
         /// <returns>Um status HTTP indicando se o produto foi excluído.</returns>
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:int}")]
         [SwaggerResponse(202, "Produto excluído.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Produto não encontrado para o `id` informado.", Type = typeof(MensagemDto))]

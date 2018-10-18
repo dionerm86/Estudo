@@ -61,23 +61,41 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idNfe"></param>
         /// <returns></returns>
-        public bool VerificarNfeJaInclusa(int idNfe)
+        public bool VerificarNfeJaInclusa(string chaveAcesso)
         {
-            return objPersistence.ExecuteSqlQueryCount($@"SELECT ncdm.IdCidadeDescarga
+            return objPersistence.ExecuteSqlQueryCount($@"SELECT count(*)
             FROM nfe_cidade_descarga_mdfe ncdm
                     INNER JOIN cidade_descarga_mdfe cdm ON (ncdm.IdCidadeDescarga = cdm.IdCidadeDescarga)
                     INNER JOIN manifesto_eletronico me ON (me.Situacao <> {(int)SituacaoEnum.Cancelado} AND
                     me.IdManifestoEletronico = cdm.IdManifestoEletronico)
-            AND ncdm.IdNfe = {idNfe}") > 0;
+            AND ncdm.ChaveAcesso = ?chaveAcesso", new GDAParameter("?chaveAcesso", chaveAcesso)) > 0;
+        }
+
+        /// <summary>
+        /// Recupera o número do mdfe onde a nota já foi inserida.
+        /// </summary>
+        /// <param name="chaveAcesso">Chave de acesso da nota buscada.</param>
+        /// <returns>O número do mdfe associado à nota.</returns>
+        public string GetMdfeNfeInclusa(string chaveAcesso)
+        {
+            var sql = $@"SELECT me.NumeroManifestoEletronico
+                FROM nfe_cidade_descarga_mdfe ncdm
+                        INNER JOIN cidade_descarga_mdfe cdm ON (ncdm.IdCidadeDescarga = cdm.IdCidadeDescarga)
+                        INNER JOIN manifesto_eletronico me ON (me.Situacao <> {(int)SituacaoEnum.Cancelado} AND
+                        me.IdManifestoEletronico = cdm.IdManifestoEletronico)
+                AND ncdm.ChaveAcesso = ?chaveAcesso";
+
+            var retorno = ExecuteScalar<string>(sql, new GDAParameter("?chaveAcesso", chaveAcesso));
+
+            return retorno;
         }
 
         #region Metodos Sobrescritos
 
         public override uint Insert(GDASession session, NFeCidadeDescargaMDFe objInsert)
         {
-            // Verifica se a NFe tem chave de acesso válida
-            var chaveAcessoNFe = NotaFiscalDAO.Instance.ObtemChaveAcesso((uint)objInsert.IdNFe);
-            if (string.IsNullOrWhiteSpace(chaveAcessoNFe) || chaveAcessoNFe.Length != 44)
+            // Verifica se tem chave de acesso válida
+            if (string.IsNullOrWhiteSpace(objInsert.ChaveAcesso) || objInsert.ChaveAcesso.Length != 44)
                 throw new Exception("A NFe deve ter chave de acesso válida para ser adicionada ao MDFe");
 
             return base.Insert(session, objInsert);

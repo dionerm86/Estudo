@@ -1,5 +1,5 @@
 ﻿Vue.component('lista-selecao-parcelas', {
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Parcela selecionada.

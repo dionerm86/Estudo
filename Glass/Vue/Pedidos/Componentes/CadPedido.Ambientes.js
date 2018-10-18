@@ -1,5 +1,5 @@
 Vue.component('pedido-ambientes', {
-  mixins: [Mixins.Clonar, Mixins.Patch, Mixins.Comparar],
+  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista()],
 
   props: {
     /**
@@ -50,10 +50,6 @@ Vue.component('pedido-ambientes', {
       ambientePedido: {},
       ambientePedidoOriginal: {},
       numeroLinhaEdicao: -1,
-      dadosOrdenacao_: {
-        campo: '',
-        direcao: ''
-      },
       produtoAtual: null,
       dadosValidacaoProduto: {},
       processoAtual: null,
@@ -85,19 +81,6 @@ Vue.component('pedido-ambientes', {
      */
     listaInternaAtualizada: function(numeroItens) {
       this.numeroItensLista = numeroItens;
-    },
-
-    /**
-     * Realiza a ordenação dos ambientes de acordo com um campo específico.
-     * @param {!string} campo O campo pelo qual a ordenação será feita.
-     */
-    ordenar: function(campo) {
-      if (campo !== this.dadosOrdenacao_.campo) {
-        this.dadosOrdenacao_.campo = campo;
-        this.dadosOrdenacao_.direcao = '';
-      } else {
-        this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
-      }
     },
 
     /**
@@ -333,15 +316,6 @@ Vue.component('pedido-ambientes', {
           this.$emit('update:ambiente', valor);
         }
       }
-    },
-
-    /**
-     * Propriedade computada que retorna a ordenação a ser utilizada na lista.
-     * @type {string}
-     */
-    ordenacao: function() {
-      var direcao = this.dadosOrdenacao_.direcao ? ' ' + this.dadosOrdenacao_.direcao : '';
-      return this.dadosOrdenacao_.campo + direcao;
     },
 
     /**

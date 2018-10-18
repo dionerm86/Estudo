@@ -6,7 +6,7 @@ using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Produtos;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Produtos.Filtro;
+using Glass.API.Backend.Models.Produtos.V1.Filtro;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
@@ -26,12 +26,12 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Produtos.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Produtos.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaProdutos()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Produtos.Configuracoes.ListaDto();
+                var configuracoes = new Models.Produtos.V1.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }
@@ -43,15 +43,15 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
         /// <returns>Uma lista JSON com os dados dos produtos.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Produtos sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Produtos.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Produtos sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Produtos.V1.Lista.ListaDto>))]
         [SwaggerResponse(204, "Produtos não encontrados para o filtro informado.")]
-        [SwaggerResponse(206, "Produtos paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Produtos.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Produtos paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Produtos.V1.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaProdutos([FromUri] Models.Produtos.Lista.FiltroDto filtro)
+        public IHttpActionResult ObterListaProdutos([FromUri] Models.Produtos.V1.Lista.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.Produtos.Lista.FiltroDto();
+                filtro = filtro ?? new Models.Produtos.V1.Lista.FiltroDto();
 
                 var produtos = Microsoft.Practices.ServiceLocation.ServiceLocator
                     .Current.GetInstance<Global.Negocios.IProdutoFluxo>()
@@ -80,7 +80,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                     produtos
                         .Skip(filtro.ObterPrimeiroRegistroRetornar())
                         .Take(filtro.NumeroRegistros)
-                        .Select(c => new Models.Produtos.Lista.ListaDto(c)),
+                        .Select(c => new Models.Produtos.V1.Lista.ListaDto(c)),
                     filtro,
                     () => produtos.Count);
             }

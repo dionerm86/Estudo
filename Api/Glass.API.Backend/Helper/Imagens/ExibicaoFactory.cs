@@ -1,10 +1,10 @@
-﻿// <copyright file="ExibicaoFactory.cs" company="Sync Softwares">
+// <copyright file="ExibicaoFactory.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using GDA;
 using Glass.API.Backend.Helper.Imagens.Estrategias.Exibicao;
-using Glass.API.Backend.Models.Imagens.Exibicao;
+using Glass.API.Backend.Models.Imagens.V1.Exibicao;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Helper.Imagens
@@ -30,6 +30,12 @@ namespace Glass.API.Backend.Helper.Imagens
             {
                 case TipoItem.Produto:
                     return new ExibicaoProdutoStrategy(sessao, apiController);
+
+                case TipoItem.PecaProducao:
+                    return new ExibicaoPecaProducaoStrategy(sessao, apiController);
+
+                case TipoItem.SvgProjeto:
+                    return new ExibicaoSvgProjetoStrategy(sessao, apiController);
             }
 
             return null;

@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.ContasReceber;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.ContasReceber.CadastroAtualizacao;
+using Glass.API.Backend.Models.ContasReceber.V1.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -51,6 +51,8 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
 
                     contaRecebida = new ConverterCadastroAtualizacaoParaContaRecebida(dadosParaAlteracao, contaRecebida)
                         .ConverterParaContaRecebida();
+
+                    sessao.BeginTransaction();
 
                     ContasReceberDAO.Instance.Update(sessao, contaRecebida);
                     sessao.Commit();

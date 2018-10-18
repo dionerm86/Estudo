@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.NotasFiscais.Boleto;
+using Glass.API.Backend.Models.Boletos.V1.Boleto;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;

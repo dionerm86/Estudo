@@ -50,7 +50,7 @@ Busca.Popup = {
 
 Vue.component('campo-busca-com-popup', {
   inheritAttrs: false,
-  mixins: [Mixins.UUID, Mixins.Comparar],
+  mixins: [Mixins.UUID, Mixins.Objetos],
   props: {
     /**
      * O item que está selecionado atualmente no controle.
@@ -180,7 +180,7 @@ Vue.component('campo-busca-com-popup', {
         return;
       }
 
-      const url = this.urlPopup
+      const url = this.caminhoRelativo(this.urlPopup)
         + (this.urlPopup.indexOf('?') > -1 ? '&' : '?')
         + 'buscaComPopup=true&id-controle=' + this.uuid;
 
