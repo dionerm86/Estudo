@@ -2292,13 +2292,36 @@ namespace Glass.Data.DAL
                     throw new Exception("O saldo da obra ultrapassou seu valor total. Saldo da obra: " + saldoObra.ToString("C"));
             }
 
-            // Verifica se o total dos clones é igual aos seus produtos_pedido_espelho relacionados
-            foreach (var prodPedEsp in ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false, false))
-            {
-                var prodPed = ProdutosPedidoDAO.Instance.GetByProdPedEsp(session, prodPedEsp.IdProdPed, false);
+            var tolerancia = 0.03M;
 
-                if (prodPed != null && prodPed.IdProdPed > 0 && (prodPedEsp.Total != prodPed.Total || prodPedEsp.ValorBenef != prodPed.ValorBenef))
-                    throw new Exception("É necessário cancelar a conferência e gerá-la novamente antes de finalizar. Alguns produtos da conferência estão divergentes do original.");
+            var ppe = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(
+                session,
+                idPedido,
+                false,
+                false);
+
+            // Verifica se o total dos clones é igual aos seus produtos_pedido_espelho relacionados
+            foreach (var prodPedEsp in ppe)
+            {
+                var prodPed = ProdutosPedidoDAO.Instance.GetByProdPedEsp(
+                    session,
+                    prodPedEsp.IdProdPed,
+                    false);
+
+                if (prodPed != null && prodPed.IdProdPed > 0)
+                {
+                    var diferenca = Math.Max(
+                        (prodPedEsp.Total - prodPed.Total),
+                        (prodPedEsp.ValorBenef - prodPed.ValorBenef));
+
+                    if (diferenca > tolerancia)
+                    {
+                        throw new Exception("É necessário cancelar a conferência e gerá-la novamente antes de finalizar." +
+                            " Alguns produtos da conferência estão divergentes do original.");
+                    }
+
+                    tolerancia -= diferenca;
+                }
             }
 
             /* Chamado 56050. */
@@ -3866,37 +3889,92 @@ namespace Glass.Data.DAL
 
             var removidos = new List<uint>();
 
-            var alteraAcrescimo = antigo.Acrescimo != novo.Acrescimo || antigo.TipoAcrescimo != novo.TipoAcrescimo;
-            var alteraDesconto = antigo.Desconto != novo.Desconto || antigo.TipoDesconto != novo.TipoDesconto;
-            var alteraComissao = antigo.PercComissao != novo.PercComissao;
+            var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(
+                session,
+                novo.IdPedido,
+                false,
+                false,
+                true);
 
-            var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, novo.IdPedido, false, false, true);
+            var aplicarAcrescimo = AplicarAcrescimo(
+                session,
+                novo,
+                novo.TipoAcrescimo,
+                novo.Acrescimo,
+                produtosPedidoEspelho);
 
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo && AplicarAcrescimo(session, novo, novo.TipoAcrescimo, novo.Acrescimo, produtosPedidoEspelho))
-                removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
+            if (aplicarAcrescimo)
+            {
+                removidos.AddRange(
+                    produtosPedidoEspelho
+                    .Select(p => p.IdProdPed));
+            }
+
+            var aplicarDesconto = AplicarDesconto(
+                session,
+                novo,
+                novo.TipoDesconto,
+                novo.Desconto,
+                produtosPedidoEspelho);
 
             // Remove o desconto do pedido
-            if (alteraDesconto && AplicarDesconto(session, novo, novo.TipoDesconto, novo.Desconto, produtosPedidoEspelho))
-                removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
+            if (aplicarDesconto)
+            {
+                removidos
+                    .AddRange(
+                    produtosPedidoEspelho
+                    .Select(p => p.IdProdPed));
+            }
+
+            var aplicarComissao = AplicarComissao(
+                session,
+                novo,
+                novo.PercComissao,
+                produtosPedidoEspelho);
 
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao && AplicarComissao(session, novo, novo.PercComissao, produtosPedidoEspelho))
-                removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
+            if (aplicarComissao)
+            {
+                removidos.AddRange(
+                    produtosPedidoEspelho
+                    .Select(p => p.IdProdPed));
+            }
 
             /* Chamado 62763. */
             foreach (var ambientePedido in ambientesPedido)
             {
-                var produtosAmbiente = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(session, ambientePedido.IdAmbientePedido);
-                if (AmbientePedidoEspelhoDAO.Instance.AplicarAcrescimo(session, novo, ambientePedido.IdAmbientePedido, ambientePedido.TipoAcrescimo, ambientePedido.Acrescimo, produtosAmbiente))
-                    removidos.AddRange(produtosAmbiente.Select(p => p.IdProdPed));
+                var produtosAmbiente = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(
+                    session,
+                    ambientePedido.IdAmbientePedido);
+
+                var aplicarAcrescimoAmbiente = AmbientePedidoEspelhoDAO.Instance.AplicarAcrescimo(
+                    session,
+                    novo,
+                    ambientePedido.IdAmbientePedido,
+                    ambientePedido.TipoAcrescimo,
+                    ambientePedido.Acrescimo,
+                    produtosAmbiente);
+
+                if (aplicarAcrescimoAmbiente)
+                {
+                    removidos
+                        .AddRange(
+                        produtosAmbiente
+                        .Select(p => p.IdProdPed));
+                }
             }
 
             var produtosAtualizar = produtosPedidoEspelho
                 .Where(p => removidos.Contains(p.IdProdPed))
                 .ToList();
 
-            FinalizarAplicacaoComissaoAcrescimoDesconto(session, novo, produtosAtualizar, true);
+            FinalizarAplicacaoComissaoAcrescimoDesconto(
+                session,
+                novo,
+                produtosAtualizar,
+                true);
+
             UpdateTotalPedido(session, novo);
         }
 
