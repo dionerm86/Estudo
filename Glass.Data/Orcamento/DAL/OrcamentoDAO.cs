@@ -488,11 +488,12 @@ namespace Glass.Data.DAL
                     l.NomeFantasia as NomeLoja, l.InscEst as InscEstLoja, l.Cnpj as CnpjLoja, l.Endereco as LogradouroLoja,
                     l.Compl as ComplLoja, l.Bairro as BairroLoja, cidLoja.NomeCidade as CidadeLoja, cidLoja.NomeUf as UfLoja, l.Cep as CepLoja,
                     l.numero as numeroLoja, concat(l.Telefone, if(length(l.telefone2)>0, concat(' / ', l.telefone2), '')) as TelefoneLoja,
-                    l.Fax as FaxLoja, l.Site as emailLoja, c.cpf_cnpj as cpfCnpjCliente, c.rg_escinst as inscEstCliente, c.ObsNfe
+                    l.Fax as FaxLoja, l.Site as emailLoja, c.cpf_cnpj as cpfCnpjCliente, c.rg_escinst as inscEstCliente, c.ObsNfe, vend.Nome as VendedorCliente
                 From orcamento o Left Join funcionario f On o.IdFunc=f.idFunc
                     Left Join loja l On o.idLoja=l.idLoja
                     Left Join cidade cidLoja On (cidLoja.idCidade=l.idCidade)
                     Left Join cliente c On (o.idCliente=c.id_Cli)
+                    Left Join funcionario vend On (c.idFunc=vend.idFunc)
                 Where IdOrcamento=" + idOrca;
 
             Orcamento orca = objPersistence.LoadOneData(sql);

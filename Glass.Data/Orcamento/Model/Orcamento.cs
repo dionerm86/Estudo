@@ -563,6 +563,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("ObsNfe", DirectionParameter.InputOptional)]
         public string ObsNfe { get; set; }
 
+        [PersistenceProperty("VendedorCliente", DirectionParameter.InputOptional)]
+        public string VendedorCliente { get; set; }
+
         #endregion
 
         [XmlIgnore]
