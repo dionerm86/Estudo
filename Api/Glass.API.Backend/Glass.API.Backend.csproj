@@ -266,6 +266,11 @@
     <Compile Include="Controllers\Fornecedores\V1\PostFornecedoresController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GetPlanosContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\PlanosContaController.cs" />
+    <Compile Include="Controllers\Condutores\CondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\DeleteCondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\GetCondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\PatchCondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\PostCondutoresController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\DeleteCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PatchCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PostCoresAluminioController.cs" />
@@ -423,6 +428,8 @@
     <Compile Include="Helper\Producao\Turnos\TraducaoOrdenacaoListaTurnos.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
+    <Compile Include="Helper\Condutores\ConverterCadastroAtualizacaoParaCondutor.cs" />
+    <Compile Include="Helper\Condutores\TraducaoOrdenacaoListaCondutores.cs" />
     <Compile Include="Helper\Rotas\TraducaoOrdenacaoListaRotas.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\TraducaoOrdenacaoListaTabelasDescontoAcrescimoCliente.cs" />
@@ -492,6 +499,9 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />
@@ -810,6 +820,41 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\Acertos\Lista\" />
+    <Folder Include="Models\Beneficiamentos\Configuracoes\" />
+    <Folder Include="Models\Beneficiamentos\Filtro\" />
+    <Folder Include="Models\Beneficiamentos\Total\" />
+    <Folder Include="Models\Caixas\Diario\CadastroAtualizacao\" />
+    <Folder Include="Models\Caixas\Diario\Configuracoes\" />
+    <Folder Include="Models\Caixas\Diario\Lista\" />
+    <Folder Include="Models\Caixas\Geral\Configuracoes\" />
+    <Folder Include="Models\Caixas\Geral\Lista\" />
+    <Folder Include="Models\Cep\Endereco\" />
+    <Folder Include="Models\Cheques\CadastroAtualizacao\" />
+    <Folder Include="Models\Cheques\Configuracoes\" />
+    <Folder Include="Models\Cheques\Lista\" />
+    <Folder Include="Models\Clientes\Tipos\CadastroAtualizacao\" />
+    <Folder Include="Models\Clientes\Tipos\Lista\" />
+    <Folder Include="Models\Comissionados\Configuracoes\" />
+    <Folder Include="Models\Comissionados\Lista\" />
+    <Folder Include="Models\Datas\Feriados\CadastroAtualizacao\" />
+    <Folder Include="Models\Datas\Feriados\Lista\" />
+    <Folder Include="Models\Estoques\CadastroAtualizacao\" />
+    <Folder Include="Models\Estoques\Configuracoes\" />
+    <Folder Include="Models\Fornecedores\Configuracoes\" />
+    <Folder Include="Models\Fornecedores\Lista\" />
+    <Folder Include="Models\PlanosConta\Lista\" />
+    <Folder Include="Models\Produtos\CoresAluminio\CadastroAtualizacao\" />
+    <Folder Include="Models\Produtos\CoresAluminio\Lista\" />
+    <Folder Include="Models\Produtos\CoresFerragem\CadastroAtualizacao\" />
+    <Folder Include="Models\Produtos\CoresFerragem\Lista\" />
+    <Folder Include="Models\Produtos\CoresVidro\CadastroAtualizacao\" />
+    <Folder Include="Models\Produtos\CoresVidro\Lista\" />
+    <Folder Include="Models\Sinais\Lista\" />
+    <Folder Include="Models\Transportadores\Configuracoes\" />
+    <Folder Include="Models\Transportadores\Lista\" />
+    <Folder Include="Models\Veiculos\Configuracoes\" />
+    <Folder Include="Models\Veiculos\Lista\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">

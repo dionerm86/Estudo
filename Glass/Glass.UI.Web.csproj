@@ -441,6 +441,7 @@
     <Content Include="Cadastros\CadClassificacaoRoteiroProducao.aspx" />
     <Content Include="Cadastros\CadCliente.aspx" />
     <Content Include="Cadastros\CadClienteMulti.aspx" />
+    <Content Include="Cadastros\CadCondutores.aspx" />
     <Content Include="Cadastros\CadExpressaoRentabilidade.aspx" />
     <Content Include="Cadastros\CadFornecedorVinculos.aspx" />
     <Content Include="Cadastros\CadClienteVinculos.aspx" />
@@ -502,6 +503,7 @@
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.Filtro.js" />
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.js" />
     <Content Include="Vue\Fornecedores\Templates\LstFornecedores.Filtro.html" />
+    <Content Include="Vue\Condutores\Componentes\CadCondutores.js" />
     <Content Include="Vue\Rotas\Componentes\LstRotas.js" />
     <Content Include="Vue\TabelasDescontoAcrescimoCliente\Componentes\LstTabelasDescontoAcrescimoCliente.js" />
     <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
@@ -1732,6 +1734,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaProcesso.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaProduto.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCep.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoCpf.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoDescontoQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoEndereco.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoLargura.js" />
@@ -1776,6 +1779,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Condutores.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Sinais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Acertos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />
@@ -1846,6 +1850,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaEtiquetaProcesso.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaProduto.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCep.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoCpf.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoDescontoQuantidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoEndereco.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoLargura.html" />
@@ -3206,6 +3211,13 @@
     </Compile>
     <Compile Include="Cadastros\CadClienteMulti.aspx.designer.cs">
       <DependentUpon>CadClienteMulti.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Cadastros\CadCondutores.aspx.cs">
+      <DependentUpon>CadCondutores.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\CadCondutores.aspx.designer.cs">
+      <DependentUpon>CadCondutores.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\CadExpressaoRentabilidade.aspx.cs">
       <DependentUpon>CadExpressaoRentabilidade.aspx</DependentUpon>

@@ -1552,7 +1552,7 @@ namespace Glass.Data.DAL
 
             foreach (var cond in mdfe.Rodoviario.CondutorVeiculo)
             {
-                var condutorVeiculo = FuncionarioDAO.Instance.GetElement((uint)cond.IdCondutor);
+                var condutorVeiculo = CondutoresDAO.Instance.GetElementByPrimaryKey((uint)cond.IdCondutor);
                 XmlElement condutor = doc.CreateElement("condutor");
                 ManipulacaoXml.SetNode(doc, condutor, "xNome", Formatacoes.TrataTextoDocFiscal(condutorVeiculo.Nome));
                 ManipulacaoXml.SetNode(doc, condutor, "CPF", Formatacoes.TrataStringDocFiscal(condutorVeiculo.Cpf));

@@ -462,6 +462,7 @@
     <Compile Include="Financeiro\Model\QuitacaoParcelaCartao.cs" />
     <Compile Include="Fiscal\DAL\CargaTributariaMediaMTDAO.cs" />
     <Compile Include="Fiscal\DAL\CestDAO.cs" />
+    <Compile Include="Fiscal\DAL\CondutoresDAO.cs" />
     <Compile Include="Fiscal\DAL\CTe\EfdCteDAO.cs" />
     <Compile Include="Fiscal\DAL\CTe\ImpostoCteDAO.cs" />
     <Compile Include="Financeiro\DAL\RegistroArquivoRemessaDAO.cs" />
@@ -500,6 +501,7 @@
     <Compile Include="Fiscal\ICalculoImpostoResultado.cs" />
     <Compile Include="Fiscal\Model\CargaTributariaMediaMT.cs" />
     <Compile Include="Fiscal\Model\Cest.cs" />
+    <Compile Include="Fiscal\Model\Condutores.cs" />
     <Compile Include="Fiscal\Model\CTe\ChaveAcessoCte.cs" />
     <Compile Include="Fiscal\Model\DetalhamentoDebitosPisCofins.cs" />
     <Compile Include="Fiscal\Model\FotosNotaFiscal.cs" />
