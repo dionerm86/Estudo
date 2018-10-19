@@ -108,6 +108,7 @@ namespace Glass.Data.Helper
                 var cidadeUf = ClienteDAO.Instance.ObtemCidadeUf(Pedido.IdCli);
                 Pedido.CidadeClienteExterno = cidadeUf.Split('/')[0];
                 Pedido.UfClienteExterno = cidadeUf.Split('/')[1];
+                Pedido.IdTransportador = null;
 
                 // Zera a entrada e o pagamento antecipado para não der erro de validação de valor ao exportar o pedido.
                 Pedido.ValorEntrada = 0;
