@@ -298,7 +298,11 @@ namespace Glass.Data.Helper.Calculos
         {
             try
             {
-                RemoverComissao(sessao, container, produtos);
+                if (reaplicarComissao)
+                {
+                    RemoverComissao(sessao, container, produtos);
+                }
+
                 return Remover(sessao, estrategia, container, produtos);
             }
             finally
