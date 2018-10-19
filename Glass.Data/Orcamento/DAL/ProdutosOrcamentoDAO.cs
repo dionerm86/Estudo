@@ -780,6 +780,9 @@ namespace Glass.Data.DAL
                     WHERE (po.IdProdOrcamentoParent IS NULL OR po.IdProdOrcamentoParent = 0) AND po.IdProdParent = {prodOrca.IdProd}";
                 var total = this.objPersistence.ExecuteScalar(sessao, sql).ToString().StrParaDecimal();
 
+                sql = $"SELECT percComissao FROM orcamento WHERE idOrcamento = {prodOrca.IdOrcamento}";
+                decimal valorPercComissao = decimal.Parse(objPersistence.ExecuteScalar(sessao, sql).ToString());
+
                 if (!PedidoConfig.RatearDescontoProdutos)
                 {
                     var valorDesconto = prodOrca.Desconto;
@@ -790,6 +793,12 @@ namespace Glass.Data.DAL
                     }
 
                     total -= valorDesconto;
+
+                    if (valorPercComissao > 0)
+                    {
+                        var valorAplicarComissao = Math.Round(total * (valorPercComissao / 100), 2);
+                        total += valorAplicarComissao;
+                    }
                 }
 
                 sql = $@"UPDATE produtos_orcamento po
