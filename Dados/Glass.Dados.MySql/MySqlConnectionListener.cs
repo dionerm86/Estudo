@@ -26,7 +26,7 @@
             cmd.CommandText =
                 string.Format("{0}{1}",
                     connection.ConnectionString.ToLower().Contains("connectiontimeout=59") ?
-                        "" : "SET SESSION tx_isolation = 'READ-UNCOMMITTED';",
+                        "" : "SET SESSION transaction_isolation = 'READ-UNCOMMITTED';",
                     "SET SESSION foreign_key_checks = 0;");
             cmd.ExecuteNonQuery();
         }
