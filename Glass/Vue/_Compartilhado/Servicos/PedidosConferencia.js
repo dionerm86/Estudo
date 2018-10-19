@@ -92,6 +92,19 @@ Servicos.PedidosConferencia = (function (http) {
      */
     obterDadosProducao: function (id) {
       return http().get(API + id + '/dadosProducao');
+    },
+
+    /**
+     * Recupera o objeto com as situações do pedido em conferência.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    podeImprimirImportados: function (filtro) {
+      filtro = filtro || {};
+
+      return http().get(API + 'podeImprimirImportados', {
+        params: filtro
+      });
     }
   };
 })(function () {
