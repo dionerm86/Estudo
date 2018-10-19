@@ -1703,12 +1703,12 @@ namespace Glass.Data.DAL
             if (idProdPed == 0)
                 return;
 
-            if (!ValidarSaidaProduto(sessao, idProdPed, qtdSaida))
+            var idPedido = (int)ObtemIdPedido(idProdPed);
+
+            if (!ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
             {
                 return;
             }
-
-            var idPedido = (int)ObtemIdPedido(idProdPed);
 
             if (!string.IsNullOrWhiteSpace(metodo)
                 && PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido) == Pedido.TipoPedidoEnum.Revenda)
@@ -1746,8 +1746,14 @@ namespace Glass.Data.DAL
             }
         }
 
-        private bool ValidarSaidaProduto(GDASession sessao, uint idProdPed, float qtdSaida)
+        private bool ValidarSaidaProduto(GDASession sessao, uint idProdPed, float qtdSaida, uint idPedido)
         {
+            var tipoPedido = PedidoDAO.Instance.ObterTipoPedido(sessao, idPedido);
+            if (tipoPedido == Pedido.TipoPedidoEnum.MaoDeObra)
+            {
+                return true;
+            }
+
             var quantidadeProduto = ObtemValorCampo<float>(sessao, "Qtde", $"IdProdPed={idProdPed}");
             var quantidadeSaidaAtualProduto = ObtemValorCampo<float>(sessao, "QtdSaida", $"IdProdPed={idProdPed}");
 
