@@ -4,6 +4,7 @@
 
 using Glass.API.Backend.Helper.Condutores;
 using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.V1;
 
 namespace Glass.API.Backend.Models.Condutores.Lista
 {
