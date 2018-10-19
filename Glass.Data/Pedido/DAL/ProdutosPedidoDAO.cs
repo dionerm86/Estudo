@@ -1700,9 +1700,13 @@ namespace Glass.Data.DAL
         /// </summary>
         public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta)
         {
-
             if (idProdPed == 0)
                 return;
+
+            if (!ValidarSaidaProduto(sessao, idProdPed, qtdSaida))
+            {
+                return;
+            }
 
             var idPedido = (int)ObtemIdPedido(idProdPed);
 
@@ -1740,6 +1744,21 @@ namespace Glass.Data.DAL
 
                 ProdutoSaidaEstoqueDAO.Instance.Insert(sessao, novo);
             }
+        }
+
+        private bool ValidarSaidaProduto(GDASession sessao, uint idProdPed, float qtdSaida)
+        {
+            var quantidadeProduto = ObtemValorCampo<float>(sessao, "Qtde", $"IdProdPed={idProdPed}");
+            var quantidadeSaidaAtualProduto = ObtemValorCampo<float>(sessao, "QtdSaida", $"IdProdPed={idProdPed}");
+
+            qtdSaida += quantidadeSaidaAtualProduto;
+
+            if (qtdSaida > quantidadeProduto)
+            {
+                throw new InvalidOperationException($"Foi realizada uma tentativa de lançar uma saída maior do que a disponível em estoque para o produto. Dados da situação: IdProdPed: {idProdPed} QtdSaida: {qtdSaida}.");
+            }
+
+            return true;
         }
 
         #endregion
