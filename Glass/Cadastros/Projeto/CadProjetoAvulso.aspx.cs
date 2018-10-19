@@ -35,7 +35,6 @@ namespace Glass.UI.Web.Cadastros.Projeto
             if (!IsPostBack)
             {
                 hdfIdOrcamento.Value = Request["IdOrcamento"];
-                hdfIdAmbienteOrca.Value = Request["IdAmbienteOrca"];
                 hdfIdPedidoOriginal.Value = Request["IdPedido"];
                 hdfIdPedidoEspelho.Value = Request["IdPedidoEspelho"];
                 hdfTipoEntrega.Value = Request["TipoEntrega"];
@@ -61,7 +60,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 var parceiro = Request["Parceiro"] == "true" ? true : false;
 
                 if (!String.IsNullOrEmpty(Request["idProdOrca"]))
-                    hdfIdItemProjeto.Value = ProdutosOrcamentoDAO.Instance.BuscaItemProjeto(Glass.Conversoes.StrParaUint(Request["idProdOrca"])).ToString();
+                    hdfIdItemProjeto.Value = ProdutosOrcamentoDAO.Instance.ObterIdItemProjeto(null, Glass.Conversoes.StrParaInt(Request["idProdOrca"])).ToString();
                 else if (!String.IsNullOrEmpty(hdfIdAmbientePedido.Value))
                     hdfIdItemProjeto.Value = AmbientePedidoDAO.Instance.ObtemItemProjeto(Glass.Conversoes.StrParaUint(Request["idAmbientePedido"])).ToString();
                 else if (!String.IsNullOrEmpty(hdfIdAmbientePedidoEspelho.Value))
@@ -143,7 +142,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 if (Request["idOrcamento"] != null)
                 {
                     int start = url.IndexOf("IdProdOrca=", StringComparison.Ordinal) + 11;
-                    uint? idProdOrca = ProdutosOrcamentoDAO.Instance.GetIdByIdItemProjeto(Glass.Conversoes.StrParaUint(e.CommandArgument.ToString()));
+                    uint? idProdOrca = (uint)ProdutosOrcamentoDAO.Instance.ObterIdProdOrcamentoPeloIdItemProjeto(null, Glass.Conversoes.StrParaInt(e.CommandArgument.ToString()));
                     url = url.Substring(0, start) + idProdOrca + url.Substring(url.IndexOf("&", start, StringComparison.Ordinal));
                 }
                 else if (Request["idPedido"] != null)
@@ -241,11 +240,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     ProjetoDAO.Instance.UpdateTotalProjeto(idProjeto.Value);
                 else if (idOrc > 0)
                 {
-                    uint idProd = ProdutosOrcamentoDAO.Instance.ObtemIdProdutoPorIdItemProjeto(idItemProjeto);
+                    var idProd = ProdutosOrcamentoDAO.Instance.ObterIdProdOrcamentoPeloIdItemProjeto(null, (int)idItemProjeto);
                     if (idProd > 0)
-                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(idProd);
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(null, ProdutosOrcamentoDAO.Instance.GetElementByPrimaryKey(null, (uint)idProd));
 
-                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(idOrc.Value);
+                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(null, OrcamentoDAO.Instance.GetElementByPrimaryKey(null, idOrc.Value), false, false);
                 }
             }
             catch (Exception ex)
@@ -476,7 +475,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         /// Cria um novo Item de Projeto
         /// </summary>
         [Ajax.AjaxMethod()]
-        public string NovoItemProjeto(string idOrcamentoString, string idAmbienteOrcaString, string idPedidoString,
+        public string NovoItemProjeto(string idOrcamentoString, string idPedidoString,
             string idAmbientePedString, string idPedidoEspString, string idAmbientePedEspString, string idProjetoModelo,
             string espessuraVidro, string idCorVidro, string idCorAluminio, string idCorFerragem, string apenasVidros, string medidaExata)
         {
@@ -485,10 +484,6 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 uint? idOrcamento =
                     !String.IsNullOrEmpty(idOrcamentoString) ?
                         (uint?)Glass.Conversoes.StrParaUint(idOrcamentoString) : null;
-
-                uint? idAmbienteOrca =
-                    !String.IsNullOrEmpty(idAmbienteOrcaString) ?
-                        (uint?)Glass.Conversoes.StrParaUint(idAmbienteOrcaString) : null;
 
                 uint? idPedido =
                     !String.IsNullOrEmpty(idPedidoString) ?
@@ -527,7 +522,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 #region Inserir novo item projeto
 
-                var itemProj = ItemProjetoDAO.Instance.NovoItemProjetoVazioComTransacao(null, idOrcamento, idAmbienteOrca, idPedido, idAmbientePedido,
+                var itemProj = ItemProjetoDAO.Instance.NovoItemProjetoVazioComTransacao(null, idOrcamento, idPedido, idAmbientePedido,
                     idPedidoEspelho, idAmbientePedidoEspelho, idProjetoModelo.StrParaUint(), espessuraVidro.StrParaIntNullable(),
                     idCorVidro.StrParaUint(), idCorAluminio.StrParaUint(), idCorFerragem.StrParaUint(), apenasVidros == "true", medidaExata == "true", true);
 
@@ -893,8 +888,8 @@ namespace Glass.UI.Web.Cadastros.Projeto
             if (!String.IsNullOrEmpty(Request["IdOrcamento"]))
             {
                 uint idOrcamento = Glass.Conversoes.StrParaUint(Request["idOrcamento"]);
-                idCliente = OrcamentoDAO.Instance.ObtemIdCliente(idOrcamento);
-                tipoEntrega = OrcamentoDAO.Instance.ObtemTipoEntrega(idOrcamento);
+                idCliente = (uint?)OrcamentoDAO.Instance.ObterIdCliente(null, (int)idOrcamento);
+                tipoEntrega = OrcamentoDAO.Instance.ObterTipoEntrega(null, (int)idOrcamento);
             }
 
             if (!String.IsNullOrEmpty(Request["IdPedido"]))
@@ -1101,11 +1096,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     ProjetoDAO.Instance.UpdateTotalProjeto(idProjeto.Value);
                 else if (idOrcamento > 0)
                 {
-                    uint idProd = ProdutosOrcamentoDAO.Instance.ObtemIdProdutoPorIdItemProjeto(idItemProjeto);
+                    var idProd = ProdutosOrcamentoDAO.Instance.ObterIdProdOrcamentoPeloIdItemProjeto(null, (int)idItemProjeto);
                     if (idProd > 0)
-                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(idProd);
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(null, ProdutosOrcamentoDAO.Instance.GetElementByPrimaryKey(null, (uint)idProd));
 
-                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(idOrcamento.Value);
+                    OrcamentoDAO.Instance.UpdateTotaisOrcamento(null, OrcamentoDAO.Instance.GetElementByPrimaryKey(null, idOrcamento.Value), false, false);
                 }
 
                 #endregion
@@ -1183,7 +1178,6 @@ namespace Glass.UI.Web.Cadastros.Projeto
         protected bool ConfirmaProjeto()
         {
             uint? idOrcamento = null;
-            uint? idAmbienteOrca = null;
             uint? idPedido = null;
             uint? idAmbientePedido = null;
             uint? idPedidoEsp = null;
@@ -1203,11 +1197,6 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 if (!String.IsNullOrEmpty(Request["IdPedidoEspelho"]))
                     idPedidoEsp = Glass.Conversoes.StrParaUint(Request["IdPedidoEspelho"]);
-
-                if (!String.IsNullOrEmpty(hdfIdAmbienteOrca.Value))
-                    idAmbienteOrca = Glass.Conversoes.StrParaUint(hdfIdAmbienteOrca.Value);
-                else if (!String.IsNullOrEmpty(Request["IdAmbienteOrca"]))
-                    idAmbienteOrca = Glass.Conversoes.StrParaUint(Request["IdAmbienteOrca"]);
 
                 if (!String.IsNullOrEmpty(hdfIdAmbientePedido.Value))
                     idAmbientePedido = Glass.Conversoes.StrParaUint(hdfIdAmbientePedido.Value);
@@ -1233,7 +1222,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 var medidasAlteradas = hdfMedidasAlteradas != null && bool.Parse(hdfMedidasAlteradas.Value);
 
                 ItemProjetoDAO.Instance.Confirmar(itemProjeto, idOrcamento.GetValueOrDefault(), idPedido.GetValueOrDefault(),
-                    idPedidoEsp.GetValueOrDefault(), idAmbienteOrca.GetValueOrDefault(), idAmbientePedido.GetValueOrDefault(),
+                    idPedidoEsp.GetValueOrDefault(), idAmbientePedido.GetValueOrDefault(),
                     idAmbientePedidoEsp.GetValueOrDefault(), !String.IsNullOrEmpty(txtAmbiente.Text) ? txtAmbiente.Text : "",
                     pecasAlteradas, AlterarMedidasPecas(), Request["visualizar"] == "1", ref tbPecaModelo, ref tbMedInst,
                     out retornoValidacao, ref medidasAlteradas, Request["Parceiro"] == "true");
@@ -1258,7 +1247,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 // Recarrega a tela no caso do cadastro do item
                 // No orçamento não é necessário verificar se o item foi inserido,
                 // já que o anterior é apagado do banco e o novo é sempre inserido
-                if ((idOrcamento.GetValueOrDefault() > 0 /*&& idAmbienteOrca == 0 */) ||
+                if ((idOrcamento.GetValueOrDefault() > 0) ||
                     (idPedido.GetValueOrDefault() > 0 && idAmbientePedido.GetValueOrDefault() == 0) ||
                     (idPedidoEsp.GetValueOrDefault() > 0 && idAmbientePedidoEsp.GetValueOrDefault() == 0))
                     recarregarPagina = true;
@@ -1269,10 +1258,13 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 var idItemProj = hdfIdItemProjeto != null ? hdfIdItemProjeto.Value : "null";
 
-                ErroDAO.Instance.InserirFromException(string.Format("Confirmar Projeto - IdItemProjeto: {0} IdOrcamento: {1} " +
-                    "IdPedido: {2} IdPedidoEsp: {3} IdAmbienteOrca: {4} IdAmbientePedido: {5} IdAmbientePedidoEsp: {6}",
-                    idItemProj, idOrcamento.GetValueOrDefault(), idPedido.GetValueOrDefault(), idPedidoEsp.GetValueOrDefault(),
-                    idAmbienteOrca.GetValueOrDefault(), idAmbientePedido.GetValueOrDefault(), idAmbientePedidoEsp.GetValueOrDefault()), ex);
+                ErroDAO.Instance.InserirFromException(
+                    $@"Confirmar Projeto - IdItemProjeto: {idItemProj}
+                    IdOrcamento: {idOrcamento}
+                    IdPedido: {idPedido}
+                    IdPedidoEsp: {idPedidoEsp}
+                    IdAmbientePedido: {idAmbientePedido}
+                    IdAmbientePedidoEsp: {idAmbientePedidoEsp}", ex);
 
                 // Marca que cálculo de projeto não foi conferido
                 if (idPedido.GetValueOrDefault() > 0 || idPedidoEsp.GetValueOrDefault() > 0)
@@ -1367,7 +1359,6 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
             uint idItemProjeto = Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value);
             uint? idOrcamento = null;
-            uint? idAmbienteOrca = null;
             uint? idPedido = null;
             uint? idAmbientePedido = null;
             uint? idPedidoEsp = null;
@@ -1377,9 +1368,6 @@ namespace Glass.UI.Web.Cadastros.Projeto
             {
                 if (!String.IsNullOrEmpty(Request["idOrcamento"]))
                     idOrcamento = Glass.Conversoes.StrParaUint(Request["idOrcamento"]);
-
-                if (!String.IsNullOrEmpty(Request["IdAmbienteOrca"]))
-                    idAmbienteOrca = Glass.Conversoes.StrParaUint(Request["IdAmbienteOrca"]);
 
                 if (!String.IsNullOrEmpty(Request["IdPedido"]))
                     idPedido = Glass.Conversoes.StrParaUint(Request["IdPedido"]);
@@ -1403,7 +1391,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 ItemProjeto itemProjeto = ItemProjetoDAO.Instance.GetElement(idItemProjeto);
 
                 if (idOrcamento > 0)
-                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(idOrcamento.Value, idAmbienteOrca, itemProjeto);
+                    ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(null, (int)idOrcamento.Value, null, itemProjeto, false);
 
                 if (idPedido > 0)
                 {

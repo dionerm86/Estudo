@@ -110,5 +110,19 @@ namespace Glass.API.Backend.Models.PedidosConferencia.V1.Lista
         [DataMember]
         [JsonProperty("logAlteracoes")]
         public bool LogAlteracoes { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o pedido pode ter arquivos gerados.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("podeGerarArquivo")]
+        public bool PodeGerarArquivo { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o pedido importado pode gerar arquivo.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("pedidoImportadoPodeGerarArquivo")]
+        public bool PedidoImportadoPodeGerarArquivo { get; set; }
     }
 }

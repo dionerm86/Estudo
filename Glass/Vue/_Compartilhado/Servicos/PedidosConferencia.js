@@ -16,13 +16,8 @@ Servicos.PedidosConferencia = (function (http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-      filtro = filtro || {};
-      filtro.pagina = pagina;
-      filtro.numeroRegistros = numeroRegistros;
-      filtro.ordenacao = ordenacao;
-
       return http().get(API.substr(0, API.length - 1), {
-        params: filtro
+        params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
       });
     },
 
@@ -97,6 +92,19 @@ Servicos.PedidosConferencia = (function (http) {
      */
     obterDadosProducao: function (id) {
       return http().get(API + id + '/dadosProducao');
+    },
+
+    /**
+     * Recupera o objeto com as situações do pedido em conferência.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    podeImprimirImportados: function (filtro) {
+      filtro = filtro || {};
+
+      return http().get(API + 'podeImprimirImportados', {
+        params: filtro
+      });
     }
   };
 })(function () {

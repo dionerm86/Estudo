@@ -75,6 +75,7 @@ namespace Glass.API.Backend.Models.PedidosConferencia.V1.Lista
                 ExibirSituacaoCncConferencia = pedidoConferencia.ExibirSituacaoCncConferencia,
                 ExibirConferirPedido = pedidoConferencia.ConferirPedidoVisible,
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.PedidoEspelho, pedidoConferencia.IdPedido, null),
+                PedidoImportadoPodeGerarArquivo = !pedidoConferencia.Importado || pedidoConferencia.PedidoConferido,
             };
         }
 

@@ -140,7 +140,9 @@ namespace Glass.Data.DAL
 		        WHERE lp.DataLeitura >= ?dataLeituraInicial
         	        AND lp.DataLeitura <= ?dataLeituraFinal
         	        AND lp.IdSetor = { idSetor }
-                GROUP BY lp.IdProdPedProducao");
+                GROUP BY lp.IdProdPedProducao",
+                new GDAParameter("?dataLeituraInicial", dataLeituraInicial),
+                new GDAParameter("?dataLeituraFinal", dataLeituraFinal));
 
             return idsProdPedProducao ?? new List<int>();
         }

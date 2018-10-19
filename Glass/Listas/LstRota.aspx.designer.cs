@@ -11,50 +11,5 @@ namespace Glass.UI.Web.Listas {
     
     
     public partial class LstRota {
-        
-        /// <summary>
-        /// lnkInserir control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkInserir;
-        
-        /// <summary>
-        /// grdRota control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdRota;
-        
-        /// <summary>
-        /// odsRota control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsRota;
-        
-        /// <summary>
-        /// lnkImprimir control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkImprimir;
-        
-        /// <summary>
-        /// lnkExportarExcel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkExportarExcel;
     }
 }

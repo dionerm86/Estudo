@@ -73,7 +73,7 @@
 
             var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo, idProcesso);
 
-            if (idSubgrupo.value != "" && retornoValidacao.value == "False" && (FindControl("txtProcIns", "input") != null && FindControl("txtProcIns", "input").value != "")) {
+            if (idSubgrupo.value != "" && retornoValidacao.value == "false" && (FindControl("txtProcIns", "input") != null && FindControl("txtProcIns", "input").value != "")) {
                 FindControl("txtProcIns", "input").value = "";
                 alert("Este processo não pode ser selecionado para este produto.")
                 return false;

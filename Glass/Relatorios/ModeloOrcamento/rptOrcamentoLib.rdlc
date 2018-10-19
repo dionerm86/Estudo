@@ -542,10 +542,6 @@
           <DataField>IdProduto</DataField>
           <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
         </Field>
-        <Field Name="IdAmbienteOrca">
-          <DataField>IdAmbienteOrca</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
         <Field Name="Peso">
           <DataField>Peso</DataField>
           <rd:TypeName>System.Single</rd:TypeName>
@@ -609,10 +605,6 @@
         <Field Name="IdProdParent">
           <DataField>IdProdParent</DataField>
           <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="NumSeq">
-          <DataField>NumSeq</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
         </Field>
         <Field Name="Espessura">
           <DataField>Espessura</DataField>

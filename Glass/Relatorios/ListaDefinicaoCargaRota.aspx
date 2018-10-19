@@ -59,7 +59,6 @@
         }
 
         function exibirPecas(idCliente, situacao) {
-            debugger;
             var inicio = FindControl("txtDataIni", "input").value;
             var fim = FindControl("txtDataFim", "input").value;
             var situacao = situacao === 'pendente' ? "3" : situacao === 'pronto' ? "4" : "5";

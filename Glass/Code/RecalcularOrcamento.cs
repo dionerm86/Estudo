@@ -32,13 +32,12 @@ namespace Glass.UI.Web
                 decimal desconto;
                 int tipoAcrescimo;
                 decimal acrescimo;
-                uint? idComissionado;
+                int? idComissionado;
                 float percComissao;
                 Dictionary<uint, KeyValuePair<KeyValuePair<int, decimal>, KeyValuePair<int, decimal>>> dadosProd;
 
-                var orcamento = ObterOrcamento((uint)idOrcamento);
                 OrcamentoDAO.Instance.RecalcularOrcamentoComTransacao(idOrcamento, tipoEntregaNovo, idClienteNovo, out tipoDesconto, out desconto, out tipoAcrescimo, out acrescimo,
-                    out idComissionado, out percComissao, out dadosProd, orcamento);
+                    out idComissionado, out percComissao, out dadosProd);
 
                 return OrcamentoDAO.Instance.ObterDadosOrcamentoRecalcular(tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosProd);
             }
@@ -69,11 +68,8 @@ namespace Glass.UI.Web
             uint? idCliente = Conversoes.StrParaUintNullable(idClienteNovoStr)
                 ?? ObterOrcamento(idOrcamento).IdCliente;
     
-            foreach (ProdutosOrcamento p in ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, true))
-            {
-                if (p.TemItensProduto)
-                    continue;
-    
+            foreach (ProdutosOrcamento p in ProdutosOrcamentoDAO.Instance.ObterProdutosOrcamento(null, (int)idOrcamento, null))
+            {    
                 p.IdCliente = idCliente;
     
                 if (p.IdProduto > 0)
@@ -129,7 +125,7 @@ namespace Glass.UI.Web
                 switch (tipo.ToLower())
                 {
                     case "orçamento":
-                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(null, idProd, beneficiamentos, orcamento);
+                        ProdutosOrcamentoDAO.Instance.AtualizarBenef(null, (int)idProd, beneficiamentos);
                         break;
     
                     case "material":
@@ -158,9 +154,8 @@ namespace Glass.UI.Web
                 var acrescimo = acrescimoStr.Replace(".", ",").StrParaDecimal();
                 var idComissionado = idComissionadoStr.StrParaIntNullable();
                 var percComissao = percComissaoStr.Replace(".", ",").StrParaFloat();
-
-                var orcamento = ObterOrcamento((uint)idOrcamento);
-                OrcamentoDAO.Instance.FinalizarRecalcularComTransacao(idOrcamento, tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosAmbientes, orcamento);
+                
+                OrcamentoDAO.Instance.FinalizarRecalcularComTransacao(idOrcamento, tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosAmbientes);
             }
             catch (Exception ex)
             {
