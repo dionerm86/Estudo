@@ -104,13 +104,19 @@ namespace Glass.Data.DAL
         public void SetLast(uint idSms, string resultDescr)
         {
             // Incrementa o número de tentativas
-            objPersistence.ExecuteCommand("update fila_sms set numTentativas=coalesce(numTentativas,0)+1 where idSms=" + idSms);
+            var sqlNumTentativas = $"update fila_sms set numTentativas=coalesce(numTentativas,0)+1, descricaoResultado= ?descricaoResultado where idSms= {idSms}";
+            objPersistence.ExecuteCommand(sqlNumTentativas, new GDAParameter("?descricaoResultado", resultDescr));
+
             if (ObtemValorCampo<int>("numTentativas", "idSms=" + idSms) > FilaSms.MAX_NUMERO_TENTATIVAS)
+            {
                 return;
+            }
 
             uint id = ExecuteScalar<uint>("select max(idSms)+1 from fila_sms");
             if (id == (idSms + 1))
+            {
                 return;
+            }
 
             string sql = @"update fila_sms set idSms={0} {1} where idSms=" + idSms + @"; 
                 alter table fila_sms auto_increment={0}";
