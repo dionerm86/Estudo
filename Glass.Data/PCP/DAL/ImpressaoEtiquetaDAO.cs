@@ -3193,6 +3193,11 @@ namespace Glass.Data.DAL
                     // Marca os produtos da impressão como cancelados.
                     ProdutoImpressaoDAO.Instance.MarcarProdutosImpressaoCancelado(sessao, new List<int> { (int)idProdImpressao }, null);
 
+                    if (produtosImpressao != null && produtosImpressao.Length > 0)
+                    {
+                        ProdutoImpressaoDAO.Instance.MarcarProdutosImpressaoCancelado(sessao, produtosImpressao.Select(f => (int)f.IdProdImpressao).ToList(), null);
+                    }
+
                     // Atualiza a situação dos pedidos.
                     if (idImpressao > 0 && (numeroNFe ?? 0) == 0 && idProdImpressao == 0)
                     {
