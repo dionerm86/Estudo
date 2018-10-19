@@ -3773,6 +3773,7 @@ namespace Glass.Data.DAL
                 prodPed.Beneficiamentos = GenericBenefCollection.Empty;
                 prodPed.ValorBenef = 0;
 
+                ValorTotal.Instance.PrepararRecalculoAtualizacao(session, pedido, prodPed);
                 ValorBruto.Instance.Calcular(session, pedido, prodPed);
 
                 prodPed.InicializarParaCalculo(session, pedido);
@@ -3805,7 +3806,7 @@ namespace Glass.Data.DAL
                 ValorBruto.Instance.Calcular(session, pedido, prodPed);
 
                 if (!PedidoConfig.RatearDescontoProdutos)
-                    prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd + prodPed.ValorDescontoQtde;
+                    prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd;
             }
             finally
             {
