@@ -4106,10 +4106,7 @@ namespace Glass.Data.DAL
 
                 if (aplicarAcrescimoAmbiente)
                 {
-                    removidos
-                        .AddRange(
-                        produtosAmbiente
-                        .Select(p => p.IdProdPed));
+                    removidos.AddRange(produtosAmbiente.Select(p => p.IdProdPed));
                 }
             }
 
