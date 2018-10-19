@@ -2430,14 +2430,8 @@ namespace Glass.Data.DAL
 
             var tolerancia = 0.03M;
 
-            var ppe = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(
-                session,
-                idPedido,
-                false,
-                false);
-
-            // Verifica se o total dos clones é igual aos seus produtos_pedido_espelho relacionados
-            foreach (var prodPedEsp in ppe)
+             // Verifica se o total dos clones é igual aos seus produtos_pedido_espelho relacionados
+            foreach (var prodPedEsp in produtosPedidoEspelho)
             {
                 var prodPed = ProdutosPedidoDAO.Instance.GetByProdPedEsp(
                     session,
@@ -2446,9 +2440,10 @@ namespace Glass.Data.DAL
 
                 if (prodPed != null && prodPed.IdProdPed > 0)
                 {
-                    var diferenca = Math.Max(
-                        (prodPedEsp.Total - prodPed.Total),
-                        (prodPedEsp.ValorBenef - prodPed.ValorBenef));
+                    var diferencaValorBeneficamento = (prodPedEsp.ValorBenef - prodPed.ValorBenef);
+                    var diferencaTotalProduto = (prodPedEsp.Total - prodPed.Total);
+
+                    var diferenca = Math.Max(diferencaValorBeneficamento, diferencaTotalProduto);
 
                     if (diferenca > tolerancia)
                     {
@@ -2456,7 +2451,8 @@ namespace Glass.Data.DAL
                             " Alguns produtos da conferência estão divergentes do original.");
                     }
 
-                    tolerancia -= diferenca;
+                    tolerancia -= diferencaValorBeneficamento;
+                    tolerancia -= diferencaTotalProduto;
                 }
             }
 
@@ -4065,9 +4061,7 @@ namespace Glass.Data.DAL
             // Remove o acréscimo do pedido
             if (aplicarAcrescimo)
             {
-                removidos.AddRange(
-                    produtosPedidoEspelho
-                    .Select(p => p.IdProdPed));
+                removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
             }
 
             var aplicarDesconto = AplicarDesconto(
@@ -4080,10 +4074,7 @@ namespace Glass.Data.DAL
             // Remove o desconto do pedido
             if (aplicarDesconto)
             {
-                removidos
-                    .AddRange(
-                    produtosPedidoEspelho
-                    .Select(p => p.IdProdPed));
+                removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
             }
 
             var aplicarComissao = AplicarComissao(
@@ -4095,9 +4086,7 @@ namespace Glass.Data.DAL
             // Remove o valor da comissão nos produtos e no pedido
             if (aplicarComissao)
             {
-                removidos.AddRange(
-                    produtosPedidoEspelho
-                    .Select(p => p.IdProdPed));
+                removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
             }
 
             /* Chamado 62763. */
