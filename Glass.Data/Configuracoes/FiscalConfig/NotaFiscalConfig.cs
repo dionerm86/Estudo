@@ -351,17 +351,12 @@ namespace Glass.Configuracoes
                 if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.LojaDosEspelhos &&
                     (inscEstLoja == "06.200.647-9" || inscEstLoja == "062006479"))
                     return 2;
- 
-                if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.VitralManaus &&
-                    (inscEstLoja == "06.200.648-7" || inscEstLoja == "062006487"))
-                    return 6;
 
                 if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.CasaDosEspelhos &&
                     (inscEstLoja == "06.201.161-8" || inscEstLoja == "062011618"))
                     return 2;
 
-                if ((ControleSistema.GetSite() == ControleSistema.ClienteSistema.Divine ||
-                    ControleSistema.GetSite() == ControleSistema.ClienteSistema.Dividros ||
+                if ((ControleSistema.GetSite() == ControleSistema.ClienteSistema.Dividros ||
                     ControleSistema.GetSite() == ControleSistema.ClienteSistema.Invitra) &&
                     (codCfop == "5103" || codCfop == "5104"))
                     return 3;
