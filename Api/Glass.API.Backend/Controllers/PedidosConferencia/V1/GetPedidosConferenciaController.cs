@@ -52,7 +52,7 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
             {
                 filtro = filtro ?? new Models.PedidosConferencia.V1.Lista.FiltroDto();
 
-                var notasFiscais = PedidoEspelhoDAO.Instance.GetList(
+                var pedidosEspelho = PedidoEspelhoDAO.Instance.GetList(
                     (uint)(filtro.IdPedido ?? 0),
                     (uint)(filtro.IdCliente ?? 0),
                     filtro.NomeCliente,
@@ -88,7 +88,7 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    notasFiscais.Select(n => new Models.PedidosConferencia.V1.Lista.ListaDto(n)),
+                    pedidosEspelho.Select(n => new Models.PedidosConferencia.V1.Lista.ListaDto(n)),
                     filtro,
                     () => PedidoEspelhoDAO.Instance.GetCount(
                         (uint)(filtro.IdPedido ?? 0),
@@ -168,6 +168,72 @@ namespace Glass.API.Backend.Controllers.PedidosConferencia.V1
                     });
 
                 return this.Lista(situacoes);
+            }
+        }
+
+        /// <summary>
+        /// Valida se os pedidos filtrados podem ser impressos.
+        /// </summary>
+        /// <param name="filtro">Os filtros para a busca dos pedidos.</param>
+        /// <returns>O retorno da validação dos pedidos passados.</returns>
+        [HttpGet]
+        [Route("podeImprimirImportados")]
+        [SwaggerResponse(200, "Pedidos podem ser impressos.")]
+        [SwaggerResponse(400, "Pedidos não podem ser impressos.", Type = typeof(MensagemDto))]
+        public IHttpActionResult VerificarPodeImprimirVariosPedidosImportados([FromUri] Models.PedidosConferencia.V1.Lista.FiltroDto filtro)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                if (!Configuracoes.PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos)
+                {
+                    return this.Ok();
+                }
+
+                filtro = filtro ?? new Models.PedidosConferencia.V1.Lista.FiltroDto();
+
+                IList<int> idsPedidos = PedidoEspelhoDAO.Instance.ObterIdsPedidos(
+                    sessao,
+                    (uint)(filtro.IdPedido ?? 0),
+                    (uint)(filtro.IdCliente ?? 0),
+                    filtro.NomeCliente,
+                    (uint)(filtro.IdLoja ?? 0),
+                    (uint)(filtro.IdVendedor ?? 0),
+                    (uint)(filtro.IdConferente ?? 0),
+                    (int)(filtro.Situacao ?? 0),
+                    filtro.SituacaoPedidoComercial != null && filtro.SituacaoPedidoComercial.Any() ? string.Join(",", filtro.SituacaoPedidoComercial.Select(f => (int)f)) : null,
+                    filtro.IdsProcesso != null && filtro.IdsProcesso.Any() ? string.Join(",", filtro.IdsProcesso) : null,
+                    filtro.PeriodoEntregaInicio?.ToShortDateString(),
+                    filtro.PeriodoEntregaFim?.ToShortDateString(),
+                    filtro.PeriodoFabricaInicio?.ToShortDateString(),
+                    filtro.PeriodoFabricaFim?.ToShortDateString(),
+                    filtro.PeriodoFinalizacaoConferenciaInicio?.ToShortDateString(),
+                    filtro.PeriodoFinalizacaoConferenciaFim?.ToShortDateString(),
+                    filtro.PeriodoCadastroConferenciaInicio?.ToShortDateString(),
+                    filtro.PeriodoCadastroConferenciaFim?.ToShortDateString(),
+                    filtro.PeriodoCadastroPedidoInicio?.ToShortDateString(),
+                    filtro.PeriodoCadastroPedidoFim?.ToShortDateString(),
+                    false,
+                    filtro.PedidosSemAnexo,
+                    filtro.SituacaoCnc != null && filtro.SituacaoCnc.Any() ? string.Join(",", filtro.SituacaoCnc.Select(f => (int)f)) : null,
+                    filtro.PeriodoProjetoCncInicio?.ToShortDateString(),
+                    filtro.PeriodoProjetoCncFim?.ToShortDateString(),
+                    filtro.PedidosAComprar,
+                    filtro.TiposPedido != null && filtro.TiposPedido.Any() ? string.Join(",", filtro.TiposPedido.Select(f => (int)f)) : null,
+                    filtro.IdsRota != null && filtro.IdsRota.Any() ? string.Join(",", filtro.IdsRota) : null,
+                    filtro.OrigemPedido ?? 0,
+                    filtro.PedidosConferidos,
+                    (int?)filtro.TipoVenda);
+
+                try
+                {
+                    PedidoEspelhoDAO.Instance.ValidarPedidosConferidos(sessao, idsPedidos);
+                }
+                catch (System.Exception x)
+                {
+                    return this.ErroValidacao(x.Message);
+                }
+
+                return this.Ok();
             }
         }
 

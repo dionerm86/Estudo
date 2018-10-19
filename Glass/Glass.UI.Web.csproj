@@ -476,12 +476,17 @@
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamento.ascx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Producao\Turnos\Componentes\LstTurnos.js" />
     <Content Include="Vue\Produtos\GruposProduto\Componentes\LstGruposProduto.js" />
     <Content Include="Vue\Feriados\Componentes\LstFeriados.js" />
     <Content Include="Vue\Comissionados\Componentes\LstComissionados.Filtro.js" />
@@ -497,6 +502,7 @@
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.Filtro.js" />
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.js" />
     <Content Include="Vue\Fornecedores\Templates\LstFornecedores.Filtro.html" />
+    <Content Include="Vue\Rotas\Componentes\LstRotas.js" />
     <Content Include="Vue\TabelasDescontoAcrescimoCliente\Componentes\LstTabelasDescontoAcrescimoCliente.js" />
     <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
@@ -661,7 +667,6 @@
     <Content Include="Cadastros\CadPlanoConta.aspx" />
     <Content Include="Cadastros\CadPrecoProduto.aspx" />
     <Content Include="Cadastros\CadProduto.aspx" />
-    <Content Include="Cadastros\CadProdutoOrcamento.aspx" />
     <Content Include="Cadastros\CadProprietarioVeiculo.aspx" />
     <Content Include="Cadastros\CadQuitarDebitoFunc.aspx" />
     <Content Include="Cadastros\CadQuitarParcCartao.aspx" />
@@ -696,7 +701,6 @@
     <Content Include="Cadastros\CadTransportador.aspx" />
     <Content Include="Cadastros\CadTrasnfCxGeralParaCxDiario.aspx" />
     <Content Include="Cadastros\CadTrocaDev.aspx" />
-    <Content Include="Cadastros\CadTurno.aspx" />
     <Content Include="Cadastros\CadValorRetidoFonte.aspx" />
     <Content Include="Cadastros\CadVeiculos.aspx" />
     <Content Include="Cadastros\CadVolume.aspx" />
@@ -3631,6 +3635,34 @@
     <Compile Include="Controls\ctrlPesquisaCliente.ascx.designer.cs">
       <DependentUpon>ctrlPesquisaCliente.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChild.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChild.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoAlterarProcApl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoAlterarProcApl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamento.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamento.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamento.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamento.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ctrlProdComposicaoAlterarProcApl.ascx.cs">
       <DependentUpon>ctrlProdComposicaoAlterarProcApl.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4311,13 +4343,6 @@
     <Compile Include="Cadastros\CadProduto.aspx.designer.cs">
       <DependentUpon>CadProduto.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Cadastros\CadProdutoOrcamento.aspx.cs">
-      <DependentUpon>CadProdutoOrcamento.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Cadastros\CadProdutoOrcamento.aspx.designer.cs">
-      <DependentUpon>CadProdutoOrcamento.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Cadastros\CadProprietarioVeiculo.aspx.cs">
       <DependentUpon>CadProprietarioVeiculo.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4555,13 +4580,6 @@
     </Compile>
     <Compile Include="Cadastros\CadTrocaDev.aspx.designer.cs">
       <DependentUpon>CadTrocaDev.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Cadastros\CadTurno.aspx.cs">
-      <DependentUpon>CadTurno.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Cadastros\CadTurno.aspx.designer.cs">
-      <DependentUpon>CadTurno.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\CadValorRetidoFonte.aspx.cs">
       <DependentUpon>CadValorRetidoFonte.aspx</DependentUpon>

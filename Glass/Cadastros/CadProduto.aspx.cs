@@ -179,6 +179,12 @@ namespace Glass.UI.Web.Cadastros
         }
 
         [Ajax.AjaxMethod]
+        public string ObrigarAlturaLargura(string idSubgrupo)
+        {
+            return WebGlass.Business.SubgrupoProd.Fluxo.BuscarEValidar.Ajax.ObrigarAlturaLargura(idSubgrupo);
+        }
+
+        [Ajax.AjaxMethod]
         public string ObterTipoSubgrupoPeloSubgrupo(string idSubgrupoStr)
         {
             return WebGlass.Business.SubgrupoProd.Fluxo.BuscarEValidar.Ajax.ObterTipoSubgrupoPeloSubgrupo(idSubgrupoStr);

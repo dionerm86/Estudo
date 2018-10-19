@@ -18,41 +18,48 @@ namespace Glass.Data.Model
         /// </summary>
         [Description("Nenhum")]
         Nenhum = 0,
+
         /// <summary>
         /// Domingo.
         /// </summary>
         [Description("Domingo")]
         Domingo = 1,
+
         /// <summary>
         /// Segunda-Feira.
         /// </summary>
         [Description("Segunda-Feira")]
         Segunda = 2,
+
         /// <summary>
         /// Terça-Feira.
         /// </summary>
         [Description("Terça-Feira")]
         Terca = 4,
+
         /// <summary>
         /// Quarta-Feira.
         /// </summary>
         [Description("Quarta-Feira")]
         Quarta = 8,
+
         /// <summary>
         /// Quinta-Feira.
         /// </summary>
         [Description("Quinta-Feira")]
         Quinta = 16,
+
         /// <summary>
         /// Sexta-Feira.
         /// </summary>
         [Description("Sexta-Feira")]
         Sexta = 32,
+
         /// <summary>
         /// Sábado.
         /// </summary>
         [Description("Sábado")]
-        Sabado = 64
+        Sabado = 64,
     }
 
     [PersistenceBaseDAO(typeof(RotaDAO))]

@@ -255,8 +255,11 @@
     <Compile Include="Financeiro\QuitacaoParcelaCartaoFluxo.cs" />
     <Compile Include="Fiscal\CalculadoraImposto.cs" />
     <Compile Include="Fiscal\CalculadoraRentabilidadeNotaFiscal.cs" />
+    <Compile Include="Fiscal\Calculadoras\CalculadoraImpostoOrcamento.cs" />
     <Compile Include="Fiscal\Calculadoras\CalculadoraImpostoNotaFiscal.cs" />
+    <Compile Include="Fiscal\Calculadoras\OrcamentoImpostoContainer.cs" />
     <Compile Include="Fiscal\Calculadoras\NotaFiscalImpostoContainer.cs" />
+    <Compile Include="Fiscal\Calculadoras\ProdutoOrcamentoItemImposto.cs" />
     <Compile Include="Fiscal\Calculadoras\ProdutoNfItemImposto.cs" />
     <Compile Include="Fiscal\CentroCustoFluxo.cs" />
     <Compile Include="Fiscal\CestFluxo.cs" />

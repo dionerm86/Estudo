@@ -52,7 +52,7 @@ namespace Glass.UI.Web.Otimizacao.Views
     
                 var orcamento = OrcamentoDAO.Instance.GetElement(idOrca);
     
-                orcamento.QtdePecas = OrcamentoDAO.Instance.ObtemQuantidadePecas(idOrca);
+                orcamento.QtdePecas = OrcamentoDAO.Instance.ObterQuantidadePecas(null, (int)idOrca);
     
                 str.Append(orcamento.IdOrcamento + ";");
                 str.Append(orcamento.NomeCliente + ";");

@@ -20,13 +20,8 @@ Servicos.Produtos = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obter: function (filtro, pagina, numeroRegistros, ordenacao) {
-        filtro = filtro || {};
-        filtro.pagina = pagina;
-        filtro.numeroRegistros = numeroRegistros;
-        filtro.ordenacao = ordenacao;
-
         return http().get(API + 'grupos', {
-          params: filtro
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
 
@@ -40,7 +35,7 @@ Servicos.Produtos = (function(http) {
 
       /**
        * Remove um grupo de produto.
-       * @param {!number} idCorVidro O identificador da cor de vidro que será excluída.
+       * @param {!number} idGrupoProduto O identificador do grupo de produto que será excluído.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       excluir: function (idGrupoProduto) {
@@ -53,7 +48,7 @@ Servicos.Produtos = (function(http) {
 
       /**
        * Insere um grupo de produto.
-       * @param {!Object} grupoProduto O objeto com os dados do grupo de produto a ser inserida.
+       * @param {!Object} grupoProduto O objeto com os dados do grupo de produto a ser inserido.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       inserir: function (grupoProduto) {
@@ -125,13 +120,8 @@ Servicos.Produtos = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obter: function (filtro, pagina, numeroRegistros, ordenacao) {
-        filtro = filtro || {};
-        filtro.pagina = pagina;
-        filtro.numeroRegistros = numeroRegistros;
-        filtro.ordenacao = ordenacao;
-
         return http().get(API + 'subgrupos', {
-          params: filtro
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
 
@@ -218,13 +208,8 @@ Servicos.Produtos = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obter: function (filtro, pagina, numeroRegistros, ordenacao) {
-        filtro = filtro || {};
-        filtro.pagina = pagina;
-        filtro.numeroRegistros = numeroRegistros;
-        filtro.ordenacao = ordenacao;
-
         return http().get(API + 'cores/vidro', {
-          params: filtro
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
 
@@ -290,13 +275,8 @@ Servicos.Produtos = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obter: function (filtro, pagina, numeroRegistros, ordenacao) {
-        filtro = filtro || {};
-        filtro.pagina = pagina;
-        filtro.numeroRegistros = numeroRegistros;
-        filtro.ordenacao = ordenacao;
-
         return http().get(API + 'cores/ferragem', {
-          params: filtro
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
 
@@ -362,72 +342,8 @@ Servicos.Produtos = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obter: function (filtro, pagina, numeroRegistros, ordenacao) {
-        filtro = filtro || {};
-        filtro.pagina = pagina;
-        filtro.numeroRegistros = numeroRegistros;
-        filtro.ordenacao = ordenacao;
-
         return http().get(API + 'cores/aluminio', {
-          params: filtro
-        });
-      },
-
-      /**
-       * Remove uma cor de alumínio.
-       * @param {!number} idCorAluminio O identificador da cor de alumínio que será excluída.
-       * @returns {Promise} Uma promise com o resultado da operação.
-       */
-      excluir: function (idCorAluminio) {
-        if (!idCorAluminio) {
-          throw new Error('Cor de alumínio é obrigatória.');
-        }
-
-        return http().delete(API + 'cores/aluminio/' + idCorAluminio);
-      },
-
-      /**
-       * Insere uma cor de alumínio.
-       * @param {!Object} corAluminio O objeto com os dados da cor de alumínio a ser inserida.
-       * @returns {Promise} Uma promise com o resultado da operação.
-       */
-      inserir: function (corAluminio) {
-        return http().post(API + 'cores/aluminio', corAluminio);
-      },
-
-      /**
-       * Altera os dados de uma cor de alumínio.
-       * @param {!number} idCorAluminio O identificador da cor de alumínio que será alterada.
-       * @param {!Object} corAluminio O objeto com os dados da cor de alumínio a serem alteradas.
-       * @returns {Promise} Uma promise com o resultado da operação.
-       */
-      atualizar: function (idCorAluminio, corAluminio) {
-        if (!idCorAluminio) {
-          throw new Error('Cor de alumínio é obrigatória.');
-        }
-
-        if (!corAluminio || corAluminio === {}) {
-          return Promise.resolve();
-        }
-
-        return http().patch(API + 'cores/aluminio/' + idCorAluminio, corAluminio);
-      },
-
-      /**
-       * Recupera a lista de cores de alumínio para uso no controle de busca.
-       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
-       * @param {number} pagina O número da página de resultados a ser exibida.
-       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
-       * @param {string} ordenacao A ordenação para o resultado.
-       * @returns {Promise} Uma promise com o resultado da operação.
-       */
-      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
-        filtro = filtro || {};
-        filtro.pagina = pagina;
-        filtro.numeroRegistros = numeroRegistros;
-        filtro.ordenacao = ordenacao;
-
-        return http().get(API + 'cores/aluminio', {
-          params: filtro
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
 
@@ -489,13 +405,8 @@ Servicos.Produtos = (function(http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-      filtro = filtro || {};
-      filtro.pagina = pagina;
-      filtro.numeroRegistros = numeroRegistros;
-      filtro.ordenacao = ordenacao;
-
       return http().get(API.substr(0, API.length - 1), {
-        params: filtro
+        params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
       });
     },
 

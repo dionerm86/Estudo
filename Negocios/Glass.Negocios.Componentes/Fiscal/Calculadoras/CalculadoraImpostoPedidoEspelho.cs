@@ -126,11 +126,11 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
                         ambientes.FirstOrDefault(f => f.IdAmbientePedido == produtoPedido.IdAmbientePedido.Value) : null;
 
                     if (ambiente != null && ambiente.Desconto > 0)
-                        descontoRateadoImpostos -=
+                        descontoRateadoImpostos +=
                             (ambiente.TipoDesconto == 1 ?
                                 ambiente.Desconto / 100m :
                                 ambiente.Desconto / (ambiente.TotalProdutos + ambiente.ValorDescontoAtual)) *
-                            (produtoPedido.Total * produtoPedido.ValorBenef);
+                            (produtoPedido.Total + produtoPedido.ValorBenef);
                 }
 
                 var produtoNateruzaOperacao = produtosNaturezaOperacao[(int)produtoPedido.IdProd];

@@ -41,7 +41,6 @@
         }
 
         function formataCampoValor() {
-            debugger;
             FindControl("txtValorPadraoIns", "input").value = FindControl("txtValorPadraoIns", "input").value.toString().replace(',', '.');
         }
 

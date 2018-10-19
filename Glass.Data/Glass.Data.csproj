@@ -771,7 +771,7 @@
     <Compile Include="NFeUtils\IRetornoAutorizacao.cs" />
     <Compile Include="NFeUtils\IStatusServico.cs" />
     <Compile Include="Orcamento\DAL\FotosOrcamentoDAO.cs" />
-    <Compile Include="Orcamento\Model\AmbienteOrcamentoRentabilidade.cs" />
+    <Compile Include="Orcamento\DAL\ProdutosOrcamentoDAO.Ambiente.cs" />
     <Compile Include="Orcamento\Model\OrcamentoRentabilidade.cs" />
     <Compile Include="Orcamento\Model\ProdutoOrcamentoRentabilidade.cs" />
     <Compile Include="Otimizacao\Model\PecaPlanoCorte.cs" />
@@ -942,7 +942,6 @@
     <Compile Include="Medicao\Model\Medicao.cs" />
     <Compile Include="Medicao\Model\MedicaoSite.cs" />
     <Compile Include="Medicao\Model\PontoFotoMedicao.cs" />
-    <Compile Include="Orcamento\DAL\AmbienteOrcamentoDAO.cs" />
     <Compile Include="Pedido\DAL\AmbientePedidoDAO.cs" />
     <Compile Include="Global\DAL\AnexoEmailDAO.cs" />
     <Compile Include="Financeiro\DAL\AntecipContaRecDAO.cs" />
@@ -1477,7 +1476,6 @@
     <Compile Include="RelModel\MemoriaCalculo.cs" />
     <Compile Include="Helper\UtilsFinanceiro.cs" />
     <Compile Include="Helper\UtilsPlanoConta.cs" />
-    <Compile Include="Orcamento\Model\AmbienteOrcamento.cs" />
     <Compile Include="Global\Model\BenefConfig.cs" />
     <Compile Include="Global\Model\ChapaVidro.cs" />
     <Compile Include="Pedido\Model\PedidoComissao.cs" />

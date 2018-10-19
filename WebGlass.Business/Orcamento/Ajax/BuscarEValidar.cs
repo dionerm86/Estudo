@@ -17,14 +17,14 @@ namespace WebGlass.Business.Orcamento.Ajax
             try
             {
                 uint idOrcamento = Glass.Conversoes.StrParaUint(idOrcamentoStr);
-                uint? idClienteOrca = OrcamentoDAO.Instance.ObtemIdCliente(null, idOrcamento);
-                int? tipoEntregaOrca = OrcamentoDAO.Instance.ObtemTipoEntrega(idOrcamento);
+                var idClienteOrca = OrcamentoDAO.Instance.ObterIdCliente(null, (int)idOrcamento);
+                var tipoEntregaOrca = OrcamentoDAO.Instance.ObterTipoEntrega(null, (int)idOrcamento);
 
                 string idCliente = idClienteOrca > 0 ? idClienteOrca.ToString() : "";
-                bool revenda = idClienteOrca > 0 ? ClienteDAO.Instance.IsRevenda(null, idClienteOrca.Value) : false;
+                bool revenda = idClienteOrca > 0 ? ClienteDAO.Instance.IsRevenda(null, (uint)idClienteOrca) : false;
                 string tipoEntrega = tipoEntregaOrca > 0 ? tipoEntregaOrca.ToString() : ((int)Glass.Data.Model.Orcamento.TipoEntregaOrcamento.Balcao).ToString();
 
-                return "Ok;" + idCliente + ";" + revenda + ";" + OrcamentoDAO.Instance.RecuperaPercComissao(idOrcamento).ToString().Replace(",", ".") + ";" + tipoEntrega;
+                return "Ok;" + idCliente + ";" + revenda + ";" + OrcamentoDAO.Instance.RecuperaPercComissao(null, idOrcamento).ToString().Replace(",", ".") + ";" + tipoEntrega;
             }
             catch (Exception ex)
             {
