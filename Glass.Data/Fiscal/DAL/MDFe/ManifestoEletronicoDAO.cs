@@ -1304,9 +1304,9 @@ namespace Glass.Data.DAL
             {
                 XmlElement infAdic = doc.CreateElement("infAdic");
                 if (!string.IsNullOrWhiteSpace(mdfe.InformacoesAdicionaisFisco))
-                    ManipulacaoXml.SetNode(doc, infAdic, "infAdFisco", Formatacoes.TrataStringDocFiscal(mdfe.InformacoesAdicionaisFisco));
+                    ManipulacaoXml.SetNode(doc, infAdic, "infAdFisco", Formatacoes.TrataTextoDocFiscal(mdfe.InformacoesAdicionaisFisco));
                 if (!string.IsNullOrWhiteSpace(mdfe.InformacoesComplementares))
-                    ManipulacaoXml.SetNode(doc, infAdic, "infCpl", Formatacoes.TrataStringDocFiscal(mdfe.InformacoesComplementares));
+                    ManipulacaoXml.SetNode(doc, infAdic, "infCpl", Formatacoes.TrataTextoDocFiscal(mdfe.InformacoesComplementares));
                 infMDFe.AppendChild(infAdic);
             }
 
