@@ -1,23 +1,20 @@
 using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Data;
 using System.Linq;
 using System.Web;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 
 namespace Glass.UI.Web
 {
-    /// <summary>
-    /// Summary description for Bootstrapper
-    /// </summary>
     public class Bootstrapper : Glass.UI.Web.Process.BaseBootstrapper
     {
         protected override void ConfigureContainer()
         {
             base.ConfigureContainer();
 
-            Container.ComposeExportedValue<Glass.Otimizacao.IRepositorioSolucaoOtimizacao>(
-                new Glass.Otimizacao.RepositorioSolucaoOtimizacao(HttpContext.Current.Server.MapPath("~/Upload/Otimizacoes")));   
+            this.Container.ComposeExportedValue<Glass.Otimizacao.IRepositorioSolucaoOtimizacao>(
+                new Glass.Otimizacao.RepositorioSolucaoOtimizacao(HttpContext.Current.Server.MapPath("~/Upload/Otimizacoes")));
         }
 
         protected override void ConfigureAggregateCatalog()
@@ -28,7 +25,7 @@ namespace Glass.UI.Web
             {
                 var reader = System.Xml.XmlReader.Create(textReader, new System.Xml.XmlReaderSettings
                 {
-                    IgnoreWhitespace = true
+                    IgnoreWhitespace = true,
                 });
                 reader.Read();
                 var configurableCatalog =
@@ -50,10 +47,12 @@ namespace Glass.UI.Web
                 var assembly = System.Reflection.Assembly.Load(System.IO.Path.GetFileNameWithoutExtension(i));
 
                 if (assembly != null)
+                {
                     this.AggregateCatalog.Catalogs.Add(new System.ComponentModel.Composition.Hosting.AssemblyCatalog(assembly));
+                }
             }
 
-            AggregateCatalog.Catalogs.Add(new MefContrib.Hosting.Conventions.ConventionCatalog(
+            this.AggregateCatalog.Catalogs.Add(new MefContrib.Hosting.Conventions.ConventionCatalog(
                 new Colosoft.Mef.PartConventionBuilder()
                     .Add<Glass.Negocios.Componentes.Seguranca.ProvedorToken, Colosoft.Security.ITokenProvider>()
                     .AddImportingConstructor<Colosoft.Query.Database.MySql.MySqlDataSource, Colosoft.Query.Database.SqlQueryDataSource>()
@@ -61,7 +60,7 @@ namespace Glass.UI.Web
                     .Add<Colosoft.Data.Database.MySql.MySqlPrimaryKeyRepository, Colosoft.Data.Database.MySql.IMySqlPrimaryKeyRepository>()
                 ));
 
-            AggregateCatalog.Catalogs.Add(new Colosoft.Mef.InstanceCatalog()
+            this.AggregateCatalog.Catalogs.Add(new Colosoft.Mef.InstanceCatalog()
 
                .Add<Colosoft.Data.Schema.ITypeSchema>(new Lazy<Colosoft.Data.Schema.ITypeSchema>(() =>
                {
@@ -70,8 +69,7 @@ namespace Glass.UI.Web
                })));
         }
 
-        protected override Colosoft.Data.IPersistenceContext CreateDatabasePersistenceContext
-            (Colosoft.Data.Schema.ITypeSchema typeSchema)
+        protected override Colosoft.Data.IPersistenceContext CreateDatabasePersistenceContext(Colosoft.Data.Schema.ITypeSchema typeSchema)
         {
             return new Colosoft.Data.Database.MySql.MySqlPersistenceContext
                 (Microsoft.Practices.ServiceLocation.ServiceLocator.Current, typeSchema);
@@ -79,7 +77,7 @@ namespace Glass.UI.Web
 
         protected override void ConfigureGDAListeners()
         {
-            GDA.GDAConnectionManager.Listeners.Add(new Glass.Dados.MySql.MySqlConnectionListener());
+            GDA.GDAConnectionManager.Listeners.Add(new Dados.MySql.MySqlConnectionListener());
         }
     }
 }

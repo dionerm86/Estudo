@@ -56,10 +56,12 @@ namespace Glass.Global.Negocios.Entidades
                         ("Aplicacao", f => f.Aplicacao, f => f.IdAplicacao, true, Colosoft.Business.LoadOptions.Lazy)
                     .Reference<EtiquetaProcesso, Data.Model.EtiquetaProcesso>
                         ("Processo", f => f.Processo, f => f.IdProcesso, true, Colosoft.Business.LoadOptions.Lazy)
+                    .Reference<GrupoProd, Data.Model.GrupoProd>("GrupoProd", f => f.GrupoProd, f => f.IdGrupoProd, true, Colosoft.Business.LoadOptions.Lazy)
                     .Reference<SubgrupoProd, Data.Model.SubgrupoProd>("Subgrupo", f => f.Subgrupo, f => f.IdSubgrupoProd)
                     .Reference<Fiscal.Negocios.Entidades.Cest, Data.Model.Cest>("Cest", f => f.Cest, f => f.IdCest)
                     .Child<ProdutoNCM, Data.Model.ProdutoNCM>("NCMs", f => f.NCMs, f => f.IdProd)
                     .Child<FlagArqMesaProduto, Data.Model.FlagArqMesaProduto>("FlagArqMesaProduto", f => f.FlagArqMesaProduto, f => f.IdProduto)
+                    .Reference<UnidadeMedida, Data.Model.UnidadeMedida>("UnidadeMedida", f => f.UnidadeMedida, f => f.IdUnidadeMedida, true, Colosoft.Business.LoadOptions.Lazy)
                     .Creator(f => new Produto(f));
             }
         }
@@ -108,6 +110,18 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
+        /// Obtém o grupo de produtos.
+        /// </summary>
+        [System.Diagnostics.DebuggerHidden]
+        public GrupoProd GrupoProd
+        {
+            get
+            {
+                return this.GetReference<GrupoProd>("GrupoProd", true);
+            }
+        }
+
+        /// <summary>
         /// Subgrupo ao qual o produto pertence.
         /// </summary>
         [System.Diagnostics.DebuggerHidden]
@@ -123,6 +137,18 @@ namespace Glass.Global.Negocios.Entidades
         public Fiscal.Negocios.Entidades.Cest Cest
         {
             get { return GetReference<Fiscal.Negocios.Entidades.Cest>("Cest", true); }
+        }
+
+        /// <summary>
+        /// Obtém a unidade de medida associada.
+        /// </summary>
+        [System.Diagnostics.DebuggerHidden]
+        public UnidadeMedida UnidadeMedida
+        {
+            get
+            {
+                return this.GetReference<UnidadeMedida>("UnidadeMedida", true);
+            }
         }
 
         /// <summary>

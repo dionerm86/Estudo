@@ -4668,7 +4668,9 @@ namespace Glass.Data.DAL
             objUpdate.Descricao = objUpdate.Descricao.Replace("'", "").Replace("\"", "").Replace("\t", "").Replace("\n", "");
 
             LogAlteracaoDAO.Instance.LogProduto(objUpdate, LogAlteracaoDAO.SequenciaObjeto.Novo);
-            return base.Update(session, objUpdate);
+            var resultado = base.Update(session, objUpdate);
+
+            return resultado;
         }
 
         /// <summary>

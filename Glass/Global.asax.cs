@@ -80,7 +80,9 @@ namespace Glass.UI.Web
             {
                 var ticket = System.Web.Security.FormsAuthentication.Decrypt(cookie.Value);
 
-                if (ticket != null && ticket.IssueDate < _dataInicioSistema)
+                if (ticket != null &&
+                    ticket.IssueDate < _dataInicioSistema &&
+                    !StringComparer.InvariantCultureIgnoreCase.Equals(HttpContext.Current.Request.Url.Host, "localhost"))
                 {
                     System.Web.Security.FormsAuthentication.SignOut();
                     System.Web.Security.FormsAuthentication.RedirectToLoginPage();

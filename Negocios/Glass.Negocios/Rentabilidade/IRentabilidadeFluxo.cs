@@ -84,6 +84,13 @@ namespace Glass.Rentabilidade.Negocios
         /// <returns></returns>
         Colosoft.Business.DeleteResult ApagarIndicadorFinanceiro(Entidades.IndicadorFinanceiro indicadorFinanceiro);
 
+        /// <summary>
+        /// Realiza a atualiza~çao dos indicadores financeiros.
+        /// </summary>
+        /// <param name="indicadores">Dados dos indicadores que serão atualizados.</param>
+        /// <returns>Resultado da operação.</returns>
+        Colosoft.Business.SaveResult AtualizarIndicadores(IEnumerable<AtualizacaoIndicadorFinanceiro> indicadores);
+
         #endregion
 
         #region ConfigRegistroRentabilidade
