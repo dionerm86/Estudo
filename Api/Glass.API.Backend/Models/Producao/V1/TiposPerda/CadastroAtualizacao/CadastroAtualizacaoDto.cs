@@ -29,11 +29,11 @@ namespace Glass.API.Backend.Models.Producao.V1.TiposPerda.CadastroAtualizacao
         /// Obtém ou define um valor que indica se peças com este tipo de perda será exibido no painel de produção.
         /// </summary>
         [DataMember]
-        [JsonProperty("exibirNoPainelProducao")]
-        public string ExibirNoPainelProducao
+        [JsonProperty("exibirNoPainelDeProducao")]
+        public bool ExibirNoPainelDeProducao
         {
-            get { return this.ObterValor(c => c.ExibirNoPainelProducao); }
-            set { this.AdicionarValor(c => c.ExibirNoPainelProducao, value); }
+            get { return this.ObterValor(c => c.ExibirNoPainelDeProducao); }
+            set { this.AdicionarValor(c => c.ExibirNoPainelDeProducao, value); }
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Glass.API.Backend.Models.Producao.V1.TiposPerda.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("situacao")]
-        public string Situacao
+        public Situacao Situacao
         {
             get { return this.ObterValor(c => c.Situacao); }
             set { this.AdicionarValor(c => c.Situacao, value); }

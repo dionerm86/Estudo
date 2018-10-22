@@ -3,7 +3,9 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
+using Glass.API.Backend.Models.Genericas.V1;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,9 +46,28 @@ namespace Glass.API.Backend.Controllers.Producao.V1.TiposPerda
                     tiposPerda
                         .Skip(filtro.ObterPrimeiroRegistroRetornar())
                         .Take(filtro.NumeroRegistros)
-                        .Select(c => new Models.PCP.V1.TiposPerda.Lista.ListaDto(c)),
+                        .Select(c => new Models.Producao.V1.TiposPerda.Lista.ListaDto(c)),
                     filtro,
                     () => tiposPerda.Count);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de situações de tipo de perda.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos das situações de tipo de perda.</returns>
+        [HttpGet]
+        [Route("situacoes")]
+        [SwaggerResponse(200, "Situações de tipo de perda encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Situações de tipo de perda não encontradas.")]
+        public IHttpActionResult ObterSituacoes()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = new ConversorEnum<Situacao>()
+                    .ObterTraducao();
+
+                return this.Lista(tipos);
             }
         }
     }

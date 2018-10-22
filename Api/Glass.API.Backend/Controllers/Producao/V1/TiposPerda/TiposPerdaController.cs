@@ -28,7 +28,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1.TiposPerda
         {
             var validacao = this.ValidarIdTtipoPerda(id);
 
-            if (validacao == null && !TurnoDAO.Instance.Exists(sessao, id))
+            if (validacao == null && !TipoPerdaDAO.Instance.Exists(sessao, id))
             {
                 return this.NaoEncontrado("Tipo de perda não encontrado.");
             }

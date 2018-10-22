@@ -512,6 +512,7 @@
     <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />

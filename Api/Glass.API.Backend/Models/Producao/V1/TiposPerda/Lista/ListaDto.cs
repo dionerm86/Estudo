@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Genericas.V1;
+using Glass.Data.DAL;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
@@ -22,7 +23,7 @@ namespace Glass.API.Backend.Models.Producao.V1.TiposPerda.Lista
         {
             this.Id = tipoPerda.IdTipoPerda;
             this.Nome = tipoPerda.Descricao;
-            this.ExibirNoPainelProducao = tipoPerda.ExibirPainelProducao;
+            this.ExibirNoPainelDeProducao = tipoPerda.ExibirPainelProducao;
             this.Situacao = new IdNomeDto()
             {
                 Id = (int)tipoPerda.Situacao,
@@ -31,8 +32,16 @@ namespace Glass.API.Backend.Models.Producao.V1.TiposPerda.Lista
 
             this.Setor = new IdNomeDto()
             {
-                Id = (int)tipoPerda.IdSetor,
+                Id = tipoPerda.IdSetor,
                 Nome = tipoPerda.Setor,
+            };
+
+            this.Permissoes = new PermissoesDto
+            {
+                LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(
+                    Data.Model.LogAlteracao.TabelaAlteracao.TipoPerda,
+                    (uint)tipoPerda.IdTipoPerda,
+                    null),
             };
         }
 
@@ -40,8 +49,8 @@ namespace Glass.API.Backend.Models.Producao.V1.TiposPerda.Lista
         /// Obtém ou define um valor que indica se peças com este tipo de perda será exibido no painel de produção.
         /// </summary>
         [DataMember]
-        [JsonProperty("exibirNoPainelProducao")]
-        public bool ExibirNoPainelProducao { get; set; }
+        [JsonProperty("exibirNoPainelDeProducao")]
+        public bool ExibirNoPainelDeProducao { get; set; }
 
         /// <summary>
         /// Obtém ou define a situação do tipo de perda.
@@ -56,5 +65,12 @@ namespace Glass.API.Backend.Models.Producao.V1.TiposPerda.Lista
         [DataMember]
         [JsonProperty("setor")]
         public IdNomeDto Setor { get; set; }
+
+        /// <summary>
+        /// Obtém ou define as permissões para o tipo de perda.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("permissoes")]
+        public PermissoesDto Permissoes { get; set; }
     }
 }

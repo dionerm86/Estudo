@@ -50,7 +50,7 @@ namespace Glass.API.Backend.Helper.Producao.TiposPerda
             destino.Descricao = this.cadastro.ObterValorNormalizado(c => c.Nome, destino.Descricao);
             destino.IdSetor = this.cadastro.ObterValorNormalizado(c => c.IdSetor, destino.IdSetor);
             destino.Situacao = this.cadastro.ObterValorNormalizado(c => c.Situacao, destino.Situacao);
-            destino.ExibirPainelProducao = this.cadastro.ObterValorNormalizado(c => c.ExibirNoPainelProducao, destino.ExibirPainelProducao);
+            destino.ExibirPainelProducao = this.cadastro.ObterValorNormalizado(c => c.ExibirNoPainelDeProducao, destino.ExibirPainelProducao);
         }
     }
 }
