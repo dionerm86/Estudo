@@ -45,7 +45,7 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensSituacao: function () {
-      return Servicos.Producao.TiposPerda.obterSituacoes(false, false);
+      return Servicos.Producao.TiposPerda.obterSituacoes();
     },
 
     /**

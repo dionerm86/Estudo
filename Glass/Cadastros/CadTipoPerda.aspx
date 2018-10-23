@@ -37,7 +37,7 @@
                     <td>{{ item.nome }}</td>
                     <td v-if="item.setor">{{ item.setor.nome }}</td>
                     <td v-if="item.situacao">{{ item.situacao.nome }}</td>
-                    <td>{{ item.exibirNoPainelDeProducao | simNao }}</td>
+                    <td>{{ item.exibirNoPainelDeProducao | indicaMarcado }}</td>
                     <td>
                         <log-alteracao tabela="TipoPerda" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logAlteracoes"></log-alteracao>
                     </td>
