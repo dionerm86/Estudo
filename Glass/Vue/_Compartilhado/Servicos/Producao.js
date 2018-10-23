@@ -12,6 +12,118 @@ Servicos.Producao = (function(http) {
      */
     Setores: {
       /**
+       * Recupera a lista de setores.
+       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'setores', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Recupera as configurações para a tela de setores.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterConfiguracoesLista: function () {
+        return http().get(API + 'setores/configuracoes');
+      },
+
+      /**
+       * Remove um setor.
+       * @param {!number} id O identificador do setor que será excluído.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      excluir: function (id) {
+        if (!id) {
+          throw new Error('Setor é obrigatório.');
+        }
+
+        return http().delete(API + 'setores/' + id);
+      },
+
+      /**
+       * Insere um setor.
+       * @param {!Object} setor O objeto com os dados do setor a ser inserido.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      inserir: function (setor) {
+        return http().post(API + 'setores', setor);
+      },
+
+      /**
+       * Altera os dados de um setor.
+       * @param {!number} id O identificador do item que será alterado.
+       * @param {!Object} setor O objeto com os dados do item a serem alterados.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      atualizar: function (id, setor) {
+        if (!id) {
+          throw new Error('Setor é obrigatório.');
+        }
+
+        if (!setor || setor === {}) {
+          return Promise.resolve();
+        }
+
+        return http().patch(API + 'setores/' + id, setor);
+      },
+
+      /**
+       * Altera a posição de um setor.
+       * @param {!number} id O identificador do item que será alterado.
+       * @param {!boolean} acima Define se o setor será movimentado para cima.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      alterarPosicao: function (id, acima) {
+        if (!id) {
+          throw new Error('Setor é obrigatório.');
+        }
+
+        var posicao = {
+          acima
+        };
+
+        return http().patch(API + 'setores/' + id + '/posicao', posicao);
+      },
+
+      /**
+       * Recupera a lista de tipos de setor para uso no controle de seleção.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterTipos: function () {
+        return http().get(API + 'setores/tipos');
+      },
+
+      /**
+       * Recupera a lista de cores de setor para uso no controle de seleção.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterCores: function () {
+        return http().get(API + 'setores/cores');
+      },
+
+      /**
+       * Recupera a lista de cores de tela de setor para uso no controle de seleção.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterCoresTela: function () {
+        return http().get(API + 'setores/coresTela');
+      },
+
+      /**
+       * Recupera a lista de situações setor para uso no controle de seleção.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterSituacoes: function () {
+        return http().get(API + 'setores/situacoes');
+      },
+
+      /**
        * Recupera a lista de setores de produção para uso no controle de busca.
        * @param {?boolean} [incluirSetorImpressao=null] Indica se o setor de impressão de etiquetas deve ser retornado.
        * @param {?boolean} [incluirEtiquetaNaoImpressa=null] Indica se deve ser retornado um setor de 'etiqueta não impressa'.
