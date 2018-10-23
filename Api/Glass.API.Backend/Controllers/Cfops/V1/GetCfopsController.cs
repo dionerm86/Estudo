@@ -25,7 +25,7 @@ namespace Glass.API.Backend.Controllers.Cfops.V1
         [HttpGet]
         [Route("configuracoes")]
         [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Cfops.V1.Configuracoes.ListaDto))]
-        public IHttpActionResult ObterConfiguracoesListaGruposProduto()
+        public IHttpActionResult ObterConfiguracoesListaCfops()
         {
             var configuracoes = new Models.Cfops.V1.Configuracoes.ListaDto();
             return this.Item(configuracoes);

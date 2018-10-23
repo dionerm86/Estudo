@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.Cfops
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "CodInterno DESC"; }
+            get { return "CodInterno ASC"; }
         }
 
         /// <inheritdoc/>
@@ -32,13 +32,23 @@ namespace Glass.API.Backend.Helper.Cfops
                 case "codigo":
                     return "CodInterno";
 
-                case "descricao":
-                case "idTipoCfop":
+                case "nome":
+                    return "Descricao";
+
+                case "tipo":
+                    return "Tipo";
+
                 case "tipoMercadoria":
+                    return "TipoMercadoria";
+
                 case "alterarEstoqueTerceiros":
+                    return "AlterarEstoqueTerceiros";
+
                 case "alterarEstoqueCliente":
+                    return "AlterarEstoqueCliente";
+
                 case "obs":
-                    return campo;
+                    return "Obs";
 
                 default:
                     return this.OrdenacaoPadrao;

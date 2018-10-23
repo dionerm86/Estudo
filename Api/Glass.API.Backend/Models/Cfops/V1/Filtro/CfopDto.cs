@@ -23,7 +23,6 @@ namespace Glass.API.Backend.Models.Cfops.V1.Filtro
         /// <param name="cfop">A model de CFOP's.</param>
         public CfopDto(GDASession sessao, Cfop cfop)
         {
-            this.Id = cfop.IdCfop;
             this.Codigo = cfop.CodInterno;
             this.Descricao = cfop.Descricao;
         }

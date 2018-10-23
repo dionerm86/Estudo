@@ -19,7 +19,7 @@
                         <a href="#" @click.prevent="ordenar('descricao')">Descrição</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('idTipoCfop')">Tipo</a>
+                        <a href="#" @click.prevent="ordenar('tipo')">Tipo</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('tipoMercadoria')">Tipo Mercadoria</a>
@@ -27,7 +27,7 @@
                     <th>
                         <a href="#" @click.prevent="ordenar('alterarEstoqueTerceiros')">Alterar estoque terceiros</a>
                     </th>
-                    <th>
+                    <th v-if="configuracoes && configuracoes.controlarEstoqueVidrosClientes">
                         <a href="#" @click.prevent="ordenar('alterarEstoqueCliente')">Alterar estoque cliente</a>
                     </th>
                     <th>
@@ -40,7 +40,7 @@
                         <button @click.prevent="editar(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
                             <img src="../Images/Edit.gif">
                         </button>
-                        <button @click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1 && item.permissoes.excluir">
+                        <button @click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1">
                             <img src="../Images/ExcluirGrid.gif">
                         </button>
                         <a href="#" @click.prevent="abrirNaturezaOperacao(item)" title="Natureza Operação">
@@ -49,14 +49,13 @@
                     </td>
                     <td>{{ item.codigo }}</td>
                     <td>{{ item.nome }}</td>
-                    <td>{{ item.idTipoCfop }}</td>
-                    <td>{{ item.tipoMercadoria }}</td>
+                    <td>{{ item.tipoCfop.descricao }}</td>
+                    <td>{{ item.tipoMercadoria.Nome }}</td>
                     <td>{{ item.alterarEstoqueTerceiros | simNao }}</td>
                     <td v-if="configuracoes && configuracoes.controlarEstoqueVidrosClientes">{{ item.alterarEstoqueCliente | simNao }}</td>
                     <td>{{ item.obs }}</td>
                     <td style="white-space: nowrap">
-                        <controle-exibicao-imagem :id-item="item.id" tipo-item="Cfop"></controle-exibicao-imagem>
-                        <log-alteracao tabela="Cfop" :id-item="item.id" :atualizar-ao-alterar="false"></log-alteracao>
+                        <log-alteracao tabela="Cfop" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logAlteracoes"></log-alteracao>
                     </td>
                 </template>
             </lista-paginada>

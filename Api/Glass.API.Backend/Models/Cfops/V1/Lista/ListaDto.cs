@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Genericas.V1;
+using Glass.Data.DAL;
 using Glass.Data.Model;
 using Glass.Fiscal.Negocios.Entidades;
 using Newtonsoft.Json;
@@ -25,11 +26,27 @@ namespace Glass.API.Backend.Models.Cfops.V1.Lista
             this.Id = cfop.IdCfop;
             this.Nome = cfop.Descricao;
             this.Codigo = cfop.CodInterno;
-            this.IdTipoCfop = cfop.IdTipoCfop;
-            this.TipoMercadoria = cfop.TipoMercadoria;
+
+            this.TipoMercadoria = new IdNomeDto()
+            {
+                Id = (int)cfop.TipoMercadoria.GetValueOrDefault(),
+                Nome = Colosoft.Translator.Translate(cfop.TipoMercadoria.GetValueOrDefault()).Format(),
+            };
+
             this.AlterarEstoqueTerceiros = cfop.AlterarEstoqueTerceiros;
             this.AlterarEstoqueCliente = cfop.AlterarEstoqueCliente;
             this.Obs = cfop.Obs;
+
+            this.TipoCfop = new TipoCfopDto()
+            {
+                IdTipoCfop = cfop.IdTipoCfop,
+                Descricao = cfop.Tipo,
+            };
+
+            this.Permissoes = new PermissoesDto()
+            {
+                LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.Cfop, (uint)cfop.IdCfop, null),
+            };
         }
 
         /// <summary>
@@ -40,18 +57,18 @@ namespace Glass.API.Backend.Models.Cfops.V1.Lista
         public string Codigo { get; set; }
 
         /// <summary>
-        /// Obtém ou define o tipo do CFOP.
+        /// Obtém ou define dados do tipo do CFOP.
         /// </summary>
         [DataMember]
-        [JsonProperty("idTipoCfop")]
-        public int? IdTipoCfop { get; set; }
+        [JsonProperty("tipoCfop")]
+        public TipoCfopDto TipoCfop { get; set; }
 
         /// <summary>
         /// Obtém ou define o tipo de mercadoria do CFOP.
         /// </summary>
         [DataMember]
         [JsonProperty("tipoMercadoria")]
-        public TipoMercadoria? TipoMercadoria { get; set; }
+        public IdNomeDto TipoMercadoria { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se o estoque de terceiros deve ser alterado.
@@ -73,5 +90,12 @@ namespace Glass.API.Backend.Models.Cfops.V1.Lista
         [DataMember]
         [JsonProperty("obs")]
         public string Obs { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a lista de permissões do item.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("permissoes")]
+        public PermissoesDto Permissoes { get; set; }
     }
 }

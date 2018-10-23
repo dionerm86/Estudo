@@ -11,7 +11,7 @@
 
   methods: {
     /**
-     * Busca os produtos para exibição na lista.
+     * Busca os CFOP's para exibição na lista.
      * @param {!Object} filtro O filtro utilizado para a busca dos itens.
      * @param {!number} pagina O número da página que será exibida na lista.
      * @param {!number} numeroRegistros O número de registros que serão exibidos na lista.
@@ -44,11 +44,26 @@
     },
 
     /**
-     * Inicia o cadastro de CFOP.
+     * Insere um novo CFOP.
+     * @param {Object} event O objeto com o evento do JavaScript.
      */
-    iniciarCadastro: function () {
-      this.iniciarCadastroOuAtualizacao_();
-      this.inserindo = true;
+    inserir: function (event) {
+      if (!event || !this.validarFormulario_(event.target)) {
+        return;
+      }
+
+      var vm = this;
+
+      Servicos.Cfops.inserir(this.cfop)
+        .then(function (resposta) {
+          vm.atualizarLista();
+          vm.cancelar();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
     },
 
     /**
@@ -59,6 +74,30 @@
     editar: function (cfop, numeroLinha) {
       this.iniciarCadastroOuAtualizacao_(cfop);
       this.numeroLinhaEdicao = numeroLinha;
+    },
+
+    /**
+     * Atualiza os dados do CFOP.
+     * @param {Object} event O objeto com o evento do JavaScript.
+     */
+    atualizar: function (event) {
+      if (!event || !this.validarFormulario_(event.target)) {
+        return;
+      }
+
+      var cfopAtualizar = this.patch(this.cfop, this.cfopOriginal);
+      var vm = this;
+
+      Servicos.Cfops.atualizar(this.cfop.id, cfopAtualizar)
+        .then(function (resposta) {
+          vm.atualizarLista();
+          vm.cancelar();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
     },
 
     /**
@@ -92,6 +131,40 @@
     },
 
     /**
+     * Função executada para criação dos objetos necessários para edição ou cadastro de CFOP.
+     * @param {?Object} [cfop=null] O CFOP que servirá como base para criação do objeto (para edição).
+     */
+    iniciarCadastroOuAtualizacao_: function (cfop) {
+      if (cfop) {
+        this.cfop = {
+          id: cfop.id,
+          codInterno: cfop.codInterno,
+          nome: cfop.nome,
+          idTipoCfop: cfop.idTipoCfop,
+          tipoMercadoria: cfop.tipoMercadoria,
+          alterarEstoqueTerceiros: cfop.alterarEstoqueTerceiros,
+          alterarEstoqueCliente: cfop.alterarEstoqueCliente,
+          obs: cfop.obs
+        };
+      } else {
+        this.cfop = {
+          id: null,
+          nome: null,
+          tipo: null,
+          tipoCalculoPedido: null,
+          tipoCalculoNotaFiscal: null,
+          bloquearEstoque: null,
+          alterarEstoque: null,
+          alterarEstoqueFiscal: null,
+          exibirMensagemEstoque: null,
+          geraVolume: null
+        };
+      }
+
+      this.cfopOriginal = this.clonar(this.cfop);
+    },
+
+    /**
      * Retornar uma string com os filtros selecionados na tela.
      */
     formatarFiltros_: function () {
@@ -109,6 +182,20 @@
       return filtros.length
         ? '&' + filtros.join('&')
         : '';
+    },
+
+    /**
+     * Função que indica se o formulário de CFOP's possui valores válidos de acordo com os controles.
+     * @param {Object} botao O botão que foi disparado no controle.
+     * @returns {boolean} Um valor que indica se o formulário está válido.
+     */
+    validarFormulario_: function (botao) {
+      var form = botao.form || botao;
+      while (form.tagName.toLowerCase() !== 'form') {
+        form = form.parentNode;
+      }
+
+      return form.checkValidity();
     },
 
     /**
