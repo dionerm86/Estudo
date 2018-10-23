@@ -84,8 +84,9 @@ Servicos.Producao = (function(http) {
           throw new Error('Setor é obrigatório.');
         }
 
-        var posicao = {};
-        posicao.acima = acima;
+        var posicao = {
+          acima
+        };
 
         return http().patch(API + 'setores/' + id + '/posicao', posicao);
       },
