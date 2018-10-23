@@ -9531,7 +9531,8 @@ namespace Glass.Data.DAL
                         var inscEstLoja = LojaDAO.Instance.ObtemValorCampo<string>(sessao, "inscEst", "idLoja=" + objInsert.IdLoja);
 
                         // Ao transferir a nota para outro BD, essa configuração deve ser igual nas duas empresas
-                        objInsert.Serie = FiscalConfig.NotaFiscalConfig.SeriePadraoNFe(codCfop, inscEstLoja, objInsert.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Ajuste).ToString();
+                        objInsert.Serie = FiscalConfig.NotaFiscalConfig.SeriePadraoNFe(codCfop, inscEstLoja, objInsert.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Ajuste,
+                            objInsert.Consumidor).ToString();
                     }
 
                     objInsert.Modelo = ConfigNFe.Modelo(objInsert.Consumidor);

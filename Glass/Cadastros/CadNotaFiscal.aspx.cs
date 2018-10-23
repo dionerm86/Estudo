@@ -840,10 +840,14 @@ namespace Glass.UI.Web.Cadastros
             {
                 var tipo = Request["tipo"].StrParaIntNullable();
                 var finalidade = Request["tipo"].StrParaIntNullable();
+                var modelo = Request["mod"].StrParaIntNullable();
                 var serie = "";
 
                 if (tipo.GetValueOrDefault(0) != (int)NotaFiscal.TipoDoc.EntradaTerceiros && tipo.GetValueOrDefault(0) != (int)NotaFiscal.TipoDoc.NotaCliente)
-                    serie = FiscalConfig.NotaFiscalConfig.SeriePadraoNFe(null, null, finalidade.GetValueOrDefault(0) == (int)NotaFiscal.FinalidadeEmissaoEnum.Ajuste).ToString();
+                {
+                    serie = FiscalConfig.NotaFiscalConfig.SeriePadraoNFe(null, null, finalidade.GetValueOrDefault(0) == (int)NotaFiscal.FinalidadeEmissaoEnum.Ajuste,
+                        modelo.GetValueOrDefault(0) == 65).ToString();
+                }
 
                 ((TextBox)sender).Text = serie;
             }

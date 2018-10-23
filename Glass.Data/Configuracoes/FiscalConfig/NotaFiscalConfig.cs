@@ -341,31 +341,49 @@ namespace Glass.Configuracoes
             /// <summary>
             /// Define a série que será inserida na nota caso o usuário não tenha preenchido este campo com 0, 1 e vazio ao inserir a nota fiscal
             /// </summary>
-            public static int SeriePadraoNFe(string codCfop, string inscEstLoja, bool? notaDeAjuste)
+            public static int SeriePadraoNFe(string codCfop, string inscEstLoja, bool? notaDeAjuste, bool? Nfce)
             {
-                var config = Config.GetConfigItem<int>(Config.ConfigEnum.SeriePadraoNFe);
+                var configNfe = Config.GetConfigItem<int>(Config.ConfigEnum.SeriePadraoNFe);
+                var configNfce = Config.GetConfigItem<int>(Config.ConfigEnum.SeriePadraoNFCe);
 
-                if (config != 1)
-                    return config;
+                if (Nfce.GetValueOrDefault())
+                {
+                    return configNfce > 0 ? configNfce : 1;
+                }
+
+                if (configNfe != 1)
+                {
+                    return configNfe;
+                }
 
                 if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.LojaDosEspelhos &&
                     (inscEstLoja == "06.200.647-9" || inscEstLoja == "062006479"))
+                {
                     return 2;
+                }
 
                 if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.CasaDosEspelhos &&
                     (inscEstLoja == "06.201.161-8" || inscEstLoja == "062011618"))
+                {
                     return 2;
+                }
 
                 if ((ControleSistema.GetSite() == ControleSistema.ClienteSistema.Dividros ||
                     ControleSistema.GetSite() == ControleSistema.ClienteSistema.Invitra) &&
                     (codCfop == "5103" || codCfop == "5104"))
+                {
                     return 3;
+                }
 
                 if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.ModeloVidros && notaDeAjuste.GetValueOrDefault())
+                {
                     return 3;
+                }
 
                 if ((ControleSistema.GetSite() == ControleSistema.ClienteSistema.TemperadosEstrela || ControleSistema.GetSite() == ControleSistema.ClienteSistema.VidrosDresch) && notaDeAjuste.GetValueOrDefault())
+                {
                     return 2;
+                }
 
                 return 1;
             }
