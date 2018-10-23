@@ -77,7 +77,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Setores
         [SwaggerResponse(202, "Posição do setor alterada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Setor não encontrado para o id informado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AtualizarSetor(int id, bool acima)
+        public IHttpActionResult AlterarPosicaoSetor(int id, bool acima)
         {
             using (var sessao = new GDATransaction())
             {

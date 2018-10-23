@@ -100,11 +100,30 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Setores
         [Route("coresTela")]
         [SwaggerResponse(200, "Cores de tela de setor encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Cores de tela de setor não encontradas.")]
-        public IHttpActionResult ObterCorestelaSetor()
+        public IHttpActionResult ObterCoresTelaSetor()
         {
             using (var sessao = new GDATransaction())
             {
                 var cores = new ConversorEnum<CorTelaSetor>()
+                    .ObterTraducao();
+
+                return this.Lista(cores);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de situações de setor.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos das situações de setor.</returns>
+        [HttpGet]
+        [Route("situacoes")]
+        [SwaggerResponse(200, "Situações encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Situações não encontradas.")]
+        public IHttpActionResult ObterSituacoesSetor()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var cores = new ConversorEnum<Situacao>()
                     .ObterTraducao();
 
                 return this.Lista(cores);
