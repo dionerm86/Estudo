@@ -1,5 +1,5 @@
 ﻿Vue.component('campo-cpf', {
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Objetos],
 
   props: {
     /**
@@ -11,7 +11,6 @@
       twoWay: true,
       validator: Mixins.Validacao.validarStringOuVazio
     }
-
   },
 
   data: function () {
@@ -21,9 +20,9 @@
   },
 
   methods: {
-
     /**
      * Valida o CPF passado.
+     * @param {string} cpf O CPF que será validado.
      * @return {Promise} Mensagem de erro de validação.
      */
     validarCpf: function (cpf) {
@@ -35,6 +34,7 @@
 
     /**
      * Valida o CPF.
+     * @param {string} cpf O CPF que será validado.
      * @return {Promise} Mensagem de erro de validação;
      */
     validar: function (cpf) {
@@ -89,11 +89,9 @@
 
       return '';
     }
-
   },
 
   computed: {
-
     /**
      * Propriedade computada que retorna o cpf normalizado e que
      * atualiza a propriedade em caso de alteração.
@@ -108,7 +106,6 @@
         }
       }
     }
-
   },
 
   watch: {

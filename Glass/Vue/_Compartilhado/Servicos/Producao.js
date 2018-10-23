@@ -197,6 +197,73 @@ Servicos.Producao = (function(http) {
     },
 
     /**
+     * Objeto com os serviços para a API de tipos de perda.
+     */
+    TiposPerda: {
+      /**
+       * Recupera a lista de tipos de perda.
+       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'tiposPerda', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Remove um tipos de perda.
+       * @param {!number} id O identificador do tipos de perda que será excluído.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      excluir: function (id) {
+        if (!id) {
+          throw new Error('Tipo de perda é obrigatório.');
+        }
+
+        return http().delete(API + 'tiposPerda/' + id);
+      },
+
+      /**
+       * Insere um tipo de perda.
+       * @param {!Object} tipoPerda O objeto com os dados do tipo de perda a ser inserido.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      inserir: function (tipoPerda) {
+        return http().post(API + 'tiposPerda', tipoPerda);
+      },
+
+      /**
+       * Altera os dados de um tipo de perda.
+       * @param {!number} id O identificador do item que será alterado.
+       * @param {!Object} tipoPerda O objeto com os dados do item a serem alterados.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      atualizar: function (id, tipoPerda) {
+        if (!id) {
+          throw new Error('Tipo de perda é obrigatório.');
+        }
+
+        if (!tipoPerda || tipoPerda === {}) {
+          return Promise.resolve();
+        }
+
+        return http().patch(API + 'tiposPerda/' + id, tipoPerda);
+      },
+
+      /**
+       * Recupera a lista de situações para uso no controle de seleção.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterSituacoes: function () {
+        return http().get(API + 'tiposPerda/situacoes');
+      }
+    },
+
+    /**
      * Recupera a lista de peças para a tela de consulta de produção.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de peças.
      * @param {number} pagina O número da página de resultados a ser exibida.
