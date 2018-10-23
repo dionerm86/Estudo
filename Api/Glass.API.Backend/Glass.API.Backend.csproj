@@ -238,6 +238,9 @@
     <Compile Include="Controllers\Aplicacoes\V1\PostAplicacoesController.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
+    <Compile Include="Controllers\Cfops\V1\DeleteCfopsController.cs" />
+    <Compile Include="Controllers\Cfops\V1\PatchCfopsController.cs" />
+    <Compile Include="Controllers\Cfops\V1\PostCfopsController.cs" />
     <Compile Include="Controllers\Clientes\V1\Sugestoes\GetSugestaoClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Sugestoes\DeleteSugestaoClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Sugestoes\SugestaoClienteController.cs" />
@@ -405,6 +408,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Cfops\ConverterCadastroAtualizacaoParaCfop.cs" />
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
@@ -415,6 +419,9 @@
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
+    <Compile Include="Helper\Cfops\Estrategias\Filtro\IValidacaoFiltro.cs" />
+    <Compile Include="Helper\Cfops\Estrategias\Filtro\ValidacaoFiltroSemOperacaoStrategy.cs" />
+    <Compile Include="Helper\Cfops\TraducaoOrdenacaoListaCfops.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\TraducaoOrdenacaoListaTabelasDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\Produtos\SubgruposProduto\ConverterCadastroAtualizacaoParaSubgrupoProduto.cs" />
@@ -483,6 +490,11 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Cfops\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Cfops\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Cfops\V1\Filtro\CfopDto.cs" />
+    <Compile Include="Models\Cfops\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Cfops\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\Lista\ListaDto.cs" />

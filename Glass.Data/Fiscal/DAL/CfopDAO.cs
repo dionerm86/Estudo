@@ -27,11 +27,15 @@ namespace Glass.Data.DAL
             return sql;
         }
 
-        public Cfop[] GetSortedByCodInterno()
+        /// <summary>
+        /// Obtém uma lista de CFOP's ordenada pelo Código Interno.
+        /// </summary>
+        /// <returns>Retorna uma lista de CFOP's ordenada pelo Código Interno.</returns>
+        public Cfop[] ObterListaOrdenadaPeloCodInterno()
         {
-            var sql = SqlList(null, null, true);
+            var sql = this.SqlList(null, null, true);
 
-            return objPersistence.LoadData(sql + " order by CodInterno asc").ToList().ToArray();
+            return this.objPersistence.LoadData($"{sql} ORDER BY CodInterno ASC").ToList().ToArray();
         }
 
         public Cfop[] GetList(string codInterno, string descricao, string sortExpression, int startRow, int pageSize)
@@ -46,7 +50,7 @@ namespace Glass.Data.DAL
 
         public Cfop[] GetListForRpt()
         {
-            return GetSortedByCodInterno();
+            return ObterListaOrdenadaPeloCodInterno();
         }
 
         public int GetCount(string codInterno, string descricao)

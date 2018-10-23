@@ -1,4 +1,4 @@
-var Servicos = Servicos || {};
+﻿var Servicos = Servicos || {};
 
 /**
  * Objeto com os serviços para a API de notas fiscais.
@@ -24,6 +24,14 @@ Servicos.Cfops = (function(http) {
       return http().get(API.substr(0, API.length - 1), {
         params: filtro
       });
+    },
+
+    /**
+     * Recupera o objeto com as configurações utilizadas na tela de listagem de CFOP.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterConfiguracoesLista: function () {
+      return http().get(API + 'cfops/configuracoes');
     },
 
     /**

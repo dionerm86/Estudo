@@ -484,12 +484,16 @@
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
+    <Content Include="Listas\LstCfopMigrando.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Cfops\Componentes\LstCfops.Filtro.js" />
+    <Content Include="Vue\Cfops\Componentes\LstCfops.js" />
+    <Content Include="Vue\Cfops\Templates\LstCfops.Filtro.html" />
     <Content Include="Vue\Produtos\GruposProduto\Componentes\LstGruposProduto.js" />
     <Content Include="Vue\Feriados\Componentes\LstFeriados.js" />
     <Content Include="Vue\Comissionados\Componentes\LstComissionados.Filtro.js" />
@@ -3764,6 +3768,13 @@
     </Compile>
     <Compile Include="Listas\LstBandeiraCartao.aspx.designer.cs">
       <DependentUpon>LstBandeiraCartao.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstCfopMigrando.aspx.cs">
+      <DependentUpon>LstCfopMigrando.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstCfopMigrando.aspx.designer.cs">
+      <DependentUpon>LstCfopMigrando.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstChapasDisponiveis.aspx.cs">
       <DependentUpon>LstChapasDisponiveis.aspx</DependentUpon>
@@ -9404,7 +9415,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62047</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:15160/</IISUrl>
+          <IISUrl>http://localhost:15190/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
