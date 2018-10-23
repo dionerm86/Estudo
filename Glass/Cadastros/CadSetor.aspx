@@ -18,6 +18,9 @@
                         <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
                     </th>
                     <th>
+                        <a href="#" @click.prevent="ordenar('tipo')">Tipo</a>
+                    </th>
+                    <th>
                         <a href="#" @click.prevent="ordenar('entradaEstoque')">Entrada estoque</a>
                     </th>
                     <th>
@@ -99,10 +102,10 @@
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
                     <td style="white-space: nowrap">
-                        <button @click.prevent="editar(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1 && item.id > 1">
+                        <button @click.prevent="editar(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
                             <img src="../Images/Edit.gif">
                         </button>
-                        <button @click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1">
+                        <button @click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1 && item.id > 1">
                             <img src="../Images/ExcluirGrid.gif">
                         </button>
                     </td>
@@ -131,7 +134,7 @@
                     <td v-if="item.funcoes && configuracoes && configuracoes.usarGerenciamentoFornada">{{ item.funcoes.gerenciarFornada | indicaMarcado }}</td>
                     <td v-if="item.capacidade && configuracoes && configuracoes.usarGerenciamentoFornada">{{ item.capacidade.alturaMaxima }}</td>
                     <td v-if="item.capacidade && configuracoes && configuracoes.usarGerenciamentoFornada">{{ item.capacidade.larguraMaxima }}</td>
-                    <td v-if="item.capacidade">{{ item.capacidade.ignorarCapacidadeDiaria }}</td>
+                    <td v-if="item.capacidade">{{ item.capacidade.ignorarCapacidadeDiaria | indicaMarcado }}</td>
                     <td v-if="item.restricoes">{{ item.restricoes.permitirLeituraForaRoteiro | indicaMarcado }}</td>
                     <td v-if="item.exibicoes">{{ item.exibicoes.painelComercial | indicaMarcado }}</td>
                     <td v-if="item.exibicoes">{{ item.exibicoes.painelProducao | indicaMarcado }}</td>

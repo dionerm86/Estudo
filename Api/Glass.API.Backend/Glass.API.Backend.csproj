@@ -518,6 +518,7 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\PosicaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\Lista\ListaDto.cs" />

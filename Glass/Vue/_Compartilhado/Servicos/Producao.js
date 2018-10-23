@@ -26,6 +26,14 @@ Servicos.Producao = (function(http) {
       },
 
       /**
+       * Recupera as configurações para a tela de setores.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterConfiguracoesLista: function () {
+        return http().get(API + 'setores/configuracoes');
+      },
+
+      /**
        * Remove um setor.
        * @param {!number} id O identificador do setor que será excluído.
        * @returns {Promise} Uma promise com o resultado da operação.
@@ -76,9 +84,10 @@ Servicos.Producao = (function(http) {
           throw new Error('Setor é obrigatório.');
         }
 
-        return http().patch(API + 'setores/' + id, {
-            acima: acima || false
-          });
+        var posicao = {};
+        posicao.acima = acima;
+
+        return http().patch(API + 'setores/' + id + '/posicao', posicao);
       },
 
       /**

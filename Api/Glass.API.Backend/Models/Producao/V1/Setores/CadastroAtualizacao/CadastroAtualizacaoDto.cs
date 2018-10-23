@@ -262,7 +262,7 @@ namespace Glass.API.Backend.Models.Producao.V1.Setores.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("desafioPerda")]
-        public int DesafioPerda
+        public decimal DesafioPerda
         {
             get { return this.ObterValor(c => c.DesafioPerda); }
             set { this.AdicionarValor(c => c.DesafioPerda, value); }
@@ -273,7 +273,7 @@ namespace Glass.API.Backend.Models.Producao.V1.Setores.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("metaPerda")]
-        public int MetaPerda
+        public decimal MetaPerda
         {
             get { return this.ObterValor(c => c.MetaPerda); }
             set { this.AdicionarValor(c => c.MetaPerda, value); }

@@ -70,14 +70,14 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Setores
         /// Atualiza a posição de um setor.
         /// </summary>
         /// <param name="id">O identificador do setor que será alterado.</param>
-        /// <param name="acima">Define se o setor será movimentado para cima.</param>
+        /// <param name="posicao">Define se o setor será movimentado para cima.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPatch]
         [Route("{id:int}/posicao")]
         [SwaggerResponse(202, "Posição do setor alterada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Setor não encontrado para o id informado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AlterarPosicaoSetor(int id, bool acima)
+        public IHttpActionResult AlterarPosicaoSetor(int id, PosicaoDto posicao)
         {
             using (var sessao = new GDATransaction())
             {
@@ -93,7 +93,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Setores
                     var fluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
                         .Current.GetInstance<PCP.Negocios.ISetorFluxo>();
 
-                    var resultado = fluxo.AlterarPosicao(id, acima);
+                    var resultado = fluxo.AlterarPosicao(id, posicao.Acima);
 
                     if (!resultado)
                     {

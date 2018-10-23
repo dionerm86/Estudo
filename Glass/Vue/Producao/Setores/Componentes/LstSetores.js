@@ -3,6 +3,7 @@
   mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('descricao', 'asc')],
 
   data: {
+    configuracoes: {},
     numeroLinhaEdicao: -1,
     inserindo: false,
     setor: {},
@@ -30,7 +31,7 @@
      * Retorna os itens para o controle de tipos de setor.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterItensTipos: function () {
+    obterItensTipo: function () {
       return Servicos.Producao.Setores.obterTipos();
     },
 
@@ -187,10 +188,11 @@
     iniciarCadastroOuAtualizacao_: function (setor) {
       this.tipoAtual = setor && setor.funcoes && setor.funcoes.tipo ? this.clonar(setor.funcoes.tipo) : null;
       this.corAtual = setor && setor.cores && setor.cores.setor ? this.clonar(setor.cores.setor) : null;
-      this.corTelaAtual = atual && atual.cores && atual.cores.tela ? this.clonar(setor.cores.tela) : null;
+      this.corTelaAtual = setor && setor.cores && setor.cores.tela ? this.clonar(setor.cores.tela) : null;
       this.situacaoAtual = setor && setor.situacao ? this.clonar(setor.situacao) : null;
 
       this.setor = {
+        id: setor ? setor.id : null,
         nome: setor ? setor.nome : null,
         codigo: setor ? setor.codigo : null,
         sequencia: setor ? setor.sequencia : null,
@@ -256,7 +258,7 @@
     tipoAtual: {
       handler: function (atual) {
         if (this.setor) {
-          this.setor.tipo = atual && atual.funcoes && atual.funcoes.tipo ? atual.funcoes.tipo.id : null;
+          this.setor.tipo = atual ? atual.id : null;
         }
       },
       deep: true
@@ -269,7 +271,7 @@
     corAtual: {
       handler: function (atual) {
         if (this.setor) {
-          this.setor.corSetor = atual && atual.cores && atual.cores.setor ? atual.cores.setor.id : null;
+          this.setor.corSetor = atual ? atual.id : null;
         }
       },
       deep: true
@@ -282,7 +284,7 @@
     corTelaAtual: {
       handler: function (atual) {
         if (this.setor) {
-          this.setor.corTela = atual && atual.cores && atual.cores.tela ? atual.cores.tela.id : null;
+          this.setor.corTela = atual ? atual.id : null;
         }
       },
       deep: true
@@ -295,10 +297,18 @@
     situacaoAtual: {
       handler: function (atual) {
         if (this.setor) {
-          this.setor.situacao = atual && atual.situacao ? atual.situacao.id : null;
+          this.setor.situacao = atual ? atual.id : null;
         }
       },
       deep: true
     }
+  },
+
+  mounted: function () {
+    var vm = this;
+
+    Servicos.Producao.Setores.obterConfiguracoesLista().then(function (resposta) {
+      vm.configuracoes = resposta.data;
+    });
   }
 });

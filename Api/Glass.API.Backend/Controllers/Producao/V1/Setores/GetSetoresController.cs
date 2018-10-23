@@ -21,6 +21,22 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Setores
     public partial class SetoresController : BaseController
     {
         /// <summary>
+        /// Recupera as configurações usadas pela tela de setores.
+        /// </summary>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("configuracoes")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Producao.V1.Setores.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesListaPedidos()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.Producao.V1.Setores.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
         /// Recupera a lista de setores.
         /// </summary>
         /// <param name="filtro">Os filtros para a busca dos setores.</param>

@@ -69,8 +69,8 @@ namespace Glass.API.Backend.Helper.Producao.Setores
             destino.Forno = this.cadastro.ObterValorNormalizado(c => c.Forno, destino.Forno);
             destino.EntradaEstoque = this.cadastro.ObterValorNormalizado(c => c.EntradaEstoque, destino.EntradaEstoque);
             destino.GerenciarFornada = this.cadastro.ObterValorNormalizado(c => c.GerenciaFornada, destino.GerenciarFornada);
-            destino.DesafioPerda = this.cadastro.ObterValorNormalizado(c => c.DesafioPerda, destino.DesafioPerda);
-            destino.MetaPerda = this.cadastro.ObterValorNormalizado(c => c.MetaPerda, destino.MetaPerda);
+            destino.DesafioPerda = (double)this.cadastro.ObterValorNormalizado(c => c.DesafioPerda, (decimal)destino.DesafioPerda);
+            destino.MetaPerda = (double)this.cadastro.ObterValorNormalizado(c => c.MetaPerda, (decimal)destino.MetaPerda);
             destino.ImpedirAvanco = this.cadastro.ObterValorNormalizado(c => c.ImpedirAvanco, destino.ImpedirAvanco);
             destino.InformarRota = this.cadastro.ObterValorNormalizado(c => c.InformarRota, destino.InformarRota);
             destino.InformarCavalete = this.cadastro.ObterValorNormalizado(c => c.InformarCavalete, destino.InformarCavalete);

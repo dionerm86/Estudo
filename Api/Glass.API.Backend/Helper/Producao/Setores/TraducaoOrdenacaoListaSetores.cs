@@ -32,6 +32,9 @@ namespace Glass.API.Backend.Helper.Producao.Setores
                 case "nome":
                     return "Descricao";
 
+                case "codigo":
+                    return "Sigla";
+
                 case "sequencia":
                     return "NumeroSequencia";
 
