@@ -7,32 +7,7 @@
 
 <script type="text/javascript">
 
-    function alterarFormasPagtoPadrao(selecionado, idFormaPagto, formaPagto) {
-
-        var formaPagtoPadrao = <%= FormaPagtoPadrao %>;
-
-        if (formaPagtoPadrao == idFormaPagto) {
-            return;
-        }
-
-        var drpFormaPagto = FindControl("drpFormaPagto", "select");
-
-        if (selecionado) {
-            var option = document.createElement('option');
-            option.text = formaPagto;
-            option.value = idFormaPagto;
-
-            drpFormaPagto.add(option, drpFormaPagto.options.length);
-        }
-        else {
-            for (i = 0; i < drpFormaPagto.options.length; i++) {
-                if (drpFormaPagto.options[i].value == idFormaPagto) {
-                    drpFormaPagto.remove(drpFormaPagto.options[i].index);
-                    break;
-                }
-            }
-        }
-    }
+    var formaPagtoPadrao = <%= FormaPagtoPadrao %>;
 
 </script>
 
