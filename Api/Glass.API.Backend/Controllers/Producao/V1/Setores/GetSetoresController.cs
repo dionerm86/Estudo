@@ -76,8 +76,8 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Setores
         /// <returns>Uma lista JSON com os dados básicos dos tipos de setor.</returns>
         [HttpGet]
         [Route("tipos")]
-        [SwaggerResponse(200, "Tipos de setor encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Tipos de setor não encontradas.")]
+        [SwaggerResponse(200, "Tipos de setor encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de setor não encontrados.")]
         public IHttpActionResult ObterTiposSetor()
         {
             using (var sessao = new GDATransaction())
