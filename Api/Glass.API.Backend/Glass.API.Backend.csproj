@@ -260,6 +260,11 @@
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
     <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\DeleteTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\GetTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\PatchTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\PostTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\TiposPerdaController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\DeleteTurnosController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\GetTurnosController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\TurnosController.cs" />
@@ -428,6 +433,8 @@
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoSvgProjetoStrategy.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
+    <Compile Include="Helper\Producao\TiposPerda\ConverterCadastroAtualizacaoParaTipoPerda.cs" />
+    <Compile Include="Helper\Producao\TiposPerda\TraducaoOrdenacaoListaTiposPerda.cs" />
     <Compile Include="Helper\Producao\Turnos\ConverterCadastroAtualizacaoParaTurno.cs" />
     <Compile Include="Helper\Producao\Turnos\TraducaoOrdenacaoListaTurnos.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
@@ -506,6 +513,10 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />
