@@ -260,6 +260,9 @@
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
     <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\DeleteSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\PatchSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\PostSetoresController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\DeleteTurnosController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\GetTurnosController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\TurnosController.cs" />
@@ -428,6 +431,8 @@
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoSvgProjetoStrategy.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
+    <Compile Include="Helper\Producao\Setores\ConverterCadastroAtualizacaoParaSetor.cs" />
+    <Compile Include="Helper\Producao\Setores\TraducaoOrdenacaoListaSetores.cs" />
     <Compile Include="Helper\Producao\Turnos\ConverterCadastroAtualizacaoParaTurno.cs" />
     <Compile Include="Helper\Producao\Turnos\TraducaoOrdenacaoListaTurnos.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
@@ -506,6 +511,18 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\FuncoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\PerdaDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\TempoLoginDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\RestricoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\ExibicoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\CoresDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\CapacidadeDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />

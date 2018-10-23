@@ -38,7 +38,7 @@ namespace Glass.API.Backend.Models.Sinais.V1.Lista
             this.Permissoes = new PermissoesDto()
             {
                 Cancelar = sinal.Situacao != (int)Sinal.SituacaoEnum.Cancelado,
-                LogAlteracoes = LogCancelamentoDAO.Instance.TemRegistro(LogCancelamento.TabelaCancelamento.Sinal, sinal.IdSinal),
+                LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.Sinal, sinal.IdSinal, null),
                 LogCancelamento = LogCancelamentoDAO.Instance.TemRegistro(LogCancelamento.TabelaCancelamento.Sinal, sinal.IdSinal),
             };
         }
