@@ -15060,7 +15060,7 @@ namespace Glass.Data.DAL
                     // Esse produto não pode ser utilizado, pois a loja do seu subgrupo é diferente da loja do pedido.
                     var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)prodPed.IdProd);
 
-                    if (idsLojaSubgrupoProd.Any() && idsLojaSubgrupoProd.Any(f => f != 0 && f != objUpdate.IdLoja))
+                    if (idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f != 0 && f == objUpdate.IdLoja))
                     {
                         throw new Exception("Não é possível alterar a loja deste pedido, as lojas cadastradas para o subgrupo de um ou mais produtos é diferente da loja selecionada para o pedido.");
                     }
