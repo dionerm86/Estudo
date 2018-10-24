@@ -5930,5 +5930,27 @@ namespace Glass.Data.DAL
 
             return pedido.DataEntregaSistema != null && (pedido.DataEntregaSistema.Value.Date == pedido.DataEntrega.Value.Date || !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega));
         }
+
+        /// <summary>
+        /// Verifica se os produtos do pedido de Revenda já deram saída total. 
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        internal bool VerificarSaidaProduto(GDASession sessao, uint idPedido)
+        {
+            if(idPedido == 0 || !PedidoDAO.Instance.IsRevenda(sessao, idPedido))
+            {
+                return false;
+            }
+
+            var sql = $@"SELECT (SUM(QtdSaida) + 1) >= SUM(Qtde) = COUNT(*)
+                FROM produtos_pedido
+                WHERE IdPedido = {idPedido} 
+                    AND InvisivelPedido = 0";
+
+            return ExecuteScalar<bool>(sessao, sql);
+
+        }
     }
 }

@@ -11162,6 +11162,12 @@ namespace Glass.Data.DAL
 
             #endregion
 
+            if (Instance.IsRevenda(sessao, idPedido))
+            {
+                return situacaoProducao == SituacaoProdutoProducao.Entregue 
+                    && ProdutosPedidoDAO.Instance.VerificarSaidaProduto(sessao, idPedido);
+            }
+
             var sqlBase = @"
                 select coalesce(count(ppp.idProdPedProducao){1},0)
                 from pedido ped
@@ -11181,11 +11187,10 @@ namespace Glass.Data.DAL
 
             var complSql = "0";
 
-            var sql = "select (({0})+({1})+({2})+({3}))";
+            var sql = "select (({0})+({1})+({2}))";
             sql = string.Format(sql,
                 string.Format(sqlBase, "ped.idPedido", "{0}"),
                 string.Format(complSql, "ped.idPedido"),
-                string.Format(sqlBase, "ppp.idPedidoExpedicao", "{0}"),
                 sqlProdImpressao);
 
             /* Chamado 23697. */
@@ -11238,12 +11243,6 @@ namespace Glass.Data.DAL
                 retorno = ExecuteScalar<int>(sessao, string.Format(sql, "=sum(ppp.situacaoProducao>=" + (int)situacaoProducao + ")"));
                 prontoEntregue = retorno != 0;
             }
-
-            // Se estiver entregue mas o pedido for de revenda, é necessário verificar se todas as peças de produção foram expedidas.
-            if (prontoEntregue && situacaoProducao == SituacaoProdutoProducao.Entregue &&
-                Instance.GetTipoPedido(sessao, idPedido) == Pedido.TipoPedidoEnum.Revenda &&
-                ObtemQtdVidrosProducao(sessao, idPedido) != ProdutoPedidoProducaoDAO.Instance.ObtemQtdVidroEstoqueEntreguePorPedido(sessao, idPedido))
-                prontoEntregue = false;
 
             return prontoEntregue;
         }
