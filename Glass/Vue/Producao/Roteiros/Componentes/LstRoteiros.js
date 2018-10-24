@@ -32,7 +32,7 @@
      * @param {Object} item O roteiro que será editado.
      */
     obterLinkEditarRoteiro: function (item) {
-      return '../../Cadastros/Producao/CadRoteiroProducao.aspx?id=' + item.id;
+      return this.obterLinkInserirRoteiro() + '?id=' + item.id;
     },
 
     /**
