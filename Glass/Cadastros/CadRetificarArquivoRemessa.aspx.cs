@@ -8,7 +8,13 @@ namespace Glass.UI.Web.Cadastros
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
 
+            if (!string.IsNullOrWhiteSpace(this.Request["id"]))
+            {
+                this.txtNumRemessa.Text = this.Request["id"];
+                this.txtNumRemessa.Enabled = false;
+            }
         }
 
         protected void grdContasReceber_DataBound(object sender, EventArgs e)
@@ -59,6 +65,12 @@ namespace Glass.UI.Web.Cadastros
             {
                 MensagemAlerta.ErrorMsg("Falha ao retificar", ex, Page);
             }
+        }
+
+        protected void imgPesq_Click(object sender, System.Web.UI.ImageClickEventArgs e)
+        {
+            grdContasReceber.PageIndex = 0;
+            grdContasReceber.DataBind();
         }
     }
 }

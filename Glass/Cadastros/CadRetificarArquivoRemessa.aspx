@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Retificar Arquivo Remessa" Language="C#" MasterPageFile="~/Layout.master" AutoEventWireup="true" 
+﻿<%@ Page Title="Retificar Arquivo Remessa" Language="C#" MasterPageFile="~/Layout.master" AutoEventWireup="true"
     CodeBehind="CadRetificarArquivoRemessa.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadRetificarArquivoRemessa" %>
 
 <asp:Content ID="menu" runat="server" ContentPlaceHolderID="Menu">
@@ -8,6 +8,22 @@
 
     <script type="text/javascript">
 
+        function getCli(idCli) {
+            if (idCli.value == "")
+                return;
+
+            var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
+
+            if (retorno[0] == "Erro") {
+                alert(retorno[1]);
+                idCli.value = "";
+                FindControl("txtNome", "input").value = "";
+                return false;
+            }
+
+            FindControl("txtNome", "input").value = retorno[1];
+        }
+
         function onChecked(control, recebida) {
             if (recebida == true)
                 control.checked = true;
@@ -16,10 +32,23 @@
     </script>
 
     <table>
-       <%-- <tr>
+        <tr>
             <td align="center">
                 <table>
                     <tr>
+                        <td>
+                            <asp:Label ID="Label8" runat="server" Text="Cliente" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td nowrap="nowrap">
+                            <asp:TextBox ID="txtNumCli" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
+                                onblur="getCli(this);"></asp:TextBox>
+                            <asp:TextBox ID="txtNome" runat="server" Width="150px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
+                        </td>
+                        <td>
+                            <asp:ImageButton ID="imgPesq1" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
+                                OnClientClick="getCli(FindControl('txtNumCli', 'input'));" OnClick="imgPesq_Click"
+                                CausesValidation="False" />
+                        </td>
                         <td>
                             <asp:Label ID="Label2" runat="server" Text="Num. Remessa: " ForeColor="#0066FF"></asp:Label>
                         </td>
@@ -27,11 +56,13 @@
                             <asp:TextBox runat="server" ID="txtNumRemessa"></asp:TextBox>
                         </td>
                         <td>
-                            <asp:Button runat="server" ID="btnBuscarContasReceber" Text="Buscar contas" /></td>
+                            <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
+                                 OnClick="imgPesq_Click" CausesValidation="False" />
+                        </td>
                     </tr>
                 </table>
             </td>
-        </tr>--%>
+        </tr>
         <tr>
             <td align="center">
                 <table>
@@ -64,6 +95,7 @@
                                     <asp:BoundField DataField="DescricaoContaContabil" HeaderText="Tipo." />
                                     <asp:BoundField DataField="DescrFormaPagtoPlanoConta" HeaderText="Forma Pagto." />
                                     <asp:BoundField DataField="NomeLoja" HeaderText="Loja" />
+                                    <asp:BoundField DataField="IdArquivoRemessa" HeaderText="Arquivo de Remessa" ItemStyle-HorizontalAlign="Center" />
                                     <asp:BoundField DataField="Obs" HeaderText="Obs." />
                                 </Columns>
                                 <PagerStyle CssClass="pgr"></PagerStyle>
@@ -75,7 +107,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <asp:Label ID="lblNaoRemover" runat="server" Text="*Contas em vermelho estão recebidas e não podem ser removidas." ForeColor="red"></asp:Label></td>
+                            <asp:Label ID="lblNaoRemover" runat="server" Text="*Contas recebidas não serão exibidas para a retificação." ForeColor="red"></asp:Label></td>
                     </tr>
                 </table>
             </td>
@@ -89,11 +121,13 @@
                     Text="Retificar Arquivo Remessa" OnClick="btnRetificarArquivoRemessa_Click" /></td>
         </tr>
     </table>
-
+    <asp:HiddenField ID="hdfIdArquivoRemessa" runat="server" />
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsContasReceber" runat="server" SelectMethod="ObterContasReceberParaRetificarArquivoRemessa"
         TypeName="Glass.Data.DAL.ContasReceberDAO">
         <SelectParameters>
-            <asp:QueryStringParameter QueryStringField="id" Name="idArquivoRemessa" />
+            <asp:ControlParameter ControlID="txtNumRemessa" Name="idArquivoRemessa" PropertyName="Text" Type="Int32" />
+            <asp:ControlParameter ControlID="txtNumCli" Name="idCli" PropertyName="Text" Type="Int32" />
+            <asp:ControlParameter ControlID="txtNome" Name="nomeCli" PropertyName="Text" Type="String" />
         </SelectParameters>
     </colo:VirtualObjectDataSource>
 

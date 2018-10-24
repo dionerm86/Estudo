@@ -38,7 +38,7 @@ namespace Glass.Data.DAL
             bool apenasContasNf, bool forcarVirgula)
         {
             return SqlBuscarNF(null, aliasContasReceber, selecionar, numeroNFe, apenasContasNf, forcarVirgula);
-        }               
+        }
 
         internal string SqlBuscarNF(GDASession session, string aliasContasReceber, bool selecionar, uint numeroNFe,
             bool apenasContasNf, bool forcarVirgula)
@@ -134,7 +134,7 @@ namespace Glass.Data.DAL
         {
             return String.Format("concat(if(({0}.tipoConta & {1})={1}, '{2}', " +
                 "if(({0}.tipoConta & {5})={5}, '{6}', '{3}')), " +
-                "if(({0}.tipoConta & {4})={4}, ', Reposição', ''))", 
+                "if(({0}.tipoConta & {4})={4}, ', Reposição', ''))",
 
                 aliasContasReceber,
                 (byte)ContasReceber.TipoContaEnum.Contabil,
@@ -149,7 +149,7 @@ namespace Glass.Data.DAL
         {
             string retorno = String.Empty;
             criterio = String.Empty;
-            
+
             if (!String.IsNullOrEmpty(tipoContasBuscar))
             {
                 var contas = ObtemTiposContas();
@@ -187,9 +187,9 @@ namespace Glass.Data.DAL
                 numArqRemessa, refObra, protestadas, idContaBancoCnab, numCte, out temFiltro, out filtroAdicional);
         }
 
-        private string SqlAReceber(uint idContaR, uint idPedido, uint idLiberarPedido, uint idAcerto, uint idTrocaDevolucao, uint numeroNFe, 
+        private string SqlAReceber(uint idContaR, uint idPedido, uint idLiberarPedido, uint idAcerto, uint idTrocaDevolucao, uint numeroNFe,
             uint idLoja, bool lojaCliente, uint idCli, uint idFunc, uint tipoEntrega, string nomeCli, uint idContaBanco, string dtIni, string dtFim,
-            string dtIniLib, string dtFimLib, string dataCadIni, string dataCadFim, string dtIniAntecip, string dtFimAntecip, 
+            string dtIniLib, string dtFimLib, string dataCadIni, string dataCadFim, string dtIniAntecip, string dtFimAntecip,
             string sitAntecip, Single precoInicial, Single precoFinal, bool returnAll, bool exibirContasVinculadas, uint[] idsFormaPagto, int situacaoPedido,
             uint filtroContasAntecipadas, bool simples, bool incluirParcCartao, int contasRenegociadas, bool apenasNf, string agrupar,
             int contasCnab, string idsRotas, string obs, string tipoContasBuscar, string tipoContaContabil, bool selecionar, bool buscarContasValorZerado,
@@ -201,9 +201,9 @@ namespace Glass.Data.DAL
             bool having = numeroNFe > 0 || apenasNf || (!String.IsNullOrEmpty(tipoContasBuscar) && tipoContasBuscar != "1,2,3");
 
             string campoTipoContaContabil = SqlCampoDescricaoContaContabil("c");
-            string campos = selecionar ? @"c.*, cli.Nome as NomeCli, cli.Credito as CreditoCliente, a.data as DataAntecip, 
+            string campos = selecionar ? @"c.*, cli.Nome as NomeCli, cli.Credito as CreditoCliente, a.data as DataAntecip,
                 Coalesce(Tel_Cont, Tel_Cel, Tel_Res) as telCliente, pl.Descricao as DescrPlanoConta, '$$$' as criterio," +
-                campoTipoContaContabil + "  as descricaoContaContabil, cli.limite as limiteCliente" : 
+                campoTipoContaContabil + "  as descricaoContaContabil, cli.limite as limiteCliente" :
                 "Count(*) as contagem" + (having ? ", c.id" + (PedidoConfig.LiberarPedido ? "Liberar" : "") + "Pedido" : "");
 
             if (FinanceiroConfig.FinanceiroRec.ExibirCnab && selecionar)
@@ -216,13 +216,13 @@ namespace Glass.Data.DAL
             // Busca pedidos da liberação
             if (selecionar && Glass.Configuracoes.PedidoConfig.LiberarPedido)
             {
-                var codCliente = FinanceiroConfig.RelatorioContasReceber.ExibirPedCli ? 
+                var codCliente = FinanceiroConfig.RelatorioContasReceber.ExibirPedCli ?
                     "COALESCE(concat(cast(ped.idPedido as char), ' (',ped.codCliente, ')'),ped.idPedido)" : "ped.idPedido";
 
                 campos += @", lp.dataLiberacao, (
-                    select Cast(group_concat(distinct "+ codCliente + @" separator ', ') as char)    
-                    from produtos_liberar_pedido plp 
-                    inner join pedido ped on (plp.idpedido = ped.idpedido) 
+                    select Cast(group_concat(distinct "+ codCliente + @" separator ', ') as char)
+                    from produtos_liberar_pedido plp
+                    inner join pedido ped on (plp.idpedido = ped.idpedido)
                     where plp.idliberarpedido=c.idliberarpedido
 
                     /* Este Group By e Order By devem ter 2 espaços entre as duas palavras, pois, ao utilizar o método LoadDataWithSortExpression
@@ -274,7 +274,7 @@ namespace Glass.Data.DAL
             if (FinanceiroConfig.FinanceiroRec.ExibirCnab)
             {
                 sql += @"
-                    LEFT JOIN 
+                    LEFT JOIN
                     (
                         SELECT rar.idContaR, rar.idContaBanco, max(rar.protestado) AS protestado
                         FROM registro_arquivo_remessa rar
@@ -285,8 +285,8 @@ namespace Glass.Data.DAL
             }
 
             sql += @"
-                Left Join cliente cli On (c.idCliente=cli.id_Cli) 
-                Left Join plano_contas pl On (c.IdConta=pl.IdConta) 
+                Left Join cliente cli On (c.idCliente=cli.id_Cli)
+                Left Join plano_contas pl On (c.IdConta=pl.IdConta)
                 Left Join antecip_conta_rec a On (c.idAntecipContaRec=a.idAntecipContaRec)
                 Where 1 ?filtroAdicional?";
 
@@ -353,7 +353,7 @@ namespace Glass.Data.DAL
 
             //0 - Exceto Contas Antecipadas
             //1 - Incluir Contas Antecipadas
-            //2 - Apenas Contas Antecipadas          
+            //2 - Apenas Contas Antecipadas
             if (filtroContasAntecipadas == 0)
                 filtroAdicional += " And c.idAntecipContaRec Is Null";
             else if (filtroContasAntecipadas == 1)
@@ -377,7 +377,7 @@ namespace Glass.Data.DAL
 
             if (idPedido > 0)
             {
-                filtroAdicional += !PedidoConfig.LiberarPedido ? " And c.IdPedido=" + idPedido : 
+                filtroAdicional += !PedidoConfig.LiberarPedido ? " And c.IdPedido=" + idPedido :
                     " And (c.IdPedido=" + idPedido + " Or c.IdLiberarPedido in (select distinct idLiberarPedido from produtos_liberar_pedido where idPedido=" + idPedido + @")
                     OR c.IdNf IN (SELECT DISTINCT idNf FROM pedidos_nota_fiscal WHERE idPedido=" + idPedido + "))";
                 criterio += "Pedido: " + idPedido + "    ";
@@ -387,7 +387,7 @@ namespace Glass.Data.DAL
             {
                 if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
                     filtroAdicional += " AND (c.IdLiberarPedido=" + idLiberarPedido + @"
-                        OR c.idNf IN (SELECT idNf 
+                        OR c.idNf IN (SELECT idNf
                                         FROM pedidos_nota_fiscal
                                         WHERE idLiberarPedido=" + idLiberarPedido + "))";
                 else
@@ -395,7 +395,7 @@ namespace Glass.Data.DAL
 
                 criterio += "Liberação: " + idLiberarPedido + "    ";
             }
-            
+
             if (idAcerto > 0)
             {
                 filtroAdicional += " and (c.idAcerto=" + idAcerto + " Or c.idAcertoParcial=" + idAcerto + ")";
@@ -525,7 +525,7 @@ namespace Glass.Data.DAL
             if (idFunc > 0)
             {
                 if (PedidoConfig.LiberarPedido)
-                    filtroAdicional += @" And c.idLiberarPedido In (Select idLiberarPedido From produtos_liberar_pedido Where idPedido In 
+                    filtroAdicional += @" And c.idLiberarPedido In (Select idLiberarPedido From produtos_liberar_pedido Where idPedido In
                         (Select idPedido From pedido Where idFunc=" + idFunc + "))";
                 else
                 {
@@ -539,7 +539,7 @@ namespace Glass.Data.DAL
             if (tipoEntrega > 0)
             {
                 if (PedidoConfig.LiberarPedido)
-                    filtroAdicional += @" And c.idLiberarPedido In (Select idLiberarPedido From produtos_liberar_pedido Where idPedido In 
+                    filtroAdicional += @" And c.idLiberarPedido In (Select idLiberarPedido From produtos_liberar_pedido Where idPedido In
                         (Select idPedido From pedido Where tipoEntrega=" + tipoEntrega + "))";
                 else
                 {
@@ -575,7 +575,7 @@ namespace Glass.Data.DAL
             if (situacaoPedido > 0)
             {
                 if (PedidoConfig.LiberarPedido)
-                    filtroAdicional += @" And c.idLiberarPedido In (Select idLiberarPedido From produtos_liberar_pedido Where idPedido In 
+                    filtroAdicional += @" And c.idLiberarPedido In (Select idLiberarPedido From produtos_liberar_pedido Where idPedido In
                         (Select idPedido From pedido Where situacaoProducao=" + situacaoPedido + "))";
                 else
                 {
@@ -747,7 +747,7 @@ namespace Glass.Data.DAL
                 precoInicial, precoFinal, true, exibirContasVinculadas, idsFormaPagto, situacaoPedido, filtroContasAntecipadas, true,
                 incluirParcCartao, contasRenegociadas, apenasNf, "", contasCnab, idsRotas, obs, tipoContasBuscar, tipoContaContabil, true,
                 false, numArqRemessa, refObra, protestadas, idContaBanco, numCte, out temFiltro, out filtroAdicional);
-            
+
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional, GetParam(nomeCli, dtIni, dtFim, dtIniLib, dtFimLib,
                  null, null, dataCadIni, dataCadFim, obs, null, null, null, null));
         }
@@ -757,7 +757,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<ContasReceber> GetNaoRecebidasRpt(uint idContaR, uint idPedido, uint idLiberarPedido, uint idAcerto, uint idTrocaDevolucao,
             uint numeroNFe, uint idLoja, bool lojaCliente, uint idCli, uint idFunc, uint tipoEntrega, string nomeCli, string dtIni, string dtFim,
-            string dtIniLib, string dtFimLib, string dataCadIni, string dataCadFim, float precoInicial, float precoFinal, uint[] idsFormaPagto, 
+            string dtIniLib, string dtFimLib, string dataCadIni, string dataCadFim, float precoInicial, float precoFinal, uint[] idsFormaPagto,
             int situacaoPedido, bool incluirParcCartao, int contasRenegociadas, bool apenasNf, uint filtroContasAntecipadas, string agrupar,
             int sort, int contasCnab, string idsRotas, string obs, string tipoContasBuscar, string tipoContaContabil, uint numArqRemessa,
             bool refObra, bool exibirContasVinculadas, int protestadas, uint idContaBanco, int numCte)
@@ -887,7 +887,7 @@ namespace Glass.Data.DAL
                 false, "", 0, null, observacao, null, tipoContaContabil, true, buscarContasValorZerado, 0, true, 0, 0, numeroCTe,
                 out temFiltro, out filtroAdicional);
 
-            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional, 
+            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
                 GetParam(nomeCli, dtIni, dtFim, null, null, null, null, null, null, observacao, tipoContaContabil, null, null, null));
         }
 
@@ -905,7 +905,7 @@ namespace Glass.Data.DAL
 
             string sql = SqlAReceber(0, idPedido, idLiberarPedido, idAcerto, idTrocaDevolucao, numeroNFe, idLoja, false, idCli, 0, 0, nomeCli, 0, dtIni, dtFim,
                 null, null, null, null, null, null, "", 0, 0, false, contasVinculadas, idFormaPagto, 0, 0, false, false, naoBuscarReneg ? 3 : 0,
-                false, "", 0, null, observacao, null, tipoContaContabil, true, buscarContasValorZerado, 0, true, 0, 0, numeroCTe, 
+                false, "", 0, null, observacao, null, tipoContaContabil, true, buscarContasValorZerado, 0, true, 0, 0, numeroCTe,
                 out temFiltro, out filtroAdicional);
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional,
@@ -964,7 +964,7 @@ namespace Glass.Data.DAL
                 formaPagto =
                     string.Join(", ", pagtosContasReceber.Select(f =>
                         // Descrição forma de pagamento.
-                        FormaPagtoDAO.Instance.GetDescricao(session, f.IdFormaPagto) + 
+                        FormaPagtoDAO.Instance.GetDescricao(session, f.IdFormaPagto) +
                         // Tipo de cartão.
                         (f.IdTipoCartao > 0 ? " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(session, (int)f.IdTipoCartao) : string.Empty) +
                         // Número de parcelas
@@ -1109,14 +1109,14 @@ namespace Glass.Data.DAL
 
             string criterio = String.Empty;
             string where = String.Empty;
-            
+
             var campos = string.Empty;
 
-            campos = selecionar ? @"c.idContaR, c.idCliente, c.idFormaPagto, c.idPedido, c.idAntecipContaRec, c.idConta, c.dataVec, c.DestinoRec, 
-                c.valorVec, c.dataRec, c.valorRec, c.juros, c.recebida, c.usuRec, c.idAcerto, c.numParc, c.desconto, c.motivoDescontoAcresc, 
-                c.idFuncDescAcresc, c.numAutConstrucard, c.dataDescAcresc, c.idLiberarPedido, c.idContaBanco, c.idAcertoParcial, c.obs, 
-                c.idObra, c.dataPrimNeg, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta, f.Nome as NomeFunc, '$$$' as Criterio, 
-                    c.NumParcMax, cli.Credito as CreditoCliente, c.renegociada, c.idTrocaDevolucao, c.dataCad, c.multa, c.idDevolucaoPagto, 
+            campos = selecionar ? @"c.idContaR, c.idCliente, c.idFormaPagto, c.idPedido, c.idAntecipContaRec, c.idConta, c.dataVec, c.DestinoRec,
+                c.valorVec, c.dataRec, c.valorRec, c.juros, c.recebida, c.usuRec, c.idAcerto, c.numParc, c.desconto, c.motivoDescontoAcresc,
+                c.idFuncDescAcresc, c.numAutConstrucard, c.dataDescAcresc, c.idLiberarPedido, c.idContaBanco, c.idAcertoParcial, c.obs,
+                c.idObra, c.dataPrimNeg, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta, f.Nome as NomeFunc, '$$$' as Criterio,
+                    c.NumParcMax, cli.Credito as CreditoCliente, c.renegociada, c.idTrocaDevolucao, c.dataCad, c.multa, c.idDevolucaoPagto,
                     c.isParcelaCartao, c.IdContaRCartao, c.acrescimo, c.valorJurosCartao, c.tipoRecebimentoParcCartao, c.idSinal, c.usuCad, c.idAcertoCheque,
                     c.idEncontroContas, c.idNf, c.numArquivoRemessaCnab, c.numeroDocumentoCnab, p.PercentualComissao,
                     cli.cpf_cnpj as CpfCnpjCliente, cli.rg_escInst as InscEstadualCliente, GROUP_CONCAT(COALESCE(fp.descricao, '')) as FormaPagto, GROUP_CONCAT(COALESCE(pcr.NumAutCartao, '')) as NumAutCartao, ccr.IdComissao," +
@@ -1128,10 +1128,10 @@ namespace Glass.Data.DAL
 
             // Busca pedidos da liberação
             if (selecionar && protestadas && FinanceiroConfig.RelatorioContasRecebidas.ExibirPedidos)
-            {                
+            {
                 campos += @", (
                     select Cast(group_concat(distinct idPedido separator ', ') as char)
-                    from produtos_liberar_pedido plp 
+                    from produtos_liberar_pedido plp
                     where plp.idliberarpedido=c.idliberarpedido
                     group by idLiberarPedido
                     order by idLiberarPedido, idPedido) as pedidosLiberacao";
@@ -1160,13 +1160,13 @@ namespace Glass.Data.DAL
             campos += SqlBuscarNF("c", selecionar, numeroNFe, false, true);
 
             string sql = @"
-                Select " + campos + @" From contas_receber c 
+                Select " + campos + @" From contas_receber c
                     Left Join pedido p On (c.IdPedido=p.idPedido) ";
 
             if (PedidoConfig.LiberarPedido)
             {
                 sql += "Left Join liberarpedido lp On (c.idLiberarPedido=lp.idLiberarPedido) ";
- 
+
                 if (idFunc > 0)
                     sql += @"
                         Left Join produtos_liberar_pedido plp On (lp.idLiberarPedido=plp.idLiberarPedido)
@@ -1176,7 +1176,7 @@ namespace Glass.Data.DAL
             if (FinanceiroConfig.FinanceiroRec.ExibirCnab)
             {
                 sql += @"
-                    LEFT JOIN 
+                    LEFT JOIN
                     (
                         SELECT rar.idContaR, rar.idContaBanco, max(rar.protestado) AS protestado
                         FROM registro_arquivo_remessa rar
@@ -1187,8 +1187,8 @@ namespace Glass.Data.DAL
             }
 
             sql += @"
-                    Left Join cliente cli On (c.idCliente=cli.id_Cli) 
-                    Left Join plano_contas pl On (c.IdConta=pl.IdConta) 
+                    Left Join cliente cli On (c.idCliente=cli.id_Cli)
+                    Left Join plano_contas pl On (c.IdConta=pl.IdConta)
                     Left Join funcionario f On (c.UsuRec=f.IdFunc)
                     LEFT JOIN comissao_contas_receber ccr ON (c.IdContaR = ccr.IdContaR)
                     LEFT JOIN pagto_contas_receber pcr ON (pcr.IdContaR = c.IdContaR)
@@ -1205,21 +1205,21 @@ namespace Glass.Data.DAL
                 var idsLiberacao = String.Join(",", LiberarPedidoDAO.Instance.GetIdsLiberacaoAtivaByPedido(idPedido));
                 if (String.IsNullOrEmpty(idsLiberacao))
                     idsLiberacao = "0";
-                
+
                 if (recebida.GetValueOrDefault(true))
                 {
                     if (PedidoConfig.LiberarPedido)
                     {
-                        IList<string> lstIdAcerto = ExecuteMultipleScalar<string>(@"Select idAcerto From contas_receber Where idAcerto Is Not Null And 
+                        IList<string> lstIdAcerto = ExecuteMultipleScalar<string>(@"Select idAcerto From contas_receber Where idAcerto Is Not Null And
                             idLiberarPedido In (" + idsLiberacao + ")");
-                        
+
                         // Os parênteses abaixo devem ficar separados ") )" para que caso passe no TrimEnd(')') logo abaixo remova somente um deles
                         if (lstIdAcerto.Count > 0)
                             filtro = " And (c.idLiberarPedido In (" + idsLiberacao + ") Or c.idAcerto In (" + String.Join(",", lstIdAcerto.ToArray()) + ") )";
                     }
                     else
                     {
-                        IList<string> lstIdAcerto = ExecuteMultipleScalar<string>(@"Select idAcerto From contas_receber Where idAcerto Is Not Null And 
+                        IList<string> lstIdAcerto = ExecuteMultipleScalar<string>(@"Select idAcerto From contas_receber Where idAcerto Is Not Null And
                             idPedido=" + idPedido);
 
                         // Os parênteses abaixo devem ficar separados ") )" para que caso passe no TrimEnd(')') logo abaixo remova somente um deles
@@ -1247,23 +1247,23 @@ namespace Glass.Data.DAL
                 else
                     filtroAdicional += string.Format("{0} {1} OR c.IdPedido={2} OR c.IdNf IN (SELECT pnf.IdNf FROM pedidos_nota_fiscal pnf WHERE pnf.IdPedido={2}))",
                         filtro.TrimEnd(')'), PedidoConfig.LiberarPedido ? string.Format(filtroLiberacao, "OR") : string.Empty, idPedido);
-                
+
                 criterio += "Pedido N.º " + idPedido + "    ";
             }
-            
+
             if (idLiberarPedido > 0)
             {
                 filtroAdicional += " and (c.IdLiberarPedido=" + idLiberarPedido +
                     " Or c.idNf In (Select pnf.idNf From pedidos_nota_fiscal pnf Where pnf.idLiberarPedido=" + idLiberarPedido + "))";
                 criterio += "Liberação N.º " + idLiberarPedido + "    ";
             }
-            
+
             if (idAcerto > 0)
             {
                 filtroAdicional += " and c.idAcerto=" + idAcerto;
                 criterio += "Acerto N.º " + idAcerto + "    ";
             }
-            
+
             if (idAcertoParcial > 0)
             {
                 filtroAdicional += " and c.idAcertoParcial=" + idAcertoParcial;
@@ -1334,7 +1334,7 @@ namespace Glass.Data.DAL
             if (idComissionado > 0)
             {
                 if (PedidoConfig.LiberarPedido)
-                    filtroAdicional += @" And c.idLiberarPedido In (Select idLiberarPedido From produtos_liberar_pedido Where idPedido In 
+                    filtroAdicional += @" And c.idLiberarPedido In (Select idLiberarPedido From produtos_liberar_pedido Where idPedido In
                         (Select idPedido From pedido Where idComissionado=" + idComissionado + "))";
                 else
                 {
@@ -1655,8 +1655,8 @@ namespace Glass.Data.DAL
             return sql;
         }
 
-        public ContasReceber[] GetForRpt(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao, 
-            uint numeroNFe, uint idLoja, uint idCli, uint idFunc, uint idFuncRecebido, uint tipoEntrega, string nomeCli, string dtIniVenc, 
+        public ContasReceber[] GetForRpt(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao,
+            uint numeroNFe, uint idLoja, uint idCli, uint idFunc, uint idFuncRecebido, uint tipoEntrega, string nomeCli, string dtIniVenc,
             string dtFimVenc, string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string dtIniLib, string dtFimLib, string idsFormaPagto, uint idTipoBoleto,
             Single precoInicial, Single precoFinal, int sort, bool? renegociadas, bool? recebida, uint idComissionado,
             uint idRota, string obs, string tipoContaContabil, uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal,
@@ -1676,17 +1676,17 @@ namespace Glass.Data.DAL
                 precoFinal, recebida, idComissionado, idRota, obs, 0, renegociadas, tipoContaContabil, true, numArqRemessa, refObra, contasCnab, idVendedorAssociado, idVendedorObra, idComissao, idSinal, numCte,
                 protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, true, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
-            List<ContasReceber> lst = objPersistence.LoadData(sql + sortExpression, GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, 
+            List<ContasReceber> lst = objPersistence.LoadData(sql + sortExpression, GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec,
                 dataIniCad, dataFimCad, dtIniLib, dtFimLib, null, null, obs));
 
             return lst.ToArray();
         }
 
-        public ContasReceber[] GetForListRpt(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao, 
-            uint numeroNFe, uint idLoja, uint idFunc, uint idFuncRecebido, uint idCli, uint tipoEntrega, string nomeCli, string dtIniVenc, 
+        public ContasReceber[] GetForListRpt(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao,
+            uint numeroNFe, uint idLoja, uint idFunc, uint idFuncRecebido, uint idCli, uint tipoEntrega, string nomeCli, string dtIniVenc,
             string dtFimVenc, string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string idsFormaPagto, uint idTipoBoleto, float precoInicial, float precoFinal,
             bool? renegociadas, bool? recebida, uint idComissionado, uint idRota, string obs, int ordenacao, string tipoContaContabil,
-            uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte, 
+            uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte,
             bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao, string sortExpression, int startRow, int pageSize)
         {
             var ordenacaoSql = !string.IsNullOrEmpty(sortExpression) ? string.Empty :
@@ -1709,11 +1709,11 @@ namespace Glass.Data.DAL
             return lst.ToArray();
         }
 
-        public int GetRptCount(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao, 
-            uint numeroNFe, uint idLoja, uint idFunc, uint idFuncRecebido, uint idCli, uint tipoEntrega, string nomeCli, string dtIniVenc, 
+        public int GetRptCount(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao,
+            uint numeroNFe, uint idLoja, uint idFunc, uint idFuncRecebido, uint idCli, uint tipoEntrega, string nomeCli, string dtIniVenc,
             string dtFimVenc, string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string idsFormaPagto, uint idTipoBoleto, float precoInicial, float precoFinal,
             bool? renegociadas, bool? recebida, uint idComissionado, uint idRota, string obs, int ordenacao, string tipoContaContabil,
-            uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte, 
+            uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte,
             bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao)
         {
             bool temFiltro;
@@ -1732,49 +1732,49 @@ namespace Glass.Data.DAL
         /// </summary>
         public void PreencheLocalizacao(GDASession session, ref ContasReceber[] lst)
         {
-            var sqlContaRec = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ') 
+            var sqlContaRec = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ')
                 FROM contas_receber c
                     LEFT JOIN caixa_geral cx ON (c.IdContaR=cx.IdContaR)
                     LEFT JOIN caixa_diario cd ON (c.IdContaR=cd.IdContaR)
                     LEFT JOIN mov_banco mb ON (c.IdContaR=mb.IdContaR)
                     LEFT JOIN conta_banco cb ON (mb.IdContaBanco=cb.IdContaBanco)
-                WHERE c.IdContaR=?id 
+                WHERE c.IdContaR=?id
                 ORDER BY COALESCE(cx.IdCaixaGeral, 0), COALESCE(cd.IdCaixaDiario, 0), COALESCE(mb.IdMovBanco, 0) DESC LIMIT 1";
 
-            var sqlSinal = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ') 
+            var sqlSinal = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ')
                 FROM contas_receber c
                     LEFT JOIN caixa_geral cx ON (c.IdSinal=cx.IdSinal)
                     LEFT JOIN caixa_diario cd ON (c.IdSinal=cd.IdSinal)
                     LEFT JOIN mov_banco mb ON (c.IdSinal=mb.IdSinal)
                     LEFT JOIN conta_banco cb ON (mb.IdContaBanco=cb.IdContaBanco)
-                WHERE c.IdSinal=?id 
+                WHERE c.IdSinal=?id
                 ORDER BY COALESCE(cx.IdCaixaGeral, 0), COALESCE(cd.IdCaixaDiario, 0), COALESCE(mb.IdMovBanco, 0) DESC LIMIT 1";
 
-            var sqlAcerto = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ') 
-                FROM contas_receber c 
-                    LEFT JOIN caixa_geral cx ON (c.IdAcerto=cx.IdAcerto) 
-                    LEFT JOIN caixa_diario cd ON (c.IdAcerto=cd.IdAcerto) 
-                    LEFT JOIN mov_banco mb ON (c.IdAcerto=mb.IdAcerto) 
+            var sqlAcerto = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ')
+                FROM contas_receber c
+                    LEFT JOIN caixa_geral cx ON (c.IdAcerto=cx.IdAcerto)
+                    LEFT JOIN caixa_diario cd ON (c.IdAcerto=cd.IdAcerto)
+                    LEFT JOIN mov_banco mb ON (c.IdAcerto=mb.IdAcerto)
                     LEFT JOIN conta_banco cb ON (mb.IdContaBanco=cb.IdContaBanco)
                 WHERE c.IdAcerto=?id
                 ORDER BY COALESCE(cx.IdCaixaGeral, 0), COALESCE(cd.IdCaixaDiario, 0), COALESCE(mb.IdMovBanco, 0) DESC LIMIT 1";
 
-            var sqlAcertoParcial = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ') 
-                FROM contas_receber c 
-                    LEFT JOIN caixa_geral cx ON (c.IdAcertoParcial=cx.IdAcerto) 
-                    LEFT JOIN caixa_diario cd ON (c.IdAcertoParcial=cd.IdAcerto) 
-                    LEFT JOIN mov_banco mb ON (c.IdAcertoParcial=mb.IdAcerto) 
+            var sqlAcertoParcial = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ')
+                FROM contas_receber c
+                    LEFT JOIN caixa_geral cx ON (c.IdAcertoParcial=cx.IdAcerto)
+                    LEFT JOIN caixa_diario cd ON (c.IdAcertoParcial=cd.IdAcerto)
+                    LEFT JOIN mov_banco mb ON (c.IdAcertoParcial=mb.IdAcerto)
                     LEFT JOIN conta_banco cb ON (mb.IdContaBanco=cb.IdContaBanco)
-                WHERE c.IdAcertoParcial=?id 
+                WHERE c.IdAcertoParcial=?id
                 ORDER BY COALESCE(cx.IdCaixaGeral, 0), COALESCE(cd.IdCaixaDiario, 0), COALESCE(mb.IdMovBanco, 0) DESC LIMIT 1";
 
-            var sqlPedido = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ') 
+            var sqlPedido = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ')
                 FROM contas_receber c
                     LEFT JOIN caixa_geral cx ON (c.IdPedido=cx.IdPedido)
                     LEFT JOIN caixa_diario cd ON (c.IdPedido=cd.IdPedido)
                     LEFT JOIN mov_banco mb ON (c.IdPedido=mb.IdPedido)
                     LEFT JOIN conta_banco cb ON (mb.IdContaBanco=cb.IdContaBanco)
-                WHERE c.IdPedido=?id 
+                WHERE c.IdPedido=?id
                 ORDER BY COALESCE(cx.IdCaixaGeral, 0), COALESCE(cd.IdCaixaDiario, 0), COALESCE(mb.IdMovBanco, 0) DESC LIMIT 1";
 
             var sqlLiberacao = @"select Referencia from
@@ -1792,7 +1792,7 @@ namespace Glass.Data.DAL
                     where idliberarpedido = ?id) as temp
                 order by ID DESC";
 
-            var sqlObra = @"SELECT COALESCE(IF(mb.IdMovBanco>0, CONCAT('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), IF(cx.IdCaixaGeral>0, ' Cx. Geral', IF(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ') 
+            var sqlObra = @"SELECT COALESCE(IF(mb.IdMovBanco>0, CONCAT('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), IF(cx.IdCaixaGeral>0, ' Cx. Geral', IF(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ')
                 FROM contas_receber c
                     LEFT JOIN caixa_geral cx ON (c.IdObra=cx.IdObra AND c.IdConta=cx.IdConta AND c.ValorRec=cx.ValorMov)
                     LEFT JOIN caixa_diario cd ON (c.IdObra=cd.IdObra AND c.IdConta=cd.IdConta AND c.ValorRec=cd.Valor)
@@ -1935,7 +1935,7 @@ namespace Glass.Data.DAL
                 if (string.IsNullOrWhiteSpace(cr.DestinoRec) && cr.Renegociada)
                     cr.DestinoRec = "Renegociada";
 
-                #endregion               
+                #endregion
 
                 objPersistence.ExecuteCommand(session, "update contas_receber set DestinoRec=?obj where idContar=" + cr.IdContaR,
                         new GDAParameter("?obj", cr.DestinoRec));
@@ -2124,8 +2124,8 @@ namespace Glass.Data.DAL
             IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, decimal juros, IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard,
             IEnumerable<int> quantidadesParcelaCartao, bool recebimentoParcial, IEnumerable<decimal> taxasAntecipacao, IEnumerable<int> tiposBoleto, IEnumerable<decimal> valoresRecebimento)
         {
-            var contaReceber = PrepararContaRecebimento(session, caixaDiario, creditoUtilizado, dataRecebimento, 
-                descontarComissao, gerarCredito, idContaR, idsFormaPagamento, idsTipoCartao, juros, 
+            var contaReceber = PrepararContaRecebimento(session, caixaDiario, creditoUtilizado, dataRecebimento,
+                descontarComissao, gerarCredito, idContaR, idsFormaPagamento, idsTipoCartao, juros,
                 numeroAutorizacaoConstrucard, quantidadesParcelaCartao, recebimentoParcial, valoresRecebimento);
 
             #region Validações do recebimento da conta
@@ -2146,7 +2146,7 @@ namespace Glass.Data.DAL
 
             ChequesContasReceberDAO.Instance.InserirPelaString(session, contaReceber, dadosChequesRecebimento);
             PagtoContasReceberDAO.Instance.DeleteByIdContaR(session, contaReceber.IdContaR);
-            
+
             // Salva as formas de pagamento.
             for (var i = 0; i < valoresRecebimento.Count(); i++)
             {
@@ -2537,7 +2537,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            var contasReceber = new[] { contaReceber };          
+            var contasReceber = new[] { contaReceber };
             PreencheLocalizacao(session, ref contasReceber);
 
             return mensagemRetorno;
@@ -3191,7 +3191,7 @@ namespace Glass.Data.DAL
                                 contadorPagamento = -1;
                                 break;
                             }
-                        } 
+                        }
                     }
 
                     if (contadorPagamento > -1)
@@ -3261,7 +3261,7 @@ namespace Glass.Data.DAL
                                 contadorPagamento = -1;
                                 break;
                             }
-                        } 
+                        }
                     }
 
                     if (contadorPagamento > -1)
@@ -3291,7 +3291,7 @@ namespace Glass.Data.DAL
 
                     Update(session, contaReceberParcial);
 
-                    // Se o valor restante não der para pagar a conta toda, recebe parcial 
+                    // Se o valor restante não der para pagar a conta toda, recebe parcial
                     // e sai do loop, para não receber mais nenhuma conta
                     if (totalPagoRestante < contaReceberParcial.ValorVec)
                     {
@@ -3610,7 +3610,7 @@ namespace Glass.Data.DAL
             var dataValida = DateTime.Now;
 
             ValidarReceberContaAntecipada(data, ref dataValida);
-            
+
             // Atualiza esta conta a receber
             ContasReceber conta = GetElementByPrimaryKey(sessao, idContaR);
             conta.UsuRec = UserInfo.GetUserInfo.CodUser;
@@ -3670,7 +3670,7 @@ namespace Glass.Data.DAL
                          !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.CancelarRecebimentos))
                         throw new Exception("Você não tem permissão para cancelar contas recebidas, contacte o administrador");
 
-                    // Busca a conta a receber          
+                    // Busca a conta a receber
                     ContasReceber contaRec = GetElement(transaction, idContaR);
 
                     // Verifica se esta conta já foi recebida
@@ -3844,7 +3844,7 @@ namespace Glass.Data.DAL
         {
             // Apenas financeiro e caixa diário podem cancelar contas recebidas
             if ((!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
-                !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento)) || 
+                !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento)) ||
                 !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.CancelarRecebimentos))
                 throw new Exception("Você não tem permissão para cancelar acertos, contacte o administrador");
 
@@ -3914,7 +3914,7 @@ namespace Glass.Data.DAL
 
             // Volta contas recebidas por este acerto para em aberto
             objPersistence.ExecuteCommand(session,
-                @"Update contas_receber set idAcerto=null, recebida=false, usuRec=null, dataRec=null, 
+                @"Update contas_receber set idAcerto=null, recebida=false, usuRec=null, dataRec=null,
                     valorRec=null, juros=0, renegociada=false Where idAcerto=" + idAcerto);
 
             //Remove o pagamento das contas recebidas
@@ -3995,7 +3995,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    // Busca a conta a receber          
+                    // Busca a conta a receber
                     ContasReceber conta = GetElementByPrimaryKey(transaction, idContaR);
 
                     if (conta.Recebida)
@@ -4350,7 +4350,7 @@ namespace Glass.Data.DAL
             foreach (ContasReceber c in objPersistence.LoadData(sessao, "SELECT * FROM contas_receber WHERE (Recebida=false OR (SELECT tipoPagto=" +
                 (int)Obra.TipoPagtoObra.AVista + " FROM obra WHERE idObra=" + idObra + ")) AND idObra=" + idObra).ToList())
                 LogCancelamentoDAO.Instance.LogContaReceber(sessao, c, "Cancelamento da Obra " + idObra, false);
-                
+
             // Exclui as contas a receber ou recebidas caso a obra seja à vista
             foreach (var conta in objPersistence.LoadData(sessao, "Select * From contas_receber Where (Recebida=false Or (Select tipoPagto=" + (int)Obra.TipoPagtoObra.AVista +
                 " From obra Where idObra=" + idObra + ")) And idObra=" + idObra).ToList())
@@ -4498,9 +4498,9 @@ namespace Glass.Data.DAL
         public bool ClientePossuiContasVencidas(GDASession session, uint idCliente)
         {
             var sql = @"
-                Select Count(*) From contas_receber c 
-                Where AddDate(datavec, interval " + FinanceiroConfig.NumeroDiasContaRecAtrasada + @" day)<now() 
-                    And Recebida <> 1 
+                Select Count(*) From contas_receber c
+                Where AddDate(datavec, interval " + FinanceiroConfig.NumeroDiasContaRecAtrasada + @" day)<now()
+                    And Recebida <> 1
                     And (c.isParcelaCartao=false or c.isParcelaCartao is null)
                     And valorVec>0
                     And idCliente=" + idCliente;
@@ -4560,10 +4560,10 @@ namespace Glass.Data.DAL
                 return new List<ContasReceber>();
 
             var sql = @"SELECT c.*, cli.Nome AS NomeCli, pl.Descricao AS DescrPlanoConta FROM contas_receber c
-                    LEFT JOIN cliente cli ON (c.IdCliente=cli.Id_Cli) 
-                    LEFT JOIN plano_contas pl ON (c.IdConta=pl.IdConta) 
+                    LEFT JOIN cliente cli ON (c.IdCliente=cli.Id_Cli)
+                    LEFT JOIN plano_contas pl ON (c.IdConta=pl.IdConta)
                 WHERE Recebida <> 1 AND (c.IsParcelaCartao=0 OR c.IsParcelaCartao IS NULL)";
-            
+
             if (tipoBusca == 0 && idPedidoLiberacao > 0)
             {
                 if (!PedidoConfig.LiberarPedido)
@@ -4586,13 +4586,13 @@ namespace Glass.Data.DAL
 
         public IList<ContasReceber> GetByAcerto(GDASession sessao, uint idAcerto, bool soRecebidas)
         {
-            bool buscarReais = !AcertoDAO.Instance.Exists(sessao, idAcerto) || 
+            bool buscarReais = !AcertoDAO.Instance.Exists(sessao, idAcerto) ||
                 AcertoDAO.Instance.ObtemValorCampo<Acerto.SituacaoEnum>(sessao, "situacao", "idAcerto=" + idAcerto) != Acerto.SituacaoEnum.Cancelado;
 
             // Este SQL fica mais otimizado buscando os pedidos da liberação da forma como está
             string sql = @"
                 Select c.*, cli.Nome as NomeCli, (
-		                select Cast(group_concat(distinct concat(p.idPedido, if(p.codCliente<>'' And p.codCliente is not NULL, 
+		                select Cast(group_concat(distinct concat(p.idPedido, if(p.codCliente<>'' And p.codCliente is not NULL,
                             Concat(' (', p.codcliente, ')'), '')) separator ', ') as char) as pedidosLiberacao
                         from produtos_liberar_pedido plp
        		                inner join pedido p On (plp.idPedido=p.idPedido)
@@ -4600,8 +4600,8 @@ namespace Glass.Data.DAL
                         group by plp.idLiberarPedido
                         order by plp.idLiberarPedido, plp.idPedido
                     ) as pedidosLiberacao" + SqlBuscarNF("c", true, 0, false, false) + @"
-                From contas_receber c 
-                    Left Join cliente cli on (c.IdCliente=cli.Id_Cli) 
+                From contas_receber c
+                    Left Join cliente cli on (c.IdCliente=cli.Id_Cli)
                 Where (c.isParcelaCartao=false or c.isParcelaCartao is null)";
 
             if (buscarReais)
@@ -4633,9 +4633,9 @@ namespace Glass.Data.DAL
         {
             string sql = @"
                 Select c.*, cli.Nome as NomeCli" + SqlBuscarNF(session, "c", true, 0, false, false) + @"
-                From contas_receber c 
-                    Left Join cliente cli on (c.IdCliente=cli.Id_Cli) 
-                Where c.idAcertoParcial=" + idAcerto + @" 
+                From contas_receber c
+                    Left Join cliente cli on (c.IdCliente=cli.Id_Cli)
+                Where c.idAcertoParcial=" + idAcerto + @"
                     And (c.isParcelaCartao=false or c.isParcelaCartao is null)";
 
             if (soRecebidas)
@@ -4647,9 +4647,9 @@ namespace Glass.Data.DAL
         public int GetCountRenegByAcerto(uint idAcerto, bool soRecebidas)
         {
             string sql = @"
-                Select count(*) From contas_receber c 
-                    Left Join cliente cli on (c.IdCliente=cli.Id_Cli) 
-                Where c.idAcertoParcial=" + idAcerto + @" 
+                Select count(*) From contas_receber c
+                    Left Join cliente cli on (c.IdCliente=cli.Id_Cli)
+                Where c.idAcertoParcial=" + idAcerto + @"
                     And (c.isParcelaCartao=false or c.isParcelaCartao is null)";
 
             if (soRecebidas)
@@ -4753,7 +4753,7 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sql).ToList();
         }
 
-        #endregion 
+        #endregion
 
         #region Busca contas recebidas antecipadas
 
@@ -4770,9 +4770,9 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<ContasReceber> GetByAntecipacao(GDASession session, uint idAntecipContaRec)
         {
-            string sql = @"Select c.*, cli.Nome as NomeCli" + 
-                SqlBuscarNF(session, "c", true, 0, false, true) + @" From contas_receber c 
-                Left Join cliente cli on (c.IdCliente=cli.Id_Cli) 
+            string sql = @"Select c.*, cli.Nome as NomeCli" +
+                SqlBuscarNF(session, "c", true, 0, false, true) + @" From contas_receber c
+                Left Join cliente cli on (c.IdCliente=cli.Id_Cli)
                 Where c.idAntecipContaRec=" + idAntecipContaRec;
 
             return objPersistence.LoadData(session, sql).ToList();
@@ -4792,13 +4792,13 @@ namespace Glass.Data.DAL
 
         #region Busca histórico de um cliente
 
-        private string SqlHist(uint idCliente, uint idPedido, string dataIniVenc, string dataFimVenc, string dataIniRec, string dataFimRec, 
+        private string SqlHist(uint idCliente, uint idPedido, string dataIniVenc, string dataFimVenc, string dataIniRec, string dataFimRec,
             string dataIniCad, string dataFimCad, float vIniVenc, float vFinVenc, float vIniRec, float vFinRec, bool emAberto, bool recEmDia,
             bool recComAtraso, bool buscarParcCartao, int contasRenegociadas, bool buscaPedRepoGarantia, bool buscarChequeDevolvido,
             string sort, bool selecionar, out bool temFiltro)
         {
             temFiltro = false;
-            string totalEmAberto = GetHistValor(1, idCliente, dataIniVenc, dataFimVenc, dataIniRec, dataFimRec, dataIniCad, dataFimCad, 
+            string totalEmAberto = GetHistValor(1, idCliente, dataIniVenc, dataFimVenc, dataIniRec, dataFimRec, dataIniCad, dataFimCad,
                 vIniVenc, vFinVenc, vIniRec, vFinRec, emAberto, recEmDia, recComAtraso, buscarParcCartao, contasRenegociadas, buscarChequeDevolvido).ToString().Replace(',', '.') + " + 0.001";
             string totalEmDia = GetHistValor(2, idCliente, dataIniVenc, dataFimVenc, dataIniRec, dataFimRec, dataIniCad, dataFimCad,
                 vIniVenc, vFinVenc, vIniRec, vFinRec, emAberto, recEmDia, recComAtraso, buscarParcCartao, contasRenegociadas, buscarChequeDevolvido).ToString().Replace(',', '.') + " + 0.001";
@@ -4806,25 +4806,25 @@ namespace Glass.Data.DAL
                 vIniVenc, vFinVenc, vIniRec, vFinRec, emAberto, recEmDia, recComAtraso, buscarParcCartao, contasRenegociadas, buscarChequeDevolvido).ToString().Replace(',', '.') + " + 0.001";
 
             string campos = selecionar ? @"c.idContaR, c.idPedido, c.idAntecipContaRec, c.idConta, c.dataVec, c.valorVec, c.dataRec, c.DestinoRec,
-                c.valorRec, c.juros, c.recebida, c.usuRec, c.idAcerto, c.numParc, c.desconto, c.motivoDescontoAcresc, c.idFuncDescAcresc, 
-                c.numAutConstrucard, c.dataDescAcresc, c.idLiberarPedido, c.idContaBanco, c.idAcertoParcial, c.obs, c.idObra, c.dataPrimNeg, 
+                c.valorRec, c.juros, c.recebida, c.usuRec, c.idAcerto, c.numParc, c.desconto, c.motivoDescontoAcresc, c.idFuncDescAcresc,
+                c.numAutConstrucard, c.dataDescAcresc, c.idLiberarPedido, c.idContaBanco, c.idAcertoParcial, c.obs, c.idObra, c.dataPrimNeg,
                 c.idCliente, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta, c.idFormaPagto, f.Nome as NomeFunc, cast(" +
-                totalEmAberto + " as decimal(10,2)) as totalEmAberto, cast(" + totalEmDia + " as decimal(10,2)) as totalRecEmDia, cast(" + 
-                totalComAtraso + @" as decimal(10,2)) as totalRecComAtraso, '$$$' as Criterio, c.NumParcMax, c.idTrocaDevolucao, c.renegociada, 
-                c.dataCad, c.multa, c.idDevolucaoPagto, c.isParcelaCartao, c.IdContaRCartao, c.acrescimo, c.valorJurosCartao, c.tipoRecebimentoParcCartao, 
+                totalEmAberto + " as decimal(10,2)) as totalEmAberto, cast(" + totalEmDia + " as decimal(10,2)) as totalRecEmDia, cast(" +
+                totalComAtraso + @" as decimal(10,2)) as totalRecComAtraso, '$$$' as Criterio, c.NumParcMax, c.idTrocaDevolucao, c.renegociada,
+                c.dataCad, c.multa, c.idDevolucaoPagto, c.isParcelaCartao, c.IdContaRCartao, c.acrescimo, c.valorJurosCartao, c.tipoRecebimentoParcCartao,
                 c.idSinal, c.usuCad, c.idAcertoCheque, 0 As numCheque, c.numArquivoRemessaCnab, c.numeroDocumentoCnab, c.idEncontroContas, c.idNf,
                 if(c.idConta in (" + UtilsPlanoConta.ContasCredito(3) + "), 0, c.valorRec) as valorRecSemCredito, cli.Credito AS CreditoCliente" :
                 "Count(*) as contagem";
 
             string sql = @"
-                Select " + campos + @" From contas_receber c 
-                    Left Join cliente cli On (c.idCliente=cli.id_Cli) 
-                    Left Join plano_contas pl On (c.IdConta=pl.IdConta) 
-                    Left Join funcionario f On (c.UsuRec=f.IdFunc) 
+                Select " + campos + @" From contas_receber c
+                    Left Join cliente cli On (c.idCliente=cli.id_Cli)
+                    Left Join plano_contas pl On (c.IdConta=pl.IdConta)
+                    Left Join funcionario f On (c.UsuRec=f.IdFunc)
                     Where ValorVec>0 &where";
 
             string criterio = String.Empty;
-            string where = String.Empty;    
+            string where = String.Empty;
 
             if (idCliente > 0)
             {
@@ -4991,21 +4991,21 @@ namespace Glass.Data.DAL
             {
                 sql += " UNION Select ";
 
-                string camposUnion = selecionar ? @"null as idContaR, ped.idPedido, null as idAntecipContaRec, null as idConta, 
-                    ped.dataEntrega as dataVec, ped.total as valorVec, null as dataRec, 
-                    null as valorRec, null as juros, null as recebida, null as usuRec, null as idAcerto, ped.numParc, 
-                    ped.desconto, null as motivoDescontoAcresc, null as idFuncDescAcresc, 
-                    ped.numAutConstrucard, null as dataDescAcresc, ped.idLiberarPedido, null as idContaBanco, null as idAcertoParcial, 
-                    ped.obs, ped.idObra, null as dataPrimNeg, 
+                string camposUnion = selecionar ? @"null as idContaR, ped.idPedido, null as idAntecipContaRec, null as idConta,
+                    ped.dataEntrega as dataVec, ped.total as valorVec, null as dataRec,
+                    null as valorRec, null as juros, null as recebida, null as usuRec, null as idAcerto, ped.numParc,
+                    ped.desconto, null as motivoDescontoAcresc, null as idFuncDescAcresc,
+                    ped.numAutConstrucard, null as dataDescAcresc, ped.idLiberarPedido, null as idContaBanco, null as idAcertoParcial,
+                    ped.obs, ped.idObra, null as dataPrimNeg,
                     ped.idCli as idCliente, cl.Nome as NomeCli, 'Reposição/Garantia' as DescrPlanoConta, ped.idFormaPagto, fu.Nome as NomeFunc, cast(" +
                     totalEmAberto + " as decimal(10,2)) as totalEmAberto, cast(" + totalEmDia + " as decimal(10,2)) as totalRecEmDia, cast(" +
-                    totalComAtraso + @" as decimal(10,2)) as totalRecComAtraso, null as Criterio, null as NumParcMax, null as idTrocaDevolucao, 
-                    null as renegociada, ped.dataCad, null as multa, null as idDevolucaoPagto, null as isParcelaCartao, NULL AS IdContaRCartao, ped.acrescimo, 
-                    null as valorJurosCartao, null as tipoRecebimentoParcCartao, ped.idSinal, ped.usuCad, 
+                    totalComAtraso + @" as decimal(10,2)) as totalRecComAtraso, null as Criterio, null as NumParcMax, null as idTrocaDevolucao,
+                    null as renegociada, ped.dataCad, null as multa, null as idDevolucaoPagto, null as isParcelaCartao, NULL AS IdContaRCartao, ped.acrescimo,
+                    null as valorJurosCartao, null as tipoRecebimentoParcCartao, ped.idSinal, ped.usuCad,
                     null as idAcertoCheque, 0 As numCheque, null as numArquivoRemessaCnab, null as numeroDocumentoCnab, cl.Credito AS CreditoCliente" : "Count(*) as contagem";
 
-                sql += camposUnion + @" from pedido ped 
-                Left Join cliente cl On (ped.idCli=cl.id_Cli) 
+                sql += camposUnion + @" from pedido ped
+                Left Join cliente cl On (ped.idCli=cl.id_Cli)
                 Left Join funcionario fu On (ped.idFunc=fu.IdFunc) ";
 
                 sql += " WHERE (ped.TipoVenda=3 Or ped.TipoVenda=4) ";
@@ -5037,7 +5037,7 @@ namespace Glass.Data.DAL
             {
                 sql += " Union Select ";
 
-                string camposUnion = selecionar ? @"Null As idContaR, Null As idPedido, Null As idAntecipContaRec, Null As idConta, 
+                string camposUnion = selecionar ? @"Null As idContaR, Null As idPedido, Null As idAntecipContaRec, Null As idConta,
                     ch.dataVenc As dataVec, ch.valor As valorVec, ac.dataAcerto As dataRec, iac.valorReceb As valorRec, Null As juros, Null As recebida, f.idFunc As usuRec,
                     Null As idAcerto, Null As numParc, 0 As desconto, Null As motivoDescontoAcresc, Null As idFuncDescAcresc, Null As numAutConstrucard,
                     Null As dataDescAcresc, Null As idLiberarPedido, Null As idContaBanco, Null As idAcertoParcial, ch.obs, Null As idObra, Null As dataPrimNeg,
@@ -5048,7 +5048,7 @@ namespace Glass.Data.DAL
                     Null As tipoRecebimentoParcCartao, Null As idSinal, Null As usuCad, ac.idAcertoCheque, ch.num As numCheque, Null As numArquivoRemessaCnab,
                     Null As numeroDocumentoCnab, Null As idEncontroContas, Null As idNf, Null As valorRecSemCredito, cli.Credito AS CreditoCliente" : "Count(*) As contagem";
 
-                sql += camposUnion + @" From cheques ch 
+                sql += camposUnion + @" From cheques ch
                     Left Join cliente cli On (ch.idCliente=cli.id_Cli)
                     Left Join item_acerto_cheque iac On (ch.idCheque=iac.idCheque)
                     Left Join acerto_cheque ac On (iac.idAcertoCheque=ac.idAcertoCheque)
@@ -5100,8 +5100,8 @@ namespace Glass.Data.DAL
         /// Retorna o valor das contas do cliente por situação
         /// </summary>
         /// <param name="tipoValor">1-Em aberto, 2-Rec em dia, 3-Rec com atraso</param>
-        public decimal GetHistValor(int tipoValor, uint idCliente, string dataIniVenc, string dataFimVenc, string dataIniRec, 
-            string dataFimRec, string dataIniCad, string dataFimCad, float vIniVenc, float vFinVenc, float vIniRec, float vFinRec, 
+        public decimal GetHistValor(int tipoValor, uint idCliente, string dataIniVenc, string dataFimVenc, string dataIniRec,
+            string dataFimRec, string dataIniCad, string dataFimCad, float vIniVenc, float vFinVenc, float vIniRec, float vFinRec,
             bool emAberto, bool recEmDia, bool recComAtraso, bool buscarParcCartao, int contasRenegociadas, bool buscarChequeDevolvido)
         {
             string sql = "Select " + (tipoValor != 1 ? "c.valorRec" : "c.valorVec") + @" As valor
@@ -5222,13 +5222,13 @@ namespace Glass.Data.DAL
             return ExecuteScalar<decimal>(sql, GetParamHist(dataIniVenc, dataFimVenc, dataIniRec, dataFimRec, dataIniCad, dataFimCad));
         }
 
-        public IList<ContasReceber> GetForRptHist(uint idCliente, uint idPedido, string dataIniVenc, string dataFimVenc, string dataIniRec, 
+        public IList<ContasReceber> GetForRptHist(uint idCliente, uint idPedido, string dataIniVenc, string dataFimVenc, string dataIniRec,
             string dataFimRec, string dataIniCad, string dataFimCad, float vIniVenc, float vFinVenc, float vIniRec, float vFinRec,
             bool emAberto, bool recEmDia, bool recComAtraso, bool buscarParcCartao, int contasRenegociadas, bool buscaPedRepoGarantia,
             bool buscarChequedevolvido, string sort)
         {
             bool temFiltro;
-            var retorno = objPersistence.LoadData(SqlHist(idCliente, idPedido, dataIniVenc, dataFimVenc, dataIniRec, dataFimRec, dataIniCad, dataFimCad, 
+            var retorno = objPersistence.LoadData(SqlHist(idCliente, idPedido, dataIniVenc, dataFimVenc, dataIniRec, dataFimRec, dataIniCad, dataFimCad,
                 vIniVenc, vFinVenc, vIniRec, vFinRec, emAberto, recEmDia, recComAtraso, buscarParcCartao, contasRenegociadas, buscaPedRepoGarantia, buscarChequedevolvido,
                 sort, true, out temFiltro), GetParamHist(dataIniVenc, dataFimVenc, dataIniRec, dataFimRec, dataIniCad, dataFimCad)).ToArray();
 
@@ -5236,9 +5236,9 @@ namespace Glass.Data.DAL
             return retorno;
         }
 
-        public ContasReceber[] GetListHist(uint idCliente, uint idPedido, string dataIniVenc, string dataFimVenc, string dataIniRec, 
+        public ContasReceber[] GetListHist(uint idCliente, uint idPedido, string dataIniVenc, string dataFimVenc, string dataIniRec,
             string dataFimRec, string dataIniCad, string dataFimCad, float vIniVenc, float vFinVenc, float vIniRec, float vFinRec,
-            bool emAberto, bool recEmDia, bool recComAtraso, bool buscarParcCartao, int contasRenegociadas, bool buscaPedRepoGarantia, 
+            bool emAberto, bool recEmDia, bool recComAtraso, bool buscarParcCartao, int contasRenegociadas, bool buscaPedRepoGarantia,
             bool buscarChequeDevolvido, string sort, string sortExpression, int startRow, int pageSize)
         {
             if (!String.IsNullOrEmpty(sortExpression))
@@ -5262,8 +5262,8 @@ namespace Glass.Data.DAL
             return lst;
         }
 
-        public int GetCountHist(uint idCliente, uint idPedido, string dataIniVenc, string dataFimVenc, string dataIniRec, string dataFimRec, 
-            string dataIniCad, string dataFimCad, float vIniVenc, float vFinVenc, float vIniRec, float vFinRec, bool emAberto, 
+        public int GetCountHist(uint idCliente, uint idPedido, string dataIniVenc, string dataFimVenc, string dataIniRec, string dataFimRec,
+            string dataIniCad, string dataFimCad, float vIniVenc, float vFinVenc, float vIniRec, float vFinRec, bool emAberto,
             bool recEmDia, bool recComAtraso, bool buscarParcCartao, int contasRenegociadas, bool buscaPedRepoGarantia,
             bool buscarChequeDevolvido, string sort)
         {
@@ -5325,7 +5325,7 @@ namespace Glass.Data.DAL
                     if (!string.IsNullOrEmpty(idsPedido))
                         foreach (var idPedido in idsPedido.Split(','))
                         {
-                            var codCliente = PedidoDAO.Instance.ObtemValorCampo<string>("CodCliente", string.Format("idPedido={0}", 
+                            var codCliente = PedidoDAO.Instance.ObtemValorCampo<string>("CodCliente", string.Format("idPedido={0}",
                                 idPedido.Contains("...") ? idPedido.Replace("...","") : idPedido));
                             referencia += string.Format("{0} ({1}), ", idPedido, codCliente);
                         }
@@ -5391,12 +5391,12 @@ namespace Glass.Data.DAL
             string campos = selecionar ? "Distinct cr.*, cli.Nome as NomeCli, f.Nome as nomeFuncDesc, " +
                 (!PedidoConfig.LiberarPedido ? "p.tipoEntrega as TipoEntrega, fp.Nome as nomeFunc, " : "") +
                 "pl.Descricao as DescrPlanoConta, otd.descricao as DescrOrigemDescontoAcrescimo, '$$$' as Criterio" : "Count(*)";
-            
+
             string criterio = String.Empty;
 
             string sql = "Select " + campos + @" From contas_receber cr
                 Left Join cliente cli On (cr.IdCliente=cli.id_Cli)
-                Left Join funcionario f On (f.idFunc=cr.idFuncDescAcresc) 
+                Left Join funcionario f On (f.idFunc=cr.idFuncDescAcresc)
                 left join origem_troca_desconto otd on (cr.idOrigemDescontoAcrescimo = otd.idOrigemTrocaDesconto)" +
                 (PedidoConfig.LiberarPedido ?
                 @"Left Join liberarpedido lp On (cr.idLiberarPedido=lp.idLiberarPedido)
@@ -5417,7 +5417,7 @@ namespace Glass.Data.DAL
             {
                 if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
                     sql += " AND (cr.IdLiberarPedido=" + idLiberarPedido + @"
-                        OR cr.idNf IN (SELECT idNf 
+                        OR cr.idNf IN (SELECT idNf
                                         FROM pedidos_nota_fiscal
                                         WHERE idLiberarPedido=" + idLiberarPedido + "))";
                 else
@@ -5532,7 +5532,7 @@ namespace Glass.Data.DAL
             string sql = SqlContaComDesconto(idPedido, idLiberarPedido, idLoja, idCliente, nomeCli, idFunc, valorIniAcres, valorFimAcres, valorIniDesc, valorFimDesc,
                 dataIni, dataFim, dataDescIni, dataDescFim, idOrigemDesconto, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
 
-            return LoadDataWithSortExpression(sql, sort, startRow, pageSize, temFiltro, filtroAdicional, 
+            return LoadDataWithSortExpression(sql, sort, startRow, pageSize, temFiltro, filtroAdicional,
                 GetParamContaComDesconto(dataIni, dataFim, dataDescIni, dataDescFim));
         }
 
@@ -5636,7 +5636,7 @@ namespace Glass.Data.DAL
             return lstParam.Count > 0 ? lstParam.ToArray() : null;
         }
 
-        private GDAParameter[] GetParamRpt(string nomeCli, string dtIniVenc, string dtFimVenc, string dtIniRec, string dtFimRec, 
+        private GDAParameter[] GetParamRpt(string nomeCli, string dtIniVenc, string dtFimVenc, string dtIniRec, string dtFimRec,
             string dataIniCad, string dataFimCad, string dtIniLib, string dtFimLib, string dtIniAntecip, string dtFimAntecip, string obs)
         {
             List<GDAParameter> lstParam = new List<GDAParameter>();
@@ -5700,7 +5700,7 @@ namespace Glass.Data.DAL
                         transaction.BeginTransaction();
 
                         var contaReceberAtual = GetElementByPrimaryKey(transaction, idContaR);
-                        
+
                         var idPedido = ObtemValorCampo<uint?>(transaction, "idPedido", "idContaR=" + idContaR);
                         var recebida = ObtemValorCampo<bool>(transaction, "recebida", "idContaR=" + idContaR);
 
@@ -5744,7 +5744,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Obtém dados da Conta a Receber
- 
+
         /// <summary>
         /// Obtém os ids das parcelas de cartão associadas à conta a receber/recebida.
         /// </summary>
@@ -5817,7 +5817,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Obtém contas a receber da NF-e
-        
+
         public IList<uint> ObtemPelaNfe(uint idNf)
         {
             var numeroNfe = NotaFiscalDAO.Instance.ObtemNumeroNf(null, idNf);
@@ -5886,19 +5886,19 @@ namespace Glass.Data.DAL
         private string ObtemIds(GDASession sessao, uint idAcerto, string campo, bool relatorio)
         {
             // Foi retirada a opção idAcertoParcial para otimizar o comando
-            string ids = ExecuteScalar<string>(sessao, @"select cast(group_concat(distinct " + campo + @" separator ',') as char) 
+            string ids = ExecuteScalar<string>(sessao, @"select cast(group_concat(distinct " + campo + @" separator ',') as char)
                 from contas_receber where idAcerto=" + idAcerto/* + " or idAcertoParcial=" + idAcerto*/);
 
             if (ids == null)
                 return "";
-            
+
             if (relatorio)
             {
                 string[] vetIds = ids.Split(',');
- 
+
                 string[] retorno = new string[Math.Min(3, vetIds.Length)];
                 Array.Copy(vetIds, retorno, retorno.Length);
- 
+
                 return String.Join(", ", retorno) + (vetIds.Length > 3 ? "..." : "");
             }
             else
@@ -6001,7 +6001,7 @@ namespace Glass.Data.DAL
 
             List<string> itensBuscar = new List<string>(buscarItens.Split(','));
 
-            string camposVazios = @", null as idformapagto, null as idAcerto, null as idAcertoParcial, NULL AS IdObra, null as idConta, 
+            string camposVazios = @", null as idformapagto, null as idAcerto, null as idAcertoParcial, NULL AS IdObra, null as idConta,
                 null as idFuncDescAcresc, null as idContaBanco, null as valorRec, null as dataRec, null as dataPrimNeg, null as Juros,
                 false as Recebida, null as usuRec, null as numParc, null as numParcMax, null as Desconto, null as motivoDescontoAcresc,
                 null as dataDescAcresc, null as numAutConstrucard, null as Obs, null as idTrocaDevolucao, null as multa,
@@ -6013,9 +6013,9 @@ namespace Glass.Data.DAL
             // Busca débitos de contas a receber
             if (itensBuscar.Contains("1") && (tipoDebito == TipoDebito.Todos || tipoDebito == TipoDebito.ContasAReceberTotal || tipoDebito == TipoDebito.ContasAReceberAntecipadas))
             {
-                string camposCr = @"c.idContaR, c.idNf, c.idEncontroContas" + SqlBuscarNF("c", true, 0, false, false) + @", null as numCheque, 
-                    c.idCliente as idCliente, cast(concat(pc.Descricao, if(c.idAntecipContaRec is not null, concat(' (Antecipação: ', 
-                    c.idAntecipContaRec, ')'), '')) as char) as DescrPlanoConta, c.valorVec as valorVec, c.idPedido, c.idLiberarPedido, c.dataVec, c.renegociada, 
+                string camposCr = @"c.idContaR, c.idNf, c.idEncontroContas" + SqlBuscarNF("c", true, 0, false, false) + @", null as numCheque,
+                    c.idCliente as idCliente, cast(concat(pc.Descricao, if(c.idAntecipContaRec is not null, concat(' (Antecipação: ',
+                    c.idAntecipContaRec, ')'), '')) as char) as DescrPlanoConta, c.valorVec as valorVec, c.idPedido, c.idLiberarPedido, c.dataVec, c.renegociada,
                     c.dataCad, c.idSinal, c.idAntecipContaRec" +
                     /* Chamado 52394.
                      * Caso seja incluso algum item no Replace, o texto deverá ser incluído com letras minúsculas. */
@@ -6037,11 +6037,11 @@ namespace Glass.Data.DAL
             }
 
             // Busca débitos de sinais de pedidos
-            if ((itensBuscar.Contains("1") || itensBuscar.Contains("2") || itensBuscar.Contains("3") || itensBuscar.Contains("4")) && 
+            if ((itensBuscar.Contains("1") || itensBuscar.Contains("2") || itensBuscar.Contains("3") || itensBuscar.Contains("4")) &&
                 (tipoDebito == TipoDebito.Todos || tipoDebito == TipoDebito.PedidosEmAberto))
             {
                 string camposPedidoSinal = @"null as idContaR, null as idNf, null as idEncontroContas, null as numeroNFe, null as numCheque,
-                    p.idCli as idCliente, 'Sinal do pedido' as DescrPlanoConta, p.valorEntrada as valorVec, 
+                    p.idCli as idCliente, 'Sinal do pedido' as DescrPlanoConta, p.valorEntrada as valorVec,
                     p.idPedido, p.idLiberarPedido, null as dataVec, false as renegociada, p.dataCad, p.idSinal, null as idAntecipContaRec" + camposVazios;
 
                 if (!String.IsNullOrEmpty(sql))
@@ -6052,13 +6052,13 @@ namespace Glass.Data.DAL
                     where p.idSinal is null and p.idCli=?idCliente and p.valorEntrada>0 " +
                         (!String.IsNullOrEmpty(idsPedido) ? " and p.idPedido Not In (" + idsPedido.Trim(',') + ")" : "") + @"
                         and p.tipoVenda in (" + (int)Pedido.TipoVendaPedido.APrazo + "," + (int)Pedido.TipoVendaPedido.AVista + @")
-                        and p.situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + @" 
+                        and p.situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + @"
                         AND p.TipoPedido<>" + (int)Pedido.TipoPedidoEnum.Producao + @"
                         and idPagamentoAntecipado is null ";
             }
 
             //Busca os pedidos conferidos
-            if ((itensBuscar.Contains("2") || itensBuscar.Contains("3")) && 
+            if ((itensBuscar.Contains("2") || itensBuscar.Contains("3")) &&
                 (FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoAtivoLimite || FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite) &&
                 (tipoDebito == TipoDebito.Todos || tipoDebito == TipoDebito.PedidosEmAberto))
             {
@@ -6066,7 +6066,7 @@ namespace Glass.Data.DAL
                     sql += " union ";
 
                 string situacaoPedido = ((itensBuscar.Contains("3") && FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite ? (int)Pedido.SituacaoPedido.Conferido + "," : "") +
-                    (itensBuscar.Contains("2") && FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoAtivoLimite ? (int)Pedido.SituacaoPedido.Ativo + "," + 
+                    (itensBuscar.Contains("2") && FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoAtivoLimite ? (int)Pedido.SituacaoPedido.Ativo + "," +
                     (int)Pedido.SituacaoPedido.AtivoConferencia : "")).Trim(',');
 
                 if (String.IsNullOrEmpty(situacaoPedido))
@@ -6074,13 +6074,13 @@ namespace Glass.Data.DAL
 
                 // Sempre subtrai o valor do sinal do pedido, pois o valor de entrada já é calculado no item acima, já o valor do pagto antecipado
                 // é calculado somente se for recebido, não retorna o idSinal para que não apareça na referência na listagem
-                string camposPedidosConferidos = @"null as idContaR, null as idNf, null as idEncontroContas, null as numeroNFe, null as numCheque, 
-                    p.idCli as idCliente, Cast(Concat('Pedido ', if(p.situacao=1, 'ativo', 
-                    'conferido')) as char) as descrPlanoConta, cast((p.total-(Coalesce(if(/*p.idSinal is not null and */coalesce(s.isPagtoAntecipado,false)=false, 
+                string camposPedidosConferidos = @"null as idContaR, null as idNf, null as idEncontroContas, null as numeroNFe, null as numCheque,
+                    p.idCli as idCliente, Cast(Concat('Pedido ', if(p.situacao=1, 'ativo',
+                    'conferido')) as char) as descrPlanoConta, cast((p.total-(Coalesce(if(/*p.idSinal is not null and */coalesce(s.isPagtoAntecipado,false)=false,
                     p.valorEntrada, 0), 0) + Coalesce(if(p.idPagamentoAntecipado is not null, p.valorPagamentoAntecipado, 0), 0))) as decimal(12,2)) as valorVec,
                     p.idPedido, null as idLiberarPedido, null as dataVenc, false as renegociada, p.dataCad, null as idSinal, null as idAntecipContaRec" + camposVazios;
 
-                sql += @" 
+                sql += @"
                     select " + camposPedidosConferidos + @" from pedido p
                         left join sinal s on (p.idSinal=s.idSinal)
                     where p.idCli=?idCliente " +
@@ -6091,9 +6091,9 @@ namespace Glass.Data.DAL
                     having valorVec>0";
             }
 
-            // Se for liberação, busca débitos de pedidos confirmados liberação, 
+            // Se for liberação, busca débitos de pedidos confirmados liberação,
             // não retorna o idSinal e o idliberarpedido para que não apareça na referência na listagem
-            if (PedidoConfig.LiberarPedido && (itensBuscar.Contains("3") || itensBuscar.Contains("4")) && 
+            if (PedidoConfig.LiberarPedido && (itensBuscar.Contains("3") || itensBuscar.Contains("4")) &&
                 (tipoDebito == TipoDebito.Todos || tipoDebito == TipoDebito.PedidosEmAberto))
             {
                 if (!String.IsNullOrEmpty(sql))
@@ -6104,18 +6104,18 @@ namespace Glass.Data.DAL
                 if (String.IsNullOrEmpty(situacaoBusca))
                     situacaoBusca = "0";
 
-                string camposPedidoConfLib = @"null as idContaR, null as idNf, null as idEncontroContas, null as numeroNFe, null as numCheque, 
-                    p.idCli as idCliente, 'Pedido confirmado' as DescrPlanoConta, 
+                string camposPedidoConfLib = @"null as idContaR, null as idNf, null as idEncontroContas, null as numeroNFe, null as numCheque,
+                    p.idCli as idCliente, 'Pedido confirmado' as DescrPlanoConta,
                     cast((Coalesce(pe.total,p.total)-(Coalesce(if((p.valorEntrada > 0 Or p.idSinal is not null) and coalesce(s.isPagtoAntecipado,false)=false, p.valorEntrada, 0), 0)+
                     Coalesce(if(p.idPagamentoAntecipado is not null, p.valorPagamentoAntecipado, 0), 0)))-
-                    coalesce(round((select sum(pp.total/pp.qtde*plp.qtdeCalc) from produtos_pedido pp inner join produtos_liberar_pedido plp on 
-                    (pp.idProdPed=plp.idProdPed) where plp.idPedido=p.idPedido and plp.qtdeCalc>0),2),0) as decimal(12,2)) as valorVec, 
-                    p.idPedido, null as idLiberarPedido, p.dataCad as dataVec, false as renegociada, if(p.situacao=" + 
+                    coalesce(round((select sum(pp.total/pp.qtde*plp.qtdeCalc) from produtos_pedido pp inner join produtos_liberar_pedido plp on
+                    (pp.idProdPed=plp.idProdPed) where plp.idPedido=p.idPedido and plp.qtdeCalc>0),2),0) as decimal(12,2)) as valorVec,
+                    p.idPedido, null as idLiberarPedido, p.dataCad as dataVec, false as renegociada, if(p.situacao=" +
                     (int)Pedido.SituacaoPedido.LiberadoParcialmente + @", lp.DataLiberacao, if(p.situacao=" +
                     (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + @", p.dataConf, p.dataCad)) as dataCad, null as idSinal, null as idAntecipContaRec" + camposVazios;
 
                 sql += " select " + camposPedidoConfLib + @"
-                    From pedido p 
+                    From pedido p
                         left join sinal s on (p.idSinal=s.idSinal)
                         left join liberarpedido lp on (p.idLiberarPedido=lp.idLiberarPedido)
                         left join pedido_espelho pe On (p.idPedido=pe.idPedido)
@@ -6127,7 +6127,7 @@ namespace Glass.Data.DAL
             }
 
             // Busca débitos de cheques
-            if (itensBuscar != null && itensBuscar.Contains("5") && FinanceiroConfig.DebitosLimite.EmpresaConsideraChequeLimite && 
+            if (itensBuscar != null && itensBuscar.Contains("5") && FinanceiroConfig.DebitosLimite.EmpresaConsideraChequeLimite &&
                 /*(login.IdCliente == 0 || login.IdCliente == null) &&*/
                 (tipoDebito == TipoDebito.Todos || tipoDebito == TipoDebito.ChequesTotal || tipoDebito == TipoDebito.ChequesEmAberto ||
                 tipoDebito == TipoDebito.ChequesDevolvidos || tipoDebito == TipoDebito.ChequesProtestados))
@@ -6135,15 +6135,15 @@ namespace Glass.Data.DAL
                 if (!String.IsNullOrEmpty(sql))
                     sql += " union ";
 
-                string camposCheques = @"null as idContaR, null as idNf, null as idEncontroContas, null as numeroNFe, c.num as numCheque, 
-                    c.idCliente as idCliente, cast(concat('Cheque ', 
-                    if(c.situacao=" + (int)Cheques.SituacaoCheque.EmAberto + @", 'em aberto', 
-                    if(c.situacao=" + (int)Cheques.SituacaoCheque.Devolvido + @", 'devolvido', 
-                    if(c.situacao=" + (int)Cheques.SituacaoCheque.Protestado + @", 'protestado', 
-                    if(c.situacao=" + (int)Cheques.SituacaoCheque.Trocado + @", 'trocado', 
-                    if(c.situacao=" + (int)Cheques.SituacaoCheque.Compensado + @", 'compensado (não vencido)', ''))))), ' Banco/Ag./Conta ', c.Banco, 
-                    '/', c.Conta, '/', c.Agencia) as char) as DescrPlanoConta, 
-                    (c.valor - coalesce(c.valorReceb, 0)) as valorVec, null as idPedido, null as idLiberarPedido, dataVenc as dataVec, false as renegociada, 
+                string camposCheques = @"null as idContaR, null as idNf, null as idEncontroContas, null as numeroNFe, c.num as numCheque,
+                    c.idCliente as idCliente, cast(concat('Cheque ',
+                    if(c.situacao=" + (int)Cheques.SituacaoCheque.EmAberto + @", 'em aberto',
+                    if(c.situacao=" + (int)Cheques.SituacaoCheque.Devolvido + @", 'devolvido',
+                    if(c.situacao=" + (int)Cheques.SituacaoCheque.Protestado + @", 'protestado',
+                    if(c.situacao=" + (int)Cheques.SituacaoCheque.Trocado + @", 'trocado',
+                    if(c.situacao=" + (int)Cheques.SituacaoCheque.Compensado + @", 'compensado (não vencido)', ''))))), ' Banco/Ag./Conta ', c.Banco,
+                    '/', c.Conta, '/', c.Agencia) as char) as DescrPlanoConta,
+                    (c.valor - coalesce(c.valorReceb, 0)) as valorVec, null as idPedido, null as idLiberarPedido, dataVenc as dataVec, false as renegociada,
                     c.dataCad, null as idSinal, null as idAntecipContaRec" + camposVazios;
 
                 // Verifica quais situações de cheques serão consideradas
@@ -6168,20 +6168,20 @@ namespace Glass.Data.DAL
 
                 // Considera no limite os cheques de terceiro em aberto e devolvido ou compensado e não vencidos e o restante
                 // a ser pago de cheques trocados que não foram totalmente quitados
-                sql += @"  
-                    select " + camposCheques + @" from cheques c 
+                sql += @"
+                    select " + camposCheques + @" from cheques c
                     where c.idCliente=?idCliente and (c.valor - coalesce(c.valorReceb, 0)) > 0
                         and (c.situacao in (" + situacoes + ")" +
                             (tipoDebito == TipoDebito.Todos || tipoDebito == TipoDebito.ChequesTotal || tipoDebito == TipoDebito.ChequesEmAberto ?
-                                "Or (" + (FinanceiroConfig.DebitosLimite.ConsiderarChequeDepositadoVencidoNoLimite ? "" : "c.idDeposito is null And") + @" 
-                                    c.situacao=" + (int)Cheques.SituacaoCheque.Compensado + @" And dataVenc>date_add(now(), INTERVAL " + diasConsiderarChequeCompensado +" DAY))" : 
+                                "Or (" + (FinanceiroConfig.DebitosLimite.ConsiderarChequeDepositadoVencidoNoLimite ? "" : "c.idDeposito is null And") + @"
+                                    c.situacao=" + (int)Cheques.SituacaoCheque.Compensado + @" And dataVenc>date_add(now(), INTERVAL " + diasConsiderarChequeCompensado +" DAY))" :
                             String.Empty) + @"
                         )" +
                         (!String.IsNullOrEmpty(idsCheques) ? " and c.idCheque not in (" + idsCheques.Trim(',') + ")" : "");
             }
 
             string criterio = "";
-            string campos = selecionar ? "temp.*, c.nome as NomeCli, c.Credito as CreditoCliente, c.cpf_cnpj As CpfCnpjCliente, c.limite As LimiteCliente, '$$$' as Criterio" : 
+            string campos = selecionar ? "temp.*, c.nome as NomeCli, c.Credito as CreditoCliente, c.cpf_cnpj As CpfCnpjCliente, c.limite As LimiteCliente, '$$$' as Criterio" :
                 "count(*)";
 
             if (idCliente > 0)
@@ -6202,8 +6202,8 @@ namespace Glass.Data.DAL
             if (String.IsNullOrEmpty(sql))
                 return String.Empty;
 
-            sql = "select " + campos + @" 
-                from (" + sql + @") as temp 
+            sql = "select " + campos + @"
+                from (" + sql + @") as temp
                     left join cliente c on (temp.idCliente=c.id_cli)
                 where 1";
 
@@ -6241,7 +6241,7 @@ namespace Glass.Data.DAL
 
             if (!itensBuscar.Contains("2") && FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoAtivoLimite)
                 naoBuscar += "pedidos abertos, ";
-            
+
             if (!itensBuscar.Contains("3") && (FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoAtivoLimite || Glass.Configuracoes.PedidoConfig.LiberarPedido))
                 naoBuscar += "pedidos conferidos, ";
 
@@ -6287,7 +6287,7 @@ namespace Glass.Data.DAL
             // Busca débitos do cliente logado
             if (idCliente == 0 && UserInfo.GetUserInfo.IdCliente > 0)
                 idCliente = UserInfo.GetUserInfo.IdCliente.Value;
-            
+
             string sql = SqlDebitos(idCliente, idPedido, idLiberarPedido, null, null, null, buscarItens, TipoDebito.Todos, tipoBuscaData,
                 dataIni, dataFim, true);
 
@@ -6416,7 +6416,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public decimal GetDebitosByTipo(GDASession session, uint idCliente, TipoDebito tipoDebito)
         {
-            if (idCliente == 0) 
+            if (idCliente == 0)
                 return 0;
 
             string sql = SqlDebitos(idCliente, 0, 0, null, null, null, null, tipoDebito, 0, null, null, true);
@@ -6438,7 +6438,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public decimal GetDebitos(GDASession sessao, uint idCliente, string idsPedidoLib)
         {
-            if (idCliente == 0) 
+            if (idCliente == 0)
                 return 0;
 
             return GetDebitos(sessao, idCliente, idsPedidoLib, null, null);
@@ -6495,7 +6495,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public decimal GetDebitosCheque(GDASession sessao, uint idCliente, string idsPedidosLib, string idsContasR, string idsChequesR)
         {
-            if (idCliente == 0) 
+            if (idCliente == 0)
                 return 0;
 
             string sql = "select sum(if(instr(descrPlanoConta, 'Cheque Banco/Ag./Conta/Num. ')>0, valorVec, 0)) from (" +
@@ -6507,7 +6507,7 @@ namespace Glass.Data.DAL
         public decimal ObterValorParaSaldoDevedor(GDASession sessao, uint idCliente)
         {
             var sql = @"
-                SELECT SUM(ValorVec) 
+                SELECT SUM(ValorVec)
                 FROM contas_receber
                 WHERE COALESCE(IsParcelaCartao, 0) = 0
                     AND Recebida = 0
@@ -6517,10 +6517,10 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-        
+
         #region Parcelas do cartão
 
-        private string SqlParcCartao(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idLoja, uint idCli, uint tipoEntrega, 
+        private string SqlParcCartao(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idLoja, uint idCli, uint tipoEntrega,
             string nomeCli, string dtIni, string dtFim, uint idAcertoCheque, bool returnAll, bool vinculadas, uint tipoCartao, bool agrupar,
             bool selecionar, bool recebidas, string dtCadIni, string dtCadFim,string nCNI,
             decimal valorIni, decimal valorFim, TipoCartaoEnum tipoRecbCartao, string numAutCartao, string numEstabCartao, string ultDigCartao,
@@ -6532,7 +6532,7 @@ namespace Glass.Data.DAL
 
             string criterio = "";
             string campos = selecionar || agrupar ?
-                @"c.*, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta, 
+                @"c.*, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta,
                 CONCAT(jpc.Juros,'%') AS TaxaJuros, CONCAT(oc.DESCRICAO, ' ', bc.DESCRICAO, ' ', (CASE tcc.TIPO WHEN 1 THEN 'Débito' ELSE 'Crédito' END)   ) AS DescricaoCartao,
                 concat(coalesce(cb.nome, ''), ' (Ag. ', coalesce(cb.agencia, ''), ' Conta ', coalesce(cb.conta, ''), ')') as contaBanco, '$$$' as criterio" : "Count(*)";
 
@@ -6547,7 +6547,7 @@ namespace Glass.Data.DAL
 
                     if (PedidoConfig.LiberarPedido)
                     {
-                        IList<string> lstIdAcerto = ExecuteMultipleScalar<string>(@"Select idAcerto From contas_receber Where idAcerto Is Not Null And 
+                        IList<string> lstIdAcerto = ExecuteMultipleScalar<string>(@"Select idAcerto From contas_receber Where idAcerto Is Not Null And
                             idLiberarPedido In (Select idLiberarPedido From produtos_liberar_pedido Where idPedido=" + idPedido + ")");
 
                         // Os parênteses abaixo devem ficar separados ") )" para que caso passe no TrimEnd(')') logo abaixo remova somente um deles
@@ -6556,7 +6556,7 @@ namespace Glass.Data.DAL
                     }
                     else
                     {
-                        IList<string> lstIdAcerto = ExecuteMultipleScalar<string>(@"Select idAcerto From contas_receber Where idAcerto Is Not Null And 
+                        IList<string> lstIdAcerto = ExecuteMultipleScalar<string>(@"Select idAcerto From contas_receber Where idAcerto Is Not Null And
                             idPedido=" + idPedido);
 
                         // Os parênteses abaixo devem ficar separados ") )" para que caso passe no TrimEnd(')') logo abaixo remova somente um deles
@@ -6685,7 +6685,7 @@ namespace Glass.Data.DAL
                 criterio += "Tipo Cartão: " + TipoCartaoCreditoDAO.Instance.ObterDescricao(null, (int)tipoCartao) + "    ";
                 temFiltro = true;
             }
-            
+
             if (!String.IsNullOrEmpty(dtIni))
             {
                 where += " And DATAVEC>=?dtIni";
@@ -6713,7 +6713,7 @@ namespace Glass.Data.DAL
                 criterio += "Data Cad. término: " + dtCadFim + "    ";
                 temFiltro = true;
             }
-            
+
             if (idLoja > 0)
             {
                 filtroAdicional += " And c.IdLoja=" + idLoja;
@@ -6727,14 +6727,14 @@ namespace Glass.Data.DAL
                 filtroAdicional = " And 0>1";
             }
 
-            string sql = "Select " + campos + @" From contas_receber c 
+            string sql = "Select " + campos + @" From contas_receber c
                 Left Join conta_banco cb On (c.idContaBanco=cb.idContaBanco)
-                Left Join plano_contas pl On (c.IdConta=pl.IdConta) 
-                Left Join cliente cli On (c.idCliente=cli.id_Cli)  
+                Left Join plano_contas pl On (c.IdConta=pl.IdConta)
+                Left Join cliente cli On (c.idCliente=cli.id_Cli)
                 Left Join pedido p On (c.IdPedido=p.idPedido)
                 LEFT JOIN cartao_nao_identificado cni ON (c.IdCartaoNaoIdentificado=cni.IdCartaoNaoIdentificado)
                 LEFT JOIN tipo_cartao_credito tcc on (c.IDCONTA=tcc.IDCONTAVISTA OR c.IDCONTA=tcc.IDCONTARECPRAZO  OR c.IDCONTA=tcc.IDCONTAENTRADA )
-                LEFT JOIN juros_parcela_cartao jpc on (jpc.IDJUROSPARCELA=(CASE 
+                LEFT JOIN juros_parcela_cartao jpc on (jpc.IDJUROSPARCELA=(CASE
 																		        (SELECT COUNT(*) FROM juros_parcela_cartao WHERE IDTIPOCARTAO = tcc.IDTIPOCARTAO AND NUMPARC = c.NUMPARCMAX AND IDLOJA =c.IdLoja)
 																		        WHEN 0
 																		        THEN (SELECT MIN(IDJUROSPARCELA) AS IDJUROSPARCELA FROM juros_parcela_cartao WHERE IDTIPOCARTAO = tcc.IdTipoCartao AND NUMPARC = c.NUMPARCMAX)
@@ -6750,8 +6750,8 @@ namespace Glass.Data.DAL
                 var camposAgrupar = @"c.*, cast(sum(c.valorVec) as decimal(12,2)) as valorAgrupado,
                     cast(group_concat(c.idContaR) as char) as idsContas, coalesce(l.nomeFantasia, l.razaoSocial) as nomeLoja";
 
-                sql = "SELECT " + camposAgrupar + 
-                    " FROM (" + sql + @") as c 
+                sql = "SELECT " + camposAgrupar +
+                    " FROM (" + sql + @") as c
                         LEFT JOIN loja l on (c.idLoja = l.idLoja) " +
                     "GROUP BY " + (PedidoConfig.LiberarPedido ? "" : "c.idLoja,") + "date(c.dataVec), c.IdConta";
             }
@@ -6769,9 +6769,9 @@ namespace Glass.Data.DAL
         /// Busca as parcelas de cartão a receber que ainda não foram recebidas
         /// </summary>
         /// <returns></returns>
-        public IList<ContasReceber> GetParcCartao(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idLoja, uint idCli, 
+        public IList<ContasReceber> GetParcCartao(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idLoja, uint idCli,
             uint tipoEntrega, string nomeCli, string dtIni, string dtFim,
-            uint tipoCartao, uint idAcertoCheque, bool agrupar, bool recebidas, string dtCadIni, string dtCadFim, string nCNI, 
+            uint tipoCartao, uint idAcertoCheque, bool agrupar, bool recebidas, string dtCadIni, string dtCadFim, string nCNI,
             decimal valorIni, decimal valorFim, TipoCartaoEnum tipoRecbCartao, string numAutCartao, string numEstabCartao, string ultDigCartao,
             string sortExpression, int startRow, int pageSize)
         {
@@ -6780,7 +6780,7 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            string sql = SqlParcCartao(idPedido, idLiberarPedido, idAcerto, idLoja, idCli, tipoEntrega, nomeCli, dtIni, dtFim, 
+            string sql = SqlParcCartao(idPedido, idLiberarPedido, idAcerto, idLoja, idCli, tipoEntrega, nomeCli, dtIni, dtFim,
                 idAcertoCheque, true, false, tipoCartao, agrupar, true, recebidas, dtCadIni, dtCadFim, nCNI, valorIni, valorFim,
                 tipoRecbCartao, numAutCartao, numEstabCartao, ultDigCartao,
                 out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
@@ -7100,12 +7100,12 @@ namespace Glass.Data.DAL
                                 {
                                     // Verifica a conciliação bancária.
                                     ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(transaction, conta.IdContaBanco.Value, dataEstornoBanco.Value);
-                                    
+
                                     // Percorre as movimentações bancárias da parcela de cartão para estorná-las.
                                     foreach (var m in movimentacoesBancarias)
                                     {
                                         // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                                        // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                                        // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente,
                                         // por isso, para o loop neste momento
                                         if (m.TipoMov == 2)
                                         {
@@ -7132,7 +7132,7 @@ namespace Glass.Data.DAL
                                                 ContaBancoDAO.Instance.MovContaContaR(transaction, conta.IdContaBanco.Value,
                                                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoJurosVendaConstrucard), m.IdLoja, null, null, m.IdContaR, null,
                                                     m.IdCliente.GetValueOrDefault(), m.TipoMov == 1 ? 2 : 1, m.ValorMov, 0, dataEstornoBanco.Value, obs);
-                                                
+
                                                 continue;
                                             }
                                             else
@@ -7205,7 +7205,7 @@ namespace Glass.Data.DAL
                 }
             }
         }
-        
+
         #endregion
 
         #region Contas geradas/recebidas por período
@@ -7296,7 +7296,7 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-        
+
         #region Atualiza observação e data de vencimento da conta
 
         /// <summary>
@@ -7318,7 +7318,7 @@ namespace Glass.Data.DAL
                 sql += ", dataVec=?dataVec";
                 lstParam.Add(new GDAParameter("?dataVec", contaRec.DataVec));
             }
-            
+
             sql += " Where idContaR=" + contaRec.IdContaR;
 
             var temp = objPersistence.ExecuteCommand(sql, lstParam.ToArray());
@@ -7353,10 +7353,10 @@ namespace Glass.Data.DAL
         public IList<ContasReceber> GetByLiberacaoPedido(GDASession sessao, uint idLiberarPedido, bool removerNumParcIguaisECredito)
         {
             string sql = @"
-                Select c.*, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta From contas_receber c 
-                    Left Join cliente cli On (c.IdCliente=cli.id_Cli) 
-                    Left Join plano_contas pl On (c.IdConta=pl.IdConta) 
-                Where (c.isParcelaCartao=false or c.isParcelaCartao is null) 
+                Select c.*, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta From contas_receber c
+                    Left Join cliente cli On (c.IdCliente=cli.id_Cli)
+                    Left Join plano_contas pl On (c.IdConta=pl.IdConta)
+                Where (c.isParcelaCartao=false or c.isParcelaCartao is null)
                     And idAcertoParcial is null";
 
             // O filtro "And idAcertoParcial is null" foi colocado para que ao imprimir liberação que tenha parcela renegociada
@@ -7369,7 +7369,7 @@ namespace Glass.Data.DAL
 
             if (removerNumParcIguaisECredito)
                 sql += " And coalesce(c.idConta, 0) Not In (" + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EntradaCredito) + "," +
-                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.VistaCredito) + "," + 
+                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.VistaCredito) + "," +
                     UtilsPlanoConta.ContasSinalPedido() + ")";
 
             sql += " Order By DataVec Asc";
@@ -7471,7 +7471,7 @@ namespace Glass.Data.DAL
 
         #region Verifica se há alguma conta recebida/a receber no pedido passado
 
-        /// <summary>        
+        /// <summary>
         /// Verifica se há alguma conta recebida no pedido passado
         /// </summary>
         /// <param name="idPedido"></param>
@@ -7481,7 +7481,7 @@ namespace Glass.Data.DAL
             return ExisteRecebida(null, idsPedidos, paraComissao);
         }
 
-        /// <summary>        
+        /// <summary>
         /// Verifica se há alguma conta recebida no pedido passado
         /// </summary>
         /// <param name="idPedido"></param>
@@ -7502,7 +7502,7 @@ namespace Glass.Data.DAL
                         " AND (plp.IdPedido IN (" + idsPedidos + ") {0}) GROUP BY COALESCE(plp.IdPedido, pnf.IdPedido)" :
                         " AND (cr.IdPedido IN (" + idsPedidos + ") {0}) GROUP BY COALESCE(cr.IdPedido, pnf.IdPedido)"),
                 "OR pnf.IdPedido IN (" + idsPedidos + ")");
-                    
+
             /*AND (plp.IdPedido IN () OR pnf.IdPedido IN ())
                 GROUP BY pnf.IdPedido;";*/
 
@@ -7550,7 +7550,7 @@ namespace Glass.Data.DAL
                     Left Join pedidos_nota_fiscal pnf ON (cr.idNf=pnf.idNf)
                 Where Coalesce(cr.recebida, False)=True
                     And cr.idConta Not In (" + UtilsPlanoConta.ContasSinalPedido() + "," + UtilsPlanoConta.ContasAVista() + ")" +
-                    (PedidoConfig.LiberarPedido ? " And (plp.idPedido=" + idPedido + " Or pnf.idPedido=" + idPedido + @")Group By cr.idContaR" : 
+                    (PedidoConfig.LiberarPedido ? " And (plp.idPedido=" + idPedido + " Or pnf.idPedido=" + idPedido + @")Group By cr.idContaR" :
                     " And (cr.idPedido=" + idPedido + " Or pnf.idPedido=" + idPedido + ")");
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
@@ -7713,7 +7713,7 @@ namespace Glass.Data.DAL
         {
             foreach (ContasReceber c in objPersistence.LoadData(session, "select * from contas_receber where isParcelaCartao=true and " +
                 "idAcerto is null and idSinal is null and idPedido=" + idPedido).ToList())
-            { 
+            {
                 LogCancelamentoDAO.Instance.LogContaReceber(session, c, "Cancelamento do Pedido " + idPedido, false);
                 Delete(session, c);
             }
@@ -7722,7 +7722,7 @@ namespace Glass.Data.DAL
         public void DeleteParcCartaoBySinal(GDASession sessao, uint idSinal)
         {
             foreach (ContasReceber c in objPersistence.LoadData(sessao, "Select * from contas_receber Where idSinal=" + idSinal +
-                " And (recebida=true Or isParcelaCartao) And idConta In (" + UtilsPlanoConta.ContasSinalPedido() + "," + 
+                " And (recebida=true Or isParcelaCartao) And idConta In (" + UtilsPlanoConta.ContasSinalPedido() + "," +
                 UtilsPlanoConta.ContasTipoPagto(Glass.Data.Model.Pagto.FormaPagto.Cartao) + ")").ToList())
             {
                 LogCancelamentoDAO.Instance.LogContaReceber(sessao, c, "Cancelamento do Sinal " + idSinal, false);
@@ -7734,7 +7734,7 @@ namespace Glass.Data.DAL
         {
             foreach (ContasReceber c in objPersistence.LoadData(sessao, "select * from contas_receber where isParcelaCartao=true and " +
                 "idLiberarPedido=" + idLiberarPedido).ToList())
-            { 
+            {
                 LogCancelamentoDAO.Instance.LogContaReceber(sessao, c, "Cancelamento da Liberação de Pedido " + idLiberarPedido, false);
                 Delete(sessao, c);
             }
@@ -7744,13 +7744,13 @@ namespace Glass.Data.DAL
         {
             var conta = GetElementByPrimaryKey(sessao, idContaR);
             var idsContaRParcCartao = ObterIdsContaRParcCartaoPeloIdContaR(sessao, (int)idContaR);
-            
+
             if (idsContaRParcCartao.Count == 0)
             {
                 /* Chamado 57969. */
                 if (conta.IdPedido == 0 && conta.IdLiberarPedido == 0 && conta.IdAcerto == 0 && conta.IdAcertoParcial == 0 && conta.IdTrocaDevolucao == 0 && conta.IdDevolucaoPagto == 0 && conta.IdObra == 0)
                     throw new Exception("Não foi possível cancelar as parcelas de cartão associadas à conta a receber. A referência não foi encontrada. Entre em contato com o suporte do software WebGlass.");
-                
+
                 string sql = " and idCliente=" + conta.IdCliente;
                 sql += " and idFormaPagto" + (conta.IdFormaPagto != null ? "=" + conta.IdFormaPagto : " is null");
                 sql += " and idPedido" + (conta.IdPedido != null ? "=" + conta.IdPedido : " is null");
@@ -7776,7 +7776,7 @@ namespace Glass.Data.DAL
         public void DeleteParcCartaoByAcerto(GDASession sessao, uint idAcerto)
         {
             foreach (ContasReceber c in objPersistence.LoadData(sessao, "select * from contas_receber where isParcelaCartao=true and idAcerto=" + idAcerto).ToList())
-            { 
+            {
                 LogCancelamentoDAO.Instance.LogContaReceber(sessao, c, "Cancelamento do Acerto " + idAcerto, false);
                 Delete(sessao, c);
             }
@@ -7794,7 +7794,7 @@ namespace Glass.Data.DAL
         public void DeleteParcCartaoByObra(GDASession sessao, uint idObra)
         {
             foreach (ContasReceber c in objPersistence.LoadData(sessao, "select * from contas_receber where isParcelaCartao=true and idObra=" + idObra).ToList())
-            { 
+            {
                 LogCancelamentoDAO.Instance.LogContaReceber(sessao, c, "Cancelamento da Obra " + idObra, false);
                 Delete(sessao, c);
             }
@@ -7803,7 +7803,7 @@ namespace Glass.Data.DAL
         public void DeleteParcCartaoByTrocaDevolucao(GDASession session, uint idTrocaDevolucao)
         {
             foreach (ContasReceber c in objPersistence.LoadData(session, "select * from contas_receber where isParcelaCartao=true and idTrocaDevolucao=" + idTrocaDevolucao).ToList())
-            { 
+            {
                 LogCancelamentoDAO.Instance.LogContaReceber(session, c, "Cancelamento da Troca/Devolução " + idTrocaDevolucao, false);
                 Delete(session, c);
             }
@@ -7955,7 +7955,7 @@ namespace Glass.Data.DAL
             else if (codbanco == (int)Sync.Utils.CodigoBanco.Sicoob)
             {
                 var num = nossoNumero.Substring(0, nossoNumero.Length - 1).StrParaInt();
-                idContaR = ObtemValorCampo<uint>(session, "idContaR", "numeroDocumentoCnab=" + num); 
+                idContaR = ObtemValorCampo<uint>(session, "idContaR", "numeroDocumentoCnab=" + num);
                 numDocCnab = num.ToString();
             }
             else if (codbanco == (int)Sync.Utils.CodigoBanco.Bradesco)
@@ -8079,7 +8079,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Método que recupera os Identificadores dos planos de conta que 
+        /// Método que recupera os Identificadores dos planos de conta que
         /// devem ser considerados como a prazo para a geração do CNAB.
         /// </summary>
         /// <returns>Retorna uma lista de inteiros com os identificadores dos planos de conta.</returns>
@@ -8104,8 +8104,8 @@ namespace Glass.Data.DAL
                 .Split(',')
                 .Select(x => (Pagto.FormaPagto)x.StrParaUint());
 
-            var tipoPeriodoConsiderar = tipoPeriodo == 0 
-                ? "c.dataVec" 
+            var tipoPeriodoConsiderar = tipoPeriodo == 0
+                ? "c.dataVec"
                 : "c.dataCad";
 
             foreach (var f in formasPagtoArray)
@@ -8129,10 +8129,10 @@ namespace Glass.Data.DAL
             var sql = $@"
                 SELECT c.*, CONCAT(cli.id_cli, ' - ', cli.nome) as nomeCli, {SqlCampoDescricaoContaContabil("c")} as descricaoContaContabil, l.nomeFantasia as NomeLoja
                 FROM contas_receber c
-                    INNER JOIN cliente cli ON (c.idCliente=cli.id_Cli) 
+                    INNER JOIN cliente cli ON (c.idCliente=cli.id_Cli)
                     LEFT JOIN loja l ON (c.idLoja = l.idLoja)
                 WHERE COALESCE(c.isParcelaCartao, 0) = 0
-                    AND coalesce(recebida, 0) = 0 
+                    AND coalesce(recebida, 0) = 0
                     AND numeroDocumentoCnab IS NULL
                     AND numArquivoRemessaCnab IS NULL";
 
@@ -8155,19 +8155,19 @@ namespace Glass.Data.DAL
             {
                 sql += $" AND {tipoPeriodoConsiderar} <= ?dataFim";
             }
-                
+
 
             if (string.IsNullOrWhiteSpace(tiposConta))
             {
-                sql += !string.IsNullOrWhiteSpace(idsContas) 
-                    ? string.Empty 
+                sql += !string.IsNullOrWhiteSpace(idsContas)
+                    ? string.Empty
                     : " AND 0";
             }
             else
             {
                 sql += FiltroTipoConta(
-                    "c", 
-                    tiposConta, 
+                    "c",
+                    tiposConta,
                     out criterio);
             }
 
@@ -8183,14 +8183,14 @@ namespace Glass.Data.DAL
             else if (!String.IsNullOrWhiteSpace(nomeCli))
             {
                 string ids = ClienteDAO.Instance.GetIds(
-                    null, 
-                    nomeCli, 
-                    null, 
-                    0, 
-                    null, 
-                    null, 
-                    null, 
-                    null, 
+                    null,
+                    nomeCli,
+                    null,
+                    0,
+                    null,
+                    null,
+                    null,
+                    null,
                     0);
 
                 sql += $" AND cli.Id_Cli IN ({ids})";
@@ -8205,14 +8205,14 @@ namespace Glass.Data.DAL
             {
                 sql += $" AND cli.IdContaBanco = {idContaBancoCliente}";
             }
-                
+
             if (!string.IsNullOrWhiteSpace(idsContas) && !string.IsNullOrWhiteSpace(idsContas.Trim(',')))
             {
                 sql += $" AND c.IdContaR IN ({idsContas.Trim(',')})";
             }
-               
+
             sql += " ORDER BY dataVec";
-            
+
             var retorno =  objPersistence.LoadData(sql, new GDAParameter("?dataIni", DateTime.Parse(dataIni + " 00:00")),
                 new GDAParameter("?dataFim", DateTime.Parse(dataFim + " 23:59"))).ToList();
 
@@ -8291,21 +8291,34 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Obtem as contas a receber para retificar o arquivo remessa
+        /// Obtem as contas a receber para retificar o arquivo remessa.
         /// </summary>
-        /// <param name="idArquivoRemessa"></param>
-        /// <returns></returns>
-        public IList<ContasReceber> ObterContasReceberParaRetificarArquivoRemessa(int idArquivoRemessa)
+        /// <param name="idArquivoRemessa">Identificador do arquivo de remessa.</param>
+        /// <param name="idCli">Identificador do cliente.</param>
+        /// <param name="nomeCli">Nome do cliente.</param>
+        /// <returns>Contas a receber para retificar associadas ao arquivo de remessa.</returns>
+        public IList<ContasReceber> ObterContasReceberParaRetificarArquivoRemessa(int idArquivoRemessa, int idCli, string nomeCli)
         {
-            var sql = @"
-                SELECT c.*, CONCAT(cli.id_cli, ' - ', cli.nome) as nomeCli, " + SqlCampoDescricaoContaContabil("c") + @" as descricaoContaContabil, l.nomeFantasia as NomeLoja
+            var sql = $@"
+                SELECT c.*, CONCAT(cli.id_cli, ' - ', cli.nome) as nomeCli, {this.SqlCampoDescricaoContaContabil("c")} as descricaoContaContabil, l.nomeFantasia as NomeLoja
                 FROM contas_receber c
-                    INNER JOIN cliente cli ON (c.idCliente=cli.id_Cli) 
+                    INNER JOIN cliente cli ON (c.idCliente=cli.id_Cli)
                     LEFT JOIN loja l ON (c.idLoja = l.idLoja)
-                WHERE idArquivoRemessa  = " + idArquivoRemessa +
-                " ORDER BY dataVec";
+                WHERE (c.Recebida = null OR c.Recebida = 0) AND idArquivoRemessa  = " + idArquivoRemessa;
 
-            var retorno = objPersistence.LoadData(sql).ToList();
+            if (idCli > 0)
+            {
+                sql += " AND cli.ID_CLI=" + idCli;
+            }
+            else if (!string.IsNullOrEmpty(nomeCli))
+            {
+                string ids = ClienteDAO.Instance.GetIds(null, nomeCli, null, 0, null, null, null, null, 0);
+                sql += " AND cli.ID_CLI in (" + ids + ")";
+            }
+
+            sql += " ORDER BY dataVec";
+
+            var retorno = this.objPersistence.LoadData(sql).ToList();
 
             return retorno;
         }
@@ -8436,9 +8449,9 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-         
+
         #region Retorna o total de débitos do cliente
-        
+
         /// <summary>
         /// Obtém o total de débitos do cliente.
         /// </summary>
@@ -8520,7 +8533,7 @@ namespace Glass.Data.DAL
 
         public uint InsertExecScript(ContasReceber objInsert)
         {
-            string sql = @"select idContaR from contas_receber where idCliente=?idCliente and date(dataVec)=date(?dataVenc) 
+            string sql = @"select idContaR from contas_receber where idCliente=?idCliente and date(dataVec)=date(?dataVenc)
                 and valorVec=?valorVenc and numParc=?numParc and tipoConta=?tipoConta and idLoja=?idLoja";
 
             var idContaR = ExecuteScalar<uint?>(sql, new GDAParameter("?idCliente", objInsert.IdCliente),
@@ -8533,7 +8546,7 @@ namespace Glass.Data.DAL
             else
                 throw new Exception("Conta já inserida. Cliente:" + objInsert.IdCliente);
         }
-        
+
         public override int Delete(GDASession session, ContasReceber objDelete)
         {
             return DeleteByPrimaryKey(session, objDelete.IdContaR, false);
@@ -8638,7 +8651,7 @@ namespace Glass.Data.DAL
             }
 
             var retorno = 0;
-            
+
             PagtoContasReceberDAO.Instance.DeleteByIdContaR(sessao, Key);
 
             retorno = base.DeleteByPrimaryKey(sessao, Key);
@@ -8665,7 +8678,7 @@ namespace Glass.Data.DAL
             SELECT " + campos + @"
             FROM contas_receber cr
                 LEFT JOIN cliente cli ON (cr.idCliente = cli.id_cli)
-                LEFT JOIN plano_contas pl ON (cr.IdConta = pl.IdConta) 
+                LEFT JOIN plano_contas pl ON (cr.IdConta = pl.IdConta)
                 LEFT JOIN arquivo_remessa ar ON (cr.IdArquivoRemessa = ar.IdArquivoRemessa)
                 {0}
             WHERE (cr.numArquivoRemessaCnab IS NOT NULL OR cr.numeroDocumentoCnab IS NOT NULL)";
@@ -8689,7 +8702,7 @@ namespace Glass.Data.DAL
             {
                 if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
                     sql += " AND (cr.IdLiberarPedido=" + idLiberarPedido + @"
-                        OR cr.idNf IN (SELECT idNf 
+                        OR cr.idNf IN (SELECT idNf
                                         FROM pedidos_nota_fiscal
                                         WHERE idLiberarPedido=" + idLiberarPedido + "))";
                 else
@@ -8933,11 +8946,11 @@ namespace Glass.Data.DAL
 
             return lstParam.Count > 0 ? lstParam.ToArray() : null;
         }
-        
+
         #endregion
 
         #region Busca contas recebidas para o ajuste da tabela pagto_contas_receber
-        
+
         public IList<ContasReceber> ObtemContasParaAjustePagtoContasReceber(DateTime dataInicioRecebimento, DateTime dataFimRecebimento)
         {
             var sql = string.Format(@"
@@ -9237,7 +9250,7 @@ namespace Glass.Data.DAL
 
             return base.Update(session, objUpdate);
         }
-        
+
         #endregion
 
         }
