@@ -5,7 +5,6 @@
 using Glass.API.Backend.Models.ContasBancarias.V1.CadastroAtualizacao;
 using Glass.Financeiro.Negocios.Entidades;
 using System;
-using System.Linq;
 
 namespace Glass.API.Backend.Helper.ContasBancarias
 {
@@ -51,40 +50,33 @@ namespace Glass.API.Backend.Helper.ContasBancarias
             destino.Situacao = this.cadastro.ObterValorNormalizado(c => c.Situacao, destino.Situacao);
             destino.IdLoja = this.cadastro.ObterValorNormalizado(c => c.IdLoja, (int?)destino.IdLoja).GetValueOrDefault();
 
-            destino.CodBanco = this.cadastro.VerificarCampoInformado(c => c.DadosBanco)
-                && this.cadastro.VerificarCampoInformado(c => c.DadosBanco.Banco)
-                ? this.cadastro.DadosBanco.Banco
-                : destino.CodBanco;
+            this.ConverterDadosBancarios(destino);
+            this.ConverterDadosCnab(destino);
+        }
 
-            destino.Titular = this.cadastro.VerificarCampoInformado(c => c.DadosBanco)
-                && this.cadastro.VerificarCampoInformado(c => c.DadosBanco.Titular)
-                ? this.cadastro.DadosBanco.Titular
-                : destino.Titular;
+        private void ConverterDadosBancarios(ContaBanco destino)
+        {
+            if (!this.cadastro.VerificarCampoInformado(c => c.DadosBanco))
+            {
+                return;
+            }
 
-            destino.Agencia = this.cadastro.VerificarCampoInformado(c => c.DadosBanco)
-                && this.cadastro.VerificarCampoInformado(c => c.DadosBanco.Agencia)
-                ? this.cadastro.DadosBanco.Agencia
-                : destino.Agencia;
+            destino.CodBanco = this.cadastro.DadosBanco.ObterValorNormalizado(c => c.Banco, destino.CodBanco);
+            destino.Titular = this.cadastro.DadosBanco.ObterValorNormalizado(c => c.Titular, destino.Titular);
+            destino.Agencia = this.cadastro.DadosBanco.ObterValorNormalizado(c => c.Agencia, destino.Agencia);
+            destino.Conta = this.cadastro.DadosBanco.ObterValorNormalizado(c => c.Conta, destino.Conta);
+            destino.CodConvenio = this.cadastro.DadosBanco.ObterValorNormalizado(c => c.CodigoConvenio, destino.CodConvenio);
+        }
 
-            destino.Conta = this.cadastro.VerificarCampoInformado(c => c.DadosBanco)
-                && this.cadastro.VerificarCampoInformado(c => c.DadosBanco.Conta)
-                ? this.cadastro.DadosBanco.Conta
-                : destino.Conta;
+        private void ConverterDadosCnab(ContaBanco destino)
+        {
+            if (!this.cadastro.VerificarCampoInformado(c => c.Cnab))
+            {
+                return;
+            }
 
-            destino.CodConvenio = this.cadastro.VerificarCampoInformado(c => c.DadosBanco)
-                && this.cadastro.VerificarCampoInformado(c => c.DadosBanco.CodigoConvenio)
-                ? this.cadastro.DadosBanco.CodigoConvenio
-                : destino.CodConvenio;
-
-            destino.CodCliente = this.cadastro.VerificarCampoInformado(c => c.Cnab)
-                && this.cadastro.VerificarCampoInformado(c => c.Cnab.CodigoCliente)
-                ? this.cadastro.Cnab.CodigoCliente
-                : destino.CodCliente;
-
-            destino.Posto = this.cadastro.VerificarCampoInformado(c => c.Cnab)
-                && this.cadastro.VerificarCampoInformado(c => c.Cnab.Posto)
-                ? this.cadastro.Cnab.Posto
-                : destino.Posto;
+            destino.CodCliente = this.cadastro.Cnab.ObterValorNormalizado(c => c.CodigoCliente, destino.CodCliente);
+            destino.Posto = this.cadastro.Cnab.ObterValorNormalizado(c => c.Posto, destino.Posto);
         }
     }
 }
