@@ -259,6 +259,9 @@
     <Compile Include="Controllers\Datas\V1\Feriados\GetFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\DeletePlanosContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\PatchPlanosContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\PostPlanosContaController.cs" />
     <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
     <Compile Include="Controllers\Producao\V1\TiposPerda\DeleteTiposPerdaController.cs" />
     <Compile Include="Controllers\Producao\V1\TiposPerda\GetTiposPerdaController.cs" />
@@ -457,6 +460,8 @@
     <Compile Include="Helper\Produtos\SubgruposProduto\TraducaoOrdenacaoListaSubgruposProduto.cs" />
     <Compile Include="Helper\Produtos\GruposProduto\ConverterCadastroAtualizacaoParaGrupoProduto.cs" />
     <Compile Include="Helper\Produtos\GruposProduto\TraducaoOrdenacaoListaGruposProduto.cs" />
+    <Compile Include="Helper\PlanosConta\ConverterCadastroAtualizacaoParaPlanoConta.cs" />
+    <Compile Include="Helper\PlanosConta\TraducaoOrdenacaoListaPlanosConta.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
@@ -522,6 +527,10 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\PosicaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
@@ -883,7 +892,6 @@
     <Folder Include="Models\Estoques\Configuracoes\" />
     <Folder Include="Models\Fornecedores\Configuracoes\" />
     <Folder Include="Models\Fornecedores\Lista\" />
-    <Folder Include="Models\PlanosConta\Lista\" />
     <Folder Include="Models\Produtos\CoresAluminio\CadastroAtualizacao\" />
     <Folder Include="Models\Produtos\CoresAluminio\Lista\" />
     <Folder Include="Models\Produtos\CoresFerragem\CadastroAtualizacao\" />

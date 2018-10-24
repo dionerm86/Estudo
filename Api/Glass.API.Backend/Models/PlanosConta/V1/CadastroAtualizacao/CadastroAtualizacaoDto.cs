@@ -1,0 +1,61 @@
+// <copyright file="CadastroAtualizacaoDto.cs" company="Sync Softwares">
+// Copyright (c) Sync Softwares. Todos os direitos reservados.
+// </copyright>
+
+using Glass.API.Backend.Models.Genericas.V1.CadastroAtualizacao;
+using Newtonsoft.Json;
+using System.Runtime.Serialization;
+
+namespace Glass.API.Backend.Models.PlanosConta.V1.CadastroAtualizacao
+{
+    /// <summary>
+    /// Classe que encapsula os dados de cadastro ou atualização de um plano de conta.
+    /// </summary>
+    [DataContract(Name = "CadastroAtualizacao")]
+    public class CadastroAtualizacaoDto : BaseCadastroAtualizacaoDto<CadastroAtualizacaoDto>
+    {
+        /// <summary>
+        /// Obtém ou define o nome do plano de conta.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("nome")]
+        public string Nome
+        {
+            get { return this.ObterValor(c => c.Nome); }
+            set { this.AdicionarValor(c => c.Nome, value); }
+        }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o plano de conta será exibido no DRE.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("exibirDre")]
+        public bool ExibirDre
+        {
+            get { return this.ObterValor(c => c.ExibirDre); }
+            set { this.AdicionarValor(c => c.ExibirDre, value); }
+        }
+
+        /// <summary>
+        /// Obtém ou define o grupo do plano de conta.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("grupoConta")]
+        public int GrupoConta
+        {
+            get { return this.ObterValor(c => c.GrupoConta); }
+            set { this.AdicionarValor(c => c.GrupoConta, value); }
+        }
+
+        /// <summary>
+        /// Obtém ou define a situação do plano de conta.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("situacao")]
+        public Situacao Situacao
+        {
+            get { return this.ObterValor(c => c.Situacao); }
+            set { this.AdicionarValor(c => c.Situacao, value); }
+        }
+    }
+}
