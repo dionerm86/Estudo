@@ -1,0 +1,20 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Grupo</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="grupoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroGrupos"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Subgrupo</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="subgrupoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroSubgrupos"
+                v-bind:ordenar="false" v-bind:filtro-recuperar-itens="filtroSubgrupos"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Processo</label>
+            <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual"></campo-busca-etiqueta-processo>
+        </span>
+    </div>
+</section>
