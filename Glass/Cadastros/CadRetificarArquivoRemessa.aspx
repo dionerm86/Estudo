@@ -70,8 +70,7 @@
                             <asp:GridView GridLines="None" ID="grdContasReceber" runat="server" AutoGenerateColumns="False"
                                 DataSourceID="odsContasReceber" DataKeyNames="IdPedido" EmptyDataText="Não há contas à receber para o filtro especificado."
                                 PageSize="20" CssClass="gridStyle" PagerStyle-CssClass="pgr"
-                                AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" OnDataBound="grdContasReceber_DataBound"
-                                OnRowDataBound="grdContasReceber_RowDataBound">
+                                AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" OnDataBound="grdContasReceber_DataBound">
                                 <PagerSettings PageButtonCount="20" />
                                 <Columns>
                                     <asp:TemplateField>
@@ -81,6 +80,7 @@
                                         </ItemTemplate>
                                         <ItemStyle Wrap="False" />
                                     </asp:TemplateField>
+                                    <asp:BoundField DataField="IdArquivoRemessa" HeaderText="Arq. Remessa" />
                                     <asp:BoundField DataField="Referencia" HeaderText="Ref." />
                                     <asp:BoundField DataField="NumParc" HeaderText="Parc." />
                                     <asp:BoundField DataField="NomeCli" HeaderText="Cliente" />
@@ -90,7 +90,6 @@
                                     <asp:BoundField DataField="DescricaoContaContabil" HeaderText="Tipo." />
                                     <asp:BoundField DataField="DescrFormaPagtoPlanoConta" HeaderText="Forma Pagto." />
                                     <asp:BoundField DataField="NomeLoja" HeaderText="Loja" />
-                                    <asp:BoundField DataField="IdArquivoRemessa" HeaderText="Arquivo de Remessa" ItemStyle-HorizontalAlign="Center" />
                                     <asp:BoundField DataField="Obs" HeaderText="Obs." />
                                 </Columns>
                                 <PagerStyle CssClass="pgr"></PagerStyle>

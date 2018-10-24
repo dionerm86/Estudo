@@ -14,6 +14,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 this.txtNumRemessa.Text = this.Request["id"];
                 this.txtNumRemessa.Enabled = false;
+                grdContasReceber.Columns[1].Visible = false;
             }
         }
 
@@ -24,19 +25,7 @@ namespace Glass.UI.Web.Cadastros
             btnRetificarArquivoRemessa.Visible = possuiItens;
             lblContas.Visible = possuiItens;
             lblNaoRemover.Visible = possuiItens;
-        }
-
-        protected void grdContasReceber_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-
-            if (e.Row.RowType == DataControlRowType.DataRow)
-            {
-                if (((Data.Model.ContasReceber)e.Row.DataItem).Recebida)
-                    for (int i = 0; i < e.Row.Cells.Count; i++)
-                        e.Row.Cells[i].ForeColor = System.Drawing.Color.Red;
-            }
-
-        }
+        }       
 
         protected void btnRetificarArquivoRemessa_Click(object sender, EventArgs e)
         {
