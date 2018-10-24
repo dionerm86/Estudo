@@ -8,6 +8,15 @@
     <script type="text/javascript">
 
         function setApl(idAplicacao, codInterno, descr) {
+            if (GetQueryString("buscaComPopup") === "true") {
+                var idControle = GetQueryString("id-controle");
+                if (idControle) {
+                    window.opener.Busca.Popup.atualizar(idControle, null, codInterno);
+                    closeWindow();
+                    return;
+                }
+            }
+
             if (GetQueryString("idProdPed") != "" && GetQueryString("idProdPed") != 'undefined' && GetQueryString("idProdPed") != null) {
                 window.opener.setAplComposicao(idAplicacao, codInterno, GetQueryString("idProdPed"));
             }
