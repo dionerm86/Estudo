@@ -25,7 +25,7 @@ namespace Glass.UI.Web.Cadastros
             btnRetificarArquivoRemessa.Visible = possuiItens;
             lblContas.Visible = possuiItens;
             lblNaoRemover.Visible = possuiItens;
-        }       
+        }
 
         protected void btnRetificarArquivoRemessa_Click(object sender, EventArgs e)
         {
@@ -58,8 +58,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void imgPesq_Click(object sender, System.Web.UI.ImageClickEventArgs e)
         {
-            grdContasReceber.PageIndex = 0;
-            grdContasReceber.DataBind();
+
         }
     }
 }
