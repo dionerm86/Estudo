@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.PlanosConta
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "Descricao ASC"; }
+            get { return "CategoriaTipo, Grupo, Descricao"; }
         }
 
         /// <inheritdoc/>

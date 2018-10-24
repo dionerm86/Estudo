@@ -37,14 +37,14 @@ namespace Glass.API.Backend.Models.PlanosConta.V1.CadastroAtualizacao
         }
 
         /// <summary>
-        /// Obtém ou define o grupo do plano de conta.
+        /// Obtém ou define o identificador do grupo do plano de conta.
         /// </summary>
         [DataMember]
-        [JsonProperty("grupoConta")]
-        public int GrupoConta
+        [JsonProperty("idGrupoConta")]
+        public int IdGrupoConta
         {
-            get { return this.ObterValor(c => c.GrupoConta); }
-            set { this.AdicionarValor(c => c.GrupoConta, value); }
+            get { return this.ObterValor(c => c.IdGrupoConta); }
+            set { this.AdicionarValor(c => c.IdGrupoConta, value); }
         }
 
         /// <summary>
