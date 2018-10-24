@@ -22,7 +22,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
             string acrescimoStr, string formaPagtoPrazoStr, string valorUtilizadoObraStr, string chequesPagto, string numAutCartao, string idsOc);
 
         string ConfirmarGarantiaReposicao(string idCliente, string idsPedido, string idsProdutosPedido,
-            string idsProdutosProducao, string qtdeProdutosLiberar);
+            string idsProdutosProducao, string qtdeProdutosLiberar, string idsOc);
 
         string ConfirmarPedidoFuncionario(string idCliente, string idsPedido, string idsProdutosPedido,
             string idsProdutosProducao, string qtdeProdutosLiberar);
@@ -307,7 +307,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
         }
 
         public string ConfirmarGarantiaReposicao(string idCliente, string idsPedido, string idsProdutosPedido,
-            string idsProdutosProducao, string qtdeProdutosLiberar)
+            string idsProdutosProducao, string qtdeProdutosLiberar, string idsOc)
         {
             try
             {
@@ -338,7 +338,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
                 uint idLiberarPedido =
                     LiberarPedidoDAO.Instance.CriarLiberacaoGarantiaReposicao(Glass.Conversoes.StrParaUint(idCliente),
                         idsPedido, produtosLiberar,
-                        produtosProducaoLiberar, qtdeLiberar);
+                        produtosProducaoLiberar, qtdeLiberar, idsOc);
 
                 return "ok\tPedidos liberados.\t\t" + idLiberarPedido;
             }

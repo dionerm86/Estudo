@@ -2433,7 +2433,7 @@ namespace Glass.Data.DAL
         /// Liberação de pedido de Garantia/Reposição
         /// </summary>
         public uint CriarLiberacaoGarantiaReposicao(uint idCliente, string idsPedido, uint[] idsProdutosPedido,
-            uint?[] idsProdutoPedidoProducao, float[] qtdeLiberar)
+            uint?[] idsProdutoPedidoProducao, float[] qtdeLiberar, string idsOc)
         {
             FilaOperacoes.LiberarPedido.AguardarVez();
 
@@ -2614,7 +2614,7 @@ namespace Glass.Data.DAL
                     #region Carregamento parcial
 
                     //Atualiza o carregamento e as ocs parciais se houver
-                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsPedido, string.Empty, idLiberarPedido);
+                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsPedido, idsOc, idLiberarPedido);
 
                     #endregion
 

@@ -148,10 +148,10 @@ namespace Glass.UI.Web.Cadastros
 
         [Ajax.AjaxMethod()]
         public string ConfirmarGarantiaReposicao(string idCliente, string idsPedido, string idsProdutosPedido,
-            string idsProdutosProducao, string qtdeProdutosLiberar)
+            string idsProdutosProducao, string qtdeProdutosLiberar, string idsOc)
         {
             return WebGlass.Business.LiberarPedido.Fluxo.Confirmar.Ajax.ConfirmarGarantiaReposicao(idCliente,
-                idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar);
+                idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, idsOc);
         }
 
         #endregion
