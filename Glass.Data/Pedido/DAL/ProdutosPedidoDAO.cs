@@ -5932,7 +5932,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se os produtos do pedido de Revenda já deram saída total. 
+        /// Verifica se os produtos do pedido de Revenda jï¿½ deram saï¿½da total. 
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idPedido"></param>

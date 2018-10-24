@@ -1,4 +1,4 @@
-using Colosoft;
+﻿using Colosoft;
 using GDA;
 using Glass.Configuracoes;
 using Glass.Data.Exceptions;
@@ -11911,7 +11911,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o pedido é do tipo Revenda.
         /// </summary>
-        public bool IsRevenda(uint idPedido)
+        public bool IsRevenda(GDASession sessao, uint idPedido)
         {
             return GetTipoPedido(null, idPedido) == Pedido.TipoPedidoEnum.Revenda;
         }
