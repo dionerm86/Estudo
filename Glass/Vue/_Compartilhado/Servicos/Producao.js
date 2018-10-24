@@ -140,6 +140,38 @@ Servicos.Producao = (function(http) {
     },
 
     /**
+     * Objeto com os serviços para a API de roteiros.
+     */
+    Roteiros: {
+      /**
+       * Recupera a lista de roteiros.
+       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'roteiros', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Remove um roteiro.
+       * @param {!number} id O identificador do roteiro que será excluído.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      excluir: function (id) {
+        if (!id) {
+          throw new Error('Roteiro é obrigatório.');
+        }
+
+        return http().delete(API + 'roteiros/' + id);
+      }
+    },
+
+    /**
      * Objeto com os serviços para a API de turnos.
      */
     Turnos: {
