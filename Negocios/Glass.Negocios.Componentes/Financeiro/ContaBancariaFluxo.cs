@@ -170,7 +170,7 @@ namespace Glass.Financeiro.Negocios.Componentes
                 .From<Data.Model.ContaBanco>("cb")
                 .LeftJoin<Data.Model.Loja>("cb.IdLoja=l.IdLoja", "l")
                 .Select(@"cb.IdContaBanco, cb.IdLoja, cb.Nome, cb.CodBanco, cb.Agencia, 
-                         cb.Conta, cb.Titular, cb.CodConvenio, cb.Situacao, l.NomeFantasia AS Loja,
+                         cb.Conta, cb.Titular, cb.CodConvenio, cb.Situacao, l.NomeFantasia AS Loja, cb.CodConvenio, cb.Posto,
                          ?subQtdeMov AS QtdeMovimentacoes")
                 .Add("?subQtdeMov",
                     SourceContext.Instance.CreateQuery()

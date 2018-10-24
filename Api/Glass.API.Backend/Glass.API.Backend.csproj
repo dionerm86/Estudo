@@ -419,6 +419,11 @@
     <Compile Include="Atributos\AuthorizationAttribute.cs" />
     <Compile Include="Controllers\TiposCartao\V1\GetTiposCartaoController.cs" />
     <Compile Include="Controllers\TiposCartao\V1\TiposCartaoController.cs" />
+    <Compile Include="Controllers\ContasBancarias\DeleteContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\GetContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\PatchContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\PostContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\ContasBancariasController.cs" />
     <Compile Include="Controllers\Veiculos\V1\DeleteVeiculosController.cs" />
     <Compile Include="Controllers\Veiculos\V1\GetVeiculosController.cs" />
     <Compile Include="Controllers\Veiculos\V1\VeiculosController.cs" />
@@ -518,6 +523,11 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\ContasBancarias\CadastroAtualizacao\BancoDto.cs" />
+    <Compile Include="Models\ContasBancarias\CadastroAtualizacao\CnabDto.cs" />
+    <Compile Include="Models\ContasBancarias\Lista\CnabDto.cs" />
+    <Compile Include="Models\ContasBancarias\Lista\BancoDto.cs" />
+    <Compile Include="Models\ContasBancarias\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\PosicaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\Lista\FiltroDto.cs" />
@@ -602,6 +612,9 @@
     <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\ListaDto.cs" />
     <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\ContasBancarias\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\ContasBancarias\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ContasBancarias\Lista\ListaDto.cs" />
     <Compile Include="Models\Veiculos\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\V1\Lista\ListaDto.cs" />
