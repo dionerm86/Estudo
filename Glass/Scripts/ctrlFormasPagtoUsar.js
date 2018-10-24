@@ -39,7 +39,7 @@ function validarFormasPagtoUsar(val, args)
  * @param {?number} idFormaPagto Identificador da forma de pagamento.
  * @param {?string} formaPagto Descritivo da forma de pagamento.
  */
-function alterarFormasPagtoPadrao(selecionado, idFormaPagto, formaPagto) {
+function alterarFormasPagtoPadrao(selecionado, idFormaPagto, formaPagto, formaPagtoPadrao) {
 
   if (formaPagtoPadrao == idFormaPagto) {
     return;

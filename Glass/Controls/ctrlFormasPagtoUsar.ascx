@@ -5,12 +5,6 @@
 
 <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/ctrlFormasPagtoUsar.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
-<script type="text/javascript">
-
-    var formaPagtoPadrao = <%= FormaPagtoPadrao %>;
-
-</script>
-
 <table cellpadding="0" cellspacing="0">
     <tr>
         <td nowrap="nowrap">
