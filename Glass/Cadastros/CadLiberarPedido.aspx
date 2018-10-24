@@ -467,7 +467,7 @@
                 if (FindControl("hdfIsGarantiaReposicao", "input").value == "true")
                 {
                     retorno = CadLiberarPedido.ConfirmarGarantiaReposicao(idCliente, idsPedido, idsProdutosPedido,
-                        idsProdutosProducao, qtdeProdutosLiberar).value;
+                        idsProdutosProducao, qtdeProdutosLiberar, idsOc).value;
                 }
                 else if (FindControl("hdfIsPedidoFuncionario", "input").value == "true")
                 {

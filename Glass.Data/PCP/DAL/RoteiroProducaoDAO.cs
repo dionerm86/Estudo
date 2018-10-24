@@ -114,12 +114,12 @@ namespace Glass.Data.DAL
             return dados;
         }
 
-        public RoteiroProducao ObtemElemento(int idRoteiroProducao)
+        public RoteiroProducao ObtemElemento(GDASession sessao, int idRoteiroProducao)
         {
             string filtroAdicional, sql = Sql(idRoteiroProducao, 0, 0, 0, null, 0, false, true, out filtroAdicional).
                 Replace(FILTRO_ADICIONAL, filtroAdicional);
 
-            return objPersistence.LoadOneData(sql);
+            return objPersistence.LoadOneData(sessao, sql);
         }
 
         private GDAParameter[] GetParams(string codProcesso)

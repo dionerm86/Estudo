@@ -268,6 +268,9 @@
     <Compile Include="Controllers\Producao\V1\Setores\DeleteSetoresController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\PatchSetoresController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\PostSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\DeleteRoteirosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\GetRoteirosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\RoteirosController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\DeleteTurnosController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\GetTurnosController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\TurnosController.cs" />
@@ -445,6 +448,7 @@
     <Compile Include="Helper\Producao\Setores\TraducaoOrdenacaoListaSetores.cs" />
     <Compile Include="Helper\Producao\TiposPerda\ConverterCadastroAtualizacaoParaTipoPerda.cs" />
     <Compile Include="Helper\Producao\TiposPerda\TraducaoOrdenacaoListaTiposPerda.cs" />
+    <Compile Include="Helper\Producao\Roteiros\TraducaoOrdenacaoListaRoteiros.cs" />
     <Compile Include="Helper\Producao\Turnos\ConverterCadastroAtualizacaoParaTurno.cs" />
     <Compile Include="Helper\Producao\Turnos\TraducaoOrdenacaoListaTurnos.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
@@ -525,6 +529,7 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ContasBancarias\CadastroAtualizacao\DadosBancoDto.cs" />
     <Compile Include="Models\ContasBancarias\CadastroAtualizacao\CnabDto.cs" />
     <Compile Include="Models\ContasBancarias\Lista\CnabDto.cs" />
@@ -547,6 +552,8 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\CapacidadeDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />

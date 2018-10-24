@@ -843,7 +843,9 @@ namespace Glass.UI.Web.Cadastros
                 var serie = "";
 
                 if (tipo.GetValueOrDefault(0) != (int)NotaFiscal.TipoDoc.EntradaTerceiros && tipo.GetValueOrDefault(0) != (int)NotaFiscal.TipoDoc.NotaCliente)
+                {
                     serie = FiscalConfig.NotaFiscalConfig.SeriePadraoNFe(null, null, finalidade.GetValueOrDefault(0) == (int)NotaFiscal.FinalidadeEmissaoEnum.Ajuste).ToString();
+                }
 
                 ((TextBox)sender).Text = serie;
             }

@@ -10,6 +10,15 @@
     <script type="text/javascript">
 
         function setProduto(codInterno, idProd) {
+            if (GetQueryString("buscaComPopup") === "true") {
+                var idControle = GetQueryString("id-controle");
+                if (idControle) {
+                    window.opener.Busca.Popup.atualizar(idControle, null, codInterno);
+                    closeWindow();
+                    return;
+                }
+            }
+
             if (FindControl("hdfCallback", "input").value == "setVidro") {
                 window.opener.setVidro(codInterno);
             }

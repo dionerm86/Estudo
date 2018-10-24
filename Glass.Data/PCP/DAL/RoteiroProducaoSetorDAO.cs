@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
 using Glass.Data.Model;
+using GDA;
 
 namespace Glass.Data.DAL
 {
     public sealed class RoteiroProducaoSetorDAO : BaseDAO<RoteiroProducaoSetor, RoteiroProducaoSetorDAO>
     {
-        //private RoteiroProducaoSetorDAO() { }
-
-        public void ApagarPorRoteiroProducao(int idRoteiroProducao)
+        public void ApagarPorRoteiroProducao(GDASession sessao, int idRoteiroProducao)
         {
-            objPersistence.ExecuteCommand("delete from roteiro_producao_setor where idRoteiroProducao=" + idRoteiroProducao);
+            objPersistence.ExecuteCommand(sessao, "delete from roteiro_producao_setor where idRoteiroProducao=" + idRoteiroProducao);
         }
 
         public uint[] InserirPorRoteiroProducao(int idRoteiroProducao, IEnumerable<uint> idsSetores)
         {
-            ApagarPorRoteiroProducao(idRoteiroProducao);
+            ApagarPorRoteiroProducao(null, idRoteiroProducao);
 
             List<uint> retorno = new List<uint>();
 
