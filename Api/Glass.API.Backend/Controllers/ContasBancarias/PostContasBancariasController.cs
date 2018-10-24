@@ -37,14 +37,14 @@ namespace Glass.API.Backend.Controllers.ContasBancarias.V1
 
                     var resultado = Microsoft.Practices.ServiceLocation.ServiceLocator
                         .Current.GetInstance<Financeiro.Negocios.IContaBancariaFluxo>()
-                        .SalvarContaBancaria(contaBancaria);
+                        .SalvarContaBanco(contaBancaria);
 
                     if (!resultado)
                     {
                         return this.ErroValidacao($"Falha ao cadastrar conta bancária. {resultado.Message.Format()}");
                     }
 
-                    return this.Criado("Conta bancária cadastrada com sucesso!", contaBancaria.IdContaBancaria);
+                    return this.Criado("Conta bancária cadastrada com sucesso!", contaBancaria.IdContaBanco);
                 }
                 catch (Exception ex)
                 {

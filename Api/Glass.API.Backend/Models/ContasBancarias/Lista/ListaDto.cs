@@ -6,6 +6,7 @@ using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Glass.Data.Model;
 using Newtonsoft.Json;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.ContasBancarias.V1.Lista
@@ -36,9 +37,14 @@ namespace Glass.API.Backend.Models.ContasBancarias.V1.Lista
                 Nome = contaBancaria.Loja,
             };
 
-            this.Banco = new BancoDto
+            this.DadosBanco = new DadosBancoDto
             {
-                CodigoBanco = contaBancaria.CodBanco,
+                Banco = new IdNomeDto
+                {
+                    Id = contaBancaria.CodBanco,
+                    Nome = this.ObterNomeBanco(contaBancaria.CodBanco),
+                },
+
                 Titular = contaBancaria.Titular,
                 Agencia = contaBancaria.Agencia,
                 Conta = contaBancaria.Conta,
@@ -79,8 +85,8 @@ namespace Glass.API.Backend.Models.ContasBancarias.V1.Lista
         /// Obtém ou define dados do banco da conta bancária.
         /// </summary>
         [DataMember]
-        [JsonProperty("banco")]
-        public BancoDto Banco { get; set; }
+        [JsonProperty("dadosBanco")]
+        public DadosBancoDto DadosBanco { get; set; }
 
         /// <summary>
         /// Obtém ou define dados do CNAB da conta bancária.
@@ -95,5 +101,20 @@ namespace Glass.API.Backend.Models.ContasBancarias.V1.Lista
         [DataMember]
         [JsonProperty("permissoes")]
         public PermissoesDto Permissoes { get; set; }
+
+        private string ObterNomeBanco(int? codigoBanco)
+        {
+            if (codigoBanco == null)
+            {
+                return string.Empty;
+            }
+
+            var banco = Microsoft.Practices.ServiceLocation.ServiceLocator
+                .Current.GetInstance<Financeiro.Negocios.IContaBancariaFluxo>()
+                .ObtemBancos()
+                .FirstOrDefault(f => f.Id == codigoBanco);
+
+            return banco.Name;
+        }
     }
 }

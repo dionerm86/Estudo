@@ -61,7 +61,7 @@ namespace Glass.API.Backend.Controllers.ContasBancarias.V1
         [Route("bancos")]
         [SwaggerResponse(200, "Bancos encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Bancos não encontrados.")]
-        public IHttpActionResult ObterSequencias()
+        public IHttpActionResult ObterBancos()
         {
             using (var sessao = new GDATransaction())
             {
@@ -75,6 +75,25 @@ namespace Glass.API.Backend.Controllers.ContasBancarias.V1
                     });
 
                 return this.Lista(bancos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de situações.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos das situações.</returns>
+        [HttpGet]
+        [Route("situacoes")]
+        [SwaggerResponse(200, "Situações encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Situações não encontradas.")]
+        public IHttpActionResult ObterSituacoes()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = new ConversorEnum<Situacao>()
+                    .ObterTraducao();
+
+                return this.Lista(tipos);
             }
         }
     }

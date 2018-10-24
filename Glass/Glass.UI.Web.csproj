@@ -513,6 +513,7 @@
     <Content Include="Vue\Rotas\Componentes\LstRotas.js" />
     <Content Include="Vue\TabelasDescontoAcrescimoCliente\Componentes\LstTabelasDescontoAcrescimoCliente.js" />
     <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
+    <Content Include="Vue\ContasBancarias\Componentes\LstContasBancarias.js" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />
@@ -1786,6 +1787,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Condutores.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\ContasBancarias.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Sinais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Acertos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />

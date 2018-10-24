@@ -458,6 +458,8 @@
     <Compile Include="Helper\Produtos\SubgruposProduto\TraducaoOrdenacaoListaSubgruposProduto.cs" />
     <Compile Include="Helper\Produtos\GruposProduto\ConverterCadastroAtualizacaoParaGrupoProduto.cs" />
     <Compile Include="Helper\Produtos\GruposProduto\TraducaoOrdenacaoListaGruposProduto.cs" />
+    <Compile Include="Helper\ContasBancarias\ConverterCadastroAtualizacaoParaContaBancaria.cs" />
+    <Compile Include="Helper\ContasBancarias\TraducaoOrdenacaoListaContasBancarias.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
@@ -523,10 +525,10 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
-    <Compile Include="Models\ContasBancarias\CadastroAtualizacao\BancoDto.cs" />
+    <Compile Include="Models\ContasBancarias\CadastroAtualizacao\DadosBancoDto.cs" />
     <Compile Include="Models\ContasBancarias\CadastroAtualizacao\CnabDto.cs" />
     <Compile Include="Models\ContasBancarias\Lista\CnabDto.cs" />
-    <Compile Include="Models\ContasBancarias\Lista\BancoDto.cs" />
+    <Compile Include="Models\ContasBancarias\Lista\DadosBancoDto.cs" />
     <Compile Include="Models\ContasBancarias\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\PosicaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />

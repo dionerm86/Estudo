@@ -1,4 +1,4 @@
-﻿// <copyright file="BancoDto.cs" company="Sync Softwares">
+﻿// <copyright file="DadosBancoDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -11,18 +11,18 @@ namespace Glass.API.Backend.Models.ContasBancarias.V1.CadastroAtualizacao
     /// <summary>
     /// Classe que encapsula dados do banco.
     /// </summary>
-    [DataContract(Name = "Banco")]
-    public class BancoDto : BaseCadastroAtualizacaoDto<BancoDto>
+    [DataContract(Name = "DadosBanco")]
+    public class DadosBancoDto : BaseCadastroAtualizacaoDto<DadosBancoDto>
     {
         /// <summary>
         /// Obtém ou define o código do banco.
         /// </summary>
         [DataMember]
-        [JsonProperty("codigoBanco")]
-        public int? CodigoBanco
+        [JsonProperty("banco")]
+        public int? Banco
         {
-            get { return this.ObterValor(c => c.CodigoBanco); }
-            set { this.AdicionarValor(c => c.CodigoBanco, value); }
+            get { return this.ObterValor(c => c.Banco); }
+            set { this.AdicionarValor(c => c.Banco, value); }
         }
 
         /// <summary>
