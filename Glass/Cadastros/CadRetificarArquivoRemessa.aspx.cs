@@ -58,7 +58,6 @@ namespace Glass.UI.Web.Cadastros
 
         protected void imgPesq_Click(object sender, System.Web.UI.ImageClickEventArgs e)
         {
-
         }
     }
 }
