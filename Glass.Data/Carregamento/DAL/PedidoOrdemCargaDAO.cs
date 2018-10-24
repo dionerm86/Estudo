@@ -1,4 +1,4 @@
-using Glass.Data.Model;
+﻿using Glass.Data.Model;
 using GDA;
 using System.Collections.Generic;
 
@@ -50,20 +50,6 @@ namespace Glass.Data.DAL
             return this.objPersistence.LoadData(sessao, sql);
         }
 
-        public bool VerificarPedidoOrdemCargaSemItemCarregamento(GDASession sessao, int idPedido)
-        {
-            if (idPedido == 0)
-                return true;
-
-            var sql = $@"SELECT COUNT(*) > 0 FROM 
-                         pedido_ordem_carga poc LEFT JOIN 
-                         	item_carregamento ic ON (ic.IdOrdemCarga = poc.IdOrdemCarga) 
-                         WHERE poc.idPedido = {idPedido} 
-                         AND ic.IdItemCarregamento IS NULL";
-
-            return ExecuteScalar<bool>(sessao, sql);
-
-        }
 
         /// <summary>
         /// Verifica se o pedido informado possui alguma ordem carga ainda sem item carregamento. Neste caso é necessário primeiro gerar o carregamento desta OC.
