@@ -31,7 +31,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Roteiros.ClassificacoesRotei
                 .Current.GetInstance<PCP.Negocios.IClassificacaoRoteiroProducaoFluxo>()
                 .ObtemClassificacao(id);
 
-            if (validacao == null && classificacao != null)
+            if (validacao == null && classificacao == null)
             {
                 return this.NaoEncontrado("Classificação de roteiro não encontrada.");
             }

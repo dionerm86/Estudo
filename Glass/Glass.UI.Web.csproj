@@ -491,6 +491,7 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Producao\Roteiros\Classificacoes\Componentes\LstClassificacoesRoteiro.js" />
     <Content Include="Vue\Producao\Roteiros\Componentes\LstRoteiros.Filtro.js" />
     <Content Include="Vue\Producao\Roteiros\Templates\LstRoteiros.Filtro.html" />
     <Content Include="Vue\Producao\Setores\Componentes\LstSetores.js" />
