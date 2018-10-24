@@ -469,6 +469,7 @@
     <Compile Include="Financeiro\Model\QuitacaoParcelaCartao.cs" />
     <Compile Include="Fiscal\DAL\CargaTributariaMediaMTDAO.cs" />
     <Compile Include="Fiscal\DAL\CestDAO.cs" />
+    <Compile Include="Fiscal\DAL\CondutoresDAO.cs" />
     <Compile Include="Fiscal\DAL\CTe\EfdCteDAO.cs" />
     <Compile Include="Fiscal\DAL\CTe\ImpostoCteDAO.cs" />
     <Compile Include="Financeiro\DAL\RegistroArquivoRemessaDAO.cs" />
@@ -503,10 +504,13 @@
     <Compile Include="Fiscal\DAL\ProdutoNfCustoDAO.cs" />
     <Compile Include="Fiscal\DAL\ProdutoNfCustoRentabilidadeDAO.cs" />
     <Compile Include="Fiscal\DAL\ProdutoNfRentabilidadeDAO.cs" />
+    <Compile Include="Fiscal\Domain\NotaFiscalEventoArgs.cs" />
+    <Compile Include="Fiscal\Domain\NotaFiscalGerada.cs" />
     <Compile Include="Fiscal\ICalculadoraImposto.cs" />
     <Compile Include="Fiscal\ICalculoImpostoResultado.cs" />
     <Compile Include="Fiscal\Model\CargaTributariaMediaMT.cs" />
     <Compile Include="Fiscal\Model\Cest.cs" />
+    <Compile Include="Fiscal\Model\Condutores.cs" />
     <Compile Include="Fiscal\Model\CTe\ChaveAcessoCte.cs" />
     <Compile Include="Fiscal\Model\DetalhamentoDebitosPisCofins.cs" />
     <Compile Include="Fiscal\Model\FotosNotaFiscal.cs" />
@@ -555,6 +559,7 @@
     <Compile Include="Global\DAL\GrupoClienteDAO.cs" />
     <Compile Include="Global\DAL\TipoInstalacaoDAO.cs" />
     <Compile Include="Global\DAL\TipoEntregaDAO.cs" />
+    <Compile Include="Domain\EventoComSessaoArgs.cs" />
     <Compile Include="Global\Model\AvaliacaoAtendimento.cs" />
     <Compile Include="Global\Model\DeviceApp.cs" />
     <Compile Include="Global\Model\FlagArqMesaProduto.cs" />
@@ -778,7 +783,7 @@
     <Compile Include="NFeUtils\IRetornoAutorizacao.cs" />
     <Compile Include="NFeUtils\IStatusServico.cs" />
     <Compile Include="Orcamento\DAL\FotosOrcamentoDAO.cs" />
-    <Compile Include="Orcamento\Model\AmbienteOrcamentoRentabilidade.cs" />
+    <Compile Include="Orcamento\DAL\ProdutosOrcamentoDAO.Ambiente.cs" />
     <Compile Include="Orcamento\Model\OrcamentoRentabilidade.cs" />
     <Compile Include="Orcamento\Model\ProdutoOrcamentoRentabilidade.cs" />
     <Compile Include="Otimizacao\Model\PecaPlanoCorte.cs" />
@@ -949,7 +954,6 @@
     <Compile Include="Medicao\Model\Medicao.cs" />
     <Compile Include="Medicao\Model\MedicaoSite.cs" />
     <Compile Include="Medicao\Model\PontoFotoMedicao.cs" />
-    <Compile Include="Orcamento\DAL\AmbienteOrcamentoDAO.cs" />
     <Compile Include="Pedido\DAL\AmbientePedidoDAO.cs" />
     <Compile Include="Global\DAL\AnexoEmailDAO.cs" />
     <Compile Include="Financeiro\DAL\AntecipContaRecDAO.cs" />
@@ -1484,7 +1488,6 @@
     <Compile Include="RelModel\MemoriaCalculo.cs" />
     <Compile Include="Helper\UtilsFinanceiro.cs" />
     <Compile Include="Helper\UtilsPlanoConta.cs" />
-    <Compile Include="Orcamento\Model\AmbienteOrcamento.cs" />
     <Compile Include="Global\Model\BenefConfig.cs" />
     <Compile Include="Global\Model\ChapaVidro.cs" />
     <Compile Include="Pedido\Model\PedidoComissao.cs" />
@@ -4511,6 +4514,7 @@
     <Content Include="Web References\wsPSVRSCTeStatusServico\CteStatusServico.disco" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Configuracoes\IntegracaoConfig\" />
     <Folder Include="Configuracoes\RelatorioConfig\" />
     <Folder Include="Rentabilidade\DAL\" />
   </ItemGroup>

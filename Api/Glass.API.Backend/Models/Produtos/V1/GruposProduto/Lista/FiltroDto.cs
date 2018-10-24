@@ -8,7 +8,7 @@ using Glass.API.Backend.Models.Genericas.V1;
 namespace Glass.API.Backend.Models.Produtos.V1.GruposProduto.Lista
 {
     /// <summary>
-    /// Classe que encapsula os itens de filtro para a lista de cores de ferragem.
+    /// Classe que encapsula os itens de filtro para a lista de grupos de produto.
     /// </summary>
     public class FiltroDto : PaginacaoDto
     {

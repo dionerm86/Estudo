@@ -24,7 +24,7 @@ namespace Glass.Data.Model
         Inativo,
     }
 
-[PersistenceBaseDAO(typeof(TipoPerdaDAO))]
+    [PersistenceBaseDAO(typeof(TipoPerdaDAO))]
     [PersistenceClass("tipo_perda")]
     public class TipoPerda : Colosoft.Data.BaseModel
     {
@@ -44,7 +44,7 @@ namespace Glass.Data.Model
 
         [Log("Situação Tipo Perda")]
         [PersistenceProperty("SITUACAO")]
-        public SituacaoTipoPerda Situacao { get; set; }
+        public Situacao Situacao { get; set; }
 
         [Log("Exibir no Painel de Produção")]
         [PersistenceProperty("EXIBIRPAINELPRODUCAO")]

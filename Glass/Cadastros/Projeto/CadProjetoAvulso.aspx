@@ -183,12 +183,8 @@
             var idOrcamento = FindControl("hdfIdOrcamento", "input").value;
             var idPedido = FindControl("hdfIdPedidoOriginal", "input").value;
             var idPedidoEspelho = FindControl("hdfIdPedidoEspelho", "input").value;
-
-            // Necessário para incluir o projeto no ambiente do orçamento, se esquecer de confirmar o projeto,
-            // associa no ambiente do orçamento
-            var idAmbienteOrca = FindControl("hdfIdAmbienteOrca", "input").value;
-
-            var retorno = CadProjetoAvulso.NovoItemProjeto(idOrcamento, idAmbienteOrca, idPedido, "",
+            
+            var retorno = CadProjetoAvulso.NovoItemProjeto(idOrcamento, idPedido, "",
                 idPedidoEspelho, "", idProjetoModelo, espessuraVidro, idCorVidro, idCorAluminio, idCorFerragem, apenasVidros, medidaExata).value;
 
             if (retorno == null) {
@@ -780,7 +776,7 @@
             var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfIdProdMater", "input").value);
             var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
 
-            if(idSubgrupo.value != "" && retornoValidacao.value == "False" && FindControl("txtProcIns", "input").value != "")
+            if(idSubgrupo.value != "" && retornoValidacao.value == "false" && FindControl("txtProcIns", "input").value != "")
             {
                 FindControl("txtProcIns", "input").value = "";
                 alert("Este processo não pode ser selecionado para este produto.")
@@ -1652,7 +1648,6 @@
                 <asp:HiddenField ID="hdfIdProdMater" runat="server" />
                 <asp:HiddenField ID="hdfIdItemProjeto" runat="server" />
                 <asp:HiddenField ID="hdfIdOrcamento" runat="server" />
-                <asp:HiddenField ID="hdfIdAmbienteOrca" runat="server" />
                 <asp:HiddenField ID="hdfIdAmbientePedido" runat="server" />
                 <asp:HiddenField ID="hdfIdPedidoEspelho" runat="server" />
                 <asp:HiddenField ID="hdfIdPedidoOriginal" runat="server" />

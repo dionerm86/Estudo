@@ -67,7 +67,6 @@
                     var isAmbiente = inputs[i].parentNode.getAttribute("ambiente") == "true";
                     if (!isAmbiente && inputs[i].checked) {
                         var vetIdProd = inputs[i].id.split('_');
-                        debugger;
                         var idProdPed = FindControl(vetIdProd[0] + "_" + vetIdProd[1] + "_" + vetIdProd[2] + "_" + vetIdProd[3] + "_" + vetIdProd[4] + "_" + vetIdProd[5] + "_" + vetIdProd[6] + "_" + vetIdProd[7] + "_" + "hdfIdProdPed", "input").value;
                         var qtde = FindControl(vetIdProd[0] + "_" + vetIdProd[1] + "_" + vetIdProd[2] + "_" + vetIdProd[3] + "_" + vetIdProd[4] + "_" + vetIdProd[5] + "_" + vetIdProd[6] + "_" + vetIdProd[7] + "_" + "txtQtdeComprar", "input").value;
                         var qtdeMax = FindControl(vetIdProd[0] + "_" + vetIdProd[1] + "_" + vetIdProd[2] + "_" + vetIdProd[3] + "_" + vetIdProd[4] + "_" + vetIdProd[5] + "_" + vetIdProd[6] + "_" + vetIdProd[7] + "_" + "hdfQtdeMaxComprar", "input").value;

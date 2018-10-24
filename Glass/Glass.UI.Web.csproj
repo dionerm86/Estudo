@@ -202,6 +202,10 @@
       <HintPath>..\packages\CalcEngine.Forvet.1.9.93\lib\net35\FC.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FluentScheduler, Version=5.3.0.0, Culture=neutral, PublicKeyToken=b76503528a14ebd1, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentScheduler.5.3.0\lib\net40\FluentScheduler.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
       <Private>True</Private>
@@ -449,6 +453,7 @@
     <Content Include="Cadastros\CadClassificacaoRoteiroProducao.aspx" />
     <Content Include="Cadastros\CadCliente.aspx" />
     <Content Include="Cadastros\CadClienteMulti.aspx" />
+    <Content Include="Cadastros\CadCondutores.aspx" />
     <Content Include="Cadastros\CadExpressaoRentabilidade.aspx" />
     <Content Include="Cadastros\CadFornecedorVinculos.aspx" />
     <Content Include="Cadastros\CadClienteVinculos.aspx" />
@@ -485,12 +490,19 @@
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Listas\LstCfopMigrando.aspx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx" />
+    <Content Include="Controls\ctrlProdComposicaoOrcamento.ascx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Producao\Setores\Componentes\LstSetores.js" />
+    <Content Include="Vue\Producao\Turnos\Componentes\LstTurnos.js" />
+    <Content Include="Vue\Producao\TiposPerda\Componentes\LstTiposPerda.js" />
     <Content Include="Vue\Cfops\Componentes\LstCfops.Filtro.js" />
     <Content Include="Vue\Cfops\Componentes\LstCfops.js" />
     <Content Include="Vue\Cfops\Templates\LstCfops.Filtro.html" />
@@ -509,6 +521,8 @@
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.Filtro.js" />
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.js" />
     <Content Include="Vue\Fornecedores\Templates\LstFornecedores.Filtro.html" />
+    <Content Include="Vue\Condutores\Componentes\CadCondutores.js" />
+    <Content Include="Vue\Rotas\Componentes\LstRotas.js" />
     <Content Include="Vue\TabelasDescontoAcrescimoCliente\Componentes\LstTabelasDescontoAcrescimoCliente.js" />
     <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
@@ -673,7 +687,6 @@
     <Content Include="Cadastros\CadPlanoConta.aspx" />
     <Content Include="Cadastros\CadPrecoProduto.aspx" />
     <Content Include="Cadastros\CadProduto.aspx" />
-    <Content Include="Cadastros\CadProdutoOrcamento.aspx" />
     <Content Include="Cadastros\CadProprietarioVeiculo.aspx" />
     <Content Include="Cadastros\CadQuitarDebitoFunc.aspx" />
     <Content Include="Cadastros\CadQuitarParcCartao.aspx" />
@@ -708,7 +721,6 @@
     <Content Include="Cadastros\CadTransportador.aspx" />
     <Content Include="Cadastros\CadTrasnfCxGeralParaCxDiario.aspx" />
     <Content Include="Cadastros\CadTrocaDev.aspx" />
-    <Content Include="Cadastros\CadTurno.aspx" />
     <Content Include="Cadastros\CadValorRetidoFonte.aspx" />
     <Content Include="Cadastros\CadVeiculos.aspx" />
     <Content Include="Cadastros\CadVolume.aspx" />
@@ -1740,6 +1752,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaProcesso.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaProduto.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCep.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoCpf.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoDescontoQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoEndereco.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoLargura.js" />
@@ -1784,6 +1797,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Condutores.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Sinais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Acertos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />
@@ -1854,6 +1868,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaEtiquetaProcesso.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaProduto.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCep.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoCpf.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoDescontoQuantidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoEndereco.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoLargura.html" />
@@ -3215,6 +3230,13 @@
     <Compile Include="Cadastros\CadClienteMulti.aspx.designer.cs">
       <DependentUpon>CadClienteMulti.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Cadastros\CadCondutores.aspx.cs">
+      <DependentUpon>CadCondutores.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\CadCondutores.aspx.designer.cs">
+      <DependentUpon>CadCondutores.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Cadastros\CadExpressaoRentabilidade.aspx.cs">
       <DependentUpon>CadExpressaoRentabilidade.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3642,6 +3664,34 @@
     </Compile>
     <Compile Include="Controls\ctrlPesquisaCliente.ascx.designer.cs">
       <DependentUpon>ctrlPesquisaCliente.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChildAlterarProcApl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChild.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoChild.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoAlterarProcApl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamentoAlterarProcApl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamento.ascx.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamento.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlProdComposicaoOrcamento.ascx.designer.cs">
+      <DependentUpon>ctrlProdComposicaoOrcamento.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\ctrlProdComposicaoAlterarProcApl.ascx.cs">
       <DependentUpon>ctrlProdComposicaoAlterarProcApl.ascx</DependentUpon>
@@ -4330,13 +4380,6 @@
     <Compile Include="Cadastros\CadProduto.aspx.designer.cs">
       <DependentUpon>CadProduto.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Cadastros\CadProdutoOrcamento.aspx.cs">
-      <DependentUpon>CadProdutoOrcamento.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Cadastros\CadProdutoOrcamento.aspx.designer.cs">
-      <DependentUpon>CadProdutoOrcamento.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Cadastros\CadProprietarioVeiculo.aspx.cs">
       <DependentUpon>CadProprietarioVeiculo.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4574,13 +4617,6 @@
     </Compile>
     <Compile Include="Cadastros\CadTrocaDev.aspx.designer.cs">
       <DependentUpon>CadTrocaDev.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Cadastros\CadTurno.aspx.cs">
-      <DependentUpon>CadTurno.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Cadastros\CadTurno.aspx.designer.cs">
-      <DependentUpon>CadTurno.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\CadValorRetidoFonte.aspx.cs">
       <DependentUpon>CadValorRetidoFonte.aspx</DependentUpon>
@@ -8679,6 +8715,10 @@
     <ProjectReference Include="..\Global\UI\Web\Glass.Global.UI.Web.Process\Glass.Global.UI.Web.Process.csproj">
       <Project>{53e0ef88-b812-45fe-9f91-f4f7889bd6cb}</Project>
       <Name>Glass.Global.UI.Web.Process</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Integracao\Glass.Integracao.Khan\Glass.Integracao.Khan.csproj">
+      <Project>{3db16aa0-b7b1-4500-8541-1bc155742124}</Project>
+      <Name>Glass.Integracao.Khan</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mathematical\Glass.Mathematical\Glass.Mathematical.csproj">
       <Project>{79bba571-e0aa-4861-a91d-c6732c94b83a}</Project>

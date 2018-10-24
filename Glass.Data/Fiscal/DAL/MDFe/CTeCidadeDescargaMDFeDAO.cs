@@ -1,4 +1,4 @@
-﻿using GDA;
+using GDA;
 using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace Glass.Data.DAL
                 LEFT JOIN loja l ON (l.IdLoja=pct.IdLoja)
                 LEFT JOIN cliente c ON (c.Id_cli=pct.IdCliente)
                 WHERE ccd.IdCidadeDescarga={0}
-                GROUP BY ccd.CHAVEACESSO";
+                GROUP BY ct.CHAVEACESSO";
 
             return string.Format(sql, idCidadeDescarga);
         }

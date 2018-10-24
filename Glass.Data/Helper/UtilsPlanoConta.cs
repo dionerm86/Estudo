@@ -2568,7 +2568,8 @@ namespace Glass.Data.Helper
                 case Glass.Data.Model.Pagto.FormaPagto.Deposito:
                     lst = new List<uint>() { GetPlanoConta(PlanoContas.EntradaDeposito), GetPlanoConta(PlanoContas.PrazoDeposito),
                         GetPlanoConta(PlanoContas.RecPrazoDeposito), GetPlanoConta(PlanoContas.VistaDeposito),
-                        GetPlanoConta(PlanoContas.RecChequeDevDeposito), GetPlanoConta(PlanoContas.EstornoDevolucaoPagtoDeposito) }; break;
+                        GetPlanoConta(PlanoContas.RecChequeDevDeposito), GetPlanoConta(PlanoContas.EstornoDevolucaoPagtoDeposito),
+                        GetPlanoConta(PlanoContas.TransfDeCxDiarioDeposito)}; break;
                 case Glass.Data.Model.Pagto.FormaPagto.Permuta:
                     lst = new List<uint>() { GetPlanoConta(PlanoContas.EntradaPermuta), GetPlanoConta(PlanoContas.PrazoPermuta),
                         GetPlanoConta(PlanoContas.RecPrazoPermuta), GetPlanoConta(PlanoContas.VistaPermuta),
@@ -2721,7 +2722,7 @@ namespace Glass.Data.Helper
         {
             return new List<uint>() { GetPlanoConta(PlanoContas.EntradaBoleto), GetPlanoConta(PlanoContas.PrazoBoleta),
                 GetPlanoConta(PlanoContas.RecPrazoBoleto), GetPlanoConta(PlanoContas.EstornoDevolucaoPagtoBoleto),
-                GetPlanoConta(PlanoContas.RecChequeDevBoleto) };
+                GetPlanoConta(PlanoContas.RecChequeDevBoleto), GetPlanoConta(PlanoContas.TransfDeCxDiarioBoleto) };
         }
 
         public static List<uint> GetLstEntradaBoletoBancoBrasil()

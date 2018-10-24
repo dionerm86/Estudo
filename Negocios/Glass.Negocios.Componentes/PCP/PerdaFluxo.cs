@@ -50,7 +50,7 @@ namespace Glass.PCP.Negocios.Componentes
                 .From<Glass.Data.Model.TipoPerda>("tp")
                 .LeftJoin<Glass.Data.Model.Setor>("tp.IdSetor=s.IdSetor", "s")
                 .Where("tp.Situacao=?situacao")
-                .Add("?situacao", Glass.Data.Model.SituacaoTipoPerda.Ativo)
+                .Add("?situacao", Situacao.Ativo)
                 .OrderBy("Descricao");
 
             if (idSetor > 0)

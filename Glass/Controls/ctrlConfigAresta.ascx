@@ -186,9 +186,7 @@
         }
 
         vm.removerLinha = function (btnExcluir) {
-            var linha = btnExcluir.parentElement.parentElement.rowIndex - 1;               
-            debugger;
-
+            var linha = btnExcluir.parentElement.parentElement.rowIndex - 1;
             var aux = vm.hdfSubgrupo.value.split(';');
             aux.splice(linha, 1);
             vm.hdfSubgrupo.value = aux.join(';');

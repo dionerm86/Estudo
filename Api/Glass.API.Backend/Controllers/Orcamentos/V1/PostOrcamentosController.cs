@@ -83,7 +83,7 @@ namespace Glass.API.Backend.Controllers.Orcamentos.V1
                 {
                     sessao.BeginTransaction();
 
-                    PedidoDAO.Instance.GerarPedidosAgrupados(sessao, (uint)id);
+                    PedidoDAO.Instance.GerarPedidosAgrupados(sessao, id);
 
                     sessao.Commit();
 

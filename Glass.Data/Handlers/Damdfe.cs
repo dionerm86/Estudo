@@ -45,7 +45,7 @@ namespace Glass.Data.Handlers
             var lstParam = new List<ReportParameter>();
 
             var mdfe = ManifestoEletronicoDAO.Instance.ObterManifestoEletronicoPeloId(idMDFe);
-            var damdfe = MDFeDAO.ObterParaDAMDFE(context, mdfe.ChaveAcesso);
+            var damdfe = MDFeDAO.ObterParaDAMDFE(context, mdfe.ChaveAcesso);            
 
             var participanteEmitente = mdfe.Participantes.Where(f => f.TipoParticipante == Model.TipoParticipanteEnum.Emitente).FirstOrDefault();
             var idLojaEmitente = participanteEmitente.IdLoja.GetValueOrDefault(0);
@@ -58,7 +58,7 @@ namespace Glass.Data.Handlers
             // Parâmetros para o cabeçalho/rodapé do relatório
             lstParam.Add(new ReportParameter("CodigoBarras", Utils.GetUrlSite(context) +
                 "/Handlers/Damdfe.ashx?IdMDFe=" + idMDFe + "&isCodigoBarras=true"));
-            lstParam.Add(new ReportParameter("Producao", (damdfe.TipoAmbiente == (int)Glass.Data.MDFeUtils.ConfigMDFe.TipoAmbienteMDFe.Producao && 
+            lstParam.Add(new ReportParameter("Producao", (damdfe.TipoAmbiente == (int)Glass.Data.MDFeUtils.ConfigMDFe.TipoAmbienteMDFe.Producao &&
                 mdfe.Situacao != Model.SituacaoEnum.Cancelado && !preVisualizar).ToString().ToLower()));
             // Define se o MDF-e foi emitida em contingência
             lstParam.Add(new ReportParameter("Contingencia", (mdfe.TipoEmissao == Model.TipoEmissao.Contingencia).ToString().ToLower()));

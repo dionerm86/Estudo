@@ -32,7 +32,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
             var parceiro = Request["Parceiro"] == "true" ? true : false;
 
-            List<ProjetoModelo> lstModelos = maisUsados ? ProjetoModeloDAO.Instance.ObtemMaisUsadosCliente(OrcamentoDAO.Instance.ObtemIdCliente(Request["idProjeto"].StrParaUint()).GetValueOrDefault(0), 21) :
+            List<ProjetoModelo> lstModelos = maisUsados ? ProjetoModeloDAO.Instance.ObtemMaisUsadosCliente((uint)OrcamentoDAO.Instance.ObterIdCliente(null, Request["idProjeto"].StrParaInt()), 21) :
                ProjetoModeloDAO.Instance.GetList(txtCodigo.Text, txtDescricao.Text, idGrupoModelo);
             
             Unit largModelo = new Unit("160px");

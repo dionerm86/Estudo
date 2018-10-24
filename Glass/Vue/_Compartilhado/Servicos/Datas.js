@@ -20,13 +20,8 @@ Servicos.Datas = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obter: function (filtro, pagina, numeroRegistros, ordenacao) {
-        filtro = filtro || {};
-        filtro.pagina = pagina;
-        filtro.numeroRegistros = numeroRegistros;
-        filtro.ordenacao = ordenacao;
-
         return http().get(API + 'feriados', {
-          params: filtro
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
 

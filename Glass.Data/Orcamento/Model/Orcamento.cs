@@ -402,6 +402,9 @@ namespace Glass.Data.Model
 
         #region Propriedades Estendidas
 
+        [PersistenceProperty("CliRevenda", DirectionParameter.InputOptional)]
+        public bool CliRevenda { get; set; }
+
         private string _nomeFuncionario;
 
         [PersistenceProperty("NOMEFUNCIONARIO",DirectionParameter.InputOptional)]
@@ -559,6 +562,9 @@ namespace Glass.Data.Model
                
         [PersistenceProperty("ObsNfe", DirectionParameter.InputOptional)]
         public string ObsNfe { get; set; }
+
+        [PersistenceProperty("VendedorCliente", DirectionParameter.InputOptional)]
+        public string VendedorCliente { get; set; }
 
         #endregion
 
@@ -753,8 +759,8 @@ namespace Glass.Data.Model
         {
             get
             {
-                return OrcamentoDAO.Instance.GetDescontoOrcamento(IdOrcamento) +
-                    (_somarDescontoProdutosTotal ? OrcamentoDAO.Instance.GetDescontoProdutos(IdOrcamento) : 0);
+                return OrcamentoDAO.Instance.ObterDescontoOrcamento(null, (int)IdOrcamento) +
+                    (_somarDescontoProdutosTotal ? OrcamentoDAO.Instance.ObterDescontoProdutos(null, (int)IdOrcamento) : 0);
             }
         }
 
@@ -791,29 +797,29 @@ namespace Glass.Data.Model
             get
             {
                 return GetTextoPerc(2,
-                    OrcamentoDAO.Instance.GetAcrescimoOrcamento(IdOrcamento) +
-                    OrcamentoDAO.Instance.GetAcrescimoProdutos(IdOrcamento), TotalSemAcrescimo, 0);
+                    OrcamentoDAO.Instance.ObterAcrescimoOrcamento(null, (int)IdOrcamento) +
+                    OrcamentoDAO.Instance.ObterAcrescimoProdutos(null, (int)IdOrcamento), TotalSemAcrescimo, 0);
             }
         }
 
         public decimal TotalSemDesconto
         {
-            get { return OrcamentoDAO.Instance.GetTotalSemDesconto(IdOrcamento, Total); }
+            get { return OrcamentoDAO.Instance.ObterTotalSemDesconto(null, (int)IdOrcamento, Total); }
         }
 
         public decimal TotalSemAcrescimo
         {
-            get { return OrcamentoDAO.Instance.GetTotalSemAcrescimo(IdOrcamento, Total); }
+            get { return OrcamentoDAO.Instance.ObterTotalSemAcrescimo(null, (int)IdOrcamento, Total); }
         }
 
         public decimal TotalSemDescontoETaxaPrazo
         {
-            get { return OrcamentoDAO.Instance.GetTotalSemDescontoETaxaPrazo(IdOrcamento, Total); }
+            get { return OrcamentoDAO.Instance.ObterTotalSemDescontoETaxaPrazo(null, (int)IdOrcamento, Total); }
         }
 
         public decimal TotalBruto
         {
-            get { return OrcamentoDAO.Instance.GetTotalBruto(IdOrcamento); }
+            get { return OrcamentoDAO.Instance.ObterTotalBruto(null, (int)IdOrcamento); }
         }
 
         public string EnderecoLoja
@@ -948,7 +954,7 @@ namespace Glass.Data.Model
                 {
                     ambientes = new DadosAmbienteDTO(
                         this,
-                        () => ProdutosOrcamentoDAO.Instance.GetByOrcamento(IdOrcamento, false)
+                        () => ProdutosOrcamentoDAO.Instance.ObterProdutosAmbienteOrcamento(null, (int)IdOrcamento)
                     );
                 }
 

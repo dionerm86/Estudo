@@ -24,15 +24,7 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.VendedorPodeAlterarOrcamentoQualquerLoja); }
         }
-
-        /// <summary>
-        /// Define se a empresa trabalha com o ambiente no orçamento.
-        /// </summary>
-        public static bool AmbienteOrcamento
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AmbienteOrcamento); }
-        }
-
+        
         /// <summary>
         /// Indica se o orçamento gera medição definitiva.
         /// </summary>
