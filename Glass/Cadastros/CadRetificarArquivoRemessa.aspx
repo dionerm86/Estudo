@@ -24,11 +24,6 @@
             FindControl("txtNome", "input").value = retorno[1];
         }
 
-        function onChecked(control, recebida) {
-            if (recebida == true)
-                control.checked = true;
-        }
-
     </script>
 
     <table>
@@ -81,7 +76,7 @@
                                 <Columns>
                                     <asp:TemplateField>
                                         <ItemTemplate>
-                                            <asp:CheckBox ID="chkSel" runat="server" Checked="True" onclick='<%# "onChecked(this, " + Eval("Recebida").ToString().ToLower() + ");" %>' />
+                                            <asp:CheckBox ID="chkSel" runat="server" Checked="True" />
                                             <asp:HiddenField ID="hdfIdContaR" runat="server" Value='<%# Eval("IdContaR") %>' />
                                         </ItemTemplate>
                                         <ItemStyle Wrap="False" />
