@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using GDA;
@@ -3492,7 +3492,7 @@ namespace Glass.Data.DAL
                 /* Chamado 46018.
                  * Caso o estoque do produto tenha que ser baixado através de um volume e ele já tiver sido expedido, não verifica o estoque dele.
                  * A configuração UsarControleOrdemCarga é utilizada somente para constatar que não serão permitidas liberações parciais. */
-                if (OrdemCargaConfig.UsarControleOrdemCarga && !naoVolume && ProdutosPedidoDAO.Instance.ObtemQtdSaida(idsProdutosPedido[i]) == qtdeLiberar[i])
+                if (OrdemCargaConfig.UsarControleOrdemCarga && !naoVolume && ProdutosPedidoDAO.Instance.ObterQtdSaida(session, idsProdutosPedido[i]) == qtdeLiberar[i])
                     continue;
 
                 int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)idProd);
