@@ -22,8 +22,8 @@ namespace Glass.API.Backend.Controllers.PlanosConta.V1.GruposConta
         /// <returns>Uma lista JSON com os grupos de conta encontrados.</returns>
         [HttpGet]
         [Route("filtro")]
-        [SwaggerResponse(200, "grupos de conta encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "grupos de conta não encontrados.")]
+        [SwaggerResponse(200, "Grupos de conta encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Grupos de conta não encontrados.")]
         public IHttpActionResult ObterGruposContaParaFiltro()
         {
             using (var sessao = new GDATransaction())
