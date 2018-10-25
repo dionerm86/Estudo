@@ -21,8 +21,8 @@ namespace Glass.Data.wsHNFeRetAutorizacao {
     using System.Xml.Serialization;
     using System.ComponentModel;
     using NFeUtils;
-    
-    
+
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.3056.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]

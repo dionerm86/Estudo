@@ -23,10 +23,10 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Collections.Generic.List<Glass.Integracao.Khan.KhanPedidoServiceReference.ItemPedido> ItensField;
+        private Glass.Integracao.Khan.KhanPedidoServiceReference.ItemPedido[] ItensField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Collections.Generic.List<Glass.Integracao.Khan.KhanPedidoServiceReference.ParcelaPedido> ParcelasField;
+        private Glass.Integracao.Khan.KhanPedidoServiceReference.ParcelaPedido[] ParcelasField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int QtdItemField;
@@ -213,7 +213,7 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        internal System.Collections.Generic.List<Glass.Integracao.Khan.KhanPedidoServiceReference.ItemPedido> Itens {
+        internal Glass.Integracao.Khan.KhanPedidoServiceReference.ItemPedido[] Itens {
             get {
                 return this.ItensField;
             }
@@ -226,7 +226,7 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        internal System.Collections.Generic.List<Glass.Integracao.Khan.KhanPedidoServiceReference.ParcelaPedido> Parcelas {
+        internal Glass.Integracao.Khan.KhanPedidoServiceReference.ParcelaPedido[] Parcelas {
             get {
                 return this.ParcelasField;
             }
