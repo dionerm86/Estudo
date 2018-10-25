@@ -595,16 +595,16 @@ namespace Glass.Data.DAL
         private string SqlList(uint idPagto, uint idCompra, uint idFornec, string nomeFornec, string dataIni, string dataFim, 
             float valorInicial, float valorFinal, int situacao, uint numeroNfe, uint idCustoFixo, uint idImpostoServ, string obs, bool selecionar)
         {
-            string campos = selecionar ? @"p.*, func.Nome as NomeFuncPagto, Coalesce(forn.NomeFantasia, forn.RazaoSocial) as NomeFornec, 
+            string campos = selecionar ? $@"p.*, func.Nome as NomeFuncPagto, Coalesce(forn.NomeFantasia, forn.RazaoSocial) as NomeFornec, 
                 Concat(cb.Nome, ' Agência: ', cb.Agencia, ' Conta: ', cb.Conta) as DescrContaBanco, 
-                group_concat(concat(fp.descricao, if(pp.idAntecipFornec is not null, concat(': ', pp.idAntecipFornec), ''), 
+                group_concat(concat(if(fp.idFormaPagto <> {(int)Pagto.FormaPagto.Deposito}, fp.descricao, 'Pagto. Bancário'), if(pp.idAntecipFornec is not null, concat(': ', pp.idAntecipFornec), ''), 
                 if(cb.idContaBanco is not null, Concat(' (Banco: ', cb.Nome, ' Agência: ', cb.Agencia, ' Conta: ', 
                 cb.Conta, ')'), ''), if(length(coalesce(pp.numBoleto,''))>0, concat(' Num. ', pp.numBoleto), ''), if(pp.dataPagto is not null, 
                 concat(' Data: ', date_format(pp.dataPagto, '%d/%m/%Y')), '')) separator ', ') as descrFormaPagto, 
                 cast(group_concat(pp.valorPagto separator ';') as char) as valoresPagos" : "Count(*)";
 
-            string sql = @"
-                Select " + campos + @" 
+            string sql = $@"
+                Select {campos}
                 From pagto p 
                     Left Join pagto_pagto pp On (p.idPagto=pp.idPagto)
                     Left Join formapagto fp On (pp.idFormaPagto=fp.idFormaPagto)
@@ -614,47 +614,75 @@ namespace Glass.Data.DAL
                 Where 1";
 
             if (idPagto > 0)
-                sql += " And p.idPagto=" + idPagto;
+            {
+                sql += $" And p.idPagto= {idPagto} ";
+            }
 
             if (idFornec > 0)
-                sql += " And p.IdPagto In (Select idPagto From contas_pagar Where idFornec=" + idFornec + ")";
-            else if (!String.IsNullOrEmpty(nomeFornec))
+            {
+                sql += $" And p.IdPagto In (Select idPagto From contas_pagar Where idFornec= {idFornec})";
+            }
+            else if (!string.IsNullOrEmpty(nomeFornec))
+            {
                 sql += @" And p.IdPagto In (Select cp.idPagto From contas_pagar cp 
                     Inner Join fornecedor fn On (cp.idFornec=fn.idFornec) 
                     Where fn.NomeFantasia Like ?nomeFornec Or fn.RazaoSocial Like ?nomeFornec)";
+            }
 
             if (idCompra > 0)
-                sql += " And p.IdPagto In (Select idPagto From contas_pagar Where idCompra=" + idCompra + ")";
+            {
+                sql += $" And p.IdPagto In (Select idPagto From contas_pagar Where idCompra= {idCompra})";
+            }
 
-            if (!String.IsNullOrEmpty(dataIni))
+            if (!string.IsNullOrEmpty(dataIni))
+            {
                 sql += " And p.DataPagto>=?dataIni";
+            }
 
-            if (!String.IsNullOrEmpty(dataFim))
+            if (!string.IsNullOrEmpty(dataFim))
+            {
                 sql += " And p.DataPagto<=?dataFim";
+            }
 
             if (valorInicial > 0)
-                sql += " And p.valorPago>=" + valorInicial.ToString().Replace(',', '.');
+            {
+                sql += $" And p.valorPago>= {valorInicial.ToString().Replace(',', '.')}";
+            }
 
             if (valorFinal > 0)
-                sql += " And p.valorPago<=" + valorFinal.ToString().Replace(',', '.');
+            {
+                sql += $" And p.valorPago<= {valorFinal.ToString().Replace(',', '.')}";
+            }
 
             if (situacao > 0)
-                sql += " And p.situacao=" + situacao;
+            {
+                sql += $" And p.situacao= {situacao}";
+            }
 
             if (numeroNfe > 0)
-                sql += " And p.idPagto In (Select idPagto From contas_pagar Where idNf In (Select idNf From nota_fiscal Where numeroNfe=" + numeroNfe + "))";
+            {
+                sql += $" And p.idPagto In (Select idPagto From contas_pagar Where idNf In (Select idNf From nota_fiscal Where numeroNfe= {numeroNfe}))";
+            }
 
             if (idCustoFixo > 0)
-                sql += " And p.idPagto in (Select idPagto from contas_pagar Where IdCustoFixo=" + idCustoFixo + ")";
+            {
+                sql += $" And p.idPagto in (Select idPagto from contas_pagar Where IdCustoFixo= {idCustoFixo})";
+            }
 
             if (idImpostoServ > 0)
-                sql += " And p.idPagto in (Select idPagto from contas_pagar Where idImpostoServ=" + idImpostoServ + ")";
+            {
+                sql += $" And p.idPagto in (Select idPagto from contas_pagar Where idImpostoServ= {idImpostoServ})";
+            }
 
-            if (!String.IsNullOrEmpty(obs))
+            if (!string.IsNullOrEmpty(obs))
+            {
                 sql += " And p.obs Like ?obs";
+            }
 
             if (selecionar)
+            {
                 sql += " group by p.idPagto";
+            }
 
             return sql;
         }
