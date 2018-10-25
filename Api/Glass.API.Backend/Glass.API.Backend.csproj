@@ -265,6 +265,9 @@
     <Compile Include="Controllers\PlanosConta\V1\PatchPlanosContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\PostPlanosContaController.cs" />
     <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\ClassificacoesRoteiro\DeleteClassificacoesRoteiroController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\ClassificacoesRoteiro\GetClassificacoesRoteiroController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\ClassificacoesRoteiro\ClassificacoesRoteiroController.cs" />
     <Compile Include="Controllers\Producao\V1\TiposPerda\DeleteTiposPerdaController.cs" />
     <Compile Include="Controllers\Producao\V1\TiposPerda\GetTiposPerdaController.cs" />
     <Compile Include="Controllers\Producao\V1\TiposPerda\PatchTiposPerdaController.cs" />
@@ -444,6 +447,7 @@
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoSvgProjetoStrategy.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
+    <Compile Include="Helper\Producao\Roteiros\ClassificacoesRoteiro\TraducaoOrdenacaoListaClassificacoesRoteiro.cs" />
     <Compile Include="Helper\Producao\Setores\ConverterCadastroAtualizacaoParaSetor.cs" />
     <Compile Include="Helper\Producao\Setores\TraducaoOrdenacaoListaSetores.cs" />
     <Compile Include="Helper\Producao\TiposPerda\ConverterCadastroAtualizacaoParaTipoPerda.cs" />
@@ -533,6 +537,8 @@
     <Compile Include="Models\PlanosConta\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\PlanosConta\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\PlanosConta\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\PosicaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
