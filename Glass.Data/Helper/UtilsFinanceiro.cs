@@ -522,7 +522,7 @@ namespace Glass.Data.Helper
 
             #endregion
         }
-        
+
         /// <summary>
         /// Realiza o recebimento de todas as formas de recebimento do sistema
         /// </summary>
@@ -574,10 +574,10 @@ namespace Glass.Data.Helper
                 ValidarRecebimento(sessao, cxDiario, (int)idCliente, (int)idLoja, cartaoNaoIdentificado != null ? cartaoNaoIdentificado.Select(f => ((int?)f).GetValueOrDefault()) : new List<int>(),
                     contasBanco != null ? contasBanco.Select(f => ((int?)f).GetValueOrDefault()) : new List<int>(),
                     formasPagto != null ? formasPagto.Select(f => ((int?)f).GetValueOrDefault()) : new List<int>(), gerarCredito, juros, recebParcial, tipoReceb, totalPago, totalASerPago);
-                                
+
                 #region Cheques
 
-                // Se a forma de pagamento for cheques de terceiros, associa os mesmos ao pagamento 
+                // Se a forma de pagamento for cheques de terceiros, associa os mesmos ao pagamento
                 // e muda seus status para compensado, pode haver também cheques próprios
                 if ((ContemFormaPagto(Pagto.FormaPagto.ChequeProprio, formasPagto) || ContemFormaPagto(Pagto.FormaPagto.ChequeTerceiro, formasPagto)) &&
                     tipoReceb != TipoReceb.ChequeReapresentado && tipoReceb != TipoReceb.LiberacaoAPrazoCheque && tipoReceb != TipoReceb.ChequeProprioDevolvido)
@@ -676,7 +676,7 @@ namespace Glass.Data.Helper
                             }
 
                             #region Valida o valor de cheques com o valor dos cheques inseridos
-                            
+
                             for (var i = 0; i < formasPagto.Count(); i++)
                             {
                                 if (formasPagto[i] == (uint)Pagto.FormaPagto.ChequeProprio || formasPagto[i] == (uint)Pagto.FormaPagto.ChequeTerceiro)
@@ -785,7 +785,7 @@ namespace Glass.Data.Helper
                                     throw new Exception("Falha ao inserir cheque próprio.");
                                 }
 
-                                // Gera movimentação no caixa geral de cada cheque, mas sem alterar o saldo, 
+                                // Gera movimentação no caixa geral de cada cheque, mas sem alterar o saldo,
                                 // a forma de pagto deve ser 0 (zero), para que não atrapalhe o cálculo feito no caixa geral
                                 CaixaGeralDAO.Instance.MovCxPagto(sessao, 0, (int?)idAcertoCheque, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoChequeProprio), 2,
                                     cheque.Valor, 0, null, cheque.Obs, 0, false, null);
@@ -898,7 +898,7 @@ namespace Glass.Data.Helper
                         novaConta.IdLoja = idLoja;
                         novaConta.IdCartaoNaoIdentificado = (int)idCartaoNaoIdentificado;
                     }
-                   
+
                     novaConta.IsParcelaCartao = true;
                     novaConta.IdContaRCartao = conta != null && conta.IdContaR > 0 ? conta.IdContaR : (uint?)null;
                     novaConta.IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null;
@@ -949,7 +949,7 @@ namespace Glass.Data.Helper
                                 novaConta.NumParcMax = (int)numParcCartoes[i];
                                 novaConta.IdContaBanco = contasBanco[i] > 0 ? (uint?)contasBanco[i] : null;
                                 novaConta.TipoRecebimentoParcCartao = (int)tiposCartao[i];
-                                
+
                                 uint idParcelaCartao = ContasReceberDAO.Instance.Insert(sessao, novaConta);
 
                                 if (idParcelaCartao == 0)
@@ -970,7 +970,7 @@ namespace Glass.Data.Helper
                 {
                     return retorno;
                 }
-                
+
                 // Se o funcionário for Caixa Diário, ou tiver permissão de caixa diário e tiver pagando conta através deste menu
                 if (isCaixaDiario && !recebApenasCxGeral)
                 {
@@ -1000,7 +1000,7 @@ namespace Glass.Data.Helper
                             formasPagto[i] == (uint)Pagto.FormaPagto.Construcard;
 
                         //Se for depósito não identificado, vincula o mesmo ao qu esta sendo recebeido e altera a situação do mesmo
-                        //para em uso. 
+                        //para em uso.
                         string obs = string.Empty;
                         if (formasPagto[i] == (uint)Pagto.FormaPagto.DepositoNaoIdentificado)
                         {
@@ -1219,7 +1219,7 @@ namespace Glass.Data.Helper
                                             ContaBancoDAO.Instance.MovContaDevolucaoPagto(sessao, contasBanco[i], item.Value.Item1, (int)UserInfo.GetUserInfo.IdLoja, idDevolucaoPagto, idCliente, 2, valorMov, dataMovimentacaoBancaria) : 0;
 
                                         /* Chamado 48332.
-                                         * Caso o cartão não identificado seja de débito e o sistema não esteja configurado para 
+                                         * Caso o cartão não identificado seja de débito e o sistema não esteja configurado para
                                          * gerar parcela de cartão de débito, a movimentação na conta bancária deve ser feita. */
                                         if (idCartaoNaoIdentificado > 0 && idMovBanco == 0 && tipoReceb == TipoReceb.CartaoNaoIdentificado &&
                                             IsFormaPagtoCartaoDebito(formasPagto[i], tiposCartao[i]) && !FinanceiroConfig.Cartao.QuitarParcCartaoDebito)
@@ -1268,7 +1268,7 @@ namespace Glass.Data.Helper
                                                     ContaBancoDAO.Instance.MovContaDevolucaoPagto(sessao, contasBanco[i], idContaAssociar, (int)UserInfo.GetUserInfo.IdLoja, idDevolucaoPagto, idCliente, 1, valorJuros, dataMovimentacaoBancaria) : 0;
 
                                             /* Chamado 48332.
-                                             * Caso o cartão não identificado seja de débito e o sistema não esteja configurado para 
+                                             * Caso o cartão não identificado seja de débito e o sistema não esteja configurado para
                                              * gerar parcela de cartão de débito, a movimentação na conta bancária deve ser feita. */
                                             if (idCartaoNaoIdentificado > 0 && idMovBanco == 0 && tipoReceb == TipoReceb.CartaoNaoIdentificado &&
                                                 IsFormaPagtoCartaoDebito(formasPagto[i], tiposCartao[i]) && !FinanceiroConfig.Cartao.QuitarParcCartaoDebito)
@@ -1373,7 +1373,7 @@ namespace Glass.Data.Helper
                         if (creditoUtilizado > 0 && creditoUtilizado > ClienteDAO.Instance.GetCredito(sessao, idCliente))
                             throw new Exception("O cliente não possui o crédito informado para uso neste recebimento.");
 
-                        // Se houver algum crédito do cliente sendo utilizado, 
+                        // Se houver algum crédito do cliente sendo utilizado,
                         // gera movimentação de entrada no caixa diário de pagamento com crédito
                         if (creditoUtilizado > 0)
                         {
@@ -1411,7 +1411,7 @@ namespace Glass.Data.Helper
                             retorno.creditoDebitado = true;
                         }
 
-                        // Se o valor pago for superior ao valor da conta, 
+                        // Se o valor pago for superior ao valor da conta,
                         // gera movimentação de saída no caixa diário de geração de crédito
                         if (gerarCredito && (totalPago - totalASerPago) > 0)
                         {
@@ -1420,9 +1420,9 @@ namespace Glass.Data.Helper
                             if (tipoReceb != TipoReceb.ChequeDevolvido && tipoReceb != TipoReceb.ChequeProprioDevolvido)
                                 retorno.creditoGerado -= juros;
 
-                            // 07/11/2012 A única situação que o total pago será igual ao crédito gerado é na liberação, caso o pedido tenha sido 
+                            // 07/11/2012 A única situação que o total pago será igual ao crédito gerado é na liberação, caso o pedido tenha sido
                             // pago antecipadamente fazendo com que o valor da liberação fique zerado ou negativo, esta condição deve ficar
-                            // exatamente assim para evitar um erro que voltou a ocorrer de gerar crédito do total pago e não do 
+                            // exatamente assim para evitar um erro que voltou a ocorrer de gerar crédito do total pago e não do
                             // totalpago-totalaserpago, o qual não foi possível reproduzir
                             if (totalPago == retorno.creditoGerado &&
                                 (totalASerPago > 0 || (tipoReceb != TipoReceb.LiberacaoAVista && tipoReceb != TipoReceb.LiberacaoAPrazoCheque)))
@@ -1504,7 +1504,7 @@ namespace Glass.Data.Helper
                             formasPagto[i] == (uint)Pagto.FormaPagto.Construcard);
 
                         //Se for depósito não identificado, vincula o mesmo ao que esta sendo recebeido e altera a situação do mesmo
-                        //para em uso. 
+                        //para em uso.
                         string obs = string.Empty;
                         if (formasPagto[i] == (uint)Pagto.FormaPagto.DepositoNaoIdentificado)
                         {
@@ -1636,8 +1636,8 @@ namespace Glass.Data.Helper
                         var naoGerarMovCaixaCNI = formasPagto[i] == (uint)Pagto.FormaPagto.CartaoNaoIdentificado && !FinanceiroConfig.Cartao.CartaoMovimentaCxGeralDiario;
 
                         // Registra recebimento no caixa geral
-                        // Se a empresa trabalha com quitamento de cartao de credito posterior e esta movimentação 
-                        // for cartão de crédito, não gera movimentação no caixa geral, a menos que seja WebGlass Lite ou 
+                        // Se a empresa trabalha com quitamento de cartao de credito posterior e esta movimentação
+                        // for cartão de crédito, não gera movimentação no caixa geral, a menos que seja WebGlass Lite ou
                         // que esteja no config para movimentar o caixa
                         if (((tipoReceb != TipoReceb.ChequeReapresentado && !parcelaCartaoGerada[i]) ||
                             FinanceiroConfig.Cartao.CartaoMovimentaCxGeralDiario) && !naoGerarMovCaixaCNI)
@@ -1777,7 +1777,7 @@ namespace Glass.Data.Helper
                                                 idDevolucaoPagto, idCliente, 2, valorMov, dataMovimentacaoBancaria) : 0;
 
                                         /* Chamado 48332.
-                                         * Caso o cartão não identificado seja de débito e o sistema não esteja configurado para 
+                                         * Caso o cartão não identificado seja de débito e o sistema não esteja configurado para
                                          * gerar parcela de cartão de débito, a movimentação na conta bancária deve ser feita. */
                                         if (idCartaoNaoIdentificado > 0 && idMovBanco == 0 && tipoReceb == TipoReceb.CartaoNaoIdentificado &&
                                             IsFormaPagtoCartaoDebito(formasPagto[i], tiposCartao[i]) && !FinanceiroConfig.Cartao.QuitarParcCartaoDebito)
@@ -1837,7 +1837,7 @@ namespace Glass.Data.Helper
                                                 idDevolucaoPagto, idCliente, 1, valorJuros, dataMovimentacaoBancaria) : 0;
 
                                             /* Chamado 48332.
-                                             * Caso o cartão não identificado seja de débito e o sistema não esteja configurado para 
+                                             * Caso o cartão não identificado seja de débito e o sistema não esteja configurado para
                                              * gerar parcela de cartão de débito, a movimentação na conta bancária deve ser feita. */
                                             if (idCartaoNaoIdentificado > 0 && idMovBanco == 0 && tipoReceb == TipoReceb.CartaoNaoIdentificado &&
                                                 IsFormaPagtoCartaoDebito(formasPagto[i], tiposCartao[i]) && !FinanceiroConfig.Cartao.QuitarParcCartaoDebito)
@@ -1988,7 +1988,7 @@ namespace Glass.Data.Helper
                         if (creditoUtilizado > 0 && creditoUtilizado > ClienteDAO.Instance.GetCredito(sessao, idCliente))
                             throw new Exception("O cliente não possui o crédito informado para uso neste recebimento.");
 
-                        // Gera movimentação de entrada no caixa diário de pagamento com crédito, 
+                        // Gera movimentação de entrada no caixa diário de pagamento com crédito,
                         // se houver algum crédito do cliente sendo utilizado
                         if (creditoUtilizado > 0)
                         {
@@ -2029,7 +2029,7 @@ namespace Glass.Data.Helper
                             retorno.creditoDebitado = true;
                         }
 
-                        // Gera movimentação de entrada no caixa diário de geração de crédito, 
+                        // Gera movimentação de entrada no caixa diário de geração de crédito,
                         // se o valor pago for superior ao valor do pedido
                         if (gerarCredito && (totalPago - totalASerPago) > 0)
                         {
@@ -2038,9 +2038,9 @@ namespace Glass.Data.Helper
                             if (tipoReceb != TipoReceb.ChequeDevolvido && tipoReceb != TipoReceb.ChequeProprioDevolvido)
                                 retorno.creditoGerado -= Math.Round(juros, 2);
 
-                            // 07/11/2012 A única situação que o total pago será igual ao crédito gerado é na liberação, caso o pedido tenha sido 
+                            // 07/11/2012 A única situação que o total pago será igual ao crédito gerado é na liberação, caso o pedido tenha sido
                             // pago antecipadamente fazendo com que o valor da liberação fique zerado ou negativo, esta condição deve ficar
-                            // exatamente assim para evitar um erro que voltou a ocorrer de gerar crédito do total pago e não do 
+                            // exatamente assim para evitar um erro que voltou a ocorrer de gerar crédito do total pago e não do
                             // totalpago-totalaserpago, o qual não foi possível reproduzir
                             if (totalPago == retorno.creditoGerado &&
                                 (totalASerPago > 0 || (tipoReceb != TipoReceb.LiberacaoAVista && tipoReceb != TipoReceb.LiberacaoAPrazoCheque)))
@@ -2096,6 +2096,55 @@ namespace Glass.Data.Helper
             }
 
             return retorno;
+        }
+
+        /// <summary>
+        /// Gera crédito para o cliente referente ao percentual de bonificação.
+        /// </summary>
+        /// <param name="session">Transação.</param>
+        /// <param name="idCliente">Identificador do cliente.</param>
+        /// <param name="idLiberarPedido">Identificador da Liberação.</param>
+        /// <param name="valorBaseGerar">Valor base do crédito a ser gerado.</param>
+        /// <param name="cxDiario">Indicador se o crédito será feito no caixa diário.</param>
+        public static void GerarCréditoBonificacaoCliente(GDASession session, uint idCliente, uint idLiberarPedido, decimal valorBaseGerar, bool cxDiario)
+        {
+            decimal valorPercentualBonificacao = ClienteDAO.Instance.GetPercentualBonificacao(session, idCliente);
+            var creditoGerado = valorBaseGerar * (valorPercentualBonificacao / 100);
+            bool isCaixaDiario = VerificarRecebimentoCaixaDiario(cxDiario);
+
+            if (isCaixaDiario)
+            {
+                CaixaDiarioDAO.Instance.MovCxLiberarPedido(
+                    session,
+                    UserInfo.GetUserInfo.IdLoja,
+                    idCliente,
+                    idLiberarPedido,
+                    1,
+                    creditoGerado,
+                    0,
+                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoVendaGerado),
+                    null,
+                    null,
+                    false);
+            }
+            else
+            {
+                CaixaGeralDAO.Instance.MovCxLiberarPedido(
+                    session,
+                    idLiberarPedido,
+                    idCliente,
+                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoVendaGerado),
+                    1,
+                    creditoGerado,
+                    0,
+                    null,
+                    false,
+                    null,
+                    null);
+            }
+
+            // Credita crédito do cliente
+            ClienteDAO.Instance.CreditaCredito(session, idCliente, creditoGerado);
         }
 
         #endregion
@@ -2234,10 +2283,10 @@ namespace Glass.Data.Helper
                                 // Soma ou subtrai crédito do cliente
                                 CreditoCliente(sessao, obra.IdCliente, cx.IdConta, cx.ValorMov);
 
-                                // Estorna valor no caixa geral                    
+                                // Estorna valor no caixa geral
                                 CaixaGeralDAO.Instance.MovCxObra(sessao, obra.IdObra, obra.IdCliente, UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, cx.Juros, null, mudarSaldo, null, null,
                                     contadorDataUnica++);
-                            }                          
+                            }
                             #endregion
 
                             //Gera o Credito para o cliente
@@ -2309,7 +2358,7 @@ namespace Glass.Data.Helper
                 foreach (CaixaGeral cx in cxGeral)
                 {
                     // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente,
                     // por isso, para o loop neste momento
                     if (cx.TipoMov == 2)
                         break;
@@ -2319,7 +2368,7 @@ namespace Glass.Data.Helper
                     // Soma ou subtrai crédito do cliente
                     CreditoCliente(sessao, pedido.IdCli, cx.IdConta, cx.ValorMov);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaGeralDAO.Instance.MovCxPedido(sessao, pedido.IdPedido, pedido.IdCli,
                         UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null, contadorDataUnica++);
                 }
@@ -2336,7 +2385,7 @@ namespace Glass.Data.Helper
                 foreach (MovBanco m in lstMovBanco)
                 {
                     // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente,
                     // por isso, para o loop neste momento
                     // Se for juros de venda cartão, estorna
                     if (m.TipoMov == 2)
@@ -2449,7 +2498,7 @@ namespace Glass.Data.Helper
                     // Soma ou subtrai crédito do cliente
                     CreditoCliente(sessao, liberacao.IdCliente, cx.IdConta, cx.ValorMov);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, cx.IdCliente,
                         UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null, contadorDataUnica++);
                 }
@@ -2462,7 +2511,7 @@ namespace Glass.Data.Helper
                     // Soma ou subtrai crédito do cliente
                     CreditoCliente(sessao, liberacao.IdCliente, cx.IdConta, cx.ValorMov);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, cx.IdCliente,
                         UtilsPlanoConta.EstornoSinalPedido(cx.IdConta), 2, cx.ValorMov, 0, null, mudarSaldo, null, null, contadorDataUnica++);
                 }
@@ -2479,7 +2528,7 @@ namespace Glass.Data.Helper
                 foreach (MovBanco m in lstMovBanco)
                 {
                     // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente,
                     // por isso, para o loop neste momento
                     // Se for juros de venda cartão, estorna
                     if (m.TipoMov == 2)
@@ -2502,7 +2551,7 @@ namespace Glass.Data.Helper
                 foreach (MovBanco m in MovBancoDAO.Instance.GetByLiberacao(sessao, liberacao.IdLiberarPedido, 2))
                 {
                     // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente,
                     // por isso, para o loop neste momento
                     // Se for juros de venda cartão, estorna
                     if (m.TipoMov == 2)
@@ -2606,13 +2655,13 @@ namespace Glass.Data.Helper
                 foreach (MovBanco m in lstMovBanco)
                 {
                     // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente,
                     // por isso, para o loop neste momento
                     if (m.TipoMov == 2)
                     {
                         if (dataEstornoBanco == default(DateTime) && (m.IdConta == FinanceiroConfig.PlanoContaJurosCartao ||
                             m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.JurosVendaConstrucard)))
-                        { 
+                        {
                             ExcluiMovBanco(sessao, m.IdMovBanco);
                         }
                         else
@@ -2680,7 +2729,7 @@ namespace Glass.Data.Helper
                 foreach (CaixaGeral cx in cxGeral)
                 {
                     // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente,
                     // por isso, para o loop neste momento
                     if (cx.TipoMov == 2)
                     {
@@ -2704,7 +2753,7 @@ namespace Glass.Data.Helper
                     // Soma ou subtrai crédito do cliente
                     CreditoCliente(sessao, contaRec.IdCliente, cx.IdConta, cx.ValorMov);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaGeralDAO.Instance.MovCxContaRec(sessao, contaRec.IdPedido, contaRec.IdLiberarPedido, contaRec.IdContaR,
                         contaRec.IdCliente, UtilsPlanoConta.EstornoAPrazo(cx.IdConta), 2, cx.ValorMov, cx.Juros, null, cx.FormaSaida,
                         mudarSaldo, null, null, contadorDataUnica++);
@@ -2723,7 +2772,7 @@ namespace Glass.Data.Helper
                 foreach (MovBanco m in lstMovBanco)
                 {
                     // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                    // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente,
                     // por isso, para o loop neste momento
                     if (m.TipoMov == 2)
                     {
@@ -2832,7 +2881,7 @@ namespace Glass.Data.Helper
                     // Soma ou subtrai crédito do cliente
                     CreditoCliente(sessao, acerto.IdCli, cx.IdConta, cx.ValorMov);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaGeralDAO.Instance.MovCxAcerto(sessao, acerto.IdAcerto, acerto.IdCli,
                         UtilsPlanoConta.EstornoAPrazo(cx.IdConta),
                         2, cx.ValorMov, cx.Juros, null, cx.FormaSaida, mudarSaldo, null, null, contadorDataUnica++);
@@ -2953,7 +3002,7 @@ namespace Glass.Data.Helper
                     if (acertoCheque.IdCliente > 0)
                         CreditoCliente(sessao, acertoCheque.IdCliente.Value, cx.IdConta, cx.Valor);
 
-                    // Estorna valor no caixa diario                    
+                    // Estorna valor no caixa diario
                     uint idConta = 0;
 
                     try
@@ -3000,7 +3049,7 @@ namespace Glass.Data.Helper
                     if (acertoCheque.IdCliente > 0)
                         CreditoCliente(sessao, acertoCheque.IdCliente.Value, cx.IdConta, cx.ValorMov);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     uint idConta = 0;
 
                     try
@@ -3187,7 +3236,7 @@ namespace Glass.Data.Helper
                     if (acertoCheque.IdCliente > 0)
                         CreditoCliente(sessao, acertoCheque.IdCliente.Value, cx.IdConta, cx.ValorMov);
 
-                    // Estorna valor no caixa geral            
+                    // Estorna valor no caixa geral
                     if (cx.IdConta != UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado))
                     {
                         uint idConta = 0;
@@ -3297,7 +3346,7 @@ namespace Glass.Data.Helper
                     // Soma ou subtrai crédito do cliente
                     CreditoCliente(sessao, obra.IdCliente, cx.IdConta, cx.ValorMov);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaGeralDAO.Instance.MovCxObra(sessao, obra.IdObra, obra.IdCliente, UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, cx.Juros, null, mudarSaldo, null, null,
                         contadorDataUnica++);
                 }
@@ -3400,7 +3449,7 @@ namespace Glass.Data.Helper
                     // Soma ou subtrai crédito do cliente
                     CreditoCliente(sessao, trocaDevolucao.IdCliente, cx.IdConta, cx.ValorMov);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaGeralDAO.Instance.MovCxTrocaDev(sessao, trocaDevolucao.IdTrocaDevolucao, trocaDevolucao.IdPedido, trocaDevolucao.IdCliente,
                         UtilsPlanoConta.EstornoAVista(cx.IdConta), 2, cx.ValorMov, cx.Juros, null, mudarSaldo, null, null);
                 }
@@ -3477,7 +3526,7 @@ namespace Glass.Data.Helper
                     // Soma ou subtrai crédito do cliente
                     CreditoCliente(sessao, devolucaoPagto.IdCliente, cx.IdConta, cx.ValorMov);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaGeralDAO.Instance.MovCxDevolucaoPagto(sessao, devolucaoPagto.IdDevolucaoPagto, devolucaoPagto.IdCliente,
                         UtilsPlanoConta.GetEstornoDevolucaoPagto(cx.IdConta), 1, cx.ValorMov, cx.Juros, null, mudarSaldo, null, null);
                 }
@@ -3502,7 +3551,7 @@ namespace Glass.Data.Helper
                     // Soma ou subtrai crédito do cliente
                     CreditoCliente(sessao, devolucaoPagto.IdCliente, cx.IdConta, cx.Valor);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaDiarioDAO.Instance.MovCxDevolucaoPagto(sessao, cx.IdLoja, devolucaoPagto.IdDevolucaoPagto, devolucaoPagto.IdCliente,
                          UtilsPlanoConta.GetEstornoDevolucaoPagto(cx.IdConta), 1, cx.Valor, cx.Juros, null, mudarSaldo, null);
                 }
@@ -3842,7 +3891,7 @@ namespace Glass.Data.Helper
             foreach (CaixaDiario c in cxDiario)
             {
                 // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente,
                 // por isso, para o loop neste momento
                 if (c.TipoMov == 2)
                 {
@@ -3878,7 +3927,7 @@ namespace Glass.Data.Helper
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(c.IdConta, true);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaGeralDAO.Instance.MovCxPedido(session, pedido.IdPedido, pedido.IdCli,
                         UtilsPlanoConta.EstornoAVista(c.IdConta), 2, c.Valor, 0, null, mudarSaldo, null, null);
 
@@ -3937,7 +3986,7 @@ namespace Glass.Data.Helper
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(c.IdConta, true);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, c.IdCliente,
                         UtilsPlanoConta.EstornoAVista(c.IdConta), 2, c.Valor, 0, null, mudarSaldo, null, null);
 
@@ -3983,7 +4032,7 @@ namespace Glass.Data.Helper
                     //Verifica se o plano de conta altera saldo no caixa geral
                     var mudarSaldo = MudarSaldo(c.IdConta, true);
 
-                    // Estorna valor no caixa geral                    
+                    // Estorna valor no caixa geral
                     CaixaGeralDAO.Instance.MovCxLiberarPedido(sessao, liberacao.IdLiberarPedido, c.IdCliente,
                         UtilsPlanoConta.EstornoSinalPedido(c.IdConta), 2, c.Valor, 0, null, mudarSaldo, null, null);
 
@@ -4005,7 +4054,7 @@ namespace Glass.Data.Helper
             foreach (CaixaDiario c in cxDiario)
             {
                 // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente,
                 // por isso, para o loop neste momento
                 if (c.TipoMov == 2)
                 {
@@ -4063,7 +4112,7 @@ namespace Glass.Data.Helper
             foreach (CaixaDiario cd in cxDiario)
             {
                 // Se a movimentação for de saída, quer dizer que movimentações anteriores à essas
-                // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente, 
+                // já foram estornadas anteriormente, uma vez que a lista está ordenada em ordem decrescente,
                 // por isso, para o loop neste momento
                 if (cd.TipoMov == 2)
                 {
@@ -4086,7 +4135,7 @@ namespace Glass.Data.Helper
                         //Verifica se o plano de conta altera saldo no caixa diário
                         var mudarSaldo = MudarSaldo(cd.IdConta, cxGeral);
 
-                        // Estorna valor no caixa diário                    
+                        // Estorna valor no caixa diário
                         CaixaDiarioDAO.Instance.MovCxContaRec(sessao, cd.IdLoja, contaRec.IdCliente, contaRec.IdPedido,
                             contaRec.IdLiberarPedido, contaRec.IdContaR, 2, cd.Valor, cd.Juros,
                             UtilsPlanoConta.EstornoAPrazo(cd.IdConta), null, cd.FormaSaida != null ? cd.FormaSaida.Value : 0, null, mudarSaldo);
@@ -4144,7 +4193,7 @@ namespace Glass.Data.Helper
                         //Verifica se o plano de conta altera saldo no caixa diário
                         var mudarSaldo = MudarSaldo(cd.IdConta, cxGeral);
 
-                        // Estorna valor no caixa diário                    
+                        // Estorna valor no caixa diário
                         CaixaDiarioDAO.Instance.MovCxAcerto(sessao, cd.IdLoja, cd.IdCliente, acerto.IdAcerto, 2,
                             cd.Valor, cd.Juros, UtilsPlanoConta.EstornoAPrazo(cd.IdConta), null, cd.FormaSaida != null ? cd.FormaSaida.Value : 0, null, mudarSaldo);
                     }
@@ -4198,7 +4247,7 @@ namespace Glass.Data.Helper
                         //Verifica se o plano de conta altera saldo no caixa diário
                         var mudarSaldo = MudarSaldo(cd.IdConta, cxGeral);
 
-                        // Estorna valor no caixa diário                    
+                        // Estorna valor no caixa diário
                         CaixaDiarioDAO.Instance.MovCxObra(sessao, cd.IdLoja, obra.IdCliente, obra.IdObra, 2,
                             cd.Valor, cd.Juros, UtilsPlanoConta.EstornoAVista(cd.IdConta), null, null, mudarSaldo, null);
                     }

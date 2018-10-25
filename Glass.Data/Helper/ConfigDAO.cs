@@ -409,7 +409,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ComissaoPorContasRecebidas);
 
             itens.Add(Config.ConfigEnum.TempoAlertaFaturamentoInoperante);
-            itens.Add(Config.ConfigEnum.PermitirLiberacaoPedidosLojasDiferentes);            
+            itens.Add(Config.ConfigEnum.PermitirLiberacaoPedidosLojasDiferentes);
 
             if (!Geral.SistemaLite)
                 itens.Add(Config.ConfigEnum.ControleCaixaDiario);
@@ -571,6 +571,7 @@ namespace Glass.Data.Helper
 
             var itens = new List<Config.ConfigEnum>();
 
+            itens.Add(Config.ConfigEnum.UsarPercentualBonificacaoCliente);
             itens.Add(Config.ConfigEnum.ApenasAdminCancelaLiberacao);
             itens.Add(Config.ConfigEnum.BloquearLiberacaoDadosPedido);
             itens.Add(Config.ConfigEnum.DescontoLiberarPedido);

@@ -1318,6 +1318,10 @@ namespace Glass.Data.DAL
 
             #endregion
 
+            var totalPedidos = PedidoDAO.Instance.GetTotalLiberado(0, idLiberarPedido.ToString());
+
+            UtilsFinanceiro.GerarCréditoBonificacaoCliente(session, liberarPedido.IdCliente, liberarPedido.IdLiberarPedido, (decimal)totalPedidos, recebimentoCaixaDiario);
+
             // Envia o e-mail.
             Email.EnviaEmailLiberacao(session, (uint)idLiberarPedido);
         }

@@ -2032,6 +2032,27 @@ namespace Glass.Global.Negocios.Entidades
             }
         }
 
+        /// <summary>
+        /// Obtém ou define o Percentual da bonificação do cliente.
+        /// </summary>
+        public decimal? PercentualBonificacao
+        {
+            get
+            {
+                return this.DataModel.PercentualBonificacao;
+            }
+
+            set
+            {
+                if (this.DataModel.PercentualBonificacao != value &&
+                    this.RaisePropertyChanging("PercentualBonificacao", value))
+                {
+                    this.DataModel.PercentualBonificacao = value;
+                    this.RaisePropertyChanged("PercentualBonificacao");
+                }
+            }
+        }
+
         #endregion
 
         #region Propriedades referenciadas/filhos

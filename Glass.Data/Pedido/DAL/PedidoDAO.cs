@@ -4540,7 +4540,7 @@ namespace Glass.Data.DAL
             string nomeCliExterno, string codRotaExterna, bool selecionar)
         {
             var campos = @"p.*, c.nomeFantasia as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja,
-                (SELECT r.codInterno FROM rota r WHERE r.idRota IN (Select rc.idRota From rota_cliente rc Where rc.idCliente=p.idCli)) As codRota, 
+                (SELECT r.codInterno FROM rota r WHERE r.idRota IN (Select rc.idRota From rota_cliente rc Where rc.idCliente=p.idCli)) As codRota,
                 CAST(SUM(pp.qtde) as SIGNED) as QuantidadePecasPedido, COALESCE(vpp.qtde, 0) as QtdePecasVolume, SUM(pp.TotM) as TotMVolume,
                 SUM(pp.peso) as PesoVolume";
 
@@ -4560,7 +4560,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN funcionario f On (p.idFunc=f.idFunc)
                     LEFT JOIN loja l On (p.IdLoja = l.IdLoja)
                     LEFT JOIN grupo_prod gp ON (prod.idGrupoProd = gp.idGrupoProd)
-                    LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd 
+                    LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd
                         AND (sgp.PermitirItemRevendaNaVenda IS NULL OR sgp.PermitirItemRevendaNaVenda = 0))
                     LEFT JOIN (
                         SELECT v1.idPedido, SUM(vpp1.qtde) AS qtde
@@ -4641,9 +4641,9 @@ namespace Glass.Data.DAL
             {
                 sql += @" AND p.IdPedido IN (
                     SELECT IdPedido
-                    FROM produtos_liberar_pedido 
+                    FROM produtos_liberar_pedido
                     WHERE IdLiberarPedido IN (
-                        SELECT IdLiberarPedido 
+                        SELECT IdLiberarPedido
                         FROM liberarpedido WHERE DataLiberacao>=?dataLibIni))";
             }
 
@@ -4651,15 +4651,15 @@ namespace Glass.Data.DAL
             {
                 sql += @" AND p.IdPedido IN (
                     SELECT IdPedido
-                    FROM produtos_liberar_pedido 
+                    FROM produtos_liberar_pedido
                     WHERE IdLiberarPedido IN (
-                        SELECT IdLiberarPedido 
+                        SELECT IdLiberarPedido
                         FROM liberarpedido WHERE DataLiberacao<=?dataLibFim))";
             }
 
             if (!string.IsNullOrEmpty(codRota))
             {
-                sql += @" And c.id_Cli IN (Select idCliente From rota_cliente Where idRota In 
+                sql += @" And c.id_Cli IN (Select idCliente From rota_cliente Where idRota In
                     (Select idRota From rota where codInterno like ?codRota))";
             }
 
@@ -16337,7 +16337,7 @@ namespace Glass.Data.DAL
             pedido.TipoPedido = orcamento.TipoOrcamento.GetValueOrDefault((int)Pedido.TipoPedidoEnum.Venda);
             pedido.ValorEntrega = orcamento.ValorEntrega;
 
-            // O if abaixo foi comentado por que ao gerar pedido de um orçamento calculado com o tipo entrega "Entrega", o pedido ao invés 
+            // O if abaixo foi comentado por que ao gerar pedido de um orçamento calculado com o tipo entrega "Entrega", o pedido ao invés
             // de pegar o valor de obra estava pegando o valor de balcão, fazendo com o valor do pedido ficasse diferente do orçamento
             /*if (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)*/
             pedido.DataEntrega = GetDataEntregaMinima(
@@ -16513,7 +16513,7 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-        
+
         #region Buscar pedidos prontos e não entregues
 
         public bool ExistemPedidosProntosNaoEntreguesPeriodo(int qtdeDias)
