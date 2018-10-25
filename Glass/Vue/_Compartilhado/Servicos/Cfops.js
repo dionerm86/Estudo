@@ -42,7 +42,7 @@ Servicos.Cfops = (function(http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterTiposCfop: function () {
-      return http().get(API + 'tiposCfop');
+      return http().get(API + 'tipos');
     },
 
     /**
@@ -65,7 +65,7 @@ Servicos.Cfops = (function(http) {
     /**
      * Altera os dados de um CFOP.
      * @param {!number} idCfop O identificador do item que será alterado.
-     * @param {!Object} grupoProduto O objeto com os dados do item a serem alterados.
+     * @param {!Object} cfop O objeto com os dados do item a serem alterados.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     atualizar: function (idCfop, cfop) {

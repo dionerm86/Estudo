@@ -44,7 +44,7 @@ namespace Glass.API.Backend.Controllers.Cfops.V1
                     if (!resultado)
                     {
                         sessao.Rollback();
-                        return this.ErroValidacao($"Falha ao cadastrar grupo de produto. {resultado.Message.Format()}");
+                        return this.ErroValidacao($"Falha ao cadastrar CFOP. {resultado.Message.Format()}");
                     }
 
                     sessao.Commit();

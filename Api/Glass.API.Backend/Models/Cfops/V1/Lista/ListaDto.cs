@@ -20,7 +20,7 @@ namespace Glass.API.Backend.Models.Cfops.V1.Lista
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
         /// </summary>
-        /// <param name="cfop">A model de CFOP's.</param>
+        /// <param name="cfop">A model de CFOP.</param>
         internal ListaDto(CfopPesquisa cfop)
         {
             this.Id = cfop.IdCfop;

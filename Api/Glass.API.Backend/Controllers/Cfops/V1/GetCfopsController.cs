@@ -42,14 +42,17 @@ namespace Glass.API.Backend.Controllers.Cfops.V1
         [SwaggerResponse(204, "CFOPs não encontrados.")]
         public IHttpActionResult ObterFiltro()
         {
-            var cfops = CfopDAO.Instance.ObterListaOrdenadaPeloCodInterno()
+            using (var sessao = new GDATransaction())
+            {
+                var cfops = CfopDAO.Instance.ObterListaOrdenadaPeloCodInterno(sessao)
                 .Select(c => new IdNomeDto()
                 {
                     Id = c.IdCfop,
                     Nome = c.CodInterno,
                 });
 
-            return this.Lista(cfops);
+                return this.Lista(cfops);
+            }
         }
 
         /// <summary>
@@ -57,19 +60,19 @@ namespace Glass.API.Backend.Controllers.Cfops.V1
         /// </summary>
         /// <returns>Uma lista JSON com os dados dos tipos de CFOP encontrados.</returns>
         [HttpGet]
-        [Route("tiposCfop")]
+        [Route("tipos")]
         [SwaggerResponse(200, "Tipos de CFOP encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Tipos de CFOP não encontrados.")]
         public IHttpActionResult ObterTiposCfop()
         {
-            var tiposCfop = TipoCfopDAO.Instance.GetAll()
+            var tipos = TipoCfopDAO.Instance.GetAll()
                 .Select(c => new IdNomeDto()
                 {
                     Id = c.IdTipoCfop,
                     Nome = c.Descricao,
                 });
 
-            return this.Lista(tiposCfop);
+            return this.Lista(tipos);
         }
 
         /// <summary>
@@ -84,10 +87,10 @@ namespace Glass.API.Backend.Controllers.Cfops.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var tipos = new ConversorEnum<Data.Model.TipoMercadoria>()
+                var tiposMercadoria = new ConversorEnum<Data.Model.TipoMercadoria>()
                     .ObterTraducao();
 
-                return this.Lista(tipos);
+                return this.Lista(tiposMercadoria);
             }
         }
 

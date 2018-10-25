@@ -19,9 +19,8 @@ namespace Glass.API.Backend.Models.Cfops.V1.Filtro
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="CfopDto"/>.
         /// </summary>
-        /// <param name="sessao">A transação atual com o banco de dados.</param>
-        /// <param name="cfop">A model de CFOP's.</param>
-        public CfopDto(GDASession sessao, Cfop cfop)
+        /// <param name="cfop">A model de CFOP.</param>
+        public CfopDto(Cfop cfop)
         {
             this.Codigo = cfop.CodInterno;
             this.Descricao = cfop.Descricao;
