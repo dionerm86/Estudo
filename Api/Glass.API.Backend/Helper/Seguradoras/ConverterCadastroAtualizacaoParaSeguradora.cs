@@ -20,7 +20,7 @@ namespace Glass.API.Backend.Helper.Seguradoras
         /// Inicia uma nova instância da classe <see cref="ConverterCadastroAtualizacaoParaSeguradora"/>.
         /// </summary>
         /// <param name="cadastro">O DTO de cadastro, enviado para o endpoint.</param>
-        /// <param name="atual">A seguradora atual atual (opcional), para que sejam aproveitados os valores, se necessário.</param>
+        /// <param name="atual">A seguradora atual (opcional), para que sejam aproveitados os valores, se necessário.</param>
         public ConverterCadastroAtualizacaoParaSeguradora(
             CadastroAtualizacaoDto cadastro,
             Seguradora atual = null)
