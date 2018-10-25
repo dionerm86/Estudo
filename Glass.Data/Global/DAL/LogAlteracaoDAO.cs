@@ -2430,5 +2430,50 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        /// <summary>
+        /// Copia o log de alterações de imagens-produção da peça do pedido para a peça do pedido espelho.
+        /// </summary>
+        /// <param name="sessao">Transação.</param>
+        /// <param name="idPecaItemProj">Identificador da peça do item do projeto associado ao produto do pedido.</param>
+        /// <param name="idPecaItemProjEsp">Identificador da peça do item do projeto associado ao produto do pedido espelho.</param>
+        public void CopiarLogAlteracaoImagemProducao(GDASession sessao, int idPecaItemProj, int idPecaItemProjEsp)
+        {
+            var sql = $@"
+                SELECT *
+                FROM log_alteracao
+                WHERE Tabela = {(int)LogAlteracao.TabelaAlteracao.ImagemProducao} AND IdRegistroAlt = " + idPecaItemProj;
+
+            var logAlteracao = this.objPersistence.LoadData(sessao, sql);
+
+            foreach (var alteracao in logAlteracao)
+            {
+                alteracao.IdRegistroAlt = idPecaItemProjEsp;
+                this.Insert(sessao, alteracao);
+            }
+        }
+
+        /// <summary>
+        /// Copia o log de alterações de imagens da peça do pedido para a peça do pedido espelho.
+        /// </summary>
+        /// <param name="sessao">Transação.</param>
+        /// <param name="idProdPed">Identificador do produto do pedido.</param>
+        /// <param name="idProdPedEsp">Identificador do produto do pedido espelho.</param>
+        public void CopiarLogImagemProdPed(GDASession sessao, int idProdPed, int idProdPedEsp)
+        {
+            var sql = $@"
+                SELECT *
+                FROM log_alteracao
+                WHERE Tabela = {(int)LogAlteracao.TabelaAlteracao.ImagemProdPed} AND IdRegistroAlt = " + idProdPed;
+
+            var logAlteracao = this.objPersistence.LoadData(sessao, sql);
+
+            foreach (var alteracao in logAlteracao)
+            {
+                alteracao.IdRegistroAlt = idProdPedEsp;
+                alteracao.Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPedEsp;
+                this.Insert(sessao, alteracao);
+            }
+        }
     }
 }
