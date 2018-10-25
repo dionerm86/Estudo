@@ -11,32 +11,5 @@ namespace Glass.UI.Web.Listas {
     
     
     public partial class LstSeguradora {
-        
-        /// <summary>
-        /// lnkInserir control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkInserir;
-        
-        /// <summary>
-        /// grdSeguradora control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdSeguradora;
-        
-        /// <summary>
-        /// odsSeguradora control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsSeguradora;
     }
 }

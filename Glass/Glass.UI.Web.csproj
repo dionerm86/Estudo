@@ -516,6 +516,7 @@
     <Content Include="Vue\Rotas\Componentes\LstRotas.js" />
     <Content Include="Vue\TabelasDescontoAcrescimoCliente\Componentes\LstTabelasDescontoAcrescimoCliente.js" />
     <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
+    <Content Include="Vue\Seguradoras\Componentes\LstSeguradoras.js" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />
@@ -694,7 +695,6 @@
     <Content Include="Cadastros\CadRetiradaRotativo.aspx" />
     <Content Include="Cadastros\CadRota.aspx" />
     <Content Include="Cadastros\CadSaidaEstoque.aspx" />
-    <Content Include="Cadastros\CadSeguradora.aspx" />
     <Content Include="Cadastros\CadSetor.aspx" />
     <Content Include="Cadastros\CadSubgrupoProduto.aspx" />
     <Content Include="Cadastros\CadSubtipoPerda.aspx" />
@@ -1789,6 +1789,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Condutores.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Seguradoras.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Sinais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Acertos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />
@@ -4475,13 +4476,6 @@
     </Compile>
     <Compile Include="Cadastros\CadSaidaEstoque.aspx.designer.cs">
       <DependentUpon>CadSaidaEstoque.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Cadastros\CadSeguradora.aspx.cs">
-      <DependentUpon>CadSeguradora.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Cadastros\CadSeguradora.aspx.designer.cs">
-      <DependentUpon>CadSeguradora.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\CadSetor.aspx.cs">
       <DependentUpon>CadSetor.aspx</DependentUpon>

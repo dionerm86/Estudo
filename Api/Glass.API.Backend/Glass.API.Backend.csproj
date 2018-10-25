@@ -422,6 +422,11 @@
     <Compile Include="Atributos\AuthorizationAttribute.cs" />
     <Compile Include="Controllers\TiposCartao\V1\GetTiposCartaoController.cs" />
     <Compile Include="Controllers\TiposCartao\V1\TiposCartaoController.cs" />
+    <Compile Include="Controllers\Seguradoras\DeleteSeguradorasController.cs" />
+    <Compile Include="Controllers\Seguradoras\GetSeguradorasController.cs" />
+    <Compile Include="Controllers\Seguradoras\PatchSeguradorasController.cs" />
+    <Compile Include="Controllers\Seguradoras\PostSeguradorasController.cs" />
+    <Compile Include="Controllers\Seguradoras\SeguradorasController.cs" />
     <Compile Include="Controllers\Veiculos\V1\DeleteVeiculosController.cs" />
     <Compile Include="Controllers\Veiculos\V1\GetVeiculosController.cs" />
     <Compile Include="Controllers\Veiculos\V1\VeiculosController.cs" />
@@ -451,12 +456,14 @@
     <Compile Include="Helper\Condutores\ConverterCadastroAtualizacaoParaCondutor.cs" />
     <Compile Include="Helper\Condutores\TraducaoOrdenacaoListaCondutores.cs" />
     <Compile Include="Helper\Rotas\TraducaoOrdenacaoListaRotas.cs" />
+    <Compile Include="Helper\Seguradoras\TraducaoOrdenacaoListaSeguradoras.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\TraducaoOrdenacaoListaTabelasDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\Produtos\SubgruposProduto\ConverterCadastroAtualizacaoParaSubgrupoProduto.cs" />
     <Compile Include="Helper\Produtos\SubgruposProduto\TraducaoOrdenacaoListaSubgruposProduto.cs" />
     <Compile Include="Helper\Produtos\GruposProduto\ConverterCadastroAtualizacaoParaGrupoProduto.cs" />
     <Compile Include="Helper\Produtos\GruposProduto\TraducaoOrdenacaoListaGruposProduto.cs" />
+    <Compile Include="Helper\Seguradoras\ConverterCadastroAtualizacaoParaSeguradora.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
@@ -609,6 +616,9 @@
     <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\ListaDto.cs" />
     <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Seguradoras\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Seguradoras\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Seguradoras\Lista\ListaDto.cs" />
     <Compile Include="Models\Veiculos\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\V1\Lista\ListaDto.cs" />
