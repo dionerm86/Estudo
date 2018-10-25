@@ -30,7 +30,7 @@ namespace Glass.UI.Web.Relatorios.Genericos
             try
             {
                 // Busca produtos do orçamento
-                var lstProd = ProdutosOrcamentoDAO.Instance.GetForRecibo(Glass.Conversoes.StrParaUint(idOrcamento));
+                var lstProd = ProdutosOrcamentoDAO.Instance.GetForRecibo(Glass.Conversoes.StrParaInt(idOrcamento));
     
                 if (lstProd.Count == 0)
                     return "Erro\tO orçamento informado não possui nenhum produto ou não existe.";

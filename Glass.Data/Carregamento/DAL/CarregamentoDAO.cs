@@ -435,11 +435,12 @@ namespace Glass.Data.DAL
         /// <param name="idsProdutosPedido"></param>
         public void AtualizaCarregamentoParcial(GDASession session, string idsPedido, string idsOc, uint idLiberarPedido)
         {
-
             uint[] idsProdutosPedido = ProdutosPedidoDAO.Instance.ObtemIdsProdPedByPedidos(session, idsPedido).ToArray();
 
             if (!OrdemCargaConfig.UsarOrdemCargaParcial)
+            {
                 return;
+            }                
 
             var idsUsados = new List<int>();
 
@@ -450,7 +451,9 @@ namespace Glass.Data.DAL
                 var idPedido = (int)ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idsProdutosPedido[i]);
 
                 if (!PedidoDAO.Instance.ObtemOrdemCargaParcial(session, (uint)idPedido))
+                {
                     continue;
+                }
 
                 ItemCarregamentoDAO.Instance.VincularItensCarregamentoAoProdutoLiberarPedido(session, idsOc, (int)idsProdutosPedido[i], idProdLiberarPedido);
 
@@ -460,7 +463,9 @@ namespace Glass.Data.DAL
 
             //Marca as ocs como carregada parcialmente
             foreach (var idCarregamento in ItemCarregamentoDAO.Instance.ObterIdsCarregamento(session, idsUsados))
+            {
                 Instance.AtualizaCarregamentoCarregado(session, (uint)idCarregamento, null);
+            }                
         }
 
         #endregion

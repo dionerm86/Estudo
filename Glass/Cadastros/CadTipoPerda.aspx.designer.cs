@@ -11,41 +11,5 @@ namespace Glass.UI.Web.Cadastros {
     
     
     public partial class CadTipoPerda {
-        
-        /// <summary>
-        /// grdTipoPerda control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdTipoPerda;
-        
-        /// <summary>
-        /// odsTipoPerda control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoPerda;
-        
-        /// <summary>
-        /// odsSetor control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsSetor;
-        
-        /// <summary>
-        /// odsSituacao control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsSituacao;
     }
 }

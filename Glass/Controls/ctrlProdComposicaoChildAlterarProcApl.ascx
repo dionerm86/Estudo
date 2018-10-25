@@ -110,7 +110,7 @@
         var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfChild_IdProdComposicao", "input", tr).value);
         var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
 
-        if(idSubgrupo.value != "" && retornoValidacao.value == "False" && (FindControl("txtChild_ProcComposicaoIns", "input", tr) != null && FindControl("txtChild_ProcComposicaoIns", "input", tr).value != ""))
+        if(idSubgrupo.value != "" && retornoValidacao.value == "false" && (FindControl("txtChild_ProcComposicaoIns", "input", tr) != null && FindControl("txtChild_ProcComposicaoIns", "input", tr).value != ""))
         {
             FindControl("txtChild_ProcComposicaoIns", "input", tr).value = "";
             alert("Este processo não pode ser selecionado para este produto.")

@@ -437,6 +437,64 @@ namespace Glass.Rentabilidade.Negocios.Componentes
             return resultado;
         }
 
+        /// <summary>
+        /// Realiza a atualiza~çao dos indicadores financeiros.
+        /// </summary>
+        /// <param name="indicadores">Dados dos indicadores que serão atualizados.</param>
+        /// <returns>Resultado da operação.</returns>
+        public Colosoft.Business.SaveResult AtualizarIndicadores(IEnumerable<AtualizacaoIndicadorFinanceiro> indicadores)
+        {
+            var index = 0;
+            var parametros = indicadores
+                .GroupBy(f => f.Nome, StringComparer.InvariantCultureIgnoreCase)
+                .Select(f =>
+                {
+                    var indicador = f.First();
+                    return new
+                    {
+                        Parametro = $"?p{index++}",
+                        Nome = indicador.Nome,
+                        Valor = indicador.Valor,
+                    };
+                }).ToList();
+
+            if (!parametros.Any())
+            {
+                return new Colosoft.Business.SaveResult(true, null);
+            }
+
+            var indicadores2 = SourceContext.Instance.CreateQuery()
+                .From<Data.Model.IndicadorFinanceiro>()
+                .Where(string.Join(" AND ", parametros.Select(f => $"Nome={f.Parametro}")))
+                .Add(parametros.Select(f => new Colosoft.Query.QueryParameter(f.Parametro, f.Valor)))
+                .ProcessLazyResult<Entidades.IndicadorFinanceiro>()
+                .ToList();
+
+            using (var session = SourceContext.Instance.CreateSession())
+            {
+                foreach (var parametro in parametros)
+                {
+                    var indicador = indicadores2.FirstOrDefault(f => StringComparer.InvariantCultureIgnoreCase.Equals(parametro.Nome, f.Nome));
+
+                    if (indicador != null)
+                    {
+                        indicador.Valor = parametro.Valor;
+                        indicador.Save(session);
+                    }
+                }
+
+                var resultado = session.Execute(false).ToSaveResult();
+
+                if (resultado)
+                {
+                    this.AtualizarIndicadoresFinanceiros();
+                    this.RedefinirCalculadora();
+                }
+
+                return resultado;
+            }
+        }
+
         #endregion
 
         #region ConfigRegistroRentabilidade

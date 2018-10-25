@@ -8,9 +8,9 @@ namespace Glass.Data.DAL
     {
         public List<CondutorVeiculoMDFe> ObterCondutorVeiculoMDFe(int idRodoviario)
         {
-            var sql = @"SELECT cv.*, f.Nome AS NomeCondutor
+            var sql = @"SELECT cv.*, c.Nome AS NomeCondutor
                 FROM condutor_veiculo_mdfe cv
-                LEFT JOIN funcionario f ON (cv.IdCondutor=f.IdFunc)
+                LEFT JOIN condutores c ON (cv.IdCondutor=c.IdCondutor)
                 WHERE cv.IdRodoviario={0}";
 
             return objPersistence.LoadData(string.Format(sql, idRodoviario)).ToList();

@@ -112,6 +112,10 @@
     <Reference Include="EditorConfig.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=fe6ce3ea283749f2, processorArchitecture=MSIL">
       <HintPath>..\..\packages\editorconfig.0.12.1\lib\net45\EditorConfig.Core.dll</HintPath>
     </Reference>
+    <Reference Include="FluentScheduler, Version=5.3.0.0, Culture=neutral, PublicKeyToken=b76503528a14ebd1, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentScheduler.5.3.0\lib\net40\FluentScheduler.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
     </Reference>
@@ -222,11 +226,29 @@
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
     <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\DeleteTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\GetTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\PatchTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\PostTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\TiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\DeleteSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\PatchSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\PostSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\DeleteTurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\GetTurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\TurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\PatchTurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\PostTurnosController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\GetSetoresController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\SetoresController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\PostFornecedoresController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GetPlanosContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\PlanosContaController.cs" />
+    <Compile Include="Controllers\Condutores\CondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\DeleteCondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\GetCondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\PatchCondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\PostCondutoresController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\DeleteCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PatchCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PostCoresAluminioController.cs" />
@@ -243,6 +265,7 @@
     <Compile Include="Controllers\Produtos\V1\SubgruposProduto\DeleteSubgruposProdutoController.cs" />
     <Compile Include="Controllers\Produtos\V1\SubgruposProduto\PatchSubgruposProdutoController.cs" />
     <Compile Include="Controllers\Produtos\V1\SubgruposProduto\PostSubgruposProdutoController.cs" />
+    <Compile Include="Controllers\Rotas\V1\DeleteRotasController.cs" />
     <Compile Include="Controllers\Sinais\V1\SinaisController.cs" />
     <Compile Include="Controllers\Sinais\V1\GetSinaisController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
@@ -380,9 +403,18 @@
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoSvgProjetoStrategy.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
+    <Compile Include="Helper\Producao\Setores\ConverterCadastroAtualizacaoParaSetor.cs" />
+    <Compile Include="Helper\Producao\Setores\TraducaoOrdenacaoListaSetores.cs" />
+    <Compile Include="Helper\Producao\TiposPerda\ConverterCadastroAtualizacaoParaTipoPerda.cs" />
+    <Compile Include="Helper\Producao\TiposPerda\TraducaoOrdenacaoListaTiposPerda.cs" />
+    <Compile Include="Helper\Producao\Turnos\ConverterCadastroAtualizacaoParaTurno.cs" />
+    <Compile Include="Helper\Producao\Turnos\TraducaoOrdenacaoListaTurnos.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
     <Compile Include="Helper\Cfops\TraducaoOrdenacaoListaCfops.cs" />
+    <Compile Include="Helper\Condutores\ConverterCadastroAtualizacaoParaCondutor.cs" />
+    <Compile Include="Helper\Condutores\TraducaoOrdenacaoListaCondutores.cs" />
+    <Compile Include="Helper\Rotas\TraducaoOrdenacaoListaRotas.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\TraducaoOrdenacaoListaTabelasDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\Produtos\SubgruposProduto\ConverterCadastroAtualizacaoParaSubgrupoProduto.cs" />
@@ -457,6 +489,33 @@
     <Compile Include="Models\Cfops\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\PosicaoDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\FuncoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\PerdaDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\TempoLoginDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\RestricoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\ExibicoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\CoresDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\CapacidadeDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Rotas\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Turnos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Producao\V1\Turnos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Turnos\Lista\ListaDto.cs" />
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\Lista\ListaDto.cs" />
@@ -768,6 +827,41 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\Acertos\Lista\" />
+    <Folder Include="Models\Beneficiamentos\Configuracoes\" />
+    <Folder Include="Models\Beneficiamentos\Filtro\" />
+    <Folder Include="Models\Beneficiamentos\Total\" />
+    <Folder Include="Models\Caixas\Diario\CadastroAtualizacao\" />
+    <Folder Include="Models\Caixas\Diario\Configuracoes\" />
+    <Folder Include="Models\Caixas\Diario\Lista\" />
+    <Folder Include="Models\Caixas\Geral\Configuracoes\" />
+    <Folder Include="Models\Caixas\Geral\Lista\" />
+    <Folder Include="Models\Cep\Endereco\" />
+    <Folder Include="Models\Cheques\CadastroAtualizacao\" />
+    <Folder Include="Models\Cheques\Configuracoes\" />
+    <Folder Include="Models\Cheques\Lista\" />
+    <Folder Include="Models\Clientes\Tipos\CadastroAtualizacao\" />
+    <Folder Include="Models\Clientes\Tipos\Lista\" />
+    <Folder Include="Models\Comissionados\Configuracoes\" />
+    <Folder Include="Models\Comissionados\Lista\" />
+    <Folder Include="Models\Datas\Feriados\CadastroAtualizacao\" />
+    <Folder Include="Models\Datas\Feriados\Lista\" />
+    <Folder Include="Models\Estoques\CadastroAtualizacao\" />
+    <Folder Include="Models\Estoques\Configuracoes\" />
+    <Folder Include="Models\Fornecedores\Configuracoes\" />
+    <Folder Include="Models\Fornecedores\Lista\" />
+    <Folder Include="Models\PlanosConta\Lista\" />
+    <Folder Include="Models\Produtos\CoresAluminio\CadastroAtualizacao\" />
+    <Folder Include="Models\Produtos\CoresAluminio\Lista\" />
+    <Folder Include="Models\Produtos\CoresFerragem\CadastroAtualizacao\" />
+    <Folder Include="Models\Produtos\CoresFerragem\Lista\" />
+    <Folder Include="Models\Produtos\CoresVidro\CadastroAtualizacao\" />
+    <Folder Include="Models\Produtos\CoresVidro\Lista\" />
+    <Folder Include="Models\Sinais\Lista\" />
+    <Folder Include="Models\Transportadores\Configuracoes\" />
+    <Folder Include="Models\Transportadores\Lista\" />
+    <Folder Include="Models\Veiculos\Configuracoes\" />
+    <Folder Include="Models\Veiculos\Lista\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">
@@ -793,6 +887,14 @@
     <ProjectReference Include="..\..\Global\UI\Web\Glass.Global.UI.Web.Process\Glass.Global.UI.Web.Process.csproj">
       <Project>{53e0ef88-b812-45fe-9f91-f4f7889bd6cb}</Project>
       <Name>Glass.Global.UI.Web.Process</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Integracao\Glass.Integracao.Khan\Glass.Integracao.Khan.csproj">
+      <Project>{3db16aa0-b7b1-4500-8541-1bc155742124}</Project>
+      <Name>Glass.Integracao.Khan</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Integracao\Glass.Integracao\Glass.Integracao.csproj">
+      <Project>{eddba46b-4412-433b-a587-c481ba2831fd}</Project>
+      <Name>Glass.Integracao</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Mathematical\Glass.Mathematical\Glass.Mathematical.csproj">
       <Project>{79bba571-e0aa-4861-a91d-c6732c94b83a}</Project>

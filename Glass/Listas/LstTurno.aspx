@@ -1,62 +1,95 @@
 <%@ Page Title="Turnos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
-    CodeBehind="LstTurno.aspx.cs" Inherits="Glass.UI.Web.Listas.LstTurno" %>
+    CodeBehind="LstTurno.aspx.cs" Inherits="Glass.UI.Web.Listas.LstTurno" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-
-    <script type="text/javascript">
-
-        function openRpt(exportarExcel) {
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ListaTurno&exportarExcel=" + exportarExcel);
-        }
-        
-    </script>
-
-    <div class="inserir">
-        <asp:LinkButton ID="LinkButton1" runat="server" OnClick="lnkInserir_Click">Inserir Turno</asp:LinkButton>
+    <div id="app">
+        <section>
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum turno encontrado."
+                :numero-registros="15" :exibir-inclusao="true" :linha-editando="numeroLinhaEdicao">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('nome')">Descrição</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('sequencia')">Turno</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('inicio')">Início</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('termino')">Término</a>
+                    </th>
+                </template>
+                <template slot="item" slot-scope="{ item, index }">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="editar(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/Edit.gif">
+                        </button>
+                        <button @click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>{{ item.nome }}</td>
+                    <td v-if="item.sequencia">{{ item.sequencia.nome }}</td>
+                    <td>{{ item.inicio }}</td>
+                    <td>{{ item.termino }}</td>
+                </template>
+                <template slot="itemEditando">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="atualizar" title="Atualizar">
+                            <img src="../Images/ok.gif">
+                        </button>
+                        <button @click.prevent="cancelar" title="Cancelar">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="turno.nome" maxlength="150" style="width: 150px" required />
+                    </td>
+                    <td>
+                        <lista-selecao-id-valor v-bind:item-selecionado.sync="sequenciaAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensSequencia"
+                            v-bind:ordenar="false" required></lista-selecao-id-valor>
+                    </td>
+                    <td>
+                        <input type="text" v-model="turno.inicio" maxlength="5" style="width: 50px" required />
+                    </td>
+                    <td>
+                        <input type="text" v-model="turno.termino" maxlength="5" style="width: 50px" required />
+                    </td>
+                </template>
+                <template slot="itemIncluir">
+                    <td style="white-space: nowrap">
+                        <button v-on:click.prevent="iniciarCadastro" title="Novo turno..." v-if="!inserindo">
+                            <img src="../Images/Insert.gif">
+                        </button>
+                        <button v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">
+                            <img src="../Images/Ok.gif">
+                        </button>
+                        <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="turno.nome" maxlength="150" style="width: 150px" v-if="inserindo" required />
+                    </td>
+                    <td>
+                        <lista-selecao-id-valor v-bind:item-selecionado.sync="sequenciaAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensSequencia"
+                            v-bind:ordenar="false" v-if="inserindo" required></lista-selecao-id-valor>
+                    </td>
+                    <td>
+                        <input type="text" v-model="turno.inicio" maxlength="5" style="width: 50px" v-if="inserindo" required />
+                    </td>
+                    <td>
+                        <input type="text" v-model="turno.termino" maxlength="5" style="width: 50px" v-if="inserindo" required />
+                    </td>
+                </template>
+            </lista-paginada>
+        </section>
     </div>
-    <asp:GridView ID="grdTurno" runat="server" SkinID="defaultGridView"
-        DataKeyNames="IdTurno" DataSourceID="odsTurno"
-        EmptyDataText="Não existem turnos cadastrados">
-        <Columns>
-            <asp:TemplateField>
-                <ItemTemplate>
-                    <asp:HyperLink ID="lnkEditar" runat="server" NavigateUrl='<%# "../Cadastros/CadTurno.aspx?idTurno=" + Eval("IdTurno") %>'
-                        ToolTip="Editar">
-                        <img alt="Editar" src="../Images/EditarGrid.gif" /></asp:HyperLink>
-                    <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                        OnClientClick="return confirm(&quot;Tem certeza que deseja excluir esta Turno?&quot;);"
-                        ToolTip="Excluir" />
-                </ItemTemplate>
-                <ItemStyle Wrap="False" />
-            </asp:TemplateField>
-            <asp:BoundField DataField="Descricao" HeaderText="Descrição" SortExpression="Descricao" />
-            <asp:TemplateField HeaderText="Turno" SortExpression="Sequencia">
-                <ItemTemplate>
-                    <%# Colosoft.Translator.Translate(Eval("NumSeq")).Format() %>
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:BoundField DataField="Inicio" HeaderText="Início" SortExpression="Inicio" />
-            <asp:BoundField DataField="Termino" HeaderText="Término" SortExpression="Termino" />
-        </Columns>
-    </asp:GridView>
-    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTurno" runat="server" 
-        DataObjectTypeName="Glass.Global.Negocios.Entidades.Turno"
-        DeleteMethod="ApagarTurno" DeleteStrategy="GetAndDelete"
-        SelectMethod="PesquisarTurnos" 
-        SelectByKeysMethod="ObtemTurno"
-        TypeName="Glass.Global.Negocios.ITurnoFluxo"
-        EnablePaging="True" MaximumRowsParameterName="pageSize"
-        SortParameterName="sortExpression">
-    </colo:VirtualObjectDataSource>
-    <div class="imprimir">
-        <span>
-            <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRpt(false);"> 
-            <img alt="Imprimir" src="../Images/printer.png" /> Imprimir</asp:LinkButton>
-        </span>
-        <span>
-            <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true); return false;">
-            <img alt="Exportar para o Excel" src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
-        </span>
-    </div>
-   
+     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/Producao/Turnos/Componentes/LstTurnos.js" />
+        </Scripts>
+    </asp:ScriptManager>
 </asp:Content>

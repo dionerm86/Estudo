@@ -3121,8 +3121,8 @@ namespace Glass.Data.DAL
             {
                 id = idOrcamento.Value;
                 tipo = ContainerCalculoDTO.TipoContainer.Orcamento;
-                tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, idOrcamento.Value).GetValueOrDefault();
-                idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, idOrcamento.Value).GetValueOrDefault();
+                tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, (int)idOrcamento.Value).GetValueOrDefault();
+                idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, (int)idOrcamento.Value).GetValueOrDefault();
             }
 
             #endregion
@@ -4668,7 +4668,9 @@ namespace Glass.Data.DAL
             objUpdate.Descricao = objUpdate.Descricao.Replace("'", "").Replace("\"", "").Replace("\t", "").Replace("\n", "");
 
             LogAlteracaoDAO.Instance.LogProduto(objUpdate, LogAlteracaoDAO.SequenciaObjeto.Novo);
-            return base.Update(session, objUpdate);
+            var resultado = base.Update(session, objUpdate);
+
+            return resultado;
         }
 
         /// <summary>

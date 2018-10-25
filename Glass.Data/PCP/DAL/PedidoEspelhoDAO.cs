@@ -701,6 +701,142 @@ namespace Glass.Data.DAL
             return lstParam.Count > 0 ? lstParam.ToArray() : null;
         }
 
+        /// <summary>
+        /// Busca os ids dos pedidos filtrados na tela.
+        /// </summary>
+        /// <param name="session">Transação.</param>
+        /// <param name="idPedido">Identificador do pedido.</param>
+        /// <param name="idCli">Identificador do cliente.</param>
+        /// <param name="nomeCli">Nome do Cliente.</param>
+        /// <param name="idLoja">Identificador da loja.</param>
+        /// <param name="idFunc">Identificador do funcionário.</param>
+        /// <param name="idFuncionarioConferente">Identificador do funcionário conferente.</param>
+        /// <param name="situacao">Situação do pedido.</param>
+        /// <param name="situacaoPedOri">Situação do pedido original.</param>
+        /// <param name="idsProcesso">ids de etiquetas de processo.</param>
+        /// <param name="dataIniEnt">Data entrada inicial.</param>
+        /// <param name="dataFimEnt">Data Entrada final.</param>
+        /// <param name="dataIniFab">Data fábrica inicial.</param>
+        /// <param name="dataFimFab">Data fábrica final.</param>
+        /// <param name="dataIniFin">Data finalização inicial.</param>
+        /// <param name="dataFimFin">Data finalização final.</param>
+        /// <param name="dataIniConf">Data confirmação inicial.</param>
+        /// <param name="dataFimConf">Data confirmação final.</param>
+        /// <param name="dataIniEmis">Data emissão inicial.</param>
+        /// <param name="dataFimEmis">Data emissão final.</param>
+        /// <param name="soFinalizados">Buscar somente pedidos finalizados.</param>
+        /// <param name="pedidosSemAnexo">Indicativo se devem ser buscados pedidos sem anexo.</param>
+        /// <param name="situacaoCnc">Situação CNC.</param>
+        /// <param name="dataIniSituacaoCnc">Data situação CNC inicial.</param>
+        /// <param name="dataFimSituacaoCnc">Data situação CNC final.</param>
+        /// <param name="pedidosAComprar">Indicativo se devem ser buscados pedidos a comprar.</param>
+        /// <param name="tipoPedido">Tipo do pedido.</param>
+        /// <param name="idsRotas">Ids das rotas a serem buscadas.</param>
+        /// <param name="origemPedido">Origem do pedido.</param>
+        /// <param name="pedidosConferidos">Indicativo se devem ser buscados pedidos conferidos.</param>
+        /// <param name="tipoVenda">Tipo venda a ser buscado.</param>
+        /// <returns>Ids dos pedidos filtrados.</returns>
+        public IList<int> ObterIdsPedidos(
+            GDATransaction session,
+            uint idPedido,
+            uint idCli,
+            string nomeCli,
+            uint idLoja,
+            uint idFunc,
+            uint idFuncionarioConferente,
+            int situacao,
+            string situacaoPedOri,
+            string idsProcesso,
+            string dataIniEnt,
+            string dataFimEnt,
+            string dataIniFab,
+            string dataFimFab,
+            string dataIniFin,
+            string dataFimFin,
+            string dataIniConf,
+            string dataFimConf,
+            string dataIniEmis,
+            string dataFimEmis,
+            bool soFinalizados,
+            bool pedidosSemAnexo,
+            string situacaoCnc,
+            string dataIniSituacaoCnc,
+            string dataFimSituacaoCnc,
+            bool pedidosAComprar,
+            string tipoPedido,
+            string idsRotas,
+            int origemPedido,
+            int pedidosConferidos,
+            int? tipoVenda)
+        {
+            bool apenasMaoDeObra = !Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) && Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
+
+            bool temFiltro;
+            string sql = this.Sql(
+                idPedido,
+                null,
+                idCli,
+                nomeCli,
+                idLoja,
+                idFunc,
+                idFuncionarioConferente,
+                situacao,
+                situacaoPedOri,
+                idsProcesso,
+                dataIniEnt,
+                dataFimEnt,
+                dataIniFab,
+                dataFimFab,
+                dataIniFin,
+                dataFimFin,
+                dataIniConf,
+                dataFimConf,
+                dataIniEmis,
+                dataFimEmis,
+                soFinalizados,
+                apenasMaoDeObra,
+                null,
+                pedidosSemAnexo,
+                pedidosAComprar,
+                situacaoCnc,
+                dataIniSituacaoCnc,
+                dataFimSituacaoCnc,
+                tipoPedido,
+                idsRotas,
+                null,
+                null,
+                0,
+                false,
+                origemPedido,
+                pedidosConferidos,
+                tipoVenda,
+                true,
+                out temFiltro);
+
+            var pedidos = this.objPersistence.LoadData(
+                session,
+                sql,
+                this.GetParam(
+                    null,
+                    nomeCli,
+                    dataIniEnt,
+                    dataFimEnt,
+                    dataIniFab,
+                    dataFimFab,
+                    dataIniFin,
+                    dataFimFin,
+                    dataIniConf,
+                    dataFimConf,
+                    dataIniEmis,
+                    dataFimEmis,
+                    dataIniSituacaoCnc,
+                    dataFimSituacaoCnc,
+                    null,
+                    null));
+
+            return pedidos.Select(f => (int)f.IdPedido).ToList();
+        }
+
         #endregion
 
         #region Busca pedidos com produtos de beneficiamento
@@ -2292,13 +2428,32 @@ namespace Glass.Data.DAL
                     throw new Exception("O saldo da obra ultrapassou seu valor total. Saldo da obra: " + saldoObra.ToString("C"));
             }
 
-            // Verifica se o total dos clones é igual aos seus produtos_pedido_espelho relacionados
-            foreach (var prodPedEsp in ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false, false))
-            {
-                var prodPed = ProdutosPedidoDAO.Instance.GetByProdPedEsp(session, prodPedEsp.IdProdPed, false);
+            var tolerancia = 0.03M;
 
-                if (prodPed != null && prodPed.IdProdPed > 0 && (prodPedEsp.Total != prodPed.Total || prodPedEsp.ValorBenef != prodPed.ValorBenef))
-                    throw new Exception("É necessário cancelar a conferência e gerá-la novamente antes de finalizar. Alguns produtos da conferência estão divergentes do original.");
+             // Verifica se o total dos clones é igual aos seus produtos_pedido_espelho relacionados
+            foreach (var prodPedEsp in produtosPedidoEspelho)
+            {
+                var prodPed = ProdutosPedidoDAO.Instance.GetByProdPedEsp(
+                    session,
+                    prodPedEsp.IdProdPed,
+                    false);
+
+                if (prodPed != null && prodPed.IdProdPed > 0)
+                {
+                    var diferencaValorBeneficamento = (prodPedEsp.ValorBenef - prodPed.ValorBenef);
+                    var diferencaTotalProduto = (prodPedEsp.Total - prodPed.Total);
+
+                    var diferenca = Math.Max(diferencaValorBeneficamento, diferencaTotalProduto);
+
+                    if (diferenca > tolerancia)
+                    {
+                        throw new Exception("É necessário cancelar a conferência e gerá-la novamente antes de finalizar." +
+                            " Alguns produtos da conferência estão divergentes do original.");
+                    }
+
+                    tolerancia -= diferencaValorBeneficamento;
+                    tolerancia -= diferencaTotalProduto;
+                }
             }
 
             /* Chamado 56050. */
@@ -2390,7 +2545,7 @@ namespace Glass.Data.DAL
                     if (PossuiOrcamentoGerado(session, idPedido))
                     {
                         idOrcamento = ObtemIdOrcamentoGerado(session, idPedido);
-                        if (OrcamentoDAO.Instance.ObtemSituacao(session, idOrcamento) == (int)Orcamento.SituacaoOrcamento.EmAberto)
+                        if (OrcamentoDAO.Instance.ObterSituacao(session, (int)idOrcamento) == (int)Orcamento.SituacaoOrcamento.EmAberto)
                             GeraOrcamento(session, idPedido, idOrcamento);
                     }
                     else
@@ -2514,9 +2669,6 @@ namespace Glass.Data.DAL
                         IdOrcamento = idOrcamento.Value,
                         IdProdParent = idProdParent,
                         IdProduto = mip.IdProd,
-                        NumSeq =
-                            ProdutosOrcamentoDAO.Instance.ObtemValorCampo<uint>(sessao, "numSeq",
-                                "idProd=" + idProdParent),
                         Ambiente = ip.Ambiente,
                         Descricao = ProdutoDAO.Instance.GetDescrProduto(sessao, (int)mip.IdProd),
                         Total = mip.Total,
@@ -3210,6 +3362,32 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteScalar(sql).ToString().ToLower() == "true";
         }
 
+        /// <summary>
+        /// Valida se os pedidos importados podem ter arquivo gerado.
+        /// </summary>
+        /// <param name="session">Transação.</param>
+        /// <param name="idsPedidos">Identificadores de pedidos.</param>
+        public void ValidarPedidosConferidos(GDASession session, IEnumerable<int> idsPedidos)
+        {
+            if (!idsPedidos.Any())
+            {
+                throw new Exception("Nenhum pedido a ser validado.");
+            }
+
+            var sql = $@"
+                SELECT pe.IdPedido
+                FROM pedido_espelho pe
+                    LEFT JOIN pedido p ON (p.IdPedido = pe.IdPedido)
+                WHERE pe.IdPedido IN ({idsPedidos}) AND p.Importado = 1 AND (pe.PedidoConferido IS NULL OR pe.PedidoConferido = 0)";
+
+            List<uint> retorno = this.ExecuteMultipleScalar<uint>(session, sql);
+
+            if (retorno.Any())
+            {
+                throw new Exception($"Os pedidos {string.Join(",", retorno)} não estão conferidos");
+            }
+        }
+
         #endregion
 
         #region Verifica se os pedidos está conferido
@@ -3866,37 +4044,82 @@ namespace Glass.Data.DAL
 
             var removidos = new List<uint>();
 
-            var alteraAcrescimo = antigo.Acrescimo != novo.Acrescimo || antigo.TipoAcrescimo != novo.TipoAcrescimo;
-            var alteraDesconto = antigo.Desconto != novo.Desconto || antigo.TipoDesconto != novo.TipoDesconto;
-            var alteraComissao = antigo.PercComissao != novo.PercComissao;
+            var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(
+                session,
+                novo.IdPedido,
+                false,
+                false,
+                true);
 
-            var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, novo.IdPedido, false, false, true);
+            var aplicarAcrescimo = AplicarAcrescimo(
+                session,
+                novo,
+                novo.TipoAcrescimo,
+                novo.Acrescimo,
+                produtosPedidoEspelho);
 
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo && AplicarAcrescimo(session, novo, novo.TipoAcrescimo, novo.Acrescimo, produtosPedidoEspelho))
+            if (aplicarAcrescimo)
+            {
                 removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
+            }
+
+            var aplicarDesconto = AplicarDesconto(
+                session,
+                novo,
+                novo.TipoDesconto,
+                novo.Desconto,
+                produtosPedidoEspelho);
 
             // Remove o desconto do pedido
-            if (alteraDesconto && AplicarDesconto(session, novo, novo.TipoDesconto, novo.Desconto, produtosPedidoEspelho))
+            if (aplicarDesconto)
+            {
                 removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
+            }
+
+            var aplicarComissao = AplicarComissao(
+                session,
+                novo,
+                novo.PercComissao,
+                produtosPedidoEspelho);
 
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao && AplicarComissao(session, novo, novo.PercComissao, produtosPedidoEspelho))
+            if (aplicarComissao)
+            {
                 removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
+            }
 
             /* Chamado 62763. */
             foreach (var ambientePedido in ambientesPedido)
             {
-                var produtosAmbiente = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(session, ambientePedido.IdAmbientePedido);
-                if (AmbientePedidoEspelhoDAO.Instance.AplicarAcrescimo(session, novo, ambientePedido.IdAmbientePedido, ambientePedido.TipoAcrescimo, ambientePedido.Acrescimo, produtosAmbiente))
+                var produtosAmbiente = ProdutosPedidoEspelhoDAO.Instance.GetByAmbiente(
+                    session,
+                    ambientePedido.IdAmbientePedido);
+
+                var aplicarAcrescimoAmbiente = AmbientePedidoEspelhoDAO.Instance.AplicarAcrescimo(
+                    session,
+                    novo,
+                    ambientePedido.IdAmbientePedido,
+                    ambientePedido.TipoAcrescimo,
+                    ambientePedido.Acrescimo,
+                    produtosAmbiente);
+
+                if (aplicarAcrescimoAmbiente)
+                {
                     removidos.AddRange(produtosAmbiente.Select(p => p.IdProdPed));
+                }
             }
 
             var produtosAtualizar = produtosPedidoEspelho
                 .Where(p => removidos.Contains(p.IdProdPed))
                 .ToList();
 
-            FinalizarAplicacaoComissaoAcrescimoDesconto(session, novo, produtosAtualizar, true);
+            FinalizarAplicacaoComissaoAcrescimoDesconto(
+                session,
+                novo,
+                produtosAtualizar,
+                true);
+
             UpdateTotalPedido(session, novo);
         }
 

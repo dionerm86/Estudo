@@ -27,7 +27,6 @@
     
     function validacao(idPecaProjetoModelo, idProjetoModelo)
     {
-        debugger;
         openWindow(500, 1000, "CadValidacaoPecaModelo.aspx?idPecaProjMod=" + idPecaProjetoModelo + "&idProjetoModelo=" + idProjetoModelo);
     }
 

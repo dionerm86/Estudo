@@ -30,7 +30,7 @@
         /// <summary>
         /// Situação Tipo Perda
         /// </summary>
-        public Glass.Data.Model.SituacaoTipoPerda Situacao { get; set; }
+        public Situacao Situacao { get; set; }
 
         /// <summary>
         /// Exibir painel de produção

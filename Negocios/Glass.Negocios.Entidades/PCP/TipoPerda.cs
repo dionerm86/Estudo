@@ -109,7 +109,7 @@ namespace Glass.PCP.Negocios.Entidades
         /// <summary>
         /// Situação Tipo Perda
         /// </summary>
-        public Glass.Data.Model.SituacaoTipoPerda Situacao
+        public Situacao Situacao
         {
             get { return DataModel.Situacao; }
             set

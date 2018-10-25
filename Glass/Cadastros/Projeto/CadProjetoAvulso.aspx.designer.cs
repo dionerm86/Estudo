@@ -589,15 +589,6 @@ namespace Glass.UI.Web.Cadastros.Projeto {
         protected global::System.Web.UI.WebControls.HiddenField hdfIdOrcamento;
         
         /// <summary>
-        /// hdfIdAmbienteOrca control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfIdAmbienteOrca;
-        
-        /// <summary>
         /// hdfIdAmbientePedido control.
         /// </summary>
         /// <remarks>

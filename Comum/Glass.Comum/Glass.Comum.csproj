@@ -197,12 +197,12 @@
     <Compile Include="WebService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\.editorconfig">
+    <AdditionalFiles Include="..\..\.editorconfig">
       <Link>.editorconfig</Link>
-    </None>
-    <None Include="..\..\stylecop.json">
+    </AdditionalFiles>
+    <AdditionalFiles Include="..\..\stylecop.json">
       <Link>stylecop.json</Link>
-    </None>
+    </AdditionalFiles>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>

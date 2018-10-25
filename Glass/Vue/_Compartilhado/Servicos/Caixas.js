@@ -20,13 +20,8 @@ Servicos.Caixas = (function(http) {
        * @returns {Promise} Uma promise com o resultado da busca.
        */
       obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-        filtro = filtro || {};
-        filtro.pagina = pagina;
-        filtro.numeroRegistros = numeroRegistros;
-        filtro.ordenacao = ordenacao;
-
         return http().get(API.substr(0, API.length - 1) + '/diario', {
-          params: filtro
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
 
@@ -96,13 +91,8 @@ Servicos.Caixas = (function(http) {
        * @returns {Promise} Uma promise com o resultado da busca.
        */
       obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-        filtro = filtro || {};
-        filtro.pagina = pagina;
-        filtro.numeroRegistros = numeroRegistros;
-        filtro.ordenacao = ordenacao;
-
         return http().get(API.substr(0, API.length - 1) + '/geral', {
-          params: filtro
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
 

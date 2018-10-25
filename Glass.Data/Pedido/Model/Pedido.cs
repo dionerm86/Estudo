@@ -494,6 +494,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("MotivoIgnorarComissao")]
         public string MotivoIgnorarComissao { get; set; }
 
+        [XmlIgnore]
         [PersistenceProperty("IDTRANSPORTADOR")]
         public int? IdTransportador { get; set; }
 

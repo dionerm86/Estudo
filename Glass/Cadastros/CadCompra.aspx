@@ -604,7 +604,7 @@ function formaPagtoChange(control) {
             if (control == null || control.value == null) {
                 return false;
             }
-            debugger;
+
             if (control.value.toString().length >= tamanhoLimite) {
                 control.value = control.value.toString().substring(0, tamanhoLimite - 1)
                 return false;
