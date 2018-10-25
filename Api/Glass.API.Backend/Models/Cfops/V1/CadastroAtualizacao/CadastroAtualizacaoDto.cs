@@ -18,11 +18,11 @@ namespace Glass.API.Backend.Models.Cfops.V1.CadastroAtualizacao
         /// Obtém ou define o código interno do CFOP.
         /// </summary>
         [DataMember]
-        [JsonProperty("codInterno")]
-        public string CodInterno
+        [JsonProperty("codigo")]
+        public string Codigo
         {
-            get { return this.ObterValor(c => c.CodInterno); }
-            set { this.AdicionarValor(c => c.CodInterno, value); }
+            get { return this.ObterValor(c => c.Codigo); }
+            set { this.AdicionarValor(c => c.Codigo, value); }
         }
 
         /// <summary>
@@ -84,11 +84,11 @@ namespace Glass.API.Backend.Models.Cfops.V1.CadastroAtualizacao
         /// Obtém ou define a observação do CFOP.
         /// </summary>
         [DataMember]
-        [JsonProperty("obs")]
-        public string Obs
+        [JsonProperty("observacao")]
+        public string Observacao
         {
-            get { return this.ObterValor(c => c.Obs); }
-            set { this.AdicionarValor(c => c.Obs, value); }
+            get { return this.ObterValor(c => c.Observacao); }
+            set { this.AdicionarValor(c => c.Observacao, value); }
         }
     }
 }

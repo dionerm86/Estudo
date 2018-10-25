@@ -26,6 +26,11 @@ namespace Glass.API.Backend.Models.Cfops.V1.Lista
             this.Id = cfop.IdCfop;
             this.Nome = cfop.Descricao;
             this.Codigo = cfop.CodInterno;
+            this.TipoCfop = new IdNomeDto()
+            {
+                Id = cfop.IdTipoCfop,
+                Nome = cfop.Tipo,
+            };
 
             this.TipoMercadoria = new IdNomeDto()
             {
@@ -35,14 +40,7 @@ namespace Glass.API.Backend.Models.Cfops.V1.Lista
 
             this.AlterarEstoqueTerceiros = cfop.AlterarEstoqueTerceiros;
             this.AlterarEstoqueCliente = cfop.AlterarEstoqueCliente;
-            this.Obs = cfop.Obs;
-
-            this.TipoCfop = new TipoCfopDto()
-            {
-                IdTipoCfop = cfop.IdTipoCfop,
-                Descricao = cfop.Tipo,
-            };
-
+            this.Observacao = cfop.Obs;
             this.Permissoes = new PermissoesDto()
             {
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.Cfop, (uint)cfop.IdCfop, null),
@@ -61,7 +59,7 @@ namespace Glass.API.Backend.Models.Cfops.V1.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("tipoCfop")]
-        public TipoCfopDto TipoCfop { get; set; }
+        public IdNomeDto TipoCfop { get; set; }
 
         /// <summary>
         /// Obtém ou define o tipo de mercadoria do CFOP.
@@ -88,8 +86,8 @@ namespace Glass.API.Backend.Models.Cfops.V1.Lista
         /// Obtém ou define a observação do CFOP.
         /// </summary>
         [DataMember]
-        [JsonProperty("obs")]
-        public string Obs { get; set; }
+        [JsonProperty("observacao")]
+        public string Observacao { get; set; }
 
         /// <summary>
         /// Obtém ou define a lista de permissões do item.

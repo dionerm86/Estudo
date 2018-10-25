@@ -27,17 +27,10 @@
       filtroAtual: this.merge(
         {
           codigo: null,
-          descricao: null,
-          idTipoCfop: null,
-          tipoMercadoria: null,
-          alterarEstoqueTerceiros: null,
-          alterarEstoqueCliente: null,
-          obs: null
+          descricao: null
         },
         this.filtro
-      ),
-      grupoAtual: null,
-      subgrupoAtual: null
+      )
     };
   },
 

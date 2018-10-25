@@ -98,9 +98,22 @@ namespace Glass.Data.DAL
             return GetCount(tabela, idRegistroAlt, exibirAdmin, campo, false);
         }
 
+        /// <summary>
+        /// Obtém a quantidade de logs de alteração, que correspondem aos filtros informados.
+        /// </summary>
+        /// <param name="tabela">tabela.</param>
+        /// <param name="idRegistroAlt">idRegistroAlt.</param>
+        /// <param name="exibirAdmin">exibirAdmin.</param>
+        /// <param name="campo">campo.</param>
+        /// <param name="buscarVazio">buscarVazio.</param>
+        /// <returns>Retorna a quantidade de logs de alteração, que correspondem aos filtros informados.</returns>
         public int GetCount(int tabela, uint idRegistroAlt, bool exibirAdmin, string campo, bool buscarVazio)
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(tabela, idRegistroAlt, exibirAdmin, null, campo, null, null, false, buscarVazio), GetParams(campo, null, null));
+            var sqlLogAlteracao = this.Sql(tabela, idRegistroAlt, exibirAdmin, null, campo, null, null, false, buscarVazio);
+            var parametrosConsulta = this.GetParams(campo, null, null);
+            var retorno = this.objPersistence.ExecuteSqlQueryCount(sqlLogAlteracao, parametrosConsulta);
+
+            return retorno;
         }
 
         #endregion

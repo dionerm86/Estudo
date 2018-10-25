@@ -46,13 +46,13 @@ namespace Glass.API.Backend.Helper.Cfops
 
         private void ConverterDtoParaModelo(Cfop destino)
         {
-            destino.CodInterno = this.cadastro.ObterValorNormalizado(c => c.CodInterno, destino.CodInterno);
+            destino.CodInterno = this.cadastro.ObterValorNormalizado(c => c.Codigo, destino.CodInterno);
             destino.Descricao = this.cadastro.ObterValorNormalizado(c => c.Nome, destino.Descricao);
             destino.IdTipoCfop = this.cadastro.ObterValorNormalizado(c => c.IdTipoCfop, destino.IdTipoCfop);
             destino.TipoMercadoria = this.cadastro.ObterValorNormalizado(c => c.TipoMercadoria, destino.TipoMercadoria);
             destino.AlterarEstoqueTerceiros = this.cadastro.ObterValorNormalizado(c => c.AlterarEstoqueTerceiros, destino.AlterarEstoqueTerceiros);
             destino.AlterarEstoqueCliente = this.cadastro.ObterValorNormalizado(c => c.AlterarEstoqueCliente, destino.AlterarEstoqueCliente);
-            destino.Obs = this.cadastro.ObterValorNormalizado(c => c.Obs, destino.Obs);
+            destino.Obs = this.cadastro.ObterValorNormalizado(c => c.Observacao, destino.Obs);
         }
     }
 }

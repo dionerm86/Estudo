@@ -3,6 +3,7 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
@@ -56,10 +57,10 @@ namespace Glass.API.Backend.Controllers.Cfops.V1
         /// </summary>
         /// <returns>Uma lista JSON com os dados dos tipos de CFOP encontrados.</returns>
         [HttpGet]
-        [Route("tipos")]
+        [Route("tiposCfop")]
         [SwaggerResponse(200, "Tipos de CFOP encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Tipos de CFOP não encontrados.")]
-        public IHttpActionResult ObterTipos()
+        public IHttpActionResult ObterTiposCfop()
         {
             var tiposCfop = TipoCfopDAO.Instance.GetAll()
                 .Select(c => new IdNomeDto()
@@ -69,6 +70,25 @@ namespace Glass.API.Backend.Controllers.Cfops.V1
                 });
 
             return this.Lista(tiposCfop);
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de mercadoria.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos tipos de mercadoria.</returns>
+        [HttpGet]
+        [Route("tiposMercadoria")]
+        [SwaggerResponse(200, "Tipos de mercadoria encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de mercadoria não encontrados.")]
+        public IHttpActionResult ObterTiposMercadoria()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = new ConversorEnum<Data.Model.TipoMercadoria>()
+                    .ObterTraducao();
+
+                return this.Lista(tipos);
+            }
         }
 
         /// <summary>

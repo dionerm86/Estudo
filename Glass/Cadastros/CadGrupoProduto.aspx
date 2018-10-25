@@ -1,4 +1,4 @@
-<%@ Page Title="Grupos de Produto" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+Ôªø<%@ Page Title="Grupos de Produto" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="CadGrupoProduto.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadGrupoProduto" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
@@ -9,16 +9,16 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('id')">CÛdigo</a>
+                        <a href="#" @click.prevent="ordenar('id')">C√≥digo</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('nome')">DescriÁ„o</a>
+                        <a href="#" @click.prevent="ordenar('nome')">Descri√ß√£o</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('tipoCalculoPedido')">C·lculo</a>
+                        <a href="#" @click.prevent="ordenar('tipoCalculoPedido')">C√°lculo</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('tipoCalculoNotaFiscal')">C·lculo NF</a>
+                        <a href="#" @click.prevent="ordenar('tipoCalculoNotaFiscal')">C√°lculo NF</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('bloquearEstoque')">Bloquear estoque *</a>
@@ -164,7 +164,7 @@
         <section class="links">
             <div>
                 <span>
-                    * Bloqueia venda dos produtos deste grupo se n„o houver em estoque
+                    * Bloqueia venda dos produtos deste grupo se n√£o houver em estoque
                 </span>
             </div>
         </section>

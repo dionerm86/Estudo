@@ -484,7 +484,7 @@
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
-    <Content Include="Listas\LstCfopMigrando.aspx" />
+    <Content Include="Listas\LstCfop.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
@@ -1215,7 +1215,6 @@
     <Content Include="Listas\LstBenefConfig.aspx" />
     <Content Include="Listas\LstCarregamentos.aspx" />
     <Content Include="Listas\LstCentroCusto.aspx" />
-    <Content Include="Listas\LstCfop.aspx" />
     <Content Include="Listas\LstChapaVidro.aspx" />
     <Content Include="Listas\LstCheque.aspx" />
     <Content Include="Listas\LstChequeFinanc.aspx" />
@@ -3769,12 +3768,12 @@
     <Compile Include="Listas\LstBandeiraCartao.aspx.designer.cs">
       <DependentUpon>LstBandeiraCartao.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Listas\LstCfopMigrando.aspx.cs">
-      <DependentUpon>LstCfopMigrando.aspx</DependentUpon>
+    <Compile Include="Listas\LstCfop.aspx.cs">
+      <DependentUpon>LstCfop.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Listas\LstCfopMigrando.aspx.designer.cs">
-      <DependentUpon>LstCfopMigrando.aspx</DependentUpon>
+    <Compile Include="Listas\LstCfop.aspx.designer.cs">
+      <DependentUpon>LstCfop.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstChapasDisponiveis.aspx.cs">
       <DependentUpon>LstChapasDisponiveis.aspx</DependentUpon>
@@ -5463,13 +5462,6 @@
     </Compile>
     <Compile Include="Listas\LstCentroCusto.aspx.designer.cs">
       <DependentUpon>LstCentroCusto.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Listas\LstCfop.aspx.cs">
-      <DependentUpon>LstCfop.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Listas\LstCfop.aspx.designer.cs">
-      <DependentUpon>LstCfop.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstChapaVidro.aspx.cs">
       <DependentUpon>LstChapaVidro.aspx</DependentUpon>

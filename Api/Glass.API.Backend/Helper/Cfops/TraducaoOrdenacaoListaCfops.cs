@@ -35,20 +35,20 @@ namespace Glass.API.Backend.Helper.Cfops
                 case "nome":
                     return "Descricao";
 
-                case "tipo":
-                    return "Tipo";
-
-                case "tipoMercadoria":
+                case "tipomercadoria":
                     return "TipoMercadoria";
 
-                case "alterarEstoqueTerceiros":
+                case "alterarestoqueterceiros":
                     return "AlterarEstoqueTerceiros";
 
-                case "alterarEstoqueCliente":
+                case "alterarestoquecliente":
                     return "AlterarEstoqueCliente";
 
-                case "obs":
+                case "observacao":
                     return "Obs";
+
+                case "tipocfop":
+                    return "IdTipoCfop";
 
                 default:
                     return this.OrdenacaoPadrao;

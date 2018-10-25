@@ -382,8 +382,6 @@
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
-    <Compile Include="Helper\Cfops\Estrategias\Filtro\IValidacaoFiltro.cs" />
-    <Compile Include="Helper\Cfops\Estrategias\Filtro\ValidacaoFiltroSemOperacaoStrategy.cs" />
     <Compile Include="Helper\Cfops\TraducaoOrdenacaoListaCfops.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\TraducaoOrdenacaoListaTabelasDescontoAcrescimoCliente.cs" />
@@ -456,7 +454,6 @@
     <Compile Include="Models\Cfops\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Cfops\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Cfops\V1\Filtro\CfopDto.cs" />
-    <Compile Include="Models\Cfops\V1\Lista\TipoCfopDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\PermissoesDto.cs" />

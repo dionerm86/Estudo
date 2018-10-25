@@ -6,7 +6,11 @@
     configuracoes: {},
     filtro: {},
     numeroLinhaEdicao: -1,
-    inserindo: false
+    inserindo: false,
+    cfop: {},
+    cfopOriginal: {},
+    tipoCfopAtual: {},
+    tipoMercadoriaAtual: {}
   },
 
   methods: {
@@ -21,6 +25,22 @@
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
       var filtroUsar = this.clonar(filtro || {});
       return Servicos.Cfops.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
+    },
+
+    /**
+     * Retorna os itens para o controle de tipos de CFOP.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterItensTipoCfop: function () {
+      return Servicos.Cfops.obterTiposCfop(false);
+    },
+
+    /**
+     * Retorna os itens para o controle de tipos de mercadoria.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterItensTipoMercadoria: function () {
+      return Servicos.Cfops.obterTiposMercadoria(false);
     },
 
     /**
@@ -131,35 +151,31 @@
     },
 
     /**
+     * Inicia o cadastro de CFOP.
+     */
+    iniciarCadastro: function () {
+      this.iniciarCadastroOuAtualizacao_();
+      this.inserindo = true;
+    },
+
+    /**
      * Função executada para criação dos objetos necessários para edição ou cadastro de CFOP.
      * @param {?Object} [cfop=null] O CFOP que servirá como base para criação do objeto (para edição).
      */
     iniciarCadastroOuAtualizacao_: function (cfop) {
-      if (cfop) {
-        this.cfop = {
-          id: cfop.id,
-          codInterno: cfop.codInterno,
-          nome: cfop.nome,
-          idTipoCfop: cfop.idTipoCfop,
-          tipoMercadoria: cfop.tipoMercadoria,
-          alterarEstoqueTerceiros: cfop.alterarEstoqueTerceiros,
-          alterarEstoqueCliente: cfop.alterarEstoqueCliente,
-          obs: cfop.obs
-        };
-      } else {
-        this.cfop = {
-          id: null,
-          nome: null,
-          tipo: null,
-          tipoCalculoPedido: null,
-          tipoCalculoNotaFiscal: null,
-          bloquearEstoque: null,
-          alterarEstoque: null,
-          alterarEstoqueFiscal: null,
-          exibirMensagemEstoque: null,
-          geraVolume: null
-        };
-      }
+      this.tipoCfopAtual = cfop ? this.clonar(cfop.tipoCfop) : null;
+      this.tipoMercadoriaAtual = cfop && cfop.tipoMercadoria ? this.clonar(cfop.tipoMercadoria) : null;
+
+      this.cfop = {
+        id: cfop ? cfop.id : null,
+        codigo: cfop ? cfop.codigo : null,
+        nome: cfop ? cfop.nome : null,
+        idTipoCfop: cfop && cfop.tipoCfop ? cfop.tipoCfop.id : null,
+        tipoMercadoria: cfop && cfop.tipoMercadoria ? cfop.tipoMercadoria.id : null,
+        alterarEstoqueTerceiros: cfop ? cfop.alterarEstoqueTerceiros : null,
+        alterarEstoqueCliente: cfop ? cfop.alterarEstoqueCliente : null,
+        observacao: cfop ? cfop.observacao : null
+      };
 
       this.cfopOriginal = this.clonar(this.cfop);
     },
@@ -172,11 +188,6 @@
 
       this.incluirFiltroComLista(filtros, 'codInterno', this.filtro.codigo);
       this.incluirFiltroComLista(filtros, 'descricao', this.filtro.descricao);
-      this.incluirFiltroComLista(filtros, 'idTipoCfop', this.filtro.idTipoCfop);
-      this.incluirFiltroComLista(filtros, 'tipoMercadoria', this.filtro.tipoMercadoria);
-      this.incluirFiltroComLista(filtros, 'alterarEstoqueTerceiros', this.filtro.alterarEstoqueTerceiros);
-      this.incluirFiltroComLista(filtros, 'alterarEstoqueCliente', this.filtro.alterarEstoqueCliente);
-      this.incluirFiltroComLista(filtros, 'obs', this.filtro.obs);
       this.incluirFiltroComLista(filtros, 'orderBy', this.filtro.ordenacaoFiltro);
 
       return filtros.length
@@ -213,5 +224,33 @@
       .then(function (resposta) {
         vm.configuracoes = resposta.data;
       });
+  },
+
+  watch: {
+    /**
+     * Observador para a variável 'tipoCfopAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    tipoCfopAtual: {
+      handler: function (atual) {
+        if (this.cfop) {
+          this.cfop.idTipoCfop = atual ? atual.id : null;
+        }
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'tipoMercadoriaAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    tipoMercadoriaAtual: {
+      handler: function (atual) {
+        if (this.cfop) {
+          this.cfop.tipoMercadoria = atual ? atual.id : null;
+        }
+      },
+      deep: true
+    }
   }
 });

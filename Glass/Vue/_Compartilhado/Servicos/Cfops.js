@@ -31,7 +31,7 @@ Servicos.Cfops = (function(http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterConfiguracoesLista: function () {
-      return http().get(API + 'cfops/configuracoes');
+      return http().get(API + 'configuracoes');
     },
 
     /**
@@ -46,8 +46,16 @@ Servicos.Cfops = (function(http) {
      * Retorna os itens para o controle de tipos de cfop.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterTipos: function () {
-      return http().get(API + 'tipos');
+    obterTiposCfop: function () {
+      return http().get(API + 'tiposCfop');
+    },
+
+    /**
+     * Retorna os itens para o controle de tipos de mercadoria.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterTiposMercadoria: function () {
+      return http().get(API + 'tiposMercadoria');
     },
 
     /**
@@ -56,7 +64,7 @@ Servicos.Cfops = (function(http) {
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     inserir: function (cfop) {
-      return http().post(API + 'cfops', cfop);
+      return http().post(API, cfop);
     },
 
     /**
@@ -74,7 +82,7 @@ Servicos.Cfops = (function(http) {
         return Promise.resolve();
       }
 
-      return http().patch(API + 'cfops/' + idCfop, cfop);
+      return http().patch(API + idCfop, cfop);
     },
 
     /**
@@ -87,7 +95,7 @@ Servicos.Cfops = (function(http) {
         throw new Error('CFOP é obrigatório.');
       }
 
-      return http().delete(API + 'cfops/' + idCfop);
+      return http().delete(API + idCfop);
     }
   };
 }) (function () {
