@@ -551,13 +551,20 @@ namespace Glass.Data.DAL
         /// </summary>
         public void VinculaOCsCarregamento(GDASession sessao, uint idCarregamento, string idsOCs)
         {
+            var idsOrdemCarga = idsOCs.Split(',');
+
+            VerificarExistePedidoOrdemCargaNoCarregamento(
+                sessao, 
+                idCarregamento, 
+                idsOrdemCarga);
+
             string sql = @"
                 UPDATE ordem_carga
                 SET idCarregamento=" + idCarregamento + @",
                     situacao=" + (int)OrdemCarga.SituacaoOCEnum.PendenteCarregamento + @"
                 WHERE idOrdemCarga IN(" + idsOCs + ")";
 
-            foreach (var idOc in idsOCs.Split(','))
+            foreach (var idOc in idsOrdemCarga)
             {
                 // Insere a situação da ordem de carga no log de alterações.
                 LogAlteracaoDAO.Instance.LogOrdemCarga(sessao, idOc.StrParaInt(), "Situação: Pendente Carregamento");
@@ -567,6 +574,42 @@ namespace Glass.Data.DAL
             }
 
             objPersistence.ExecuteCommand(sessao, sql);
+        }
+
+        private void VerificarExistePedidoOrdemCargaNoCarregamento(GDASession sessao, uint idCarregamento, string[] idsOrdemCarga)
+        {
+            var idsPedidos = new List<uint>();
+
+            foreach (var idOC in idsOrdemCarga)
+            {
+                idsPedidos.AddRange(this.GetIdsPedidosOC(
+                    sessao,
+                    Conversoes.StrParaUint(idOC),
+                    OrdemCarga.TipoOCEnum.Venda));
+            }
+
+            if (!idsPedidos.Any(f => f > 0))
+            {
+                return;
+            }
+                
+            var pedidosOrdemCarga = PedidoOrdemCargaDAO.Instance.ObterPedidosOrdemCarga(
+                sessao,
+                idCarregamento,
+                idsPedidos);
+
+            if (!pedidosOrdemCarga.Any(f => f.IdPedidoOrdemCarga > 0))
+            {
+                return;
+            }
+
+            var mensagem = $"Existem pedidos na listagem que já estão vinculados ao carregamento {idCarregamento}:";
+            foreach (var pedidoOrdemCarga in pedidosOrdemCarga)
+            {
+                mensagem += $"\nPedido: {pedidoOrdemCarga.IdPedido}, Ordem de carga: {pedidoOrdemCarga.IdOrdemCarga}";
+            }
+
+            throw new Exception(mensagem);
         }
 
         #endregion
