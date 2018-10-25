@@ -3,8 +3,10 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.API.Backend.Models.Parcelas.V1.Filtro;
+using Glass.API.Backend.Models.Parcelas.V1.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
@@ -18,6 +20,46 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
     /// </summary>
     public partial class ParcelasController : BaseController
     {
+        /// <summary>
+        /// Recupera as configurações usadas pela tela de listagem de parcelas.
+        /// </summary>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("configuracoes")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Parcelas.V1.Parcelas.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesListaParcelas()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.Parcelas.V1.Parcelas.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de parcelas para a tela de listagem.
+        /// </summary>
+        /// <param name="filtro">O filtro para a busca de condutores.</param>
+        /// <returns>Uma lista JSON com os dados dos condutores.</returns>
+        [HttpGet]
+        [Route("")]
+        [SwaggerResponse(200, "Parcelas encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<ListaDto>))]
+        [SwaggerResponse(204, "Parcelas não encontradas para o filtro informado.")]
+        [SwaggerResponse(206, "Parcelas paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<ListaDto>))]
+        [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterListaParcelas([FromUri] FiltroDto filtro)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var parcelas = ParcelasDAO.Instance.GetAll();
+
+                return this.ListaPaginada(
+                    parcelas.Select(dao => new ListaDto(dao)),
+                    filtro,
+                    () => parcelas.Count());
+            }
+        }
+
         /// <summary>
         /// Recupera as parcelas do sistema para os controles de filtro das telas.
         /// </summary>

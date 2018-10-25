@@ -8,11 +8,46 @@ Servicos.Parcelas = (function(http) {
 
   return {
     /**
+     * Recupera a lista de parcelas.
+     * @param {number} pagina O número da página de resultados a ser exibida.
+     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+     * @param {string} ordenacao A ordenação para o resultado.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+      ObterListaParcelas: function (filtro, pagina, numeroRegistros, ordenacao) {
+          return http().get(API.substr(0, API.length - 1), {
+              params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+          });
+      },
+
+      /**
+       * Recupera o objeto com as configurações utilizadas na tela de listagem de parcelas.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      ObterConfiguracoesListaParcelas: function () {
+          return http().get(API + 'configuracoes');
+      },
+
+
+    /**
      * Recupera a lista de parcelas para uso no controle de busca.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     obterParaControle: function () {
       return http().get(API + 'filtro');
+    },
+
+    /**
+     * Remove uma rota.
+     * @param {!number} id O identificador da rota que será excluída.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    excluir: function (id) {
+        if (!id) {
+            throw new Error('Parcela é obrigatória.');
+        }
+
+        return http().delete(API + id);
     },
 
     /**
