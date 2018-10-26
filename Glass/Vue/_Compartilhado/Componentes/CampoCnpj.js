@@ -47,8 +47,9 @@
             }, 0)
             % 11;
 
-          return (digitoCalculado < 2 && digito === 0)
-            || (digitoCalculado >= 2 && digito === (11 - digitoCalculado));
+          return digitoCalculado < 2
+            ? digito === 0
+            : digito === (11 - digitoCalculado);
         }
 
         return validarDigito(12, 1) && validarDigito(13, 0);
