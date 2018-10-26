@@ -49,91 +49,69 @@
   <ItemGroup>
     <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Business.1.0.0\lib\net40\Colosoft.Business.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Caching, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d17063ea1176ac27, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Caching.1.0.0\lib\net40\Colosoft.Caching.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Core.1.0.0.272\lib\net40\Colosoft.Core.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Caching, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4582941062e92565, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Caching.1.0.0\lib\net40\Colosoft.Data.Caching.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Database, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1d992570aca53534, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Database.1.0.0\lib\net40\Colosoft.Data.Database.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Database.Generic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Database.Generic.1.0.0\lib\net40\Colosoft.Data.Database.Generic.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Database.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Database.MySql.1.0.0\lib\net40\Colosoft.Data.Database.MySql.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Schema, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d550d59fa5ddf895, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Schema.1.0.0\lib\net40\Colosoft.Data.Schema.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Schema.GDA, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Schema.GDA.1.0.0\lib\net40\Colosoft.Data.Schema.GDA.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.DataAccess, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ddb5805976f37b7c, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.DataAccess.1.0.0\lib\net40\Colosoft.DataAccess.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Mef, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8374acc24c9df9ab, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Mef.1.0.0\lib\net40\Colosoft.Mef.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Query.Database, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7dca01bd831b5786, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Query.Database.1.0.0\lib\net40\Colosoft.Query.Database.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Query.Database.Generic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Query.Database.Generic.1.0.0\lib\net40\Colosoft.Query.Database.Generic.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Query.Database.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Query.Database.MySql.1.0.0\lib\net40\Colosoft.Query.Database.MySql.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Security.Captcha, Version=1.0.0.0, Culture=neutral, PublicKeyToken=acad0a7596db2bc4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Security.Captcha.1.0.0\lib\net40\Colosoft.Security.Captcha.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=019fcb5f415e5b13, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Web.1.0.0\lib\net40\Colosoft.Web.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Web.Http, Version=1.0.0.0, Culture=neutral, PublicKeyToken=812c55bd78f48efb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Web.Http.1.0.0\lib\net452\Colosoft.Web.Http.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="EditorConfig.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=fe6ce3ea283749f2, processorArchitecture=MSIL">
       <HintPath>..\..\packages\editorconfig.0.12.1\lib\net45\EditorConfig.Core.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="FluentScheduler, Version=5.3.0.0, Culture=neutral, PublicKeyToken=b76503528a14ebd1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FluentScheduler.5.3.0\lib\net40\FluentScheduler.dll</HintPath>
@@ -141,15 +119,12 @@
     </Reference>
     <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="GDA.Provider.MySql, Version=1.0.4.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\GDA.Provider.MySql.1.0.4.1\lib\net35\GDA.Provider.MySql.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="MefContrib">
       <HintPath>..\..\Dlls\MefContrib\MefContrib.dll</HintPath>
@@ -160,41 +135,33 @@
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.6\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.Cors, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Cors.5.2.6\lib\net45\System.Web.Cors.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -205,15 +172,12 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.6\lib\net45\System.Web.Http.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Http.Cors, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Cors.5.2.6\lib\net45\System.Web.Http.Cors.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.6\lib\net45\System.Web.Http.WebHost.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -224,7 +188,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -242,6 +205,9 @@
     <Compile Include="Controllers\Aplicacoes\V1\PostAplicacoesController.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
+    <Compile Include="Controllers\Cfops\V1\DeleteCfopsController.cs" />
+    <Compile Include="Controllers\Cfops\V1\PatchCfopsController.cs" />
+    <Compile Include="Controllers\Cfops\V1\PostCfopsController.cs" />
     <Compile Include="Controllers\Clientes\V1\Sugestoes\GetSugestaoClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Sugestoes\DeleteSugestaoClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Sugestoes\SugestaoClienteController.cs" />
@@ -444,6 +410,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Cfops\ConverterCadastroAtualizacaoParaCfop.cs" />
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
@@ -462,6 +429,7 @@
     <Compile Include="Helper\Producao\Turnos\TraducaoOrdenacaoListaTurnos.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
+    <Compile Include="Helper\Cfops\TraducaoOrdenacaoListaCfops.cs" />
     <Compile Include="Helper\Condutores\ConverterCadastroAtualizacaoParaCondutor.cs" />
     <Compile Include="Helper\Condutores\TraducaoOrdenacaoListaCondutores.cs" />
     <Compile Include="Helper\Rotas\TraducaoOrdenacaoListaRotas.cs" />
@@ -537,6 +505,12 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Cfops\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Cfops\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Cfops\V1\Filtro\CfopDto.cs" />
+    <Compile Include="Models\Cfops\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Cfops\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Cfops\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
@@ -882,7 +856,7 @@
     <Content Include="AppSettings.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="packages.config" />
+    <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1020,7 +994,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50879</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:15160/backend</IISUrl>
+          <IISUrl>http://localhost:15190/backend</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
@@ -1048,7 +1022,7 @@
   </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>Este projeto faz referência a pacotes do NuGet que não estão presentes neste computador. Use a Restauração de Pacotes do NuGet para baixá-los.  Para obter mais informações, consulte http://go.microsoft.com/fwlink/?LinkID=322105. O arquivo ausente é {0}.</ErrorText>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />

@@ -492,6 +492,7 @@
     <Content Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx" />
     <Content Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx" />
     <Content Include="Controls\ctrlProdComposicaoOrcamento.ascx" />
+    <Content Include="Listas\LstCfop.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
@@ -507,6 +508,9 @@
     <Content Include="Vue\Producao\Roteiros\Componentes\LstRoteiros.js" />
     <Content Include="Vue\Producao\Turnos\Componentes\LstTurnos.js" />
     <Content Include="Vue\Producao\TiposPerda\Componentes\LstTiposPerda.js" />
+    <Content Include="Vue\Cfops\Componentes\LstCfops.Filtro.js" />
+    <Content Include="Vue\Cfops\Componentes\LstCfops.js" />
+    <Content Include="Vue\Cfops\Templates\LstCfops.Filtro.html" />
     <Content Include="Vue\Produtos\GruposProduto\Componentes\LstGruposProduto.js" />
     <Content Include="Vue\Feriados\Componentes\LstFeriados.js" />
     <Content Include="Vue\Comissionados\Componentes\LstComissionados.Filtro.js" />
@@ -1230,7 +1234,6 @@
     <Content Include="Listas\LstBenefConfig.aspx" />
     <Content Include="Listas\LstCarregamentos.aspx" />
     <Content Include="Listas\LstCentroCusto.aspx" />
-    <Content Include="Listas\LstCfop.aspx" />
     <Content Include="Listas\LstChapaVidro.aspx" />
     <Content Include="Listas\LstCheque.aspx" />
     <Content Include="Listas\LstChequeFinanc.aspx" />
@@ -3816,6 +3819,13 @@
     <Compile Include="Listas\LstBandeiraCartao.aspx.designer.cs">
       <DependentUpon>LstBandeiraCartao.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Listas\LstCfop.aspx.cs">
+      <DependentUpon>LstCfop.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstCfop.aspx.designer.cs">
+      <DependentUpon>LstCfop.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Listas\LstChapasDisponiveis.aspx.cs">
       <DependentUpon>LstChapasDisponiveis.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -5489,13 +5499,6 @@
     </Compile>
     <Compile Include="Listas\LstCentroCusto.aspx.designer.cs">
       <DependentUpon>LstCentroCusto.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Listas\LstCfop.aspx.cs">
-      <DependentUpon>LstCfop.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Listas\LstCfop.aspx.designer.cs">
-      <DependentUpon>LstCfop.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstChapaVidro.aspx.cs">
       <DependentUpon>LstChapaVidro.aspx</DependentUpon>
@@ -9445,7 +9448,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62047</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:15160/</IISUrl>
+          <IISUrl>http://localhost:15190/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -193,7 +193,7 @@ namespace Glass.Data.DAL
             numeroRegistros = 0;
 
             // Só otimiza consultas sem filtro e que devem ser limitadas e ordenadas
-            if (limitar != string.Empty)
+            if (ordenar != string.Empty && limitar != string.Empty)
             {
                 try
                 {
