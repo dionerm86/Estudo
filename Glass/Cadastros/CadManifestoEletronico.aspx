@@ -1,4 +1,4 @@
-<%@ Page Title="Cadastro MDF-e" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+﻿<%@ Page Title="Cadastro MDF-e" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="CadManifestoEletronico.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadManifestoEletronico" %>
 
 <%@ Register Src="~/Controls/MDFe/ctrlRodoviario.ascx" TagName="ctrlRodoviario" TagPrefix="uc1" %>
@@ -262,14 +262,14 @@
             return false;
         }
 
-        //Salva as informações de CTe associadas
+        // Salva as informações de CTe associadas.
         function SalvarCTeReferenciada(botaoAdicionar) {
             var idControleGrdCTeCidadeDescarga = botaoAdicionar.id.substring(0, botaoAdicionar.id.lastIndexOf("_"));
-            var idControleGrdCidadeDescarga = idControleGrdNFeCidadeDescarga.substring(0, idControleGrdNFeCidadeDescarga.lastIndexOf("_grdCTeCidadeDescarga"));
-            var idCidadeDescarga = FindControl(idControleGrdCidadeDescarga + 'hdfIdCidadeDescargaCTe', 'input').value;
-            var idCTe = FindControl(idControleGrdCTeCidadeDescarga + 'hdfIdCTe', 'input').value;
-            var chaveAcesso = FindControl(idControleGrdNFeCidadeDescarga + 'txtChaveAcessoCte', 'input').value;
-            var fsda = FindControl(idControleGrdNFeCidadeDescarga + 'txtFsdaCTe', 'input').value;
+            var idControleGrdCidadeDescarga = idControleGrdCTeCidadeDescarga.substring(0, idControleGrdCTeCidadeDescarga.lastIndexOf("_grdCTeCidadeDescarga"));
+            var idCidadeDescarga = FindControl(idControleGrdCidadeDescarga + '_hdfIdCidadeDescargaCTe', 'input').value;
+            var idCTe = FindControl(idControleGrdCTeCidadeDescarga + '_hdfIdCTe', 'input').value;
+            var chaveAcesso = FindControl(idControleGrdCTeCidadeDescarga + '_txtChaveAcessoCte', 'input').value;
+            var fsda = FindControl(idControleGrdCTeCidadeDescarga + '_txtFsdaCTe', 'input').value;
 
             var retorno = CadManifestoEletronico.InserirCteCidadeDescarga(idCidadeDescarga, idCTe, chaveAcesso, fsda);
 
