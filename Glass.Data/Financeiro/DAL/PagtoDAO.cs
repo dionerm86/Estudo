@@ -620,9 +620,9 @@ namespace Glass.Data.DAL
 
             if (idFornec > 0)
             {
-                sql += $" And p.IdPagto In (Select idPagto From contas_pagar Where idFornec= {idFornec})";
+                sql += $" And p.IdPagto In (Select idPagto From contas_pagar Where idFornec = {idFornec})";
             }
-            else if (!string.IsNullOrEmpty(nomeFornec))
+            else if (!string.IsNullOrWhiteSpace(nomeFornec))
             {
                 sql += @" And p.IdPagto In (Select cp.idPagto From contas_pagar cp 
                     Inner Join fornecedor fn On (cp.idFornec=fn.idFornec) 
@@ -631,50 +631,50 @@ namespace Glass.Data.DAL
 
             if (idCompra > 0)
             {
-                sql += $" And p.IdPagto In (Select idPagto From contas_pagar Where idCompra= {idCompra})";
+                sql += $" And p.IdPagto In (Select idPagto From contas_pagar Where idCompra = {idCompra})";
             }
 
             if (!string.IsNullOrEmpty(dataIni))
             {
-                sql += " And p.DataPagto>=?dataIni";
+                sql += " And p.DataPagto >= ?dataIni";
             }
 
             if (!string.IsNullOrEmpty(dataFim))
             {
-                sql += " And p.DataPagto<=?dataFim";
+                sql += " And p.DataPagto <= ?dataFim";
             }
 
             if (valorInicial > 0)
             {
-                sql += $" And p.valorPago>= {valorInicial.ToString().Replace(',', '.')}";
+                sql += $" And p.valorPago >= {valorInicial.ToString().Replace(',', '.')}";
             }
 
             if (valorFinal > 0)
             {
-                sql += $" And p.valorPago<= {valorFinal.ToString().Replace(',', '.')}";
+                sql += $" And p.valorPago <= {valorFinal.ToString().Replace(',', '.')}";
             }
 
             if (situacao > 0)
             {
-                sql += $" And p.situacao= {situacao}";
+                sql += $" And p.situacao = {situacao}";
             }
 
             if (numeroNfe > 0)
             {
-                sql += $" And p.idPagto In (Select idPagto From contas_pagar Where idNf In (Select idNf From nota_fiscal Where numeroNfe= {numeroNfe}))";
+                sql += $" And p.idPagto In (Select idPagto From contas_pagar Where idNf In (Select idNf From nota_fiscal Where numeroNfe = {numeroNfe}))";
             }
 
             if (idCustoFixo > 0)
             {
-                sql += $" And p.idPagto in (Select idPagto from contas_pagar Where IdCustoFixo= {idCustoFixo})";
+                sql += $" And p.idPagto in (Select idPagto from contas_pagar Where IdCustoFixo = {idCustoFixo})";
             }
 
             if (idImpostoServ > 0)
             {
-                sql += $" And p.idPagto in (Select idPagto from contas_pagar Where idImpostoServ= {idImpostoServ})";
+                sql += $" And p.idPagto in (Select idPagto from contas_pagar Where idImpostoServ = {idImpostoServ})";
             }
 
-            if (!string.IsNullOrEmpty(obs))
+            if (!string.IsNullOrWhiteSpace(obs))
             {
                 sql += " And p.obs Like ?obs";
             }
