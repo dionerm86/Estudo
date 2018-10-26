@@ -39,8 +39,8 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
         /// <summary>
         /// Recupera a lista de parcelas para a tela de listagem.
         /// </summary>
-        /// <param name="filtro">O filtro para a busca de condutores.</param>
-        /// <returns>Uma lista JSON com os dados dos condutores.</returns>
+        /// <param name="filtro">O filtro para a busca de parcelas.</param>
+        /// <returns>Uma lista JSON com os dados das parcelas.</returns>
         [HttpGet]
         [Route("")]
         [SwaggerResponse(200, "Parcelas encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<ListaDto>))]

@@ -14,7 +14,7 @@ Servicos.Parcelas = (function(http) {
      * @param {string} ordenacao A ordenação para o resultado.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-      ObterListaParcelas: function (filtro, pagina, numeroRegistros, ordenacao) {
+      obterListaParcelas: function (filtro, pagina, numeroRegistros, ordenacao) {
           return http().get(API.substr(0, API.length - 1), {
               params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
           });
@@ -24,7 +24,7 @@ Servicos.Parcelas = (function(http) {
        * Recupera o objeto com as configurações utilizadas na tela de listagem de parcelas.
        * @returns {Promise} Uma promise com o resultado da busca.
        */
-      ObterConfiguracoesListaParcelas: function () {
+      obterConfiguracoesListaParcelas: function () {
           return http().get(API + 'configuracoes');
       },
 
@@ -39,7 +39,7 @@ Servicos.Parcelas = (function(http) {
 
     /**
      * Remove uma rota.
-     * @param {!number} id O identificador da rota que será excluída.
+     * @param {!number} id O identificador da parcela que será excluída.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     excluir: function (id) {

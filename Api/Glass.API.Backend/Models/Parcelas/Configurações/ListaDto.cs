@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 namespace Glass.API.Backend.Models.Parcelas.V1.Parcelas.Configuracoes
 {
     /// <summary>
-    /// Classe que encapsula as configurações para a tela de listagem de grupos de produtos.
+    /// Classe que encapsula as configurações para a tela de listagem de parcelas.
     /// </summary>
     [DataContract(Name = "Lista")]
     public class ListaDto

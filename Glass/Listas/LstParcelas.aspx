@@ -46,10 +46,10 @@
                     </td>
                     <td>{{ item.nome }}</td>
                     <td>{{ item.numParcelas }}</td>
-                    <td v-if="usarTabelaDescontoAcrescimoPedidoAVista">{{ item.desconto }}</td>
+                    <td v-if="configuracoes.usarTabelaDescontoAcrescimoPedidoAVista">{{ item.desconto }}</td>
                     <td>{{ item.dias }}</td>
                     <td>{{ item.parcelaPadrao | indicaMarcado }}</td>
-                    <td v-if="usarDescontoEmParcela">{{ item.parcelaAvista }}</td>
+                    <td v-if="configuracoes.usarDescontoEmParcela">{{ item.parcelaAvista }}</td>
                     <td>{{ item.situacao }}</td>
                     <td>
                         <log-alteracao tabela="Parcelas" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>

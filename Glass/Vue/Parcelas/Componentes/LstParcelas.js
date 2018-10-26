@@ -16,7 +16,7 @@
          * @return {Promise} Uma promise com o resultado da busca.
          */
         obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-            return Servicos.Parcelas.ObterListaParcelas(filtro, pagina, numeroRegistros, ordenacao);
+            return Servicos.Parcelas.obterListaParcelas(filtro, pagina, numeroRegistros, ordenacao);
         },
 
         /**
@@ -34,10 +34,17 @@
             return '../Cadastros/CadParcelas.aspx?idParcela=' + item.id;
         },
 
-    /**
-     * Exclui uma parcela.
-     * @param {Object} parcela A parcela que será excluída.
-     */
+        /**
+         * Força a atualização da lista de parcelas, com base no filtro atual.
+         */
+        atualizarLista: function () {
+            this.$refs.lista.atualizar();
+        },
+
+        /**
+         * Exclui uma parcela.
+         * @param {Object} parcela A parcela que será excluída.
+         */
         excluir: function (parcela) {
             if (!this.perguntar('Confirmação', 'Tem certeza que deseja excluir esta parcela?')) {
                 return;
@@ -68,7 +75,7 @@
     mounted: function () {
         var vm = this;
 
-        Servicos.Parcelas.obterConfiguracoesListaParcela()
+        Servicos.Parcelas.obterConfiguracoesListaParcelas()
           .then(function (resposta) {
               vm.configuracoes = resposta.data;
           });

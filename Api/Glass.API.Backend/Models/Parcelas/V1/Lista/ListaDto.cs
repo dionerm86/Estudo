@@ -59,14 +59,14 @@ namespace Glass.API.Backend.Models.Parcelas.V1.Lista
         public bool ParcelaPadrao { get; set; }
 
         /// <summary>
-        /// Obtém se a parcela é padrão.
+        /// Obtém se a parcela é a vista.
         /// </summary>
         [DataMember]
         [JsonProperty("parcelaAvista")]
         public bool ParcelaAVista { get; set; }
 
         /// <summary>
-        /// Obtém se a parcela é padrão.
+        /// Obtém o desconto da parcela.
         /// </summary>
         [DataMember]
         [JsonProperty("desconto")]
