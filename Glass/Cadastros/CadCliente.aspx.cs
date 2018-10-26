@@ -269,6 +269,10 @@ namespace Glass.UI.Web.Cadastros
             return Glass.Configuracoes.ClienteConfig.TelaCadastro.ExigirEmailClienteAoInserirOuAtualizar;
         }
 
+        /// <summary>
+        /// Recupera a configuração de bonificação do cliente.
+        /// </summary>
+        /// <returns>Configuração de bonificação do cliente.</returns>
         protected bool UsarPercentualBonificacaoCliente()
         {
             return Glass.Configuracoes.Liberacao.UsarPercentualBonificacaoCliente;
