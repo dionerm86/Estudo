@@ -25,11 +25,14 @@ namespace Glass.API.Backend.Helper.Parcelas
         {
             switch (campo.ToLowerInvariant())
             {
-                case "id":
-                    return "IdParcela";
-
                 case "nome":
                     return "Descricao";
+
+                case "dias":
+                case "numparcelas":
+                case "parcelapadrao":
+                case "situacao":
+                    return campo;
 
                 default:
                     return this.OrdenacaoPadrao;

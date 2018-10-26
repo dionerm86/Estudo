@@ -39,8 +39,17 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
                         return validacao;
                     }
 
-                    ParcelasDAO.Instance.DeleteByPrimaryKey(sessao, id);
-                    sessao.Commit();
+                    var fluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
+                        .Current.GetInstance<Financeiro.Negocios.IParcelasFluxo>();
+
+                    var parcela = fluxo.ObtemParcela(id);
+
+                    var resultado = fluxo.ApagarParcela(parcela);
+
+                    if (!resultado)
+                    {
+                        return this.ErroValidacao($"Falha ao excluir parcela. {resultado.Message.Format()}");
+                    }
 
                     return this.Aceito($"Parcela {id} excluída.");
                 }

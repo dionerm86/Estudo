@@ -18,7 +18,7 @@ namespace Glass.API.Backend.Models.Parcelas.V1.Lista
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
         /// </summary>
         /// <param name="parcelas">A parcela que será retornada.</param>
-        public ListaDto(Data.Model.Parcelas parcelas)
+        public ListaDto(Glass.Financeiro.Negocios.Entidades.Parcelas parcelas)
         {
             this.Id = parcelas.IdParcela;
             this.Nome = parcelas.Descricao;

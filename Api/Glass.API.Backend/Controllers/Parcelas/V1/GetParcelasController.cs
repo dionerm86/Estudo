@@ -43,20 +43,30 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
         /// <returns>Uma lista JSON com os dados das parcelas.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Parcelas encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<ListaDto>))]
+        [SwaggerResponse(200, "Parcelas encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Parcelas.V1.Lista.ListaDto>))]
         [SwaggerResponse(204, "Parcelas não encontradas para o filtro informado.")]
-        [SwaggerResponse(206, "Parcelas paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<ListaDto>))]
+        [SwaggerResponse(206, "Parcelas paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Parcelas.V1.Lista.ListaDto>))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaParcelas([FromUri] FiltroDto filtro)
+        public IHttpActionResult ObterListaParcelas([FromUri] Models.Parcelas.V1.Lista.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                var parcelas = ParcelasDAO.Instance.GetAll();
+                filtro = filtro ?? new Models.Parcelas.V1.Lista.FiltroDto();
+
+                var parcelas = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Glass.Financeiro.Negocios.IParcelasFluxo>()
+                    .PesquisarParcelas();
+
+                ((Colosoft.Collections.IVirtualList)parcelas).Configure(filtro.NumeroRegistros);
+                ((Colosoft.Collections.ISortableCollection)parcelas).ApplySort(filtro.ObterTraducaoOrdenacao());
 
                 return this.ListaPaginada(
-                    parcelas.Select(dao => new ListaDto(dao)),
+                    parcelas
+                        .Skip(filtro.ObterPrimeiroRegistroRetornar())
+                        .Take(filtro.NumeroRegistros)
+                        .Select(s => new Models.Parcelas.V1.Lista.ListaDto(s)),
                     filtro,
-                    () => parcelas.Count());
+                    () => parcelas.Count);
             }
         }
 
