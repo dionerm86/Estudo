@@ -967,7 +967,7 @@ namespace Glass.Data.DAL
             // Verifica se o pedido possui sinal ou pagamento antecipado a receber.
             if (!PCPConfig.TelaPedidoPcp.PermitirFinalizarComDiferencaEPagtoAntecip && pedidosPossuemSinalPagamentoAntecipadoAReceber)
             {
-                throw new Exception(string.Format("Falha ao liberar pedidos. Erro: {0}", mensagemSinalPagamentoAntecipado));
+                throw new Exception(string.Format("Falha ao liberar pedidos. Erro: {0}", string.Join(", ", mensagemSinalPagamentoAntecipado)));
             }
 
             // Verifica se foram informados cheques na liberação do pedido e se eles foram recuperados no parâmetro valoresPagos.
