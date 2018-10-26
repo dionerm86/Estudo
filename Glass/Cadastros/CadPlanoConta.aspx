@@ -59,7 +59,7 @@
                     </td>
                     <td>{{ planoConta.codigo }}</td>
                     <td>
-                        <template v-if="planoConta.permissoes && planoConta.permissoes.editarApenasExibirDre">
+                        <template v-if="planoConta.permissoes && !planoConta.permissoes.editarApenasExibirDre">
                             <lista-selecao-id-valor v-bind:item-selecionado.sync="grupoContaAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensGrupoConta"
                                 v-bind:ordenar="false" required></lista-selecao-id-valor>
                         </template>
@@ -68,7 +68,7 @@
                         </template>
                     </td>
                     <td>
-                        <template v-if="planoConta.permissoes && planoConta.permissoes.editarApenasExibirDre">
+                        <template v-if="planoConta.permissoes && !planoConta.permissoes.editarApenasExibirDre">
                             <input type="text" v-model="planoConta.nome" maxlength="60" style="width: 250px" required />
                         </template>
                         <template v-else>
@@ -79,7 +79,7 @@
                         <input type="checkbox" v-model="planoConta.exibirDre" />
                     </td>
                     <td>
-                        <template v-if="planoConta.permissoes && planoConta.permissoes.editarApenasExibirDre">
+                        <template v-if="planoConta.permissoes && !planoConta.permissoes.editarApenasExibirDre">
                             <lista-selecao-id-valor v-bind:item-selecionado.sync="situacaoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensSituacao"
                                 v-bind:ordenar="false" required></lista-selecao-id-valor>
                         </template>

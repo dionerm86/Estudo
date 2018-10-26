@@ -9,7 +9,7 @@
     planoConta: {},
     planoContaOriginal: {},
     grupoContaAtual: {},
-    situacaoAtual: {}    
+    situacaoAtual: {}
   },
 
   methods: {
@@ -154,7 +154,7 @@
         nomeGrupoConta: planoConta && planoConta.grupoConta ? planoConta.grupoConta.nome : null,
         situacao: planoConta && planoConta.situacao ? planoConta.situacao.id : null,
         descricaoSituacao: planoConta && planoConta.situacao ? planoConta.situacao.nome : null,
-        permissoes: planoConta ? this.clonar(this.planoConta.permissoes) : null
+        permissoes: planoConta ? this.clonar(planoConta.permissoes) : null
       };
 
       this.planoContaOriginal = this.clonar(this.planoConta);

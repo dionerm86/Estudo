@@ -6,6 +6,7 @@ using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Glass.Data.Model;
 using Newtonsoft.Json;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.PlanosConta.V1.Lista
@@ -40,8 +41,8 @@ namespace Glass.API.Backend.Models.PlanosConta.V1.Lista
 
             this.Permissoes = new PermissoesDto
             {
-                Excluir = planoConta.PlanoContasSistema,
-                EditarApenasExibirDre = planoConta.PlanoContasSistema,
+                Excluir = !this.VerificarPlanoDeContaInternoSistema(planoConta.IdGrupo),
+                EditarApenasExibirDre = this.VerificarPlanoDeContaInternoSistema(planoConta.IdGrupo),
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.PlanoContas, (uint)planoConta.IdConta, null),
             };
         }
@@ -80,5 +81,12 @@ namespace Glass.API.Backend.Models.PlanosConta.V1.Lista
         [DataMember]
         [JsonProperty("permissoes")]
         public PermissoesDto Permissoes { get; set; }
+
+        private bool VerificarPlanoDeContaInternoSistema(int idGrupoConta)
+        {
+            return Glass.Data.Helper.UtilsPlanoConta.GetGruposSistema.Split(',')
+                .Select(f => int.Parse(f))
+                .Contains(idGrupoConta);
+        }
     }
 }
