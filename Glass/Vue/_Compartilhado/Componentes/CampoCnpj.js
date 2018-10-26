@@ -1,10 +1,10 @@
-﻿Vue.component('campo-cpf', {
+﻿Vue.component('campo-cnpj', {
   props: {
     /**
-     * CPF buscado pelo controle.
+     * CNPJ buscado pelo controle.
      * @type {?string}
      */
-    cpf: {
+    cnpj: {
       required: true,
       twoWay: true,
       validator: Mixins.Validacao.validarStringOuVazio
@@ -13,17 +13,17 @@
 
   methods: {
     /**
-     * Valida o CPF atual, alterando a validação do campo.
+     * Valida o CNPJ atual, alterando a validação do campo.
      */
-    validarCpf: function () {
-      var cpf = (this.cpfAtual || '').replace(/[^\d]+/g, '');
+    validarCnpj: function () {
+      var cnpj = (this.cnpjAtual || '').replace(/[^\d]+/g, '');
 
-      const validar = function () {
-        if (cpf.length !== 11) {
+      const validar = function() {
+        if (cnpj.length !== 14) {
           return false;
         }
 
-        const numeros = cpf.split('')
+        const numeros = cnpj.split('')
           .map(x => parseInt(x, 10));
 
         const todosIguais = numeros
@@ -35,7 +35,7 @@
           return false;
         }
 
-        const multiplicadores = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+        const multiplicadores = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
         const validarDigito = function (posicaoDigito, deslocamentoMultiplicador) {
           const digito = numeros[posicaoDigito];
@@ -52,12 +52,12 @@
             : digito === (11 - digitoCalculado);
         }
 
-        return validarDigito(9, 1) && validarDigito(10, 0);
+        return validarDigito(12, 1) && validarDigito(13, 0);
       };
 
       var validacao = validar()
         ? ''
-        : 'CPF Inválido';
+        : 'CNPJ Inválido';
 
       var campo = this.$refs.campo.$refs.campo.$refs.input;
       campo.setCustomValidity(validacao);
@@ -66,16 +66,16 @@
 
   computed: {
     /**
-     * Propriedade computada que retorna o CPF e que
+     * Propriedade computada que retorna o CNPJ e que
      * atualiza a propriedade em caso de alteração.
      */
-    cpfAtual: {
+    cnpjAtual: {
       get: function () {
-        return this.cpf;
+        return this.cnpj;
       },
       set: function (valor) {
-        if (valor !== this.cpf) {
-          this.$emit('update:cpf', valor);
+        if (valor !== this.cnpj) {
+          this.$emit('update:cnpj', valor);
         }
       }
     }
@@ -83,13 +83,13 @@
 
   watch: {
     /**
-     * Observador para a variável 'cpfAtual'.
-     * Realiza a validação para o CPF digitado.
+     * Observador para a variável 'cnpjAtual'.
+     * Realiza a validação para o CNPJ digitado.
      */
-    cpfAtual: function () {
-      this.validarCpf();
+    cnpjAtual: function () {
+      this.validarCnpj();
     }
   },
 
-  template: '#CampoCpf-template'
+  template: '#CampoCnpj-template'
 });
