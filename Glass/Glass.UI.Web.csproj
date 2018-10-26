@@ -467,7 +467,6 @@
     <Content Include="Cadastros\CadConfirmarPedidoInterno.aspx" />
     <Content Include="Cadastros\CadConfirmarPedidoLiberacao.aspx" />
     <Content Include="Cadastros\CadConhecimentoTransporte.aspx" />
-    <Content Include="Cadastros\CadContaBanco.aspx" />
     <Content Include="Cadastros\CadContabilista.aspx" />
     <Content Include="Cadastros\CadContaPagar.aspx" />
     <Content Include="Cadastros\CadContaReceber.aspx" />
@@ -500,7 +499,11 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Producao\Roteiros\Classificacoes\Componentes\LstClassificacoesRoteiro.js" />
+    <Content Include="Vue\Producao\Roteiros\Componentes\LstRoteiros.Filtro.js" />
+    <Content Include="Vue\Producao\Roteiros\Templates\LstRoteiros.Filtro.html" />
     <Content Include="Vue\Producao\Setores\Componentes\LstSetores.js" />
+    <Content Include="Vue\Producao\Roteiros\Componentes\LstRoteiros.js" />
     <Content Include="Vue\Producao\Turnos\Componentes\LstTurnos.js" />
     <Content Include="Vue\Producao\TiposPerda\Componentes\LstTiposPerda.js" />
     <Content Include="Vue\Cfops\Componentes\LstCfops.Filtro.js" />
@@ -525,6 +528,7 @@
     <Content Include="Vue\Rotas\Componentes\LstRotas.js" />
     <Content Include="Vue\TabelasDescontoAcrescimoCliente\Componentes\LstTabelasDescontoAcrescimoCliente.js" />
     <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
+    <Content Include="Vue\ContasBancarias\Componentes\LstContasBancarias.js" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />
@@ -1797,6 +1801,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Condutores.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\ContasBancarias.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Sinais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Acertos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />
@@ -3326,13 +3331,6 @@
     </Compile>
     <Compile Include="Cadastros\CadConhecimentoTransporte.aspx.designer.cs">
       <DependentUpon>CadConhecimentoTransporte.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Cadastros\CadContaBanco.aspx.cs">
-      <DependentUpon>CadContaBanco.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Cadastros\CadContaBanco.aspx.designer.cs">
-      <DependentUpon>CadContaBanco.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\CadContabilista.aspx.cs">
       <DependentUpon>CadContabilista.aspx</DependentUpon>

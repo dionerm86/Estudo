@@ -1284,7 +1284,7 @@ namespace Glass.Data.DAL
         /// <param name="roteiroProducao"></param>
         public void LogRoteiroProducao(RoteiroProducao roteiroProducao)
         {
-            RoteiroProducao atual = RoteiroProducaoDAO.Instance.ObtemElemento(roteiroProducao.IdRoteiroProducao);
+            RoteiroProducao atual = RoteiroProducaoDAO.Instance.ObtemElemento(null, roteiroProducao.IdRoteiroProducao);
             InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.RoteiroProducao, (uint)roteiroProducao.IdRoteiroProducao, atual, roteiroProducao);
         }
 

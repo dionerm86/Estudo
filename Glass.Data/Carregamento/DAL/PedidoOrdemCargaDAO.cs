@@ -1,4 +1,4 @@
-using Glass.Data.Model;
+﻿using Glass.Data.Model;
 using GDA;
 using System.Collections.Generic;
 
@@ -27,6 +27,29 @@ namespace Glass.Data.DAL
 
             return objPersistence.LoadOneData(sessao, sql);
         }
+
+        /// <summary>
+        /// Recupera uma lista de Pedidos Ordem Carga com os pedidos já inseridos no carregamento.
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="idCarregamento">Id do Carregamento a ser verificado.</param>
+        /// <param name="idsPedidos">Ids dos pedidos a serem verificados.</param>
+        /// <returns>Retorna uma Lista de PedidosOrdemCarga.</returns>
+        public List<PedidoOrdemCarga> ObterPedidosOrdemCarga(GDASession sessao, uint idCarregamento, List<uint> idsPedidos)
+        {
+            string sql = $@"SELECT 
+                    poc.*
+                FROM
+                    ordem_carga oc
+                        INNER JOIN
+                    pedido_ordem_carga poc ON poc.IdOrdemCarga = oc.IdOrdemCarga
+                        INNER JOIN
+                    carregamento c ON c.IdCarregamento = oc.IdCarregamento
+                        WHERE poc.IdPedido IN ({string.Join(",", idsPedidos)}) And c.IdCarregamento = {idCarregamento};";
+
+            return this.objPersistence.LoadData(sessao, sql);
+        }
+
 
         /// <summary>
         /// Verifica se o pedido informado possui alguma ordem carga ainda sem item carregamento. Neste caso é necessário primeiro gerar o carregamento desta OC.

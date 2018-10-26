@@ -226,6 +226,9 @@
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
     <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\ClassificacoesRoteiro\DeleteClassificacoesRoteiroController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\ClassificacoesRoteiro\GetClassificacoesRoteiroController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\ClassificacoesRoteiro\ClassificacoesRoteiroController.cs" />
     <Compile Include="Controllers\Producao\V1\TiposPerda\DeleteTiposPerdaController.cs" />
     <Compile Include="Controllers\Producao\V1\TiposPerda\GetTiposPerdaController.cs" />
     <Compile Include="Controllers\Producao\V1\TiposPerda\PatchTiposPerdaController.cs" />
@@ -234,6 +237,9 @@
     <Compile Include="Controllers\Producao\V1\Setores\DeleteSetoresController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\PatchSetoresController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\PostSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\DeleteRoteirosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\GetRoteirosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\RoteirosController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\DeleteTurnosController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\GetTurnosController.cs" />
     <Compile Include="Controllers\Producao\V1\Turnos\TurnosController.cs" />
@@ -385,6 +391,11 @@
     <Compile Include="Atributos\AuthorizationAttribute.cs" />
     <Compile Include="Controllers\TiposCartao\V1\GetTiposCartaoController.cs" />
     <Compile Include="Controllers\TiposCartao\V1\TiposCartaoController.cs" />
+    <Compile Include="Controllers\ContasBancarias\DeleteContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\GetContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\PatchContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\PostContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\ContasBancariasController.cs" />
     <Compile Include="Controllers\Veiculos\V1\DeleteVeiculosController.cs" />
     <Compile Include="Controllers\Veiculos\V1\GetVeiculosController.cs" />
     <Compile Include="Controllers\Veiculos\V1\VeiculosController.cs" />
@@ -403,10 +414,12 @@
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoSvgProjetoStrategy.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
+    <Compile Include="Helper\Producao\Roteiros\ClassificacoesRoteiro\TraducaoOrdenacaoListaClassificacoesRoteiro.cs" />
     <Compile Include="Helper\Producao\Setores\ConverterCadastroAtualizacaoParaSetor.cs" />
     <Compile Include="Helper\Producao\Setores\TraducaoOrdenacaoListaSetores.cs" />
     <Compile Include="Helper\Producao\TiposPerda\ConverterCadastroAtualizacaoParaTipoPerda.cs" />
     <Compile Include="Helper\Producao\TiposPerda\TraducaoOrdenacaoListaTiposPerda.cs" />
+    <Compile Include="Helper\Producao\Roteiros\TraducaoOrdenacaoListaRoteiros.cs" />
     <Compile Include="Helper\Producao\Turnos\ConverterCadastroAtualizacaoParaTurno.cs" />
     <Compile Include="Helper\Producao\Turnos\TraducaoOrdenacaoListaTurnos.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
@@ -421,6 +434,8 @@
     <Compile Include="Helper\Produtos\SubgruposProduto\TraducaoOrdenacaoListaSubgruposProduto.cs" />
     <Compile Include="Helper\Produtos\GruposProduto\ConverterCadastroAtualizacaoParaGrupoProduto.cs" />
     <Compile Include="Helper\Produtos\GruposProduto\TraducaoOrdenacaoListaGruposProduto.cs" />
+    <Compile Include="Helper\ContasBancarias\ConverterCadastroAtualizacaoParaContaBancaria.cs" />
+    <Compile Include="Helper\ContasBancarias\TraducaoOrdenacaoListaContasBancarias.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
@@ -492,6 +507,14 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\ContasBancarias\CadastroAtualizacao\DadosBancoDto.cs" />
+    <Compile Include="Models\ContasBancarias\CadastroAtualizacao\CnabDto.cs" />
+    <Compile Include="Models\ContasBancarias\Lista\CnabDto.cs" />
+    <Compile Include="Models\ContasBancarias\Lista\DadosBancoDto.cs" />
+    <Compile Include="Models\ContasBancarias\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\PosicaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\Lista\FiltroDto.cs" />
@@ -509,6 +532,8 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\CapacidadeDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />
@@ -576,6 +601,9 @@
     <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\ListaDto.cs" />
     <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\ContasBancarias\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\ContasBancarias\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ContasBancarias\Lista\ListaDto.cs" />
     <Compile Include="Models\Veiculos\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\V1\Lista\ListaDto.cs" />
