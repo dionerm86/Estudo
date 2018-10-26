@@ -1,0 +1,9 @@
+﻿<div class="visualizar-linha"
+     v-bind:class="{ 'warn': item.categoria == 'Warn', 'error': item.categoria == 'Exception' || item.categoria == 'Critical' }"
+     @click.prevent="alterarExibicaoErro()">
+    {{item.dataCriacao}} : {{item.mensagem}}
+    <div v-if="podeExibirErro" class="detalhes-erro">
+        <span>{{item.erro}}</span>
+        <span>{{item.pilhaChamada}}</span>
+    </div>
+</div>

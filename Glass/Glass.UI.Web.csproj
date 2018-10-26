@@ -485,12 +485,28 @@
     <Content Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx" />
     <Content Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx" />
     <Content Include="Controls\ctrlProdComposicaoOrcamento.ascx" />
+    <Content Include="Listas\LstIntegradores.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Integracao\Integradores\Assets\LstIntegradores.css" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.Configuracao.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.ItemLogger.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.JobIntegracao.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.Logger.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.OperacaoIntegracao.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.Integrador.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.js" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.Configuracao.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.ItemLogger.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.Logger.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.JobIntegracao.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.ParametroOperacaoIntegracao.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.OperacaoIntegracao.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.Integrador.html" />
     <Content Include="Vue\Producao\Roteiros\Componentes\LstRoteiros.Filtro.js" />
     <Content Include="Vue\Producao\Roteiros\Templates\LstRoteiros.Filtro.html" />
     <Content Include="Vue\Producao\Setores\Componentes\LstSetores.js" />
@@ -1787,6 +1803,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Integracao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Condutores.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Sinais.js" />
@@ -2161,6 +2178,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="WebGlassParceiros\PainelParceiros.master" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.ParametroOperacaoIntegracao.js" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -5987,6 +6005,13 @@
     </Compile>
     <Compile Include="Listas\LstInstalacao.aspx.designer.cs">
       <DependentUpon>LstInstalacao.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstIntegradores.aspx.cs">
+      <DependentUpon>LstIntegradores.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstIntegradores.aspx.designer.cs">
+      <DependentUpon>LstIntegradores.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstInventarioEstoque.aspx.cs">
       <DependentUpon>LstInventarioEstoque.aspx</DependentUpon>

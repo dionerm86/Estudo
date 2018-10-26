@@ -1,0 +1,16 @@
+﻿<tr>
+    <td class="col parametros-col_nome">
+        <div class="nome__parametro">
+            {{parametro.definicao.nome}}
+        </div>
+        <div class="tipo__parametro">
+            {{parametro.definicao.tipo}}
+        </div>
+    </td>
+    <td class="col parametros-col_descricao">
+        <div class="markdown">{{parametro.definicao.descricao}}</div>
+        <input v-if="!somenteLeitura && parametro != null" type="text" class="" title=""
+                v-bind:placeholder="parametro.definicao.descricao"
+                v-model="parametro.valor" />
+    </td>
+</tr>

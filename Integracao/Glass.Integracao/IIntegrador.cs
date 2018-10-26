@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="IIntegrador.cs" company="Sync Softwares">
+// Copyright (c) Sync Softwares. Todos os direitos reservados.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,9 +26,32 @@ namespace Glass.Integracao
         ConfiguracaoIntegrador Configuracao { get; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se o integrador está ativo.
+        /// Obtém um valor que indica se o integrador está ativo.
         /// </summary>
         bool Ativo { get; }
+
+        /// <summary>
+        /// Obtém as operações de integração.
+        /// </summary>
+        IEnumerable<OperacaoIntegracao> Operacoes { get; }
+
+        /// <summary>
+        /// Obtém os Jobs do integrador.
+        /// </summary>
+        IEnumerable<IJobIntegracao> Jobs { get; }
+
+        /// <summary>
+        /// Obtém o logger do integrador.
+        /// </summary>
+        LoggerIntegracao Logger { get; }
+
+        /// <summary>
+        /// Executa a operação de integração informada.
+        /// </summary>
+        /// <param name="operacao">Nome da operação que será executada.</param>
+        /// <param name="parametros">Parâmetros da operação.</param>
+        /// <returns>Resultado da operação.</returns>
+        Task<object> ExecutarOperacao(string operacao, object[] parametros);
 
         /// <summary>
         /// Realiza o setup do integrador.

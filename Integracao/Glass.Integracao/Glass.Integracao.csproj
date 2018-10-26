@@ -77,13 +77,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfiguracaoIntegrador.cs" />
+    <Compile Include="GerenciadorOperacaoIntegracao.cs" />
     <Compile Include="IIntegrador.cs" />
     <Compile Include="GerenciadorIntegradores.cs" />
+    <Compile Include="IJobIntegracao.cs" />
     <Compile Include="IProvedorIntegradores.cs" />
+    <Compile Include="ItemLoggerIntegracao.cs" />
+    <Compile Include="LoggerIntegracao.cs" />
     <Compile Include="MonitorEventos.cs" />
     <Compile Include="MonitorEventosEntitidade.cs" />
+    <Compile Include="OperacaoIntegracao.cs" />
+    <Compile Include="ParametroOperacaoIntegracao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProvedorIntegradores.cs" />
+    <Compile Include="SituacaoJobIntegracao.cs" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="..\..\.editorconfig">

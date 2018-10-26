@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Colosoft;
 
 namespace Glass.Integracao.Khan
 {
@@ -30,20 +31,27 @@ namespace Glass.Integracao.Khan
         /// </summary>
         internal const string NomePedidosService = "KhanPedidosService";
 
+        private readonly Microsoft.Practices.ServiceLocation.IServiceLocator serviceLocator;
         private readonly Colosoft.Domain.IDomainEvents domainEvents;
         private readonly List<IDisposable> monitores = new List<IDisposable>();
+        private readonly GerenciadorOperacaoIntegracao gerenciadorOperacoes = new GerenciadorOperacaoIntegracao();
+
+        private IntegradorScheculerRegistry integradorSchedulerRegistry;
 
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="IntegradorKhan"/>.
         /// </summary>
         /// <param name="domainEvents">Relação dos eventos de domínio.</param>
         /// <param name="rentabilidadeFluxo">Fluxo de negócio da rentabilidade.</param>
+        /// <param name="serviceLocator">Localizador de serviços.</param>
         public IntegradorKhan(
             Colosoft.Domain.IDomainEvents domainEvents,
-            Glass.Rentabilidade.Negocios.IRentabilidadeFluxo rentabilidadeFluxo)
+            Glass.Rentabilidade.Negocios.IRentabilidadeFluxo rentabilidadeFluxo,
+            Microsoft.Practices.ServiceLocation.IServiceLocator serviceLocator)
         {
-            this.Logger = new Colosoft.Logging.DebugLogger();
+            this.Logger = new LoggerIntegracao();
             this.domainEvents = domainEvents;
+            this.serviceLocator = serviceLocator;
             this.MonitorIndicadoresFinanceiros = new MonitorIndicadoresFinanceiros(this.Configuracao, this.Logger, rentabilidadeFluxo);
         }
 
@@ -94,15 +102,47 @@ namespace Glass.Integracao.Khan
         internal MonitorIndicadoresFinanceiros MonitorIndicadoresFinanceiros { get; }
 
         /// <summary>
-        /// Obtém o logger do integrador.
+        /// Obtém as operações do integrador.
         /// </summary>
-        public Colosoft.Logging.ILogger Logger { get; }
+        public IEnumerable<OperacaoIntegracao> Operacoes => this.gerenciadorOperacoes.Operacoes;
 
-        private void ConfigurarMonitor<T>()
+        /// <summary>
+        /// Obtém os Jobs do integrador.
+        /// </summary>
+        public IEnumerable<IJobIntegracao> Jobs => this.integradorSchedulerRegistry?.Jobs ?? Array.Empty<IJobIntegracao>();
+
+        /// <inheritdoc />
+        public LoggerIntegracao Logger { get; }
+
+        private T ConfigurarMonitor<T>()
             where T : MonitorEventos
         {
-            var monitor = (T)Activator.CreateInstance(typeof(T), this.domainEvents, this.Configuracao);
+            var constructor = typeof(T).GetConstructors().FirstOrDefault();
+            var parameters = constructor.GetParameters()
+                .Select(parameter =>
+                {
+                    if (parameter.ParameterType == typeof(Colosoft.Domain.IDomainEvents))
+                    {
+                        return this.domainEvents;
+                    }
+                    else if (parameter.ParameterType == typeof(ConfiguracaoKhan))
+                    {
+                        return this.Configuracao;
+                    }
+                    else if (parameter.ParameterType == typeof(Colosoft.Logging.ILogger))
+                    {
+                        return this.Logger;
+                    }
+                    else
+                    {
+                        return this.serviceLocator.GetInstance(parameter.ParameterType);
+                    }
+                }).ToArray();
+
+            var monitor = (T)Activator.CreateInstance(typeof(T), parameters);
             this.monitores.Add(monitor);
+
+            return monitor;
         }
 
         private Colosoft.Net.ServiceAddress ObterEnderecoServico(string nome, string endereco)
@@ -205,17 +245,40 @@ namespace Glass.Integracao.Khan
         }
 
         /// <summary>
+        /// Executa a operação de integração informada.
+        /// </summary>
+        /// <param name="operacao">Nome da operação que será executada.</param>
+        /// <param name="parametros">Parâmetros da operação.</param>
+        /// <returns>Resultado da operação.</returns>
+        public Task<object> ExecutarOperacao(string operacao, object[] parametros)
+        {
+            return this.gerenciadorOperacoes.Executar(operacao, parametros);
+        }
+
+        /// <summary>
         /// Realiza o setup do integrador.
         /// </summary>
         /// <returns>Tarefa.</returns>
         public Task Setup()
         {
+            this.Logger.Info("*******************************".GetFormatter());
+            this.Logger.Info("* Iniciando o integrador Khan *".GetFormatter());
+            this.Logger.Info("*******************************".GetFormatter());
+
+            this.Logger.Info("Configurando os WebServices...".GetFormatter());
             this.ConfigurarWebServices();
-            this.ConfigurarMonitor<MonitorProdutos>();
+
+            this.Logger.Info("Configurando monitor de produtos...".GetFormatter());
+            var monitorProdutos = this.ConfigurarMonitor<MonitorProdutos>();
+            monitorProdutos.ConfigurarOperacoes(this.gerenciadorOperacoes);
+
+            this.Logger.Info("Configurando monitor de notas fiscais...".GetFormatter());
             this.ConfigurarMonitor<MonitorNotaFiscal>();
 
-            var schedulerRegistry = new IntegradorScheculerRegistry(this);
-            FluentScheduler.JobManager.Initialize(schedulerRegistry);
+            this.integradorSchedulerRegistry = new IntegradorScheculerRegistry(this);
+
+            this.Logger.Info("Iniciando os jobs...".GetFormatter());
+            FluentScheduler.JobManager.Initialize(this.integradorSchedulerRegistry);
 
             return Task.CompletedTask;
         }

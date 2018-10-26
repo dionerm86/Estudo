@@ -259,6 +259,10 @@
     <Compile Include="Controllers\Datas\V1\Feriados\GetFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
+    <Compile Include="Controllers\Integracao\V1\Integradores\GetIntegradoresController.cs" />
+    <Compile Include="Controllers\Integracao\V1\Integradores\IntegradoresController.cs" />
+    <Compile Include="Controllers\Integracao\V1\Integradores\PostIntegradoresController.cs" />
+    <Compile Include="Controllers\Integracao\V1\Integradores\PutIntegradoresController.cs" />
     <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
     <Compile Include="Controllers\Producao\V1\TiposPerda\DeleteTiposPerdaController.cs" />
     <Compile Include="Controllers\Producao\V1\TiposPerda\GetTiposPerdaController.cs" />
@@ -522,6 +526,14 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\ExecucaoOperacaoIntegracao\DadosExecucaoDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Lista\ConfiguracaoIntegradorDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Lista\IntegradorDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Lista\JobIntegracaoDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Lista\OperacaoIntegracaoDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Lista\ParametroOperacaoIntegracaoDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Logger\ItemLoggerIntegracaoDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Logger\LoggerIntegracaoDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\PosicaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />

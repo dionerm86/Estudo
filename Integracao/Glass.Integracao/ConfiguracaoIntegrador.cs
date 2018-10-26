@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="ConfiguracaoIntegrador.cs" company="Sync Softwares">
+// Copyright (c) Sync Softwares. Todos os direitos reservados.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,23 +25,23 @@ namespace Glass.Integracao
         /// <summary>
         /// Obtém os nomes do parâmetros da confgiuração.
         /// </summary>
-        public IEnumerable<string> ParameterNames => this.parametros.Keys;
+        public IEnumerable<string> NomesParametro => this.parametros.Keys;
 
         /// <summary>
         /// Obtém ou define o parâmetro associado com o nome informado.
         /// </summary>
-        /// <param name="name">Nome do parâmetro.</param>
+        /// <param name="nome">Nome do parâmetro.</param>
         /// <returns>Valor do parâmetro.</returns>
-        public object this[string name]
+        public object this[string nome]
         {
             get
             {
-                return this.parametros[name];
+                return this.parametros[nome];
             }
 
             set
             {
-                this.parametros[name] = value;
+                this.parametros[nome] = value;
             }
         }
 
