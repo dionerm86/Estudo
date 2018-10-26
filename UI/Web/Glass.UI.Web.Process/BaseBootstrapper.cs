@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GDA;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -191,6 +192,24 @@ namespace Glass.UI.Web.Process
         }
 
         /// <summary>
+        /// Configura parâmetros, na string de conexão do sistema, automaticamente.
+        /// Para evitar alterações em massa no arquivo GDA.config de todos os clientes.
+        /// </summary>
+        /// <param name="sender">sender.</param>
+        /// <param name="args">args.</param>
+        public void ConfigurarConnectionString(object sender, ProviderConfigurationLoadArgs args)
+        {
+            var connectionString = args.ProvideConfiguration.ConnectionString?.Split(';')?.ToList();
+
+            if (connectionString != null && !connectionString.Any(f => f.Trim().ToLower().Contains("sslmode")))
+            {
+                connectionString.Add("SslMode=none");
+            }
+
+            args.ProvideConfiguration.ConnectionString = string.Join(";", connectionString);
+        }
+
+        /// <summary>
         /// Executa o bootstrapper.
         /// </summary>
         public override void Run()
@@ -210,6 +229,7 @@ namespace Glass.UI.Web.Process
             Glass.Negocios.ProvedorControleAlteracao.Configurar();
 
             GDA.GDASettings.LoadConfiguration();
+            GDA.GDAOperations.SetGlobalProviderConfigurationLoadHandler(this.ConfigurarConnectionString);
             GDA.GDASession.DefaultCommandTimeout = 60;
             GDA.GDAOperations.DebugTrace += this.GDAOperations_DebugTrace;
             this.ConfigureGDAListeners();
