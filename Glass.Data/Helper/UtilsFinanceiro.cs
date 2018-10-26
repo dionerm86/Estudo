@@ -2104,12 +2104,23 @@ namespace Glass.Data.Helper
         /// <param name="session">Transação.</param>
         /// <param name="idCliente">Identificador do cliente.</param>
         /// <param name="idLiberarPedido">Identificador da Liberação.</param>
-        /// <param name="valorBaseGerar">Valor base do crédito a ser gerado.</param>
         /// <param name="cxDiario">Indicador se o crédito será feito no caixa diário.</param>
-        public static void GerarCréditoBonificacaoCliente(GDASession session, uint idCliente, uint idLiberarPedido, decimal valorBaseGerar, bool cxDiario)
+        public static void GerarCréditoBonificacaoCliente(GDASession session, uint idCliente, uint idLiberarPedido, bool cxDiario)
         {
+            if (!Liberacao.UsarPercentualBonificacaoCliente)
+            {
+                return;
+            }
+
             decimal valorPercentualBonificacao = ClienteDAO.Instance.GetPercentualBonificacao(session, idCliente);
-            var creditoGerado = valorBaseGerar * (valorPercentualBonificacao / 100);
+            var valorBaseGerar = (decimal)PedidoDAO.Instance.GetTotalLiberado(0, idLiberarPedido.ToString());
+
+            if (valorPercentualBonificacao == 0 || valorBaseGerar == 0)
+            {
+                return;
+            }
+
+            var creditoGerado = Math.Round(valorBaseGerar * (valorPercentualBonificacao / 100), 2);
             bool isCaixaDiario = VerificarRecebimentoCaixaDiario(cxDiario);
 
             if (isCaixaDiario)
@@ -2124,7 +2135,7 @@ namespace Glass.Data.Helper
                     0,
                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoVendaGerado),
                     null,
-                    null,
+                    "Crédito de Bonificação",
                     false);
             }
             else
@@ -2140,7 +2151,7 @@ namespace Glass.Data.Helper
                     null,
                     false,
                     null,
-                    null);
+                    "Crédito de Bonificação");
             }
 
             // Credita crédito do cliente

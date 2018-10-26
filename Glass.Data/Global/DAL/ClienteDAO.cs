@@ -1435,7 +1435,7 @@ namespace Glass.Data.DAL
                 return 0;
             }
 
-            return this.ObtemValorCampo<decimal>(sessao, "GetPercentualBonificacao", "id_Cli=" + idCliente);
+            return this.ObtemValorCampo<decimal>(sessao, "PercentualBonificacao", "id_Cli=" + idCliente);
         }
 
         #region Retorna Crédito

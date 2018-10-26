@@ -1087,7 +1087,7 @@
                                                 </tr>
                                                 <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() && UsarPercentualBonificacaoCliente()  ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader"  style="width: 170px">
-                                                        <asp:Label ID="lblPercBonificacao" runat="server" Text="Perc. Bonificacao"></asp:Label>
+                                                        <asp:Label ID="lblPercBonificacao" runat="server" Text="Perc. Bonificação"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtPercBonificacao" runat="server" Width="50px"
@@ -2057,7 +2057,7 @@
                                                 </tr>
                                                 <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() && UsarPercentualBonificacaoCliente()  ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader"  style="width: 170px">
-                                                        <asp:Label ID="lblPercBonificacao" runat="server" Text="Perc. Bonificacao"></asp:Label>
+                                                        <asp:Label ID="lblPercBonificacao" runat="server" Text="Perc. Bonificação"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtPercBonificacao" runat="server" Width="50px"
