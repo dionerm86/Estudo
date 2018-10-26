@@ -8299,6 +8299,11 @@ namespace Glass.Data.DAL
         /// <returns>Contas a receber para retificar associadas ao arquivo de remessa.</returns>
         public IList<ContasReceber> ObterContasReceberParaRetificarArquivoRemessa(int idArquivoRemessa, int idCli, string nomeCli)
         {
+            if (idArquivoRemessa == 0 && idCli == 0 && string.IsNullOrWhiteSpace(nomeCli))
+            {
+                return new List<ContasReceber>();
+            }
+
             var sql = $@"
                 SELECT c.*, CONCAT(cli.id_cli, ' - ', cli.nome) as nomeCli, {this.SqlCampoDescricaoContaContabil("c")} as descricaoContaContabil, l.nomeFantasia as NomeLoja
                 FROM contas_receber c
