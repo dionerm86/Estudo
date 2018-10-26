@@ -2069,16 +2069,7 @@ namespace Glass.Data.DAL
             else if (idProdPedEsp > 0)
                 sql += " and pp.idProdPedEsp=" + idProdPedEsp;
 
-            if (!PCPConfig.UsarConferenciaFluxo)
-                sql += " and (pp.InvisivelPedido=false or pp.InvisivelPedido is null)";
-            else
-            {
-                // Chamado 15160: Ocorreu um problema ao excluir alguns produtos deste pedido, no entanto, alterando a condição abaixo,
-                // garante que caso o pedido possua espelho, só busque produtos que estejam na conferência
-                sql += @" and (pp.InvisivelFluxo=false or pp.InvisivelFluxo is null)
-                    and (pedEsp.idPedido is null or ppe.idProdPed is not null)
-                    /*and (pp.idProdPedEsp is null or ppe.idProdPed is not null)*/";
-            }
+            sql += ObterFluxoSqlLiberacao();
 
             if (liberarProdutosProntos)
             {
@@ -5882,14 +5873,21 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public List<ProdutosPedido> ObterProdutosCortados(GDASession session, uint idLiberarPedido)
         {
-            var sql = @"SELECT pp.*, prod.CodInterno, prod.Descricao AS DescrProduto FROM produtos_pedido pp
-                        INNER JOIN produto prod ON pp.IdProd=prod.IdProd
-                        INNER JOIN pedido p on pp.IdPedido=p.IdPedido
-                        WHERE IdPedidoRevenda IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido=?idLiberarPedido)";
+ 
+            var sql = $@"SELECT pp.*, prod.CodInterno, prod.Descricao AS DescrProduto FROM produtos_pedido pp
+                INNER JOIN produto prod ON pp.IdProd=prod.IdProd
+                INNER JOIN pedido p on pp.IdPedido=p.IdPedido
+                LEFT JOIN pedido_espelho pedEsp ON (p.IdPedido=pedEsp.IdPedido)
+                LEFT JOIN produtos_pedido_espelho ppe on (pp.IdProdPedEsp = ppe.IdProdPed)
+                WHERE IdPedidoRevenda IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido=?idLiberarPedido)
+                {ObterFluxoSqlLiberacao()}";
 
             var parameter = new GDAParameter("?idLiberarPedido", idLiberarPedido);
 
-            var retorno = objPersistence.LoadData(session, sql, parameter);
+            var retorno = objPersistence.LoadData(
+                session, 
+                sql, 
+                parameter);
 
             return retorno;
         }
@@ -5930,5 +5928,17 @@ namespace Glass.Data.DAL
 
             return pedido.DataEntregaSistema != null && (pedido.DataEntregaSistema.Value.Date == pedido.DataEntrega.Value.Date || !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega));
         }
+
+        /// <summary>
+        /// Método que retorna uma string contendo o fluxo utilizado no SqlLiberacao
+        /// </summary>
+        /// <returns>String com os filtros de fluxo da tabela produtos_pedido.</returns>
+        private string ObterFluxoSqlLiberacao()
+        {
+            return PCPConfig.UsarConferenciaFluxo
+                ? @" AND (!pp.InvisivelFluxo OR pp.InvisivelFluxo IS NULL) AND (pedEsp.IdPedido IS NULL OR ppe.IdProdPed IS NOT NULL)"
+                : " AND (!pp.InvisivelPedido OR pp.InvisivelPedido IS NULL)";
+        }
+
     }
 }
