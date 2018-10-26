@@ -217,7 +217,7 @@ namespace Glass.Integracao.Khan
             var schedulerRegistry = new IntegradorScheculerRegistry(this);
             FluentScheduler.JobManager.Initialize(schedulerRegistry);
 
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
 
         /// <summary>
