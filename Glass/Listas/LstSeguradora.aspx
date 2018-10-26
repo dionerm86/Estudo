@@ -40,7 +40,7 @@
                         <input type="text" v-model="seguradora.nome" maxlength="50" style="width: 300px" required />
                     </td>
                     <td>
-                        <campo-cnpj :cnpj.sync="seguradora.cnpj" required>
+                        <campo-cnpj :cnpj.sync="seguradora.cnpj" required></campo-cnpj>
                     </td>
                 </template>
                 <template slot="itemIncluir">
@@ -59,7 +59,7 @@
                         <input type="text" v-model="seguradora.nome" maxlength="50" style="width: 300px" v-if="inserindo" required />
                     </td>
                     <td>
-                        <campo-cnpj :cnpj.sync="seguradora.cnpj" v-if="inserindo" required>
+                        <campo-cnpj :cnpj.sync="seguradora.cnpj" v-if="inserindo" required></campo-cnpj>
                     </td>
                 </template>
             </lista-paginada>
