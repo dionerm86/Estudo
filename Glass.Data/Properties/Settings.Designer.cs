@@ -12,7 +12,7 @@ namespace Glass.Data.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.8.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -1629,91 +1629,77 @@ namespace Glass.Data.Properties {
                 return ((string)(this["Glass_Data_wsPNFeStatusServico_NFeStatusServico4"]));
             }
         }
-
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/CadConsultaCadastro2")]
+        public string Glass_Data_wsPNFeConsultaCadastro2_CadConsultaCadastro2 {
+            get {
+                return ((string)(this["Glass_Data_wsPNFeConsultaCadastro2_CadConsultaCadastro2"]));
+            }
+        }
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx")]
-        public string Glass_Data_wsNFeSVANAutorizacao_NFeAutorizacao4
-        {
-            get
-            {
+        public string Glass_Data_wsNFeSVANAutorizacao_NFeAutorizacao4 {
+            get {
                 return ((string)(this["Glass_Data_wsNFeSVANAutorizacao_NFeAutorizacao4"]));
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocol" +
             "o4.asmx")]
-        public string Glass_Data_wsNFeSVANConsultaProtocolo_NFeConsultaProtocolo4
-        {
-            get
-            {
+        public string Glass_Data_wsNFeSVANConsultaProtocolo_NFeConsultaProtocolo4 {
+            get {
                 return ((string)(this["Glass_Data_wsNFeSVANConsultaProtocolo_NFeConsultaProtocolo4"]));
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx")]
-        public string Glass_Data_wsNFeSVANInutilizacao_NFeInutilizacao4
-        {
-            get
-            {
+        public string Glass_Data_wsNFeSVANInutilizacao_NFeInutilizacao4 {
+            get {
                 return ((string)(this["Glass_Data_wsNFeSVANInutilizacao_NFeInutilizacao4"]));
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asm" +
             "x")]
-        public string Glass_Data_wsNFeSVANRecepcaoEvento_NFeRecepcaoEvento4
-        {
-            get
-            {
+        public string Glass_Data_wsNFeSVANRecepcaoEvento_NFeRecepcaoEvento4 {
+            get {
                 return ((string)(this["Glass_Data_wsNFeSVANRecepcaoEvento_NFeRecepcaoEvento4"]));
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asm" +
             "x")]
-        public string Glass_Data_wsNFeSVANRetAutorizacao_NFeRetAutorizacao4
-        {
-            get
-            {
+        public string Glass_Data_wsNFeSVANRetAutorizacao_NFeRetAutorizacao4 {
+            get {
                 return ((string)(this["Glass_Data_wsNFeSVANRetAutorizacao_NFeRetAutorizacao4"]));
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx")]
-        public string Glass_Data_wsNFeSVANStatusServico_NFeStatusServico4
-        {
-            get
-            {
+        public string Glass_Data_wsNFeSVANStatusServico_NFeStatusServico4 {
+            get {
                 return ((string)(this["Glass_Data_wsNFeSVANStatusServico_NFeStatusServico4"]));
-            }
-        }
-
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/CadConsultaCadastro2")]
-        public string Glass_Data_wsPNFeConsultaCadastro2_CadConsultaCadastro2
-        {
-            get
-            {
-                return ((string)(this["Glass_Data_wsPNFeConsultaCadastro2_CadConsultaCadastro2"]));
             }
         }
     }

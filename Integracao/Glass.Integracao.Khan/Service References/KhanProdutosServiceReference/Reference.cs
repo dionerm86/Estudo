@@ -930,7 +930,7 @@ namespace Glass.Integracao.Khan.KhanProdutosServiceReference {
         Glass.Integracao.Khan.KhanProdutosServiceReference.Produtos SalvarProdutos(Glass.Integracao.Khan.KhanProdutosServiceReference.Produtos prod);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProdutosService/ConsultarProdutos", ReplyAction="http://tempuri.org/IProdutosService/ConsultarProdutosResponse")]
-        System.Collections.Generic.List<Glass.Integracao.Khan.KhanProdutosServiceReference.Produtos> ConsultarProdutos(string CodPRO);
+        Glass.Integracao.Khan.KhanProdutosServiceReference.Produtos[] ConsultarProdutos(string CodPRO);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -964,7 +964,7 @@ namespace Glass.Integracao.Khan.KhanProdutosServiceReference {
             return base.Channel.SalvarProdutos(prod);
         }
         
-        public System.Collections.Generic.List<Glass.Integracao.Khan.KhanProdutosServiceReference.Produtos> ConsultarProdutos(string CodPRO) {
+        public Glass.Integracao.Khan.KhanProdutosServiceReference.Produtos[] ConsultarProdutos(string CodPRO) {
             return base.Channel.ConsultarProdutos(CodPRO);
         }
     }

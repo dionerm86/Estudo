@@ -422,7 +422,7 @@ namespace Glass.Global.Negocios.Entidades
             }
             set
             {
-                if (value.Count() == 0)
+                if ((value?.Count()).GetValueOrDefault() == 0)
                 {
                     SubgruposProdLoja.Clear();
                     return;

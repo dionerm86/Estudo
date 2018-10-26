@@ -1,4 +1,4 @@
-﻿var Mixins = Mixins || {};
+var Mixins = Mixins || {};
 
 /**
  * Objeto com o mixin para com métodos para manipulação de objetos.
