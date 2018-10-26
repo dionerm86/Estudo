@@ -8304,7 +8304,12 @@ namespace Glass.Data.DAL
                 FROM contas_receber c
                     INNER JOIN cliente cli ON (c.idCliente=cli.id_Cli)
                     LEFT JOIN loja l ON (c.idLoja = l.idLoja)
-                WHERE (c.Recebida = null OR c.Recebida = 0) AND idArquivoRemessa  = " + idArquivoRemessa;
+                WHERE (c.Recebida = null OR c.Recebida = 0)";
+
+            if (idArquivoRemessa > 0)
+            {
+                sql += " AND idArquivoRemessa=" + idArquivoRemessa;
+            }
 
             if (idCli > 0)
             {
