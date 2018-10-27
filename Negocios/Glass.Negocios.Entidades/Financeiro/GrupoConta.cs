@@ -195,7 +195,7 @@ namespace Glass.Financeiro.Negocios.Entidades
                     var logAlteracao = ObterLogAlteracao();
 
                     logAlteracao.ValorAnterior = grupoContaAnterior.Categoria.Descricao;
-                    logAlteracao.ValorAtual = Categoria.Descricao;
+                    logAlteracao.ValorAtual = Categoria?.Descricao;
                     logAlteracao.Campo = "Categoria";
 
                     logAlteracao.Save(session);

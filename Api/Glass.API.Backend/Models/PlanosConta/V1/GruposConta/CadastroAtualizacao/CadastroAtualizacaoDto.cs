@@ -41,7 +41,7 @@ namespace Glass.API.Backend.Models.PlanosConta.V1.GruposConta.CadastroAtualizaca
         /// </summary>
         [DataMember]
         [JsonProperty("idCategoriaConta")]
-        public int IdCategoriaConta
+        public int? IdCategoriaConta
         {
             get { return this.ObterValor(c => c.IdCategoriaConta); }
             set { this.AdicionarValor(c => c.IdCategoriaConta, value); }

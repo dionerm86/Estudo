@@ -48,7 +48,7 @@ namespace Glass.API.Backend.Helper.PlanosConta.GruposConta
         {
             destino.Descricao = this.cadastro.ObterValorNormalizado(c => c.Nome, destino.Descricao);
             destino.PontoEquilibrio = this.cadastro.ObterValorNormalizado(c => c.ExibirPontoEquilibrio, destino.PontoEquilibrio);
-            destino.IdCategoriaConta = this.cadastro.ObterValorNormalizado(c => c.IdCategoriaConta, destino.IdGrupo);
+            destino.IdCategoriaConta = this.cadastro.ObterValorNormalizado(c => c.IdCategoriaConta, destino.IdCategoriaConta);
             destino.Situacao = this.cadastro.ObterValorNormalizado(c => c.Situacao, destino.Situacao);
         }
     }

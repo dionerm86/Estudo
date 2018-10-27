@@ -226,6 +226,8 @@
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\DeletePlanosContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\GetCategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\CategoriasContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\DeleteGruposContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\GetGruposContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\GruposContaController.cs" />
