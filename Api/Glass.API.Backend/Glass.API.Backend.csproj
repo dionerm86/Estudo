@@ -226,8 +226,11 @@
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\DeletePlanosContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\DeleteGruposContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\GetGruposContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\GruposContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\PatchGruposContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\PostGruposContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\PatchPlanosContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\PostPlanosContaController.cs" />
     <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
@@ -412,6 +415,8 @@
     <Compile Include="Controllers\Transportadores\V1\DeleteTransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\TransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\GetTransportadoresController.cs" />
+    <Compile Include="Controllers\_Compartilhado\Comum\V1\ComumController.cs" />
+    <Compile Include="Controllers\_Compartilhado\Comum\V1\GetComumController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -424,6 +429,8 @@
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoSvgProjetoStrategy.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
+    <Compile Include="Helper\PlanosConta\GruposConta\ConverterCadastroAtualizacaoParaGrupoConta.cs" />
+    <Compile Include="Helper\PlanosConta\GruposConta\TraducaoOrdenacaoListaGruposConta.cs" />
     <Compile Include="Helper\Producao\Roteiros\ClassificacoesRoteiro\TraducaoOrdenacaoListaClassificacoesRoteiro.cs" />
     <Compile Include="Helper\Producao\Setores\ConverterCadastroAtualizacaoParaSetor.cs" />
     <Compile Include="Helper\Producao\Setores\TraducaoOrdenacaoListaSetores.cs" />
@@ -522,17 +529,21 @@
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\Lista\FiltroDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\Lista\ListaDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\Lista\PermissoesDto.cs" />
     <Compile Include="Models\PlanosConta\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\PlanosConta\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\PlanosConta\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\ContasBancarias\CadastroAtualizacao\DadosBancoDto.cs" />
-    <Compile Include="Models\ContasBancarias\CadastroAtualizacao\CnabDto.cs" />
-    <Compile Include="Models\ContasBancarias\Lista\CnabDto.cs" />
-    <Compile Include="Models\ContasBancarias\Lista\DadosBancoDto.cs" />
-    <Compile Include="Models\ContasBancarias\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\CadastroAtualizacao\DadosBancoDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\CadastroAtualizacao\CnabDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\Lista\CnabDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\Lista\DadosBancoDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\PosicaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\Lista\FiltroDto.cs" />
@@ -622,9 +633,9 @@
     <Compile Include="Models\Seguradoras\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Seguradoras\Lista\FiltroDto.cs" />
     <Compile Include="Models\Seguradoras\Lista\ListaDto.cs" />
-    <Compile Include="Models\ContasBancarias\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
-    <Compile Include="Models\ContasBancarias\Lista\FiltroDto.cs" />
-    <Compile Include="Models\ContasBancarias\Lista\ListaDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Veiculos\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\V1\Lista\ListaDto.cs" />
@@ -876,29 +887,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\Acertos\Lista\" />
-    <Folder Include="Models\Beneficiamentos\Configuracoes\" />
-    <Folder Include="Models\Beneficiamentos\Filtro\" />
-    <Folder Include="Models\Beneficiamentos\Total\" />
-    <Folder Include="Models\Caixas\Diario\CadastroAtualizacao\" />
-    <Folder Include="Models\Caixas\Diario\Configuracoes\" />
-    <Folder Include="Models\Caixas\Diario\Lista\" />
-    <Folder Include="Models\Caixas\Geral\Configuracoes\" />
-    <Folder Include="Models\Caixas\Geral\Lista\" />
-    <Folder Include="Models\Cep\Endereco\" />
-    <Folder Include="Models\Cheques\CadastroAtualizacao\" />
-    <Folder Include="Models\Cheques\Configuracoes\" />
-    <Folder Include="Models\Cheques\Lista\" />
-    <Folder Include="Models\Clientes\Tipos\CadastroAtualizacao\" />
-    <Folder Include="Models\Clientes\Tipos\Lista\" />
-    <Folder Include="Models\Comissionados\Configuracoes\" />
-    <Folder Include="Models\Comissionados\Lista\" />
-    <Folder Include="Models\Datas\Feriados\CadastroAtualizacao\" />
-    <Folder Include="Models\Datas\Feriados\Lista\" />
-    <Folder Include="Models\Estoques\CadastroAtualizacao\" />
-    <Folder Include="Models\Estoques\Configuracoes\" />
-    <Folder Include="Models\Fornecedores\Configuracoes\" />
-    <Folder Include="Models\Fornecedores\Lista\" />
     <Folder Include="Models\Produtos\CoresAluminio\CadastroAtualizacao\" />
     <Folder Include="Models\Produtos\CoresAluminio\Lista\" />
     <Folder Include="Models\Produtos\CoresFerragem\CadastroAtualizacao\" />

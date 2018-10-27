@@ -14,19 +14,19 @@ namespace Glass.API.Backend.Helper.PlanosConta
     internal class ConverterCadastroAtualizacaoParaPlanoConta
     {
         private readonly CadastroAtualizacaoDto cadastro;
-        private readonly Lazy<PlanoContas> turno;
+        private readonly Lazy<PlanoContas> planoConta;
 
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ConverterCadastroAtualizacaoParaPlanoConta"/>.
         /// </summary>
         /// <param name="cadastro">O DTO de cadastro, enviado para o endpoint.</param>
-        /// <param name="atual">O turno atual (opcional), para que sejam aproveitados os valores, se necessário.</param>
+        /// <param name="atual">O plano de conta atual (opcional), para que sejam aproveitados os valores, se necessário.</param>
         public ConverterCadastroAtualizacaoParaPlanoConta(
             CadastroAtualizacaoDto cadastro,
             PlanoContas atual = null)
         {
             this.cadastro = cadastro;
-            this.turno = new Lazy<PlanoContas>(() =>
+            this.planoConta = new Lazy<PlanoContas>(() =>
             {
                 var destino = atual ?? new PlanoContas();
                 this.ConverterDtoParaModelo(destino);
@@ -38,10 +38,10 @@ namespace Glass.API.Backend.Helper.PlanosConta
         /// <summary>
         /// Realiza a conversão para a model.
         /// </summary>
-        /// <returns>A model de turno preenchida.</returns>
+        /// <returns>A model de plano de conta preenchida.</returns>
         public PlanoContas ConverterParaPlanoConta()
         {
-            return this.turno.Value;
+            return this.planoConta.Value;
         }
 
         private void ConverterDtoParaModelo(PlanoContas destino)
