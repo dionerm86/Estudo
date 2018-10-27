@@ -59,7 +59,7 @@ namespace Glass.API.Backend.Controllers.PlanosConta.V1.GruposConta.CategoriasCon
         /// </summary>
         /// <returns>Uma lista JSON com os tipos de categoria de conta encontradas.</returns>
         [HttpGet]
-        [Route("filtro")]
+        [Route("tipos")]
         [SwaggerResponse(200, "Tipos de categoria de conta encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Tipos de categoria de conta não encontrados.")]
         public IHttpActionResult ObterTiposCategoriaParaFiltro()

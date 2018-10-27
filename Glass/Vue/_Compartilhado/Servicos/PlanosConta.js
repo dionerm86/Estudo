@@ -16,12 +16,92 @@ Servicos.PlanosConta = (function(http) {
        */
       Categorias: {
         /**
+         * Recupera a lista de categorias de conta.
+         * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+         * @param {number} pagina O número da página de resultados a ser exibida.
+         * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+         * @param {string} ordenacao A ordenação para o resultado.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+          return http().get(API + 'grupos/categorias', {
+            params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+          });
+        },
+
+        /**
+         * Remove uma categoria de conta.
+         * @param {!number} id O identificador da categoria de conta que será excluída.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        excluir: function (id) {
+          if (!id) {
+            throw new Error('Categoria de conta é obrigatória.');
+          }
+
+          return http().delete(API + 'grupos/categorias/' + id);
+        },
+
+        /**
+         * Insere uma categoria de conta.
+         * @param {!Object} categoriaConta O objeto com os dados da categoria de conta a ser inserida.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        inserir: function (categoriaConta) {
+          return http().post(API + 'grupos/categorias/', categoriaConta);
+        },
+
+        /**
+         * Altera os dados de uma categoria de conta.
+         * @param {!number} id O identificador do item que será alterado.
+         * @param {!Object} categoriaConta O objeto com os dados do item a serem alterados.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        atualizar: function (id, categoriaConta) {
+          if (!id) {
+            throw new Error('Categoria de conta é obrigatório.');
+          }
+
+          if (!categoriaConta || categoriaConta === {}) {
+            return Promise.resolve();
+          }
+
+          return http().patch(API + 'grupos/categorias/' + id, categoriaConta);
+        },
+
+        /**
+         * Altera a posição de uma categoria de conta.
+         * @param {!number} id O identificador do item que será alterado.
+         * @param {!boolean} acima Define se o setor será movimentado para cima.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        alterarPosicao: function (id, acima) {
+          if (!id) {
+            throw new Error('Categoria de conta é obrigatória.');
+          }
+
+          var posicao = {
+            acima
+            };
+
+          return http().patch(API + 'grupos/categorias/' + id + '/posicao', posicao);
+        },
+
+        /**
+         * Recupera a lista de tipos de categoria de conta para uso no controle de seleção.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        obterTipos: function () {
+          return http().get(API + 'grupos/categorias/tipos');
+        },
+
+        /**
          * Recupera a lista de categorias de conta para uso no controle de seleção.
          * @returns {Promise} Uma promise com o resultado da operação.
          */
-          obterParaControle: function () {
-            return http().get(API + 'grupos/categorias/filtro');
-          }
+        obterParaControle: function () {
+          return http().get(API + 'grupos/categorias/filtro');
+        }
       },
 
       /**

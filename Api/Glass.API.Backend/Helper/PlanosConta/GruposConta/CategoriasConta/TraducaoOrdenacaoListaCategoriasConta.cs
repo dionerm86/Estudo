@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.PlanosConta.GruposConta.CategoriasConta
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "NumeroSequencia, gc.IdCategoria"; }
+            get { return "NumeroSequencia"; }
         }
 
         /// <inheritdoc/>
@@ -29,16 +29,6 @@ namespace Glass.API.Backend.Helper.PlanosConta.GruposConta.CategoriasConta
         {
             switch (campo.ToLowerInvariant())
             {
-                case "id":
-                    return "IdCategoria";
-
-                case "nome":
-                    return "Descricao";
-
-                case "tipo":
-                case "situacao":
-                    return campo;
-
                 default:
                     return this.OrdenacaoPadrao;
             }
