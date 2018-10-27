@@ -43,15 +43,6 @@ Vue.component('planos-conta-filtros', {
      */
     obterItensFiltroGruposConta: function () {
       return Servicos.PlanosConta.Grupos.obterParaControle();
-    },
-
-    /**
-     * Retorna os itens para o controle de situações.
-     * @param {?Object} filtro O filtro para a busca de situações.
-     * @returns {Promise} Uma Promise com o resultado da busca.
-     */
-    obterItensFiltroSituacoes: function (filtro) {
-      return Servicos.PlanosConta.obterSituacoes();
     }
   },
 
