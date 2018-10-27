@@ -226,8 +226,11 @@
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\DeletePlanosContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\DeleteCategoriasContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\GetCategoriasContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\CategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\PatchCategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\PostCategoriasContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\DeleteGruposContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\GetGruposContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\GruposContaController.cs" />
@@ -431,6 +434,8 @@
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoSvgProjetoStrategy.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
+    <Compile Include="Helper\PlanosConta\GruposConta\CategoriasConta\ConverterCadastroAtualizacaoParaCategoriaConta.cs" />
+    <Compile Include="Helper\PlanosConta\GruposConta\CategoriasConta\TraducaoOrdenacaoListaCategoriasConta.cs" />
     <Compile Include="Helper\PlanosConta\GruposConta\ConverterCadastroAtualizacaoParaGrupoConta.cs" />
     <Compile Include="Helper\PlanosConta\GruposConta\TraducaoOrdenacaoListaGruposConta.cs" />
     <Compile Include="Helper\Producao\Roteiros\ClassificacoesRoteiro\TraducaoOrdenacaoListaClassificacoesRoteiro.cs" />
@@ -532,6 +537,10 @@
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\GruposConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\CategoriasConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\CategoriasConta\Lista\FiltroDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\CategoriasConta\Lista\ListaDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\CategoriasConta\Lista\PermissoesDto.cs" />
     <Compile Include="Models\PlanosConta\V1\GruposConta\Lista\FiltroDto.cs" />
     <Compile Include="Models\PlanosConta\V1\GruposConta\Lista\ListaDto.cs" />
     <Compile Include="Models\PlanosConta\V1\GruposConta\Lista\PermissoesDto.cs" />

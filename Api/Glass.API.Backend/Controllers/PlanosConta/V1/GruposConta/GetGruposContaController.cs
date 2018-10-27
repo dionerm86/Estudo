@@ -29,7 +29,7 @@ namespace Glass.API.Backend.Controllers.PlanosConta.V1.GruposConta
         [SwaggerResponse(204, "Grupos de conta não encontrados para o filtro informado.")]
         [SwaggerResponse(206, "Grupos de conta paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaPlanosConta([FromUri] FiltroDto filtro)
+        public IHttpActionResult ObterListaGruposConta([FromUri] FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
