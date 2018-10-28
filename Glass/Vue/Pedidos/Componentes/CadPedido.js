@@ -348,7 +348,8 @@
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
+              vm.exibirMensagem('Erro', erro.mensagem);
+              vm.redirecionarParaListagem();
           }
         });
     },
