@@ -57,33 +57,14 @@ namespace Glass.API.Backend.Controllers.PlanosConta.V1
         }
 
         /// <summary>
-        /// Recupera a lista de situações.
-        /// </summary>
-        /// <returns>Uma lista JSON com os dados básicos das situações.</returns>
-        [HttpGet]
-        [Route("situacoes")]
-        [SwaggerResponse(200, "Situações encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Situações não encontradas.")]
-        public IHttpActionResult ObterSituacoes()
-        {
-            using (var sessao = new GDATransaction())
-            {
-                var tipos = new ConversorEnum<Situacao>()
-                    .ObterTraducao();
-
-                return this.Lista(tipos);
-            }
-        }
-
-        /// <summary>
         /// Recupera os planos de conta do sistema para os controles de filtro das telas.
         /// </summary>
         /// <param name="tipo">Tipo do plano de conta (Crédito ou débito)</param>
         /// <returns>Uma lista JSON com as parcelas encontradas.</returns>
         [HttpGet]
         [Route("filtro")]
-        [SwaggerResponse(200, "Planos de conta encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Planos de conta não encontradas.")]
+        [SwaggerResponse(200, "Planos de conta encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Planos de conta não encontrados.")]
         public IHttpActionResult ObterPlanosConta(Tipo tipo)
         {
             using (var sessao = new GDATransaction())

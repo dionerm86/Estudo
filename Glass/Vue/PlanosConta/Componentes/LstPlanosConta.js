@@ -27,14 +27,6 @@
     },
 
     /**
-     * Retorna os itens para o controle de sequências de plano de conta.
-     * @returns {Promise} Uma Promise com o resultado da busca.
-     */
-    obterItensSituacao: function () {
-      return Servicos.PlanosConta.obterSituacoes();
-    },
-
-    /**
      * Retorna os itens para o controle de grupos de plano de conta.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */

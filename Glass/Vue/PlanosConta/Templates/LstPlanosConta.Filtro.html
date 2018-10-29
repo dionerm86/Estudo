@@ -8,8 +8,7 @@
         </span>
         <span class="form-group">
             <label>Situação</label>
-            <lista-selecao-id-valor v-bind:item-selecionado.sync="situacaoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroSituacoes"
-                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual"></lista-selecao-situacoes>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
