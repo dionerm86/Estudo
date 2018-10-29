@@ -46,7 +46,9 @@
             var agruparAmbiente = FindControl("chkAmbiente", "input").checked ? "1" : "0";
             var ordenacao = FindControl("drpOrdenacao", "select").value;
             var idFunc = FindControl("drpFuncionario", "select").value;
-            var idFuncCliente = FindControl("drpVendedor", "select");
+            var idFuncCliente = FindControl("drpVendedorCliente", "select");
+            var idFuncPedido = FindControl("drpVendedorPedido", "select");
+            idFuncPedido = idFuncPedido != null ? idFuncPedido.value : "0";
             idFuncCliente = idFuncCliente != null ? idFuncCliente.value : "0";
             var tipoVenda = FindControl("cbdTipoVenda", "select").itens();
             var tipoFastDelivery = FindControl("drpFastDelivery", "select").value;
@@ -67,7 +69,7 @@
                 "&idsGrupos=" + idsGrupos + "&idsSubgrupo=" + idsSubgrupo + "&dtIniPed=" + dtIniPed + "&dtFimPed=" + dtFimPed +
                 "&dtIniEnt=" + dtIniEnt + "&dtFimEnt=" + dtFimEnt + "&situacao=" + situacao + "&situacaoProd=" + situacaoProd +
                 "&agruparCli=" + agruparCli + "&agruparGrupo=" + agruparGrupo + "&ordenacao=" + ordenacao + "&idFunc=" + idFunc +
-                "&idFuncCliente=" + idFuncCliente + "&exportarExcel=" + exportarExcel + "&tipoFastDelivery=" + tipoFastDelivery +
+                "&idFuncCliente=" + idFuncCliente + "&idFuncPedido=" + idFuncPedido + "&exportarExcel=" + exportarExcel + "&tipoFastDelivery=" + tipoFastDelivery +
                 "&tipoVenda=" + tipoVenda + "&idPedido=" + idPedido + "&agruparPedido=" + agruparPedido +
                 "&incluirMateriaPrima=" + incluirMateriaPrima + "&tipoDesconto=" + desconto + "&agrupar=" + agrupar +
                 "&agruparNcm=" + agruparNcm + "&agruparCorEsp=" + agruparCorEsp + "&semValores=" + semValores +
@@ -136,7 +138,7 @@
             FindControl("chkAgruparGrupo", "input").checked = false;
             FindControl("chkAgruparCli", "input").checked = false;
             FindControl("drpFuncionario", "select").selectedIndex = 0;
-            if (FindControl("drpVendedor", "select") != null) FindControl("drpVendedor", "select").selectedIndex = 0;
+            if (FindControl("drpVendedorCliente", "select") != null) FindControl("drpVendedorCliente", "select").selectedIndex = 0;
             FindControl("drpTipoVenda", "select").selectedIndex = 0;
             FindControl("drpFastDelivery", "select").selectedIndex = 0;
             return false;
@@ -352,15 +354,7 @@
                                 DataTextField="Descr" DataValueField="Id" Title="Selecione o tipo de venda" CheckAll="false"
                                 OnDataBound="cbdTipoVenda_DataBound">
                             </sync:CheckBoxListDropDown>
-                        </td>
-                        <td>
-                            <asp:Label ID="Label4" runat="server" Text="Funcionário" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:DropDownList ID="drpFuncionario" runat="server" DataSourceID="odsVendedor" DataTextField="Nome"
-                                DataValueField="IdFunc" AutoPostBack="True">
-                            </asp:DropDownList>
-                        </td>
+                        </td>                        
                         <td align="right">
                             <asp:Label ID="Label18" runat="server" Text="Nota Fiscal" ForeColor="#0066FF"></asp:Label>
                         </td>
@@ -376,10 +370,6 @@
                                 ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
                                 OnClick="imgPesq_Click" />
                         </td>
-                    </tr>
-                </table>
-                <table>
-                    <tr>
                         <td>
                             <asp:Label ID="Label13" runat="server" Text="Período (Entrega)" ForeColor="#0066FF"></asp:Label>
                         </td>
@@ -393,11 +383,31 @@
                             <asp:LinkButton ID="lnkPesq4" runat="server" OnClientClick="setProduto();" OnClick="lnkPesq_Click">
                             <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
                         </td>
+                        </tr>
+                    </table>
+                    <table>
+                    <tr>                        
                         <td>
-                            <asp:Label ID="Label6" runat="server" Text="Vendedor" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label6" runat="server" Text="Vendedor (Assoc. Pedido)" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpVendedor" runat="server" DataSourceID="odsVendedor" DataTextField="Nome"
+                            <asp:DropDownList ID="drpVendedorPedido" runat="server" DataSourceID="odsVendedor" DataTextField="Nome"
+                                DataValueField="IdFunc" AutoPostBack="True">
+                            </asp:DropDownList>
+                        </td>
+                        <td>
+                            <asp:Label ID="Label4" runat="server" Text="Usuário Cad." ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpFuncionario" runat="server" DataSourceID="odsVendedor" DataTextField="Nome"
+                                DataValueField="IdFunc" AutoPostBack="True">
+                            </asp:DropDownList>
+                        </td>
+                        <td>
+                            <asp:Label ID="Label19" runat="server" Text="Vendedor (Assoc. Cliente)" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpVendedorCliente" runat="server" DataSourceID="odsVendedor" DataTextField="Nome"
                                 DataValueField="IdFunc" AutoPostBack="True">
                             </asp:DropDownList>
                         </td>
@@ -557,7 +567,9 @@
                             Type="String" />
                         <asp:ControlParameter ControlID="drpFuncionario" Name="idFunc" PropertyName="SelectedValue"
                             Type="UInt32" />
-                        <asp:ControlParameter ControlID="drpVendedor" Name="idFuncCliente" PropertyName="SelectedValue"
+                        <asp:ControlParameter ControlID="drpVendedorCliente" Name="idFuncCliente" PropertyName="SelectedValue"
+                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="drpVendedorPedido" Name="idFuncPedido" PropertyName="SelectedValue"
                             Type="UInt32" />
                         <asp:ControlParameter ControlID="drpFastDelivery" Name="tipoFastDelivery" PropertyName="SelectedValue"
                             Type="Int32" />

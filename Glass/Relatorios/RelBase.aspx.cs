@@ -412,7 +412,7 @@ namespace Glass.UI.Web.Relatorios
                             Glass.Conversoes.StrParaInt(Request["tipoDesconto"]), Request["agruparCli"] == "1" && Request["agrupar"] == "false",
                             Request["agruparPedido"] == "1" && Request["agrupar"] == "false", Request["agruparLiberacao"] == "1", Request["agruparAmbiente"] == "1",
                             Glass.Conversoes.StrParaInt(Request["buscarNotaFiscal"]), Request["idLiberacao"].StrParaInt(), Glass.Conversoes.StrParaInt(Request["ordenacao"]),
-                            Request["idFuncLiberacao"].StrParaIntNullable(), Request["liberacaoNf"].StrParaIntNullable());
+                            Request["idFuncLiberacao"].StrParaIntNullable(), Request["liberacaoNf"].StrParaIntNullable(), Glass.Conversoes.StrParaUint(Request["idFuncPedido"]));
 
                         var lstProdCorEsp = lstProd
                             .Where(f => f.IdGrupoProd == (int)NomeGrupoProd.Vidro)
