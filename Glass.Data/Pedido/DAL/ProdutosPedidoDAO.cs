@@ -2069,7 +2069,12 @@ namespace Glass.Data.DAL
             else if (idProdPedEsp > 0)
                 sql += " and pp.idProdPedEsp=" + idProdPedEsp;
 
-            sql += ObterFluxoSqlLiberacao();
+            sql += ObterFluxoSqlLiberacao("pp.");
+
+            if (PCPConfig.UsarConferenciaFluxo)
+            {
+                sql += "AND(pedEsp.IdPedido IS NULL OR ppe.IdProdPed IS NOT NULL)";
+            }
 
             if (liberarProdutosProntos)
             {
@@ -5877,10 +5882,8 @@ namespace Glass.Data.DAL
             var sql = $@"SELECT pp.*, prod.CodInterno, prod.Descricao AS DescrProduto FROM produtos_pedido pp
                 INNER JOIN produto prod ON pp.IdProd=prod.IdProd
                 INNER JOIN pedido p on pp.IdPedido=p.IdPedido
-                LEFT JOIN pedido_espelho pedEsp ON (p.IdPedido=pedEsp.IdPedido)
-                LEFT JOIN produtos_pedido_espelho ppe on (pp.IdProdPedEsp = ppe.IdProdPed)
                 WHERE IdPedidoRevenda IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido=?idLiberarPedido)
-                {ObterFluxoSqlLiberacao()}";
+                {ObterFluxoSqlLiberacao("pp.")}";
 
             var parameter = new GDAParameter("?idLiberarPedido", idLiberarPedido);
 
@@ -5933,11 +5936,13 @@ namespace Glass.Data.DAL
         /// Método que retorna uma string contendo o fluxo utilizado no SqlLiberacao
         /// </summary>
         /// <returns>String com os filtros de fluxo da tabela produtos_pedido.</returns>
-        private string ObterFluxoSqlLiberacao()
+        private string ObterFluxoSqlLiberacao(string aliasProdutosPedido)
         {
-            return PCPConfig.UsarConferenciaFluxo
-                ? @" AND (!pp.InvisivelFluxo OR pp.InvisivelFluxo IS NULL) AND (pedEsp.IdPedido IS NULL OR ppe.IdProdPed IS NOT NULL)"
-                : " AND (!pp.InvisivelPedido OR pp.InvisivelPedido IS NULL)";
+            var fluxo = PCPConfig.UsarConferenciaFluxo
+                ?"Fluxo"
+                :"Pedido";
+
+            return $" AND ({aliasProdutosPedido}Invisivel{fluxo} IS NULL OR !{aliasProdutosPedido}Invisivel{fluxo})";
         }
 
     }
