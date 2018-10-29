@@ -14045,6 +14045,12 @@ namespace Glass.Data.DAL
             var idsPedidoPagtoAntecipado = new List<int>();
             idsPedidosOk = new List<int>();
             idsPedidosErro = new List<int>();
+            mensagemErro = new List<string>();
+
+            if (!PedidoConfig.ImpedirConfirmacaoPedidoPagamento)
+            {
+                return false;
+            }
 
             // Verifica, em cada pedido, se há sinal/pagamento antecipado a receber
             foreach (var pedido in pedidos)
@@ -14068,13 +14074,6 @@ namespace Glass.Data.DAL
                 {
                     idsPedidosOk.Add((int)pedido.IdPedido);
                 }
-            }
-
-            mensagemErro = new List<string>();
-
-            if (!PedidoConfig.ImpedirConfirmacaoPedidoPagamento)
-            {
-                return false;
             }
 
             if (idsPedidoSinal?.Any(f => f > 0) ?? false)
