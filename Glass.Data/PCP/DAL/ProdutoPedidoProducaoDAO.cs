@@ -5172,10 +5172,14 @@ namespace Glass.Data.DAL
 
             // Verifica se a etiqueta é uma etiqueta de pedido
             if (numEtiqueta[0] == 'P')
+            {
                 throw new Exception("Não é possível marcar reposição de peças por pedido.");
+            }
 
-            if (ProducaoConfig.ObrigarMotivoPerda && string.IsNullOrEmpty(obs))
+            if (ProducaoConfig.ObrigarMotivoPerda && string.IsNullOrWhiteSpace(obs))
+            {
                 throw new Exception("Defina o motivo da perda para continuar.");
+            }
 
             string retorno = string.Empty;
             uint idPedido = Conversoes.StrParaUint(numEtiqueta.Split('-')[0]);
@@ -5185,28 +5189,50 @@ namespace Glass.Data.DAL
             uint idProdPedProducaoParent = ObterIdProdPedProducaoParent(transaction, idProdPedProducao).GetValueOrDefault();
 
             if (idProdPedProducao == 0)
+            {
                 throw new Exception(string.Format("Não foi possível recuperar o produto de produção da etiqueta {0}.", numEtiqueta));
+            }
 
             var numEtiquetaParent = ObtemValorCampo<string>(transaction, "NumEtiqueta", "idProdPedProducao=" + idProdPedProducaoParent);
 
             if (!forcarPerdaFilhas && idProdPedProducaoParent > 0 && !string.IsNullOrWhiteSpace(numEtiquetaParent) &&
                 ProdutoImpressaoDAO.Instance.EstaImpressa(transaction, numEtiquetaParent, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
+            {
                 throw new Exception($"Não é possível marcar reposição em produtos de composição caso o produto pai esteja impresso. Cancele a impressão da etiqueta pai: {numEtiquetaParent}");
+            }
+
+            var idSetorAtual = (int)ObtemIdSetor(transaction, idProdPedProducao);
 
             /* Chamado 51854. */
-            if (SetorDAO.Instance.ObterSituacao(transaction, (int)ObtemIdSetor(transaction, idProdPedProducao)) == Situacao.Inativo)
+            if (SetorDAO.Instance.ObterSituacao(transaction, idSetorAtual) == Situacao.Inativo)
+            {
                 throw new Exception(string.Format("O último setor lido na etiqueta {0} está inativo, ative-o para marcá-la peça como reposta.", numEtiqueta));
+            }
 
             //Verifica se a peça tem leitura no carregamento, se tiver deve estornar antes de marcar perda.
             var itens = ItemCarregamentoDAO.Instance.GetByIdProdPedProducao(transaction, idProdPedProducao);
-            var carregamentos = "";
-            foreach (var item in itens)
-                if (item.Carregado)
-                    carregamentos += item.IdCarregamento + ", ";
+            var carregamentos = string.Empty;
 
-            if (!string.IsNullOrEmpty(carregamentos))
+            foreach (var item in itens)
+            {
+                if (item.Carregado)
+                {
+                    carregamentos += item.IdCarregamento + ", ";
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(carregamentos))
+            {
                 throw new Exception("Não é possível marcar resposição, pois a peça tem leitura no carregamento " + carregamentos.Trim().Trim(',') +
                     ". Efetue o estorno antes.");
+            }
+
+            Setor setor = Utils.ObtemSetor((uint)idSetorAtual);
+
+            if (setor.Tipo == TipoSetor.Entregue)
+            {
+                throw new Exception("Não é possível repor uma peça que já foi entregue.");
+            }
 
             var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(transaction, idPedido);
             var possuiLiberacaoParcial = false;
@@ -5229,19 +5255,25 @@ namespace Glass.Data.DAL
             ValidaEtiquetaProducao(transaction, ref numEtiqueta);
 
             if (PecaEstaCancelada(transaction, numEtiqueta, true))
+            {
                 throw new Exception("Não é possível repor uma peça cancelada.");
+            }
 
             // Se a perda for forçada ou se o pedido for mão-de-obra, marca a perda usando o método original
             // (se o pedido for mão-de-obra atualiza a quantidade de ambientes)
             if (forcarPerda || isMaoDeObra)
             {
                 if (isMaoDeObra && GetCountByPedido(transaction, idPedido) == 1)
+                {
                     throw new Exception("Não é possível marcar reposição de mão de obra caso o pedido possua somente um produto de mão de obra. Cancele o pedido.");
+                }
 
                 retorno = AtualizaSituacao(transaction, idFuncPerda, numChapa, numEtiqueta, idSetorRepos, true, false, tipoPerdaRepos, subtipoPerdaRepos, obs, null, 0, null, null, false, null, false, 0);
 
                 if (LiberarPedidoDAO.Instance.IsPedidoLiberado(transaction, idPedido) && isMaoDeObra)
-                    objPersistence.ExecuteCommand(transaction, "Update pedido Set situacao=" + (int)Pedido.SituacaoPedido.Confirmado + " Where idPedido=" + idPedido);
+                {
+                    objPersistence.ExecuteCommand(transaction, $"UPDATE pedido SET situacao={(int)Pedido.SituacaoPedido.Confirmado} WHERE idPedido={idPedido}");
+                }
 
                 transaction.Commit();
                 transaction.Close();
@@ -5250,10 +5282,14 @@ namespace Glass.Data.DAL
             }
 
             if (!LeituraProducaoDAO.Instance.VerificarEtiquetaLida(transaction, numEtiqueta))
+            {
                 throw new Exception("Não é possível repor uma peça que ainda não foi impressa.");
+            }
 
             if (obs != null && obs.Length > 250)
+            {
                 throw new Exception("O campo motivo da reposição não pode ter mais que 250 caracteres.");
+            }
 
             var passouSetorLaminado = LeituraProducaoDAO.Instance.PassouSetorLaminado(transaction, numEtiqueta);
 
@@ -5268,12 +5304,14 @@ namespace Glass.Data.DAL
 
             ProdutoImpressao dados = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(transaction, numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
             dadosReposicao += dados == null ? "~~~" :
-                String.Format("~{0}~{1}~{2}", dados.IdImpressao, dados.PlanoCorte, dados.PosicaoArqOtimiz);
+                string.Format("~{0}~{1}~{2}", dados.IdImpressao, dados.PlanoCorte, dados.PosicaoArqOtimiz);
 
             var leituras = LeituraProducaoDAO.Instance.GetByProdPedProducao(transaction, idProdPedProducao);
 
             foreach (LeituraProducao lp in leituras)
+            {
                 dadosReposicao += "~" + lp.IdFuncLeitura + "!" + lp.IdSetor + "!" + lp.DataLeitura;
+            }
 
             // Salva os dados atuais da reposição (se houverem) na tabela dados_reposicao
             DadosReposicaoDAO.Instance.Empilha(transaction, idProdPedProducao);
@@ -5281,12 +5319,18 @@ namespace Glass.Data.DAL
             var setorAtual = ObtemValorCampo<uint>(transaction, "idSetor", "idProdPedProducao=" + idProdPedProducao);
 
             // Marca que este produto foi reposto
-            string sp = subtipoPerdaRepos > 0 ? ", idSubtipoPerdaRepos=" + subtipoPerdaRepos : "";
-            objPersistence.ExecuteCommand(transaction, "Update produto_pedido_producao Set idPedidoExpedicao=null, pecaReposta=true, tipoPerdaRepos=" +
-                tipoPerdaRepos + sp + ", obs=?obs, dataRepos=?dataPerda, situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao +
-                ", idSetor=1, situacaoProducao=" + (int)SituacaoProdutoProducao.Pendente + ", idSetorRepos=" + idSetorRepos +
-                ", idFuncRepos=" + idFuncPerda + ", dadosReposicaoPeca=?dadosReposicao Where idProdPedProducao=" + idProdPedProducao,
-                new GDAParameter("?obs", obs), new GDAParameter("?dadosReposicao", dadosReposicao), new GDAParameter("?dataPerda", dataPerda));
+            string sp = subtipoPerdaRepos > 0 ? $", idSubtipoPerdaRepos={subtipoPerdaRepos}" : string.Empty;
+
+            objPersistence.ExecuteCommand(transaction, $@"
+                        UPDATE produto_pedido_producao 
+                        SET idPedidoExpedicao=NULL, pecaReposta=TRUE, tipoPerdaRepos= {tipoPerdaRepos} {sp}
+                        , obs=?obs, dataRepos=?dataPerda, situacao={(int)ProdutoPedidoProducao.SituacaoEnum.Producao}
+                        , idSetor=1, situacaoProducao={(int)SituacaoProdutoProducao.Pendente }, idSetorRepos={idSetorRepos}
+                        , idFuncRepos={idFuncPerda}, dadosReposicaoPeca=?dadosReposicao 
+                        WHERE idProdPedProducao={idProdPedProducao}",
+                        new GDAParameter("?obs", obs),
+                        new GDAParameter("?dadosReposicao", dadosReposicao),
+                        new GDAParameter("?dataPerda", dataPerda));
 
             //Cancela a associação com o retalho caso ela exista.
             UsoRetalhoProducaoDAO.Instance.CancelarAssociacao(transaction, idProdPedProducao);
@@ -5314,36 +5358,22 @@ namespace Glass.Data.DAL
                 ChapaCortePecaDAO.Instance.AtualizarReferenciaMovimentacaoEstoque(transaction, (uint)dados.IdProdImpressao, idProdPedProducao);
             }
 
-            if (prodPedEsp != null && prodPedEsp.IdProdPedParent == null)
-            {
-                Setor setor = Utils.ObtemSetor(setorAtual);
-                if (setor.Tipo == TipoSetor.Entregue)
-                {
-                    var idProdutoPedido = ProdutosPedidoDAO.Instance.ObterIdProdPed(transaction, (int)prodPedEsp.IdProdPed).GetValueOrDefault();
-
-                    var quantidadeSaidaAtualProduto = ProdutosPedidoDAO.Instance.ObterQtdSaida(transaction, (uint)idProdutoPedido);
-
-                    if (quantidadeSaidaAtualProduto > 0)
-                    {
-                        ProdutosPedidoDAO.Instance.EstornoSaida(transaction, (uint)idProdutoPedido, 1, "MarcaPecaReposta", numEtiqueta);
-                    }
-                }
-            }
-
             #endregion
 
             // Atualiza a situação da produção do pedido para pendente, desde que não seja mão de obra
             if (!PedidoDAO.Instance.IsMaoDeObra(transaction, idPedido))
-                objPersistence.ExecuteCommand(transaction, "update pedido set dataPronto=null, situacaoProducao=" + (int)Pedido.SituacaoProducaoEnum.Pendente + " where idPedido=" + idPedido);
+            {
+                objPersistence.ExecuteCommand(transaction, $"UPDATE pedido SET dataPronto=NULL, situacaoProducao={ (int)Pedido.SituacaoProducaoEnum.Pendente } WHERE idPedido={ idPedido }");
+            }
 
             //Remove o plano de corte da impressão e a posição do plano de corte
             if (dados != null)
             {
                 // Remove dos produtos_impressao
-                objPersistence.ExecuteCommand(transaction, @"
+                objPersistence.ExecuteCommand(transaction, $@"
                     UPDATE produto_impressao
-                    set planoCorte=null, posicaoArqOtimiz=null
-                    WHERE idProdImpressao=" + dados.IdProdImpressao);
+                    SET planoCorte=NULL, posicaoArqOtimiz=NULL
+                    WHERE idProdImpressao={dados.IdProdImpressao}");
 
                 /* Chamado 23141.
                     * Remove o plano de corte do produto de produção. */
@@ -5385,12 +5415,12 @@ namespace Glass.Data.DAL
                 MovEstoqueDAO.Instance.CreditaEstoqueProducao(transaction, prodPedEsp.IdProd, login.IdLoja, idProdPedProducao, (decimal)(m2Calc > 0 ? m2Calc : 1), true, true);
 
                 // Marca que este produto não entrou em estoque
-                objPersistence.ExecuteCommand(transaction, "Update produto_pedido_producao Set entrouEstoque=false Where idProdPedProducao=" + idProdPedProducao);
+                objPersistence.ExecuteCommand(transaction, $"UPDATE produto_pedido_producao SET entrouEstoque = FALSE WHERE idProdPedProducao = {idProdPedProducao}");
             }
 
             if (passouSetorLaminado)
             {
-                var etiquetasPecasFilhas = ExecuteMultipleScalar<string>(transaction, $"SELECT NumEtiqueta FROM produto_pedido_producao WHERE IdProdPedProducaoParent={ idProdPedProducao }");
+                var etiquetasPecasFilhas = ExecuteMultipleScalar<string>(transaction, $"SELECT NumEtiqueta FROM produto_pedido_producao WHERE IdProdPedProducaoParent={idProdPedProducao}");
 
                 foreach (var item in etiquetasPecasFilhas)
                 {
