@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-namespace Glass.API.Backend.Helper.PlanosConta.GruposConta.CategoriasConta
+namespace Glass.API.Backend.Helper.PlanosConta.CategoriasConta
 {
     /// <summary>
     /// Classe que realiza a tradução dos campos de ordenação para a lista de categorias de conta.
@@ -27,11 +27,7 @@ namespace Glass.API.Backend.Helper.PlanosConta.GruposConta.CategoriasConta
         /// <inheritdoc/>
         protected override string TraduzirCampo(string campo)
         {
-            switch (campo.ToLowerInvariant())
-            {
-                default:
-                    return this.OrdenacaoPadrao;
-            }
+            return this.OrdenacaoPadrao;
         }
     }
 }

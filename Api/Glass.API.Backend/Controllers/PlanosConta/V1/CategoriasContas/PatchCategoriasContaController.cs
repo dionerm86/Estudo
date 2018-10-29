@@ -3,14 +3,14 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Helper.PlanosConta.GruposConta.CategoriasConta;
+using Glass.API.Backend.Helper.PlanosConta.CategoriasConta;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.PlanosConta.V1.GruposConta.CategoriasConta.CadastroAtualizacao;
+using Glass.API.Backend.Models.PlanosConta.V1.CategoriasConta.CadastroAtualizacao;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.PlanosConta.V1.GruposConta.CategoriasConta
+namespace Glass.API.Backend.Controllers.PlanosConta.V1.CategoriasConta
 {
     /// <summary>
     /// Controller de categorias de conta.

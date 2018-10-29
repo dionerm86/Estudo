@@ -2,11 +2,11 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.PlanosConta.V1.GruposConta.CategoriasConta.CadastroAtualizacao;
+using Glass.API.Backend.Models.PlanosConta.V1.CategoriasConta.CadastroAtualizacao;
 using Glass.Financeiro.Negocios.Entidades;
 using System;
 
-namespace Glass.API.Backend.Helper.PlanosConta.GruposConta.CategoriasConta
+namespace Glass.API.Backend.Helper.PlanosConta.CategoriasConta
 {
     /// <summary>
     /// Classe que realiza a tradução entre o DTO e a model para cadastro ou atualização de categorias de conta.

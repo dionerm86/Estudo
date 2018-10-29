@@ -7,7 +7,7 @@ using Glass.Data.Model;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.PlanosConta.V1.GruposConta.CategoriasConta.CadastroAtualizacao
+namespace Glass.API.Backend.Models.PlanosConta.V1.CategoriasConta.CadastroAtualizacao
 {
     /// <summary>
     /// Classe que encapsula os dados de cadastro ou atualização de uma catgoria de conta.

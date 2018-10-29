@@ -31,7 +31,7 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensCategoriaConta: function () {
-      return Servicos.PlanosConta.Grupos.Categorias.obterParaControle();
+      return Servicos.PlanosConta.Categorias.obterParaControle();
     },
 
     /**

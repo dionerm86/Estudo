@@ -80,7 +80,7 @@
                     </td>
                     <td>
                         <template v-if="planoConta.permissoes && !planoConta.permissoes.editarApenasExibirDre">
-                            <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" exibir-todas="false" required></lista-selecao-situacoes>
+                            <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" required></lista-selecao-situacoes>
                         </template>
                         <template v-else>
                             {{ planoConta.descricaoSituacao }}
@@ -112,7 +112,7 @@
                         <input type="checkbox" v-model="planoConta.exibirDre" v-if="inserindo" />
                     </td>
                     <td>
-                        <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" exibir-todas="false" v-if="inserindo" required></lista-selecao-situacoes>
+                        <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" v-if="inserindo" required></lista-selecao-situacoes>
                     </td>
                     <td></td>
                 </template>

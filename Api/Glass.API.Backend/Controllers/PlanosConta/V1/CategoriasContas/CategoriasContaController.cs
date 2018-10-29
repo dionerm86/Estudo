@@ -6,12 +6,12 @@ using GDA;
 using Glass.Data.DAL;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.PlanosConta.V1.GruposConta.CategoriasConta
+namespace Glass.API.Backend.Controllers.PlanosConta.V1.CategoriasConta
 {
     /// <summary>
     /// Controller de categorias de conta.
     /// </summary>
-    [RoutePrefix("api/v1/planosConta/grupos/categorias")]
+    [RoutePrefix("api/v1/planosConta/categorias")]
     public partial class CategoriasContaController : BaseController
     {
         private IHttpActionResult ValidarIdCategoriaConta(int id)

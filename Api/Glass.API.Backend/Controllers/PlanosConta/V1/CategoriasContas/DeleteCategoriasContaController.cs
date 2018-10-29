@@ -8,7 +8,7 @@ using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.PlanosConta.V1.GruposConta.CategoriasConta
+namespace Glass.API.Backend.Controllers.PlanosConta.V1.CategoriasConta
 {
     /// <summary>
     /// Controller de categorias de conta.

@@ -8,7 +8,7 @@
         </span>
         <span class="form-group">
             <label>Situação</label>
-            <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" exibir-todas="false"></lista-selecao-situacoes>
+            <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual"></lista-selecao-situacoes>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>

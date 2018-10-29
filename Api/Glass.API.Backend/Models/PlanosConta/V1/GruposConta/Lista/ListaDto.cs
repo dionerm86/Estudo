@@ -38,6 +38,7 @@ namespace Glass.API.Backend.Models.PlanosConta.V1.GruposConta.Lista
                 Nome = Colosoft.Translator.Translate(grupoConta.Situacao).Format(),
             };
 
+            this.NumeroSequencia = grupoConta.NumeroSequencia;
             this.Permissoes = new PermissoesDto
             {
                 Excluir = !this.VerificarGrupoDeContaInternoSistema(grupoConta.IdGrupo),
@@ -66,6 +67,13 @@ namespace Glass.API.Backend.Models.PlanosConta.V1.GruposConta.Lista
         [DataMember]
         [JsonProperty("situacao")]
         public IdNomeDto Situacao { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o número sequencial do grupo de conta.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("numeroSequencia")]
+        public int NumeroSequencia { get; set; }
 
         /// <summary>
         /// Obtém ou define as permissões do grupo de conta.

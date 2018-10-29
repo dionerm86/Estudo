@@ -5,7 +5,7 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.PlanosConta.V1.GruposConta.CategoriasConta.Lista
+namespace Glass.API.Backend.Models.PlanosConta.V1.CategoriasConta.Lista
 {
     /// <summary>
     /// Classe que encapsula os dados de permissão da lista de categorias de conta.

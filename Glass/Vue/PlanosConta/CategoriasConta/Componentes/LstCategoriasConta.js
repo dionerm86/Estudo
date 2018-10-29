@@ -1,6 +1,6 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista()],
+  mixins: [Mixins.Objetos],
 
   data: {
     filtro: {},
@@ -23,7 +23,7 @@
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
       var filtroUsar = this.clonar(filtro || {});
-      return Servicos.PlanosConta.Grupos.Categorias.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
+      return Servicos.PlanosConta.Categorias.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
 
     /**
@@ -31,7 +31,7 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensTipo: function () {
-      return Servicos.PlanosConta.Grupos.Categorias.obterTipos();
+      return Servicos.PlanosConta.Categorias.obterTipos();
     },
 
     /**
@@ -42,7 +42,7 @@
     alterarPosicao: function (categoriaConta, acima) {
       var vm = this;
 
-      Servicos.PlanosConta.Grupos.Categorias.alterarPosicao(categoriaConta.id, acima)
+      Servicos.PlanosConta.Categorias.alterarPosicao(categoriaConta.id, acima)
         .then(function (resposta) {
           vm.atualizarLista();
           vm.cancelar();
@@ -83,7 +83,7 @@
 
       var vm = this;
 
-      Servicos.PlanosConta.Grupos.Categorias.excluir(categoriaConta.id)
+      Servicos.PlanosConta.Categorias.excluir(categoriaConta.id)
         .then(function (resposta) {
           vm.atualizarLista();
         })
@@ -105,7 +105,7 @@
 
       var vm = this;
 
-      Servicos.PlanosConta.Grupos.Categorias.inserir(this.categoriaConta)
+      Servicos.PlanosConta.Categorias.inserir(this.categoriaConta)
         .then(function (resposta) {
           vm.atualizarLista();
           vm.cancelar();
@@ -129,7 +129,7 @@
       var categoriaContaAtualizar = this.patch(this.categoriaConta, this.categoriaContaOriginal);
       var vm = this;
 
-      Servicos.PlanosConta.Grupos.Categorias.atualizar(this.categoriaConta.id, categoriaContaAtualizar)
+      Servicos.PlanosConta.Categorias.atualizar(this.categoriaConta.id, categoriaContaAtualizar)
         .then(function (resposta) {
           vm.atualizarLista();
           vm.cancelar();

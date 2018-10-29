@@ -226,11 +226,11 @@
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\DeletePlanosContaController.cs" />
-    <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\DeleteCategoriasContaController.cs" />
-    <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\GetCategoriasContaController.cs" />
-    <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\CategoriasContaController.cs" />
-    <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\PatchCategoriasContaController.cs" />
-    <Compile Include="Controllers\PlanosConta\V1\GruposConta\CategoriasContas\PostCategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\DeleteCategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\GetCategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\CategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\PatchCategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\PostCategoriasContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\DeleteGruposContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\GetGruposContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\GruposContaController.cs" />

@@ -4,7 +4,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <div id="app">
         <section>
-            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma categoria de conta encontrada."
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" mensagem-lista-vazia="Nenhuma categoria de conta encontrada."
                 :numero-registros="15" :exibir-inclusao="true" :linha-editando="numeroLinhaEdicao">
                 <template slot="cabecalho">
                     <th></th>
@@ -32,7 +32,7 @@
                     <td v-if="item.tipo">{{ item.tipo.nome }}</td>
                     <td v-if="item.situacao">{{ item.situacao.nome }}</td>
                     <td>
-                        <button @click.prevent="alterarPosicao(item, true)" v-if="!inserindo && numeroLinhaEdicao === -1">
+                        <button @click.prevent="alterarPosicao(item, true)" v-if="!inserindo && numeroLinhaEdicao === -1 && item.numeroSequencia > 1">
                             <img src="../Images/up.gif">
                         </button>
                         <button @click.prevent="alterarPosicao(item, false)" v-if="!inserindo && numeroLinhaEdicao === -1">
@@ -58,7 +58,7 @@
                             v-bind:ordenar="false" required></lista-selecao-id-valor>
                     </td>
                     <td>
-                        <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" exibir-todas="false" required></lista-selecao-situacoes>
+                        <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" required></lista-selecao-situacoes>
                     </td>
                     <td></td>
                 </template>
@@ -82,7 +82,7 @@
                             v-bind:ordenar="false" v-if="inserindo" required></lista-selecao-id-valor>
                     </td>
                     <td>
-                        <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" exibir-todas="false" v-if="inserindo" required></lista-selecao-situacoes>
+                        <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" v-if="inserindo" required></lista-selecao-situacoes>
                     </td>
                     <td></td>
                 </template>
@@ -91,7 +91,7 @@
     </div>
      <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
-            <asp:ScriptReference Path="~/Vue/PlanosConta/GruposConta/CategoriasConta/Componentes/LstCategoriasConta.js" />
+            <asp:ScriptReference Path="~/Vue/PlanosConta/CategoriasConta/Componentes/LstCategoriasConta.js" />
         </Scripts>
     </asp:ScriptManager>
 </asp:Content>

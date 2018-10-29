@@ -8,7 +8,7 @@ using Glass.Data.Model;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.PlanosConta.V1.GruposConta.CategoriasConta.Lista
+namespace Glass.API.Backend.Models.PlanosConta.V1.CategoriasConta.Lista
 {
     /// <summary>
     /// Classe que encapsula um item para a lista de categorias de conta.
@@ -36,6 +36,7 @@ namespace Glass.API.Backend.Models.PlanosConta.V1.GruposConta.CategoriasConta.Li
                 Nome = Colosoft.Translator.Translate(categoriaConta.Situacao).Format(),
             };
 
+            this.NumeroSequencia = categoriaConta.NumeroSequencia;
             this.Permissoes = new PermissoesDto
             {
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.CategoriaConta, (uint)categoriaConta.IdCategoriaConta, null),
@@ -55,6 +56,13 @@ namespace Glass.API.Backend.Models.PlanosConta.V1.GruposConta.CategoriasConta.Li
         [DataMember]
         [JsonProperty("situacao")]
         public IdNomeDto Situacao { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o número sequencial da categoria de conta.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("numeroSequencia")]
+        public int NumeroSequencia { get; set; }
 
         /// <summary>
         /// Obtém ou define as permissões da categoria de conta.

@@ -40,10 +40,10 @@
                     <td>{{ item.exibirPontoEquilibrio | indicaMarcado }}</td>
                     <td v-if="item.situacao">{{ item.situacao.nome }}</td>
                     <td>
-                        <button @click.prevent="alterarPosicao(item, true)" v-if="!inserindo && numeroLinhaEdicao === -1 && item.id > 1">
+                        <button @click.prevent="alterarPosicao(item, true)" v-if="!inserindo && numeroLinhaEdicao === -1 && item.numeroSequencia > 1">
                             <img src="../Images/up.gif">
                         </button>
-                        <button @click.prevent="alterarPosicao(item, false)" v-if="!inserindo && numeroLinhaEdicao === -1 && item.id > 1">
+                        <button @click.prevent="alterarPosicao(item, false)" v-if="!inserindo && numeroLinhaEdicao === -1">
                             <img src="../Images/down.gif">
                         </button>
                         <log-alteracao tabela="GrupoConta" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
@@ -81,7 +81,7 @@
                     </td>
                     <td>
                         <template v-if="grupoConta.permissoes && !grupoConta.permissoes.editarApenasExibirPontoEquilibrio">
-                            <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" exibir-todas="false" required></lista-selecao-situacoes>
+                            <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" required></lista-selecao-situacoes>
                         </template>
                         <template v-else>
                             {{ grupoConta.descricaoSituacao }}
@@ -113,7 +113,7 @@
                         <input type="checkbox" v-model="grupoConta.exibirPontoEquilibrio" v-if="inserindo" />
                     </td>
                     <td>
-                        <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" exibir-todas="false" v-if="inserindo" required></lista-selecao-situacoes>
+                        <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" v-if="inserindo" required></lista-selecao-situacoes>
                     </td>
                     <td></td>
                 </template>
