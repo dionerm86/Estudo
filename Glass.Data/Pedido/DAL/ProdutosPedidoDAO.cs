@@ -5933,17 +5933,37 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Verifica se os produtos do pedido de Revenda j� deram sa�da total. 
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        internal bool VerificarSaidaProduto(GDASession sessao, uint idPedido)
+        {
+            if(idPedido == 0 || !PedidoDAO.Instance.IsRevenda(sessao, idPedido))
+            {
+                return false;
+            }
+
+            var sql = $@"SELECT (SUM(QtdSaida) + 1) >= SUM(Qtde) = COUNT(*)
+                FROM produtos_pedido
+                WHERE IdPedido = {idPedido} 
+                    AND InvisivelPedido = 0";
+
+            return ExecuteScalar<bool>(sessao, sql);
+        }
+
+        /// <summary>
         /// Método que retorna uma string contendo o fluxo utilizado no SqlLiberacao
         /// </summary>
         /// <returns>String com os filtros de fluxo da tabela produtos_pedido.</returns>
         private string ObterFluxoSqlLiberacao(string aliasProdutosPedido)
         {
             var fluxo = PCPConfig.UsarConferenciaFluxo
-                ?"Fluxo"
-                :"Pedido";
+                ? "Fluxo"
+                : "Pedido";
 
             return $" AND ({aliasProdutosPedido}Invisivel{fluxo} IS NULL OR !{aliasProdutosPedido}Invisivel{fluxo})";
         }
-
     }
 }

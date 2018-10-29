@@ -268,10 +268,11 @@ namespace Glass.UI.Web.Cadastros
                     return "Erro|A chave de acesso precisa ter 44 caracteres.";
                 }
 
-                if (NFeCidadeDescargaMDFeDAO.Instance.VerificarNfeJaInclusa(chaveAcesso))
+                var numeroMdfeAssociadoNfe = NFeCidadeDescargaMDFeDAO.Instance.ObterNumeroMdfeAssociadoNfe(null, chaveAcesso);
+
+                if (numeroMdfeAssociadoNfe > 0)
                 {
-                    var numeroMdfe = NFeCidadeDescargaMDFeDAO.Instance.GetMdfeNfeInclusa(chaveAcesso);
-                    return $"Erro|Nota Fiscal já inclusa no MDFe {numeroMdfe}.";
+                    return $"Erro|Nota fiscal já inclusa no MDFe {numeroMdfeAssociadoNfe}.";
                 }
 
                 var nfeCidadeDescarga = new NFeCidadeDescargaMDFe();
@@ -314,9 +315,11 @@ namespace Glass.UI.Web.Cadastros
                     return "Erro|A chave de acesso precisa ter 44 caracteres.";
                 }
 
-                if (CTeCidadeDescargaMDFeDAO.Instance.VerificarCteJaIncluso(chaveAcesso))
+                var numeroMdfeAssociadoCte = CTeCidadeDescargaMDFeDAO.Instance.ObterNumeroMdfeAssociadoCte(null, chaveAcesso);
+
+                if (numeroMdfeAssociadoCte > 0)
                 {
-                    return "Erro|Conhecimento de transporte já incluso.";
+                    return $"Erro|Conhecimento de transporte já incluso no MDFe {numeroMdfeAssociadoCte}.";
                 }
 
                 var cteCidadeDescarga = new CTeCidadeDescargaMDFe();
