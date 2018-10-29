@@ -53,6 +53,11 @@ namespace Glass.UI.Web.Utils
 
                     try
                     {
+                        if (!FinalizarFinanceiro.Instance.PodeExecutarAcao((uint)idTipo[0], tipo))
+                        {
+                            throw new InvalidOperationException("A situação do pedido não e compatível com o procedimento de finalização/confirmação.");
+                        }
+
                         FinalizarFinanceiro.Instance.ExecutarAcao((uint)idTipo[0], tipo, this.txtObs.Text, !aprovado);
                     }
                     catch (Exception ex)
