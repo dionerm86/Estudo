@@ -78,7 +78,7 @@ Servicos.PlanosConta = (function(http) {
 
         var posicao = {
           acima
-          };
+        };
 
         return http().patch(API + 'categorias/' + id + '/posicao', posicao);
       },
