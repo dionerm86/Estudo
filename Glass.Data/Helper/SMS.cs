@@ -87,9 +87,15 @@ namespace Glass.Data.Helper
                 new GDA.GDAParameter("?dataFim", Geral.DataFimEnvioSMSEmailAdministradores)
             };
 
+            var reposicaoGarantia = EmailConfig.ConsiderarReposicaoGarantiaTotalPedidosEmitidos
+                ? string.Empty :
+                  string.Format("AND TipoVenda NOT IN ({0},{1})", (int)Pedido.TipoVendaPedido.Garantia, (int)Pedido.TipoVendaPedido.Reposição);
+
             // Busca os dados para a mensagem, sem considerar pedidos de produção
-            string sql =
-                string.Format("select sum({0}) from pedido where situacao<>{1} and dataCad>=?dataIni and dataCad<=?dataFim and tipoPedido<>{2} {3}",
+            var sqlTotalPedidos =
+                string.Format(@"select sum({0}) from pedido p
+                    Inner Join Cliente c ON (p.IdCli = c.Id_Cli) where IFNULL(c.IgnorarNoSmsResumoDiario, false) = false AND 
+                    p.situacao<>{1} and p.dataCad>=?dataIni and p.dataCad<=?dataFim and p.tipoPedido<>{2} {3}",
                     "{0}", (int)Pedido.SituacaoPedido.Cancelado, (int)Pedido.TipoPedidoEnum.Producao, "{1}");
 
             var sqlTotalPedidos =
@@ -99,14 +105,9 @@ namespace Glass.Data.Helper
                     "{0}", (int)Pedido.SituacaoPedido.Cancelado, (int)Pedido.TipoPedidoEnum.Producao, "{1}");
 
             // Se houver alteração neste sql, altera também no envio do email para os administradores
-            decimal totalPedidos = PedidoDAO.Instance.ExecuteScalar<decimal>(
-                string.Format(sqlTotalPedidos, "total",
-                    EmailConfig.ConsiderarReposicaoGarantiaTotalPedidosEmitidos ?
-                        string.Empty :
-                        string.Format("AND TipoVenda NOT IN ({0},{1})", (int)Pedido.TipoVendaPedido.Garantia, (int)Pedido.TipoVendaPedido.Reposição)),
-                    lstParam.ToArray());
+            decimal totalPedidos = PedidoDAO.Instance.ExecuteScalar<decimal>(string.Format(sqlTotalPedidos, "total", reposicaoGarantia), lstParam.ToArray());
 
-            double totMPedidos = PedidoDAO.Instance.ExecuteScalar<double>(string.Format(sql, "totM", ""), lstParam.ToArray());
+            double totMPedidos = PedidoDAO.Instance.ExecuteScalar<double>(string.Format(sqlTotalPedidos, "totM", reposicaoGarantia), lstParam.ToArray());
 
             var idsSetorPronto = SetorDAO.Instance.GetValoresCampo("Select idSetor From setor Where tipo=" + (int)TipoSetor.Pronto, "idSetor");
 
