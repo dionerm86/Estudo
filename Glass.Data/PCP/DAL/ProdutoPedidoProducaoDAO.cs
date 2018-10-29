@@ -5278,6 +5278,8 @@ namespace Glass.Data.DAL
             // Salva os dados atuais da reposição (se houverem) na tabela dados_reposicao
             DadosReposicaoDAO.Instance.Empilha(transaction, idProdPedProducao);
 
+            var setorAtual = ObtemValorCampo<uint>(transaction, "idSetor", "idProdPedProducao=" + idProdPedProducao);
+
             // Marca que este produto foi reposto
             string sp = subtipoPerdaRepos > 0 ? ", idSubtipoPerdaRepos=" + subtipoPerdaRepos : "";
             objPersistence.ExecuteCommand(transaction, "Update produto_pedido_producao Set idPedidoExpedicao=null, pecaReposta=true, tipoPerdaRepos=" +
@@ -5310,6 +5312,22 @@ namespace Glass.Data.DAL
             else
             {
                 ChapaCortePecaDAO.Instance.AtualizarReferenciaMovimentacaoEstoque(transaction, (uint)dados.IdProdImpressao, idProdPedProducao);
+            }
+
+            if (prodPedEsp != null && prodPedEsp.IdProdPedParent == null)
+            {
+                Setor setor = Utils.ObtemSetor(setorAtual);
+                if (setor.Tipo == TipoSetor.Entregue)
+                {
+                    var idProdutoPedido = ProdutosPedidoDAO.Instance.ObterIdProdPed(transaction, (int)prodPedEsp.IdProdPed).GetValueOrDefault();
+
+                    var quantidadeSaidaAtualProduto = ProdutosPedidoDAO.Instance.ObterQtdSaida(transaction, (uint)idProdutoPedido);
+
+                    if (quantidadeSaidaAtualProduto > 0)
+                    {
+                        ProdutosPedidoDAO.Instance.EstornoSaida(transaction, (uint)idProdutoPedido, 1, "MarcaPecaReposta", numEtiqueta);
+                    }
+                }
             }
 
             #endregion
