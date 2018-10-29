@@ -873,6 +873,12 @@ namespace Glass.Data.DAL
                 criterio += "Funcionário: " + FuncionarioDAO.Instance.GetNome(idFunc) + "    ";
             }
 
+            if (idFuncPedido > 0)
+            {
+                sqlPedido += " and ped.idFunc=" + idFuncPedido;
+                criterio += "Funcionário Vendedor: " + FuncionarioDAO.Instance.GetNome(idFuncPedido) + "    ";
+            }
+
             switch (tipoFastDelivery)
             {
                 case 1:
