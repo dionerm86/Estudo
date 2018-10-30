@@ -77,6 +77,7 @@
                                         <ItemTemplate>
                                             <asp:CheckBox ID="chkSel" runat="server" Checked="True" />
                                             <asp:HiddenField ID="hdfIdContaR" runat="server" Value='<%# Eval("IdContaR") %>' />
+                                            <asp:HiddenField ID="hdfIdArquivoRemessa" runat="server" Value='<%# Eval("IdArquivoRemessa") %>' />
                                         </ItemTemplate>
                                         <ItemStyle Wrap="False" />
                                     </asp:TemplateField>

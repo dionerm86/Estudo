@@ -8315,6 +8315,10 @@ namespace Glass.Data.DAL
             {
                 sql += " AND idArquivoRemessa=" + idArquivoRemessa;
             }
+            else
+            {
+                sql += " AND idArquivoRemessa > 0";
+            }
 
             if (idCli > 0)
             {
