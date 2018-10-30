@@ -232,9 +232,11 @@ namespace Glass.Integracao.Khan
 
         private void NotaFiscalGerada(Data.Domain.NotaFiscalEventoArgs e)
         {
+            var task = Task.Run(async () => await this.SalvarNotaFiscal(e.Sessao, e.NotaFiscal));
+
             try
             {
-                this.SalvarNotaFiscal(e.Sessao, e.NotaFiscal).Wait();
+                task.Wait();
             }
             catch (AggregateException ex)
             {
