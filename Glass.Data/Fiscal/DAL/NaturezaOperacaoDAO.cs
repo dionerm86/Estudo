@@ -100,8 +100,13 @@ namespace Glass.Data.DAL
 
         public IList<NaturezaOperacao> ObtemTodosOrdenados()
         {
+            return ObtemTodosOrdenados(null);
+        }
+
+        public IList<NaturezaOperacao> ObtemTodosOrdenados(GDASession sessao)
+        {
             string filtro;
-            return objPersistence.LoadData(Sql(0, null, 0, null, null, true, out filtro).Replace(FILTRO_ADICIONAL, filtro) + 
+            return objPersistence.LoadData(sessao, Sql(0, null, 0, null, null, true, out filtro).Replace(FILTRO_ADICIONAL, filtro) + 
                 " order by c.codInterno, no.codInterno").ToList();
         }
 
