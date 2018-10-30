@@ -875,8 +875,8 @@ namespace Glass.Data.DAL
 
             if (idFuncPedido > 0)
             {
-                sqlPedido += " and ped.idFunc=" + idFuncPedido;
-                criterio += "Funcionário Vendedor: " + FuncionarioDAO.Instance.GetNome(idFuncPedido) + "    ";
+                sqlPedido += $" and ped.idFunc={idFuncPedido}";
+                criterio += $"Vendedor pedido: {FuncionarioDAO.Instance.GetNome(idFuncPedido)}    ";
             }
 
             switch (tipoFastDelivery)
