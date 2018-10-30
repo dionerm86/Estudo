@@ -69,7 +69,7 @@ function alterarFormasPagtoPadrao(selecionado, idFormaPagto, formaPagto, idForma
  * @param {?number} idFormaPagto Identificador da forma de pagamento.
  * @param {?number} idFormaPagtoPadrao Identificador da forma de pagamento padrão.
  */
-function formaPagtoPadraoDesmarcada(controle, idFormaPagto, idFormaPagtoPadrao) {
+function alterarFormaPagtoPadraoDesmarcada(controle, idFormaPagto, idFormaPagtoPadrao) {
   if (!controle.checked && idFormaPagtoPadrao == idFormaPagto) {
     controle.checked = true;
     alert("A forma de pagamento padrão não pode ser retirada.\nAltere a forma de pagamento padrão e atualize o cliente para que seja possível retirar esta forma de pagamento.");
