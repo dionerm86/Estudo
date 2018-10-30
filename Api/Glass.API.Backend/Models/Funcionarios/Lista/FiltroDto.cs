@@ -3,7 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Helper.Funcionarios;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.V1;
 using Newtonsoft.Json;
 using System;
 

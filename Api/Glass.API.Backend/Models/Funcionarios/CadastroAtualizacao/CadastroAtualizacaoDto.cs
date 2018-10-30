@@ -3,7 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Funcionarios.Detalhe;
-using Glass.API.Backend.Models.Genericas.CadastroAtualizacao;
+using Glass.API.Backend.Models.Genericas.V1.CadastroAtualizacao;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -53,7 +53,7 @@ namespace Glass.API.Backend.Models.Funcionarios.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("endereco")]
-        public Genericas.EnderecoDto Endereco
+        public Genericas.V1.EnderecoDto Endereco
         {
             get { return this.ObterValor(c => c.Endereco); }
             set { this.AdicionarValor(c => c.Endereco, value); }

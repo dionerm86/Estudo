@@ -14,7 +14,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
     /// <summary>
     /// Controller de funcionarios.
     /// </summary>
-    public partial class PostFuncionariosController : BaseController
+    public partial class FuncionariosController : BaseController
     {
         /// <summary>
         /// Realiza a emissão de um pedido novo.

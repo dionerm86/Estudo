@@ -1,5 +1,5 @@
 ﻿Vue.component('funcionario-filtros', {
-  mixins: [Mixins.Clonar, Mixins.Merge, Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Filtros selecionados para a lista de funcionarios.

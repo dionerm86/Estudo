@@ -11,7 +11,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
     /// <summary>
     /// Controller de funcionários.
     /// </summary>
-    public partial class PatchFuncionariosController : BaseController
+    public partial class FuncionariosController : BaseController
     {
         /// <summary>
         /// Atualiza os dados de um funciónário.
