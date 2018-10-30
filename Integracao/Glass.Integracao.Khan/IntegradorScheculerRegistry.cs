@@ -16,7 +16,7 @@ namespace Glass.Integracao.Khan
     /// </summary>
     internal class IntegradorScheculerRegistry : FluentScheduler.Registry
     {
-        private readonly MonitorIndicadoresFinanceirosJob indicadoresFinanceirosJob;
+        private readonly Jobs.MonitorIndicadoresFinanceirosJob indicadoresFinanceirosJob;
 
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="IntegradorScheculerRegistry"/>.
@@ -24,11 +24,10 @@ namespace Glass.Integracao.Khan
         /// <param name="integrador">Integrador que será configurador.</param>
         public IntegradorScheculerRegistry(IntegradorKhan integrador)
         {
-            this.indicadoresFinanceirosJob = new MonitorIndicadoresFinanceirosJob(integrador.MonitorIndicadoresFinanceiros, integrador.Logger);
-            this.indicadoresFinanceirosJob.Schedule = this
-                .Schedule(this.indicadoresFinanceirosJob)
+            this.indicadoresFinanceirosJob = new Jobs.MonitorIndicadoresFinanceirosJob(integrador.MonitorIndicadoresFinanceiros, integrador.Logger);
+            this.indicadoresFinanceirosJob.Schedule = this.Schedule(this.indicadoresFinanceirosJob)
                 .WithName("KhanMonitorIndicadoresFinanceiros");
-            this.indicadoresFinanceirosJob.Schedule.ToRunNow().AndEvery(5).Minutes();
+            this.indicadoresFinanceirosJob.Schedule.NonReentrant().ToRunNow().AndEvery(5).Minutes();
         }
 
         /// <summary>
@@ -39,64 +38,6 @@ namespace Glass.Integracao.Khan
             get
             {
                 yield return this.indicadoresFinanceirosJob;
-            }
-        }
-
-        private sealed class MonitorIndicadoresFinanceirosJob : FluentScheduler.IJob, IJobIntegracao
-        {
-            private readonly MonitorIndicadoresFinanceiros monitor;
-            private readonly Colosoft.Logging.ILogger logger;
-
-            public MonitorIndicadoresFinanceirosJob(MonitorIndicadoresFinanceiros monitor, Colosoft.Logging.ILogger logger)
-            {
-                this.monitor = monitor;
-                this.logger = logger;
-            }
-
-            public FluentScheduler.Schedule Schedule { get; set; }
-
-            /// <inheritdoc />
-            public string Nome => Schedule.Name;
-
-            /// <inheritdoc />
-            public string Descricao => "Monitor dos indicadores financeiros";
-
-            /// <inheritdoc />
-            public Exception UltimaFalha { get; private set; }
-
-            /// <inheritdoc />
-            public DateTime? UltimaExecucaoComFalha { get; private set; }
-
-            /// <inheritdoc />
-            public SituacaoJobIntegracao Situacao { get; private set; } = SituacaoJobIntegracao.NaoIniciado;
-
-            /// <inheritdoc />
-            public DateTime? UltimaExecucao { get; private set; }
-
-            /// <inheritdoc />
-            public DateTime ProximaExecucao => this.Schedule.NextRun;
-
-            /// <inheritdoc />
-            public void Executar() => this.Schedule.Execute();
-
-            public void Execute()
-            {
-                this.Situacao = SituacaoJobIntegracao.Executando;
-                try
-                {
-                    this.monitor.ImportarIndicadores();
-                    this.Situacao = SituacaoJobIntegracao.Executado;
-                }
-                catch (Exception ex)
-                {
-                    this.UltimaExecucaoComFalha = DateTime.Now;
-                    this.UltimaFalha = ex;
-                    this.logger.Error("Falha ao importer indicadores financeiros da khan.".GetFormatter(), ex);
-                }
-                finally
-                {
-                    this.UltimaExecucao = DateTime.Now;
-                }
             }
         }
     }

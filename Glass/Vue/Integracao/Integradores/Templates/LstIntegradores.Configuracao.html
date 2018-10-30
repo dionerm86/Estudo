@@ -26,8 +26,8 @@
                                 </div>
                             </td>
                             <td class="col entradas-col_valor">
-                                <div v-if="!editando" class="markdown">{{entrada.valor}}</div>
-                                <input v-if="editando" type="text" class="" title="" v-model="entrada.valor" />
+                                <div v-if="!editando || entrada.somenteLeitura" class="markdown">{{entrada.valor}}</div>
+                                <input v-if="editando && !entrada.somenteLeitura" type="text" class="" title="" v-model="entrada.valor" />
                             </td>
                         </tr>
                     </tbody>

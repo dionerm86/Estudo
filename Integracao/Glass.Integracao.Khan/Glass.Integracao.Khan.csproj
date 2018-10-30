@@ -95,6 +95,7 @@
     <Compile Include="ConversorNotaFiscalPedido.cs" />
     <Compile Include="IntegradorKhan.cs" />
     <Compile Include="IntegradorScheculerRegistry.cs" />
+    <Compile Include="Jobs\MonitorIndicadoresFinanceirosJob.cs" />
     <Compile Include="MonitorIndicadoresFinanceiros.cs" />
     <Compile Include="MonitorNotaFiscal.cs" />
     <Compile Include="MonitorProdutos.cs" />

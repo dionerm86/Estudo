@@ -23,7 +23,14 @@ namespace Glass.Integracao
         /// <summary>
         /// Obtém os itens do logger.
         /// </summary>
-        public IEnumerable<ItemLoggerIntegracao> Itens => itens;
+        public IEnumerable<ItemLoggerIntegracao> Itens
+        {
+            get
+            {
+                var copia = this.itens.ToList();
+                return copia;
+            }
+        }
 
         /// <inheritdoc />
         public bool IsDebugEnabled => true;
@@ -42,12 +49,15 @@ namespace Glass.Integracao
 
         private void AdicionarItem(IMessageFormattable mensagem, Category categoria, string erro = null, string pilhaChamada = null, Priority prioridade = Priority.None)
         {
-            if (this.itens.Count > CapacidadeMaxima)
+            lock (this.itens)
             {
-                this.itens.Dequeue();
-            }
+                if (this.itens.Count > CapacidadeMaxima)
+                {
+                    this.itens.Dequeue();
+                }
 
-            this.itens.Enqueue(new ItemLoggerIntegracao(categoria, prioridade, mensagem, erro, pilhaChamada));
+                this.itens.Enqueue(new ItemLoggerIntegracao(categoria, prioridade, mensagem, erro, pilhaChamada));
+            }
         }
 
         /// <inheritdoc />

@@ -2,10 +2,10 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Colosoft;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Glass.Integracao
@@ -15,7 +15,17 @@ namespace Glass.Integracao
     /// </summary>
     public class GerenciadorOperacaoIntegracao
     {
+        private readonly Colosoft.Logging.ILogger logger;
         private readonly Dictionary<string, Operacao> operacoes = new Dictionary<string, Operacao>();
+
+        /// <summary>
+        /// Inicia uma nova instância da classe <see cref="GerenciadorOperacaoIntegracao"/>.
+        /// </summary>
+        /// <param name="logger">Logger que será usado pela instância.</param>
+        public GerenciadorOperacaoIntegracao(Colosoft.Logging.ILogger logger)
+        {
+            this.logger = logger;
+        }
 
         /// <summary>
         /// Obtém as operações registradas no gerenciador.
@@ -61,6 +71,8 @@ namespace Glass.Integracao
                 throw new InvalidOperationException($"Não foi encontrada a operação \"{operacao}\"");
             }
 
+            this.logger.Info($"Solicitação de execução da operação '{operacao}'...".GetFormatter());
+
             object resultado = null;
 
             try
@@ -69,17 +81,34 @@ namespace Glass.Integracao
             }
             catch (System.Reflection.TargetInvocationException ex)
             {
+                this.logger.Error($"Falha na execução da opereação '{operacao}'.".GetFormatter(), ex.InnerException);
                 throw ex.InnerException;
             }
+            catch (Exception ex)
+            {
+                this.logger.Error($"Falha na execução da opereação '{operacao}'.".GetFormatter(), ex);
+                throw;
+            }
+
+            this.logger.Info($"Operação '{operacao}' executada!".GetFormatter());
 
             var task = resultado as Task;
             if (task != null)
             {
-                await task;
+                try
+                {
+                    await task;
+                }
+                catch (Exception ex)
+                {
+                    this.logger.Error($"Falha na execução da opereação '{operacao}'.".GetFormatter(), ex);
+                    throw;
+                }
 
                 if (task.GetType().IsGenericType)
                 {
-                    var taskType = typeof(Task<>).MakeGenericType(task.GetType().GetGenericParameterConstraints().First());
+                    var genericArgument = task.GetType().GetGenericArguments().First();
+                    var taskType = typeof(Task<>).MakeGenericType(genericArgument);
                     var property = taskType.GetProperty(nameof(Task<object>.Result));
 
                     return property.GetValue(task);

@@ -34,7 +34,7 @@ namespace Glass.Integracao.Khan
         private readonly Microsoft.Practices.ServiceLocation.IServiceLocator serviceLocator;
         private readonly Colosoft.Domain.IDomainEvents domainEvents;
         private readonly List<IDisposable> monitores = new List<IDisposable>();
-        private readonly GerenciadorOperacaoIntegracao gerenciadorOperacoes = new GerenciadorOperacaoIntegracao();
+        private readonly GerenciadorOperacaoIntegracao gerenciadorOperacoes;
 
         private IntegradorScheculerRegistry integradorSchedulerRegistry;
 
@@ -50,6 +50,7 @@ namespace Glass.Integracao.Khan
             Microsoft.Practices.ServiceLocation.IServiceLocator serviceLocator)
         {
             this.Logger = new LoggerIntegracao();
+            this.gerenciadorOperacoes = new GerenciadorOperacaoIntegracao(this.Logger);
             this.domainEvents = domainEvents;
             this.serviceLocator = serviceLocator;
             this.MonitorIndicadoresFinanceiros = new MonitorIndicadoresFinanceiros(this.Configuracao, this.Logger, rentabilidadeFluxo);
@@ -148,11 +149,11 @@ namespace Glass.Integracao.Khan
         private Colosoft.Net.ServiceAddress ObterEnderecoServico(string nome, string endereco)
         {
             var bindingParameters = new Colosoft.Net.ServiceAddressParameterCollection();
-            bindingParameters.Add("name", $"WSHttpBinding_I{nome}");
-            bindingParameters.Add("closeTimeout", "00:00:08");
-            bindingParameters.Add("openTimeout", "00:00:08");
-            bindingParameters.Add("receiveTimeout", "00:00:20");
-            bindingParameters.Add("sendTimeout", "00:00:08");
+            bindingParameters.Add("name", $"basicHttpBinding_I{nome}");
+            bindingParameters.Add("closeTimeout", "00:01:00");
+            bindingParameters.Add("openTimeout", "00:01:00");
+            bindingParameters.Add("receiveTimeout", "00:10:00");
+            bindingParameters.Add("sendTimeout", "00:01:00");
             bindingParameters.Add("bypassProxyOnLocal", "false");
             bindingParameters.Add("transactionFlow", "false");
             bindingParameters.Add("hostNameComparisonMode", "StrongWildcard");
@@ -183,7 +184,7 @@ namespace Glass.Integracao.Khan
             securityParameters.Add("mode", "None");
 
             var transportParameters = new Colosoft.Net.ServiceAddressParameterCollection();
-            transportParameters.Add("clientCredentialType", "Certificate");
+            transportParameters.Add("clientCredentialType", "None");
             transportParameters.Add("proxyCredentialType", "None");
             transportParameters.Add("realm", string.Empty);
 
@@ -200,21 +201,14 @@ namespace Glass.Integracao.Khan
 
             var bindingNode = new Colosoft.Net.ServiceAddressNode("binding", bindingParameters, readerQuotaNode, reliableSessionNode, securityNode);
 
-            var customParameters = new Colosoft.Net.ServiceAddressParameterCollection();
-            customParameters.Add("userName", string.Empty);
-            customParameters.Add("password", string.Empty);
-            customParameters.Add("enabled", "false");
-
-            var customNode = new Colosoft.Net.ServiceAddressNode("appDownloader", customParameters);
-
             return new Colosoft.Net.ServiceAddress(
                         nome,
                         endereco,
                         "khanBasicHttpBinding",
-                        $"ServerHost.AppDownloaderService",
+                        $"ServerHost.{nome}",
                         bindingNode,
                         null,
-                        new[] { customNode });
+                        null);
         }
 
         private void ConfigurarWebServices()
@@ -269,18 +263,19 @@ namespace Glass.Integracao.Khan
             this.ConfigurarWebServices();
 
             this.Logger.Info("Configurando monitor de produtos...".GetFormatter());
-            var monitorProdutos = this.ConfigurarMonitor<MonitorProdutos>();
-            monitorProdutos.ConfigurarOperacoes(this.gerenciadorOperacoes);
+            this.ConfigurarMonitor<MonitorProdutos>()
+                .ConfigurarOperacoes(this.gerenciadorOperacoes);
 
             this.Logger.Info("Configurando monitor de notas fiscais...".GetFormatter());
-            this.ConfigurarMonitor<MonitorNotaFiscal>();
+            this.ConfigurarMonitor<MonitorNotaFiscal>()
+                .ConfigurarOperacoes(this.gerenciadorOperacoes);
 
             this.integradorSchedulerRegistry = new IntegradorScheculerRegistry(this);
 
             this.Logger.Info("Iniciando os jobs...".GetFormatter());
             FluentScheduler.JobManager.Initialize(this.integradorSchedulerRegistry);
 
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
 
         /// <summary>

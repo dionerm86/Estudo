@@ -143,7 +143,7 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
         private string numdoc2Field;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string numitensField;
+        private int numitensField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string numnfField;
@@ -733,12 +733,12 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        internal string numitens {
+        internal int numitens {
             get {
                 return this.numitensField;
             }
             set {
-                if ((object.ReferenceEquals(this.numitensField, value) != true)) {
+                if ((this.numitensField.Equals(value) != true)) {
                     this.numitensField = value;
                     this.RaisePropertyChanged("numitens");
                 }
@@ -1075,6 +1075,9 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
         private string obsvintField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private float pdesField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private float prunitField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -1371,6 +1374,19 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
                 if ((object.ReferenceEquals(this.obsvintField, value) != true)) {
                     this.obsvintField = value;
                     this.RaisePropertyChanged("obsvint");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal float pdes {
+            get {
+                return this.pdesField;
+            }
+            set {
+                if ((this.pdesField.Equals(value) != true)) {
+                    this.pdesField = value;
+                    this.RaisePropertyChanged("pdes");
                 }
             }
         }

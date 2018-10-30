@@ -84,9 +84,17 @@
 
       this.executando = true;
       Servicos.Integracao.Integradores.executarOperacao(this.integrador.nome, this.operacao.nome, parametros2)
-        .then(function (resultado) {
+        .then(function (resposta) {
           self.executando = false;
-          self.exibirMensagem('Sucesso', 'Operação executada.');
+
+          switch (resposta.status) {
+            case 200:
+              self.exibirMensagem('Sucesso', 'Operação executada.');
+              break;
+            case 400:
+              self.exibirMensagem('Sucesso', 'Perminssão negada para a execução da operação.');
+              break;
+          }
         })
         .catch(function (erro) {
           self.executando = false;

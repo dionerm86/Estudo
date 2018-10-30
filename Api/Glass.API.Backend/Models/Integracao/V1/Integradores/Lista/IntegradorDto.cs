@@ -26,8 +26,7 @@ namespace Glass.API.Backend.Models.Integracao.V1.Integradores.Lista
             this.Nome = integrador.Nome;
             this.Ativo = integrador.Ativo;
             this.Configuracao = integrador.Configuracao.NomesParametro
-                .Select(f => new ConfiguracaoIntegradorDto(f, integrador.Configuracao[f]))
-                .ToList();
+                .Select(f => new ConfiguracaoIntegradorDto(f, integrador.Configuracao[f], integrador.Configuracao.VerificarSomenteLeitura(f)));
             this.Operacoes = integrador.Operacoes.Select(f => new OperacaoIntegracaoDto(f)).ToList();
             this.Jobs = integrador.Jobs.Select(f => new JobIntegracaoDto(f)).ToList();
         }
