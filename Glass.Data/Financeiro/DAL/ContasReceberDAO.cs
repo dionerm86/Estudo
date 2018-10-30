@@ -97,13 +97,13 @@ namespace Glass.Data.DAL
                     retorno += "inner join produtos_liberar_pedido plp on (pnf.idPedido=plp.idPedido)";
                     campo = "plp.idLiberarPedido";
                     campoContasReceber = "idLiberarPedido";
-                    where = "Where 1" + (!usarJoin ? " and plp.idLiberarPedido={0}.idLiberarPedido" : "");
+                    where = "Where 1" + (!usarJoin ? " AND nf.situacao <> " + (int)NotaFiscal.SituacaoEnum.Cancelada + " and plp.idLiberarPedido={0}.idLiberarPedido" : "");
                 }
 
                 if (usarJoin && numeroNFe > 0)
                 {
                     var idsNf = string.Join(",", NotaFiscalDAO.Instance.ExecuteMultipleScalar<string>(session,
-                        string.Format("Select Cast(idNf as char) From nota_fiscal Where numeroNfe={0}{1}{2}", numeroNFe,
+                        string.Format("Select Cast(idNf as char) From nota_fiscal Where numeroNfe={0}{1}{2} AND situacao <> " + (int)NotaFiscal.SituacaoEnum.Cancelada, numeroNFe,
                             idLoja > 0 ? " AND IdLoja=" + idLoja : string.Empty, !string.IsNullOrEmpty(modelo) ? " AND modelo=?modelo" : string.Empty),
                         new GDAParameter("?modelo", modelo)));
                     where += " And nf.idNf In (" + (string.IsNullOrEmpty(idsNf) ? "0" : idsNf) + ")";
@@ -8065,12 +8065,31 @@ namespace Glass.Data.DAL
                     new List<decimal> { 0 }, vazio, new List<decimal> { valorRec });
 
                 // Atualiza o campo DataUnica para evitar o índice BLOQUEIO_DUPLICIDADE.
-                objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_geral SET DataUnica=REPLACE(DataUnica, '_0', CONCAT('_', {0})) WHERE IdContaR={1};", contadorDataUnica++, idContaR));
+                var sqlAtualizarDataUnica = $@"UPDATE caixa_geral
+                    SET DataUnica = IF(INSTR(DataUnica, '_0') > 0,
+                        REPLACE(DataUnica, '_0', CONCAT('_', {contadorDataUnica})),
+                        CONCAT('_', {contadorDataUnica++}))
+                    WHERE IdContaR = {idContaR};";
+                objPersistence.ExecuteCommand(sessao, sqlAtualizarDataUnica);
             }
             finally
             {
                 FilaOperacoes.RecebimentosGerais.ProximoFila();
             }
+        }
+
+        /// <summary>
+        /// Método que recupera os Identificadores dos planos de conta que 
+        /// devem ser considerados como a prazo para a geração do CNAB.
+        /// </summary>
+        /// <returns>Retorna uma lista de inteiros com os identificadores dos planos de conta.</returns>
+        public List<uint> ObterPlanosContaConsiderarPrazoParaCnab()
+        {
+            return new List<uint>
+            {
+                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ParcelamentoObra),
+                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PrazoCartao)
+            };
         }
 
         /// <summary>
@@ -8081,21 +8100,34 @@ namespace Glass.Data.DAL
         {
             string idsFormasPagto = "";
 
-            foreach (var f in formasPagto.Split(',').Select(x => (Pagto.FormaPagto)x.StrParaUint()))
+            var formasPagtoArray = formasPagto
+                .Split(',')
+                .Select(x => (Pagto.FormaPagto)x.StrParaUint());
+
+            var tipoPeriodoConsiderar = tipoPeriodo == 0 
+                ? "c.dataVec" 
+                : "c.dataCad";
+
+            foreach (var f in formasPagtoArray)
             {
                 if (f == Pagto.FormaPagto.Boleto)
-                    idsFormasPagto += "," + UtilsPlanoConta.ContasTodosTiposBoleto();
+                {
+                    idsFormasPagto += $",{UtilsPlanoConta.ContasTodosTiposBoleto()}";
+                }
                 if (f == Pagto.FormaPagto.Prazo)
-                    idsFormasPagto += string.Format(",{0},{1}", UtilsPlanoConta.ContasTodasPorTipo(f),
-                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ParcelamentoObra));
+                {
+                    idsFormasPagto += $",{ UtilsPlanoConta.ContasTodasPorTipo(f)},{string.Join(",", ObterPlanosContaConsiderarPrazoParaCnab().ToArray())}";
+                }
                 else
-                    idsFormasPagto += "," + UtilsPlanoConta.ContasTodasPorTipo(f);
+                {
+                    idsFormasPagto += $",{UtilsPlanoConta.ContasTodasPorTipo(f)}";
+                }
             }
 
-            var criterio = "";
+            var criterio = string.Empty;
 
-            var sql = @"
-                SELECT c.*, CONCAT(cli.id_cli, ' - ', cli.nome) as nomeCli, " + SqlCampoDescricaoContaContabil("c") + @" as descricaoContaContabil, l.nomeFantasia as NomeLoja
+            var sql = $@"
+                SELECT c.*, CONCAT(cli.id_cli, ' - ', cli.nome) as nomeCli, {SqlCampoDescricaoContaContabil("c")} as descricaoContaContabil, l.nomeFantasia as NomeLoja
                 FROM contas_receber c
                     INNER JOIN cliente cli ON (c.idCliente=cli.id_Cli) 
                     LEFT JOIN loja l ON (c.idLoja = l.idLoja)
@@ -8115,40 +8147,70 @@ namespace Glass.Data.DAL
             }
 
             if (!string.IsNullOrEmpty(dataIni))
-                sql += " AND {0} >= ?dataIni";
+            {
+                sql += $" AND {tipoPeriodoConsiderar} >= ?dataIni";
+            }
 
-            if (!string.IsNullOrEmpty(dataFim))
-                sql += " AND {0} <= ?dataFim";
+            if (!string.IsNullOrWhiteSpace(dataFim))
+            {
+                sql += $" AND {tipoPeriodoConsiderar} <= ?dataFim";
+            }
+                
 
-            if (string.IsNullOrEmpty(tiposConta))
-                sql += !string.IsNullOrEmpty(idsContas) ? "" : " AND 0";
+            if (string.IsNullOrWhiteSpace(tiposConta))
+            {
+                sql += !string.IsNullOrWhiteSpace(idsContas) 
+                    ? string.Empty 
+                    : " AND 0";
+            }
             else
-                sql += FiltroTipoConta("c", tiposConta, out criterio);
+            {
+                sql += FiltroTipoConta(
+                    "c", 
+                    tiposConta, 
+                    out criterio);
+            }
 
-            if(!string.IsNullOrEmpty(idsFormasPagto.Trim(',')))
-                sql+= " AND c.idConta in (" + idsFormasPagto.Trim(',') + ")";
+            if (!string.IsNullOrWhiteSpace(idsFormasPagto.Trim(',')))
+            {
+                sql += $" AND c.idConta IN ({idsFormasPagto.Trim(',')})";
+            }
 
             if (idCli > 0)
             {
-                sql += " And cli.Id_Cli=" + idCli;
+                sql += $" AND cli.Id_Cli = {idCli}";
             }
-            else if (!string.IsNullOrEmpty(nomeCli))
+            else if (!String.IsNullOrWhiteSpace(nomeCli))
             {
-                string ids = ClienteDAO.Instance.GetIds(null, nomeCli, null, 0, null, null, null, null, 0);
-                sql += " And cli.id_Cli in (" + ids + ")";
+                string ids = ClienteDAO.Instance.GetIds(
+                    null, 
+                    nomeCli, 
+                    null, 
+                    0, 
+                    null, 
+                    null, 
+                    null, 
+                    null, 
+                    0);
+
+                sql += $" AND cli.Id_Cli IN ({ids})";
             }
 
             if (idLoja > 0)
-                sql += " AND c.idLoja=" + idLoja;
+            {
+                sql += $" AND c.IdLoja={idLoja}";
+            }
 
             if (idContaBancoCliente > 0)
-                sql += " AND cli.IdContaBanco = " + idContaBancoCliente;
-
-            if (!string.IsNullOrEmpty(idsContas) && !string.IsNullOrEmpty(idsContas.Trim(',')))
-                sql += " AND c.IdContaR IN (" + idsContas.Trim(',') + ")";
-
-            sql = string.Format(sql, tipoPeriodo == 0 ? "c.dataVec" : "c.dataCad");
-
+            {
+                sql += $" AND cli.IdContaBanco = {idContaBancoCliente}";
+            }
+                
+            if (!string.IsNullOrWhiteSpace(idsContas) && !string.IsNullOrWhiteSpace(idsContas.Trim(',')))
+            {
+                sql += $" AND c.IdContaR IN ({idsContas.Trim(',')})";
+            }
+               
             sql += " ORDER BY dataVec";
             
             var retorno =  objPersistence.LoadData(sql, new GDAParameter("?dataIni", DateTime.Parse(dataIni + " 00:00")),
@@ -8158,15 +8220,19 @@ namespace Glass.Data.DAL
             {
                 foreach (var conta in retorno.ToList())
                 {
-                    // Verifica se esta conta a receber possui nota
-                    var possuiNota = NotaFiscalDAO.Instance.ObtemIdNfByContaR(conta.IdContaR, true).Count() > 0;
+                    var possuiNota = NotaFiscalDAO.Instance.ObtemIdNfByContaR(
+                        conta.IdContaR,
+                        true)
+                        .Count() > 0;
 
-                    // Busca apenas contas com nota
                     if (tipoContaSemSeparacao == 1 && !possuiNota)
+                    {
                         retorno.Remove(conta);
-                    // Busca apenas contas sem nota
+                    }
                     else if (tipoContaSemSeparacao == 2 && possuiNota)
+                    {
                         retorno.Remove(conta);
+                    }
                 }
             }
 

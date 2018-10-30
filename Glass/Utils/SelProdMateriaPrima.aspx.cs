@@ -55,7 +55,7 @@ namespace Glass.UI.Web.Utils
             var prodBaixaEst = new Glass.Estoque.Negocios.Entidades.ProdutoBaixaEstoque();
 
             prodBaixaEst.IdProd = Request["idProd"].StrParaInt();
-            prodBaixaEst.Qtde = qtdeString.StrParaInt();
+            prodBaixaEst.Qtde = qtdeString.StrParaFloat();
             prodBaixaEst.IdProdBaixa = produto.IdProd != null ? (int)produto.IdProd.Value : 0;
             prodBaixaEst.Altura = alturaString.StrParaInt();
             prodBaixaEst.Largura = larguraString.StrParaInt();

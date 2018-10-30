@@ -1,5 +1,5 @@
 Vue.component('lista-itens-venda', {
-  mixins: [Mixins.Clonar, Mixins.Patch],
+  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista()],
   props: {
     /**
      * Indica se a venda atual é de mão-de-obra.
@@ -254,10 +254,6 @@ Vue.component('lista-itens-venda', {
       itemVendaOriginal: {},
       numeroLinhaEdicao: -1,
       exibirDescontoQuantidade: false,
-      dadosOrdenacao_: {
-        campo: '',
-        direcao: ''
-      },
       produtoAtual: null,
       dadosValidacaoProdutoAtual: this.dadosValidacaoProduto,
       numeroBeneficiamentosParaAreaMinima: 0,
@@ -285,19 +281,6 @@ Vue.component('lista-itens-venda', {
       novoFiltro.idProdutoPai = filtro.idProdutoPai;
 
       return this.buscarItensVenda(novoFiltro, pagina, numeroRegistros, ordenacao);
-    },
-
-    /**
-     * Atualiza os dados para ordenação do resultado.
-     * @param {string} campo O campo pelo qual o resultado deve ser ordenado.
-     */
-    ordenar: function (campo) {
-      if (campo !== this.dadosOrdenacao_.campo) {
-        this.dadosOrdenacao_.campo = campo;
-        this.dadosOrdenacao_.direcao = '';
-      } else {
-        this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
-      }
     },
 
     /**
@@ -615,15 +598,6 @@ Vue.component('lista-itens-venda', {
   },
 
   computed: {
-    /**
-     * Propriedade computada que retorna o campo para realizar a ordenação do resultado.
-     * @type {string}
-     */
-    ordenacao: function () {
-      var direcao = this.dadosOrdenacao_.direcao ? ' ' + this.dadosOrdenacao_.direcao : '';
-      return this.dadosOrdenacao_.campo + direcao;
-    },
-
     /**
      * Propriedade computada que retorna o tipo para busca no controle de beneficiamentos.
      * @type {string}

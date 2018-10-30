@@ -15,7 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Glass.API.Backend</RootNamespace>
     <AssemblyName>Glass.API.Backend</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -25,6 +25,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <Use64BitIISExpress />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,103 +49,82 @@
   <ItemGroup>
     <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Business.1.0.0\lib\net40\Colosoft.Business.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Caching, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d17063ea1176ac27, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Caching.1.0.0\lib\net40\Colosoft.Caching.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Core.1.0.0.272\lib\net40\Colosoft.Core.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Caching, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4582941062e92565, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Caching.1.0.0\lib\net40\Colosoft.Data.Caching.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Database, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1d992570aca53534, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Database.1.0.0\lib\net40\Colosoft.Data.Database.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Database.Generic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Database.Generic.1.0.0\lib\net40\Colosoft.Data.Database.Generic.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Database.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Database.MySql.1.0.0\lib\net40\Colosoft.Data.Database.MySql.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Schema, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d550d59fa5ddf895, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Schema.1.0.0\lib\net40\Colosoft.Data.Schema.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data.Schema.GDA, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Schema.GDA.1.0.0\lib\net40\Colosoft.Data.Schema.GDA.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.DataAccess, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ddb5805976f37b7c, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.DataAccess.1.0.0\lib\net40\Colosoft.DataAccess.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Mef, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8374acc24c9df9ab, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Mef.1.0.0\lib\net40\Colosoft.Mef.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Query, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32cb8a6b967cc05b, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Query.1.0.0\lib\net40-client\Colosoft.Query.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Query.Database, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7dca01bd831b5786, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Query.Database.1.0.0\lib\net40\Colosoft.Query.Database.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Query.Database.Generic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Query.Database.Generic.1.0.0\lib\net40\Colosoft.Query.Database.Generic.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Query.Database.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Query.Database.MySql.1.0.0\lib\net40\Colosoft.Query.Database.MySql.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Security.Captcha, Version=1.0.0.0, Culture=neutral, PublicKeyToken=acad0a7596db2bc4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Security.Captcha.1.0.0\lib\net40\Colosoft.Security.Captcha.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=499b869ab2057256, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Text.1.0.0\lib\net40-client\Colosoft.Text.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c795e3dd39c844dd, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=019fcb5f415e5b13, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Web.1.0.0\lib\net40\Colosoft.Web.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Web.Http, Version=1.0.0.0, Culture=neutral, PublicKeyToken=812c55bd78f48efb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Web.Http.1.0.0\lib\net452\Colosoft.Web.Http.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="EditorConfig.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=fe6ce3ea283749f2, processorArchitecture=MSIL">
       <HintPath>..\..\packages\editorconfig.0.12.1\lib\net45\EditorConfig.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentScheduler, Version=5.3.0.0, Culture=neutral, PublicKeyToken=b76503528a14ebd1, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentScheduler.5.3.0\lib\net40\FluentScheduler.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="GDA.Provider.MySql, Version=1.0.4.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\GDA.Provider.MySql.1.0.4.1\lib\net35\GDA.Provider.MySql.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="MefContrib">
       <HintPath>..\..\Dlls\MefContrib\MefContrib.dll</HintPath>
@@ -155,40 +135,33 @@
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.6\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.Cors, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Cors.5.2.6\lib\net45\System.Web.Cors.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -196,31 +169,25 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.6\lib\net45\System.Web.Http.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Http.Cors, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Cors.5.2.6\lib\net45\System.Web.Http.Cors.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.6\lib\net45\System.Web.Http.WebHost.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -233,8 +200,17 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Atributos\CacheFilterAttribute.cs" />
+    <Compile Include="Controllers\Aplicacoes\V1\DeleteAplicacoesController.cs" />
+    <Compile Include="Controllers\Aplicacoes\V1\PatchAplicacoesController.cs" />
+    <Compile Include="Controllers\Aplicacoes\V1\PostAplicacoesController.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
+    <Compile Include="Controllers\Cfops\V1\DeleteCfopsController.cs" />
+    <Compile Include="Controllers\Cfops\V1\PatchCfopsController.cs" />
+    <Compile Include="Controllers\Cfops\V1\PostCfopsController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Sugestoes\GetSugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Sugestoes\DeleteSugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Sugestoes\SugestaoClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\TiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\DeleteTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
@@ -249,9 +225,49 @@
     <Compile Include="Controllers\Datas\V1\Feriados\GetFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\DeletePlanosContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\DeleteCategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\GetCategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\CategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\PatchCategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\PostCategoriasContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\DeleteGruposContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\GetGruposContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\GruposContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\PatchGruposContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GruposConta\PostGruposContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\PatchPlanosContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\PostPlanosContaController.cs" />
+    <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\ClassificacoesRoteiro\DeleteClassificacoesRoteiroController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\ClassificacoesRoteiro\GetClassificacoesRoteiroController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\ClassificacoesRoteiro\ClassificacoesRoteiroController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\DeleteTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\GetTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\PatchTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\PostTiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\TiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\DeleteSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\PatchSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\PostSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\DeleteRoteirosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\GetRoteirosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Roteiros\RoteirosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\DeleteTurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\GetTurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\TurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\PatchTurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Turnos\PostTurnosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\GetSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\SetoresController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\PostFornecedoresController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\GetPlanosContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\PlanosContaController.cs" />
+    <Compile Include="Controllers\Condutores\CondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\DeleteCondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\GetCondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\PatchCondutoresController.cs" />
+    <Compile Include="Controllers\Condutores\PostCondutoresController.cs" />
     <Compile Include="Controllers\Funcionarios\PatchFuncionariosController.cs" />
     <Compile Include="Controllers\Funcionarios\V1\PostFuncionariosController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\DeleteCoresAluminioController.cs" />
@@ -264,6 +280,14 @@
     <Compile Include="Controllers\Produtos\V1\CoresVidro\DeleteCoresVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresVidro\PatchCoresVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresVidro\PostCoresVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GruposProduto\DeleteGruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GruposProduto\PatchGruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GruposProduto\PostGruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\PatchProdutosController.cs" />
+    <Compile Include="Controllers\Produtos\V1\SubgruposProduto\DeleteSubgruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\SubgruposProduto\PatchSubgruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\SubgruposProduto\PostSubgruposProdutoController.cs" />
+    <Compile Include="Controllers\Rotas\V1\DeleteRotasController.cs" />
     <Compile Include="Controllers\Sinais\V1\SinaisController.cs" />
     <Compile Include="Controllers\Sinais\V1\GetSinaisController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
@@ -327,6 +351,9 @@
     <Compile Include="Controllers\Produtos\V1\DeleteProdutosController.cs" />
     <Compile Include="Controllers\Rotas\V1\RotasController.cs" />
     <Compile Include="Controllers\Rotas\V1\GetRotasController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\DeleteTabelasDescontoAcrescimoClienteController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\PatchTabelasDescontoAcrescimoClienteController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\PostTabelasDescontoAcrescimoClienteController.cs" />
     <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\TabelasDescontoAcrescimoClienteController.cs" />
     <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\GetTabelasDescontoAcrescimoClienteController.cs" />
     <Compile Include="Controllers\Obras\V1\ObrasController.cs" />
@@ -380,21 +407,66 @@
     <Compile Include="Atributos\AuthorizationAttribute.cs" />
     <Compile Include="Controllers\TiposCartao\V1\GetTiposCartaoController.cs" />
     <Compile Include="Controllers\TiposCartao\V1\TiposCartaoController.cs" />
+    <Compile Include="Controllers\Seguradoras\DeleteSeguradorasController.cs" />
+    <Compile Include="Controllers\Seguradoras\GetSeguradorasController.cs" />
+    <Compile Include="Controllers\Seguradoras\PatchSeguradorasController.cs" />
+    <Compile Include="Controllers\Seguradoras\PostSeguradorasController.cs" />
+    <Compile Include="Controllers\Seguradoras\SeguradorasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\DeleteContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\GetContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\PatchContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\PostContasBancariasController.cs" />
+    <Compile Include="Controllers\ContasBancarias\ContasBancariasController.cs" />
     <Compile Include="Controllers\Veiculos\V1\DeleteVeiculosController.cs" />
     <Compile Include="Controllers\Veiculos\V1\GetVeiculosController.cs" />
     <Compile Include="Controllers\Veiculos\V1\VeiculosController.cs" />
     <Compile Include="Controllers\Transportadores\V1\DeleteTransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\TransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\GetTransportadoresController.cs" />
+    <Compile Include="Controllers\_Compartilhado\Comum\V1\ComumController.cs" />
+    <Compile Include="Controllers\_Compartilhado\Comum\V1\GetComumController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Cfops\ConverterCadastroAtualizacaoParaCfop.cs" />
+    <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
     <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
     <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
+    <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoSvgProjetoStrategy.cs" />
+    <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
+    <Compile Include="Helper\PlanosConta\CategoriasConta\ConverterCadastroAtualizacaoParaCategoriaConta.cs" />
+    <Compile Include="Helper\PlanosConta\CategoriasConta\TraducaoOrdenacaoListaCategoriasConta.cs" />
+    <Compile Include="Helper\PlanosConta\GruposConta\ConverterCadastroAtualizacaoParaGrupoConta.cs" />
+    <Compile Include="Helper\PlanosConta\GruposConta\TraducaoOrdenacaoListaGruposConta.cs" />
+    <Compile Include="Helper\Producao\Roteiros\ClassificacoesRoteiro\TraducaoOrdenacaoListaClassificacoesRoteiro.cs" />
+    <Compile Include="Helper\Producao\Setores\ConverterCadastroAtualizacaoParaSetor.cs" />
+    <Compile Include="Helper\Producao\Setores\TraducaoOrdenacaoListaSetores.cs" />
+    <Compile Include="Helper\Producao\TiposPerda\ConverterCadastroAtualizacaoParaTipoPerda.cs" />
+    <Compile Include="Helper\Producao\TiposPerda\TraducaoOrdenacaoListaTiposPerda.cs" />
+    <Compile Include="Helper\Producao\Roteiros\TraducaoOrdenacaoListaRoteiros.cs" />
+    <Compile Include="Helper\Producao\Turnos\ConverterCadastroAtualizacaoParaTurno.cs" />
+    <Compile Include="Helper\Producao\Turnos\TraducaoOrdenacaoListaTurnos.cs" />
+    <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
+    <Compile Include="Helper\Cfops\TraducaoOrdenacaoListaCfops.cs" />
+    <Compile Include="Helper\Condutores\ConverterCadastroAtualizacaoParaCondutor.cs" />
+    <Compile Include="Helper\Condutores\TraducaoOrdenacaoListaCondutores.cs" />
+    <Compile Include="Helper\Rotas\TraducaoOrdenacaoListaRotas.cs" />
+    <Compile Include="Helper\Seguradoras\TraducaoOrdenacaoListaSeguradoras.cs" />
+    <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
+    <Compile Include="Helper\TabelasDescontoAcrescimoCliente\TraducaoOrdenacaoListaTabelasDescontoAcrescimoCliente.cs" />
+    <Compile Include="Helper\Produtos\SubgruposProduto\ConverterCadastroAtualizacaoParaSubgrupoProduto.cs" />
+    <Compile Include="Helper\Produtos\SubgruposProduto\TraducaoOrdenacaoListaSubgruposProduto.cs" />
+    <Compile Include="Helper\Produtos\GruposProduto\ConverterCadastroAtualizacaoParaGrupoProduto.cs" />
+    <Compile Include="Helper\Produtos\GruposProduto\TraducaoOrdenacaoListaGruposProduto.cs" />
+    <Compile Include="Helper\Seguradoras\ConverterCadastroAtualizacaoParaSeguradora.cs" />
+    <Compile Include="Helper\PlanosConta\ConverterCadastroAtualizacaoParaPlanoConta.cs" />
+    <Compile Include="Helper\PlanosConta\TraducaoOrdenacaoListaPlanosConta.cs" />
+    <Compile Include="Helper\ContasBancarias\ConverterCadastroAtualizacaoParaContaBancaria.cs" />
+    <Compile Include="Helper\ContasBancarias\TraducaoOrdenacaoListaContasBancarias.cs" />
     <Compile Include="Helper\Funcionarios\ConverterCadastroAtualizacaoParaFuncionario.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
@@ -406,6 +478,8 @@
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoFuncionarioStrategy.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\ConverterCadastroAtualizacaoParaCorFerragem.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\TraducaoOrdenacaoListaCoresFerragem.cs" />
+    <Compile Include="Helper\Aplicacoes\ConverterCadastroAtualizacaoParaAplicacao.cs" />
+    <Compile Include="Helper\Aplicacoes\TraducaoOrdenacaoListaAplicacoes.cs" />
     <Compile Include="Helper\Sinais\TraducaoOrdenacaoListaSinais.cs" />
     <Compile Include="Helper\Caixas\Geral\TraducaoOrdenacaoListaCaixaGeral.cs" />
     <Compile Include="Helper\Caixas\Diario\TraducaoOrdenacaoListaCaixaDiario.cs" />
@@ -458,6 +532,192 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Cfops\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Cfops\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Cfops\V1\Filtro\CfopDto.cs" />
+    <Compile Include="Models\Cfops\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Cfops\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Cfops\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\CategoriasConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\CategoriasConta\Lista\FiltroDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\CategoriasConta\Lista\ListaDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\CategoriasConta\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\Lista\FiltroDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\Lista\ListaDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\GruposConta\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\CadastroAtualizacao\DadosBancoDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\CadastroAtualizacao\CnabDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\Lista\CnabDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\Lista\DadosBancoDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\PosicaoDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\TiposPerda\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\FuncoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\PerdaDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\TempoLoginDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\RestricoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\ExibicoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\CoresDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\CapacidadeDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
+    <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Rotas\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Turnos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Producao\V1\Turnos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Turnos\Lista\ListaDto.cs" />
+    <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\TabelasDescontoAcrescimoCliente\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\PedidosConferencia\V1\DadosProducao\DadosProducaoDto.cs" />
+    <Compile Include="Models\Producao\V1\Composicao\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Configuracoes\SetorDto.cs" />
+    <Compile Include="Models\Producao\V1\ContagemPecas\ContagemPecasDto.cs" />
+    <Compile Include="Models\Producao\V1\ContagemPecas\DadosContagemDto.cs" />
+    <Compile Include="Models\Producao\V1\ContagemPecas\TotalAreaM2Dto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\ChapaVidroDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\DataEntregaDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\FiltroExtensions.cs" />
+    <Compile Include="Models\Producao\V1\Lista\LeituraDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\PedidoDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\PerdaDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\ProdutoPedidoDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\SetorDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\SituacaoProducaoDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\TipoPedidoEnum.cs" />
+    <Compile Include="Models\Producao\V1\Lista\TipoFastDeliveryEnum.cs" />
+    <Compile Include="Models\Producao\V1\Lista\TipoPecaExibirEnum.cs" />
+    <Compile Include="Models\Producao\V1\Lista\TipoProdutoComposicaoEnum.cs" />
+    <Compile Include="Models\Producao\V1\Lista\SituacaoProducaoEnum.cs" />
+    <Compile Include="Models\Producao\V1\Lista\TipoSituacaoProducaoEnum.cs" />
+    <Compile Include="Models\Clientes\V1\Tipos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Clientes\V1\Tipos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Clientes\V1\Tipos\Lista\ListaDto.cs" />
+    <Compile Include="Models\Clientes\V1\Tipos\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Comissionados\V1\Lista\TelefonesDto.cs" />
+    <Compile Include="Models\Datas\V1\Feriados\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Datas\V1\Feriados\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Datas\V1\Feriados\Lista\ListaDto.cs" />
+    <Compile Include="Models\Comissionados\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Comissionados\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Comissionados\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Fornecedores\V1\Lista\VendedorDto.cs" />
+    <Compile Include="Models\PlanosConta\V1\Lista\TipoEnum.cs" />
+    <Compile Include="Models\Fornecedores\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Fornecedores\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Fornecedores\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Fornecedores\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Produtos\V1\CadastroAtualizacao\SituacaoDto.cs" />
+    <Compile Include="Models\Produtos\V1\GruposProduto\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Produtos\V1\GruposProduto\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\GruposProduto\Lista\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\V1\GruposProduto\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\GruposProduto\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\GruposProduto\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Produtos\V1\GruposProduto\Lista\TiposCalculoDto.cs" />
+    <Compile Include="Models\Produtos\V1\SubgruposProduto\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Produtos\V1\SubgruposProduto\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\EntregaDto.cs" />
+    <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\SubgruposProduto\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Seguradoras\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Seguradoras\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Seguradoras\Lista\ListaDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ContasBancarias\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Veiculos\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Veiculos\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Veiculos\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Transportadores\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Transportadores\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Transportadores\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Transportadores\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Produtos\V1\CoresVidro\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Produtos\V1\CoresVidro\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\CoresVidro\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\CoresAluminio\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Produtos\V1\CoresAluminio\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\CoresAluminio\Lista\ListaDto.cs" />
+    <Compile Include="Models\Clientes\V1\SugestoesCliente\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Clientes\V1\SugestoesCliente\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Clientes\V1\SugestoesCliente\Lista\ListaDto.cs" />
+    <Compile Include="Models\Clientes\V1\SugestoesCliente\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Produtos\V1\CoresFerragem\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Produtos\V1\CoresFerragem\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\CoresFerragem\Lista\ListaDto.cs" />
+    <Compile Include="Models\Aplicacoes\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Aplicacoes\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Aplicacoes\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Aplicacoes\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Aplicacoes\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Sinais\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Sinais\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Sinais\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Cheques\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Acertos\V1\Lista\ProtestoEnum.cs" />
+    <Compile Include="Models\Beneficiamentos\V1\Configuracoes\ControleDto.cs" />
+    <Compile Include="Models\Beneficiamentos\V1\Filtro\BeneficiamentoDto.cs" />
+    <Compile Include="Models\Beneficiamentos\V1\Total\DadosBeneficiamentosDto.cs" />
+    <Compile Include="Models\Beneficiamentos\V1\Total\DadosEntradaDto.cs" />
+    <Compile Include="Models\Beneficiamentos\V1\Total\DadosCalculoDto.cs" />
+    <Compile Include="Models\Beneficiamentos\V1\Total\TotalDto.cs" />
+    <Compile Include="Models\Caixas\V1\Geral\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Caixas\V1\Geral\Lista\TotaisParcelasDto.cs" />
+    <Compile Include="Models\Caixas\V1\Geral\Lista\TotaisCreditoDto.cs" />
+    <Compile Include="Models\Caixas\V1\Geral\Lista\TotaisChequesDto.cs" />
+    <Compile Include="Models\Caixas\V1\Geral\Lista\TotaisFormaPagamentoDto.cs" />
+    <Compile Include="Models\Caixas\V1\Geral\Lista\TotalizadoresDto.cs" />
+    <Compile Include="Models\Caixas\V1\Geral\Lista\TotaisAcumuladosDto.cs" />
+    <Compile Include="Models\Caixas\V1\Geral\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Caixas\V1\Geral\Lista\ListaDto.cs" />
+    <Compile Include="Models\Caixas\V1\Diario\CadastroAtualizacao\FechamentoDto.cs" />
+    <Compile Include="Models\Caixas\V1\Diario\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Caixas\V1\Diario\Lista\DadosDoDiaDto.cs" />
+    <Compile Include="Models\Caixas\V1\Diario\Lista\DiaAnteriorDto.cs" />
+    <Compile Include="Models\Caixas\V1\Diario\Lista\DiaAtualDto.cs" />
+    <Compile Include="Models\Caixas\V1\Diario\Lista\FechamentoDto.cs" />
+    <Compile Include="Models\Caixas\V1\Diario\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Caixas\V1\Diario\Lista\ListaDto.cs" />
+    <Compile Include="Models\Cep\V1\Endereco\ResultadoServicoDto.cs" />
+    <Compile Include="Models\Cheques\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Cheques\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Cheques\V1\Lista\AdvogadoEnum.cs" />
+    <Compile Include="Models\Cheques\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Cheques\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Acertos\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Estoques\V1\CadastroAtualizacao\CadastroAtualizacaoRapidaFiscalDto.cs" />
+    <Compile Include="Models\Estoques\V1\CadastroAtualizacao\CadastroAtualizacaoFiscalDto.cs" />
+    <Compile Include="Models\Estoques\V1\CadastroAtualizacao\CadastroAtualizacaoRapidaRealDto.cs" />
+    <Compile Include="Models\Estoques\V1\CadastroAtualizacao\CadastroAtualizacaoRealDto.cs" />
+    <Compile Include="Models\Estoques\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Clientes\Tipos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Clientes\Tipos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Clientes\Tipos\Lista\ListaDto.cs" />
@@ -545,75 +805,75 @@
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRealDto.cs" />
     <Compile Include="Models\Estoques\Configuracoes\ListaDto.cs" />
     <Compile Include="Helper\NotasFiscais\ConversorParticipanteModeloParaDto.cs" />
-    <Compile Include="Models\Estoques\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Estoques\Lista\ListaDto.cs" />
-    <Compile Include="Models\Estoques\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Genericas\CadastroAtualizacao\BaseCadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Estoques\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Estoques\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Estoques\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Genericas\V1\CadastroAtualizacao\BaseCadastroAtualizacaoDto.cs" />
     <Compile Include="Helper\CadastroAtualizacao\ConversorValorTipo.cs" />
     <Compile Include="Helper\CadastroAtualizacao\ConversorValoresDtoModelo.cs" />
-    <Compile Include="Models\ContasReceber\CadastroAtualizacao\CadastroAtualizacaoRecebidaDto.cs" />
-    <Compile Include="Models\ContasReceber\Configuracoes\ListaRecebidasDto.cs" />
-    <Compile Include="Models\ContasReceber\ListaRecebidas\FiltroDto.cs" />
-    <Compile Include="Models\ContasReceber\ListaRecebidas\ListaDto.cs" />
-    <Compile Include="Models\ContasReceber\ListaRecebidas\PermissoesDto.cs" />
-    <Compile Include="Models\Acertos\Lista\ListaDto.cs" />
-    <Compile Include="Models\Acertos\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Acertos\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Imagens\Exibicao\DadosImagemDto.cs" />
-    <Compile Include="Models\Imagens\Exibicao\TipoItemEnum.cs" />
-    <Compile Include="Models\Liberacoes\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Liberacoes\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Liberacoes\Lista\ListaDto.cs" />
-    <Compile Include="Models\Liberacoes\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Clientes\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Clientes\Filtro\ClienteBaseDto.cs" />
-    <Compile Include="Models\Clientes\Filtro\ClienteDto.cs" />
-    <Compile Include="Models\Clientes\Filtro\ComissionadoDto.cs" />
-    <Compile Include="Models\Clientes\Filtro\RotaDto.cs" />
-    <Compile Include="Models\Clientes\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Clientes\Lista\ListaDto.cs" />
-    <Compile Include="Models\Clientes\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Datas\Validacao\DadosEntradaDto.cs" />
-    <Compile Include="Models\DescontoQuantidade\Dados\DadosEntradaDto.cs" />
-    <Compile Include="Models\DescontoQuantidade\Dados\DadosDescontoQuantidadeDto.cs" />
-    <Compile Include="Models\Genericas\CidadeDto.cs" />
-    <Compile Include="Models\Genericas\DataDto.cs" />
-    <Compile Include="Models\Genericas\EnderecoDto.cs" />
-    <Compile Include="Models\Genericas\IdDto.cs" />
-    <Compile Include="Models\Genericas\Venda\ComposicaoDto.cs" />
-    <Compile Include="Models\Genericas\Venda\ItemDto.cs" />
-    <Compile Include="Models\Log\Cancelamento\FiltroLogCancelamentoDto.cs" />
-    <Compile Include="Models\Log\Cancelamento\LogDto.cs" />
-    <Compile Include="Models\Lojas\Certificado\CertificadoDto.cs" />
-    <Compile Include="Models\NotasFiscais\TiposParticipantes\TipoParticipanteDto.cs" />
-    <Compile Include="Models\PedidosConferencia\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\PedidosConferencia\Lista\FiltroDto.cs" />
-    <Compile Include="Models\PedidosConferencia\Lista\ListaDto.cs" />
-    <Compile Include="Models\PedidosConferencia\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Boletos\Boleto\BoletoImpressoDto.cs" />
-    <Compile Include="Models\Boletos\Boleto\NotaFiscalDto.cs" />
-    <Compile Include="Models\NotasFiscais\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\NotasFiscais\Contingencia\EntradaDto.cs" />
-    <Compile Include="Models\NotasFiscais\Lista\FiltroDto.cs" />
-    <Compile Include="Models\NotasFiscais\Lista\ListaDto.cs" />
-    <Compile Include="Models\NotasFiscais\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Obras\Filtro\TipoObrasFiltradas.cs" />
-    <Compile Include="Models\Pedidos\AmbientesPedido\CadastroAtualizacao\BaseProdutoMaoDeObraDto.cs" />
-    <Compile Include="Models\Pedidos\AmbientesPedido\Lista\ProdutoMaoDeObraDto.cs" />
-    <Compile Include="Models\Pedidos\CadastroAtualizacao\ObservacoesPedidoDto.cs" />
-    <Compile Include="Models\Pedidos\EnviarValidacaoFinanceiro\DadosEntradaDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Obras\Filtro\DadosEntradaDto.cs" />
-    <Compile Include="Models\Obras\Filtro\ObraDto.cs" />
-    <Compile Include="Models\Orcamentos\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Orcamentos\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Orcamentos\Lista\ListaDto.cs" />
-    <Compile Include="Models\Orcamentos\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Parcelas\Filtro\ParcelaDto.cs" />
-    <Compile Include="Models\Pedidos\AmbientesPedido\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
-    <Compile Include="Models\Pedidos\AmbientesPedido\CadastroAtualizacao\ProdutoMaoDeObraDto.cs" />
-    <Compile Include="Models\Pedidos\AmbientesPedido\Lista\DadosProjetoDto.cs" />
-    <Compile Include="Models\Pedidos\AmbientesPedido\Lista\FiltroListaDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\CadastroAtualizacao\CadastroAtualizacaoRecebidaDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\Configuracoes\ListaRecebidasDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\FiltroDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\ListaDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\PermissoesDto.cs" />
+    <Compile Include="Models\Acertos\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Acertos\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Acertos\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Imagens\V1\Exibicao\DadosImagemDto.cs" />
+    <Compile Include="Models\Imagens\V1\Exibicao\TipoItemEnum.cs" />
+    <Compile Include="Models\Liberacoes\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Liberacoes\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Liberacoes\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Liberacoes\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Clientes\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Clientes\V1\Filtro\ClienteBaseDto.cs" />
+    <Compile Include="Models\Clientes\V1\Filtro\ClienteDto.cs" />
+    <Compile Include="Models\Clientes\V1\Filtro\ComissionadoDto.cs" />
+    <Compile Include="Models\Clientes\V1\Filtro\RotaDto.cs" />
+    <Compile Include="Models\Clientes\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Clientes\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Clientes\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Datas\V1\Validacao\DadosEntradaDto.cs" />
+    <Compile Include="Models\DescontoQuantidade\V1\Dados\DadosEntradaDto.cs" />
+    <Compile Include="Models\DescontoQuantidade\V1\Dados\DadosDescontoQuantidadeDto.cs" />
+    <Compile Include="Models\Genericas\V1\CidadeDto.cs" />
+    <Compile Include="Models\Genericas\V1\DataDto.cs" />
+    <Compile Include="Models\Genericas\V1\EnderecoDto.cs" />
+    <Compile Include="Models\Genericas\V1\IdDto.cs" />
+    <Compile Include="Models\Genericas\V1\Venda\ComposicaoDto.cs" />
+    <Compile Include="Models\Genericas\V1\Venda\ItemDto.cs" />
+    <Compile Include="Models\Log\V1\Cancelamento\FiltroLogCancelamentoDto.cs" />
+    <Compile Include="Models\Log\V1\Cancelamento\LogDto.cs" />
+    <Compile Include="Models\Lojas\V1\Certificado\CertificadoDto.cs" />
+    <Compile Include="Models\NotasFiscais\V1\TiposParticipantes\TipoParticipanteDto.cs" />
+    <Compile Include="Models\PedidosConferencia\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\PedidosConferencia\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\PedidosConferencia\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\PedidosConferencia\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Boletos\V1\Boleto\BoletoImpressoDto.cs" />
+    <Compile Include="Models\Boletos\V1\Boleto\NotaFiscalDto.cs" />
+    <Compile Include="Models\NotasFiscais\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\NotasFiscais\V1\Contingencia\EntradaDto.cs" />
+    <Compile Include="Models\NotasFiscais\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\NotasFiscais\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\NotasFiscais\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Obras\V1\Filtro\TipoObrasFiltradas.cs" />
+    <Compile Include="Models\Pedidos\V1\AmbientesPedido\CadastroAtualizacao\BaseProdutoMaoDeObraDto.cs" />
+    <Compile Include="Models\Pedidos\V1\AmbientesPedido\Lista\ProdutoMaoDeObraDto.cs" />
+    <Compile Include="Models\Pedidos\V1\CadastroAtualizacao\ObservacoesPedidoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\EnviarValidacaoFinanceiro\DadosEntradaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ProdutosPedido\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Obras\V1\Filtro\DadosEntradaDto.cs" />
+    <Compile Include="Models\Obras\V1\Filtro\ObraDto.cs" />
+    <Compile Include="Models\Orcamentos\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Orcamentos\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Orcamentos\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Orcamentos\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Parcelas\V1\Filtro\ParcelaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\AmbientesPedido\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\AmbientesPedido\CadastroAtualizacao\ProdutoMaoDeObraDto.cs" />
+    <Compile Include="Models\Pedidos\V1\AmbientesPedido\Lista\DadosProjetoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\AmbientesPedido\Lista\FiltroListaDto.cs" />
     <Compile Include="Helper\Pedidos\AmbientesPedido\TraducaoOrdenacaoListaAmbientesPedido.cs" />
     <Compile Include="Helper\ApiControllerExtension.cs" />
     <Compile Include="Helper\BaseTraducaoOrdenacao.cs" />
@@ -629,86 +889,87 @@
     <Compile Include="Helper\Respostas\NaoEncontrado.cs" />
     <Compile Include="Helper\Respostas\ListaPaginada.cs" />
     <Compile Include="Helper\Pedidos\TraducaoOrdenacaoListaPedidos.cs" />
-    <Compile Include="Models\Pedidos\AmbientesPedido\Lista\ListaDto.cs" />
-    <Compile Include="Models\Pedidos\AmbientesPedido\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Cidades\Detalhes\DetalheDto.cs" />
-    <Compile Include="Models\Genericas\AcrescimoDescontoDto.cs" />
-    <Compile Include="Models\Genericas\IdCodigoDto.cs" />
-    <Compile Include="Models\Genericas\IdNomeDto.cs" />
-    <Compile Include="Models\Genericas\ItemBeneficiamentoDto.cs" />
-    <Compile Include="Models\Genericas\PaginacaoDto.cs" />
-    <Compile Include="Models\Log\Alteracao\FiltroLogAlteracaoDto.cs" />
-    <Compile Include="Models\Log\Alteracao\LogDto.cs" />
-    <Compile Include="Models\Pedidos\AlterarLiberacaoFinanceiro\EntradaDto.cs" />
-    <Compile Include="Models\Pedidos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
-    <Compile Include="Models\Pedidos\CadastroAtualizacao\ComissionadoDto.cs" />
-    <Compile Include="Models\Pedidos\CadastroAtualizacao\DescontoAcrescimoDto.cs" />
-    <Compile Include="Models\Pedidos\CadastroAtualizacao\DetalheParcelaDto.cs" />
-    <Compile Include="Models\Pedidos\CadastroAtualizacao\DataEntregaMinimaDto.cs" />
-    <Compile Include="Models\Pedidos\CadastroAtualizacao\FormaPagamentoDto.cs" />
-    <Compile Include="Models\Pedidos\CadastroAtualizacao\EntregaDto.cs" />
-    <Compile Include="Models\Pedidos\CadastroAtualizacao\ParcelasDto.cs" />
-    <Compile Include="Models\Pedidos\Configuracoes\DetalheDto.cs" />
-    <Compile Include="Models\Pedidos\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\ClienteDto.cs" />
-    <Compile Include="Models\Genericas\DataFuncionarioDto.cs" />
-    <Compile Include="Models\Genericas\PercentualValorDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\ComissionadoDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\DetalheParcelaDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\EntregaDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\FastDeliveryDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\FormaPagamentoDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\ImpostoDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\DetalheDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\PermissoesDto.cs" />
-    <Compile Include="Models\Pedidos\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Pedidos\ObservacoesFinanceiro\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Pedidos\Lista\DatasEntregaDto.cs" />
-    <Compile Include="Models\Pedidos\Lista\LiberacaoDto.cs" />
-    <Compile Include="Models\Pedidos\Lista\ListaDto.cs" />
-    <Compile Include="Models\Pedidos\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Pedidos\Lista\ProducaoDto.cs" />
-    <Compile Include="Models\Pedidos\Lista\SinalEPagamentoAntecipadoDto.cs" />
-    <Compile Include="Models\Pedidos\ObservacoesFinanceiro\Lista\ListaObservacaoFinanceiroDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\ObraDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\ParcelasDto.cs" />
-    <Compile Include="Models\Pedidos\Detalhe\SinalDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\CadastroAtualizacao\DadoRealECalculadoDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\CadastroAtualizacao\ProdutoDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\Observacao\DadosEntradaDto.cs" />
-    <Compile Include="Models\Pedidos\ValidarDescontoPedido\DescontoDto.cs" />
-    <Compile Include="Models\Processos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
-    <Compile Include="Models\Processos\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Processos\Filtro\ProcessoDto.cs" />
-    <Compile Include="Models\Genericas\Venda\AlturaDto.cs" />
-    <Compile Include="Models\Genericas\Venda\AreaDto.cs" />
-    <Compile Include="Models\Genericas\BeneficiamentosDto.cs" />
-    <Compile Include="Models\Genericas\Venda\DescontoQuantidadeDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\Lista\FiltroListaDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\Lista\ListaDto.cs" />
-    <Compile Include="Models\Genericas\Venda\ProdutoDto.cs" />
-    <Compile Include="Models\Genericas\Venda\TipoProdutoDto.cs" />
-    <Compile Include="Models\Processos\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Processos\Lista\ListaDto.cs" />
-    <Compile Include="Models\Processos\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Produtos\CalculoAreaM2\AreaCalculadaDto.cs" />
-    <Compile Include="Models\Produtos\CalculoAreaM2\DadosProdutoDto.cs" />
-    <Compile Include="Models\Produtos\CalculoTotal\DadosProdutoDto.cs" />
-    <Compile Include="Models\Produtos\CalculoTotal\TotalCalculadoDto.cs" />
-    <Compile Include="Models\Produtos\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Produtos\Filtro\AlturaDto.cs" />
-    <Compile Include="Models\Produtos\Filtro\DescontoAcrescimoClienteDto.cs" />
-    <Compile Include="Models\Produtos\Filtro\QuantidadeDto.cs" />
-    <Compile Include="Models\Produtos\Filtro\LarguraDto.cs" />
-    <Compile Include="Models\Produtos\Filtro\ProdutoDto.cs" />
-    <Compile Include="Models\Produtos\Filtro\EstoqueDto.cs" />
-    <Compile Include="Models\Produtos\Lista\EstoqueDto.cs" />
-    <Compile Include="Models\Produtos\Lista\ValoresVendaDto.cs" />
-    <Compile Include="Models\Produtos\Lista\CustosDto.cs" />
-    <Compile Include="Models\Produtos\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Produtos\Lista\ListaDto.cs" />
-    <Compile Include="Models\Produtos\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Pedidos\V1\AmbientesPedido\Lista\ListaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\AmbientesPedido\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Cidades\V1\Detalhes\DetalheDto.cs" />
+    <Compile Include="Models\Genericas\V1\AcrescimoDescontoDto.cs" />
+    <Compile Include="Models\Genericas\V1\IdCodigoDto.cs" />
+    <Compile Include="Models\Genericas\V1\IdNomeDto.cs" />
+    <Compile Include="Models\Genericas\V1\ItemBeneficiamentoDto.cs" />
+    <Compile Include="Models\Genericas\V1\PaginacaoDto.cs" />
+    <Compile Include="Models\Log\V1\Alteracao\FiltroLogAlteracaoDto.cs" />
+    <Compile Include="Models\Log\V1\Alteracao\LogDto.cs" />
+    <Compile Include="Models\Pedidos\V1\AlterarLiberacaoFinanceiro\EntradaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\CadastroAtualizacao\ComissionadoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\CadastroAtualizacao\DescontoAcrescimoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\CadastroAtualizacao\DetalheParcelaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\CadastroAtualizacao\DataEntregaMinimaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\CadastroAtualizacao\FormaPagamentoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\CadastroAtualizacao\EntregaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\CadastroAtualizacao\ParcelasDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Configuracoes\DetalheDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\ClienteDto.cs" />
+    <Compile Include="Models\Genericas\V1\DataFuncionarioDto.cs" />
+    <Compile Include="Models\Genericas\V1\PercentualValorDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\ComissionadoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\DetalheParcelaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\EntregaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\FastDeliveryDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\FormaPagamentoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\ImpostoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\DetalheDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\PermissoesDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ObservacoesFinanceiro\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Lista\DatasEntregaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Lista\LiberacaoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Lista\ProducaoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Lista\SinalEPagamentoAntecipadoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ObservacoesFinanceiro\Lista\ListaObservacaoFinanceiroDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\ObraDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\ParcelasDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Detalhe\SinalDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ProdutosPedido\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ProdutosPedido\CadastroAtualizacao\DadoRealECalculadoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ProdutosPedido\CadastroAtualizacao\ProdutoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ProdutosPedido\Observacao\DadosEntradaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ValidarDescontoPedido\DescontoDto.cs" />
+    <Compile Include="Models\Processos\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Processos\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Processos\V1\Filtro\ProcessoDto.cs" />
+    <Compile Include="Models\Genericas\V1\Venda\AlturaDto.cs" />
+    <Compile Include="Models\Genericas\V1\Venda\AreaDto.cs" />
+    <Compile Include="Models\Genericas\V1\BeneficiamentosDto.cs" />
+    <Compile Include="Models\Genericas\V1\Venda\DescontoQuantidadeDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ProdutosPedido\Lista\FiltroListaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ProdutosPedido\Lista\ListaDto.cs" />
+    <Compile Include="Models\Genericas\V1\Venda\ProdutoDto.cs" />
+    <Compile Include="Models\Genericas\V1\Venda\TipoProdutoDto.cs" />
+    <Compile Include="Models\Processos\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Processos\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Processos\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Produtos\V1\CalculoAreaM2\AreaCalculadaDto.cs" />
+    <Compile Include="Models\Produtos\V1\CalculoAreaM2\DadosProdutoDto.cs" />
+    <Compile Include="Models\Produtos\V1\CalculoTotal\DadosProdutoDto.cs" />
+    <Compile Include="Models\Produtos\V1\CalculoTotal\TotalCalculadoDto.cs" />
+    <Compile Include="Models\Produtos\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\Filtro\AlturaDto.cs" />
+    <Compile Include="Models\Produtos\V1\Filtro\DescontoAcrescimoClienteDto.cs" />
+    <Compile Include="Models\Produtos\V1\Filtro\QuantidadeDto.cs" />
+    <Compile Include="Models\Produtos\V1\Filtro\LarguraDto.cs" />
+    <Compile Include="Models\Produtos\V1\Filtro\ProdutoDto.cs" />
+    <Compile Include="Models\Produtos\V1\Filtro\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\V1\Lista\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\V1\Lista\ValoresVendaDto.cs" />
+    <Compile Include="Models\Produtos\V1\Lista\CustosDto.cs" />
+    <Compile Include="Models\Produtos\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Negociacoes\JsonContentNegotiator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -719,7 +980,7 @@
     <Content Include="AppSettings.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="packages.config" />
+    <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -729,6 +990,17 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\Produtos\CoresAluminio\CadastroAtualizacao\" />
+    <Folder Include="Models\Produtos\CoresAluminio\Lista\" />
+    <Folder Include="Models\Produtos\CoresFerragem\CadastroAtualizacao\" />
+    <Folder Include="Models\Produtos\CoresFerragem\Lista\" />
+    <Folder Include="Models\Produtos\CoresVidro\CadastroAtualizacao\" />
+    <Folder Include="Models\Produtos\CoresVidro\Lista\" />
+    <Folder Include="Models\Sinais\Lista\" />
+    <Folder Include="Models\Transportadores\Configuracoes\" />
+    <Folder Include="Models\Transportadores\Lista\" />
+    <Folder Include="Models\Veiculos\Configuracoes\" />
+    <Folder Include="Models\Veiculos\Lista\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">
@@ -754,6 +1026,14 @@
     <ProjectReference Include="..\..\Global\UI\Web\Glass.Global.UI.Web.Process\Glass.Global.UI.Web.Process.csproj">
       <Project>{53e0ef88-b812-45fe-9f91-f4f7889bd6cb}</Project>
       <Name>Glass.Global.UI.Web.Process</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Integracao\Glass.Integracao.Khan\Glass.Integracao.Khan.csproj">
+      <Project>{3db16aa0-b7b1-4500-8541-1bc155742124}</Project>
+      <Name>Glass.Integracao.Khan</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Integracao\Glass.Integracao\Glass.Integracao.csproj">
+      <Project>{eddba46b-4412-433b-a587-c481ba2831fd}</Project>
+      <Name>Glass.Integracao</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Mathematical\Glass.Mathematical\Glass.Mathematical.csproj">
       <Project>{79bba571-e0aa-4861-a91d-c6732c94b83a}</Project>
@@ -815,7 +1095,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50879</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:15160/backend</IISUrl>
+          <IISUrl>http://localhost:15190/backend</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
@@ -843,7 +1123,7 @@
   </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>Este projeto faz referência a pacotes do NuGet que não estão presentes neste computador. Use a Restauração de Pacotes do NuGet para baixá-los.  Para obter mais informações, consulte http://go.microsoft.com/fwlink/?LinkID=322105. O arquivo ausente é {0}.</ErrorText>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />

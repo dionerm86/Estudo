@@ -180,7 +180,7 @@
 
     // Abre popup para cadastrar cheques
     function queryStringCheques(altura, largura, url) {
-        return "?IdSinal=&origem=1";
+        return "?IdSinal=&origem=1&IdCli=" + FindControl("txtNumCli","input").value + "&tipoPagto=2";
     }
 
     function Confirmar(control, sinal) {

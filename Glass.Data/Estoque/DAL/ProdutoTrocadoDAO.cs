@@ -466,7 +466,10 @@ namespace Glass.Data.DAL
             novo.ValorTabelaPedido = prodPed.ValorTabelaPedido;
             novo.TotalBruto = prodPed.TotalBruto;
             novo.ValorBenef = Math.Round((prodPed.ValorBenef / (decimal)qtdeOriginal) * qtde, 2);
+            novo.ValorDescontoQtde = prodPed.ValorDescontoQtde;
 
+            DescontoAcrescimo.Instance.RemoverDescontoQtde(session, ped, novo);
+            
             if (!string.IsNullOrEmpty(etiquetas))
             {
                 var lstEtq = etiquetas.Trim().Split(',').Select(f => f.Trim());
@@ -538,14 +541,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            /* Chamado 28321. */
-            if (novo.Qtde != qtdeOriginal && novo.PercDescontoQtde > 0)
-            {
-                novo.ValorDescontoQtde = (novo.ValorVendido * (decimal)novo.Qtde) * ((decimal)novo.PercDescontoQtde / 100);
-                novo.Total -= novo.ValorDescontoQtde;
-            }
-            else
-                novo.ValorDescontoQtde = prodPed.ValorDescontoQtde;
+            DescontoAcrescimo.Instance.AplicarDescontoQtde(session, ped, novo);
 
             uint retorno = base.Insert(session, novo);
 

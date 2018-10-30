@@ -38,7 +38,7 @@
                 var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
                 var cliRevenda = FindControl("hdfCliRevenda", "input").value;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
-
+                var altura = FindControl("txtAlturaIns", "input").value;
                 var idMaterItemProj = FindControl("hdfIdMaterItemProj", "input");
                 idMaterItemProj = idMaterItemProj != null ? idMaterItemProj.value : "";
 
@@ -53,7 +53,18 @@
                 var reposicao = FindControl("hdfIsReposicao", "input").value;
                 var tipoPedido = FindControl("hdfTipoPedido", "input").value;
 
-                FindControl("hdfValMin", "input").value = CadProjetoAvulso.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, tipoPedido, idMaterItemProj, "0", idPedido).value;
+                var retorno = CadProjetoAvulso.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, tipoPedido, idMaterItemProj, "0", idPedido, altura);
+
+                if (retorno.error != null) {
+                    alert(retorno.error.description);
+                    return;
+                }
+                else if(retorno == null){
+                    alert("Erro na recuperação do valor de tabela do produto.");
+                    return;
+                }
+
+                FindControl("hdfValMin", "input").value = retorno.value;
             }
             else
             {
@@ -172,12 +183,8 @@
             var idOrcamento = FindControl("hdfIdOrcamento", "input").value;
             var idPedido = FindControl("hdfIdPedidoOriginal", "input").value;
             var idPedidoEspelho = FindControl("hdfIdPedidoEspelho", "input").value;
-
-            // Necessário para incluir o projeto no ambiente do orçamento, se esquecer de confirmar o projeto,
-            // associa no ambiente do orçamento
-            var idAmbienteOrca = FindControl("hdfIdAmbienteOrca", "input").value;
-
-            var retorno = CadProjetoAvulso.NovoItemProjeto(idOrcamento, idAmbienteOrca, idPedido, "",
+            
+            var retorno = CadProjetoAvulso.NovoItemProjeto(idOrcamento, idPedido, "",
                 idPedidoEspelho, "", idProjetoModelo, espessuraVidro, idCorVidro, idCorAluminio, idCorFerragem, apenasVidros, medidaExata).value;
 
             if (retorno == null) {
@@ -360,6 +367,10 @@
                     FindControl("hdfM2Minimo", "input").value = retorno[6]; // Informa se o produto possui m² mínimo
                     FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como produto é calculado
                     var tipoCalc = retorno[7];
+
+                    if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != ""){
+                        GetAdicionalAlturaChapa();
+                    }
 
                     var nomeControle = getNomeControleBenef();
 
@@ -638,8 +649,19 @@
             var idCliente = FindControl("hdfIdCliente", "input").value;
             var revenda = FindControl("hdfCliRevenda", "input").value;
 
-            FindControl("txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, revenda,
-                        pedidoReposicao, 0, idPedido, "", "", altura).value.replace(".", ",");
+            var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, revenda,
+                        pedidoReposicao, 0, idPedido, "", "", altura);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            else if(retorno == null){
+                alert("Erro na recuperação do valor de tabela do produto.");
+                return;
+            }
+
+            FindControl("txtValorIns", "input").value = retorno.value.replace(".", ",");
         }
 
         // Calcula em tempo real o valor total do produto
@@ -754,7 +776,7 @@
             var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfIdProdMater", "input").value);
             var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
 
-            if(idSubgrupo.value != "" && retornoValidacao.value == "False" && FindControl("txtProcIns", "input").value != "")
+            if(idSubgrupo.value != "" && retornoValidacao.value == "false" && FindControl("txtProcIns", "input").value != "")
             {
                 FindControl("txtProcIns", "input").value = "";
                 alert("Este processo não pode ser selecionado para este produto.")
@@ -1626,7 +1648,6 @@
                 <asp:HiddenField ID="hdfIdProdMater" runat="server" />
                 <asp:HiddenField ID="hdfIdItemProjeto" runat="server" />
                 <asp:HiddenField ID="hdfIdOrcamento" runat="server" />
-                <asp:HiddenField ID="hdfIdAmbienteOrca" runat="server" />
                 <asp:HiddenField ID="hdfIdAmbientePedido" runat="server" />
                 <asp:HiddenField ID="hdfIdPedidoEspelho" runat="server" />
                 <asp:HiddenField ID="hdfIdPedidoOriginal" runat="server" />

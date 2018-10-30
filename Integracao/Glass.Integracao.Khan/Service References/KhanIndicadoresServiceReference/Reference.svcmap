@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="aeea3a29-aa29-461a-a871-c47c991e3cef" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>true</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.Generic.List`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>false</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://www.ikhan.com.br/appskhan/knIntegrador/IndicadoresService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="IndicadoresService.xsd" MetadataType="Schema" ID="3bf0a288-c4f5-438b-934d-a4a7eb3b1ed1" SourceId="1" SourceUrl="http://www.ikhan.com.br/appskhan/knIntegrador/IndicadoresService.svc?xsd=xsd2" />
+    <MetadataFile FileName="IndicadoresService1.xsd" MetadataType="Schema" ID="5234af62-1041-4993-825a-9c1d2262a831" SourceId="1" SourceUrl="http://www.ikhan.com.br/appskhan/knIntegrador/IndicadoresService.svc?xsd=xsd1" />
+    <MetadataFile FileName="IndicadoresService.disco" MetadataType="Disco" ID="2fed49c0-c3e7-4641-92c5-a60828c109ba" SourceId="1" SourceUrl="http://www.ikhan.com.br/appskhan/knIntegrador/IndicadoresService.svc?disco" />
+    <MetadataFile FileName="IndicadoresService2.xsd" MetadataType="Schema" ID="721b43e5-48f3-4150-a5f9-1b11ed4e1bc5" SourceId="1" SourceUrl="http://www.ikhan.com.br/appskhan/knIntegrador/IndicadoresService.svc?xsd=xsd0" />
+    <MetadataFile FileName="IndicadoresService.wsdl" MetadataType="Wsdl" ID="2ab12342-bc03-4b39-882d-04361c1095ee" SourceId="1" SourceUrl="http://www.ikhan.com.br/appskhan/knIntegrador/IndicadoresService.svc?wsdl" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

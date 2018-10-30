@@ -4,8 +4,8 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas;
-using Glass.API.Backend.Models.Lojas.Certificado;
+using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.Lojas.V1.Certificado;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;

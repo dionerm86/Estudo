@@ -1,12 +1,8 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.Patch],
+  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('descricao', 'asc')],
 
   data: {
-    dadosOrdenacao_: {
-      campo: 'descricao',
-      direcao: 'asc'
-    },
     configuracoes: {},
     numeroLinhaEdicao: -1,
     inserindo: false,
@@ -28,19 +24,6 @@ const app = new Vue({
      */
     obterLista: function(filtro, pagina, numeroRegistros, ordenacao) {
       return Servicos.Processos.obter(filtro, pagina, numeroRegistros, ordenacao);
-    },
-
-    /**
-     * Realiza a ordenação da lista de processos.
-     * @param {string} campo O nome do campo pelo qual o resultado será ordenado.
-     */
-    ordenar: function (campo) {
-      if (campo !== this.dadosOrdenacao_.campo) {
-        this.dadosOrdenacao_.campo = campo;
-        this.dadosOrdenacao_.direcao = '';
-      } else {
-        this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
-      }
     },
 
     /**
@@ -261,17 +244,6 @@ const app = new Vue({
       if (!this.processo.gerarArquivoDeMesa) {
         this.processo.forcarGerarSag = false;
       }
-    }
-  },
-
-  computed: {
-    /**
-     * Propriedade computada que indica a ordenação para a lista.
-     * @type {string}
-     */
-    ordenacao: function () {
-      var direcao = this.dadosOrdenacao_.direcao ? ' ' + this.dadosOrdenacao_.direcao : '';
-      return this.dadosOrdenacao_.campo + direcao;
     }
   },
 

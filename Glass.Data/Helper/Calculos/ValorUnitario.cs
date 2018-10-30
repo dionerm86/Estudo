@@ -179,7 +179,7 @@ namespace Glass.Data.Helper.Calculos
 
         private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container, int tipoCalc)
         {
-            if (container?.MaoDeObra ?? false && tipoCalc == (int)TipoCalculoGrupoProd.Perimetro)
+            if ((container?.MaoDeObra ?? false) && tipoCalc == (int)TipoCalculoGrupoProd.Perimetro)
                 return valor.GetValueOrDefault();
 
             return 2;

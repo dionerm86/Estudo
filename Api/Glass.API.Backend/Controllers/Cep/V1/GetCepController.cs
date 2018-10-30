@@ -3,8 +3,8 @@
 // </copyright>
 
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Cep.Endereco;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Cep.V1.Endereco;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Newtonsoft.Json;
 using Swashbuckle.Swagger.Annotations;

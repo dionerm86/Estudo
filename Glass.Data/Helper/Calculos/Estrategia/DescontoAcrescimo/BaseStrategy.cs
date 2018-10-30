@@ -1,10 +1,10 @@
-﻿using System;
+﻿using GDA;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
+using Glass.Data.Model;
+using Glass.Pool;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Glass.Data.Model;
-using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
-using Glass.Pool;
-using GDA;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 {
@@ -31,7 +31,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
             decimal valorAplicado = Aplicar(sessao, produtos, percentualAplicar);
 
-            IProdutoCalculo produtoValorResidual = produtos.Last();
+            var produtoValorResidual = ObterProdutoValorResidual(produtos);
             AplicarValorResidual(sessao, produtoValorResidual, valor - valorAplicado);
 
             return true;
@@ -131,6 +131,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
                 CalcularTotalBrutoProduto(sessao, produto);
                 RemoverBeneficiamentos(produto);
                 RemoverProduto(produto);
+                CalcularTotalBrutoProduto(sessao, produto);
                 acoesAdicionais(produto);
             }
         }
@@ -176,6 +177,26 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             }
 
             return Math.Round(valorAplicado, 2);
+        }
+
+        private IProdutoCalculo ObterProdutoValorResidual(IEnumerable<IProdutoCalculo> produtos)
+        {
+            var produtosQtde = produtos.Where(p => p.TipoCalc == (int)TipoCalculoGrupoProd.Qtd);
+
+            if (produtosQtde.Any())
+            {
+                return produtosQtde
+                    .OrderBy(f => f.Qtde)
+                    .First();
+            }
+            else
+            {
+                return produtos
+                    .OrderBy(f => f.ValorUnit)
+                    .ThenBy(f => f.TotM2Calc)
+                    .ThenByDescending(f => f.Qtde)
+                    .First();
+            }
         }
 
         protected virtual void AplicarValorResidual(GDASession sessao, IProdutoCalculo produto, decimal valorResidual)

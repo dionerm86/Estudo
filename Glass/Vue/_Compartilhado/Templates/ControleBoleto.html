@@ -1,5 +1,6 @@
 ﻿<span style="padding: 0">
     <a href="#" @click.prevent="exibirBoleto()">
-        <img id="boleto" border="0" src="../Images/Boleto.png" v-bind:title="tooltipBoleto" />
+        <img id="boleto" border="0" v-bind:src="caminhoRelativo('/Images/Boleto.png')"
+            v-bind:title="tooltipBoleto" />
     </a>
 </span>

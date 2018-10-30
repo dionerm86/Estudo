@@ -3,8 +3,8 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Genericas;
-using Glass.API.Backend.Models.Produtos.CoresAluminio.Lista;
+using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.Produtos.V1.CoresAluminio.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;

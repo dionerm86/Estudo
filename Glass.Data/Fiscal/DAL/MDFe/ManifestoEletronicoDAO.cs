@@ -661,7 +661,7 @@ namespace Glass.Data.DAL
 
             try
             {
-                // Lê Xml de retorno do envio do lote                
+                // Lê Xml de retorno do envio do lote
                 var cStat = Conversoes.StrParaInt(xmlRetEvento["infEvento"]["cStat"].InnerText);
                 string xMotivo = xmlRetEvento["infEvento"]["xMotivo"].InnerText;
 
@@ -814,7 +814,7 @@ namespace Glass.Data.DAL
             }
         }
 
-        #endregion  
+        #endregion
 
         #region Gerar XML do MDFe para emissão
 
@@ -1104,8 +1104,6 @@ namespace Glass.Data.DAL
             {
                 XmlElement infDoc = doc.CreateElement("infDoc");
                 Cidade cidadeDescarga = null;
-                NotaFiscal notaFiscal = null;
-                Model.Cte.ConhecimentoTransporte conhecimentoTransporte = null;
                 foreach (var munDescarga in mdfe.CidadesDescarga)
                 {
                     cidadeDescarga = CidadeDAO.Instance.GetElementByPrimaryKey(munDescarga.IdCidade);
@@ -1117,13 +1115,13 @@ namespace Glass.Data.DAL
                         // Nota Fiscal
                         foreach (var nfe in munDescarga.NFesCidadeDescarga)
                         {
-                            notaFiscal = NotaFiscalDAO.Instance.GetElementByPrimaryKey(nfe.IdNFe);
                             XmlElement infNFe = doc.CreateElement("infNFe");
-                            ManipulacaoXml.SetNode(doc, infNFe, "chNFe", notaFiscal.ChaveAcesso);
+                            ManipulacaoXml.SetNode(doc, infNFe, "chNFe", nfe.ChaveAcesso);
+
                             //Se o tipo de emissão da NF-e informada for FS-DA, o campo SegCodBarra deverá ser informado.
-                            if (notaFiscal.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaFSDA)
+                            if (nfe.NumeroDocumentoFsda != null)
                             {
-                                ManipulacaoXml.SetNode(doc, infNFe, "SegCodBarra", notaFiscal.NumeroDocumentoFsda.ToString());
+                                ManipulacaoXml.SetNode(doc, infNFe, "SegCodBarra", nfe.NumeroDocumentoFsda.ToString());
                             }
                             infMunDescarga.AppendChild(infNFe);
                         }
@@ -1133,11 +1131,10 @@ namespace Glass.Data.DAL
                         // Conhecimento de Transporte
                         foreach (var cte in munDescarga.CTesCidadeDescarga)
                         {
-                            conhecimentoTransporte = CTe.ConhecimentoTransporteDAO.Instance.GetElementByPrimaryKey(cte.IdCTe);
                             XmlElement infCTe = doc.CreateElement("infCTe");
-                            ManipulacaoXml.SetNode(doc, infCTe, "chCTe", conhecimentoTransporte.ChaveAcesso);
+                            ManipulacaoXml.SetNode(doc, infCTe, "chCTe", cte.ChaveAcesso);
                             //Se o tipo de emissão do CT-e informada for FS-DA, o campo SegCodBarra deverá ser informado.
-                            if (conhecimentoTransporte.TipoEmissao == (int)Model.Cte.ConhecimentoTransporte.TipoEmissaoEnum.ContingenciaFsda)
+                            if (cte.NumeroDocumentoFsda != null)
                             {
                                 throw new Exception("O sistema não está configurado para trabalhar com CTe emitido em FS-DA");
                             }
@@ -1190,7 +1187,7 @@ namespace Glass.Data.DAL
                                 if (!Glass.Validacoes.ValidaCpf(fornec.CpfCnpj))
                                     throw new Exception("O CPF do Fornecedor é inválido. Altere no cadastro de fornecedores.");
                             }
-                            
+
                             if (Formatacoes.TrataStringDocFiscal(fornec.CpfCnpj).Length == 11)
                                 ManipulacaoXml.SetNode(doc, infResp, "CPF", Formatacoes.TrataStringDocFiscal(fornec.CpfCnpj).PadLeft(11, '0'));
                             else if (Formatacoes.TrataStringDocFiscal(fornec.CpfCnpj).Length == 14)
@@ -1243,7 +1240,7 @@ namespace Glass.Data.DAL
 
                     ManipulacaoXml.SetNode(doc, seg, "nApol", Formatacoes.TrataStringDocFiscal(mdfe.NumeroApolice));
 
-                    //Informar as averbações do seguro 
+                    //Informar as averbações do seguro
                     foreach (var averbacaoSeguro in mdfe.AverbacaoSeguro)
                     {
                         ManipulacaoXml.SetNode(doc, seg, "nAver", Formatacoes.TrataStringDocFiscal(averbacaoSeguro.NumeroAverbacao));
@@ -1307,9 +1304,9 @@ namespace Glass.Data.DAL
             {
                 XmlElement infAdic = doc.CreateElement("infAdic");
                 if (!string.IsNullOrWhiteSpace(mdfe.InformacoesAdicionaisFisco))
-                    ManipulacaoXml.SetNode(doc, infAdic, "infAdFisco", Formatacoes.TrataStringDocFiscal(mdfe.InformacoesAdicionaisFisco));
+                    ManipulacaoXml.SetNode(doc, infAdic, "infAdFisco", Formatacoes.TrataTextoDocFiscal(mdfe.InformacoesAdicionaisFisco));
                 if (!string.IsNullOrWhiteSpace(mdfe.InformacoesComplementares))
-                    ManipulacaoXml.SetNode(doc, infAdic, "infCpl", Formatacoes.TrataStringDocFiscal(mdfe.InformacoesComplementares));
+                    ManipulacaoXml.SetNode(doc, infAdic, "infCpl", Formatacoes.TrataTextoDocFiscal(mdfe.InformacoesComplementares));
                 infMDFe.AppendChild(infAdic);
             }
 
@@ -1520,9 +1517,9 @@ namespace Glass.Data.DAL
 
             XmlElement veicTracao = doc.CreateElement("veicTracao");
             //ManipulacaoXml.SetNode(doc, veicTracao, "cInt", "");
-            ManipulacaoXml.SetNode(doc, veicTracao, "placa", Formatacoes.TrataStringDocFiscal(veiculoTracao.Placa));
+            ManipulacaoXml.SetNode(doc, veicTracao, "placa", Formatacoes.TrataTextoDocFiscal(veiculoTracao.Placa));
             if (!string.IsNullOrWhiteSpace(veiculoTracao.Renavam))
-                ManipulacaoXml.SetNode(doc, veicTracao, "RENAVAM", veiculoTracao.Renavam);
+                ManipulacaoXml.SetNode(doc, veicTracao, "RENAVAM", Formatacoes.TrataTextoDocFiscal(veiculoTracao.Renavam));
             ManipulacaoXml.SetNode(doc, veicTracao, "tara", veiculoTracao.Tara.ToString());
             if (veiculoTracao.CapacidadeKg > 0)
                 ManipulacaoXml.SetNode(doc, veicTracao, "capKG", veiculoTracao.CapacidadeKg.ToString());
@@ -1540,10 +1537,10 @@ namespace Glass.Data.DAL
                 else
                     ManipulacaoXml.SetNode(doc, prop, "CNPJ", Formatacoes.TrataStringDocFiscal(proprietarioVeiculoTracao.Cnpj));
 
-                ManipulacaoXml.SetNode(doc, prop, "RNTRC", proprietarioVeiculoTracao.RNTRC);
-                ManipulacaoXml.SetNode(doc, prop, "xNome", proprietarioVeiculoTracao.Nome);
-                ManipulacaoXml.SetNode(doc, prop, "IE", proprietarioVeiculoTracao.IE);
-                ManipulacaoXml.SetNode(doc, prop, "UF", proprietarioVeiculoTracao.UF);
+                ManipulacaoXml.SetNode(doc, prop, "RNTRC", Formatacoes.TrataTextoDocFiscal(proprietarioVeiculoTracao.RNTRC));
+                ManipulacaoXml.SetNode(doc, prop, "xNome", Formatacoes.TrataTextoDocFiscal(proprietarioVeiculoTracao.Nome));
+                ManipulacaoXml.SetNode(doc, prop, "IE", Formatacoes.TrataTextoDocFiscal(proprietarioVeiculoTracao.IE));
+                ManipulacaoXml.SetNode(doc, prop, "UF", Formatacoes.TrataTextoDocFiscal(proprietarioVeiculoTracao.UF));
                 ManipulacaoXml.SetNode(doc, prop, "tpProp", proprietarioVeiculoTracao.TipoProp.ToString());
 
                 veicTracao.AppendChild(prop);
@@ -1555,9 +1552,9 @@ namespace Glass.Data.DAL
 
             foreach (var cond in mdfe.Rodoviario.CondutorVeiculo)
             {
-                var condutorVeiculo = FuncionarioDAO.Instance.GetElement((uint)cond.IdCondutor);
+                var condutorVeiculo = CondutoresDAO.Instance.GetElementByPrimaryKey((uint)cond.IdCondutor);
                 XmlElement condutor = doc.CreateElement("condutor");
-                ManipulacaoXml.SetNode(doc, condutor, "xNome", condutorVeiculo.Nome);
+                ManipulacaoXml.SetNode(doc, condutor, "xNome", Formatacoes.TrataTextoDocFiscal(condutorVeiculo.Nome));
                 ManipulacaoXml.SetNode(doc, condutor, "CPF", Formatacoes.TrataStringDocFiscal(condutorVeiculo.Cpf));
 
                 veicTracao.AppendChild(condutor);
@@ -1567,7 +1564,7 @@ namespace Glass.Data.DAL
 
             ManipulacaoXml.SetNode(doc, veicTracao, "tpRod", veiculoTracao.TipoRodado.ToString("00"));
             ManipulacaoXml.SetNode(doc, veicTracao, "tpCar", veiculoTracao.TipoCarroceria.ToString("00"));
-            ManipulacaoXml.SetNode(doc, veicTracao, "UF", veiculoTracao.UfLicenc);
+            ManipulacaoXml.SetNode(doc, veicTracao, "UF", Formatacoes.TrataTextoDocFiscal(veiculoTracao.UfLicenc));
 
             rodo.AppendChild(veicTracao);
 
@@ -1584,9 +1581,9 @@ namespace Glass.Data.DAL
 
                 XmlElement veicReboque = doc.CreateElement("veicReboque");
                 //ManipulacaoXml.SetNode(doc, veicReboque, "cInt", "");
-                ManipulacaoXml.SetNode(doc, veicReboque, "placa", Formatacoes.TrataStringDocFiscal(veiculoReboque.Placa));
+                ManipulacaoXml.SetNode(doc, veicReboque, "placa", Formatacoes.TrataTextoDocFiscal(veiculoReboque.Placa));
                 if (!string.IsNullOrWhiteSpace(veiculoReboque.Renavam))
-                    ManipulacaoXml.SetNode(doc, veicReboque, "RENAVAM", veiculoReboque.Renavam);
+                    ManipulacaoXml.SetNode(doc, veicReboque, "RENAVAM", Formatacoes.TrataTextoDocFiscal(veiculoReboque.Renavam));
                 ManipulacaoXml.SetNode(doc, veicReboque, "tara", veiculoReboque.Tara.ToString());
                 ManipulacaoXml.SetNode(doc, veicReboque, "capKG", veiculoReboque.CapacidadeKg.ToString());
                 if (veiculoReboque.CapacidadeM3 > 0)
@@ -1608,10 +1605,10 @@ namespace Glass.Data.DAL
                     else
                         ManipulacaoXml.SetNode(doc, prop, "CNPJ", Formatacoes.TrataStringDocFiscal(proprietarioVeiculoReboque.Cnpj).PadLeft(14, '0'));
 
-                    ManipulacaoXml.SetNode(doc, prop, "RNTRC", proprietarioVeiculoReboque.RNTRC);
-                    ManipulacaoXml.SetNode(doc, prop, "xNome", proprietarioVeiculoReboque.Nome);
-                    ManipulacaoXml.SetNode(doc, prop, "IE", proprietarioVeiculoReboque.IE);
-                    ManipulacaoXml.SetNode(doc, prop, "UF", proprietarioVeiculoReboque.UF);
+                    ManipulacaoXml.SetNode(doc, prop, "RNTRC", Formatacoes.TrataTextoDocFiscal(proprietarioVeiculoReboque.RNTRC));
+                    ManipulacaoXml.SetNode(doc, prop, "xNome", Formatacoes.TrataTextoDocFiscal(proprietarioVeiculoReboque.Nome));
+                    ManipulacaoXml.SetNode(doc, prop, "IE", Formatacoes.TrataTextoDocFiscal(proprietarioVeiculoReboque.IE));
+                    ManipulacaoXml.SetNode(doc, prop, "UF", Formatacoes.TrataTextoDocFiscal(proprietarioVeiculoReboque.UF));
                     ManipulacaoXml.SetNode(doc, prop, "tpProp", proprietarioVeiculoReboque.TipoProp.ToString());
 
                     veicReboque.AppendChild(prop);
@@ -1620,7 +1617,7 @@ namespace Glass.Data.DAL
                 #endregion
 
                 ManipulacaoXml.SetNode(doc, veicReboque, "tpCar", veiculoReboque.TipoCarroceria.ToString("00"));
-                ManipulacaoXml.SetNode(doc, veicReboque, "UF", veiculoReboque.UfLicenc);
+                ManipulacaoXml.SetNode(doc, veicReboque, "UF", Formatacoes.TrataTextoDocFiscal(veiculoReboque.UfLicenc));
                 //ManipulacaoXml.SetNode(doc, veicReboque, "codAgPorto", "");
 
                 rodo.AppendChild(veicReboque);
@@ -1633,7 +1630,7 @@ namespace Glass.Data.DAL
             foreach (var lacRod in mdfe.Rodoviario.LacreRodoviario)
             {
                 XmlElement lacRodo = doc.CreateElement("lacRodo");
-                ManipulacaoXml.SetNode(doc, lacRodo, "nLacre", lacRod.Lacre);
+                ManipulacaoXml.SetNode(doc, lacRodo, "nLacre", Formatacoes.TrataTextoDocFiscal(lacRod.Lacre));
                 rodo.AppendChild(lacRodo);
             }
 
@@ -1765,7 +1762,7 @@ namespace Glass.Data.DAL
 
             // Evento de Encerramento
             XmlElement evEncMDFe = xmlEncerramento.CreateElement("evEncMDFe");
-            
+
             ManipulacaoXml.SetNode(xmlEncerramento, evEncMDFe, "descEvento", "Encerramento");
             ManipulacaoXml.SetNode(xmlEncerramento, evEncMDFe, "nProt", protocolo.NumProtocolo);
             var dataEncerramento = DateTimeOffset.Now;
@@ -1842,20 +1839,20 @@ namespace Glass.Data.DAL
 
             XmlElement infEvento = xmlEvento.CreateElement("infEvento");
 
-            //Identificador da TAG a ser assinada, a regra de formação do Id é: 
-            //“ID” + tpEvento +  chave da MDF-e + nSeqEvento 
+            //Identificador da TAG a ser assinada, a regra de formação do Id é:
+            //“ID” + tpEvento +  chave da MDF-e + nSeqEvento
             infEvento.SetAttribute("Id", "ID" + tipoEvento + mdfe.ChaveAcesso + "1".PadLeft(2, '0'));
             eventoMDFe.AppendChild(infEvento);
 
-            // Código do órgão de recepção do Evento. Utilizar a Tabela 
-            // do IBGE, utilizar 90 para identificar o Ambiente Nacional. 
+            // Código do órgão de recepção do Evento. Utilizar a Tabela
+            // do IBGE, utilizar 90 para identificar o Ambiente Nacional.
             XmlElement cOrgao = xmlEvento.CreateElement("cOrgao");
             cOrgao.InnerText = cidadeLojaEmitente.CodIbgeUf;
             infEvento.AppendChild(cOrgao);
 
             // Identificação do Ambiente
-            // 1 - Produção 
-            // 2 – Homologação 
+            // 1 - Produção
+            // 2 – Homologação
             ManipulacaoXml.SetNode(xmlEvento, infEvento, "tpAmb", ((int)ConfigMDFe.TipoAmbiente).ToString());
             //Autor do evento
             ManipulacaoXml.SetNode(xmlEvento, infEvento, "CNPJ", Formatacoes.TrataStringDocFiscal(lojaEmitente.Cnpj));
@@ -1863,7 +1860,7 @@ namespace Glass.Data.DAL
 
             var dataEvento = new DateTimeOffset(DateTime.Now.AddMinutes(-2));
             ManipulacaoXml.SetNode(xmlEvento, infEvento, "dhEvento", dataEvento.ToString("yyyy-MM-ddTHH:mm:sszzz"));
-            // Tipo do Evento: 
+            // Tipo do Evento:
             // 110111 - Cancelamento
             // 110112 – Encerramento
             // 110114 – Inclusão de Condutor
@@ -1896,7 +1893,7 @@ namespace Glass.Data.DAL
 
             // XML do Evento de Consulta Não Encerrados
             XmlDocument xmlConsMDFeNaoEnc = new XmlDocument();
-            
+
             XmlNode declarationNode = xmlConsMDFeNaoEnc.CreateXmlDeclaration("1.0", "UTF-8", null);
             xmlConsMDFeNaoEnc.AppendChild(declarationNode);
 

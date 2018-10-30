@@ -567,7 +567,6 @@ namespace Glass.Data.Helper
             ExibirMensagemWebGlassParceiros = 1285,
             UploadImagensOrcamento = 1286,
             AlterarOrcamentoVendedor = 1287,
-            AmbienteOrcamento = 1288,
             OrcamentoGeraMedicaoDefinitiva = 1289,
             ApenasAdminImprimeOrcamento = 1292,
             TipoOrcamentoPadrao = 1299,
@@ -749,7 +748,8 @@ namespace Glass.Data.Helper
             PermitirImpressaoDePedidosImportadosApenasConferidos = 1530,
             NomeArquivoMesaBarraPorCeCedilha = 1531,
             ListaVendasPedidosVaziaPorPadrao = 1532,
-            UsarTLS12NFe = 1533
+            UsarTLS12NFe = 1533,
+            TextoEmailAdministradores = 1534
 
             #endregion
         }

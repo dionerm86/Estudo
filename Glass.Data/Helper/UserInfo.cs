@@ -107,7 +107,9 @@ namespace Glass.Data.Helper
         {
             try
             {
-                if (HttpContext.Current == null || String.IsNullOrEmpty(HttpContext.Current.User.Identity.Name))
+                System.Security.Principal.IPrincipal principal = HttpContext.Current?.User ?? System.Threading.Thread.CurrentPrincipal;
+
+                if (principal == null || String.IsNullOrEmpty(principal.Identity?.Name))
                     return null;
 
                 if (_usuario == null)
@@ -120,7 +122,7 @@ namespace Glass.Data.Helper
                 // do cliente somente se for preciso, caso não seja, recupera o login do funcionário. Suspeitamos que o
                 // erro do chamado tenha ocorrido porque foi recuperado o login do cliente e por isso o funcionário ficou trocado.
                 // Se for login de cliente, retorna classe de login com dados do cliente
-                if (HttpContext.Current.User.Identity.Name.Contains("|cliente"))
+                if (principal.Identity.Name.Contains("|cliente"))
                 {
                     retorno = GetByIdCliente(codUser);
 
@@ -173,10 +175,14 @@ namespace Glass.Data.Helper
                 }
                 else
                 {
-                    if (HttpContext.Current == null || HttpContext.Current.User == null || HttpContext.Current.User.Identity == null || String.IsNullOrEmpty(HttpContext.Current.User.Identity.Name))
-                        return null;
+                    System.Security.Principal.IPrincipal principal = HttpContext.Current?.User ?? System.Threading.Thread.CurrentPrincipal;
 
-                    var dadosLogin = HttpContext.Current.User.Identity.Name.Split(';')[0].Split('|');
+                    if (principal == null || principal.Identity == null || String.IsNullOrEmpty(principal.Identity.Name))
+                    {
+                        return null;
+                    }
+
+                    var dadosLogin = principal.Identity.Name.Split(';')[0].Split('|');
                     uint codUser = Conversoes.StrParaUint(dadosLogin[0]);
 
                     loginUsuario = FindUserInfo(codUser, true);
@@ -193,7 +199,7 @@ namespace Glass.Data.Helper
                     }
                     // Os usuários que não são da Sync, devem poder alterar as configurações caso tenham acesso ao menu.
                     else
-                        loginUsuario.PodeAlterarConfiguracao = Utils.IsLocalUrl(HttpContext.Current) || !loginUsuario.IsAdminSync;
+                        loginUsuario.PodeAlterarConfiguracao = (HttpContext.Current != null && Utils.IsLocalUrl(HttpContext.Current)) || !loginUsuario.IsAdminSync;
                 }
 
                 return loginUsuario;

@@ -1,43 +1,50 @@
-﻿<%@ Page Title="Classificação - Roteiro da Produção" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstClassificacaoRoteiroProducao.aspx.cs" Inherits="Glass.UI.Web.Listas.LstClassificacaoRoteiroProducao" %>
+﻿<%@ Page Title="Classificação - Roteiro da Produção" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" 
+    CodeBehind="LstClassificacaoRoteiroProducao.aspx.cs" Inherits="Glass.UI.Web.Listas.LstClassificacaoRoteiroProducao" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="server">
-    <table>
-        <tr>
-            <td align="center">
-                <asp:LinkButton ID="lnkInserir" runat="server" OnClick="lnkInserir_Click">Inserir Classificação</asp:LinkButton>
-            </td>
-        </tr>
-        <tr>
-            <td align="center">
-                <asp:GridView GridLines="None" ID="grdClassificacaoRoteiroProducao" runat="server" SkinID="gridViewEditable"
-                    DataSourceID="odsClassificacaoRoteiroProducao" DataKeyNames="IdClassificacaoRoteiroProducao" EmptyDataText="Nenhuma Classificação encontrada.">
-                    <Columns>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:HyperLink ID="lnkEditar" runat="server" NavigateUrl='<%# "../Cadastros/CadClassificacaoRoteiroProducao.aspx?idClassificacao=" + Eval("IdClassificacaoRoteiroProducao") %>' ToolTip="Editar">
-                                    <img alt="" border="0" src="../Images/EditarGrid.gif" /></asp:HyperLink>
-                                <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                                    ToolTip="Excluir" OnClientClick="return confirm('Tem certeza que deseja excluir essa Classificação?');" />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:BoundField DataField="IdClassificacaoRoteiroProducao" HeaderText="Cód." SortExpression="IdClassificacaoRoteiroProducao" />
-                        <asp:BoundField DataField="Descricao" HeaderText="Descrição" SortExpression="Descricao" />
-                        <asp:BoundField DataField="CapacidadeDiaria" HeaderText="Capacidade Diária" SortExpression="CapacidadeDiaria" ><ItemStyle HorizontalAlign="Center" /></asp:BoundField>
-                        <asp:BoundField DataField="MetaDiaria" HeaderText="Meta Diária" SortExpression="MetaDiaria" />
-                    </Columns>
-                    <HeaderStyle HorizontalAlign="Left" />
-                </asp:GridView>
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsClassificacaoRoteiroProducao" runat="server"
-                    EnablePaging="True" MaximumRowsParameterName="pageSize"
-                    SelectMethod="PesquisarClassificacao"
-                    SelectByKeysMethod="ObtemClassificacao"
-                    SortParameterName="sortExpression"
-                    TypeName="Glass.PCP.Negocios.IClassificacaoRoteiroProducaoFluxo"
-                    DataObjectTypeName="Glass.PCP.Negocios.Entidades.ClassificacaoRoteiroProducao"
-                    DeleteMethod="ApagarClassificacao"
-                    DeleteStrategy="GetAndDelete">
-                </colo:VirtualObjectDataSource>
-            </td>
-        </tr>
-    </table>
+    <div id="app">
+        <section>
+            <a :href="obterLinkInserirClassificacaoRoteiro()">
+                Inserir classificação
+            </a>
+        </section>
+        <section>
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma classificação de roteiro encontrada.">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('id')">Cód.</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('nome')">Descrição</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('capacidadeDiaria')">Capacidade diária</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('metaDiaria')">Meta diária</a>
+                    </th>
+                </template>
+                <template slot="item" slot-scope="{ item, index }">
+                    <td style="white-space: nowrap">
+                        <a :href="obterLinkEditarClassificacaoRoteiro(item)" title="Editar">
+                            <img border="0" src="../../Images/EditarGrid.gif">
+                        </a>
+                        <a href="#" @click.prevent="excluir(item)" title="Excluir">
+                            <img border="0" src="../../Images/ExcluirGrid.gif">
+                        </a>
+                    </td>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.nome }}</td>
+                    <td>{{ item.capacidadeDiaria }}</td>
+                    <td>{{ item.metaDiaria }}</td>
+                </template>
+            </lista-paginada>
+        </section>
+    </div>
+    <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/Producao/Roteiros/Classificacoes/Componentes/LstClassificacoesRoteiro.js" />
+        </Scripts>
+    </asp:ScriptManager>
 </asp:Content>

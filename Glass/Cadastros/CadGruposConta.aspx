@@ -1,161 +1,128 @@
-<%@ Page Title="Grupos do Plano de Contas" Language="C#" MasterPageFile="~/Painel.master"
-    AutoEventWireup="true" CodeBehind="CadGruposConta.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadGruposConta" %>
-
-<%@ Register Src="~/Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
+<%@ Page Title="Grupos do Plano de Contas" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" 
+    CodeBehind="CadGruposConta.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadGruposConta" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-
-    <script type="text/javascript">
-
-        function onSave() {
-            if (FindControl("txtDescricao", "input").value == "") {
-                alert("Informe a descrição");
-                return false;
-            }
-        }
-
-        function SetPontoEquilibrio(idGrupo, controle) {
-            
-            var retorno = CadGruposConta.SetPontoEquilibrio(idGrupo, controle.checked);
-
-            if (retorno.error != null) {
-                alert(retorno.error.description);
-                return false;
-            }
-            else if (retorno.value.split('|')[0] == "Erro"){
-                alert(retorno.value.split('|')[1]);
-                controle.checked = !controle.checked;
-                return false;
-            }
-            
-            alert(retorno.value.split('|')[0]);
-        }
-
-    </script>
-
-    <table style="width: 100%">
-        <tr>
-            <td align="center">
-                <asp:GridView ID="grdGruposConta" runat="server" DataKeyNames="IdGrupo" DataSourceID="odsGruposConta"
-                              SkinID="gridViewEditable"
-                              onrowcommand="grdGruposConta_RowCommand">
-                    <Columns>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit">
-                                    <img border="0" src="../Images/Edit.gif" alt="Editar" /></asp:LinkButton>
-                                <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" 
-                                    ImageUrl="~/Images/ExcluirGrid.gif"
-                                    OnClientClick="return confirm(&quot;Tem certeza que deseja excluir este Grupo?&quot;);"
-                                    ToolTip="Excluir" Visible='<%# Eval("GrupoContaSistema") %>' />
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:ImageButton ID="imgAtualizar" runat="server" CommandName="Update" Height="16px"
-                                    ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" />
-                                <asp:ImageButton ID="imbCancelar" runat="server" CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif"
-                                    ToolTip="Cancelar" />
-                            </EditItemTemplate>
-                            <ItemStyle Wrap="False" />
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Categoria" SortExpression="Categoria">
-                            <ItemTemplate>
-                                <asp:Label ID="Label1" runat="server" Text='<%# Eval("Categoria") %>'></asp:Label>
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:HiddenField ID="hdfIdCategoria" runat="server" Value='<%# Eval("IdCategoriaConta") %>' />
-                                <asp:DropDownList ID="drpCategoria" runat="server" AppendDataBoundItems="True" DataSourceID="odsCategoriaConta" OnDataBinding="drpCategoria_DataBinding"
-                                    DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdCategoriaConta") %>'>
-                                </asp:DropDownList>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:DropDownList ID="drpCategoria" runat="server" AppendDataBoundItems="True" DataSourceID="odsCategoriaConta"
-                                    DataTextField="Name" DataValueField="Id">
-                                </asp:DropDownList>
-                            </FooterTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Grupo" SortExpression="IdGrupo">
-                            <ItemTemplate>
-                                <asp:Label ID="Label2" runat="server" Text='<%# Bind("IdGrupo") %>'></asp:Label>
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:Label ID="Label2" runat="server" Text='<%# Bind("IdGrupo") %>'></asp:Label>
-                            </EditItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Descrição" SortExpression="Descricao">
-                            <ItemTemplate>
-                                <asp:Label ID="Label3" runat="server" Text='<%# Bind("Descricao") %>'></asp:Label>
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:Label ID="Label3" runat="server" Text='<%# Bind("Descricao") %>'></asp:Label>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:TextBox ID="txtDescricao" runat="server" MaxLength="100" Width="200px"></asp:TextBox>
-                            </FooterTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Situação" SortExpression="Situacao">
-                            <ItemTemplate>
-                                <asp:Label ID="Label4" runat="server" Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:DropDownList ID="drpSituacao" runat="server" SelectedValue='<%# Bind("Situacao") %>'>
-                                    <asp:ListItem Value="Ativo">Ativo</asp:ListItem>
-                                    <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
-                                </asp:DropDownList>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:DropDownList ID="drpSituacao" runat="server">
-                                    <asp:ListItem Value="Ativo">Ativo</asp:ListItem>
-                                    <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
-                                </asp:DropDownList>
-                            </FooterTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Ponto de Equilíbrio" SortExpression="PontoEquilibrio">
-                            <ItemTemplate>
-                                <asp:CheckBox ID="ckbPontoEquilibrio" runat="server" Checked='<%# Bind("PontoEquilibrio") %>'
-                                    onclick='<%# "SetPontoEquilibrio(" + Eval("IdGrupo") + ", this);" %>' />
-                            </ItemTemplate>
-                            <HeaderStyle HorizontalAlign="Center" />
-                            <ItemStyle HorizontalAlign="Center" />
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="GrupoConta" IdRegistro='<%# (int)Eval("IdGrupo") %>' />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:ImageButton ID="imgUp" runat="server" CommandArgument='<%# Eval("IdGrupo") %>'
-                                    CommandName="Up" ImageUrl="~/Images/up.gif" Visible='<%# ((int)Eval("NumeroSequencia")) > 1 %>' />
-                                <asp:ImageButton ID="imgDown" runat="server" CommandArgument='<%# Eval("IdGrupo") %>'
-                                    CommandName="Down" ImageUrl="~/Images/down.gif" />
-                            </ItemTemplate>
-                            <FooterTemplate>
-                                <asp:LinkButton ID="lnkInserir" runat="server" OnClick="lnkInserir_Click" OnClientClick="return onSave();">
-                                    <img border="0" src="../Images/ok.gif" alt="Inserir" /></asp:LinkButton>
-                            </FooterTemplate>
-                        </asp:TemplateField>
-                    </Columns>
-                </asp:GridView>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsGruposConta" runat="server" 
-                    DataObjectTypeName="Glass.Financeiro.Negocios.Entidades.GrupoConta"
-                    TypeName="Glass.Financeiro.Negocios.IPlanoContasFluxo"
-                    DeleteMethod="ApagarGrupoConta" EnablePaging="True" 
-                    DeleteStrategy="GetAndDelete"
-                    MaximumRowsParameterName="pageSize"
-                    SelectMethod="PesquisarGruposConta" 
-                    SelectByKeysMethod="ObtemGrupoConta"
-                    UpdateStrategy="GetAndUpdate"
-                    SortParameterName="sortExpression"
-                    UpdateMethod="SalvarGrupoConta"> 
-                </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsCategoriaConta" 
-                    runat="server" SelectMethod="ObtemCategoriasConta"
-                    TypeName="Glass.Financeiro.Negocios.IPlanoContasFluxo">
-                    <SelectParameters>
-                        <asp:Parameter Name="ativas" DefaultValue="true" Type="Boolean"/>
-                    </SelectParameters>
-                </colo:VirtualObjectDataSource>
-            </td>
-        </tr>
-    </table>
+    <div id="app">
+        <section>
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum grupo de conta encontrado."
+                :numero-registros="15" :exibir-inclusao="true" :linha-editando="numeroLinhaEdicao">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('id')">Num. Grupo</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('categoriaConta')">Categoria</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('nome')">Descrição</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('exibirPontoEquilibrio')">Exibir no ponto de equilíbrio</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
+                    </th>
+                    <th></th>
+                </template>
+                <template slot="item" slot-scope="{ item, index }">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="editar(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/Edit.gif">
+                        </button>
+                        <button @click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1 && item.permissoes && item.permissoes.excluir">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>{{ item.id }}</td>
+                    <td v-if="item.categoriaConta">{{ item.categoriaConta.nome }}</td>
+                    <td>{{ item.nome }}</td>
+                    <td>{{ item.exibirPontoEquilibrio | indicaMarcado }}</td>
+                    <td v-if="item.situacao">{{ item.situacao.nome }}</td>
+                    <td>
+                        <button @click.prevent="alterarPosicao(item, true)" v-if="!inserindo && numeroLinhaEdicao === -1 && item.numeroSequencia > 1">
+                            <img src="../Images/up.gif">
+                        </button>
+                        <button @click.prevent="alterarPosicao(item, false)" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/down.gif">
+                        </button>
+                        <log-alteracao tabela="GrupoConta" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
+                    </td>
+                </template>
+                <template slot="itemEditando">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="atualizar" title="Atualizar">
+                            <img src="../Images/ok.gif">
+                        </button>
+                        <button @click.prevent="cancelar" title="Cancelar">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>{{ grupoConta.id }}</td>
+                    <td>
+                        <template v-if="grupoConta.permissoes && !grupoConta.permissoes.editarApenasExibirPontoEquilibrio">
+                            <lista-selecao-id-valor v-bind:item-selecionado.sync="categoriaContaAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensCategoriaConta"
+                                v-bind:ordenar="false" required></lista-selecao-id-valor>
+                        </template>
+                        <template v-else>
+                            {{ grupoConta.nomeCategoriaConta }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="grupoConta.permissoes && !grupoConta.permissoes.editarApenasExibirPontoEquilibrio">
+                            <input type="text" v-model="grupoConta.nome" maxlength="60" style="width: 250px" required />
+                        </template>
+                        <template v-else>
+                            {{ grupoConta.nome }}
+                        </template>
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="grupoConta.exibirPontoEquilibrio" />
+                    </td>
+                    <td>
+                        <template v-if="grupoConta.permissoes && !grupoConta.permissoes.editarApenasExibirPontoEquilibrio">
+                            <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" required></lista-selecao-situacoes>
+                        </template>
+                        <template v-else>
+                            {{ grupoConta.descricaoSituacao }}
+                        </template>
+                    </td>
+                    <td></td>
+                </template>
+                <template slot="itemIncluir">
+                    <td style="white-space: nowrap">
+                        <button v-on:click.prevent="iniciarCadastro" title="Novo grupo de conta..." v-if="!inserindo">
+                            <img src="../Images/Insert.gif">
+                        </button>
+                        <button v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">
+                            <img src="../Images/Ok.gif">
+                        </button>
+                        <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td></td>
+                    <td>
+                        <lista-selecao-id-valor v-bind:item-selecionado.sync="categoriaContaAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensCategoriaConta"
+                            v-bind:ordenar="false" v-if="inserindo" required></lista-selecao-id-valor>
+                    </td>
+                    <td>
+                        <input type="text" v-model="grupoConta.nome" maxlength="60" style="width: 250px" v-if="inserindo" required />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="grupoConta.exibirPontoEquilibrio" v-if="inserindo" />
+                    </td>
+                    <td>
+                        <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" v-if="inserindo" required></lista-selecao-situacoes>
+                    </td>
+                    <td></td>
+                </template>
+            </lista-paginada>
+        </section>
+    </div>
+     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/PlanosConta/GruposConta/Componentes/LstGruposConta.js" />
+        </Scripts>
+    </asp:ScriptManager>
 </asp:Content>

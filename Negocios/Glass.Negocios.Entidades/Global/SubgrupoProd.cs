@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Colosoft;
 
 namespace Glass.Global.Negocios.Entidades
@@ -417,22 +418,37 @@ namespace Glass.Global.Negocios.Entidades
         {
             get
             {
-#pragma warning disable S2365 // Properties should not make collection or array copies
                 return SubgruposProdLoja.Select(f => f.IdLoja).ToArray();
-#pragma warning restore S2365 // Properties should not make collection or array copies
             }
             set
             {
+                if ((value?.Count()).GetValueOrDefault() == 0)
+                {
+                    SubgruposProdLoja.Clear();
+                    return;
+                }
+
                 foreach (var loja in value)
                 {
                     if (SubgruposProdLoja.Any(f => f.IdLoja == loja && f.IdSubgrupoProd == IdSubgrupoProd))
+                    {
                         continue;
+                    }
 
-                    var novo = new SubgrupoProdLoja();
-                    novo.IdSubgrupoProd = IdSubgrupoProd;
-                    novo.IdLoja = loja;
+                    var novo = new SubgrupoProdLoja()
+                    {
+                        IdSubgrupoProd = IdSubgrupoProd,
+                        IdLoja = loja,
+                    };
 
                     SubgruposProdLoja.Add(novo);
+                }
+
+                List<Entidades.SubgrupoProdLoja> subgruposProdLojaRemover = SubgruposProdLoja.Where(f => !value.Contains(f.IdLoja)).ToList();
+
+                foreach (var idLoja in subgruposProdLojaRemover)
+                {
+                    SubgruposProdLoja.Remove(idLoja);
                 }
             }
         }

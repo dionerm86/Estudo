@@ -1,12 +1,8 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista()],
 
   data: {
-    dadosOrdenacao_: {
-      campo: '',
-      direcao: ''
-    },
     configuracoes: {},
     filtro: {}
   },
@@ -23,19 +19,6 @@ const app = new Vue({
     atualizarPedidosConferencia: function(filtro, pagina, numeroRegistros, ordenacao) {
       var filtroUsar = this.clonar(filtro || {});
       return Servicos.PedidosConferencia.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
-    },
-
-    /**
-     * Realiza a ordenação da lista.
-     * @param {string} campo O nome do campo pelo qual o resultado será ordenado.
-     */
-    ordenar: function(campo) {
-      if (campo !== this.dadosOrdenacao_.campo) {
-        this.dadosOrdenacao_.campo = campo;
-        this.dadosOrdenacao_.direcao = '';
-      } else {
-        this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
-      }
     },
 
     /**
@@ -257,38 +240,60 @@ const app = new Vue({
     },
 
     /**
+     * Valida se pode gerar arquivos dos pedidos filtrados.
+     * @returns {Promise} Uma promise com o resultado da busca dos itens.
+     */
+    validarPodeGerarArquivo: function () {
+      var filtroUsar = this.clonar(this.filtro || {});
+
+      var idPedido = filtroUsar.idPedido;
+
+      if (idPedido) {
+          if (!this.$refs.lista.$data.itens[0].permissoes.podeGerarArquivo) {
+            this.exibirMensagem("O pedido importado ainda não foi conferido, confira o mesmo antes de gerar arquivo");
+            return Promise.reject();
+          }
+
+          return Promise.resolve();
+      } else {
+        return Servicos.PedidosConferencia.podeImprimirImportados(filtroUsar);
+      }
+    },
+
+
+    /**
      * Gera arquivos para máquinas de CNC, a partir dos filtros da tela.
      * @param {number} tipoArquivo O tipo do arquivo (1-CNC, 2-DXF, 3-FML, 4-SGlass, 5-Intermac).
      */
     gerarArquivosMaquina: function (tipoArquivo) {
       var filtros = this.formatarFiltros_();
+      var vm = this;
 
       if (!this.validarFiltrosVazios_(filtros)) {
         return false;
       }
 
       if ((this.filtro.situacao == 0 || this.filtro.situacao == 1) && this.filtro.idPedido == "") {
-        this.exibirMensagem('Validação', 'Estes arquivos só podem ser gerados para pedidos finalizados ou impressos, filtre por alguma destas situações e tente novamente.');
+        vm.exibirMensagem('Validação', 'Estes arquivos só podem ser gerados para pedidos finalizados ou impressos, filtre por alguma destas situações e tente novamente.');
         return false;
       }
 
-      /*
-      var idPedido = FindControl("txtNumPedido", "input").value;
+      this.validarPodeGerarArquivo()
+        .then(function (resposta) {
+          var nomeArquivo = tipoArquivo == 1 ? 'Cnc'
+            : tipoArquivo == 2 ? 'Dxf'
+            : tipoArquivo == 3 ? 'Fml'
+            : tipoArquivo == 3 ? 'SGlass'
+            : tipoArquivo == 3 ? 'Intermac'
+            : '';
 
-      if (LstPedidosEspelho.PodeImprimirPedidoImportado(idPedido).value.toLowerCase() == "false") {
-          alert("O pedido importado ainda não foi conferido, confira o mesmo antes de gerar arquivo");
-          return false;
-      }
-      */
-
-      var nomeArquivo = tipoArquivo == 1 ? 'Cnc'
-        : tipoArquivo == 2 ? 'Dxf'
-        : tipoArquivo == 3 ? 'Fml'
-        : tipoArquivo == 3 ? 'SGlass'
-        : tipoArquivo == 3 ? 'Intermac'
-        : '';
-
-      this.abrirJanela(200, 200, '../Handlers/Arquivo' + nomeArquivo + '.ashx?a=1' + filtros);
+          vm.abrirJanela(200, 200, '../Handlers/Arquivo' + nomeArquivo + '.ashx?a=1' + filtros);
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
     },
 
     /**
@@ -349,17 +354,6 @@ const app = new Vue({
      */
     atualizarLista: function () {
       this.$refs.lista.atualizar();
-    }
-  },
-
-  computed: {
-    /**
-     * Propriedade computada que indica a ordenação para a lista.
-     * @type {string}
-     */
-    ordenacao: function() {
-      var direcao = this.dadosOrdenacao_.direcao ? ' ' + this.dadosOrdenacao_.direcao : '';
-      return this.dadosOrdenacao_.campo + direcao;
     }
   },
 

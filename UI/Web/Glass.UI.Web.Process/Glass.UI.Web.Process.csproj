@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Glass.UI.Web.Process</RootNamespace>
     <AssemblyName>Glass.UI.Web.Process</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -194,6 +194,10 @@
     <ProjectReference Include="..\..\..\Global\UI\Web\Glass.Global.UI.Web.Process\Glass.Global.UI.Web.Process.csproj">
       <Project>{53e0ef88-b812-45fe-9f91-f4f7889bd6cb}</Project>
       <Name>Glass.Global.UI.Web.Process</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Integracao\Glass.Integracao\Glass.Integracao.csproj">
+      <Project>{eddba46b-4412-433b-a587-c481ba2831fd}</Project>
+      <Name>Glass.Integracao</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Negocios\Glass.Negocios.Entidades\Glass.Negocios.Entidades.csproj">
       <Project>{de1a9b49-0710-4fa1-bbfb-1c83f9e9533c}</Project>

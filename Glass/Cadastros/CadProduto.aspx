@@ -77,6 +77,7 @@
             var exibirBeneficiamento = CadProduto.ExibirBenef(idGrupo, idSubgrupo).value == "true";
             FindControl("hdfSalvarBenef", "input").value = "true";
             var exibirAlturaLargura = CadProduto.ExibirAlturaLargura(idGrupo, idSubgrupo).value == "true";
+            var obrigarAlturaLargura = CadProduto.ObrigarAlturaLargura(idSubgrupo).value == "true";
 
             // Esconde campos referentes ao controle de produção: "Altura, Largura, Aplicação, Processo e Arquivo de mesa".
             for (i = 28; i < 33; i++)
@@ -105,6 +106,11 @@
 
                 tabela.rows[28].style.display = "";
                 tabela.rows[29].style.display = "";
+            }
+
+            if (!obrigarAlturaLargura) {
+                FindControl("lblObrigatoriedadeAlturaIns", "span").style.display = "none";
+                FindControl("lblObrigatoriedadeLarguraIns", "span").style.display = "none";
             }
 
             var indexBenef = 0;
@@ -189,17 +195,17 @@
             var tabela = document.getElementById("<%= dtvProduto.ClientID %>");
 
             // Recortes X1-Y2
-            tabela.rows[34].style.display = visivel ? "" : "none";
-            // Transversal Max X/Y
             tabela.rows[35].style.display = visivel ? "" : "none";
-            // Desperdício Min X/Y
+            // Transversal Max X/Y
             tabela.rows[36].style.display = visivel ? "" : "none";
-            // Distância Mínima
+            // Desperdício Min X/Y
             tabela.rows[37].style.display = visivel ? "" : "none";
-            // Recorte automático da forma
+            // Distância Mínima
             tabela.rows[38].style.display = visivel ? "" : "none";
-            // Ângulo recorte automático
+            // Recorte automático da forma
             tabela.rows[39].style.display = visivel ? "" : "none";
+            // Ângulo recorte automático
+            tabela.rows[40].style.display = visivel ? "" : "none";
         }
 
         function setBaixaEstFiscal(codInterno) {
@@ -250,18 +256,23 @@
                 }
             }
 
-            if (FindControl("txtAlturaIns", "input").parentNode.parentNode.style.display != "none") {
-                var altura = FindControl("txtAlturaIns", "input").value;
-                if (altura == "") {
-                    alert("Informe a altura do produto.");
-                    return false;
+            if (obrigarAlturaLargura) {
+                if (FindControl("txtAlturaIns", "input").parentNode.parentNode.style.display != "none") {
+                    var altura = FindControl("txtAlturaIns", "input").value;
+
+                    if (altura == "") {
+                        alert("Informe a altura do produto.");
+                        return false;
+                    }
                 }
-            }
-            if (FindControl("txtLarguraIns", "input").parentNode.parentNode.style.display != "none") {
-                var largura = FindControl("txtLarguraIns", "input").value;
-                if (largura == "") {
-                    alert("Informe a largura do produto.");
-                    return false;
+
+                if (FindControl("txtLarguraIns", "input").parentNode.parentNode.style.display != "none") {
+                    var largura = FindControl("txtLarguraIns", "input").value;
+
+                    if (largura == "") {
+                        alert("Informe a largura do produto.");
+                        return false;
+                    }
                 }
             }
 

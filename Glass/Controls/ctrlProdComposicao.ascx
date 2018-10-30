@@ -140,6 +140,10 @@
                     exibirMensagemEstoqueComposicao = retorno[14] == "true";
                     qtdEstoqueMensagemComposicao = retorno[15];
 
+                    if(FindControl("txt_AlturaComposicaoIns", "input", table) != null && FindControl("txt_AlturaComposicaoIns", "input", table).value != ""){
+                        GetAdicionalAlturaChapa();
+                    }
+
                     var tipoCalc = retorno[7];
 
                     // Se o produto não for vidro, desabilita os textboxes largura e altura,
@@ -257,7 +261,7 @@
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
             var tipoVenda = FindControl("hdfTipoVenda", "input").value;
-
+            var altura = FindControl("txt_AlturaComposicaoIns", "input", table).value;
             var idProdPed = FindControl("hdf_ProdPedComposicao", "input", table);
             idProdPed = idProdPed != null ? idProdPed.value : "";
 
@@ -267,7 +271,7 @@
             var percDescontoQtde = controleDescQtde.PercDesconto();
 
             FindControl("hdf_ValMinComposicao", "input", table).value = CadPedido.GetValorMinimo(codInterno, tipoPedido, tipoEntrega, tipoVenda,
-                idCliente, cliRevenda, idProdPed, percDescontoQtde, idPedido).value;
+                idCliente, cliRevenda, idProdPed, percDescontoQtde, idPedido, altura).value;
         }
         else
             FindControl("hdf_ValMinComposicao", "input", table).value = FindControl("txt_ValorComposicaoIns", "input", table).value;
@@ -346,7 +350,7 @@
             var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdf_IdProdComposicao", "input", tr).value);
             var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
 
-            if(idSubgrupo.value != "" && retornoValidacao.value == "False" && (FindControl("txt_ProcComposicaoIns", "input", tr) != null && FindControl("txt_ProcComposicaoIns", "input", tr).value != ""))
+            if(idSubgrupo.value != "" && retornoValidacao.value == "false" && (FindControl("txt_ProcComposicaoIns", "input", tr) != null && FindControl("txt_ProcComposicaoIns", "input", tr).value != ""))
             {
                 FindControl("txt_ProcComposicaoIns", "input", tr).value = "";
                 alert("Este processo não pode ser selecionado para este produto.")
@@ -536,8 +540,27 @@
         controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
         var percDescontoQtde = controleDescQtde.PercDesconto();
 
-        FindControl("txt_ValorComposicaoIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente,
-            cliRevenda, pedidoReposicao, percDescontoQtde, idPedido, "", "", altura).value.replace(".", ",");
+        var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente,
+            cliRevenda, pedidoReposicao, percDescontoQtde, idPedido, "", "", altura);
+
+        if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+        }
+        else if(retorno == null){
+            alert("Erro na recuperação do valor de tabela do produto.");
+            return;
+        }
+
+        var valorIns = FindControl("txt_ValorComposicaoIns", "input");
+
+        if(valorIns != null){
+            valorIns.value = retorno.value.replace(".", ",");
+        }
+        else{
+            alert("Não foi possível encontrar o controle 'txt_ValorComposicaoIns'");
+            return false;
+        }
     }
 
     // Calcula em tempo real o valor total do produto

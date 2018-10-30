@@ -39,6 +39,8 @@ namespace Glass.API.Backend.Controllers.Datas.V1.Feriados
                         return validacao;
                     }
 
+                    sessao.BeginTransaction();
+
                     FeriadoDAO.Instance.DeleteByPrimaryKey(sessao, id);
                     sessao.Commit();
 

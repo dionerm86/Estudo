@@ -209,13 +209,8 @@ Servicos.Pedidos = (function (http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-      filtro = filtro || {};
-      filtro.pagina = pagina;
-      filtro.numeroRegistros = numeroRegistros;
-      filtro.ordenacao = ordenacao;
-
       return http().get(API.substr(0, API.length - 1), {
-        params: filtro
+        params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
       });
     },
 
@@ -355,6 +350,10 @@ Servicos.Pedidos = (function (http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterListaObservacoesFinanceiro: function (idPedido, pagina, numeroRegistros, ordenacao) {
+      if (!idPedido) {
+        throw new Error('Pedido é obrigatório.');
+      }
+
       var filtro = {
         pagina,
         numeroRegistros,
@@ -406,6 +405,14 @@ Servicos.Pedidos = (function (http) {
      */
     obterSituacoes: function () {
       return http().get(API + 'situacoes');
+    },
+
+    /**
+     * Recupera a lista de situações de produção.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterSituacoesProducao: function () {
+      return http().get(API + 'situacoesProducao');
     },
 
     /**

@@ -75,9 +75,17 @@ namespace Glass.Configuracoes
 
             public static float GetDescontoMaximoPedido(GDA.GDASession sessao, uint idFunc, int tipoVendaPedido, int? idParcela)
             {
+                var idFuncAtual = UserInfo.GetUserInfo.CodUser;
+                if (idFuncAtual > 0 && idFuncAtual != idFunc && UserInfo.IsAdministrador(idFuncAtual))
+                {
+                    idFunc = idFuncAtual;
+                }
+
                 // Se o funcionário tiver permissão de ignorar bloqueio de desconto no orçamento e pedido
                 if (Config.PossuiPermissao((int)idFunc, Config.FuncaoMenuPedido.IgnorarBloqueioDescontoOrcamentoPedido))
+                {
                     return 100;
+                }
 
                 return GetDescontoMaximoPedidoConfigurado(sessao, idFunc, tipoVendaPedido, idParcela);
             }

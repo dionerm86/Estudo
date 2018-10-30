@@ -346,31 +346,50 @@ namespace Glass.Configuracoes
                 var config = Config.GetConfigItem<int>(Config.ConfigEnum.SeriePadraoNFe);
 
                 if (config != 1)
+                {
                     return config;
+                }
 
                 if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.LojaDosEspelhos &&
                     (inscEstLoja == "06.200.647-9" || inscEstLoja == "062006479"))
+                {
                     return 2;
- 
+                }
+
                 if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.VitralManaus &&
                     (inscEstLoja == "06.200.648-7" || inscEstLoja == "062006487"))
+                {
                     return 6;
+                }
+
+                if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.VitralManaus &&
+                    (inscEstLoja == "04.123.770-6" || inscEstLoja == "041237706"))
+                {
+                    return 1;
+                }
 
                 if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.CasaDosEspelhos &&
                     (inscEstLoja == "06.201.161-8" || inscEstLoja == "062011618"))
+                {
                     return 2;
+                }
 
-                if ((ControleSistema.GetSite() == ControleSistema.ClienteSistema.Divine ||
-                    ControleSistema.GetSite() == ControleSistema.ClienteSistema.Dividros ||
+                if ((ControleSistema.GetSite() == ControleSistema.ClienteSistema.Dividros ||
                     ControleSistema.GetSite() == ControleSistema.ClienteSistema.Invitra) &&
                     (codCfop == "5103" || codCfop == "5104"))
+                {
                     return 3;
+                }
 
                 if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.ModeloVidros && notaDeAjuste.GetValueOrDefault())
+                {
                     return 3;
+                }
 
                 if ((ControleSistema.GetSite() == ControleSistema.ClienteSistema.TemperadosEstrela || ControleSistema.GetSite() == ControleSistema.ClienteSistema.VidrosDresch) && notaDeAjuste.GetValueOrDefault())
+                {
                     return 2;
+                }
 
                 return 1;
             }

@@ -19,24 +19,37 @@
                 }
             }
 
-            if (FindControl("hdfCallback", "input").value == "setVidro")
+            if (FindControl("hdfCallback", "input").value == "setVidro") {
                 window.opener.setVidro(codInterno);
-            else if (FindControl("hdfCallback", "input").value == "setParent")
+            }
+            else if (FindControl("hdfCallback", "input").value == "setParent") {
                 window.opener.setParent(codInterno);
-            else if (FindControl("hdfCallback", "input").value == "setBaixaEstFiscal")
+            }
+            else if (FindControl("hdfCallback", "input").value == "setBaixaEstFiscal") {
                 window.opener.setBaixaEstFiscal(codInterno);
-            else if (FindControl("hdfCallback", "input").value == "setForPopup")
+            }
+            else if (FindControl("hdfCallback", "input").value == "setForPopup") {
                 eval("window.opener." + '<%= Request["controle"] %>').AlteraValor(idProd, codInterno);
-            else if (FindControl("hdfCallback", "input").value == "movInterna")
+            }
+            else if (FindControl("hdfCallback", "input").value == "movInterna") {
                 window.opener.setProduto(GetQueryString('cod'), GetQueryString('descr'), codInterno);
+            }
             else if (FindControl("hdfCallback", "input").value == "prodComposicao") {
-                window.opener.setProdutoComposicao(codInterno, GetQueryString('idPedido'), GetQueryString('idProdPed'));
+                var idProdPed = GetQueryString('idProdPed');
+                var idProdOrcamento = GetQueryString('idProdOrcamento');
+
+                if (idProdPed != null && idProdPed != undefined && idProdPed != "") {
+                    window.opener.setProdutoComposicao(codInterno, GetQueryString('idPedido'), idProdPed);
+                }
+                else if (idProdOrcamento != null && idProdOrcamento != undefined && idProdOrcamento != "") {
+                    window.opener.setProdutoComposicao(codInterno, GetQueryString('idOrcamento'), idProdOrcamento);
+                }
             }
             else {
                 if (FindControl("hdfCallback", "input").value == "chapa") {
                     var ignorar = '<%= Request["idProd"] != null ? Request["idProd"] : "" %>';
-
                     var resposta = SelProd.IsProdChapa(codInterno, ignorar).value;
+
                     if (resposta == "true") {
                         alert("Esse produto já está associado a uma chapa de vidro.");
                         return false;

@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -18,18 +18,18 @@ namespace Glass.Data.DAL
     public sealed class ImpressaoEtiquetaDAO : BaseDAO<ImpressaoEtiqueta, ImpressaoEtiquetaDAO>
     {
         /// <summary>
-        /// Classe auxiliar para montar a composiÁ„o de peÁ„s de vidro duplo e laminado.
+        /// Classe auxiliar para montar a composi√ß√£o de pe√ß√£s de vidro duplo e laminado.
         /// </summary>
         private class Composicao
         {
-            #region Contrutor Padr„o
+            #region Contrutor Padr√£o
 
             /// <summary>
             /// 
             /// </summary>
-            /// <param name="idProdPedPai">IdProdPed do pai da composiÁ„o</param>
-            /// <param name="numEtiquetaPai">Num. da etiqueta do pai da composiÁ„o</param>
-            /// <param name="filhos">Filhos da composiÁ„o(IdprodPed, Qtde e QtdeGerada</param>
+            /// <param name="idProdPedPai">IdProdPed do pai da composi√ß√£o</param>
+            /// <param name="numEtiquetaPai">Num. da etiqueta do pai da composi√ß√£o</param>
+            /// <param name="filhos">Filhos da composi√ß√£o(IdprodPed, Qtde e QtdeGerada</param>
             public Composicao(uint idProdPedPai, string numEtiquetaPai, Dictionary<uint, KeyValuePair<int, int>> filhos)
             {
                 IdProdPedPai = idProdPedPai;
@@ -55,7 +55,7 @@ namespace Glass.Data.DAL
 
         //private ImpressaoEtiquetaDAO() { }
 
-        #region Busca produtos para listagem padr„o
+        #region Busca produtos para listagem padr√£o
 
         private string Sql(uint idPedido, uint numeroNFe, uint idImpressao, string planoCorte, string lote, string dataIni, string dataFim, string etiqueta, 
             int tipoImpressao, bool selecionar, out bool temFiltro, out string filtroAdicional)
@@ -181,10 +181,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Exporta arquivo de otimizaÁ„o para o corte certo
+        #region Exporta arquivo de otimiza√ß√£o para o corte certo
 
         /// <summary>
-        /// Exporta arquivo txt com dados para inserÁ„o no Corte Certo
+        /// Exporta arquivo txt com dados para inser√ß√£o no Corte Certo
         /// </summary>
         public string ArquivoOtimizacaoCorteCerto(uint idFunc, uint idImpressao, string etiquetas, bool ignorarExportadas,
             ref List<Etiqueta> lstEtiqueta)
@@ -197,7 +197,7 @@ namespace Glass.Data.DAL
             // Salva uma lista com os produtos usados para montar a etiqueta
             var dicProd = new Dictionary<uint, Produto>();
 
-            // Se o idImpress„o tiver sido passado, apenas recupera lista de produtosImpresao
+            // Se o idImpress√£o tiver sido passado, apenas recupera lista de produtosImpresao
             if (idImpressao > 0)
                 lstEtiqueta = new List<Glass.Data.RelModel.Etiqueta>(Glass.Data.RelDAL.EtiquetaDAO.Instance.GetListPedidoComTransacao(
                     idFunc, idImpressao.ToString(), 0, 0, null, true, true, null, false, null, null));
@@ -220,7 +220,7 @@ namespace Glass.Data.DAL
                     campos[0] = campos[0].Replace("R", "").Replace("A", "");
                     var prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetForArquivoOtimizacao(campos[0].StrParaUint());
 
-                    #region Verifica se todos pedidos s„o da mesma loja
+                    #region Verifica se todos pedidos s√£o da mesma loja
 
                     if (EtiquetaConfig.RelatorioEtiqueta.ModeloEtiquetaPorLoja)
                     {
@@ -229,14 +229,14 @@ namespace Glass.Data.DAL
                         if (idLojaPedidoAux == 0)
                             idLojaPedidoAux = idLojaPedido;
                         else if (idLojaPedidoAux != idLojaPedido)
-                            throw new Exception("N„o È possÌvel otimizar etiquetas de pedidos associados a lojas diferentes, pois, h· um modelo de etiqueta por loja.");
+                            throw new Exception("N√£o √© poss√≠vel otimizar etiquetas de pedidos associados a lojas diferentes, pois, h√° um modelo de etiqueta por loja.");
                     }
 
                     #endregion
 
                     bool isPecaReposta = prodPedEsp.PecaReposta;
 
-                    // Busca a descriÁ„o do beneficiamento
+                    // Busca a descri√ß√£o do beneficiamento
                     string descrBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetDescrBenef(prodPedEsp.IdProdPed);
 
                     // Apaga as etiquetas desse pedido
@@ -253,13 +253,13 @@ namespace Glass.Data.DAL
                     // Pega a quantidade a ser impresso deste item
                     int qtdAImprimir = campos[1].StrParaInt();
                     int qtdGerada = 0;
-                    int posItem = 0; // Utilizado para verificar se o item da peÁa j· foi impresso
+                    int posItem = 0; // Utilizado para verificar se o item da pe√ßa j√° foi impresso
                     int prodPedEspQtde = (int)prodPedEsp.Qtde;
 
-                    // Pega a posiÁ„o deste item no pedido
+                    // Pega a posi√ß√£o deste item no pedido
                     int pos = ProdutosPedidoEspelhoDAO.Instance.GetProdPosition(null, prodPedEsp.IdPedido, prodPedEsp.IdProdPed);
 
-                    //Se for produto de composiÁ„o ajusta as quantidades
+                    //Se for produto de composi√ß√£o ajusta as quantidades
                     if (prodPedEsp.IdProdPedParent.GetValueOrDefault(0) > 0)
                     {
                         prodPedEspQtde *= (int)ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(null, prodPedEsp.IdProdPedParent.Value);
@@ -271,21 +271,21 @@ namespace Glass.Data.DAL
                         }
                     }
 
-                    // Verifica se todas as etiquetas deste produto j· foram impressas
+                    // Verifica se todas as etiquetas deste produto j√° foram impressas
                     if (prodPedEsp.QtdImpresso >= prodPedEspQtde && !isPecaReposta)
                         continue;
 
                     List<KeyValuePair<string, string>> temp = new List<KeyValuePair<string, string>>();
 
                     // Gera a qtd de etiquetas requisitadas
-                    // Se n„o for peÁa reposta ou se a qtd a imprimir for maior que 0 (necess·rio para os casos em que uma das etiquetas foi reposta),
-                    // imprime as peÁas n„o repostas
+                    // Se n√£o for pe√ßa reposta ou se a qtd a imprimir for maior que 0 (necess√°rio para os casos em que uma das etiquetas foi reposta),
+                    // imprime as pe√ßas n√£o repostas
                     if (!isPecaReposta || qtdAImprimir > 0)
                     {
                         while (qtdGerada < qtdAImprimir)
                         {
                             if (ProdutosPedidoEspelhoDAO.Instance.PossuiFilhosComposicao(null, prodPedEsp.IdProdPed))
-                                throw new Exception("Produtos principais da composiÁ„o n„o podem ser exportados.");
+                                throw new Exception("Produtos principais da composi√ß√£o n√£o podem ser exportados.");
 
                             if (ignorarExportadas && posItem >= prodPedEspQtde)
                                 break;
@@ -293,12 +293,12 @@ namespace Glass.Data.DAL
                             string numEtiqueta = Glass.Data.RelDAL.EtiquetaDAO.Instance
                                 .GetNumEtiqueta(prodPedEsp.IdPedido, pos, posItem + 1, prodPedEspQtde, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
-                            // Valida o n˙mero da etiqueta
+                            // Valida o n√∫mero da etiqueta
                             ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(null, ref numEtiqueta);
 
                             posItem++;
 
-                            // Verifica se esta etiqueta j· foi impressa
+                            // Verifica se esta etiqueta j√° foi impressa
                             if (ProdutoImpressaoDAO.Instance.EstaImpressa(numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
                                 continue;
 
@@ -374,12 +374,12 @@ namespace Glass.Data.DAL
             foreach (Glass.Data.RelModel.Etiqueta etiqueta in lstEtiqueta)
             {
                 arqOtimiz +=
-                    cont.ToString().PadLeft(7, '0') + " " + // PosiÁ„o da peÁa no arquivo
-                    "0000001 " + // Quantidade dessa peÁa
-                    etiqueta.Largura.PadLeft(7, '0') + " " + // Largura da peÁa
-                    etiqueta.Altura.PadLeft(7, '0') + " " + // Altura da peÁa
-                    etiqueta.CodOtimizacao + " " + // CÛdigo da cor utilizado no Corte Certo
-                    (!String.IsNullOrEmpty(etiqueta.BarCodeData) ? etiqueta.BarCodeData : etiqueta.IdPedido) + "\r\n"; // Label que ir· aparecer na etiqueta
+                    cont.ToString().PadLeft(7, '0') + " " + // Posi√ß√£o da pe√ßa no arquivo
+                    "0000001 " + // Quantidade dessa pe√ßa
+                    etiqueta.Largura.PadLeft(7, '0') + " " + // Largura da pe√ßa
+                    etiqueta.Altura.PadLeft(7, '0') + " " + // Altura da pe√ßa
+                    etiqueta.CodOtimizacao + " " + // C√≥digo da cor utilizado no Corte Certo
+                    (!String.IsNullOrEmpty(etiqueta.BarCodeData) ? etiqueta.BarCodeData : etiqueta.IdPedido) + "\r\n"; // Label que ir√° aparecer na etiqueta
 
                 cont++;
             }
@@ -389,10 +389,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Exporta arquivo de otimizaÁ„o para Opty Way
+        #region Exporta arquivo de otimiza√ß√£o para Opty Way
 
         /// <summary>
-        /// Retorna o desconto da lapidaÁ„o aplic·vel para cada empresa
+        /// Retorna o desconto da lapida√ß√£o aplic√°vel para cada empresa
         /// </summary>
         public float GetAresta(GDASession session, int idProd, uint? idArquivoMesaCorte, List<int> idsBenefConfig, string descrBenef, int idProcesso)
         {
@@ -405,7 +405,7 @@ namespace Glass.Data.DAL
             var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(session, idProd);
             var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, idProd);
 
-            // N„o gera aresta se for .fml b·sico.
+            // N√£o gera aresta se for .fml b√°sico.
             if (idArquivoMesaCorte != null && (idArquivoMesaCorte.GetValueOrDefault() > 0 &&
                 (TipoArquivoMesaCorte)ArquivoMesaCorteDAO.Instance.ObtemTipoArquivo(session, idArquivoMesaCorte.Value) == TipoArquivoMesaCorte.FMLBasico))
             {
@@ -421,8 +421,8 @@ namespace Glass.Data.DAL
                         bool temperado = Glass.Data.DAL.GrupoProdDAO.Instance.IsVidroTemperado(session, idGrupoProd, idSubgrupoProd);
                         bool sier = idSubgrupoProd > 0 ? SubgrupoProdDAO.Instance.GetDescricao(session, idSubgrupoProd.Value).ToLower().Contains("sier") : false;
 
-                        bool lapidacaoReta = descrBenef.ToLower().Contains("lapidaÁ„o reta");
-                        bool lapidacaoPainel = descrBenef.ToLower().Contains("lapidaÁ„o painel");
+                        bool lapidacaoReta = descrBenef.ToLower().Contains("lapida√ß√£o reta");
+                        bool lapidacaoPainel = descrBenef.ToLower().Contains("lapida√ß√£o painel");
 
                         if (sier)
                         {
@@ -521,7 +521,7 @@ namespace Glass.Data.DAL
             var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(session, idProd);
             var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, idProd);
 
-            // N„o gera aresta se for .fml b·sico.
+            // N√£o gera aresta se for .fml b√°sico.
             if (idArquivoMesaCorte != null && (idArquivoMesaCorte.GetValueOrDefault() > 0 &&
                 (TipoArquivoMesaCorte)ArquivoMesaCorteDAO.Instance.ObtemTipoArquivo(session, idArquivoMesaCorte.Value) == TipoArquivoMesaCorte.FMLBasico))
             {
@@ -607,7 +607,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Exporta arquivo txt com dados para inserÁ„o no Opty Way
+        /// Exporta arquivo txt com dados para inser√ß√£o no Opty Way
         /// </summary>
         public string ArquivoOtimizacaoOptyWay(uint idFunc, uint idImpressao, string etiquetas, ref List<Etiqueta> lstEtiqueta,
             ref List<byte[]> lstArqMesa, ref List<string> lstCodArq, ref List<KeyValuePair<string, Exception>> lstErrosArq, bool ignorarExportadas, bool ignorarSag)
@@ -626,7 +626,7 @@ namespace Glass.Data.DAL
                     // Salva uma lista com os produtos usados para montar a etiqueta
                     var dicProd = new Dictionary<uint, Produto>();
 
-                    // Se o idImpress„o tiver sido passado, apenas recupera lista de produtosImpresao
+                    // Se o idImpress√£o tiver sido passado, apenas recupera lista de produtosImpresao
                     if (idImpressao > 0)
                         lstEtiqueta = new List<Etiqueta>(EtiquetaDAO.Instance.GetListPedido(transaction,
                             idFunc, idImpressao.ToString(), 0, 0, null, true, true, null, false, null, null));
@@ -645,15 +645,15 @@ namespace Glass.Data.DAL
                         {
                             string[] campos = item.Split(';');
 
-                            // N„o permite otimizar pedido m„o de obra
+                            // N√£o permite otimizar pedido m√£o de obra
                             if (campos[0].Contains("A"))
-                                throw new Exception("N„o È possÌvel otimizar pedidos de m„o de obra.");
+                                throw new Exception("N√£o √© poss√≠vel otimizar pedidos de m√£o de obra.");
 
                             // Busca produtoPedidoEspelho
                             campos[0] = campos[0].Replace("R", "").Replace("A", "");
                             var prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetForArquivoOtimizacao(transaction, Glass.Conversoes.StrParaUint(campos[0]));
 
-                            #region Verifica se todos pedidos s„o da mesma loja
+                            #region Verifica se todos pedidos s√£o da mesma loja
 
                             if (EtiquetaConfig.RelatorioEtiqueta.ModeloEtiquetaPorLoja)
                             {
@@ -662,7 +662,7 @@ namespace Glass.Data.DAL
                                 if (idLojaPedidoAux == 0)
                                     idLojaPedidoAux = idLojaPedido;
                                 else if (idLojaPedidoAux != idLojaPedido)
-                                    throw new Exception("N„o È possÌvel otimizar etiquetas de pedidos associados a lojas diferentes, pois, h· um modelo de etiqueta por loja.");
+                                    throw new Exception("N√£o √© poss√≠vel otimizar etiquetas de pedidos associados a lojas diferentes, pois, h√° um modelo de etiqueta por loja.");
                             }
 
                             #endregion
@@ -680,19 +680,19 @@ namespace Glass.Data.DAL
                             if (campos.Length >= 3 && !String.IsNullOrEmpty(campos[3]))
                                 isPecaReposta = ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(transaction, campos[3].Split('_')[0], false);
 
-                            // Busca a descriÁ„o do beneficiamento
+                            // Busca a descri√ß√£o do beneficiamento
                             string descrBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetDescrBenef(transaction, prodPedEsp.IdPedido, prodPedEsp.IdProdPed, false);
 
                             // Pega a quantidade a ser impresso deste item
                             int qtdAImprimir = campos[1].StrParaInt();
                             int qtdGerada = 0;
-                            int posItem = 0; // Utilizado para verificar se o item da peÁa j· foi impresso
+                            int posItem = 0; // Utilizado para verificar se o item da pe√ßa j√° foi impresso
                             int prodPedEspQtde = (int)prodPedEsp.Qtde;
 
-                            // Pega a posiÁ„o deste item no pedido
+                            // Pega a posi√ß√£o deste item no pedido
                             int pos = ProdutosPedidoEspelhoDAO.Instance.GetProdPosition(transaction, prodPedEsp.IdPedido, prodPedEsp.IdProdPed);
 
-                            //Se for produto de composiÁ„o ajusta as quantidades
+                            //Se for produto de composi√ß√£o ajusta as quantidades
                             if (prodPedEsp.IdProdPedParent.GetValueOrDefault(0) > 0)
                             {
                                 prodPedEspQtde *= (int)ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(transaction, prodPedEsp.IdProdPedParent.Value);
@@ -704,21 +704,21 @@ namespace Glass.Data.DAL
                                 }
                             }
 
-                            // Verifica se todas as etiquetas deste produto j· foram impressas
+                            // Verifica se todas as etiquetas deste produto j√° foram impressas
                             if (prodPedEsp.QtdImpresso >= prodPedEspQtde && !isPecaReposta)
                                 continue;
 
                             List<KeyValuePair<string, string>> temp = new List<KeyValuePair<string, string>>();
 
                             // Gera a qtd de etiquetas requisitadas
-                            // Se n„o for peÁa reposta ou se a qtd a imprimir for maior que 0 (necess·rio para os casos em que uma das etiquetas foi reposta),
-                            // imprime as peÁas n„o repostas
+                            // Se n√£o for pe√ßa reposta ou se a qtd a imprimir for maior que 0 (necess√°rio para os casos em que uma das etiquetas foi reposta),
+                            // imprime as pe√ßas n√£o repostas
                             if (!isPecaReposta || qtdAImprimir > 0)
                             {
                                 while (qtdGerada < qtdAImprimir)
                                 {
                                     if (ProdutosPedidoEspelhoDAO.Instance.PossuiFilhosComposicao(transaction, prodPedEsp.IdProdPed))
-                                        throw new Exception("Produtos principais da composiÁ„o n„o podem ser exportados.");
+                                        throw new Exception("Produtos principais da composi√ß√£o n√£o podem ser exportados.");
 
                                     if (ignorarExportadas && posItem >= prodPedEspQtde)
                                         break;
@@ -726,12 +726,12 @@ namespace Glass.Data.DAL
                                     string numEtiqueta = Glass.Data.RelDAL.EtiquetaDAO.Instance
                                         .GetNumEtiqueta(prodPedEsp.IdPedido, pos, posItem + 1, prodPedEspQtde, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
-                                    // Valida o n˙mero da etiqueta
+                                    // Valida o n√∫mero da etiqueta
                                     ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(transaction, ref numEtiqueta);
 
                                     posItem++;
 
-                                    // Verifica se esta etiqueta j· foi impressa
+                                    // Verifica se esta etiqueta j√° foi impressa
                                     if (ProdutoImpressaoDAO.Instance.EstaImpressa(transaction, numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido) ||
                                         ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(transaction, numEtiqueta, false))
                                         continue;
@@ -741,7 +741,7 @@ namespace Glass.Data.DAL
                                         continue;
 
                                     if (PedidoDAO.Instance.ObtemSituacao(transaction, prodPedEsp.IdPedido) == Pedido.SituacaoPedido.Cancelado)
-                                        throw new Exception("O pedido " + prodPedEsp.IdPedido + " est· cancelado, portanto n„o pode ser exportado para o optyway.");
+                                        throw new Exception("O pedido " + prodPedEsp.IdPedido + " est√° cancelado, portanto n√£o pode ser exportado para o optyway.");
 
                                     Glass.Data.RelModel.Etiqueta etiqueta = new Glass.Data.RelModel.Etiqueta
                                     {
@@ -794,7 +794,7 @@ namespace Glass.Data.DAL
 
                                     qtdGerada++;
 
-                                    // Pıe peÁa em produÁ„o
+                                    // P√µe pe√ßa em produ√ß√£o
                                     if (!ProdutoPedidoProducaoDAO.Instance.EstaEmProducao(transaction, numEtiqueta))
                                         ProdutoPedidoProducaoDAO.Instance.InserePeca(transaction, idImpressao, numEtiqueta, string.Empty, idFunc, true);
                                 }
@@ -810,12 +810,12 @@ namespace Glass.Data.DAL
                                         prodImp = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(transaction, etiq,
                                             ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
-                                        // Chamado 11444. Corrigimos o problema ao imprimir etiqueta reposta e cancelada, porÈm,
-                                        // n„o executamos sql para corrigir os problemas que ocorreram, por isso, caso ocorra
-                                        // com alguma outra etiqueta, ent„o inserimos um registro na tabela de erro para facilitar a resoluÁ„o. 
+                                        // Chamado 11444. Corrigimos o problema ao imprimir etiqueta reposta e cancelada, por√©m,
+                                        // n√£o executamos sql para corrigir os problemas que ocorreram, por isso, caso ocorra
+                                        // com alguma outra etiqueta, ent√£o inserimos um registro na tabela de erro para facilitar a resolu√ß√£o. 
                                         if (prodImp == null)
                                         {
-                                            var msgErro = "Erro ao imprimir a etiqueta " + etiq + ", n„o foi possÌvel recuperar o produto de impress„o";
+                                            var msgErro = "Erro ao imprimir a etiqueta " + etiq + ", n√£o foi poss√≠vel recuperar o produto de impress√£o";
                                             ErroDAO.Instance.InserirFromException("ImprimirEtiquetas", new Exception(msgErro));
 
                                             throw new Exception(msgErro);
@@ -824,8 +824,8 @@ namespace Glass.Data.DAL
                                         var etiquetaRep = Glass.Data.RelDAL.EtiquetaDAO.Instance.MontaEtiqueta(transaction, idFunc, prodImp,
                                             prodPedEsp.DescrBeneficiamentos, null, ref temp, ref dicPedidos, ref dicProd, true);
 
-                                        // Chamado 47948 - Necess·rio pois no MontaEtiqueta essas informaÁıes s„o utilizadas de forma diferente.
-                                        // As etiquetas de peÁas repostas estavam saindo sem Rota e Data no arquivo de otimizaÁ„o.
+                                        // Chamado 47948 - Necess√°rio pois no MontaEtiqueta essas informa√ß√µes s√£o utilizadas de forma diferente.
+                                        // As etiquetas de pe√ßas repostas estavam saindo sem Rota e Data no arquivo de otimiza√ß√£o.
                                         if (PCPConfig.ExportarInfoEtiquetaOptyWay)
                                         {
                                             etiquetaRep.DataProducao = prodPedEsp.DataFabrica;
@@ -840,22 +840,22 @@ namespace Glass.Data.DAL
                                     prodImp = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(transaction, prodPedEsp.NumEtiqueta,
                                         ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
-                                    // Chamado 11444. Corrigimos o problema ao imprimir etiqueta reposta e cancelada, porÈm,
-                                    // n„o executamos sql para corrigir os problemas que ocorreram, por isso, caso ocorra
-                                    // com alguma outra etiqueta, ent„o inserimos um registro na tabela de erro para facilitar a resoluÁ„o.
+                                    // Chamado 11444. Corrigimos o problema ao imprimir etiqueta reposta e cancelada, por√©m,
+                                    // n√£o executamos sql para corrigir os problemas que ocorreram, por isso, caso ocorra
+                                    // com alguma outra etiqueta, ent√£o inserimos um registro na tabela de erro para facilitar a resolu√ß√£o.
                                     if (prodImp == null)
                                     {
                                         ErroDAO.Instance.InserirFromException("ImprimirEtiquetas",
                                             new Exception("Erro ao imprimir a etiqueta " + prodPedEsp.NumEtiqueta +
-                                                ", n„o foi possÌvel recuperar o produto de impress„o"));
+                                                ", n√£o foi poss√≠vel recuperar o produto de impress√£o"));
                                         continue;
                                     }
 
                                     var etiquetaRep = Glass.Data.RelDAL.EtiquetaDAO.Instance.MontaEtiqueta(transaction, idFunc, prodImp,
                                         prodPedEsp.DescrBeneficiamentos, null, ref temp, ref dicPedidos, ref dicProd, true);
 
-                                    // Chamado 47948 - Necess·rio pois no MontaEtiqueta essas informaÁıes s„o utilizadas de forma diferente.
-                                    // As etiquetas de peÁas repostas estavam saindo sem Rota e Data no arquivo de otimizaÁ„o.
+                                    // Chamado 47948 - Necess√°rio pois no MontaEtiqueta essas informa√ß√µes s√£o utilizadas de forma diferente.
+                                    // As etiquetas de pe√ßas repostas estavam saindo sem Rota e Data no arquivo de otimiza√ß√£o.
                                     if (PCPConfig.ExportarInfoEtiquetaOptyWay)
                                     {
                                         etiquetaRep.DataProducao = prodPedEsp.DataFabrica;
@@ -876,29 +876,29 @@ namespace Glass.Data.DAL
                     var versao = PCPConfig.VersaoArquivoOptyway;
 
                     if (versao != 4 && versao != 7)
-                        throw new Exception(string.Format("Vers„o configurada para o arquivo inexistente ({0}), a vers„o deve ser 4 ou 7.", versao));
+                        throw new Exception(string.Format("Vers√£o configurada para o arquivo inexistente ({0}), a vers√£o deve ser 4 ou 7.", versao));
 
-                    // ComeÁa a montagem do arquivo de otimizaÁ„o
-                    // 1™ linha (58 chars)
+                    // Come√ßa a montagem do arquivo de otimiza√ß√£o
+                    // 1¬™ linha (58 chars)
                     string arqOtimiz =
-                        "Arquivo gerado via WebGlass".PadRight(32) + // DescriÁ„o do serviÁo
-                        DateTime.Now.ToString("ddMMyyyy") + // Data do serviÁo
+                        "Arquivo gerado via WebGlass".PadRight(32) + // Descri√ß√£o do servi√ßo
+                        DateTime.Now.ToString("ddMMyyyy") + // Data do servi√ßo
                         "".PadLeft(8) + // Flags utilizados pelo opty way (ficar em branco)
-                        lstEtiqueta.Count.ToString().PadLeft(8) + // Qtde de peÁas
-                        "V" + versao + "\r\n"; // Identificador da vers„o do Opty Way
+                        lstEtiqueta.Count.ToString().PadLeft(8) + // Qtde de pe√ßas
+                        "V" + versao + "\r\n"; // Identificador da vers√£o do Opty Way
 
-                    // 2™ linha (8 chars)
-                    arqOtimiz += lstEtiqueta.Count.ToString().PadLeft(8) + "\r\n"; // Qtd de linhas que ser„o inseridas no arquivo
+                    // 2¬™ linha (8 chars)
+                    arqOtimiz += lstEtiqueta.Count.ToString().PadLeft(8) + "\r\n"; // Qtd de linhas que ser√£o inseridas no arquivo
 
                     int cont = 1;
 
                     bool gerarArqMesa = PCPConfig.Etiqueta.GerarArquivoMesaCorte;
 
-                    // PrÛximas linhas, peÁas que ser„o otimizadas
+                    // Pr√≥ximas linhas, pe√ßas que ser√£o otimizadas
                     foreach (Glass.Data.RelModel.Etiqueta etiqueta in lstEtiqueta)
                     {
                         if (etiqueta.CodOtimizacao == null)
-                            throw new Exception("Informe o cÛdigo de otimizaÁ„o da peÁa no cadastro de produtos.");
+                            throw new Exception("Informe o c√≥digo de otimiza√ß√£o da pe√ßa no cadastro de produtos.");
 
                         var idProd = etiqueta.IdProdPedEsp > 0 ? (int)ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(transaction, etiqueta.IdProdPedEsp) : 0;
                         var produtoProducao = ProdutoDAO.Instance.IsProdutoProducao(transaction, (int)idProd);
@@ -936,7 +936,7 @@ namespace Glass.Data.DAL
 
                         string prioridade = "0";
 
-                        // Se for pedido de fast delivery ou se for peÁa de reposiÁ„o, altera a preferÍncia para 999 no optyway
+                        // Se for pedido de fast delivery ou se for pe√ßa de reposi√ß√£o, altera a prefer√™ncia para 999 no optyway
                         if (PCPConfig.PrioridadeMaximaArquivoOptywaySeFastDeliveryOuPecaReposta &&
                             (PedidoDAO.Instance.IsFastDelivery(transaction, etiqueta.IdPedido.StrParaUint()) || isPecaReposta.Value))
                             prioridade = "999";
@@ -944,21 +944,21 @@ namespace Glass.Data.DAL
                         if (PCPConfig.GerarShapeIdVazioSePecaRepostaEEtiquetaSemForma && etiqueta.Forma == String.Empty && isPecaReposta.Value)
                             shapeId = String.Empty;
 
-                        // Chamado 15432: Se a peÁa tiver XXXXXX ou 999999, n„o deve zerar o shapeId, a menos que a empresa gere SAG de peÁa reposta
+                        // Chamado 15432: Se a pe√ßa tiver XXXXXX ou 999999, n√£o deve zerar o shapeId, a menos que a empresa gere SAG de pe√ßa reposta
                         if (isPecaReposta.Value && shapeId != null && !shapeId.Contains("XXXXXX") && !shapeId.Contains("999999") && !PCPConfig.GerarMarcacaoPecaReposta && !produtoProducao)
                             shapeId = string.Empty;
 
-                        // Chamado 17954: Se tiver que gerar marcaÁ„o de peÁa reposta
+                        // Chamado 17954: Se tiver que gerar marca√ß√£o de pe√ßa reposta
                         if (PCPConfig.GerarMarcacaoPecaReposta && String.IsNullOrEmpty(shapeId))
                             shapeId = ProdutoImpressaoDAO.Instance.ObtemForma(transaction, etiqueta.NumEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
                         if (String.IsNullOrEmpty(etiqueta.CodOtimizacao))
-                            throw new Exception("O produto " + etiqueta.DescrProd + " n„o possui cÛdigo de otimizaÁ„o, informe-o no cadastro de produto.");
+                            throw new Exception("O produto " + etiqueta.DescrProd + " n√£o possui c√≥digo de otimiza√ß√£o, informe-o no cadastro de produto.");
 
                         /* Chamado 18056. */
                         shapeId = String.IsNullOrEmpty(shapeId) ? String.Empty : shapeId;
 
-                        // AlteraÁ„o realizada para Divine
+                        // Altera√ß√£o realizada para Divine
                         string rotacao = etiqueta.CodOtimizacao != "ANT08" ? "Y" : "N";
 
                         if (PCPConfig.EnviarOptywayRotacaoNSeCanelado &&
@@ -970,7 +970,7 @@ namespace Glass.Data.DAL
                         string notasAdicionais3 = String.Empty;
                         string notasAdicionais4 = String.Empty;
 
-                        // Salva o processo e a observaÁ„o da peÁa nos campos NotaAdicional1 e NotaAdicional1 do arquivo de exportaÁ„o
+                        // Salva o processo e a observa√ß√£o da pe√ßa nos campos NotaAdicional1 e NotaAdicional1 do arquivo de exporta√ß√£o
                         if (PCPConfig.ExportarProcessoObsRotaOptyway)
                         {
                             notasAdicionais1 = etiqueta.CodProc ?? String.Empty;
@@ -1008,8 +1008,8 @@ namespace Glass.Data.DAL
 
                         var numberOfCuttingPieces = 1;
 
-                        // Recupera a quantidade da matÈria prima do produto caso o subgrupo associado seja do tipo Modulado.
-                        // Salva a quantidade na vari·vel numberOfCuttingPieces que ser· utilizada no arquivo de otimizaÁ„o.
+                        // Recupera a quantidade da mat√©ria prima do produto caso o subgrupo associado seja do tipo Modulado.
+                        // Salva a quantidade na vari√°vel numberOfCuttingPieces que ser√° utilizada no arquivo de otimiza√ß√£o.
                         if (idProd > 0)
                         {
                             var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(transaction, idProd);
@@ -1033,27 +1033,27 @@ namespace Glass.Data.DAL
                             var exportarInfoEtiquetaOptyWay = Glass.Configuracoes.PCPConfig.ExportarInfoEtiquetaOptyWay;
 
                             arqOtimiz +=
-                                // Campos obrigatÛrios
-                                etiqueta.CodOtimizacao.PadRight(16) + // IdentificaÁ„o da peÁa
-                                cont.ToString().PadLeft(5) + // PosiÁ„o na peÁa 
-                                Formatacoes.RetiraCaracteresEspeciais(nomeCliente.Replace("&", "")).PadRight(12) + // IdentifiÁ„o do cliente
+                                // Campos obrigat√≥rios
+                                etiqueta.CodOtimizacao.PadRight(16) + // Identifica√ß√£o da pe√ßa
+                                cont.ToString().PadLeft(5) + // Posi√ß√£o na pe√ßa 
+                                Formatacoes.RetiraCaracteresEspeciais(nomeCliente.Replace("&", "")).PadRight(12) + // Identifi√ß√£o do cliente
                                 etiqueta.IdPedido.PadRight(12) + // IdPedido
                                 shapeId.PadRight(8) + // Shape Id, forma cadastrada no Opty Way
-                                aresta.ToString("N2").Replace(",", ".").PadRight(8) + // Tamanho da lapidaÁ„o
-                                prioridade.PadLeft(3) + // Prioridade da peÁa
-                                rotacao + // Permitir que a peÁa seja rotacionada (Y/N)
+                                aresta.ToString("N2").Replace(",", ".").PadRight(8) + // Tamanho da lapida√ß√£o
+                                prioridade.PadLeft(3) + // Prioridade da pe√ßa
+                                rotacao + // Permitir que a pe√ßa seja rotacionada (Y/N)
                                 numberOfCuttingPieces.ToString().PadLeft(8) + // Number of Cutting Pieces
-                                "(null)".PadRight(8) + // Tool Thickness (N„o usa)
-                                (etiqueta.Largura + ".0").PadLeft(8) + // Largura da peÁa
-                                (etiqueta.Altura + ".0").PadLeft(8) + // Altura da peÁa
-                                "".PadRight(8) + // Spacer (N„o usa)
+                                "(null)".PadRight(8) + // Tool Thickness (N√£o usa)
+                                (etiqueta.Largura + ".0").PadLeft(8) + // Largura da pe√ßa
+                                (etiqueta.Altura + ".0").PadLeft(8) + // Altura da pe√ßa
+                                "".PadRight(8) + // Spacer (N√£o usa)
                                 etiqueta.BarCodeData.PadRight(32) + // Etiqueta
                                 "0".PadLeft(5) + // Number of labels
                                 "0".PadLeft(5) + // Exceded pieces
                                 "0".PadLeft(5) + // Preference value
 
                                 // Campos opcionais
-                                "".PadRight(6) + // Rack (N„o usa)
+                                "".PadRight(6) + // Rack (N√£o usa)
                                 (etiqueta.DataEntrega != null ? etiqueta.DataEntrega.Value.ToString("ddMMyyyy") : "00000000") + // Data de entrega
                                 "000" + // Fixed Text Code (for bending machine)
                                 "0.0".PadLeft(8); // Spacer Distance From Glass Edge
@@ -1099,7 +1099,7 @@ namespace Glass.Data.DAL
                             else
                             {
                                 arqOtimiz +=
-                                    "".PadRight(32) + // Campo opcional (N˙mero da etiqueta)
+                                    "".PadRight(32) + // Campo opcional (N√∫mero da etiqueta)
                                     "".PadLeft(288); // 2-10 Campos adicionais, 32 chars cada
                             }
 
@@ -1133,7 +1133,7 @@ namespace Glass.Data.DAL
                                 pedCliExterno = Glass.Formatacoes.RetiraCaracteresEspeciais(pedCliExterno);
                                 arqOtimiz += (pedCliExterno).PadLeft(32);
 
-                                //14 - CÛd de Barras (634 .. 665)
+                                //14 - C√≥d de Barras (634 .. 665)
                                 arqOtimiz += etiqueta.BarCode.PadLeft(32);
 
                                 //15 - Apl. Proc. (666 .. 697)
@@ -1167,7 +1167,7 @@ namespace Glass.Data.DAL
                             }
 
                             arqOtimiz +=
-                               "".PadLeft(48) + // DescriÁ„o do material
+                               "".PadLeft(48) + // Descri√ß√£o do material
                                (etiqueta.DataPedido != null ? etiqueta.DataPedido.Value.ToString("ddMMyyyy") : "00000000") + // Data do pedido
                                cont.ToString().PadLeft(8) + "(null)";/* + // Order line number
                             /*"".PadLeft(40) + // Customer trade name
@@ -1180,32 +1180,32 @@ namespace Glass.Data.DAL
                         else if (versao == 7)
                         {
                             arqOtimiz +=
-                                // Campos obrigatÛrios
-                                etiqueta.CodOtimizacao.PadRight(64) + // IdentificaÁ„o da peÁa
-                                cont.ToString().PadLeft(5) + // PosiÁ„o na peÁa 
-                                Formatacoes.RetiraCaracteresEspeciais(nomeCliente.Replace("&", "")).PadRight(12) + // IdentifiÁ„o do cliente
+                                // Campos obrigat√≥rios
+                                etiqueta.CodOtimizacao.PadRight(64) + // Identifica√ß√£o da pe√ßa
+                                cont.ToString().PadLeft(5) + // Posi√ß√£o na pe√ßa 
+                                Formatacoes.RetiraCaracteresEspeciais(nomeCliente.Replace("&", "")).PadRight(12) + // Identifi√ß√£o do cliente
                                 etiqueta.IdPedido.PadRight(12) + // IdPedido
                                 shapeId.PadRight(8) + // Shape Id, forma cadastrada no Opty Way
-                                "SAG".PadRight(4) + // Extens„o do arquivo shape
-                                aresta.ToString("N2").Replace(",", ".").PadRight(8) + // Tamanho da lapidaÁ„o
-                                prioridade.PadLeft(3) + // Prioridade da peÁa
-                                rotacao + // Permitir que a peÁa seja rotacionada (Y/N)
+                                "SAG".PadRight(4) + // Extens√£o do arquivo shape
+                                aresta.ToString("N2").Replace(",", ".").PadRight(8) + // Tamanho da lapida√ß√£o
+                                prioridade.PadLeft(3) + // Prioridade da pe√ßa
+                                rotacao + // Permitir que a pe√ßa seja rotacionada (Y/N)
                                 numberOfCuttingPieces.ToString().PadLeft(8) + // Number of Cutting Pieces
-                                "(null)".PadRight(8) + // Tool Thickness (N„o usa)
-                                (etiqueta.Largura + ".0").PadLeft(8) + // Largura da peÁa
-                                (etiqueta.Altura + ".0").PadLeft(8) + // Altura da peÁa
-                                "".PadRight(8) + // Spacer (N„o usa)
+                                "(null)".PadRight(8) + // Tool Thickness (N√£o usa)
+                                (etiqueta.Largura + ".0").PadLeft(8) + // Largura da pe√ßa
+                                (etiqueta.Altura + ".0").PadLeft(8) + // Altura da pe√ßa
+                                "".PadRight(8) + // Spacer (N√£o usa)
                                 (etiqueta.IdPedido + "-" + etiqueta.NumItem.Replace(" ", "")).PadRight(32) + // Etiqueta
                                 "0".PadLeft(5) + // Number of labels
                                 "0".PadLeft(5) + // Exceded pieces
                                 "0".PadLeft(5) + // Preference value
 
                                 // Campos opcionais
-                                "".PadRight(6) + // Rack (N„o usa)
+                                "".PadRight(6) + // Rack (N√£o usa)
                                 (etiqueta.DataEntrega != null ? etiqueta.DataEntrega.Value.ToString("ddMMyyyy") : "00000000") + // Data de entrega
                                 "000" + // Fixed Text Code (for bending machine)
                                 "0.0".PadLeft(8) + // Spacer Distance From Glass Edge
-                                "".PadRight(32) + // Campo opcional (N˙mero da etiqueta)
+                                "".PadRight(32) + // Campo opcional (N√∫mero da etiqueta)
                                 "".PadLeft(288) + // 2-10 Campos adicionais, 32 chars cada
                                 "".PadLeft(8) + // Second Spacer
                                 "0.0".PadLeft(8) + // Bottom/X1 Grinding Value
@@ -1215,7 +1215,7 @@ namespace Glass.Data.DAL
                                 notasAdicionais1.PadLeft(32) + // Campo adicional 1
                                 notasAdicionais2.PadLeft(32) + // Campo adicional 2
                                 "".PadLeft(256) + // 12-20 Campos adicionais, 32 chars cada
-                                "".PadLeft(48) + // DescriÁ„o do material
+                                "".PadLeft(48) + // Descri√ß√£o do material
                                 (etiqueta.DataPedido != null ? etiqueta.DataPedido.Value.ToString("ddMMyyyy") : "00000000") + // Data do pedido
                                 cont.ToString().PadLeft(8) + "(null)";/* + // Order line number
                             /*"".PadLeft(40) + // Customer trade name
@@ -1226,7 +1226,7 @@ namespace Glass.Data.DAL
                             "".PadLeft(8); // Customer address (zip/post code)*/
                         }
 
-                        // Quebra linha para ir para o prÛximo produto
+                        // Quebra linha para ir para o pr√≥ximo produto
                         arqOtimiz += "\r\n";
 
                         if (!String.IsNullOrEmpty(shapeId))
@@ -1275,7 +1275,7 @@ namespace Glass.Data.DAL
         public void MontaArquivoMesaOptyway(GDASession session, List<Etiqueta> lstEtiqueta, List<byte[]> lstArqMesa, List<string> lstCodArq,
              List<KeyValuePair<string, Exception>> lstErrosArq, uint idSetor, bool arquivoOtimizacao, int tipoArquivo, bool forSGlass, bool forIntermac, bool converterCaractereEspecial)
         {
-            // Quantidade m·xima de dÌgitos que os arquivos de mesa podem ter
+            // Quantidade m√°xima de d√≠gitos que os arquivos de mesa podem ter
             int qtdDigitosArqMesa = PCPConfig.QtdDigitosNomeArquivoMesa;
 
             bool criarArquivoSAGComNumDecimal = PCPConfig.CriarArquivoSAGComNumDecimal;
@@ -1285,10 +1285,10 @@ namespace Glass.Data.DAL
                 List<Etiqueta> lstEtiqMesaCorte = new List<Etiqueta>();
                 lstEtiqMesaCorte.AddRange(lstEtiqueta);
 
-                // Ordena a lista de etiquetas pelo pedido, para contar as peÁas de cada pedido
+                // Ordena a lista de etiquetas pelo pedido, para contar as pe√ßas de cada pedido
                 lstEtiqMesaCorte = lstEtiqMesaCorte.OrderBy(f => f.IdPedido).ToList();
 
-                // Monta o arquivo da mesa de corte e o nome do arquivo fÌsico dos mesmos
+                // Monta o arquivo da mesa de corte e o nome do arquivo f√≠sico dos mesmos
                 var tipoArquivoOriginal = tipoArquivo;
 
                 foreach (Etiqueta etiq in lstEtiqMesaCorte)
@@ -1316,20 +1316,20 @@ namespace Glass.Data.DAL
                         arqMesa = ms.ToArray();
                     }
 
-                    // Preenche o idArquivoMesaCorte aqui para que ao chamar o mÈtodo de buscar a aresta, passe o idArquivoMesaCorte correto
+                    // Preenche o idArquivoMesaCorte aqui para que ao chamar o m√©todo de buscar a aresta, passe o idArquivoMesaCorte correto
                     etiq.IdArquivoMesaCorte = idArquivoMesaCorte;
 
                     var idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, etiq.IdProdPedEsp);
                     var produtoProducao = ProdutoDAO.Instance.IsProdutoProducao(session, (int)idProd);
 
                     /* Chamado 16479.
-                     * PeÁas repostas n„o podem gerar arquivo de marcaÁ„o, devem gerar o arquivo .ASC com forma inexistente. */
+                     * Pe√ßas repostas n√£o podem gerar arquivo de marca√ß√£o, devem gerar o arquivo .ASC com forma inexistente. */
                     if (arqMesa != null && arqMesa.Length > 0 && idArquivoMesaCorte != null && (!pecaEstaReposta || PCPConfig.GerarMarcacaoPecaReposta || produtoProducao))
                     {
                         var forma = string.Empty;
                         var nomeArquivo = ObterNomeArquivo(session, etiq, (TipoArquivoMesaCorte)tipoArquivo, null, null, forIntermac, out forma, converterCaractereEspecial);
 
-                        // Verifica se È um arquivo .zip
+                        // Verifica se √© um arquivo .zip
                         if (Utils.VerificarArquivoZip(arqMesa) && !StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(nomeArquivo), ".zip"))
                             nomeArquivo = System.IO.Path.GetFileNameWithoutExtension(nomeArquivo) + ".zip";
 
@@ -1338,7 +1338,7 @@ namespace Glass.Data.DAL
 
                         etiq.Forma = forma;
                     }
-                    // Se a peÁa n„o possuir forma, n„o for produto de estoque e o processo da mesma estiver marcado 
+                    // Se a pe√ßa n√£o possuir forma, n√£o for produto de estoque e o processo da mesma estiver marcado 
                     // para gerar uma forma inexistente, gera a mesma
                     else
                     {
@@ -1389,7 +1389,7 @@ namespace Glass.Data.DAL
                         {
                             etiq.Forma = PCPConfig.PreenchimentoFormaNaoExistente;
 
-                            // Verifica se o produto possui forma cadastrada e a utiliza ao invÈs de colocar "XXXXXXXX"
+                            // Verifica se o produto possui forma cadastrada e a utiliza ao inv√©s de colocar "XXXXXXXX"
                             if (Glass.Configuracoes.PCPConfig.UsarFormaProdutoSeForFormaInexistente)
                             {
                                 int? idProdBaixa = 0;
@@ -1408,7 +1408,7 @@ namespace Glass.Data.DAL
                             {
                                 var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(session, idPedido);
 
-                                if (tipoVenda == (int)Pedido.TipoVendaPedido.ReposiÁ„o)
+                                if (tipoVenda == (int)Pedido.TipoVendaPedido.Reposi√ß√£o)
                                     etiq.Forma = "REPOSICAO";
                                 else if (tipoVenda == (int)Pedido.TipoVendaPedido.Garantia)
                                     etiq.Forma = "GARANTIA";
@@ -1424,16 +1424,16 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o nome do arquivo de marcaÁ„o, com base no tipo de arquivo de marcaÁ„o.
+        /// Recupera o nome do arquivo de marca√ß√£o, com base no tipo de arquivo de marca√ß√£o.
         /// </summary>
         public string ObterNomeArquivo(GDASession session, Etiqueta etiqueta, TipoArquivoMesaCorte tipoArquivo, int? idProdPed, string numeroEtiqueta, bool arquivoIntermac, out string forma,
             bool converterCaractereEspecial)
         {
             var retorno = string.Empty;
-            // Quantidade m·ximama de dÌgitos que os arquivos de mesa podem ter
+            // Quantidade m√°ximama de d√≠gitos que os arquivos de mesa podem ter
             var qtdDigitosArqMesa = PCPConfig.QtdDigitosNomeArquivoMesa;
             var criarArquivoSAGComNumDecimal = PCPConfig.CriarArquivoSAGComNumDecimal;
-            // Cria um campo forma com o numero do pedido + cÛdigo hexa
+            // Cria um campo forma com o numero do pedido + c√≥digo hexa
             var contador = ContadorArquivoSagDAO.Instance.GetNext();
 
             retorno = forma = (!criarArquivoSAGComNumDecimal ? string.Format("{0:X2}", contador) : contador.ToString()).PadLeft(qtdDigitosArqMesa, '0');
@@ -1442,11 +1442,11 @@ namespace Glass.Data.DAL
             if (tipoArquivo != TipoArquivoMesaCorte.SAG && tipoArquivo > 0)
             {
                 if (PCPConfig.NomeArquivoMesaComHifenEOCraseado && arquivoIntermac)
-                    retorno = numeroEtiqueta.Replace("-", "'").Replace('/', converterCaractereEspecial ? Convert.ToChar(149) : 'Ú');
+                    retorno = numeroEtiqueta.Replace("-", "'").Replace('/', converterCaractereEspecial ? Convert.ToChar(149) : '√≤');
                 else if (PCPConfig.NomeArquivoMesaBarraPorPontoVirgula)
                     retorno = numeroEtiqueta.Replace("/", ";");
                 else if (PCPConfig.NomeArquivoMesaBarraPorCeCedilha)
-                    retorno = numeroEtiqueta.Replace("/", "Á");
+                    retorno = numeroEtiqueta.Replace("/", "√ß");
                 else if (PCPConfig.NomeArquivoMesaRecriado)
                 {
                     if (etiqueta == null || etiqueta.Altura == null || etiqueta.Largura == null || etiqueta.Espessura == 0)
@@ -1491,12 +1491,12 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Pıe peÁas do pedido passado na produÁ„o, este mÈtodo deve ser chamado somente apÛs finalizar a conferÍncia do pedido,
-        /// devido ‡s validaÁıes removidas.
+        /// P√µe pe√ßas do pedido passado na produ√ß√£o, este m√©todo deve ser chamado somente ap√≥s finalizar a confer√™ncia do pedido,
+        /// devido √†s valida√ß√µes removidas.
         /// </summary>
         public void GerarEtiquetasProducao(GDASession sessao, uint idPedido, bool exportandoEtiqueta)
         {
-            //// N„o gera etiquetas de pedido m„o de obra
+            //// N√£o gera etiquetas de pedido m√£o de obra
             //if (PedidoDAO.Instance.IsMaoDeObra(idPedido))
             //    return;
 
@@ -1505,12 +1505,12 @@ namespace Glass.Data.DAL
 
             var composicoes = new List<Composicao>();
 
-            //Sequencial de quantidade de peÁas que uma composiÁ„o contem
+            //Sequencial de quantidade de pe√ßas que uma composi√ß√£o contem
             var dicTotalPecasPai = new Dictionary<string, int>();
 
             if (!PedidoDAO.Instance.IsMaoDeObra(sessao, idPedido))
             {
-                // Percorre todas as peÁas do pedido para gerar uma etiqueta de cada uma e inserir na produÁ„o
+                // Percorre todas as pe√ßas do pedido para gerar uma etiqueta de cada uma e inserir na produ√ß√£o
                 foreach (uint id in ProdutosPedidoEspelhoDAO.Instance.ObterIdsParaImpressaoFinalizacaoPCP(sessao, (int)idPedido))
                 {
                     // Busca produtoPedidoEspelho
@@ -1526,12 +1526,12 @@ namespace Glass.Data.DAL
                     // Pega a quantidade a ser impresso deste item
                     int qtdAImprimir = (int)prodPedEsp.Qtde * prodPedEsp.QtdeAmbiente;
                     int qtdGerada = 0;
-                    int posItem = 0; // Utilizado para verificar se o item da peÁa j· foi impresso
+                    int posItem = 0; // Utilizado para verificar se o item da pe√ßa j√° foi impresso
 
-                    // Pega a posiÁ„o deste item no pedido
+                    // Pega a posi√ß√£o deste item no pedido
                     int pos = ProdutosPedidoEspelhoDAO.Instance.GetProdPosition(sessao, prodPedEsp.IdPedido, prodPedEsp.IdProdPed);
 
-                    //Se for produto de composiÁ„o ajusta as quantidades
+                    //Se for produto de composi√ß√£o ajusta as quantidades
                     if (prodPedEsp.IdProdPedParent.GetValueOrDefault(0) > 0)
                     {
                         qtdAImprimir *= (int)ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(sessao, prodPedEsp.IdProdPedParent.Value);
@@ -1541,19 +1541,19 @@ namespace Glass.Data.DAL
                             qtdAImprimir *= (int)ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(sessao, idProdPedParentPai.Value);
                     }
 
-                    // Cria o cÛdigo da etiqueta e insere a peÁa na produÁ„o
+                    // Cria o c√≥digo da etiqueta e insere a pe√ßa na produ√ß√£o
                     while (qtdGerada < qtdAImprimir)
                     {
                         string numEtiqueta = Glass.Data.RelDAL.EtiquetaDAO.Instance.GetNumEtiqueta(idPedido, pos, posItem + 1, qtdAImprimir, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
-                        // Valida o n˙mero da etiqueta
+                        // Valida o n√∫mero da etiqueta
                         ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(sessao, ref numEtiqueta);
 
                         posItem++;
                         qtdGerada++;
 
                         /* Chamado 16017.
-                         * Caso a etiqueta tenha sido impressa passa para a prÛxima etiqueta. */
+                         * Caso a etiqueta tenha sido impressa passa para a pr√≥xima etiqueta. */
                         if (lstEtiquetasInseridas.Contains(numEtiqueta))
                             continue;
 
@@ -1562,7 +1562,7 @@ namespace Glass.Data.DAL
 
                         if (ProdutosPedidoDAO.Instance.TemProdutoLamComposicao(idPedido))
                         {
-                            //Busca possiveis filhos da peÁa que esta sendo gerada
+                            //Busca possiveis filhos da pe√ßa que esta sendo gerada
                             var filhos = ProdutosPedidoEspelhoDAO.Instance.ObterFilhosComposicao(sessao, prodPedEsp.IdProdPed);
 
                             if (filhos != null && filhos.Count > 0)
@@ -1573,10 +1573,10 @@ namespace Glass.Data.DAL
 
                             if (prodPedEsp.IdProdPedParent.GetValueOrDefault(0) > 0)
                             {
-                                //Busca a peÁa pai que ainda n„o foi utilizada.
+                                //Busca a pe√ßa pai que ainda n√£o foi utilizada.
                                 var comp = composicoes.Where(f => f.IdProdPedPai == prodPedEsp.IdProdPedParent.Value && f.Filhos[prodPedEsp.IdProdPed].Key > f.Filhos[prodPedEsp.IdProdPed].Value).FirstOrDefault();
 
-                                //Informa que a peÁa pai foi utilizada.
+                                //Informa que a pe√ßa pai foi utilizada.
                                 comp.Filhos[prodPedEsp.IdProdPed] = new KeyValuePair<int, int>(comp.Filhos[prodPedEsp.IdProdPed].Key, comp.Filhos[prodPedEsp.IdProdPed].Value + 1);
 
                                 numEtqVinculada = comp.NumEtiquetaPai;
@@ -1584,61 +1584,61 @@ namespace Glass.Data.DAL
                             }
                         }
 
-                        // Pıe peÁa em produÁ„o
+                        // P√µe pe√ßa em produ√ß√£o
                         ProdutoPedidoProducaoDAO.Instance.InserePeca(sessao, null, numEtiqueta, string.Empty, UserInfo.GetUserInfo.CodUser, true, null, prodPedEsp.IdProdPed, numEtqVinculada, posEtiquetaParent);
 
                         /* Chamado 16017.
-                         * Salva o n˙mero da etiqueta impressa para evitar que sejam inseridos produtos de produÁ„o duplicados. */
+                         * Salva o n√∫mero da etiqueta impressa para evitar que sejam inseridos produtos de produ√ß√£o duplicados. */
                         lstEtiquetasInseridas.Add(numEtiqueta);
                     }
                 }
             }
             else
             {
-                // Insere as peÁas na produÁ„o de acordo com cada ambiente do pedido espelho.
+                // Insere as pe√ßas na produ√ß√£o de acordo com cada ambiente do pedido espelho.
                 foreach (var ambiente in AmbientePedidoEspelhoDAO.Instance.GetByPedido(sessao, idPedido))
                 {
                     var qtdAImprimir = ambiente.Qtde.GetValueOrDefault(); // Pega a quantidade a ser impresso deste item.
                     var qtdGerada = 0;
-                    var posItem = 0; // Utilizada para verificar se o item da peÁa j· foi impresso.
-                    var pos = 0; // Utilizada para a posiÁ„o do item no pedido.
+                    var posItem = 0; // Utilizada para verificar se o item da pe√ßa j√° foi impresso.
+                    var pos = 0; // Utilizada para a posi√ß√£o do item no pedido.
                     var temp = new List<KeyValuePair<string, string>>();
 
-                    // Na produÁ„o, caso o ambiente possua mais de um produto, o id de um dos produtos de pedido È salvo, por isso,
-                    // È necess·rio que todos os produtos sejam percorridos atÈ encontrar qual deles tem associaÁ„o com o produto de produÁ„o.
+                    // Na produ√ß√£o, caso o ambiente possua mais de um produto, o id de um dos produtos de pedido √© salvo, por isso,
+                    // √© necess√°rio que todos os produtos sejam percorridos at√© encontrar qual deles tem associa√ß√£o com o produto de produ√ß√£o.
                     foreach (var prodPedEsp in ProdutosPedidoEspelhoDAO.Instance.GetByAmbienteFast(sessao, idPedido, ambiente.IdAmbientePedido))
                     {
                         pos = ProdutosPedidoEspelhoDAO.Instance.GetProdPosition(sessao, ambiente.IdPedido, prodPedEsp.IdProdPed);
 
-                        // Garante que o produto recuperado, para o ambiente, È o produto correto.
+                        // Garante que o produto recuperado, para o ambiente, √© o produto correto.
                         if (pos == 0)
                             continue;
 
                         break;
                     }
 
-                    // Cria o cÛdigo da etiqueta e insere a peÁa na produÁ„o.
+                    // Cria o c√≥digo da etiqueta e insere a pe√ßa na produ√ß√£o.
                     while (qtdGerada < qtdAImprimir)
                     {
-                        // Recupera o n˙mero da etiqueta.
+                        // Recupera o n√∫mero da etiqueta.
                         var numEtiqueta = Glass.Data.RelDAL.EtiquetaDAO.Instance.GetNumEtiqueta(idPedido, pos, posItem + 1, qtdAImprimir,
                             Glass.Data.DAL.ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
-                        // Valida o n˙mero da etiqueta.
+                        // Valida o n√∫mero da etiqueta.
                         ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(sessao, ref numEtiqueta);
 
                         posItem++;
                         qtdGerada++;
 
                         /* Chamado 16017.
-                         * Caso a etiqueta tenha sido impressa passa para a prÛxima etiqueta. */
+                         * Caso a etiqueta tenha sido impressa passa para a pr√≥xima etiqueta. */
                         if (lstEtiquetasInseridas.Contains(numEtiqueta))
                             continue;
 
-                        // Pıe peÁa em produÁ„o.
+                        // P√µe pe√ßa em produ√ß√£o.
                         ProdutoPedidoProducaoDAO.Instance.InserePeca(sessao, null, numEtiqueta, String.Empty, UserInfo.GetUserInfo.CodUser, true, null, 0, null, null);
                         /* Chamado 16017.
-                         * Salva o n˙mero da etiqueta impressa para evitar que sejam inseridos produtos de produÁ„o duplicados. */
+                         * Salva o n√∫mero da etiqueta impressa para evitar que sejam inseridos produtos de produ√ß√£o duplicados. */
                         lstEtiquetasInseridas.Add(numEtiqueta);
                     }
                 }
@@ -1650,7 +1650,7 @@ namespace Glass.Data.DAL
         #region Importa o arquivo de otimizado pelo Opty Way
 
         /// <summary>
-        /// Importa as peÁas otimizadas pelo Opty Way.
+        /// Importa as pe√ßas otimizadas pelo Opty Way.
         /// </summary>
         public void ImportarArquivoOtimizacaoOptyWay(XmlDocument arquivoOtimizado, ref List<string> etiquetas, ref string etiquetasJaImpressas, ref List<int> pedidosAlteradosAposExportacao,
             ref List<ProdutosPedidoEspelho> produtosPedidoEspelho, ref int qtdPecasImpressas)
@@ -1670,11 +1670,11 @@ namespace Glass.Data.DAL
                     {
                         #region Recupera o plano de corte
 
-                        // A tag que possui o atributo "ELABORATO", contÈm o plano de corte, as tags subsequentes ‡ ela contÈm as peÁas
+                        // A tag que possui o atributo "ELABORATO", cont√©m o plano de corte, as tags subsequentes √† ela cont√©m as pe√ßas
                         if (node.Attributes["ELABORATO"] != null)
                         {
                             if (node.Attributes["CODCOM"] == null)
-                                throw new Exception("Tag ELABORATO sem informaÁ„o do plano de corte (CODCOM). Provavelmente foi inserida uma peÁa apÛs a otimizaÁ„o das etiquetas, fazendo com que esta ficasse sem plano de corte.");
+                                throw new Exception("Tag ELABORATO sem informa√ß√£o do plano de corte (CODCOM). Provavelmente foi inserida uma pe√ßa ap√≥s a otimiza√ß√£o das etiquetas, fazendo com que esta ficasse sem plano de corte.");
 
                             planoCorte =
                                 string.Format("{0}Z{1}-{2}{3}",
@@ -1691,7 +1691,7 @@ namespace Glass.Data.DAL
                         #endregion
 
                         if (node.Attributes["NOTES"] == null)
-                            throw new Exception("Uma ou mais peÁas n„o possuem o cÛdigo da etiqueta exportado pelo WebGlass (Campo NOTES).");
+                            throw new Exception("Uma ou mais pe√ßas n√£o possuem o c√≥digo da etiqueta exportado pelo WebGlass (Campo NOTES).");
 
                         #region Recupera a altura e largura da etiqueta
 
@@ -1711,17 +1711,17 @@ namespace Glass.Data.DAL
 
                         #endregion
 
-                        // Pega a etiqueta da peÁa
+                        // Pega a etiqueta da pe√ßa
                         var etiqueta = node.Attributes["NOTES"].Value;
 
-                        // Verifica se a etiqueta È aceita no webglass
+                        // Verifica se a etiqueta √© aceita no webglass
                         if (!etiqueta.Contains(".") || !etiqueta.Contains("/") || !etiqueta.Contains("-"))
-                            throw new Exception("Uma das etiquetas do arquivo È inv·lida. Etiqueta: Notes=" + etiqueta);
+                            throw new Exception("Uma das etiquetas do arquivo √© inv√°lida. Etiqueta: Notes=" + etiqueta);
 
                         // Busca o produtoPedidoEspelho pela etiqueta
                         var isPecaReposta = ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(transaction, etiqueta, true);
 
-                        // Verifica se a etiqueta j· foi impressa
+                        // Verifica se a etiqueta j√° foi impressa
                         if (!isPecaReposta && ProdutoImpressaoDAO.Instance.EstaImpressa(transaction, etiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
                         {
                             etiquetasJaImpressas += etiqueta + ", ";
@@ -1730,7 +1730,7 @@ namespace Glass.Data.DAL
 
                         if (etiquetas.Contains(etiqueta.Trim()))
                         {
-                            // Caso a peÁa seja de modulado, ignora a validaÁ„o de etiqueta duplicada caso sua POSTOT n„o tenha se repetido (empresas que trabalham com modulado precisam disso)
+                            // Caso a pe√ßa seja de modulado, ignora a valida√ß√£o de etiqueta duplicada caso sua POSTOT n√£o tenha se repetido (empresas que trabalham com modulado precisam disso)
                             if (node.Attributes["POSTOT"] == null || posTot.Contains(node.Attributes["POSTOT"].Value))
                                 throw new Exception("Este arquivo possui etiquetas duplicadas. Etiqueta: " + etiqueta);
 
@@ -1739,10 +1739,10 @@ namespace Glass.Data.DAL
 
                         etiquetas.Add(etiqueta.Trim());
 
-                        // Pega a posiÁ„o da peÁa no arquivo de otimizaÁ„o
+                        // Pega a posi√ß√£o da pe√ßa no arquivo de otimiza√ß√£o
                         var posicaoArqOtimiz = node.Attributes["POSPZ"].Value.Split('/')[0].StrParaInt();
 
-                        // Pega a posiÁ„o de ordenaÁ„o da peÁa no arquivo de otimizaÁ„o
+                        // Pega a posi√ß√£o de ordena√ß√£o da pe√ßa no arquivo de otimiza√ß√£o
                         var numSeq = node.Attributes["POSTOT"] != null ? node.Attributes["POSTOT"].Value.StrParaInt() : 0;
                         posTot.Add(numSeq.ToString());
 
@@ -1750,15 +1750,15 @@ namespace Glass.Data.DAL
                         var forma = node.Attributes["SAGOMA"] != null ? node.Attributes["SAGOMA"].Value : string.Empty;
 
                         ProdutosPedidoEspelho prodPed;
-                        var msgErro = string.Format("A etiqueta '{0}' n„o possui uma peÁa associada. O pedido pode ter sido alterado apÛs a geraÁ„o do arquivo para o Opty Way ou a impress„o pode ter sido cancelada. {1}",
-                            etiqueta, "RefaÁa a otimizaÁ„o das etiquetas com um novo arquivo de otimizaÁ„o gerado pelo sistema.");
+                        var msgErro = string.Format("A etiqueta '{0}' n√£o possui uma pe√ßa associada. O pedido pode ter sido alterado ap√≥s a gera√ß√£o do arquivo para o Opty Way ou a impress√£o pode ter sido cancelada. {1}",
+                            etiqueta, "Refa√ßa a otimiza√ß√£o das etiquetas com um novo arquivo de otimiza√ß√£o gerado pelo sistema.");
 
                         var idProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(transaction, etiqueta);
                         uint? idProdPed = null;
 
                         if (idProdPedProducao == null)
                         {
-                            // Se j· houver uma etiqueta cancelada com este cÛdigo, apenas re-insere a mesma ao invÈs de dar mensagem de erro
+                            // Se j√° houver uma etiqueta cancelada com este c√≥digo, apenas re-insere a mesma ao inv√©s de dar mensagem de erro
                             if (ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducaoCanc(transaction, etiqueta) > 0)
                             {
                                 ProdutoPedidoProducaoDAO.Instance.InserePeca(transaction, null, etiqueta, String.Empty, UserInfo.GetUserInfo.CodUser, true);
@@ -1791,14 +1791,14 @@ namespace Glass.Data.DAL
                         }
 
                         if (etiqueta.Split('/')[1].StrParaInt() > qtde)
-                            throw new Exception(string.Format("Etiqueta {0} È inv·lida. O produto referido tem quantidade {1} e a etiqueta indica {2}.", etiqueta, prodPed.Qtde, etiqueta.Split('/')[1]));
+                            throw new Exception(string.Format("Etiqueta {0} √© inv√°lida. O produto referido tem quantidade {1} e a etiqueta indica {2}.", etiqueta, prodPed.Qtde, etiqueta.Split('/')[1]));
 
                         if (prodPed.IdPedido > 0)
                         {
                             var dataFinalizacaoPCP = PedidoEspelhoDAO.Instance.ObtemDataConf(transaction, prodPed.IdPedido).GetValueOrDefault();
                             var dataUltimaExportacaoEtiqueta = ArquivoOtimizacaoDAO.Instance.ObtemDataUltimaExportacaoEtiqueta(transaction, etiqueta);
 
-                            if (dataUltimaExportacaoEtiqueta != DateTime.MinValue && dataFinalizacaoPCP > dataUltimaExportacaoEtiqueta)
+                            if (dataUltimaExportacaoEtiqueta.GetValueOrDefault() != DateTime.MinValue && dataFinalizacaoPCP > dataUltimaExportacaoEtiqueta.Value)
                             {
                                 pedidosAlteradosAposExportacao.Add((int)prodPed.IdPedido);
                                 continue;
@@ -1819,7 +1819,7 @@ namespace Glass.Data.DAL
                             throw new Exception("Falha ao importar etiquetas.", ex);
                         }
 
-                        // Marca a qtd como 1, pois cada produto no arquivo È qtd 1, caso o produto se repita, soma a qtd
+                        // Marca a qtd como 1, pois cada produto no arquivo √© qtd 1, caso o produto se repita, soma a qtd
                         prodPed.QtdAImprimir = !isPecaReposta ? 1 : 0;
 
                         var jaInserido = false;
@@ -1857,7 +1857,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Cria uma nova impress„o
+        #region Cria uma nova impress√£o
 
         #region Classe de suporte
 
@@ -1984,10 +1984,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Impress„o de pedido
+        #region Impress√£o de pedido
 
         /// <summary>
-        /// Cria uma nova impress„o, retornando o ID Gerado
+        /// Cria uma nova impress√£o, retornando o ID Gerado
         /// </summary>
         public uint NovaImpressaoPedido(GDASession session, uint idFunc, uint[] vetIdProdPed, uint[] vetIdAmbPed, int[] vetQtdJaImpressa, int[] vetQtdImpressao, int[] vetQtdImpressaoAmb,
             string[] vetEtiqueta, string idImpressaoParam, List<uint> lstPedImpresso, List<uint> lstIdProdPed, List<int> lstQtdImpresso,
@@ -1998,7 +1998,7 @@ namespace Glass.Data.DAL
             {
                 string etiquetasImpressas = "";
 
-                #region Verifica se h· alguma impress„o com as mesmas etiquetas
+                #region Verifica se h√° alguma impress√£o com as mesmas etiquetas
 
                 const int numMaxEtiquetas = 50;
                 int numEtiquetas = 0;
@@ -2014,10 +2014,10 @@ namespace Glass.Data.DAL
                     if (dados.ItensImpressos.Count + vetQtdImpressao[i] > dados.Qtde)
                         for (int j = 0; j < dados.ItensImpressos.Count; j++)
                         {
-                            // Mesmo que o sistema acuse que determinada peÁa j· foi impressa, pode ser que n„o tenha sido,
-                            // um exemplo ocorreu quando a etiqueta x-y.2/2 estava impressa mas a x-y.1/2 ainda n„o estava, ao tentar imprimir a segunda
-                            // entrava nesta condiÁ„o dizendo que a etiqueta x-y.2/2 j· havia sido impressa, apesar de estar tentando imprimir a x-y.1/2,
-                            // a condiÁ„o abaixo foi feita para resolver esta quest„o.
+                            // Mesmo que o sistema acuse que determinada pe√ßa j√° foi impressa, pode ser que n√£o tenha sido,
+                            // um exemplo ocorreu quando a etiqueta x-y.2/2 estava impressa mas a x-y.1/2 ainda n√£o estava, ao tentar imprimir a segunda
+                            // entrava nesta condi√ß√£o dizendo que a etiqueta x-y.2/2 j√° havia sido impressa, apesar de estar tentando imprimir a x-y.1/2,
+                            // a condi√ß√£o abaixo foi feita para resolver esta quest√£o.
                             //if (PCPConfig.ControlarProducao && !String.IsNullOrEmpty(vetEtiqueta[i]) &&
                             //    (!ProdutoPedidoProducaoDAO.Instance.EstaEmProducao(vetEtiqueta[i]) || 
                             //    !ProdutoPedidoProducaoDAO.Instance.LeuProducao(vetEtiqueta[i]) || 
@@ -2043,10 +2043,10 @@ namespace Glass.Data.DAL
                     if (dados.ItensImpressos.Count + vetQtdImpressaoAmb[i] > dados.Qtde)
                         for (int j = 0; j < dados.ItensImpressos.Count; j++)
                         {
-                            // Mesmo que o sistema acuse que determinada peÁa j· foi impressa, pode ser que n„o tenha sido,
-                            // um exemplo ocorreu quando a etiqueta x-y.2/2 estava impressa mas a x-y.1/2 ainda n„o estava, ao tentar imprimir a segunda
-                            // entrava nesta condiÁ„o dizendo que a etiqueta x-y.2/2 j· havia sido impressa, apesar de estar tentando imprimir a x-y.1/2,
-                            // a condiÁ„o abaixo foi feita para resolver esta quest„o.
+                            // Mesmo que o sistema acuse que determinada pe√ßa j√° foi impressa, pode ser que n√£o tenha sido,
+                            // um exemplo ocorreu quando a etiqueta x-y.2/2 estava impressa mas a x-y.1/2 ainda n√£o estava, ao tentar imprimir a segunda
+                            // entrava nesta condi√ß√£o dizendo que a etiqueta x-y.2/2 j√° havia sido impressa, apesar de estar tentando imprimir a x-y.1/2,
+                            // a condi√ß√£o abaixo foi feita para resolver esta quest√£o.
                             //if (PCPConfig.ControlarProducao && !String.IsNullOrEmpty(vetEtiqueta[i]) &&
                             //    (!ProdutoPedidoProducaoDAO.Instance.EstaEmProducao(vetEtiqueta[i]) || 
                             //    !ProdutoPedidoProducaoDAO.Instance.LeuProducao(vetEtiqueta[i]) || 
@@ -2067,24 +2067,24 @@ namespace Glass.Data.DAL
                     etiquetasImpressas = etiquetasImpressas.TrimEnd(',', ' ');
 
                 if (idImpressaoParam == "0" && !String.IsNullOrEmpty(etiquetasImpressas))
-                    throw new Exception("Pelo menos uma dessas etiquetas j· foi impressa.\nEtiquetas impressas: " + etiquetasImpressas);
+                    throw new Exception("Pelo menos uma dessas etiquetas j√° foi impressa.\nEtiquetas impressas: " + etiquetasImpressas);
 
                 #endregion
 
-                // Verifica se algum pedido est· cancelado
+                // Verifica se algum pedido est√° cancelado
                 string idsPedido = String.Join(",", Array.ConvertAll(lstPedImpresso.ToArray(), x => x.ToString()));
 
-                // Verifica se h· algum pedido cancelado de todos os informados
+                // Verifica se h√° algum pedido cancelado de todos os informados
                 string idsPedidoCancelados = PedidoDAO.Instance.ObtemCancelados(session, idsPedido);
                 if (!String.IsNullOrEmpty(idsPedidoCancelados))
-                    throw new Exception("Os pedidos " + idsPedidoCancelados + " n„o podem ser impressos porque foram cancelados.");
+                    throw new Exception("Os pedidos " + idsPedidoCancelados + " n√£o podem ser impressos porque foram cancelados.");
 
                 // Verifica se algum pedido foi reaberto
                 if (PedidoEspelhoDAO.Instance.ExecuteScalar<bool>(session, @"
                     Select Count(*)>0 From pedido 
                     Where idPedido in (?idsPedidos) And situacao In (" + (int)PedidoEspelho.SituacaoPedido.Aberto + "," +
                     (int)PedidoEspelho.SituacaoPedido.Processando + ")", new GDAParameter("?idsPedidos", idsPedido)))
-                    throw new Exception("Alguns pedidos foram reabertos apÛs a inserÁ„o das peÁas na tela.");
+                    throw new Exception("Alguns pedidos foram reabertos ap√≥s a inser√ß√£o das pe√ßas na tela.");
 
                 // Verifica se algum pedido espelho foi reaberto.
                 if (PedidoEspelhoDAO.Instance.ExecuteScalar<bool>(session,
@@ -2093,13 +2093,13 @@ namespace Glass.Data.DAL
                         WHERE IdPedido IN (?idsPedidos) AND Situacao IN ({0},{1})",
                         (int)PedidoEspelho.SituacaoPedido.Aberto, (int)PedidoEspelho.SituacaoPedido.Processando),
                     new GDAParameter("?idsPedidos", idsPedido)))
-                    throw new Exception("Alguns pedidos foram reabertos apÛs a inserÁ„o das peÁas na tela.");
+                    throw new Exception("Alguns pedidos foram reabertos ap√≥s a inser√ß√£o das pe√ßas na tela.");
 
                 /* Chamado 54086. */
-                // Verifica se algum pedido est· pronto ou entregue.
+                // Verifica se algum pedido est√° pronto ou entregue.
                 if (PedidoEspelhoDAO.Instance.ExecuteScalar<bool>(session, string.Format("SELECT COUNT(*)>0 FROM pedido WHERE IdPedido IN (?idsPedidos) AND SituacaoProducao IN ({0},{1})",
                     (int)Pedido.SituacaoProducaoEnum.Pronto, (int)Pedido.SituacaoProducaoEnum.Entregue), new GDAParameter("?idsPedidos", idsPedido)))
-                    throw new Exception("Alguns pedidos est„o prontos ou entregues. Portanto, n„o possuem etiquetas disponÌveis para impress„o.");
+                    throw new Exception("Alguns pedidos est√£o prontos ou entregues. Portanto, n√£o possuem etiquetas dispon√≠veis para impress√£o.");
 
                 ImpressaoEtiqueta impressao = new ImpressaoEtiqueta();
                 impressao.IdLoja = UserInfo.GetByIdFunc(idFunc).IdLoja;
@@ -2110,7 +2110,7 @@ namespace Glass.Data.DAL
 
                 uint idImpressao = 0;
 
-                // Gera uma nova impress„o
+                // Gera uma nova impress√£o
                 idImpressao = Insert(session, impressao);
 
                 ProdutoImpressao prodImp;
@@ -2129,7 +2129,7 @@ namespace Glass.Data.DAL
                             this.AtualizarPlanoCorteProdutoPedidoProducao(session, prodImp.NumEtiqueta, prodImp.PlanoCorte);
                         }
 
-                        // Atualiza a observaÁ„o se for peÁa de reposiÁ„o
+                        // Atualiza a observa√ß√£o se for pe√ßa de reposi√ß√£o
                         ProdutosPedidoEspelhoDAO.Instance.AtualizaObs(session, lstIdProdPed[i], lstObs[i]);
 
                         continue;
@@ -2143,13 +2143,13 @@ namespace Glass.Data.DAL
                     // Valida as etiquetas
                     for (int l = 0; l < etiquetas.Count; l++)
                     {
-                        // Retira os espaÁos em branco no inÌcio e no final da etiqueta
+                        // Retira os espa√ßos em branco no in√≠cio e no final da etiqueta
                         string etiqueta = etiquetas[l];
 
                         ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(session, ref etiqueta);
 
                         if (etiqueta.Split('/')[1].StrParaInt() != (int)dados.Qtde)
-                            throw new Exception("Etiqueta importada È inv·lida para o produto relacionado. Etiqueta: " + etiqueta);
+                            throw new Exception("Etiqueta importada √© inv√°lida para o produto relacionado. Etiqueta: " + etiqueta);
                     }
 
                     int offset = 0;
@@ -2168,7 +2168,7 @@ namespace Glass.Data.DAL
                             }
                         }
 
-                        // Imprime apenas as etiquetas n„o-impressas
+                        // Imprime apenas as etiquetas n√£o-impressas
                         if (dados.ItensImpressos.Contains(j))
                         {
                             offset++;
@@ -2199,14 +2199,14 @@ namespace Glass.Data.DAL
                 for (int i = 0; i < vetIdAmbPed.Length; i++)
                 {
                     if (ProdutosPedidoEspelhoDAO.Instance.GetCountByAmbiente(session, vetIdAmbPed[i]) == 0)
-                        throw new Exception("Cadastre alguma m„o de obra no vidro '" + AmbientePedidoEspelhoDAO.Instance.ObtemPecaVidro(session, vetIdAmbPed[i]) + "' antes de continuar.");
+                        throw new Exception("Cadastre alguma m√£o de obra no vidro '" + AmbientePedidoEspelhoDAO.Instance.ObtemPecaVidro(session, vetIdAmbPed[i]) + "' antes de continuar.");
 
                     DadosEtiqueta.Dados dados = DadosEtiqueta.GetItem(session, null, vetIdAmbPed[i], null);
 
                     int offset = 0;
                     for (int j = 1; j <= vetQtdImpressaoAmb[i] + offset; j++)
                     {
-                        // Imprime apenas as etiquetas n„o-impressas
+                        // Imprime apenas as etiquetas n√£o-impressas
                         if (dados.ItensImpressos.Contains(j))
                         {
                             offset++;
@@ -2237,19 +2237,19 @@ namespace Glass.Data.DAL
                     }
                 }
 
-                // Altera situaÁ„o dos pedidos para "impresso" se usu·rio n„o for Aux. Adm. etiqueta, 
-                // caso contr·rio, altera situaÁ„o para "impresso comum"
+                // Altera situa√ß√£o dos pedidos para "impresso" se usu√°rio n√£o for Aux. Adm. etiqueta, 
+                // caso contr√°rio, altera situa√ß√£o para "impresso comum"
                 if (UserInfo.GetByIdFunc(idFunc).TipoUsuario != (uint)Utils.TipoFuncionario.AuxEtiqueta || Glass.Configuracoes.PedidoConfig.LiberarPedido)
                     PedidoEspelhoDAO.Instance.AlteraSituacao(session, lstPedImpresso, Glass.Data.Model.PedidoEspelho.SituacaoPedido.Impresso);
                 else
                     PedidoEspelhoDAO.Instance.AlteraSituacao(session, lstPedImpresso, Glass.Data.Model.PedidoEspelho.SituacaoPedido.ImpressoComum);
 
-                // Pıe pedidos impressos em produÁ„o
+                // P√µe pedidos impressos em produ√ß√£o
                 if (!PedidoConfig.LiberarPedido)
                     foreach (uint idPed in lstPedImpresso)
                         PedidoCorteDAO.Instance.AlteraSituacao(session, idFunc, idPed, 2);
 
-                // Marca a quantidade dos itens que ser„o impressos
+                // Marca a quantidade dos itens que ser√£o impressos
                 for (int i = 0; i < lstIdProdPed.Count; i++)
                 {
                     if (lstQtdImpresso[i] == 0)
@@ -2285,7 +2285,7 @@ namespace Glass.Data.DAL
             catch (Exception ex)
             {
                 // Chamado 13478.
-                // Caso ocorra algum erro ao imprimir etiquetas nÛs saberemos se o erro ocorreu neste mÈtodo ou n„o.
+                // Caso ocorra algum erro ao imprimir etiquetas n√≥s saberemos se o erro ocorreu neste m√©todo ou n√£o.
                 ErroDAO.Instance.InserirFromException("NovaImpressaoPedido", ex);
 
                 throw;
@@ -2293,11 +2293,11 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza os produtos pedido produÁ„o associado com os
-        /// produtos da impress„o.
+        /// Atualiza os produtos pedido produ√ß√£o associado com os
+        /// produtos da impress√£o.
         /// </summary>
-        /// <param name="sessao">Sess„o de conex„o com o banco de dados.</param>
-        /// <param name="idImpressao">Identificador da impress„o que ser· processada.</param>
+        /// <param name="sessao">Sess√£o de conex√£o com o banco de dados.</param>
+        /// <param name="idImpressao">Identificador da impress√£o que ser√° processada.</param>
         private void AtualizarProdutosPedidoProducao(GDASession sessao, int idImpressao)
         {
             var etiquetasPlanoCorte = this.CurrentPersistenceObject.LoadResult(
@@ -2320,11 +2320,11 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza o plano de corte do produto do pedido produÁ„o associado com a etiqueta.
+        /// Atualiza o plano de corte do produto do pedido produ√ß√£o associado com a etiqueta.
         /// </summary>
-        /// <param name="sessao">Sess„o de conex„o com o banco de dados.</param>
-        /// <param name="numEtiqueta">N˙mero da etiqueta.</param>
-        /// <param name="planoCorte">Plano de corte que ser„o atualizado.</param>
+        /// <param name="sessao">Sess√£o de conex√£o com o banco de dados.</param>
+        /// <param name="numEtiqueta">N√∫mero da etiqueta.</param>
+        /// <param name="planoCorte">Plano de corte que ser√£o atualizado.</param>
         private void AtualizarPlanoCorteProdutoPedidoProducao(GDASession sessao, string numEtiqueta, string planoCorte)
         {
             this.CurrentPersistenceObject.ExecuteCommand(
@@ -2340,17 +2340,17 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Impress„o de nota fiscal
+        #region Impress√£o de nota fiscal
 
         /// <summary>
-        /// Cria uma nova impress„o, retornando o ID Gerado
+        /// Cria uma nova impress√£o, retornando o ID Gerado
         /// </summary>
         public uint NovaImpressaoNFe(GDASession session, uint idFunc, uint[] vetIdProdNf, int[] vetQtdJaImpressa, int[] vetQtdImpressao, string idImpressaoParam,
             List<uint> lstNfImpresso, List<uint> lstIdProdNf, List<int> lstQtdImpresso, List<string> lstObs, ref List<uint> idsProdNfAlterados)
         {
             string etiquetasImpressas = "";
 
-            #region Verifica se h· alguma impress„o com as mesmas etiquetas
+            #region Verifica se h√° alguma impress√£o com as mesmas etiquetas
 
             const int numMaxEtiquetas = 50;
             int numEtiquetas = 0;
@@ -2366,10 +2366,10 @@ namespace Glass.Data.DAL
                 if (dados.ItensImpressos.Count + vetQtdImpressao[i] > dados.Qtde)
                     for (int j = 0; j < dados.ItensImpressos.Count; j++)
                     {
-                        // Mesmo que o sistema acuse que determinada peÁa j· foi impressa, pode ser que n„o tenha sido,
-                        // um exemplo ocorreu quando a etiqueta x-y.2/2 estava impressa mas a x-y.1/2 ainda n„o estava, ao tentar imprimir a segunda
-                        // entrava nesta condiÁ„o dizendo que a etiqueta x-y.2/2 j· havia sido impressa, apesar de estar tentando imprimir a x-y.1/2,
-                        // a condiÁ„o abaixo foi feita para resolver esta quest„o.
+                        // Mesmo que o sistema acuse que determinada pe√ßa j√° foi impressa, pode ser que n√£o tenha sido,
+                        // um exemplo ocorreu quando a etiqueta x-y.2/2 estava impressa mas a x-y.1/2 ainda n√£o estava, ao tentar imprimir a segunda
+                        // entrava nesta condi√ß√£o dizendo que a etiqueta x-y.2/2 j√° havia sido impressa, apesar de estar tentando imprimir a x-y.1/2,
+                        // a condi√ß√£o abaixo foi feita para resolver esta quest√£o.
                         //if (PCPConfig.ControlarProducao && !String.IsNullOrEmpty(vetEtiqueta[i]) &&
                         //    (!ProdutoPedidoProducaoDAO.Instance.EstaEmProducao(vetEtiqueta[i]) || 
                         //    !ProdutoPedidoProducaoDAO.Instance.LeuProducao(vetEtiqueta[i]) || 
@@ -2390,17 +2390,17 @@ namespace Glass.Data.DAL
                 etiquetasImpressas = etiquetasImpressas.TrimEnd(',', ' ');
 
             if (idImpressaoParam == "0" && !String.IsNullOrEmpty(etiquetasImpressas))
-                throw new Exception("Pelo menos uma dessas etiquetas j· foi impressa.\nEtiquetas impressas: " + etiquetasImpressas);
+                throw new Exception("Pelo menos uma dessas etiquetas j√° foi impressa.\nEtiquetas impressas: " + etiquetasImpressas);
 
             #endregion
 
-            // Verifica se alguma nota fiscal est· aberta
+            // Verifica se alguma nota fiscal est√° aberta
             string idsNf = String.Join(",", Array.ConvertAll(lstNfImpresso.ToArray(), x => x.ToString()));
 
-            // Verifica se h· algum pedido cancelado de todos os informados
+            // Verifica se h√° algum pedido cancelado de todos os informados
             string idsNfCancelados = NotaFiscalDAO.Instance.ObtemAbertas(session, idsNf);
             if (!String.IsNullOrEmpty(idsNfCancelados))
-                throw new Exception("As NF-e " + idsNfCancelados + " n„o podem ser impressos porque est„o abertas.");
+                throw new Exception("As NF-e " + idsNfCancelados + " n√£o podem ser impressos porque est√£o abertas.");
 
             ImpressaoEtiqueta impressao = new ImpressaoEtiqueta
             {
@@ -2412,7 +2412,7 @@ namespace Glass.Data.DAL
 
             uint idImpressao = 0;
 
-            // Gera uma nova impress„o
+            // Gera uma nova impress√£o
             idImpressao = Insert(session, impressao);
 
             // Salva quais produtos e com qual qtde foram impressos
@@ -2423,7 +2423,7 @@ namespace Glass.Data.DAL
                 int offset = 0;
                 for (int j = 1; j <= vetQtdImpressao[i] + offset; j++)
                 {
-                    // Imprime apenas as etiquetas n„o-impressas
+                    // Imprime apenas as etiquetas n√£o-impressas
                     if (dados.ItensImpressos.Contains(j))
                     {
                         offset++;
@@ -2453,7 +2453,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            // Marca a quantidade dos itens que ser„o impressos
+            // Marca a quantidade dos itens que ser√£o impressos
             for (int i = 0; i < lstIdProdNf.Count; i++)
             {
                 if (lstQtdImpresso[i] > 0)
@@ -2468,7 +2468,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Impress„o de retalhos
+        #region Impress√£o de retalhos
 
         public uint NovaImpressaoRetalho(GDASession sessao, uint idFunc, List<RetalhoProducao> listaRetalhoProducao)
         {
@@ -2482,7 +2482,7 @@ namespace Glass.Data.DAL
 
             uint idImpressao;
 
-            // Gera uma nova impress„o
+            // Gera uma nova impress√£o
             idImpressao = Insert(sessao, impressao);
 
             foreach (RetalhoProducao item in listaRetalhoProducao)
@@ -2515,7 +2515,7 @@ namespace Glass.Data.DAL
         #region Impressao de Box
 
         /// <summary>
-        /// Cria uma nova impress„o de etiqueta de box
+        /// Cria uma nova impress√£o de etiqueta de box
         /// </summary>
         public uint NovaImpressaoBox(uint idFunc, List<Etiqueta> lstPecasBox)
         {
@@ -2535,7 +2535,7 @@ namespace Glass.Data.DAL
 
                     uint idImpressao = 0;
 
-                    // Gera uma nova impress„o
+                    // Gera uma nova impress√£o
                     idImpressao = Insert(transaction, impressao);
 
                     // Salva quais produtos foram impressos
@@ -2568,7 +2568,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna os n˙meros das etiquetas n„o impressas
+        #region Retorna os n√∫meros das etiquetas n√£o impressas
 
         public IList<string> ObtemEtiquetasNaoImpressas(uint idProdPed, int qtdeImprimir)
         {
@@ -2594,7 +2594,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Cancela uma impress„o
+        #region Cancela uma impress√£o
 
         public void CancelarImpressaoComTransacao(uint idFunc, uint idImpressao, uint? idPedido, uint? numeroNFe, string planoCorte, uint idProdImpressao,
             string motivo, bool cancelarRetalhos)
@@ -2605,7 +2605,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    #region Recupera as peÁas impressas do pedido antes do cancelamento
+                    #region Recupera as pe√ßas impressas do pedido antes do cancelamento
 
                     var pedidosDescricaoPecasImpressasAntigas = new Dictionary<int, string>();
 
@@ -2655,7 +2655,7 @@ namespace Glass.Data.DAL
 
                     CancelarImpressao(transaction, idFunc, idImpressao, idPedido, numeroNFe, planoCorte, idProdImpressao, motivo, cancelarRetalhos);
 
-                    #region Recupera as peÁas impressas do pedido apÛs o cancelamento e insere o log
+                    #region Recupera as pe√ßas impressas do pedido ap√≥s o cancelamento e insere o log
 
                     if (PedidoConfig.SalvarLogPecasImpressasNoPedido)
                         foreach (var pedidoDescricaoPecasImpresasAntigas in pedidosDescricaoPecasImpressasAntigas)
@@ -2683,19 +2683,20 @@ namespace Glass.Data.DAL
         }
         
         /// <summary>
-        /// Cancela uma impress„o.
+        /// Cancela uma impress√£o.
         /// </summary>
         internal void CancelarImpressao(GDASession sessao, uint idFunc, uint idImpressao, uint? idPedido, uint? numeroNFe, string planoCorte, uint idProdImpressao,
             string motivo, bool cancelarRetalhos)
         {
             try
             {
-                var idsProdImpressao = string.Empty;
-                // Define se ser· necess·rio efetuar cancelamento peÁa a peÁa da impress„o (ocorre quando n„o se deseja cancelar toda a impress„o,
-                // somente determinado pedido ou plano de corte ou peÁa individual)
+                var idsProdImpressao = new List<int>();
+
+                // Define se ser√° necess√°rio efetuar cancelamento pe√ßa a pe√ßa da impress√£o (ocorre quando n√£o se deseja cancelar toda a impress√£o,
+                // somente determinado pedido ou plano de corte ou pe√ßa individual)
                 var cancelarPecaAPeca = idPedido > 0 || numeroNFe > 0 || !string.IsNullOrWhiteSpace(planoCorte) || idProdImpressao > 0;
 
-                // Recupera todos os produto_impressao que ser„o cancelados
+                // Recupera todos os produto_impressao que ser√£o cancelados
                 if (idProdImpressao > 0)
                 {
                     var numEtiqueta = ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(sessao, idProdImpressao);
@@ -2703,33 +2704,41 @@ namespace Glass.Data.DAL
 
                     if (produtoImpressaoCancelado)
                     {
-                        throw new Exception("Etiqueta j· est· cancelada.");
+                        throw new Exception("Etiqueta j√° est√° cancelada.");
                     }
 
                     if (ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, idProdImpressao))
                     {
-                        throw new Exception("MatÈria-prima associada a peÁa j· foi utilizada.");
+                        throw new Exception("Mat√©ria-prima associada a pe√ßa j√° foi utilizada.");
                     }
 
-                    idsProdImpressao = idProdImpressao.ToString();
+                    idsProdImpressao.Add((int)idProdImpressao);
                     idImpressao = (uint)ProdutoImpressaoDAO.Instance.ObterIdImpressao(sessao, (int)idProdImpressao);
 
                     if (idImpressao == 0)
                     {
-                        throw new Exception($"N„o foi possÌvel recuperar a impress„o de etiquetas do produto de impress„o de ID { idProdImpressao }.");
+                        throw new Exception($"N√£o foi poss√≠vel recuperar a impress√£o de etiquetas do produto de impress√£o de ID { idProdImpressao }.");
                     }
                 }
                 else
                 {
-                    idsProdImpressao = ProdutoImpressaoDAO.Instance.GetByIdPedidoPlanoCorte(sessao, idImpressao, idPedido, numeroNFe, planoCorte);
+                    idsProdImpressao = ProdutoImpressaoDAO.Instance.GetByIdPedidoPlanoCorte(
+                            sessao,
+                            idImpressao,
+                            idPedido,
+                            numeroNFe,
+                            planoCorte)
+                        .Split(',')
+                        .Select(f => f.ToString().StrParaInt())
+                        .ToList();
                 }
 
                 var situacaoImpressao = (ImpressaoEtiqueta.SituacaoImpressaoEtiqueta)ObtemSituacao(sessao, (int)idImpressao);
 
-                // Se a impress„o esta na situaÁ„o processando ela deve ser cancelada totalmente.
+                // Se a impress√£o esta na situa√ß√£o processando ela deve ser cancelada totalmente.
                 if (situacaoImpressao == ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando && cancelarPecaAPeca)
                 {
-                    throw new Exception("Impressıes na situaÁ„o Processando devem ser canceladas toda a impress„o.");
+                    throw new Exception("Impress√µes na situa√ß√£o Processando devem ser canceladas toda a impress√£o.");
                 }
 
                 if (idProdImpressao == 0 && (!Exists(sessao, idImpressao) || situacaoImpressao == ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada))
@@ -2740,56 +2749,56 @@ namespace Glass.Data.DAL
                 #region Valida cancelamento por pedido/plano de corte
 
                 /* Chamado 16544.
-                 * Caso o usu·rio tente cancelar as etiquetas, j· canceladas, de um pedido, lanÁa uma exceÁ„o. */
-                if (string.IsNullOrWhiteSpace(idsProdImpressao) && idPedido > 0)
+                 * Caso o usu√°rio tente cancelar as etiquetas, j√° canceladas, de um pedido, lan√ßa uma exce√ß√£o. */
+                if (!idsProdImpressao.Any(f => f > 0) && idPedido > 0)
                 {
-                    throw new Exception("As etiquetas deste pedido j· foram canceladas nesta impress„o.");
+                    throw new Exception("As etiquetas deste pedido j√° foram canceladas nesta impress√£o.");
                 }
 
                 /* Chamado 16544.
-                 * Caso o usu·rio tente cancelar as etiquetas, j· canceladas, de um plano de corte, lanÁa uma exceÁ„o. */
-                if (string.IsNullOrWhiteSpace(idsProdImpressao) && !string.IsNullOrWhiteSpace(planoCorte))
+                 * Caso o usu√°rio tente cancelar as etiquetas, j√° canceladas, de um plano de corte, lan√ßa uma exce√ß√£o. */
+                if (!idsProdImpressao.Any(f => f > 0) && !string.IsNullOrWhiteSpace(planoCorte))
                 {
-                    throw new Exception("As etiquetas deste plano de corte j· foram canceladas nesta impress„o.");
+                    throw new Exception("As etiquetas deste plano de corte j√° foram canceladas nesta impress√£o.");
                 }
 
                 #endregion
 
-                // Verifica se h· alguma peÁa para cancelar.
-                // 04/12/2014. Ocorreu na Modelo e na MS Vidros casos em que a impress„o n„o tinha produto, ao tentar cancelar a impress„o
-                // o sistema lanÁava uma exceÁ„o, mas o correto È marcar a impress„o como cancelada. Alteramos o sistema para que, neste caso,
-                // a impress„o seja cancelada e o log de cancelamento seja incluÌdo no banco de dados.
-                if (string.IsNullOrWhiteSpace(idsProdImpressao))
+                // Verifica se h√° alguma pe√ßa para cancelar.
+                // 04/12/2014. Ocorreu na Modelo e na MS Vidros casos em que a impress√£o n√£o tinha produto, ao tentar cancelar a impress√£o
+                // o sistema lan√ßava uma exce√ß√£o, mas o correto √© marcar a impress√£o como cancelada. Alteramos o sistema para que, neste caso,
+                // a impress√£o seja cancelada e o log de cancelamento seja inclu√≠do no banco de dados.
+                if (!idsProdImpressao.Any(f => f > 0))
                 {
-                    // Altera a situaÁ„o da impress„o de etiqueta.
+                    // Altera a situa√ß√£o da impress√£o de etiqueta.
                     AtualizaSituacao(sessao, idImpressao, ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada);
 
                     // Insere o log de cancelamento.
                     LogCancelamentoDAO.Instance.LogImpressaoEtiquetas(sessao, idFunc, GetElementByPrimaryKey(sessao, idImpressao), motivo, true);
 
-                    // ForÁa a saÌda do mÈtodo.
+                    // For√ßa a sa√≠da do m√©todo.
                     return;
                 }
 
                 /* Chamado 63971. */
-                if (ChapaCortePecaDAO.Instance.ChapasPossuemLeitura(sessao, idsProdImpressao.Split(',').Select(f => f.ToString().StrParaInt()).ToList()))
+                if (ChapaCortePecaDAO.Instance.ChapasPossuemLeitura(sessao, idsProdImpressao))
                 {
-                    throw new Exception("Uma ou mais matÈrias-primas a serem canceladas j· foram utilizadas.");
+                    throw new Exception("Uma ou mais mat√©rias-primas a serem canceladas j√° foram utilizadas.");
                 }
 
-                // Verifica se esta impress„o possui algum pedido j· liberado e bloqueia
+                // Verifica se esta impress√£o possui algum pedido j√° liberado e bloqueia
                 if (PedidoConfig.LiberarPedido)
                 {
                     var verificarPedidosLiberados = ExecuteScalar<bool>(sessao, $@"SELECT COUNT(*) > 0
                         FROM produto_impressao pi
                             INNER JOIN pedido p ON (pi.IdPedido = p.IdPedido)
-                        WHERE IdProdImpressao IN ({ idsProdImpressao }) 
+                        WHERE IdProdImpressao IN ({ string.Join(",", idsProdImpressao) }) 
                             AND p.Situacao = { (int)Pedido.SituacaoPedido.Confirmado }
                             AND p.TipoPedido <> { (int)Pedido.TipoPedidoEnum.Producao }");
 
                     if (verificarPedidosLiberados)
                     {
-                        throw new Exception("A impress„o n„o pode ser cancelada. Alguns pedidos desta impress„o j· foram liberados, cancele a liberaÁ„o antes de cancelar esta impress„o.");
+                        throw new Exception("A impress√£o n√£o pode ser cancelada. Alguns pedidos desta impress√£o j√° foram liberados, cancele a libera√ß√£o antes de cancelar esta impress√£o.");
                     }
                 }
 
@@ -2797,7 +2806,7 @@ namespace Glass.Data.DAL
                 var temCarregamento = false;
                 var idsProdPedProducao = new List<uint>();
 
-                //Verifica se esta impress„o possui algum pedido que esta em um carregamento e bloqueia
+                //Verifica se esta impress√£o possui algum pedido que esta em um carregamento e bloqueia
                 if (tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
                     var sqlCarregamento = $@"
@@ -2805,9 +2814,9 @@ namespace Glass.Data.DAL
                         FROM item_carregamento ic
                             INNER JOIN produto_pedido_producao ppp ON (ic.IdProdPedProducao = ppp.IdProdPedProducao)
                             INNER JOIN produto_impressao pi ON (ppp.IdImpressao = pi.IdImpressao AND pi.NumEtiqueta = ppp.NumEtiqueta)
-                        WHERE pi.IdProdImpressao IN ({ idsProdImpressao })";
+                        WHERE pi.IdProdImpressao IN ({ string.Join(",", idsProdImpressao) })";
 
-                    // Verifica se tem pedidos vinculados a Carregamento, e quais s„o eles.
+                    // Verifica se tem pedidos vinculados a Carregamento, e quais s√£o eles.
                     var pedidosVinculadosCarregamento = ExecuteMultipleScalar<uint>(sessao, sqlCarregamento);
 
                     if (pedidosVinculadosCarregamento != null && pedidosVinculadosCarregamento.Count > 0)
@@ -2817,11 +2826,11 @@ namespace Glass.Data.DAL
 
                     if (temCarregamento && situacaoImpressao != ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando)
                     {
-                        var mensagemErro = "A impress„o n„o pode ser cancelada. O(s) pedido(s) {0} desta impress„o est·(„o) vinculado(s) a um carregamento, cancele o carregamento antes de cancelar esta impress„o.";
+                        var mensagemErro = "A impress√£o n√£o pode ser cancelada. O(s) pedido(s) {0} desta impress√£o est√°(√£o) vinculado(s) a um carregamento, cancele o carregamento antes de cancelar esta impress√£o.";
                         throw new Exception(string.Format(mensagemErro, string.Join(",", pedidosVinculadosCarregamento)));
                     }
 
-                    idsProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdsProdPedProducaoByIdProdImpressao(sessao, idsProdImpressao);
+                    idsProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdsProdPedProducaoByIdProdImpressao(sessao, string.Join(",", idsProdImpressao));
 
                     /* Chamado 55897. */
                     if (idsProdPedProducao != null && idsProdPedProducao.Count > 0)
@@ -2836,7 +2845,7 @@ namespace Glass.Data.DAL
 
                                 if (!string.IsNullOrWhiteSpace(numEtiquetaPai) && ProdutoImpressaoDAO.Instance.EstaImpressa(sessao, numEtiquetaPai, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
                                 {
-                                    throw new Exception("N„o È possÌvel cancelar peÁas de composiÁ„o que estejam associadas ‡ peÁas compostas impressas.");
+                                    throw new Exception("N√£o √© poss√≠vel cancelar pe√ßas de composi√ß√£o que estejam associadas √† pe√ßas compostas impressas.");
                                 }
                             }
                         }
@@ -2846,15 +2855,15 @@ namespace Glass.Data.DAL
                 {
                     var sqlPerdas = $@"SELECT COUNT(*) > 0
                         FROM perda_chapa_vidro
-                        WHERE IdProdImpressao IN ({ idsProdImpressao }) AND COALESCE(Cancelado, 0) = 0";
+                        WHERE IdProdImpressao IN ({ string.Join(",", idsProdImpressao) }) AND COALESCE(Cancelado, 0) = 0";
 
                     if (ExecuteScalar<bool>(sessao, sqlPerdas))
                     {
-                        throw new Exception("A impress„o n„o pode ser cancelada, pois possui peÁas que foram marcadas como perda. Cancele as perdas antes de cancelar esta impress„o");
+                        throw new Exception("A impress√£o n√£o pode ser cancelada, pois possui pe√ßas que foram marcadas como perda. Cancele as perdas antes de cancelar esta impress√£o");
                     }
                 }
 
-                // Marca a impress„o como processando, para que caso o processo n„o seja concluÌdo, n„o faÁa nada com esta impress„o
+                // Marca a impress√£o como processando, para que caso o processo n√£o seja conclu√≠do, n√£o fa√ßa nada com esta impress√£o
                 if ((idPedido ?? 0) == 0 && (numeroNFe ?? 0) == 0 && string.IsNullOrWhiteSpace(planoCorte) && idProdImpressao == 0 && idImpressao > 0)
                 {
                     AtualizaSituacao(sessao, idImpressao, ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando);
@@ -2864,30 +2873,30 @@ namespace Glass.Data.DAL
 
                 if (tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho || tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
-                    // Recupera quais produtos impressos s„o referentes a retalhos
+                    // Recupera quais produtos impressos s√£o referentes a retalhos
                     idsProdImpressaoRetalho = ExecuteMultipleScalar<uint>(sessao, $@"SELECT IdRetalhoProducao FROM produto_impressao
-                        WHERE IdRetalhoProducao IS NOT NULL AND IdProdImpressao IN ({ idsProdImpressao })").ToList().FindAll(x => x > 0);
+                        WHERE IdRetalhoProducao IS NOT NULL AND IdProdImpressao IN ({ string.Join(",", idsProdImpressao) })").ToList().FindAll(x => x > 0);
 
                     foreach (var idRetalhoProducao in idsProdImpressaoRetalho)
                     {
                         if (!RetalhoProducaoDAO.Instance.PodeCancelar(sessao, idRetalhoProducao))
                         {
                             var r = RetalhoProducaoDAO.Instance.Obter(sessao, idRetalhoProducao);
-                            throw new Exception($"N„o È possÌvel cancelar o retalho { r.NumeroEtiqueta } porque ele est· em uso.");
+                            throw new Exception($"N√£o √© poss√≠vel cancelar o retalho { r.NumeroEtiqueta } porque ele est√° em uso.");
                         }
                     }
                 }
 
-                // Chamado 11444. Marca os registros produtoPedidoProducao como n„o repostos para evitar o erro ao imprimir peÁas
-                // repostas de impressıes canceladas, que ocorria porque ao recuperar o produto de impress„o nada era recuperado,
-                // pois, o produto de impress„o estava reposto e cancelado, e ele È recuperado somente se estiver reposto e ativo.
-                // A peÁa deve ser marcada como n„o reposta neste momento para que o campo "QtdImpresso" seja alterado corretamente.
+                // Chamado 11444. Marca os registros produtoPedidoProducao como n√£o repostos para evitar o erro ao imprimir pe√ßas
+                // repostas de impress√µes canceladas, que ocorria porque ao recuperar o produto de impress√£o nada era recuperado,
+                // pois, o produto de impress√£o estava reposto e cancelado, e ele √© recuperado somente se estiver reposto e ativo.
+                // A pe√ßa deve ser marcada como n√£o reposta neste momento para que o campo "QtdImpresso" seja alterado corretamente.
                 if (cancelarPecaAPeca)
                 {
                     objPersistence.ExecuteCommand(sessao, $@"UPDATE produto_pedido_producao ppp
                             INNER JOIN produto_impressao pi ON (ppp.IdImpressao = pi.IdImpressao AND pi.IdProdPed = ppp.IdProdPed AND ppp.NumEtiqueta = pi.NumEtiqueta)
                         SET ppp.PecaReposta = 0
-                        WHERE pi.IdProdImpressao IN ({ idsProdImpressao })");
+                        WHERE pi.IdProdImpressao IN ({ string.Join(",", idsProdImpressao) })");
                 }
                 else if (idImpressao > 0)
                 {
@@ -2897,79 +2906,79 @@ namespace Glass.Data.DAL
                         WHERE ppp.IdImpressao = { idImpressao }");
                 }
 
-                // Subtrai a qtd impressa de cada item desta impress„o no produtoPedidoEspelho que os mesmos est„o relacionados.
+                // Subtrai a qtd impressa de cada item desta impress√£o no produtoPedidoEspelho que os mesmos est√£o relacionados.
                 objPersistence.ExecuteCommand(sessao, $@"UPDATE produtos_pedido_espelho ppe 
                     INNER JOIN (
                         SELECT IdProdPed, COUNT(*) AS QtdeImpresso
                         FROM (
                             SELECT pi.IdProdPed
                             FROM produto_impressao pi
-                                /* Johan - deve ser Left Join para que o cancelamento seja feito se houver erro na impress„o */
+                                /* Johan - deve ser Left Join para que o cancelamento seja feito se houver erro na impress√£o */
                                 LEFT JOIN produto_pedido_producao ppp ON (pi.IdProdPed = ppp.IdProdPed AND pi.NumEtiqueta = ppp.NumEtiqueta)
-                            WHERE pi.IdProdImpressao IN ({ idsProdImpressao }) AND COALESCE(ppp.PecaReposta, 0) = 0
+                            WHERE pi.IdProdImpressao IN ({ string.Join(",", idsProdImpressao) }) AND COALESCE(ppp.PecaReposta, 0) = 0
                                 AND !COALESCE(pi.Cancelado, 0) AND pi.IdImpressao IS NOT NULL
                         ) AS temp
                         GROUP BY IdProdPed
                     ) pi ON (ppe.IdProdPed = pi.IdProdPed) 
                     SET ppe.QtdImpresso = IF(ppe.QtdImpresso = 0, 0, ppe.QtdImpresso - COALESCE(pi.QtdeImpresso, 0))");
 
-                // Subtrai a qtd impressa de cada item desta impress„o nos ambientesPedidoEspelho.
+                // Subtrai a qtd impressa de cada item desta impress√£o nos ambientesPedidoEspelho.
                 objPersistence.ExecuteCommand(sessao, $@"UPDATE ambiente_pedido_espelho ape
                     INNER JOIN (
                         SELECT IdAmbientePedido, COUNT(*) AS QtdeImpresso
                         FROM (
                             SELECT pi.IdAmbientePedido
                             FROM produto_impressao pi
-                                /* Johan - deve ser Left Join para que o cancelamento seja feito se houver erro na impress„o */
+                                /* Johan - deve ser Left Join para que o cancelamento seja feito se houver erro na impress√£o */
                                 LEFT JOIN produto_pedido_producao ppp ON (pi.IdProdPed = ppp.IdProdPed AND pi.NumEtiqueta = ppp.NumEtiqueta)
-                            WHERE pi.IdProdImpressao IN ({ idsProdImpressao }) AND COALESCE(ppp.PecaReposta, 0) = 0
+                            WHERE pi.IdProdImpressao IN ({ string.Join(",", idsProdImpressao) }) AND COALESCE(ppp.PecaReposta, 0) = 0
                                 AND !COALESCE(pi.Cancelado, 0) AND pi.IdImpressao IS NOT NULL
                         ) AS temp
                         GROUP BY IdAmbientePedido
                     ) pi ON (ape.IdAmbientePedido = pi.IdAmbientePedido)
                     SET ape.QtdeImpresso = ape.QtdeImpresso - COALESCE(pi.QtdeImpresso, 0)");
 
-                // Subtrai a qtd impressa de cada item desta impress„o nos produtos da nota fiscal
+                // Subtrai a qtd impressa de cada item desta impress√£o nos produtos da nota fiscal
                 objPersistence.ExecuteCommand(sessao, $@"UPDATE produtos_nf pnf
                     INNER JOIN (
                         SELECT pi.IdProdNf, COUNT(*) AS QtdeImpresso
                         FROM produto_impressao pi
-                        WHERE pi.IdProdImpressao IN ({ idsProdImpressao }) AND !COALESCE(pi.Cancelado, 0)
+                        WHERE pi.IdProdImpressao IN ({ string.Join(",", idsProdImpressao) }) AND !COALESCE(pi.Cancelado, 0)
                             AND pi.IdImpressao IS NOT NULL
                         GROUP BY pi.IdProdNf
                     ) pi ON (pnf.IdProdNf = pi.IdProdNf)
                     SET pnf.QtdImpresso = pnf.QtdImpresso - COALESCE(pi.QtdeImpresso, 0)");
 
-                //Subtrai a qtde impressa de cada item desta impress„o dos box impressos
+                //Subtrai a qtde impressa de cada item desta impress√£o dos box impressos
                 objPersistence.ExecuteCommand(sessao, $@"UPDATE produtos_pedido pp
                     INNER JOIN (
                         SELECT pi.IdProdPedBox, COUNT(*) AS QtdeImpresso
                         FROM produto_impressao pi
-                        WHERE pi.IdProdImpressao IN ({ idsProdImpressao }) AND !COALESCE(pi.Cancelado, 0)
+                        WHERE pi.IdProdImpressao IN ({ string.Join(",", idsProdImpressao) }) AND !COALESCE(pi.Cancelado, 0)
                             AND pi.IdImpressao IS NOT NULL
                         GROUP BY pi.IdProdPedBox
                     ) pi ON (pp.IdProdPed = pi.IdProdPedBox)
                     SET pp.QtdeBoxImpresso = pp.QtdeBoxImpresso - COALESCE(pi.QtdeImpresso, 0)");
 
                 /* Chamado 32174. */
-                if (!string.IsNullOrWhiteSpace(idsProdImpressao) && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
+                if (!idsProdImpressao.Any(f => f > 0) && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
-                    ChapaCortePecaDAO.Instance.DeleteByIdsProdImpressaoPeca(sessao, idsProdImpressao.Split(',').Select(f => f.StrParaInt()).ToList());
+                    ChapaCortePecaDAO.Instance.DeleteByIdsProdImpressaoPeca(sessao, idsProdImpressao);
                 }
 
                 var ids = string.Empty;
 
-                // Apaga as datas de leituras das peÁas dessa impress„o, considerando peÁa por peÁa da impress„o
+                // Apaga as datas de leituras das pe√ßas dessa impress√£o, considerando pe√ßa por pe√ßa da impress√£o
                 if (cancelarPecaAPeca)
                 {
-                    var idsProdPedProducaoPelosIdsProdImpressao = ProdutoPedidoProducaoDAO.Instance.ObtemIdsProdPedProducaoPelosIdsProdImpressao(sessao, idsProdImpressao.Split(',').Select(f => f.StrParaInt()).ToList());
+                    var idsProdPedProducaoPelosIdsProdImpressao = ProdutoPedidoProducaoDAO.Instance.ObtemIdsProdPedProducaoPelosIdsProdImpressao(sessao, idsProdImpressao);
 
                     if (idsProdPedProducaoPelosIdsProdImpressao.Any(f => f > 0))
                     {
                         ids = string.Join(",", idsProdPedProducaoPelosIdsProdImpressao);
                     }
                 }
-                // Apaga as datas de leituras das peÁas dessa impress„o, considerando todas as peÁas da impress„o
+                // Apaga as datas de leituras das pe√ßas dessa impress√£o, considerando todas as pe√ßas da impress√£o
                 else
                 {
                     var idsProdPedProducaoPelaImpressao = ProdutoPedidoProducaoDAO.Instance.ObterIdsProdPedProducaoPeloIdImpressao(sessao, (int)idImpressao);
@@ -3009,7 +3018,7 @@ namespace Glass.Data.DAL
                                 var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
 
                                 MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, prodPedEsp.IdProd, login.IdLoja, (uint)idProdPedProducao, 1, 0, false, false, true);
-                                // SÛ baixa apenas se a peÁa possuir produto para baixa associado
+                                // S√≥ baixa apenas se a pe√ßa possuir produto para baixa associado
                                 MovEstoqueDAO.Instance.CreditaEstoqueProducao(sessao, prodPedEsp.IdProd, login.IdLoja, (uint)idProdPedProducao, (decimal)(m2Calc > 0 && passouSetorLaminado ? m2Calc : 1), true, true);
 
                                 // Marca que este produto entrou em estoque
@@ -3019,9 +3028,9 @@ namespace Glass.Data.DAL
                     }
                 }
 
-                // Atualiza as peÁas repostas na tabela produto_impressao, voltando-as para a impress„o anterior.
+                // Atualiza as pe√ßas repostas na tabela produto_impressao, voltando-as para a impress√£o anterior.
                 var sqlIdImpressao = ProdutoPedidoProducaoDAO.Instance.SqlIdImpressao("ppp.dadosReposicaoPeca");
-                var produtosImpressao = ProdutoImpressaoDAO.Instance.GetListByIds(sessao, idsProdImpressao, true);
+                var produtosImpressao = ProdutoImpressaoDAO.Instance.GetListByIds(sessao, string.Join(",", idsProdImpressao), true);
 
                 foreach (var pi in produtosImpressao)
                 {
@@ -3029,7 +3038,7 @@ namespace Glass.Data.DAL
 
                     if (pecaReposta)
                     {
-                        // Foi necess·rio recuperar o idImpressao antes de atualiz·-lo, 
+                        // Foi necess√°rio recuperar o idImpressao antes de atualiz√°-lo, 
                         // pois em alguns casos estava ocorreno erro de "truncated INTEGER", pois recuperava um valor vazio
                         var idImpressaoRep = ExecuteScalar<uint>(sessao, $@"SELECT CAST(({ sqlIdImpressao }) AS SIGNED)
                             FROM produto_impressao pi
@@ -3044,8 +3053,8 @@ namespace Glass.Data.DAL
 
                 if (temCarregamento && situacaoImpressao == ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando)
                 {
-                    // Se tiver carregamento e a situacao da impress„o for processando, n„o marca os registros produtoPedidoProducao como cancelados
-                    // apenas remove o vinculo da impress„o.
+                    // Se tiver carregamento e a situacao da impress√£o for processando, n√£o marca os registros produtoPedidoProducao como cancelados
+                    // apenas remove o vinculo da impress√£o.
                     if (cancelarPecaAPeca)
                     {
                         objPersistence.ExecuteCommand(sessao, $@"UPDATE produto_pedido_producao ppp
@@ -3072,7 +3081,7 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    // Marca os registros produtoPedidoProducao como cancelados (Exceto as peÁas repostas)
+                    // Marca os registros produtoPedidoProducao como cancelados (Exceto as pe√ßas repostas)
                     if (cancelarPecaAPeca)
                     {
                         objPersistence.ExecuteCommand(sessao, $@"UPDATE produto_pedido_producao ppp
@@ -3084,7 +3093,7 @@ namespace Glass.Data.DAL
                                 ppp.NumEtiquetaCanc = ppp.NumEtiqueta,
                                 ppp.NumEtiqueta = NULL,
                                 ppp.Situacao = IF(ped.TipoPedido <> { (int)Pedido.TipoPedidoEnum.MaoDeObra }, { (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda }, { (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra })
-                            WHERE pi.IdProdImpressao IN ({ idsProdImpressao }) AND !COALESCE(ppp.PecaReposta, 0)");
+                            WHERE pi.IdProdImpressao IN ({ string.Join(",", idsProdImpressao) }) AND !COALESCE(ppp.PecaReposta, 0)");
                     }
                     else
                     {
@@ -3105,7 +3114,7 @@ namespace Glass.Data.DAL
                 {
                     foreach (var idRetalhoProducao in idsProdImpressaoRetalho)
                     {
-                        RetalhoProducaoDAO.Instance.Cancelar(sessao, idFunc, idRetalhoProducao, $"Cancelamento da impress„o { idImpressao }", false, false, false);
+                        RetalhoProducaoDAO.Instance.Cancelar(sessao, idFunc, idRetalhoProducao, $"Cancelamento da impress√£o { idImpressao }", false, false, false);
                     }
                 }
 
@@ -3123,13 +3132,13 @@ namespace Glass.Data.DAL
                     }
                 }
 
-                // Cancela as etiquetas repostas que foram impressas nesta impress„o e que n„o possuem outra impress„o, o motivo deste comando
-                // È cancelar as etiquetas repostas que possuem apenas um impress„o para que seja impressa desde o inÌcio do processo
-                // porque caso elas ficassem como repostas n„o teriam referÍncia de uma impress„o de etiquetas anterior n„o-cancelada
+                // Cancela as etiquetas repostas que foram impressas nesta impress√£o e que n√£o possuem outra impress√£o, o motivo deste comando
+                // √© cancelar as etiquetas repostas que possuem apenas um impress√£o para que seja impressa desde o in√≠cio do processo
+                // porque caso elas ficassem como repostas n√£o teriam refer√™ncia de uma impress√£o de etiquetas anterior n√£o-cancelada
                 // para que pudessem ser reimpressas.
                 if (idImpressao > 0)
                 {
-                    var etiquetasRepostas = ProdutoImpressaoDAO.Instance.GetEtiquetasRepostasNaImpressao(sessao, idImpressao, idsProdImpressao, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
+                    var etiquetasRepostas = ProdutoImpressaoDAO.Instance.GetEtiquetasRepostasNaImpressao(sessao, idImpressao, string.Join(",", idsProdImpressao), ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
                     foreach (var etiquetaReposta in etiquetasRepostas)
                     {
@@ -3158,7 +3167,7 @@ namespace Glass.Data.DAL
                                     ppp.Situacao = IF(ped.TipoPedido <> { (int)Pedido.TipoPedidoEnum.MaoDeObra }, { (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda }, { (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra })
                                 WHERE ppp.NumEtiqueta = '{ etiquetaReposta }'");
 
-                            // Diminui a quantidade impressao desta peÁa na tabela produtos_pedido_espelho ou ambiente_pedido_espelho.
+                            // Diminui a quantidade impressao desta pe√ßa na tabela produtos_pedido_espelho ou ambiente_pedido_espelho.
                             var idProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetIdProdPedByEtiqueta(sessao, etiquetaReposta, false);
                             var pedidoMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(sessao, vetEtiqueta[0].StrParaUint());
 
@@ -3178,22 +3187,27 @@ namespace Glass.Data.DAL
 
                 if ((idPedido ?? 0) == 0 && (numeroNFe ?? 0) == 0 && string.IsNullOrWhiteSpace(planoCorte) && idProdImpressao == 0 && idImpressao > 0)
                 {
-                    // Marca os produtos da impress„o como cancelados.
+                    // Marca os produtos da impress√£o como cancelados.
                     ProdutoImpressaoDAO.Instance.MarcarProdutosImpressaoCancelado(sessao, null, (int)idImpressao);
 
                     LogCancelamentoDAO.Instance.LogImpressaoEtiquetas(sessao, idFunc, GetElementByPrimaryKey(sessao, idImpressao), motivo, true);
 
-                    // Atualiza a situaÁ„o dos pedidos.
+                    // Atualiza a situa√ß√£o dos pedidos.
                     AtualizaSituacaoPedidos(sessao, idImpressao, idPedido, planoCorte);
 
                     AtualizaSituacao(sessao, idImpressao, ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada);
                 }
                 else
                 {
-                    // Marca os produtos da impress„o como cancelados.
+                    // Marca os produtos da impress√£o como cancelados.
                     ProdutoImpressaoDAO.Instance.MarcarProdutosImpressaoCancelado(sessao, new List<int> { (int)idProdImpressao }, null);
 
-                    // Atualiza a situaÁ„o dos pedidos.
+                    if (produtosImpressao != null && produtosImpressao.Length > 0)
+                    {
+                        ProdutoImpressaoDAO.Instance.MarcarProdutosImpressaoCancelado(sessao, produtosImpressao.Select(f => (int)f.IdProdImpressao).ToList(), null);
+                    }
+
+                    // Atualiza a situa√ß√£o dos pedidos.
                     if (idImpressao > 0 && (numeroNFe ?? 0) == 0 && idProdImpressao == 0)
                     {
                         AtualizaSituacaoPedidos(sessao, idImpressao, idPedido, planoCorte);
@@ -3251,7 +3265,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza a situaÁ„o dos pedidos cancelados.
+        /// Atualiza a situa√ß√£o dos pedidos cancelados.
         /// </summary>
         private void AtualizaSituacaoPedidos(uint idImpressao, uint? idPedido, string planoCorte)
         {
@@ -3259,7 +3273,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza a situaÁ„o dos pedidos cancelados.
+        /// Atualiza a situa√ß√£o dos pedidos cancelados.
         /// </summary>
         private void AtualizaSituacaoPedidos(GDASession session, uint idImpressao, uint? idPedido, string planoCorte)
         {
@@ -3272,7 +3286,7 @@ namespace Glass.Data.DAL
                     PedidoDAO.Instance.AlteraSituacaoProducao(session, idPedido.Value, Pedido.SituacaoProducaoEnum.NaoEntregue);
 
                     /* Chamado 34685.
-                     * Caso todas peÁas do pedido de produÁ„o tenham sido canceladas a situaÁ„o deve ser alterada para Confirmado PCP. */
+                     * Caso todas pe√ßas do pedido de produ√ß√£o tenham sido canceladas a situa√ß√£o deve ser alterada para Confirmado PCP. */
                     if (PedidoDAO.Instance.GetTipoPedido(session, idPedido.Value) == Pedido.TipoPedidoEnum.Producao)
                         PedidoDAO.Instance.AlteraSituacao(session, idPedido.Value, Pedido.SituacaoPedido.ConfirmadoLiberacao);
                 }
@@ -3297,7 +3311,7 @@ namespace Glass.Data.DAL
                             PedidoDAO.Instance.AlteraSituacaoProducao(session, idPedidoCanc, Pedido.SituacaoProducaoEnum.NaoEntregue);
 
                             /* Chamado 34685.
-                             * Caso todas peÁas do pedido de produÁ„o tenham sido canceladas a situaÁ„o deve ser alterada para Confirmado PCP. */
+                             * Caso todas pe√ßas do pedido de produ√ß√£o tenham sido canceladas a situa√ß√£o deve ser alterada para Confirmado PCP. */
                             if (PedidoDAO.Instance.GetTipoPedido(session, idPedidoCanc) == Pedido.TipoPedidoEnum.Producao)
                                 PedidoDAO.Instance.AlteraSituacao(session, idPedidoCanc, Pedido.SituacaoPedido.ConfirmadoLiberacao);
                         }
@@ -3309,14 +3323,14 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Apaga as etiquetas n„o usadas no arquivo de otimizaÁ„o
+        #region Apaga as etiquetas n√£o usadas no arquivo de otimiza√ß√£o
 
         private string BuscaRegistros(GDASession sessao, uint idProdPed, string campo, string resultadoFiltroVazio, bool executarSql2)
         {
             StringBuilder temp = new StringBuilder();
 
-            // Apaga os registros da tabela produto_pedido_producao que n„o tem registro na tabela
-            // leitura_producao (registros gerados por exportaÁ„o de arquivo de otimizaÁ„o)
+            // Apaga os registros da tabela produto_pedido_producao que n√£o tem registro na tabela
+            // leitura_producao (registros gerados por exporta√ß√£o de arquivo de otimiza√ß√£o)
             // que tem o mesmo idProdPed do argumento
             string sql1 = @"
                 select distinct " + campo + @"
@@ -3327,9 +3341,9 @@ namespace Glass.Data.DAL
                 group by ppp.idProdPedProducao
                 having count(lp.idLeituraProd)<=1 and group_concat(lp.dataLeitura) is null";
 
-            // Apaga os registros da tabela produto_pedido_producao cujo idProdPed n„o existe mais na
+            // Apaga os registros da tabela produto_pedido_producao cujo idProdPed n√£o existe mais na
             // tabela produtos_pedido_espelho (em caso de erro ao apagar um registro na tabela ou
-            // registros gerados por arquivo de exportaÁ„o)
+            // registros gerados por arquivo de exporta√ß√£o)
             string sql2 = @"
                 select distinct " + campo + @"
                 from produto_pedido_producao ppp
@@ -3353,7 +3367,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Apaga as etiquetas n„o usadas no arquivo de otimizaÁ„o.
+        /// Apaga as etiquetas n√£o usadas no arquivo de otimiza√ß√£o.
         /// </summary>
         /// <param name="idProdPed"></param>
         /// <param name="executarSql2"></param>
@@ -3364,12 +3378,12 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Apaga as etiquetas n„o usadas no arquivo de otimizaÁ„o.
+        /// Apaga as etiquetas n√£o usadas no arquivo de otimiza√ß√£o.
         /// </summary>
         public void ApagarEtiquetasOtimizacao(GDASession sessao, uint idProdPed, bool executarSql2, bool exportandoEtiquetas)
         {
-            //CondiÁ„o foi criada para n„o apagar as peÁas que foram colocadas em produÁ„o quando o pedido foi finalizado
-            //O motivo È que quando ia exportar para o optway as peÁas era apagadas e recriadas somente as que foram exportadas.
+            //Condi√ß√£o foi criada para n√£o apagar as pe√ßas que foram colocadas em produ√ß√£o quando o pedido foi finalizado
+            //O motivo √© que quando ia exportar para o optway as pe√ßas era apagadas e recriadas somente as que foram exportadas.
             if (exportandoEtiquetas)
                 return;
 
@@ -3399,10 +3413,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera dados da impress„o
+        #region Recupera dados da impress√£o
 
         /// <summary>
-        /// Recupera a situaÁ„o da impress„o.
+        /// Recupera a situa√ß√£o da impress√£o.
         /// </summary>
         public int ObtemSituacao(GDASession session, int idImpressao)
         {
@@ -3415,7 +3429,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera a situaÁ„o da impress„o.
+        /// Recupera a situa√ß√£o da impress√£o.
         /// </summary>
         public int ObtemSituacao(uint idImpressao)
         {
@@ -3423,7 +3437,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca impressıes que estejam na situaÁ„o "Processando"
+        /// Busca impress√µes que estejam na situa√ß√£o "Processando"
         /// </summary>
         public string ObtemImpressoesProcessando()
         {
@@ -3431,7 +3445,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Obtem a lista de ids dos setores lidos de uma impress„o
+        /// Obtem a lista de ids dos setores lidos de uma impress√£o
         /// </summary>
         public string ObtemSetoresProd(uint idImpressao, string idsPedidos)
         {
@@ -3465,7 +3479,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o funcion·rio que gerou a impress„o.
+        /// Recupera o funcion√°rio que gerou a impress√£o.
         /// </summary>
         public int ObterIdFunc(GDASession session, int idImpressao)
         {
@@ -3474,10 +3488,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Atualiza situaÁ„o da impress„o
+        #region Atualiza situa√ß√£o da impress√£o
 
         /// <summary>
-        /// Atualiza situaÁ„o da impress„o
+        /// Atualiza situa√ß√£o da impress√£o
         /// </summary>
         public void AtualizaSituacao(GDASession session, uint idImpressao, ImpressaoEtiqueta.SituacaoImpressaoEtiqueta situacao)
         {
@@ -3486,10 +3500,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se existem produtos de impress„o sem impress„o associada
+        #region Verifica se existem produtos de impress√£o sem impress√£o associada
 
         /// <summary>
-        /// Verifica se existem produtos de impress„o sem impress„o associada (ocorre quando d· erro na impress„o)
+        /// Verifica se existem produtos de impress√£o sem impress√£o associada (ocorre quando d√° erro na impress√£o)
         /// </summary>
         /// <returns></returns>
         public bool ExistemProdutosImpressaoSemImpressao()
@@ -3501,10 +3515,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca os ids das impressıes de um determinado pedido/NFe
+        #region Busca os ids das impress√µes de um determinado pedido/NFe
 
         /// <summary>
-        /// Busca os ids das impressıes de um determinado pedido.
+        /// Busca os ids das impress√µes de um determinado pedido.
         /// </summary>
         public string GetIdsByPedido(GDASession session, uint idPedido)
         {
@@ -3518,7 +3532,7 @@ namespace Glass.Data.DAL
         }
         
         /// <summary>
-        /// Busca os ids das impressıes de uma determinada nota fiscal.
+        /// Busca os ids das impress√µes de uma determinada nota fiscal.
         /// </summary>
         public string GetIdsByNFe(uint idNf)
         {
@@ -3533,10 +3547,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera as impressıes ativas
+        #region Recupera as impress√µes ativas
 
         /// <summary>
-        /// Recupera as impressıes ativas.
+        /// Recupera as impress√µes ativas.
         /// </summary>
         public string GetAtivas(string idsImpressoes)
         {
@@ -3548,7 +3562,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera o tipo da impress„o
+        #region Recupera o tipo da impress√£o
 
         private string SqlTipoImpressao(string idImpressao, string campo)
         {
@@ -3559,7 +3573,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o tipo da impress„o.
+        /// Recupera o tipo da impress√£o.
         /// </summary>
         public ProdutoImpressaoDAO.TipoEtiqueta GetTipoImpressao(uint idImpressao)
         {
@@ -3567,7 +3581,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o tipo da impress„o.
+        /// Recupera o tipo da impress√£o.
         /// </summary>
         public ProdutoImpressaoDAO.TipoEtiqueta GetTipoImpressao(GDASession session, uint idImpressao)
         {
@@ -3583,7 +3597,7 @@ namespace Glass.Data.DAL
             if (ExecuteScalar<bool>(session, SqlTipoImpressao(idImpressao.ToString(), "IdProdPedBox")))
                 return ProdutoImpressaoDAO.TipoEtiqueta.Box;
 
-            throw new Exception("Tipo da impress„o n„o definido.");
+            throw new Exception("Tipo da impress√£o n√£o definido.");
         }
 
         #endregion

@@ -8,7 +8,6 @@
     <script type="text/javascript">
 
         function setProc(idProcesso, codInterno, descr, codAplicacao) {
-
             if (GetQueryString("buscaComPopup") === "true") {
                 var idControle = GetQueryString("id-controle");
                 if (idControle) {
@@ -18,10 +17,16 @@
                 }
             }
 
-            if (GetQueryString("idProdPed") != "" && GetQueryString("idProdPed") != 'undefined' && GetQueryString("idProdPed") != null)
+            if (GetQueryString("idProdPed") != "" && GetQueryString("idProdPed") != 'undefined' && GetQueryString("idProdPed") != null) {
                 window.opener.setProcComposicao(idProcesso, codInterno, codAplicacao, GetQueryString("idProdPed"));
-            else
+            }
+            else if (GetQueryString("idProdOrcamento") != "" && GetQueryString("idProdOrcamento") != 'undefined' && GetQueryString("idProdOrcamento") != null) {
+                window.opener.setProcComposicao(idProcesso, codInterno, codAplicacao, GetQueryString("idProdOrcamento"));
+            }
+            else {
                 window.opener.setProc(idProcesso, codInterno, codAplicacao, GetQueryString("idControle"));
+            }
+
             closeWindow();
         }
 

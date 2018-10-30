@@ -97,6 +97,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glass.Otimizacao", "Otimiza
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glass.API.Backend", "Api\Glass.API.Backend\Glass.API.Backend.csproj", "{940C0850-AA35-466C-915C-0E5B5C986561}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integracao", "Integracao", "{8087DCE2-5F1B-4523-A805-E3B6CCE2617C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glass.Integracao.Khan", "Integracao\Glass.Integracao.Khan\Glass.Integracao.Khan.csproj", "{3DB16AA0-B7B1-4500-8541-1BC155742124}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glass.Integracao", "Integracao\Glass.Integracao\Glass.Integracao.csproj", "{EDDBA46B-4412-433B-A587-C481BA2831FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -380,6 +386,30 @@ Global
 		{940C0850-AA35-466C-915C-0E5B5C986561}.Release|Any CPU.Build.0 = Release|Any CPU
 		{940C0850-AA35-466C-915C-0E5B5C986561}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{940C0850-AA35-466C-915C-0E5B5C986561}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Debug|.NET.Build.0 = Debug|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Release|.NET.ActiveCfg = Release|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Release|.NET.Build.0 = Release|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3DB16AA0-B7B1-4500-8541-1BC155742124}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Debug|.NET.Build.0 = Debug|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Release|.NET.ActiveCfg = Release|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Release|.NET.Build.0 = Release|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -418,6 +448,8 @@ Global
 		{B48A8A08-4332-41FC-A6BB-ED85A3A99F9D} = {240F45A3-FDC6-4F3E-9463-5B6A33B8814E}
 		{876C89C4-D89E-4E70-AB98-52C008F0DE85} = {8CFCFD23-BA5D-4EB5-B552-78DFA464146D}
 		{940C0850-AA35-466C-915C-0E5B5C986561} = {320171AD-F2D1-411E-BC00-F757D7B4E117}
+		{3DB16AA0-B7B1-4500-8541-1BC155742124} = {8087DCE2-5F1B-4523-A805-E3B6CCE2617C}
+		{EDDBA46B-4412-433B-A587-C481BA2831FD} = {8087DCE2-5F1B-4523-A805-E3B6CCE2617C}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

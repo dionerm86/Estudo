@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass.Configuracoes;
 using Glass.Data.Helper;
 using Glass.Data.Helper.Calculos;
@@ -437,7 +437,7 @@ namespace Glass.Data.DAL
 
             return objPersistence.LoadData(sessao, String.Format(sql, usarEspelho ? "Fluxo" : "Pedido")).ToList();
         }
-        
+
         /// <summary>
         /// Busca os ids dos produtos de vários pedidos.
         /// </summary>
@@ -448,7 +448,7 @@ namespace Glass.Data.DAL
                 return new List<int>();
             }
 
-            var sql = $@"SELECT pp.IdProdPed 
+            var sql = $@"SELECT pp.IdProdPed
                 FROM produtos_pedido pp
                     LEFT JOIN pedido p ON (pp.IdPedido = p.IdPedido)
                 WHERE pp.IdPedido IN ({ string.Join(",", idsPedidos) })
@@ -945,7 +945,8 @@ namespace Glass.Data.DAL
 
             var camposVolume = @"
                 v.IdPedido, p.CodCliente as CodPedCliente, CONCAT('Volume: ', v.idVolume, '  Data de Fechamento: ', v.dataFechamento) as DescrProduto,
-                null as Qtde, null as Altura, null as Largura, null as TotM2Calc, CAST(ROUND(SUM(pp.peso / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde), 2) as decimal(12, 2)) as Peso";
+                null as Qtde, null as Altura, null as Largura, null as TotM2Calc, CAST(ROUND(SUM(pp.peso / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde), 2) as decimal(12, 2)) as Peso,
+                NULL AS CodAplicacao, NULL AS CodProcesso";
 
             var sql = $@"
                 SELECT { camposVolume }
@@ -1699,11 +1700,15 @@ namespace Glass.Data.DAL
         /// </summary>
         public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta)
         {
-
             if (idProdPed == 0)
                 return;
 
             var idPedido = (int)ObtemIdPedido(idProdPed);
+
+            if (!ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
+            {
+                return;
+            }
 
             if (!string.IsNullOrWhiteSpace(metodo)
                 && PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido) == Pedido.TipoPedidoEnum.Revenda)
@@ -1739,6 +1744,31 @@ namespace Glass.Data.DAL
 
                 ProdutoSaidaEstoqueDAO.Instance.Insert(sessao, novo);
             }
+        }
+
+        private bool ValidarSaidaProduto(GDASession sessao, uint idProdPed, float qtdSaida, uint idPedido)
+        {
+            var tipoPedido = PedidoDAO.Instance.ObterTipoPedido(sessao, idPedido);
+
+            /* Pedidos de mão de obra são movimentados com base na quantidade do ambiente,
+             * por isso, bloquear a movimentação de acordo com o produto, faz com que uma movimentação válida seja bloqueada.
+             * Pedidos de produção não movimentam a reserva/liberação. O método que atualiza a reserva dos produtos desconsidera esse tipo de pedido. */
+            if (tipoPedido == Pedido.TipoPedidoEnum.MaoDeObra || tipoPedido == Pedido.TipoPedidoEnum.Producao)
+            {
+                return true;
+            }
+
+            var quantidadeProduto = this.ObtemQtde(sessao, idProdPed);
+            var quantidadeSaidaAtualProduto = this.ObterQtdSaida(sessao, idProdPed);
+
+            qtdSaida += quantidadeSaidaAtualProduto;
+
+            if (qtdSaida > quantidadeProduto)
+            {
+                throw new InvalidOperationException($"Foi realizada uma tentativa de lançar uma saída maior do que a disponível em estoque para o produto. Dados da situação: IdProdPed: {idProdPed} QtdSaida: {qtdSaida}.");
+            }
+
+            return true;
         }
 
         #endregion
@@ -2708,7 +2738,9 @@ namespace Glass.Data.DAL
                     PedidoDAO.Instance.UpdateTotalPedido(sessao, pedido);
                 }
 
-                if (atualizaDataEntrega)
+                var deveAtualizar = VerificarDeveAtualizarDataEntrega(sessao, (int)pedido.IdPedido);
+
+                if (atualizaDataEntrega && deveAtualizar)
                 {
                     // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                     bool enviarMensagem;
@@ -3588,15 +3620,16 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Obtém valores de campos específicos
+        /// Obtém o valor do campo QtdSaida, do produto de pedido informado.
         /// </summary>
-        /// <param name="idProdPed"></param>
-        /// <returns></returns>
-        public float ObtemQtdSaida(uint idProdPed)
+        /// <param name="session">session.</param>
+        /// <param name="idProdPed">idProdPed.</param>
+        /// <returns>Retorna o valor do campo QtdSaida, do produto de pedido informado.</returns>
+        public float ObterQtdSaida(GDASession session, uint idProdPed)
         {
-            string sql = "Select Coalesce(qtdSaida, 0) From produtos_pedido Where idProdPed=" + idProdPed;
+            var sql = $"SELECT COALESCE(QtdSaida, 0) FROM produtos_pedido WHERE IdProdPed = {idProdPed}";
 
-            return float.Parse(objPersistence.ExecuteScalar(sql).ToString());
+            return this.objPersistence.ExecuteScalar(sql)?.ToString()?.StrParaFloat() ?? 0;
         }
 
         /// <summary>
@@ -3751,6 +3784,7 @@ namespace Glass.Data.DAL
                 prodPed.Beneficiamentos = GenericBenefCollection.Empty;
                 prodPed.ValorBenef = 0;
 
+                ValorTotal.Instance.PrepararRecalculoAtualizacao(session, pedido, prodPed);
                 ValorBruto.Instance.Calcular(session, pedido, prodPed);
 
                 prodPed.InicializarParaCalculo(session, pedido);
@@ -3759,14 +3793,15 @@ namespace Glass.Data.DAL
                 var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedido, prodPed, !somarAcrescimoDesconto);
                 prodPed.ValorVendido = valorUnitario ?? Math.Max(prodPed.ValorTabelaPedido, prodPed.ValorVendido);
 
-                bool isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+                var isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+                var calcMult5 = prodPed.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
                 ValorTotal.Instance.Calcular(
                     session,
                     pedido,
                     prodPed,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    prodPed.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
+                    calcMult5,
                     prodPed.Beneficiamentos.CountAreaMinimaSession(session)
                 );
 
@@ -3782,7 +3817,7 @@ namespace Glass.Data.DAL
                 ValorBruto.Instance.Calcular(session, pedido, prodPed);
 
                 if (!PedidoConfig.RatearDescontoProdutos)
-                    prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd + prodPed.ValorDescontoQtde;
+                    prodPed.Total -= prodPed.ValorDesconto + prodPed.ValorDescontoProd;
             }
             finally
             {
@@ -4006,7 +4041,8 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var retorno = Insert(transaction, objInsert, false, true);
+                    var atualizarDataEntrega = VerificarDeveAtualizarDataEntrega(transaction, (int)objInsert.IdPedido);
+                    var retorno = Insert(transaction, objInsert, false, atualizarDataEntrega);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4258,14 +4294,15 @@ namespace Glass.Data.DAL
             if (!objInsert.Redondo && objInsert.IdAmbientePedido > 0 && AmbientePedidoDAO.Instance.IsRedondo(session, objInsert.IdAmbientePedido.Value))
                 objInsert.Redondo = true;
 
-            bool isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+            var isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+            var calcMult5 = objInsert.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
             ValorTotal.Instance.Calcular(
                 session,
                 pedido,
                 objInsert,
                 Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                objInsert.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
+                calcMult5,
                 objInsert.Beneficiamentos.CountAreaMinimaSession(session)
             );
 
@@ -4355,7 +4392,9 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if (atualizaDataEntrega)
+            var deveAtualizar = VerificarDeveAtualizarDataEntrega(session, (int)objInsert.IdPedido);
+
+            if (atualizaDataEntrega && deveAtualizar)
             {
                 // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                 bool enviarMensagem;
@@ -4411,7 +4450,11 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var retorno = Delete(transaction, objDelete, true, true);
+                    var idPedido = ObtemIdPedido(transaction, objDelete.IdProdPed);
+
+                    var atualizarDataEntrega = VerificarDeveAtualizarDataEntrega(transaction, (int)idPedido);
+
+                    var retorno = Delete(transaction, objDelete, true, atualizarDataEntrega);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4663,7 +4706,9 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, (int)objUpdate.IdPedido);
-                    var retorno = Update(transaction, objUpdate, pedido);
+                    var atualizarDataEntrega = VerificarDeveAtualizarDataEntrega(transaction, (int)objUpdate.IdPedido);
+
+                    var retorno = Update(transaction, objUpdate, pedido, true, true, atualizarDataEntrega);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4690,7 +4735,8 @@ namespace Glass.Data.DAL
             try
             {
                 var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, (int)objUpdate.IdPedido);
-                return Update(sessao, objUpdate, pedido);
+                var atualizarDataEntrega = VerificarDeveAtualizarDataEntrega(sessao, (int)objUpdate.IdPedido);
+                return Update(sessao, objUpdate, pedido, true, true, atualizarDataEntrega);
             }
             finally
             {
@@ -4839,13 +4885,15 @@ namespace Glass.Data.DAL
                     objUpdate.Redondo = true;
 
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, objUpdate.IdPedido);
+                var calcMult5 = objUpdate.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
+                ValorTotal.Instance.PrepararRecalculoAtualizacao(sessao, pedido, objUpdate);
                 ValorTotal.Instance.Calcular(
                     sessao,
                     pedido,
                     objUpdate,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    objUpdate.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
+                    calcMult5,
                     objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao)
                 );
 
@@ -4862,7 +4910,6 @@ namespace Glass.Data.DAL
                 if (objUpdate.Beneficiamentos.Count == 0 && ProdutoBenefDAO.Instance.ProdutoPossuiBenef(sessao, objUpdate.IdProd))
                     objUpdate.Beneficiamentos = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, objUpdate.IdProd).Beneficiamentos;
 
-                objUpdate.ValorDescontoQtde = 0;
                 UpdateBase(sessao, objUpdate, pedido);
 
                 //Chamado 54616
@@ -4952,7 +4999,8 @@ namespace Glass.Data.DAL
                 DiferencaCliente.Instance.Calcular(session, container, produto);
             }
 
-            var calcMult5 = ProdutoDAO.Instance.IsVidro(session ,(int)produto.IdProd) && produto.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto;
+            var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(session, produto.IdPedido);
+            var calcMult5 = produto.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
             ValorTotal.Instance.Calcular(session,
                 container,
@@ -5368,6 +5416,349 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Gerar produtos de pedido
+
+        /// <summary>
+        /// Insere produtos de pedido, com base em produtos de orçamento.
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <param name="pedido">pedido.</param>
+        /// <param name="produtosOrcamentoAmbiente">produtosOrcamentoAmbiente.</param>
+        /// <param name="produtosOrcamento">produtosOrcamento.</param>
+        public void GerarProdutosPedido(
+            GDASession session,
+            Pedido pedido,
+            List<ProdutosOrcamento> produtosOrcamentoAmbiente,
+            List<ProdutosOrcamento> produtosOrcamento)
+        {
+            var pedidoReposicaoGarantia = pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição || pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia;
+            var pedidoMaoObraEspecial = pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObraEspecial;
+
+            foreach (var produtoOrcamentoAmbiente in produtosOrcamentoAmbiente)
+            {
+                // Não negocia os produtos já negociados ou que não serão negociados
+                if (OrcamentoConfig.NegociarParcialmente && (produtoOrcamentoAmbiente.IdAmbientePedido > 0 || !produtoOrcamentoAmbiente.Negociar))
+                {
+                    continue;
+                }
+
+                var itensProjetoId = new Dictionary<uint, uint>();
+                var ambientePedido = new AmbientePedido();
+
+                // Cria um ambiente se a empresa trabalha com ambiente no pedido ou 
+                // se o produto do orçamento for um cálculo de projeto
+                if (PedidoConfig.DadosPedido.AmbientePedido || produtoOrcamentoAmbiente.IdItemProjeto > 0)
+                {
+                    // Se o produto for um cálculo de projeto, faz uma cópia para o pedido
+                    if (produtoOrcamentoAmbiente.IdItemProjeto > 0 && !itensProjetoId.ContainsKey(produtoOrcamentoAmbiente.IdItemProjeto.Value))
+                    {
+                        var idItemProjeto = PedidoDAO.Instance.ClonaItemProjeto(session, produtoOrcamentoAmbiente.IdItemProjeto.Value, pedido.IdPedido);
+                        itensProjetoId.Add(produtoOrcamentoAmbiente.IdItemProjeto.Value, idItemProjeto);
+                    }
+
+                    ambientePedido.IdPedido = pedido.IdPedido;
+                    ambientePedido.Ambiente = produtoOrcamentoAmbiente.Ambiente;
+                    ambientePedido.Descricao = produtoOrcamentoAmbiente.Descricao;
+                    ambientePedido.IdItemProjeto = produtoOrcamentoAmbiente.IdItemProjeto != null ? (uint?)itensProjetoId[produtoOrcamentoAmbiente.IdItemProjeto.Value] : null;
+
+                    // Na Center Box/Mega Temper, a impressão do pedido é igual do orçamento, portanto, 
+                    // precisa mostrar a quantidade na impressão do pedido 
+                    if (!PedidoConfig.RelatorioPedido.ExibirItensProdutosPedido)
+                    {
+                        ambientePedido.Qtde = (int)produtoOrcamentoAmbiente.Qtde;
+                    }
+
+                    ambientePedido.IdAmbientePedido = AmbientePedidoDAO.Instance.Insert(session, ambientePedido);
+
+                    objPersistence.ExecuteCommand(session, $@"UPDATE produtos_orcamento
+                        SET IdAmbientePedido = { ambientePedido.IdAmbientePedido }
+                        WHERE IdProd = { produtoOrcamentoAmbiente.IdProd };");
+
+                    // Correção Mega Temper
+                    // Insere os produtos de projeto através do método específico
+                    if (ambientePedido.IdItemProjeto > 0)
+                    {
+                        var itemProjeto = ItemProjetoDAO.Instance.GetElement(session, ambientePedido.IdItemProjeto.Value);
+                        InsereAtualizaProdProj(session, pedido, ambientePedido.IdAmbientePedido, itemProjeto, true, false);
+                    }
+
+                    // Atualiza os dados de desconto/acréscimo do ambiente
+                    objPersistence.ExecuteCommand(session, $@"UPDATE ambiente_pedido SET
+                            TipoDesconto = ?tipoDesconto,
+                            Desconto = ?desconto,
+                            TipoAcrescimo = ?tipoAcrescimo,
+                            Acrescimo = ?acrescimo,
+                            Descricao = ?descricao
+                        WHERE IdAmbientePedido = { ambientePedido.IdAmbientePedido }",
+                        new GDAParameter("?tipoDesconto", produtoOrcamentoAmbiente.TipoDesconto),
+                        new GDAParameter("?desconto", produtoOrcamentoAmbiente.Desconto),
+                        new GDAParameter("?tipoAcrescimo", produtoOrcamentoAmbiente.TipoAcrescimo),
+                        new GDAParameter("?acrescimo", produtoOrcamentoAmbiente.Acrescimo),
+                        new GDAParameter("?descricao", produtoOrcamentoAmbiente.Descricao));
+                }
+
+                // Adiciona os itens internos como os produtos do pedido.
+                if (produtoOrcamentoAmbiente.TemItensProdutoSession(session))
+                {
+                    var idsProdOrcamentoParentIdsProdPedParent = new Dictionary<int, int>();
+
+                    foreach (var produtoOrcamento in produtosOrcamento?.Where(f => f.IdProdParent == produtoOrcamentoAmbiente.IdProd)?.ToList())
+                    {
+                        var produtoPedido = new ProdutosPedido();
+                        produtoPedido.IdPedido = pedido.IdPedido;
+                        produtoPedido.IdAmbientePedido = ambientePedido.IdAmbientePedido > 0 ? ambientePedido.IdAmbientePedido : (uint?)null;
+                        produtoPedido.IdItemProjeto = produtoOrcamento.IdItemProjeto != null ? (uint?)itensProjetoId[produtoOrcamento.IdItemProjeto.Value] : null;
+                        produtoPedido.IdProd = produtoOrcamento.IdProduto != null ? produtoOrcamento.IdProduto.Value : 0;
+                        produtoPedido.Qtde = produtoOrcamento.Qtde != null ? produtoOrcamento.Qtde.Value : 0;
+                        produtoPedido.TotM = produtoOrcamento.TotM;
+                        produtoPedido.TotM2Calc = produtoOrcamento.TotMCalc;
+                        produtoPedido.Altura = produtoOrcamento.AlturaCalc;
+                        produtoPedido.AlturaReal = produtoOrcamento.Altura;
+                        produtoPedido.Largura = produtoOrcamento.Largura;
+                        produtoPedido.Espessura = produtoOrcamento.Espessura > 0 ? produtoOrcamento.Espessura : produtoOrcamento.IdProduto > 0 ?
+                            ProdutoDAO.Instance.ObtemEspessura(session, (int)produtoOrcamento.IdProduto.Value) : 0;
+
+                        ValorTotal.Instance.Calcular(
+                            session,
+                            pedido,
+                            produtoPedido,
+                            Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
+                            true,
+                            produtoOrcamento.Beneficiamentos.CountAreaMinimaSession(session));
+
+                        produtoPedido.CustoProd = produtoOrcamento.Custo;
+                        produtoPedido.AliqIcms = produtoOrcamento.AliquotaIcms;
+                        produtoPedido.ValorIcms = produtoOrcamento.ValorIcms;
+                        produtoPedido.AliqIpi = produtoOrcamento.AliquotaIpi;
+                        produtoPedido.ValorIpi = produtoOrcamento.ValorIpi;
+                        produtoPedido.Redondo = produtoOrcamento.Redondo;
+                        produtoPedido.ValorTabelaOrcamento = produtoOrcamento.ValorTabela;
+                        produtoPedido.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(
+                            session,
+                            (int)produtoPedido.IdProd,
+                            pedido.TipoEntrega,
+                            pedido.IdCli,
+                            false,
+                            false,
+                            produtoOrcamento.PercDescontoQtde,
+                            (int)produtoPedido.IdPedido,
+                            null,
+                            null,
+                            produtoPedido.Altura);
+                        produtoPedido.TipoCalculoUsadoOrcamento = produtoOrcamento.TipoCalculoUsado;
+                        produtoPedido.TipoCalculoUsadoPedido = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoPedido.IdProd);
+                        produtoPedido.PercDescontoQtde = produtoOrcamento.PercDescontoQtde;
+                        produtoPedido.ValorDescontoQtde = produtoOrcamento.ValorDescontoQtde;
+                        produtoPedido.ValorDescontoCliente = produtoOrcamento.ValorDescontoCliente;
+                        produtoPedido.ValorAcrescimoCliente = produtoOrcamento.ValorAcrescimoCliente;
+                        produtoPedido.Beneficiamentos = produtoOrcamento.Beneficiamentos;
+                        produtoPedido.ValorUnitarioBruto = produtoOrcamento.ValorUnitarioBruto;
+                        produtoPedido.TotalBruto = produtoOrcamento.TotalBruto;
+                        produtoPedido.CustoProd = produtoOrcamento.Custo;
+                        produtoPedido.IdProcesso = produtoOrcamento.IdProcesso;
+                        produtoPedido.IdAplicacao = produtoOrcamento.IdAplicacao;
+                        // O valor vendido e o total devem ser preenchidos, assim como os outros campos abaixo, 
+                        // caso contrário o valor deste produto ficaria zerado ou incorreto no pedido, antes,
+                        // todos os campos abaixo estavam sendo preenchidos apenas se a opção PedidoConfig.DadosPedido.AlterarValorUnitarioProduto fosse true
+                        produtoPedido.ValorVendido = produtoOrcamento.ValorProd != null ? produtoOrcamento.ValorProd.Value : 0;
+                        produtoPedido.Total = produtoOrcamento.Total != null ? produtoOrcamento.Total.Value : 0;
+                        produtoPedido.ValorAcrescimo = produtoOrcamento.ValorAcrescimo + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : produtoOrcamento.ValorAcrescimoProd);
+                        produtoPedido.ValorDesconto = produtoOrcamento.ValorDesconto + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : produtoOrcamento.ValorDescontoProd);
+                        produtoPedido.ValorAcrescimoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : produtoOrcamento.ValorAcrescimoProd;
+                        produtoPedido.ValorDescontoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : produtoOrcamento.ValorDescontoProd;
+                        produtoPedido.ValorComissao = PedidoConfig.Comissao.ComissaoPedido ? produtoOrcamento.ValorComissao : 0;
+
+                        // Verifica se o valor unitário do produto foi informado, pois pode acontecer do usuário inserir produtos zerados
+                        // o que não é permitido em pedidos que não são de produção, reposição ou garantia.
+                        if (!pedidoReposicaoGarantia && produtoPedido.ValorVendido == 0)
+                        {
+                            var descricaoProduto = ProdutoDAO.Instance.ObtemDescricao(session, (int)produtoPedido.IdProd);
+                            throw new Exception($"O produto {descricaoProduto} não pode ter valor zerado.");
+                        }
+
+                        produtoPedido.IdProdPed = InsertBase(session, produtoPedido, pedido);
+
+                        if (produtoPedido.IdProdPed == 0)
+                        {
+                            throw new Exception("Inserção do produto do pedido retornou 0.");
+                        }
+
+                        if (produtoOrcamento.IdProdOrcamentoParent.GetValueOrDefault() == 0 && !idsProdOrcamentoParentIdsProdPedParent.ContainsKey((int)produtoOrcamento.IdProd))
+                        {
+                            idsProdOrcamentoParentIdsProdPedParent.Add((int)produtoOrcamento.IdProd, (int)produtoPedido.IdProdPed);
+                        }
+
+                        if (produtoOrcamento.IdProdOrcamentoParent > 0)
+                        {
+                            objPersistence.ExecuteCommand(session, $@"UPDATE produtos_pedido
+                                SET IdProdPedParent = { idsProdOrcamentoParentIdsProdPedParent[(int)produtoOrcamento.IdProdOrcamentoParent] }
+                                WHERE IdProdPed = { produtoPedido.IdProdPed };");
+                        }
+
+                        var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<IProdutoRepositorioImagens>();
+                        var stream = new MemoryStream();
+                        var possuiImagem = repositorio.ObtemImagem((int)produtoPedido.IdProd, stream);
+
+                        // Salva imagem no produto pedido.
+                        if (possuiImagem)
+                        {
+                            SalvarImagemProdutoPedido(session, produtoPedido.IdProdPed, stream);
+                        }
+
+                        /* Chamado 71793.
+                         * Essa lógica será mantida para que os orçamentos antigos que possuem vidros de composição,
+                         * gerem o pedido corretamente, com seus respectivos produtos filhos. */
+                        // Caso o produto seja do subgrupo de tipo laminado, insere os filhos.
+                        var tipoSubgrupoProd = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)produtoPedido.IdProd);
+
+                        if (tipoSubgrupoProd == TipoSubgrupoProd.VidroLaminado || tipoSubgrupoProd == TipoSubgrupoProd.VidroDuplo)
+                        {
+                            var produtoOrcamentoPossuiComposicao = ProdutosOrcamentoDAO.Instance.ObterQuantidadeProdutoComposicao((int)produtoOrcamento.IdOrcamento,
+                                (int)produtoOrcamento.IdProdParent, (int)produtoOrcamento.IdProd) > 0;
+
+                            if (!produtoOrcamentoPossuiComposicao)
+                            {
+                                var tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(session, produtoPedido.IdPedido);
+                                var produtosBaixaEstoque = ProdutoBaixaEstoqueDAO.Instance.GetByProd(session, produtoPedido.IdProd, false);
+
+                                foreach (var produtoBaixaEstoque in produtosBaixaEstoque)
+                                {
+                                    var idProdPedFilho = Insert(session, new ProdutosPedido()
+                                    {
+                                        IdProdPedParent = produtoPedido.IdProdPed,
+                                        IdProd = (uint)produtoBaixaEstoque.IdProdBaixa,
+                                        IdProcesso = (uint)produtoBaixaEstoque.IdProcesso,
+                                        IdAplicacao = (uint)produtoBaixaEstoque.IdAplicacao,
+                                        IdPedido = produtoPedido.IdPedido,
+                                        IdAmbientePedido = produtoPedido.IdAmbientePedido,
+                                        Qtde = produtoBaixaEstoque.Qtde,
+                                        Beneficiamentos = produtoBaixaEstoque.Beneficiamentos,
+                                        Altura = produtoBaixaEstoque.Altura > 0 ? produtoBaixaEstoque.Altura : produtoPedido.Altura,
+                                        Largura = produtoBaixaEstoque.Largura > 0 ? produtoBaixaEstoque.Largura : produtoPedido.Largura,
+                                        ValorVendido = ProdutoDAO.Instance.GetValorTabela(
+                                            session,
+                                            produtoBaixaEstoque.IdProdBaixa,
+                                            tipoEntrega,
+                                            pedido.IdCli,
+                                            false,
+                                            false,
+                                            0,
+                                            (int)produtoPedido.IdPedido,
+                                            null,
+                                            null,
+                                            produtoBaixaEstoque.Altura > 0 ? produtoBaixaEstoque.Altura : produtoPedido.Altura),
+                                    },
+                                    false,
+                                    true);
+
+                                    var repositorioFilho = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<IProdutoBaixaEstoqueRepositorioImagens>();
+                                    var streamFilho = new MemoryStream();
+                                    //Verifica se a matéria prima possui imagem.
+                                    var possuiImagemFilho = repositorioFilho.ObtemImagem(produtoBaixaEstoque.IdProdBaixaEst, streamFilho);
+
+                                    //Salva imagem no produto pedido
+                                    if (possuiImagemFilho)
+                                    {
+                                        SalvarImagemProdutoPedido(session, idProdPedFilho, streamFilho);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Insere produtos de pedido, com base em produtos de orçamento, para empresas que não vendem vidro.
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <param name="pedido">pedido.</param>
+        /// <param name="produtosOrcamentoAmbiente">produtosOrcamentoAmbiente.</param>
+        public void GerarProdutosPedidoNaoVendeVidro(GDASession session, Pedido pedido, List<ProdutosOrcamento> produtosOrcamentoAmbiente)
+        {
+            foreach (var produtoOrcamento in produtosOrcamentoAmbiente)
+            {
+                // Não negocia os produtos já negociados ou que não serão negociados
+                if (OrcamentoConfig.NegociarParcialmente && (produtoOrcamento.IdAmbientePedido > 0 || !produtoOrcamento.Negociar))
+                {
+                    continue;
+                }
+
+                var valorTabela = ProdutoDAO.Instance.GetValorTabela(
+                    session,
+                    (int)produtoOrcamento.IdProduto.Value,
+                    pedido.TipoEntrega,
+                    pedido.IdCli,
+                    false,
+                    false,
+                    produtoOrcamento.PercDescontoQtde,
+                    (int?)pedido.IdPedido,
+                    null,
+                    null,
+                    produtoOrcamento.Altura);
+                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoOrcamento.IdProduto.Value);
+
+                var produtoPedido = new ProdutosPedido();
+                produtoPedido.IdPedido = pedido.IdPedido;
+                produtoPedido.IdProd = produtoOrcamento.IdProduto.Value;
+                produtoPedido.Qtde = produtoOrcamento.Qtde.Value;
+                produtoPedido.TotM = produtoOrcamento.TotM;
+                produtoPedido.TotM2Calc = produtoOrcamento.TotMCalc;
+                produtoPedido.Altura = produtoOrcamento.AlturaCalc;
+                produtoPedido.AlturaReal = produtoOrcamento.Altura;
+                produtoPedido.Largura = produtoOrcamento.Largura;
+                produtoPedido.CustoProd = produtoOrcamento.Custo;
+                produtoPedido.AliqIcms = produtoOrcamento.AliquotaIcms;
+                produtoPedido.ValorIcms = produtoOrcamento.ValorIcms;
+                produtoPedido.AliqIpi = produtoOrcamento.AliquotaIpi;
+                produtoPedido.ValorIpi = produtoOrcamento.ValorIpi;
+                produtoPedido.Redondo = produtoOrcamento.Redondo;
+                produtoPedido.ValorTabelaOrcamento = produtoOrcamento.ValorTabela;
+                produtoPedido.ValorTabelaPedido = valorTabela;
+                produtoPedido.TipoCalculoUsadoOrcamento = produtoOrcamento.TipoCalculoUsado;
+                produtoPedido.TipoCalculoUsadoPedido = tipoCalculo;
+                produtoPedido.PercDescontoQtde = produtoOrcamento.PercDescontoQtde;
+                produtoPedido.ValorDescontoQtde = produtoOrcamento.ValorDescontoQtde;
+                produtoPedido.ValorDescontoCliente = produtoOrcamento.ValorDescontoCliente;
+                produtoPedido.ValorAcrescimoCliente = produtoOrcamento.ValorAcrescimoCliente;
+                produtoPedido.ValorUnitarioBruto = produtoOrcamento.ValorUnitarioBruto;
+                produtoPedido.TotalBruto = produtoOrcamento.TotalBruto;
+                produtoPedido.IdProcesso = produtoOrcamento.IdProcesso;
+                produtoPedido.IdAplicacao = produtoOrcamento.IdAplicacao;
+
+                ValorTotal.Instance.Calcular(
+                    session,
+                    pedido,
+                    produtoPedido,
+                    Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
+                    true,
+                    produtoOrcamento.Beneficiamentos.CountAreaMinimaSession(session));
+
+                produtoPedido.CustoProd = produtoOrcamento.Custo;
+
+                // O valor vendido e o total devem ser preenchidos, assim como os outros campos abaixo, 
+                // caso contrário o valor deste produto ficaria zerado ou incorreto no pedido, antes,
+                // todos os campos abaixo estavam sendo preenchidos apenas se a opção PedidoConfig.DadosPedido.AlterarValorUnitarioProduto fosse true
+                produtoPedido.ValorVendido = produtoOrcamento.ValorProd.GetValueOrDefault();
+                produtoPedido.Total = produtoOrcamento.Total.Value;
+                produtoPedido.ValorAcrescimo = produtoOrcamento.ValorAcrescimo + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : produtoOrcamento.ValorAcrescimoProd);
+                produtoPedido.ValorDesconto = produtoOrcamento.ValorDesconto + (PedidoConfig.DadosPedido.AmbientePedido ? 0 : produtoOrcamento.ValorDescontoProd);
+                produtoPedido.ValorAcrescimoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : produtoOrcamento.ValorAcrescimoProd;
+                produtoPedido.ValorDescontoProd = !PedidoConfig.DadosPedido.AmbientePedido ? 0 : produtoOrcamento.ValorDescontoProd;
+                produtoPedido.ValorComissao = PedidoConfig.Comissao.ComissaoPedido ? produtoOrcamento.ValorComissao : 0;
+
+                produtoPedido.IdProdPed = this.InsertBase(session, produtoPedido, pedido);
+
+                if (produtoPedido.IdProdPed == 0)
+                {
+                    throw new Exception("Inserção do produto do pedido retornou 0.");
+                }
+            }
+        }
+
+        #endregion
+
         public List<ProdutosPedido> ObterProdutosNaoExportados(uint idPedido)
         {
             List<ProdutosPedido> lista = new List<ProdutosPedido>();
@@ -5525,6 +5916,41 @@ namespace Glass.Data.DAL
                 Referencia = "Imagem do Produto Pedido " + idProdPedFilho,
                 NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)idProdPedFilho)
             });
+        }
+
+        /// <summary>
+        /// Valida se o sistema deverá recalcular a data de entrega do pedido
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        private bool VerificarDeveAtualizarDataEntrega(GDASession sessao, int idPedido)
+        {
+            var pedido = PedidoDAO.Instance.ObterDataEntregaEDataEntregaSistema(sessao, (int)idPedido);
+
+            return pedido.DataEntregaSistema != null && (pedido.DataEntregaSistema.Value.Date == pedido.DataEntrega.Value.Date || !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega));
+        }
+
+        /// <summary>
+        /// Verifica se os produtos do pedido de Revenda j� deram sa�da total. 
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        internal bool VerificarSaidaProduto(GDASession sessao, uint idPedido)
+        {
+            if(idPedido == 0 || !PedidoDAO.Instance.IsRevenda(sessao, idPedido))
+            {
+                return false;
+            }
+
+            var sql = $@"SELECT (SUM(QtdSaida) + 1) >= SUM(Qtde) = COUNT(*)
+                FROM produtos_pedido
+                WHERE IdPedido = {idPedido} 
+                    AND InvisivelPedido = 0";
+
+            return ExecuteScalar<bool>(sessao, sql);
+
         }
     }
 }

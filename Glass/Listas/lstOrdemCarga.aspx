@@ -492,6 +492,7 @@
                                                 <asp:BoundField HeaderText="Tipo de Pedido" DataField="DescricaoTipoPedido" />
                                                 <asp:BoundField HeaderText="Dt. Entrega" DataField="DataEntregaString" />
                                                 <asp:BoundField HeaderText="Peso" DataField="PesoOc" />
+                                                <asp:BoundField HeaderText="Pecas Pendentes na Produção" DataField="QtdePecaPendenteProducao" />
                                                 <asp:BoundField HeaderText="Volumes Pendentes" DataField="VolumesPendentes" />
                                                 <asp:TemplateField HeaderText="Obs.">
                                                     <ItemTemplate>

@@ -26,7 +26,7 @@
         function calculaComissao() {
             if (document.getElementById("<%= btnGerarComissao.ClientID %>") == null)
                 return;
-            debugger;
+
             // Recupera alguns dados da tela
             var tipoFunc = FindControl("drpTipo", "select").value;
             var inputs = document.getElementsByTagName('input');

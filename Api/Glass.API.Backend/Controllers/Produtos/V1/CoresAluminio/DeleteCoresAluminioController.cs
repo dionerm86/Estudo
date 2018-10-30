@@ -39,6 +39,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresAluminio
                         return validacao;
                     }
 
+                    sessao.BeginTransaction();
+
                     CorAluminioDAO.Instance.DeleteByPrimaryKey(sessao, id);
                     sessao.Commit();
 

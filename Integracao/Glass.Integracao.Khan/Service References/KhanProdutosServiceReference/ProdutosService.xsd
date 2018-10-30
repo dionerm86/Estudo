@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/KnIntegracao.Services" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/KnIntegracao.Services" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="Produtos">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CLASS_ABC" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CODAPLICA" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CODBAR" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CODCATEG" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CODCLASS" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CODEMPRESA" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CODMOE" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CODTIPPRO" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CodCAD" type="xs:int" />
+      <xs:element minOccurs="0" name="CodFAB" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CodFAM" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CodPRO" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ESPECIF" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Estoq" type="xs:decimal" />
+      <xs:element minOccurs="0" name="EstoqMAX" type="xs:decimal" />
+      <xs:element minOccurs="0" name="EstoqMIN" type="xs:decimal" />
+      <xs:element minOccurs="0" name="FLAGVALIDO" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Flagman" type="xs:boolean" />
+      <xs:element minOccurs="0" name="GERALOTE" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IPIESP" type="xs:decimal" />
+      <xs:element minOccurs="0" name="LETCLASS" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LUCROPROMO" type="xs:decimal" />
+      <xs:element minOccurs="0" name="Lucro1" type="xs:decimal" />
+      <xs:element minOccurs="0" name="Lucro2" type="xs:decimal" />
+      <xs:element minOccurs="0" name="MARCA" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NOCPRO" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NORMA" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NomPRO" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PCOFINS" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PCUSTOFIXO" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PDESCCOM" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PICMS" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PIIMP" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PIPI" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PIRRF" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PISS" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PPIS" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PPerda" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PRCUSTREFER" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PRCUSTVAR" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PREDICMS" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PRPROMO" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PRREFER" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PSEGS" type="xs:decimal" />
+      <xs:element minOccurs="0" name="Peso" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PrContab" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PrCust" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PrVend1" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PrVend2" type="xs:decimal" />
+      <xs:element minOccurs="0" name="QTDEMBALAGEM" type="xs:decimal" />
+      <xs:element minOccurs="0" name="SITTRIB" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TIPOPROD" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Token" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UniPRO" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="codempresa" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Produtos" nillable="true" type="tns:Produtos" />
+  <xs:complexType name="ArrayOfProdutos">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Produtos" nillable="true" type="tns:Produtos" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProdutos" nillable="true" type="tns:ArrayOfProdutos" />
+</xs:schema>

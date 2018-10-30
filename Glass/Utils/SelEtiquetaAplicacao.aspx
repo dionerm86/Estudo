@@ -7,8 +7,7 @@
 
     <script type="text/javascript">
 
-        function setApl(idAplicacao, codInterno, descr)
-        {
+        function setApl(idAplicacao, codInterno, descr) {
             if (GetQueryString("buscaComPopup") === "true") {
                 var idControle = GetQueryString("id-controle");
                 if (idControle) {
@@ -18,10 +17,15 @@
                 }
             }
 
-            if (GetQueryString("idProdPed") != "" && GetQueryString("idProdPed") != 'undefined' && GetQueryString("idProdPed") != null)
+            if (GetQueryString("idProdPed") != "" && GetQueryString("idProdPed") != 'undefined' && GetQueryString("idProdPed") != null) {
                 window.opener.setAplComposicao(idAplicacao, codInterno, GetQueryString("idProdPed"));
-            else
+            }
+            else if (GetQueryString("idProdOrcamento") != "" && GetQueryString("idProdOrcamento") != 'undefined' && GetQueryString("idProdOrcamento") != null) {
+                window.opener.setAplComposicao(idAplicacao, codInterno, GetQueryString("idProdOrcamento"));
+            }
+            else {
                 window.opener.setApl(idAplicacao, codInterno, GetQueryString("idControle"));
+            }
 
             closeWindow();
         }

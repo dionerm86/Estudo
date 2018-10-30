@@ -3,7 +3,7 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Produtos.Filtro;
+using Glass.API.Backend.Models.Produtos.V1.Filtro;
 using Glass.Data.Model;
 using System.Web.Http;
 

@@ -1,5 +1,5 @@
 Vue.component('sinais-filtros', {
-  mixins: [Mixins.Clonar, Mixins.Patch, Mixins.Merge, Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Filtros selecionados para a lista de sinais.
@@ -34,7 +34,7 @@ Vue.component('sinais-filtros', {
      * Atualiza o filtro com os dados selecionados na tela.
      */
     filtrar: function() {
-      var novoFiltro = this.clonar(this.filtroAtual, true);
+      var novoFiltro = this.clonar(this.filtroAtual);
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
       }

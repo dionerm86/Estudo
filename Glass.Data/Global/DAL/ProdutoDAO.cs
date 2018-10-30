@@ -3121,8 +3121,8 @@ namespace Glass.Data.DAL
             {
                 id = idOrcamento.Value;
                 tipo = ContainerCalculoDTO.TipoContainer.Orcamento;
-                tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, idOrcamento.Value).GetValueOrDefault();
-                idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, idOrcamento.Value).GetValueOrDefault();
+                tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, (int)idOrcamento.Value).GetValueOrDefault();
+                idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, (int)idOrcamento.Value).GetValueOrDefault();
             }
 
             #endregion
@@ -3169,9 +3169,9 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public decimal GetValorMinimo(uint id, TipoBuscaValorMinimo tipoBusca, bool revenda, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+        public decimal GetValorMinimo(uint id, TipoBuscaValorMinimo tipoBusca, bool revenda, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento, float altura)
         {
-            return GetValorMinimo(null, id, tipoBusca, revenda, percDescontoQtde, idPedido, idProjeto, idOrcamento);
+            return GetValorMinimo(null, id, tipoBusca, revenda, percDescontoQtde, idPedido, idProjeto, idOrcamento, altura);
         }
 
         /// <summary>
@@ -3179,7 +3179,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public decimal GetValorMinimo(GDASession sessao, uint id, TipoBuscaValorMinimo tipoBusca, bool revenda, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+        public decimal GetValorMinimo(GDASession sessao, uint id, TipoBuscaValorMinimo tipoBusca, bool revenda, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento, float altura)
         {
             if (id == 0)
                 return 0;
@@ -3255,7 +3255,7 @@ namespace Glass.Data.DAL
             }
 
             return GetValorMinimo(sessao, idProd, tipoEntrega, idCliente, revenda, reposicao,
-                Math.Max(percDescontoQtde, percDescontoQtdeAtual), valorUnit, idPedido, idProjeto, idOrcamento);
+                Math.Max(percDescontoQtde, percDescontoQtdeAtual), valorUnit, idPedido, idProjeto, idOrcamento, altura);
         }
 
         /// <summary>
@@ -3268,10 +3268,10 @@ namespace Glass.Data.DAL
         /// <param name="acrescimo"></param>
         /// <returns></returns>
         public decimal GetValorMinimo(int idProd, int? tipoEntrega, uint? idCliente, bool revenda,
-            bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+            bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento, float altura)
         {
             return GetValorMinimo(null, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde,
-                idPedido, idProjeto, idOrcamento);
+                idPedido, idProjeto, idOrcamento, altura);
         }
 
         /// <summary>
@@ -3284,13 +3284,13 @@ namespace Glass.Data.DAL
         /// <param name="acrescimo"></param>
         /// <returns></returns>
         public decimal GetValorMinimo(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda,
-            bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+            bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento, float altura)
         {
-            return GetValorMinimo(sessao, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, 0, idPedido, idProjeto, idOrcamento);
+            return GetValorMinimo(sessao, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, 0, idPedido, idProjeto, idOrcamento, altura);
         }
 
         private decimal GetValorMinimo(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde, decimal valorNegociado, int? idPedido,
-            int? idProjeto, int? idOrcamento)
+            int? idProjeto, int? idOrcamento, float altura)
         {
             var valorMinimoProd = ObtemValorCampo<decimal>(sessao, "Valor_Minimo", $"IdProd = { idProd }");
             var idGrupoProd = ObtemIdGrupoProd(sessao, idProd);
@@ -3299,11 +3299,12 @@ namespace Glass.Data.DAL
 
             if (valorMinimoProd > 0)
             {
-                return Math.Round((valorMinimoProd * (1 - ((decimal)percDescontoQtde / 100))) * desc.PercMultiplicar, 2);
+                var adicionalChapaVidro = ChapaVidroDAO.Instance.GetAdicionalAlturaChapaVidro(null, (uint)idProd, altura);
+                return Math.Round(((valorMinimoProd * (1 - ((decimal)percDescontoQtde / 100))) * desc.PercMultiplicar) * (1 + ((decimal)adicionalChapaVidro / 100)), 2);
             }
             else
             {
-                var valorUnitario = GetValorTabela(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto, idOrcamento);
+                var valorUnitario = GetValorTabela(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto, idOrcamento, altura);
 
                 if (valorNegociado == 0)
                 {
@@ -4667,7 +4668,9 @@ namespace Glass.Data.DAL
             objUpdate.Descricao = objUpdate.Descricao.Replace("'", "").Replace("\"", "").Replace("\t", "").Replace("\n", "");
 
             LogAlteracaoDAO.Instance.LogProduto(objUpdate, LogAlteracaoDAO.SequenciaObjeto.Novo);
-            return base.Update(session, objUpdate);
+            var resultado = base.Update(session, objUpdate);
+
+            return resultado;
         }
 
         /// <summary>

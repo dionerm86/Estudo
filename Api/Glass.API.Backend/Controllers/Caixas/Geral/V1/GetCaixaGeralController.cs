@@ -5,8 +5,8 @@
 using Colosoft;
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Caixas.Geral.Lista;
-using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Caixas.V1.Geral.Lista;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Swashbuckle.Swagger.Annotations;
@@ -28,12 +28,12 @@ namespace Glass.API.Backend.Controllers.Caixas.Geral.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Caixas.Geral.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Caixas.V1.Geral.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaCaixaDiario()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Caixas.Geral.Configuracoes.ListaDto();
+                var configuracoes = new Models.Caixas.V1.Geral.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }

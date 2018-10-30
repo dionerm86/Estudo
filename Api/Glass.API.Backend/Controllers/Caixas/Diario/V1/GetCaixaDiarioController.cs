@@ -4,7 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Caixas.Diario.Lista;
+using Glass.API.Backend.Models.Caixas.V1.Diario.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -25,12 +25,12 @@ namespace Glass.API.Backend.Controllers.Caixas.Diario.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Caixas.Diario.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Caixas.V1.Diario.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaCaixaDiario()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Caixas.Diario.Configuracoes.ListaDto();
+                var configuracoes = new Models.Caixas.V1.Diario.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
             }
         }

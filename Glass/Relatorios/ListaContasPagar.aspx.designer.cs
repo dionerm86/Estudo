@@ -382,13 +382,13 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.TextBox txtPlanoConta;
         
         /// <summary>
-        /// ImageButton1 control.
+        /// ImageButton11 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton1;
+        protected global::System.Web.UI.WebControls.ImageButton ImageButton11;
         
         /// <summary>
         /// Label20 control.

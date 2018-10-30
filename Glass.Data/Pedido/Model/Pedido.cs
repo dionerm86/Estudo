@@ -494,6 +494,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("MotivoIgnorarComissao")]
         public string MotivoIgnorarComissao { get; set; }
 
+        [XmlIgnore]
         [PersistenceProperty("IDTRANSPORTADOR")]
         public int? IdTransportador { get; set; }
 
@@ -511,6 +512,9 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("TRANSACAO")]
         public bool Transacao { get; set; }
+
+        [PersistenceProperty("DATAENTREGASISTEMA")]
+        public DateTime? DataEntregaSistema { get; set; }
 
         #region Dados para exportação
 

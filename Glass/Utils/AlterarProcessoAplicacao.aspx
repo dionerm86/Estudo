@@ -8,7 +8,7 @@
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
-    
+
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcProd.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
@@ -20,49 +20,49 @@
     var qtdEstoque = 0;
     var exibirMensagemEstoque = false;
     var qtdEstoqueMensagem = 0;
-        
-    
+
+
     var produtoAmbiente = false;
     var aplAmbiente = false;
     var procAmbiente = false;
-    var loading = true;    
-    
+    var loading = true;
+
     function mensagemProdutoComDesconto(editar)
     {
         alert("Não é possível " + (editar ? "editar" : "remover") + " esse produto porque o pedido possui desconto.\n" +
             "Aplique o desconto apenas ao terminar o cadastro dos produtos.\n" +
             "Para continuar, remova o desconto do pedido.");
-    }   
-    
-    
+    }
+
+
     function atualizaValMin()
     {
         if (parseFloat(FindControl("hdfTamanhoMaximoObra", "input").value.replace(",", ".")) == 0)
         {
             var codInterno = FindControl("txtCodProdIns", "input");
             codInterno = codInterno != null ? codInterno.value : FindControl("lblCodProdIns", "span").innerHTML;
-            
+
             var tipoPedido = FindControl("hdfTipoPedido", "input").value;
-            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
             var tipoVenda = FindControl("hdfTipoVenda", "input").value;
-            
+
             var idProdPed = FindControl("hdfProdPed", "input");
             idProdPed = idProdPed != null ? idProdPed.value : "";
-            
+
             var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
             controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-            
+
             var percDescontoQtde = controleDescQtde.PercDesconto();
-            
-            FindControl("hdfValMin", "input").value = AlterarProcessoAplicacao.GetValorMinimo(codInterno, tipoPedido, tipoEntrega, tipoVenda, 
+
+            FindControl("hdfValMin", "input").value = AlterarProcessoAplicacao.GetValorMinimo(codInterno, tipoPedido, tipoEntrega, tipoVenda,
                 idCliente, cliRevenda, idProdPed, percDescontoQtde).value;
         }
         else
             FindControl("hdfValMin", "input").value = FindControl("txtValorIns", "input").value;
     }
-    
+
     function obrigarProcApl()
     {
         var isVidro = FindControl("hdfIsVidro", "input").value == "true";
@@ -70,7 +70,7 @@
         var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
         var isVidroBenef = getNomeControleBenef() != null ? exibirControleBenef(getNomeControleBenef()) && dadosProduto.Grupo == 1 : false;
         var isVidroRoteiro = isVidro && <%= UtilizarRoteiroProducao().ToString().ToLower() %>;
-        
+
         if (dadosProduto.IsChapaVidro)
             return true;
 
@@ -86,7 +86,7 @@
                 alert("Informe a aplicação.");
                 return false;
             }
-            
+
             if (FindControl("txtProcIns", "input") != null && FindControl("txtProcIns", "input").value == "")
             {
                 if (isVidroRoteiro && !isObrigarProcApl) {
@@ -98,40 +98,40 @@
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     function calculaTamanhoMaximo()
     {
         if (FindControl("lblCodProdIns", "span") == null)
             return;
-            
+
         var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
         var codInterno = FindControl("lblCodProdIns", "span").innerHTML;
         var totM2 = FindControl("lblTotM2Ins", "span").innerHTML;
         var idProdPed = FindControl("hdfProdPed", "input") != null ? FindControl("hdfProdPed", "input").value : 0;
-        
+
         var tamanhoMaximo = AlterarProcessoAplicacao.GetTamanhoMaximoProduto(idPedido, codInterno, totM2, idProdPed).value.split(";");
         tamanhoMaximo = tamanhoMaximo[0] == "Ok" ? parseFloat(tamanhoMaximo[1].replace(",", ".")) : 0;
-        
+
         FindControl("hdfTamanhoMaximoObra", "input").value = tamanhoMaximo;
     }
-        
+
     function getNomeControleBenef()
     {
         var nomeControle = "<%= NomeControleBenef() %>";
         nomeControle = FindControl(nomeControle + "_tblBenef", "table");
-        
+
         if (nomeControle == null)
             return null;
-        
+
         nomeControle = nomeControle.id;
         return nomeControle.substr(0, nomeControle.lastIndexOf("_"));
     }
-    
+
     var comissaoAlteraValor = null;
-    
+
     // Retorna o percentual de comissão
     function getPercComissao()
     {
@@ -139,20 +139,20 @@
         var txtComissao = FindControl("txtPercentual", "input");
         var hdfPercComissao = FindControl("hdfPercComissao", "input");
         var hdfIdPedido = FindControl("hdfIdPedido", "input");
-    
+
         if (comissaoAlteraValor == null)
             comissaoAlteraValor = MetodosAjax.ComissaoAlteraValor(hdfIdPedido.value).value;
-    
+
         if (hdfIdPedido != null && comissaoAlteraValor == "false")
             return 0;
-    
+
         if (txtComissao != null && txtComissao.value != "")
             percComissao = parseFloat(txtComissao.value.replace(',', '.'));
         else if (hdfPercComissao != null && hdfPercComissao.value != "")
             percComissao = parseFloat(hdfPercComissao.value.replace(',', '.'));
-            
+
         return percComissao != null ? percComissao : 0;
-    }    
+    }
 
     // Função chamada pelo popup de escolha da Aplicação do produto
     function setApl(idAplicacao, codInterno) {
@@ -185,7 +185,7 @@
                 FindControl("txtAmbAplIns", "input").value = codInterno;
                 FindControl("hdfAmbIdAplicacao", "input").value = idAplicacao;
             }
-        
+
             aplAmbiente = false;
         }
 
@@ -194,7 +194,7 @@
             setApl("", "");
             return false;
         }
-    
+
         try {
             var response = MetodosAjax.GetEtiqAplicacao(codInterno).value;
 
@@ -205,7 +205,7 @@
             }
 
             response = response.split("\t");
-            
+
             if (response[0] == "Erro") {
                 alert(response[1]);
                 setApl("", "");
@@ -223,11 +223,11 @@
     function setProc(idProcesso, codInterno, codAplicacao) {
         var codInternoProd = "";
         var codAplicacaoAtual = "";
-        
+
         var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfIdProd", "input").value);
         var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
 
-        if(idSubgrupo.value != "" && retornoValidacao.value == "False" && (FindControl("txtProcIns", "input") != null && FindControl("txtProcIns", "input").value != ""))
+        if(idSubgrupo.value != "" && retornoValidacao.value == "false" && (FindControl("txtProcIns", "input") != null && FindControl("txtProcIns", "input").value != ""))
         {
             FindControl("txtProcIns", "input").value = "";
             alert("Este processo não pode ser selecionado para este produto.")
@@ -246,11 +246,11 @@
         if (!procAmbiente && FindControl("txtProcIns", "input") != null)
         {
             FindControl("txtProcIns", "input").value = codInterno;
-            FindControl("hdfIdProcesso", "input").value = idProcesso;            
-                
+            FindControl("hdfIdProcesso", "input").value = idProcesso;
+
             codAplicacaoAtual = FindControl("txtAplIns", "input").value;
         }
-               
+
         if (((codAplicacao && codAplicacao != "") ||
             (codInternoProd != "" && AlterarProcessoAplicacao.ProdutoPossuiAplPadrao(codInternoProd).value == "false")) &&
             (codAplicacaoAtual == null || codAplicacaoAtual == ""))
@@ -258,7 +258,7 @@
             aplAmbiente = procAmbiente;
             loadApl(codAplicacao);
         }
-        
+
         procAmbiente = false;
     }
 
@@ -278,7 +278,7 @@
             }
 
             response = response.split("\t");
-            
+
             if (response[0] == "Erro") {
                 alert(response[1]);
                 setProc("", "", "");
@@ -292,14 +292,14 @@
         }
     }
 
-    var saveProdClicked = false;    
+    var saveProdClicked = false;
 
     // Função chamada quando o produto está para ser atualizado
-    function onUpdateProd(idProdPed) {     
-        
+    function onUpdateProd(idProdPed) {
+
         if (!obrigarProcApl())
             return false;
-        
+
         return true;
     }
 
@@ -309,16 +309,16 @@
             return false;
 
         var usarComissionado = <%= Glass.Configuracoes.PedidoConfig.Comissao.UsarComissionadoCliente.ToString().ToLower() %>;
-                
+
         var retorno = AlterarProcessoAplicacao.GetCli(idCliente).value.split(';');
         if (retorno[0] == "Erro") {
             alert(retorno[1]);
-            
+
             return false;
         }
 
         FindControl("lblObsCliente", "span").innerHTML = retorno[3];
-    } 
+    }
 
     function buscarProcessos(){
         var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfIdProd", "input").value);
@@ -364,7 +364,7 @@
                                 DefaultMode="Insert" GridLines="None" Height="50px" Width="125px">
                                 <Fields>
                                     <asp:TemplateField ShowHeader="False">
-                                        
+
                                         <ItemTemplate>
                                             <table cellpadding="2" cellspacing="2">
                                                 <asp:HiddenField ID="hdfIdPedido" runat="server" Value='<%# Eval("IdPedido") %>' />
@@ -460,7 +460,7 @@
                                                         <asp:Label ID="lblDataEntrega" runat="server" Text='<%# Eval("DataEntregaString") %>'></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold">
-                                                        <asp:Label runat="server" ID="lblValorFrete" OnLoad="txtValorFrete_Load" Text="Valor do Frete"></asp:Label> 
+                                                        <asp:Label runat="server" ID="lblValorFrete" OnLoad="txtValorFrete_Load" Text="Valor do Frete"></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:Label ID="Label18" runat="server" Text='<%# Eval("ValorEntrega", "{0:C}") %>' OnLoad="txtValorFrete_Load"></asp:Label>
@@ -543,10 +543,10 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold">
-                                                        
+
                                                     </td>
                                                     <td colspan="3" align="left">
-                                                        
+
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold">
                                                         <asp:Label ID="Label15" runat="server" Text="Têmpera fora" OnLoad="TemperaFora_Load"></asp:Label>
@@ -600,8 +600,8 @@
                                             <asp:HiddenField ID="hdfIsReposicao" runat="server" Value='<%# IsReposicao(Eval("TipoVenda")) %>' />
                                         </ItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField ShowHeader="False">                                        
-                                        <ItemTemplate>                                            
+                                    <asp:TemplateField ShowHeader="False">
+                                        <ItemTemplate>
                                             <asp:HiddenField ID="hdfLoja" runat="server" Value='<%# Eval("IdLoja") %>' />
                                         </ItemTemplate>
                                         <ItemStyle HorizontalAlign="Center" />
@@ -619,25 +619,25 @@
             </td>
         </tr>
         <tr>
-            <td align="center">                
+            <td align="center">
                 <div id="divProduto" runat="server">
-                    <table>                        
+                    <table>
                         <tr>
                             <td align="center">
                                 <asp:GridView GridLines="None" ID="grdAmbiente" runat="server" AllowPaging="True"
                                     AllowSorting="True" AutoGenerateColumns="False" DataKeyNames="IdAmbientePedido"
                                     DataSourceID="odsAmbiente" OnRowCommand="grdAmbiente_RowCommand" ShowFooter="false"
                                     OnPreRender="grdAmbiente_PreRender" CssClass="gridStyle" PagerStyle-CssClass="pgr"
-                                    AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" 
+                                    AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit"
                                     OnRowUpdated="grdAmbiente_RowUpdated">
-                                    <Columns>                                        
-                                        <asp:TemplateField HeaderText="Ambiente" SortExpression="Ambiente">                                                                            
+                                    <Columns>
+                                        <asp:TemplateField HeaderText="Ambiente" SortExpression="Ambiente">
                                             <ItemTemplate>
                                                 <asp:LinkButton ID="lnkViewProd" runat="server" CausesValidation="False" CommandArgument='<%# Eval("IdAmbientePedido") %>'
-                                                    CommandName="ViewProd" Text='<%# Eval("Ambiente") %>'></asp:LinkButton>                                                
+                                                    CommandName="ViewProd" Text='<%# Eval("Ambiente") %>'></asp:LinkButton>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Descrição" SortExpression="Descricao">                                            
+                                        <asp:TemplateField HeaderText="Descrição" SortExpression="Descricao">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label2" runat="server" Text='<%# Eval("Descricao") %>'></asp:Label>
                                                 <asp:Label ID="Label17" runat="server" ForeColor="Red" Text='<%# Eval("DescrObsProj") %>'></asp:Label>
@@ -646,44 +646,44 @@
                                         <asp:TemplateField HeaderText="Qtde" SortExpression="Qtde" Visible="False">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label3" runat="server" Text='<%# Eval("Qtde") %>'></asp:Label>
-                                            </ItemTemplate>                                            
-                                        </asp:TemplateField>                                        
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
                                         <asp:TemplateField HeaderText="Largura" SortExpression="Largura" Visible="False">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label5" runat="server" Text='<%# Eval("Largura") %>'></asp:Label>
-                                            </ItemTemplate>                                            
+                                            </ItemTemplate>
                                         </asp:TemplateField>
                                         <asp:TemplateField HeaderText="Altura" SortExpression="Altura" Visible="False">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label4" runat="server" Text='<%# Eval("Altura") %>'></asp:Label>
                                             </ItemTemplate>
-                                        </asp:TemplateField>                                        
-                                        <asp:TemplateField HeaderText="Proc." SortExpression="IdProcesso" Visible="False">                                            
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Proc." SortExpression="IdProcesso" Visible="False">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label9" runat="server" Text='<%# Eval("CodProcesso") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Apl." SortExpression="IdAplicacao" Visible="False">                                            
+                                        <asp:TemplateField HeaderText="Apl." SortExpression="IdAplicacao" Visible="False">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label10" runat="server" Text='<%# Eval("CodAplicacao") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Redondo" SortExpression="Redondo" Visible="False">                                            
+                                        <asp:TemplateField HeaderText="Redondo" SortExpression="Redondo" Visible="False">
                                             <ItemTemplate>
                                                 <asp:CheckBox ID="CheckBox1" runat="server" Checked='<%# Eval("Redondo") %>' Enabled="false" />
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Valor produtos" SortExpression="TotalProdutos">                                            
+                                        <asp:TemplateField HeaderText="Valor produtos" SortExpression="TotalProdutos">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label8" runat="server" Text='<%# Eval("TotalProdutos", "{0:c}") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Acréscimo" SortExpression="Acrescimo">                                            
+                                        <asp:TemplateField HeaderText="Acréscimo" SortExpression="Acrescimo">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label6" runat="server" Text='<%# Eval("TextoAcrescimo") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Desconto" SortExpression="Desconto">                                            
+                                        <asp:TemplateField HeaderText="Desconto" SortExpression="Desconto">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label7" runat="server" Text='<%# Eval("TextoDesconto") %>'></asp:Label>
                                             </ItemTemplate>
@@ -725,27 +725,27 @@
                                     OnRowUpdated="grdProdutos_RowUpdated" >
                                     <FooterStyle Wrap="True" />
                                     <Columns>
-                                        <asp:TemplateField>                                            
+                                        <asp:TemplateField>
                                             <ItemTemplate>
                                                 <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit" Visible='<%# Eval("AlterarProcessoAplicacaoVisible") %>'
                                                      OnClientClick='<%# !(bool)Eval("PodeEditar") ? "mensagemProdutoComDesconto(true); return false" : "" %>'>
-                                                    <img border="0" src="../Images/Edit.gif" ></img></asp:LinkButton>                                                
-                                            </ItemTemplate>       
+                                                    <img border="0" src="../Images/Edit.gif" ></img></asp:LinkButton>
+                                            </ItemTemplate>
                                             <EditItemTemplate>
                                                 <asp:HiddenField ID="hdfIsVidro" runat="server" Value='<%# Eval("IsVidro") %>' />
                                                 <asp:HiddenField runat="server" id="hdfIdProdPed" Value='<%# Bind("IdProdPed") %>' />
                                                 <asp:ImageButton ID="imbAtualizar" runat="server" CommandName="Update" Height="16px"
                                                     ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" OnClientClick='<%# "if(!onUpdateProd(" + Eval("IdProdPed") + ")) return false;"%>' />
                                                 <asp:ImageButton ID="imbCancelar" runat="server" CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif"
-                                                    ToolTip="Cancelar" />                                                
-                                            </EditItemTemplate>                                     
+                                                    ToolTip="Cancelar" />
+                                            </EditItemTemplate>
                                             <ItemStyle Wrap="False" />
                                         </asp:TemplateField>
                                         <asp:TemplateField HeaderText="Cód." SortExpression="CodInterno">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label8" runat="server" Text='<%# Eval("CodInterno") %>'></asp:Label>
                                             </ItemTemplate>
-                                        </asp:TemplateField>                                       
+                                        </asp:TemplateField>
                                         <asp:TemplateField HeaderText="Produto" SortExpression="DescrProduto">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label1" runat="server" Text='<%# Eval("DescricaoProdutoComBenef") + (!String.IsNullOrEmpty(Eval("DescrBeneficiamentos").ToString()) ? " " + Eval("DescrBeneficiamentos") : "") %>'></asp:Label>
@@ -776,7 +776,7 @@
                                             </ItemTemplate>
                                             <ItemStyle Wrap="False" />
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="Tot. m² calc." SortExpression="TotM2Calc">                                            
+                                        <asp:TemplateField HeaderText="Tot. m² calc." SortExpression="TotM2Calc">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label12" runat="server" Text='<%# Eval("TotM2Calc") %>'></asp:Label>
                                             </ItemTemplate>
@@ -805,7 +805,7 @@
                                                     </tr>
                                                 </table>
                                                 <asp:HiddenField ID="hdfIdProcesso" runat="server" Value='<%# Bind("IdProcesso") %>' />
-                                            </EditItemTemplate>                                            
+                                            </EditItemTemplate>
                                             <ItemTemplate>
                                                 <asp:Label ID="Label10" runat="server" Text='<%# Eval("CodProcesso") %>'></asp:Label>
                                             </ItemTemplate>
@@ -826,7 +826,7 @@
                                                     </tr>
                                                 </table>
                                                 <asp:HiddenField ID="hdfIdAplicacao" runat="server" Value='<%# Bind("IdAplicacao") %>' />
-                                            </EditItemTemplate>                                            
+                                            </EditItemTemplate>
                                             <ItemTemplate>
                                                 <asp:Label ID="Label9" runat="server" Text='<%# Eval("CodAplicacao") %>'></asp:Label>
                                             </ItemTemplate>
@@ -835,7 +835,7 @@
                                             <ItemTemplate>
                                                 <asp:Label ID="Label13" runat="server" Text='<%# Eval("PedCli") %>'></asp:Label>
                                             </ItemTemplate>
-                                        </asp:TemplateField>                           
+                                        </asp:TemplateField>
                                         <asp:TemplateField HeaderText="Total" SortExpression="Total">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label7" runat="server" Text='<%# Eval("Total", "{0:C}") %>'></asp:Label>
@@ -844,7 +844,7 @@
                                             </ItemTemplate>
                                             <ItemStyle Wrap="False" />
                                         </asp:TemplateField>
-                                        <asp:TemplateField HeaderText="V. Benef." SortExpression="ValorBenef">                                            
+                                        <asp:TemplateField HeaderText="V. Benef." SortExpression="ValorBenef">
                                             <ItemTemplate>
                                                 <asp:Label ID="Label11" runat="server" Text='<%# Eval("ValorBenef", "{0:C}") %>'></asp:Label>
                                             </ItemTemplate>
@@ -868,7 +868,7 @@
                                                     Esp.:
                                                     <asp:TextBox ID="txtEspBenef" Width="30px" runat="server" onkeypress="return soNumeros(event, true, true)"
                                                         Text='<%# Eval("EspessuraBenef") %>'></asp:TextBox>
-                                                </div>                                                
+                                                </div>
                                                 <table id='<%# "tbConfigVidro_" + Eval("IdProdPed") %>' cellspacing="0" style="display: none;">
                                                     <tr align="left">
                                                         <td align="center">
@@ -971,7 +971,7 @@
                                                 <tr id="prodPed_<%# Eval("IdProdPed") %>" style="display: none" align="center">
                                                     <td colspan="17">
                                                         <br />
-                                                        <uc13:ctrlProdComposicao runat="server" ID="ctrlProdComp" Visible='<%# Eval("IsProdLamComposicao") %>' 
+                                                        <uc13:ctrlProdComposicao runat="server" ID="ctrlProdComp" Visible='<%# Eval("IsProdLamComposicao") %>'
                                                             IdProdPed='<%# Glass.Conversoes.StrParaUint(Eval("IdProdPed").ToString()) %>'/>
                                                         <br />
                                                     </td>
@@ -997,7 +997,7 @@
                                                     </td>
                                                 </tr>
                                             </EditItemTemplate>
-                                            
+
                                         </asp:TemplateField>
                                     </Columns>
                                     <PagerStyle CssClass="pgr"></PagerStyle>
@@ -1015,7 +1015,7 @@
         DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize"
         SelectCountMethod="GetCount" SelectMethod="GetList"
         SortParameterName="sortExpression" StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ProdutosPedidoDAO"
-        InsertMethod="Insert" UpdateMethod="UpdateProcessoAplicacao"  
+        InsertMethod="Insert" UpdateMethod="UpdateProcessoAplicacao"
         OnUpdated="odsProdXPed_Updated">
         <SelectParameters>
             <asp:QueryStringParameter Name="idPedido" QueryStringField="idPedido" Type="UInt32" />
@@ -1034,30 +1034,30 @@
         </SelectParameters>
     </colo:VirtualObjectDataSource>
 
-    <script type="text/javascript">    
-    
-                  
+    <script type="text/javascript">
+
+
 
     // Se a empressa não vende vidros, esconde campos
     if (FindControl("hdfNaoVendeVidro", "input").value == "true" && FindControl("grdProdutos", "table") != null)
     {
         var tbProd = FindControl("grdProdutos", "table");
         var rows = tbProd.rows;
-        
+
         var colsTitle = rows[0].getElementsByTagName("th");
         colsTitle[4].style.display = "none";
         colsTitle[5].style.display = "none";
         colsTitle[6].style.display = "none";
         colsTitle[7].style.display = "none";
-        
+
         var k=0;
         for (k=1; k<rows.length; k++) {
             if (rows[k].cells.length <= 2)
                 continue;
-                
+
             if (rows[k].cells[4] == null)
                 break;
-                
+
             rows[k].cells[4].style.display = "none";
             rows[k].cells[5].style.display = "none";
             rows[k].cells[6].style.display = "none";
@@ -1067,20 +1067,20 @@
     else {
         // loadConfig();
         posValor = <%= GetPosValor() %>;
-        
+
         var usarAltLarg = '<%= Glass.Configuracoes.PedidoConfig.EmpresaTrabalhaAlturaLargura %>'.toLowerCase();
 
         // Troca a posição da altura com a largura
         if (usarAltLarg == "true" && FindControl("grdProdutos", "table") != null) {
             var tbProd = FindControl("grdProdutos", "table");
             var rows = tbProd.children[0].children;
-            
+
             // Troca a label de título altura-largura
             var colsTitle = rows[0].getElementsByTagName("th");
             var colAltInnerHtml = colsTitle[4].innerHTML;
             colsTitle[4].innerHTML = colsTitle[5].innerHTML;
             colsTitle[5].innerHTML = colAltInnerHtml;
-            
+
             var j=0;
             for (j=1; j<rows.length; j++) {
                 try
@@ -1095,15 +1095,15 @@
             }
         }
     }
-    
+
     var numCli = FindControl("hdfIdCliente", "input");
     if (numCli != null && numCli.value != "")
-    {        
+    {
         getCli(numCli.value);
     }
-    
+
     var idPedido = <%= !string.IsNullOrEmpty(Request["idPedido"]) ? Request["idPedido"] : "0" %>;
-    
+
         $(document).ready(function(){
 
             var hdfProdPedComposicaoSelecionado = FindControl("hdfProdPedComposicaoSelecionado", "input");
@@ -1117,9 +1117,9 @@
                 exibirProdsComposicao(botao, hdfProdPedComposicaoSelecionado.value);
             }
         });
-    
+
         loading = false;
-    
+
     </script>
 
 </asp:Content>

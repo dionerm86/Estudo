@@ -83,7 +83,7 @@ namespace Glass.Configuracoes
             get { return Config.GetConfigItem<int>(Config.ConfigEnum.AdicionalVidroRedondoAcima12mm); }
         }
 
-        #endregion       
+        #endregion
 
         #region box
 
@@ -430,6 +430,14 @@ namespace Glass.Configuracoes
         public static bool ConcatenarDescontoPorQuantidadeNaDescricaoDoProduto
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ConcatenarDescontoPorQuantidadeNaDescricaoDoProduto); }
+        }
+
+        /// <summary>
+        /// Obtém a informação que será exibida no e-mail enviado para administradores.
+        /// </summary>
+        public static string TextoEmailAdministradores
+        {
+            get { return Config.GetConfigItem<string>(Config.ConfigEnum.TextoEmailAdministradores); }
         }
     }
 }

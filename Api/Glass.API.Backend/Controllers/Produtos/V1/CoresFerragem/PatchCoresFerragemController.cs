@@ -5,7 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Produtos.CoresFerragem;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Produtos.CoresFerragem.CadastroAtualizacao;
+using Glass.API.Backend.Models.Produtos.V1.CoresFerragem.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -41,6 +41,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresFerragem
                     {
                         return this.NaoEncontrado($"Cor de ferragem {id} não encontrada.");
                     }
+
+                    sessao.BeginTransaction();
 
                     corFerragem = new ConverterCadastroAtualizacaoParaCorFerragem(dadosParaAlteracao, corFerragem)
                         .ConverterParaCorFerragem();

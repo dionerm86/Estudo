@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Pedidos.CadastroAtualizacao;
+using Glass.API.Backend.Models.Pedidos.V1.CadastroAtualizacao;
 using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using System;
 using System.Linq;
@@ -133,7 +133,7 @@ namespace Glass.API.Backend.Helper.Pedidos
             if (this.cadastro.Comissionado != null)
             {
                 destino.IdComissionado = (uint?)this.cadastro.Comissionado.Id;
-                destino.PercComissao = this.cadastro.Comissionado.PercentualComissao;
+                destino.PercComissao = (float)this.cadastro.Comissionado.PercentualComissao;
             }
         }
 

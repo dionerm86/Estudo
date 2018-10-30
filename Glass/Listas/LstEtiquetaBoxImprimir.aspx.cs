@@ -29,7 +29,7 @@ namespace Glass.UI.Web.Listas
                 var idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
     
                 // Verifica se o pedido é do tipo Revenda.
-                if (!PedidoDAO.Instance.IsRevenda(idPedido))
+                if (!PedidoDAO.Instance.IsRevenda(null, idPedido))
                     return "Erro\tÉ possível imprimir somente etiquetas de box de pedidos de Revenda.";
     
                 // Verifica se o pedido está confirmado.

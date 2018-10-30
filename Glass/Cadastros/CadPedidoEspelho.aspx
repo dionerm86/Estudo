@@ -65,6 +65,7 @@
                 var tipoPedido = FindControl("hdfTipoPedido", "input").value;
                 var cliRevenda = FindControl("hdfCliRevenda", "input").value;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
+                var altura = FindControl("txtAlturaIns", "input").value;
 
                 var idProdPed = FindControl("hdfProdPed", "input");
                 idProdPed = idProdPed != null ? idProdPed.value : "";
@@ -75,8 +76,19 @@
                 var percDescontoQtde = controleDescQtde.PercDesconto();
                 var reposicao = FindControl("hdfIsReposicao", "input").value;
 
-                FindControl("hdfValMin", "input").value = CadPedidoEspelho.GetValorMinimo(codInterno, tipoPedido, tipoEntrega,
-                    idCliente, cliRevenda, reposicao, idProdPed, percDescontoQtde, idPedido).value;
+                var retorno = CadPedidoEspelho.GetValorMinimo(codInterno, tipoPedido, tipoEntrega,
+                    idCliente, cliRevenda, reposicao, idProdPed, percDescontoQtde, idPedido, altura);
+
+                if (retorno.error != null) {
+                    alert(retorno.error.description);
+                    return;
+                }
+                else if(retorno == null){
+                    alert("Erro na recuperação do valor de tabela do produto.");
+                    return;
+                }
+
+                FindControl("hdfValMin", "input").value = retorno.value;
             }
             else
                 FindControl("hdfValMin", "input").value = FindControl("lblValorIns", "input") != null ? FindControl("lblValorIns", "input").value : "";
@@ -390,6 +402,10 @@
                         FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como deve ser calculado o produto
                         var tipoCalc = retorno[7];
 
+                        if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != ""){
+                            GetAdicionalAlturaChapa();
+                        }
+
                         qtdEstoque = retorno[13]; // Pega a quantidade disponível em estoque deste produto
                         exibirMensagemEstoque = retorno[14] == "true";
                         qtdEstoqueMensagem = retorno[15];
@@ -542,7 +558,7 @@
             var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfIdProd", "input").value);
             var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo.value, idProcesso);
 
-            if(idSubgrupo.value != "" && retornoValidacao.value == "False" && FindControl("txtProcIns", "input").value != "")
+            if(idSubgrupo.value != "" && retornoValidacao.value == "false" && FindControl("txtProcIns", "input").value != "")
             {
                 FindControl("txtProcIns", "input").value = "";
                 alert("Este processo não pode ser selecionado para este produto.")
@@ -915,8 +931,37 @@
             controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
             var percDescontoQtde = controleDescQtde.PercDesconto();
 
-            FindControl("lblValorIns", "span").innerHTML = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, cliRevenda == "True",
-                pedidoReposicao, percDescontoQtde, idPedido, "", "", altura).value.replace(".", ",");
+            var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, cliRevenda == "True",
+                pedidoReposicao, percDescontoQtde, idPedido, "", "", altura);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            else if(retorno == null){
+                alert("Erro na recuperação do valor de tabela do produto.");
+                return;
+            }
+            
+            var hdfValorIns = FindControl('hdfValorIns', 'input');
+
+            if(hdfValorIns != null) {
+                hdfValorIns.value = retorno.value.replace(".", ",");
+            } 
+            else {
+                alert("Não foi possível encontrar o controle 'hdfValorIns'");
+                return false;
+            }
+            
+            var valorIns = FindControl('lblValorIns', 'span');
+
+            if(valorIns != null) {
+                valorIns.innerHTML = retorno.value.replace(".", ",");
+            }
+            else{
+                alert("Não foi possível encontrar o controle 'lblValorIns'");
+                return false;
+            }
         }
 
         // Calcula em tempo real o valor total do produto

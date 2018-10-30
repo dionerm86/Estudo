@@ -372,7 +372,8 @@ namespace Glass.Data.Model
                     
                     var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(IdPedido);
 
-                    var calcMult5 = ProdutoDAO.Instance.IsVidro(null, (int)ProdutoPedido.IdProd) && ProdutoPedido.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto;
+                    var calcMult5 = ( PedidoMaoDeObra || IsVidro )
+                        && ProdutoPedido.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto;
 
                     ValorTotal.Instance.Calcular(null, 
                         pedido, 
@@ -383,7 +384,14 @@ namespace Glass.Data.Model
 
                     TotalProd = ProdutoPedido.Total;
 
-                    decimal? valorUnitario = ProdutoPedido != null ? ValorUnitario.Instance.CalcularValor(null, pedido, ProdutoPedido, ValorProd - ValorBenefProd) : null;
+                    decimal? valorUnitario = ProdutoPedido != null 
+                        ? ValorUnitario.Instance.CalcularValor(
+                            null, 
+                            pedido, 
+                            ProdutoPedido, 
+                            ValorProd - ValorBenefProd)
+                        : null;
+
                     if (valorUnitario.HasValue)
                     {
                         _valorUnit = valorUnitario + valorUnitBenef;
@@ -414,11 +422,20 @@ namespace Glass.Data.Model
                 if (_isVidro == null)
                 {
                     if (IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
+                    {
                         _isVidro = false;
-                    else if (Liberacao.RelatorioLiberacaoPedido.ConsiderarVidroQualquerProdutoDoGrupoVidro && IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
+                    }
+                    else if (Liberacao.RelatorioLiberacaoPedido.ConsiderarVidroQualquerProdutoDoGrupoVidro 
+                        && IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
+                    {
                         _isVidro = true;
+                    }
                     else
-                        _isVidro = !SubgrupoProdDAO.Instance.IsSubgrupoProducao((int)IdGrupoProd, (int?)IdSubgrupoProd);
+                    {
+                        _isVidro = !SubgrupoProdDAO.Instance.IsSubgrupoProducao(
+                            (int)IdGrupoProd, 
+                            (int?)IdSubgrupoProd);
+                    }
                 }
 
                 return _isVidro.Value;

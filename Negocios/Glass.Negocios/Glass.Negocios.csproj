@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Glass.Negocios</RootNamespace>
     <AssemblyName>Glass.Negocios</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -181,6 +181,7 @@
     <Compile Include="Projeto\IFlagArqMesaFluxo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProvedorControleAlteracao.cs" />
+    <Compile Include="Rentabilidade\AtualizacaoIndicadorFinanceiro.cs" />
     <Compile Include="Rentabilidade\ICalculadoraComissaoRentabilidade.cs" />
     <Compile Include="Rentabilidade\IProvedorItemRentabilidade.cs" />
     <Compile Include="Rentabilidade\IRentabilidadeFluxo.cs" />

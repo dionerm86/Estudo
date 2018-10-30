@@ -897,8 +897,12 @@ namespace Glass.UI.Web.Utils
             if (idContaMultaReceb != null && idContaMultaReceb.ToString() != String.Empty && idContaMultaReceb.ToString() != "0")
             {
                 PlanoContas pc = PlanoContasDAO.Instance.GetByIdConta(Glass.Conversoes.StrParaUint(idContaMultaReceb.ToString()));
-                lblMultaReceb.Text = pc.DescrPlanoGrupo;
-                hdfMultaReceb.Value = pc.IdConta.ToString();
+
+                if (pc != null)
+                {
+                    lblMultaReceb.Text = pc.DescrPlanoGrupo;
+                    hdfMultaReceb.Value = pc.IdConta.ToString(); 
+                }
             }
     
             if (idContaJurosPagto != null && idContaJurosPagto.ToString() != String.Empty && idContaJurosPagto.ToString() != "0")
