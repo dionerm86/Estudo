@@ -110,9 +110,10 @@ namespace Glass.UI.Web.Controls
         {
             for (int i = 0; i < this.cblFormasPagto.Items.Count; i++)
             {
-                this.cblFormasPagto.Items[i].Attributes.Add(
-                    "onclick",
-                    $"alterarFormasPagtoPadrao(this.checked, {this.cblFormasPagto.Items[i].Value}, '{this.cblFormasPagto.Items[i].Text}', {this._formaPagtoPadrao})");
+                var metodos = $@"formaPagtoPadraoDesmarcada(this, '{this.cblFormasPagto.Items[i].Value}', {this._formaPagtoPadrao});
+                       alterarFormasPagtoPadrao(this.checked, {this.cblFormasPagto.Items[i].Value}, '{this.cblFormasPagto.Items[i].Text}', {this._formaPagtoPadrao});";
+
+                this.cblFormasPagto.Items[i].Attributes.Add("onclick", metodos);
             }
         }
     }

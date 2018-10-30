@@ -38,10 +38,11 @@ function validarFormasPagtoUsar(val, args)
  * @param {?Object} selecionado Indicador se o checkbox está ou não marcado.
  * @param {?number} idFormaPagto Identificador da forma de pagamento.
  * @param {?string} formaPagto Descritivo da forma de pagamento.
+ * @param {?number} idFormaPagtoPadrao Identificador da forma de pagamento padrão.
  */
-function alterarFormasPagtoPadrao(selecionado, idFormaPagto, formaPagto, formaPagtoPadrao) {
+function alterarFormasPagtoPadrao(selecionado, idFormaPagto, formaPagto, idFormaPagtoPadrao) {
 
-  if (formaPagtoPadrao == idFormaPagto) {
+  if (idFormaPagtoPadrao == idFormaPagto) {
     return;
   }
 
@@ -59,5 +60,18 @@ function alterarFormasPagtoPadrao(selecionado, idFormaPagto, formaPagto, formaPa
         break;
       }
     }
+  }
+}
+
+/**
+ * Altera os dados do checkbox com a forma de pagamento padrão caso desmarcado.
+ * @param {?Object} controle checkbox para verificação.
+ * @param {?number} idFormaPagto Identificador da forma de pagamento.
+ * @param {?number} idFormaPagtoPadrao Identificador da forma de pagamento padrão.
+ */
+function formaPagtoPadraoDesmarcada(controle, idFormaPagto, idFormaPagtoPadrao) {
+  if (!controle.checked && idFormaPagtoPadrao == idFormaPagto) {
+    controle.checked = true;
+    alert("A forma de pagamento padrão não pode ser retirada.\nAltere a forma de pagamento padrão e atualize o cliente para que seja possível retirar esta forma de pagamento.");
   }
 }
