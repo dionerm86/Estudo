@@ -138,8 +138,15 @@
             FindControl("chkAgruparGrupo", "input").checked = false;
             FindControl("chkAgruparCli", "input").checked = false;
             FindControl("drpFuncionario", "select").selectedIndex = 0;
-            if (FindControl("drpVendedorCliente", "select") != null) FindControl("drpVendedorCliente", "select").selectedIndex = 0;
-            if (FindControl("drpVendedorPedido", "select") != null) FindControl("drpVendedorPedido", "select").selectedIndex = 0;
+
+            if (FindControl("drpVendedorCliente", "select") != null) {
+                FindControl("drpVendedorCliente", "select").selectedIndex = 0;
+            }
+
+            if (FindControl("drpVendedorPedido", "select") != null) {
+                FindControl("drpVendedorPedido", "select").selectedIndex = 0;
+            }
+
             FindControl("drpTipoVenda", "select").selectedIndex = 0;
             FindControl("drpFastDelivery", "select").selectedIndex = 0;
             return false;
