@@ -116,7 +116,6 @@
                     Text="Retificar Arquivo Remessa" OnClick="btnRetificarArquivoRemessa_Click" /></td>
         </tr>
     </table>
-    <asp:HiddenField ID="hdfIdArquivoRemessa" runat="server" />
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsContasReceber" runat="server" SelectMethod="ObterContasReceberParaRetificarArquivoRemessa"
         TypeName="Glass.Data.DAL.ContasReceberDAO">
         <SelectParameters>

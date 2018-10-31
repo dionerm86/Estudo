@@ -112,15 +112,6 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.Button btnRetificarArquivoRemessa;
         
         /// <summary>
-        /// hdfIdArquivoRemessa control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfIdArquivoRemessa;
-        
-        /// <summary>
         /// odsContasReceber control.
         /// </summary>
         /// <remarks>
