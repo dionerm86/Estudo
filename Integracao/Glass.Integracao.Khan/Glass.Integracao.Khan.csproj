@@ -93,6 +93,7 @@
   <ItemGroup>
     <Compile Include="ConfiguracaoKhan.cs" />
     <Compile Include="ConversorNotaFiscalPedido.cs" />
+    <Compile Include="HistoricoKhan.cs" />
     <Compile Include="IntegradorKhan.cs" />
     <Compile Include="IntegradorScheculerRegistry.cs" />
     <Compile Include="Jobs\MonitorIndicadoresFinanceirosJob.cs" />

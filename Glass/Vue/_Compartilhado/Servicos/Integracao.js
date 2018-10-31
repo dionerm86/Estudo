@@ -24,12 +24,39 @@ Servicos.Integracao = (function(http) {
        * @param {string} integrador Nome do integrador de onde o logger será recuperado.
        * @returns {Promise} Um promise com os dados do Logger.
        **/
-      obterLogger: function(integrador) {
+      obterLogger: function (integrador) {
         if (!integrador) {
           throw new Error('O integrador deve ser informado.');
         }
 
         return http().get(API + 'integradores/' + integrador + '/logger');
+      },
+
+      /**
+       * Obtém os itens do histórico do integrador.
+       * @param {string} integrador Nome do integrador.
+       * @param {string} itemEsquema Nome do item do esquema de histórico.
+       * @param {string} tipo Tipo dos itens que serão filtrados.
+       * @param {Array} identificadores Identificadores que serão usados para filtrar os itens.
+       * @returns {Promise} Um promise com os dados dos itens do histórico.
+       **/
+      obterItensHistorico: function (integrador, itemEsquema, tipo, identificadores) {
+        if (!integrador) {
+          throw new Error('O integrador deve ser informado.');
+        }
+
+        if (!itemEsquema) {
+          throw new Error('O item do esquema de histório deve ser informado.');
+        }
+
+        if (!identificadores) {
+          identificadores = [];
+        }
+
+        return http().post(API + 'integradores/' + integrador + '/historico/' + itemEsquema + '/itens', {
+          tipo: tipo,
+          identificadores: identificadores,
+        });
       },
 
       /**

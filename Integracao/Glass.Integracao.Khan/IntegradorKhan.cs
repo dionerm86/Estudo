@@ -2,12 +2,11 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Colosoft;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Colosoft;
 
 namespace Glass.Integracao.Khan
 {
@@ -54,6 +53,7 @@ namespace Glass.Integracao.Khan
             this.domainEvents = domainEvents;
             this.serviceLocator = serviceLocator;
             this.MonitorIndicadoresFinanceiros = new MonitorIndicadoresFinanceiros(this.Configuracao, this.Logger, rentabilidadeFluxo);
+            this.EsquemaHistorico = CriarEsquemaHistorico();
         }
 
         /// <summary>
@@ -114,6 +114,24 @@ namespace Glass.Integracao.Khan
 
         /// <inheritdoc />
         public LoggerIntegracao Logger { get; }
+
+        /// <inheritdoc />
+        public Historico.Esquema EsquemaHistorico { get; }
+
+        private static Historico.Esquema CriarEsquemaHistorico()
+        {
+            var itens = new Historico.ItemEsquema[]
+                {
+                   HistoricoKhan.Produtos,
+                   HistoricoKhan.NotasFiscais,
+                };
+
+            return new Historico.Esquema(
+                1,
+                "Khan",
+                "Histório dos itens de integração da Khan",
+                itens);
+        }
 
         private T ConfigurarMonitor<T>()
             where T : MonitorEventos

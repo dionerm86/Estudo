@@ -3,6 +3,7 @@
 // </copyright>
 
 using Colosoft;
+using Glass.Integracao.Historico;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace Glass.Integracao.Khan
     {
         private readonly Colosoft.Logging.ILogger logger;
         private readonly ConfiguracaoKhan configuracao;
+        private readonly Historico.IProvedorHistorico provedorHistorico;
         private readonly string serviceUid = Guid.NewGuid().ToString();
         private readonly System.Text.RegularExpressions.Regex dddRegex = new System.Text.RegularExpressions.Regex("\\((?<ddd>([0-9][0-9]))\\)");
 
@@ -25,14 +27,17 @@ namespace Glass.Integracao.Khan
         /// <param name="domainEvents">Eventos de domínio.</param>
         /// <param name="logger">Logger para registrar as informações.</param>
         /// <param name="configuracao">Configuração.</param>
+        /// <param name="provedorHistorico">Provedor dos históricos.</param>
         public MonitorNotaFiscal(
             Colosoft.Domain.IDomainEvents domainEvents,
             Colosoft.Logging.ILogger logger,
-            ConfiguracaoKhan configuracao)
+            ConfiguracaoKhan configuracao,
+            Historico.IProvedorHistorico provedorHistorico)
             : base(domainEvents)
         {
             this.logger = logger;
             this.configuracao = configuracao;
+            this.provedorHistorico = provedorHistorico;
             this.AdicionarToken<Data.Domain.NotaFiscalGerada>(
                 domainEvents.GetEvent<Data.Domain.NotaFiscalGerada>().Subscribe(this.NotaFiscalGerada));
 
@@ -254,7 +259,19 @@ namespace Glass.Integracao.Khan
             var pedido = this.Converter(sessao, notaFiscal);
 
             this.logger.Info($"Salvando nota fiscal (idNf: {notaFiscal.IdNf})...".GetFormatter());
-            await this.Client.SalvarPedidoAsync(pedido);
+
+            try
+            {
+                await this.Client.SalvarPedidoAsync(pedido);
+            }
+            catch (Exception ex)
+            {
+                var mensagem = $"Não foi possível salvar os dados da nota fiscal (IdNf: {notaFiscal.IdNf}) na Khan";
+                this.provedorHistorico.RegistrarFalha(HistoricoKhan.NotasFiscais, notaFiscal, mensagem, ex);
+                throw;
+            }
+
+            this.provedorHistorico.NotificarIntegracao(HistoricoKhan.NotasFiscais, notaFiscal);
         }
 
         private Task SincronizarNotaFiscal(int idNf)

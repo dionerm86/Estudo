@@ -11,6 +11,8 @@
             "~/Vue/Integracao/Integradores/Templates/LstIntegradores.JobIntegracao.html",
             "~/Vue/Integracao/Integradores/Templates/LstIntegradores.ItemLogger.html",
             "~/Vue/Integracao/Integradores/Templates/LstIntegradores.Logger.html",
+            "~/Vue/Integracao/Integradores/Templates/LstIntegradores.ItemEsquemaHistorico.html",
+            "~/Vue/Integracao/Integradores/Templates/LstIntegradores.ItemHistorico.html",
             "~/Vue/Integracao/Integradores/Templates/LstIntegradores.Configuracao.html")
     %>
     <div id="app">
@@ -26,6 +28,8 @@
             <asp:ScriptReference Path="~/Vue/Integracao/Integradores/Componentes/LstIntegradores.ParametroOperacaoIntegracao.js" />
             <asp:ScriptReference Path="~/Vue/Integracao/Integradores/Componentes/LstIntegradores.OperacaoIntegracao.js" />
             <asp:ScriptReference Path="~/Vue/Integracao/Integradores/Componentes/LstIntegradores.JobIntegracao.js" />
+            <asp:ScriptReference Path="~/Vue/Integracao/Integradores/Componentes/LstIntegradores.ItemEsquemaHistorico.js" />
+            <asp:ScriptReference Path="~/Vue/Integracao/Integradores/Componentes/LstIntegradores.ItemHistorico.js" />
             <asp:ScriptReference Path="~/Vue/Integracao/Integradores/Componentes/LstIntegradores.ItemLogger.js" />
             <asp:ScriptReference Path="~/Vue/Integracao/Integradores/Componentes/LstIntegradores.Logger.js" />
             <asp:ScriptReference Path="~/Vue/Integracao/Integradores/Componentes/LstIntegradores.Configuracao.js" />

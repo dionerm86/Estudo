@@ -2,11 +2,12 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Colosoft;
+using Glass.Integracao.Historico;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Colosoft;
 
 namespace Glass.Integracao.Khan
 {
@@ -18,6 +19,7 @@ namespace Glass.Integracao.Khan
         private readonly Colosoft.Logging.ILogger logger;
         private readonly ConfiguracaoKhan configuracao;
         private readonly string serviceUid = Guid.NewGuid().ToString();
+        private readonly Historico.IProvedorHistorico provedorHistorico;
         private readonly Global.Negocios.IProdutoFluxo produtoFluxo;
 
         /// <summary>
@@ -27,16 +29,19 @@ namespace Glass.Integracao.Khan
         /// <param name="logger">Logger.</param>
         /// <param name="configuracao">Configuração.</param>
         /// <param name="produtoFluxo">Fluxo de negócio dos produtos.</param>
+        /// <param name="provedorHistorico">Provedor dos históricos.</param>
         public MonitorProdutos(
             Colosoft.Domain.IDomainEvents domainEvents,
             Colosoft.Logging.ILogger logger,
             ConfiguracaoKhan configuracao,
-            Global.Negocios.IProdutoFluxo produtoFluxo)
+            Global.Negocios.IProdutoFluxo produtoFluxo,
+            Historico.IProvedorHistorico provedorHistorico)
             : base(domainEvents)
         {
             this.logger = logger;
             this.configuracao = configuracao;
             this.produtoFluxo = produtoFluxo;
+            this.provedorHistorico = provedorHistorico;
             Colosoft.Net.ServiceClientsManager.Current.Register(this.serviceUid, this.CriarCliente);
         }
 
@@ -122,12 +127,13 @@ namespace Glass.Integracao.Khan
             }
             catch (Exception ex)
             {
-                this.logger.Error(
-                    $"Não foi possível salvar os dados do produto '{entidade.CodInterno}' na Khan.".GetFormatter(),
-                    ex);
-
+                var mensagem = $"Não foi possível salvar os dados do produto '{entidade.CodInterno}' na Khan.";
+                this.logger.Error(mensagem.GetFormatter(), ex);
+                this.provedorHistorico.RegistrarFalha(HistoricoKhan.Produtos, entidade, mensagem, ex);
                 throw;
             }
+
+            this.provedorHistorico.NotificarIntegracao(HistoricoKhan.Produtos, entidade);
         }
 
         /// <summary>

@@ -528,7 +528,13 @@
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\ExecucaoOperacaoIntegracao\DadosExecucaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ConfiguracaoIntegradorDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Lista\EsquemaHistoricoDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Lista\FalhaHistoricoDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Lista\IdentificadorItemEsquemaHistoricoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\IntegradorDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Lista\ItemEsquemaHistoricoDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Lista\ItemHistoricoDto.cs" />
+    <Compile Include="Models\Integracao\V1\Integradores\Lista\ItensHistoricoFiltroDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\JobIntegracaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\OperacaoIntegracaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ParametroOperacaoIntegracaoDto.cs" />

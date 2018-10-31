@@ -29,6 +29,7 @@ namespace Glass.API.Backend.Models.Integracao.V1.Integradores.Lista
                 .Select(f => new ConfiguracaoIntegradorDto(f, integrador.Configuracao[f], integrador.Configuracao.VerificarSomenteLeitura(f)));
             this.Operacoes = integrador.Operacoes.Select(f => new OperacaoIntegracaoDto(f)).ToList();
             this.Jobs = integrador.Jobs.Select(f => new JobIntegracaoDto(f)).ToList();
+            this.EsquemaHistorico = integrador.EsquemaHistorico != null ? new EsquemaHistoricoDto(integrador.EsquemaHistorico) : null;
         }
 
         /// <summary>
@@ -65,5 +66,12 @@ namespace Glass.API.Backend.Models.Integracao.V1.Integradores.Lista
         [DataMember]
         [JsonProperty("jobs")]
         public IEnumerable<JobIntegracaoDto> Jobs { get; }
+
+        /// <summary>
+        /// Obtém o esquema do histórico.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("esquemaHistorico")]
+        public EsquemaHistoricoDto EsquemaHistorico { get; }
     }
 }

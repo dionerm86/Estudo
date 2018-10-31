@@ -41,6 +41,11 @@ namespace Glass.Integracao
         IEnumerable<IJobIntegracao> Jobs { get; }
 
         /// <summary>
+        /// Obtém o esquema do histório associado com o integrador.
+        /// </summary>
+        Historico.Esquema EsquemaHistorico { get; }
+
+        /// <summary>
         /// Obtém o logger do integrador.
         /// </summary>
         LoggerIntegracao Logger { get; }

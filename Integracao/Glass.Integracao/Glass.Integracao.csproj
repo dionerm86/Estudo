@@ -78,6 +78,15 @@
   <ItemGroup>
     <Compile Include="ConfiguracaoIntegrador.cs" />
     <Compile Include="GerenciadorOperacaoIntegracao.cs" />
+    <Compile Include="Historico\Esquema.cs" />
+    <Compile Include="Historico\Falha.cs" />
+    <Compile Include="Historico\IdentificadorItemEsquema.cs" />
+    <Compile Include="Historico\IProvedorHistorico.cs" />
+    <Compile Include="Historico\ItemEsquema.cs" />
+    <Compile Include="Historico\ItemEsquema{T}.cs" />
+    <Compile Include="Historico\Item.cs" />
+    <Compile Include="Historico\ProvedorHistoricoExtensions.cs" />
+    <Compile Include="Historico\TipoItemHistorico.cs" />
     <Compile Include="IIntegrador.cs" />
     <Compile Include="GerenciadorIntegradores.cs" />
     <Compile Include="IJobIntegracao.cs" />
@@ -107,6 +116,7 @@
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

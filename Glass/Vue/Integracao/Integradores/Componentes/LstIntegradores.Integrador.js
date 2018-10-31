@@ -19,6 +19,7 @@
       podeExibirOpcoes: false,
       podeExibirJobs: false,
       podeExibirLogger: false,
+      podeExibirHistorico: false,
     };
   },
 
@@ -57,6 +58,13 @@
      **/
     alterarExibicaoLogger: function () {
       this.podeExibirLogger = !this.podeExibirLogger;
+    },
+
+    /**
+     * Altera a exibição do histórico.
+     **/
+    alterarExibicaoHistorico: function () {
+      this.podeExibirHistorico = !this.podeExibirHistorico;
     }
   },
 

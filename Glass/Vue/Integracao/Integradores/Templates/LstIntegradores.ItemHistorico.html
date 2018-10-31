@@ -1,0 +1,9 @@
+﻿<tr @click.prevent="alterarExibicaoFalha()">
+    <td v-for="coluna in colunas">
+        {{coluna.valor}}
+        <div v-if="exibirFalha && coluna.descricao == 'Mensagem'">
+            <div>{{item.falha.tipo}} :: {{item.falha.mensagem}}</div>
+            <div>{{item.falha.pilhaChamada}}</div>
+        </div>
+    </td>
+</tr>

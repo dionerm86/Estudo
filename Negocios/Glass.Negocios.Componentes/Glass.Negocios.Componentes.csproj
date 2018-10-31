@@ -299,6 +299,7 @@
     <Compile Include="Global\UnidadesFluxo.cs" />
     <Compile Include="Global\VeiculoFluxo.cs" />
     <Compile Include="Instalacao\InstalacaoFluxo.cs" />
+    <Compile Include="Integracao\ProvedorHistorico.cs" />
     <Compile Include="ObtemDescritorEntidade.cs" />
     <Compile Include="Otimizacao\AutenticadorProtocolo.cs" />
     <Compile Include="Otimizacao\ConversorSolucaoOtimizacao.cs" />
@@ -360,6 +361,10 @@
     <ProjectReference Include="..\..\Global\UI\Web\Glass.Global.UI.Web.Process\Glass.Global.UI.Web.Process.csproj">
       <Project>{53E0EF88-B812-45FE-9F91-F4F7889BD6CB}</Project>
       <Name>Glass.Global.UI.Web.Process</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Integracao\Glass.Integracao\Glass.Integracao.csproj">
+      <Project>{eddba46b-4412-433b-a587-c481ba2831fd}</Project>
+      <Name>Glass.Integracao</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Otimizacao\Glass.Otimizacao\Glass.Otimizacao.csproj">
       <Project>{876C89C4-D89E-4E70-AB98-52C008F0DE85}</Project>
