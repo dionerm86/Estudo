@@ -1,6 +1,7 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.Patch, Mixins.ExecutarTimeout],
+  mixins: [Mixins.Objetos, Mixins.ExecutarTimeout],
+
   data: {
     inserindo: false,
     editando: false,
@@ -11,6 +12,7 @@
     situacaoAtual: {},
     lojaAtual: {},
   },
+
   methods: {
     /**
      * Busca os dados de um pedido.
@@ -20,7 +22,7 @@
     buscarFuncionario: function (id) {
       var vm = this;
 
-      return Servicos.Funcionario.obterFuncionario(id)
+      return Servicos.Funcionarios.obterFuncionario(id)
         .then(function (resposta) {
           vm.funcionario = resposta.data;
         })
@@ -51,14 +53,6 @@
      * Recupera os tipos de pedido para exibição no cadastro ou edição do pedido.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterTiposPedido: function () {
-      return Servicos.Pedidos.obterTiposPedidoPorFuncionario();
-    },
-
-    /**
-     * Recupera os tipos de pedido para exibição no cadastro ou edição do pedido.
-     * @returns {Promise} Uma Promise com o resultado da busca.
-     */
     obterUfs: function () {
       return Servicos.Cidades.listarUfs();
     },
@@ -72,10 +66,6 @@
 
       this.lojaAtual = {
         id: item && item.loja ? item.loja.id : null
-      };
-
-      this.tipoPedidoAtual = {
-        id: item && item.tipo ? item.tipo.id : null
       };
 
       this.tipoFuncionarioAtual = {
@@ -101,7 +91,7 @@
           logradouro: item && item.endereco ? item.endereco.logradouro : null,
           complemento: item && item.endereco ? item.endereco.complemento : null,
           bairro: item && item.endereco ? item.endereco.bairro : null,
-          idCidade: item && item.endereco ? item.endereco.idCidade : null,
+          cidade: item && item.endereco ? item.endereco.cidade.nome : null,
           cep: item && item.endereco ? item.endereco.cep : null,
         },
         contatos :{
@@ -160,7 +150,7 @@
      * Insere o pedido, se possível.
      * @param {Object} event O objeto do evento JavaScript.
      */
-    inserirPedido: function (event) {
+    inserirFuncionario: function (event) {
       if (!this.validarFormulario_(event.target)) {
         return;
       }
@@ -181,10 +171,19 @@
     },
 
     /**
+ * Inicia o modo de edição do pedido.
+ */
+    editar: function () {
+      this.iniciarCadastroOuAtualizacao_(this.funcionario);
+      this.inserindo = false;
+      this.editando = true;
+    },
+
+    /**
      * Atualiza o pedido, se possível.
      * @param {Object} event O objeto do evento JavaScript.
      */
-    atualizarPedido: function (event) {
+    atualizarFuncionario: function (event) {
       if (!this.validarFormulario_(event.target)) {
         return;
       }
@@ -203,6 +202,33 @@
           }
         });
     },
+
+    /**
+      * Cancela a edição ou cadastro de pedido.
+      */
+    cancelar: function () {
+      if (this.editando) {
+        this.funcionario = this.clonar(this.funcionarioOriginal);
+        this.editando = false;
+      } else if (this.inserindo) {
+        this.redirecionarParaListagem();
+      }
+    },
+
+    /**
+     * Redireciona a tela atual para a tela de listagem correspondente.
+     */
+    redirecionarParaListagem: function () {
+      var idRelDinamico = GetQueryString('idRelDinamico');
+      var url = '../Listas/LstFuncionario.aspx';
+
+      if (idRelDinamico) {
+        url = '../Relatorios/Dinamicos/ListaDinamico.aspx?id=' + idRelDinamico;
+      }
+
+      window.location.assign(url);
+    },
+  },
     mounted: function () {
       var id = GetQueryString('idFunc');
       var vm = this;
@@ -223,15 +249,13 @@
         });
 
       if (id) {
-        this.buscarPedido(id)
+        this.buscarFuncionario(id)
           .then(function () {
             if (!vm.funcionario || !vm.funcionario.permissoes.podeEditar) {
               vm.redirecionarParaListagem();
             }
           });
       }
-    },
-    computed: {
     },
     watch: {
       /**
@@ -267,5 +291,4 @@
         deep: true
       }
     }
-  }
 });

@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Funcionarios.CadastroAtualizacao;
+using Glass.API.Backend.Models.Funcionarios.V1.CadastroAtualizacao;
 using System;
 
 namespace Glass.API.Backend.Helper.Funcionarios

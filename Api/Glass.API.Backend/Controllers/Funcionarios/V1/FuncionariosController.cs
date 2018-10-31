@@ -3,7 +3,7 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Funcionarios.CadastroAtualizacao;
+using Glass.API.Backend.Models.Funcionarios.V1.CadastroAtualizacao;
 using Glass.Data.DAL;
 using System;
 using System.Collections.Generic;

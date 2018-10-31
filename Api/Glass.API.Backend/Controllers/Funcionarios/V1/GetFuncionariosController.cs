@@ -20,6 +20,20 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
     public partial class FuncionariosController : BaseController
     {
         /// <summary>
+        /// Recupera as configurações usadas pela tela de listagem de pedidos.
+        /// </summary>
+        /// <param name="id">O identificador do pedido.</param>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("{id}/configuracoes")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Funcionarios.V1.Configuracoes.DetalheDto))]
+        public IHttpActionResult ObterConfiguracoesDetalhePedido(int id)
+        {
+            var configuracoes = new Models.Funcionarios.V1.Configuracoes.DetalheDto();
+            return this.Item(configuracoes);
+        }
+
+        /// <summary>
         /// Obtém uma lista de funcionários que realizaram finalização de pedidos.
         /// </summary>
         /// <returns>Uma lista JSON com os dados básicos dos funcionários que finalizaram pedidos.</returns>

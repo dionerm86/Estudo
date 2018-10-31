@@ -1,7 +1,7 @@
 ﻿using GDA;
 using Glass.API.Backend.Helper.Funcionarios;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Funcionarios.CadastroAtualizacao;
+using Glass.API.Backend.Models.Funcionarios.V1.CadastroAtualizacao;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;
@@ -24,7 +24,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         [SwaggerResponse(202, "Funcionário atualizado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Funcionário não encontrado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AtualizarPedido(int id, [FromBody] CadastroAtualizacaoDto dadosParaAtualizacao)
+        public IHttpActionResult AtualizarFuncionario(int id, [FromBody] CadastroAtualizacaoDto dadosParaAtualizacao)
         {
             using (var sessao = new GDATransaction())
             {

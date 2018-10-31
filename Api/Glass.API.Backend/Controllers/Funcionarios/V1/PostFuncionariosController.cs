@@ -25,7 +25,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         [Route("")]
         [SwaggerResponse(201, "Funcionário inserido.", Type = typeof(CriadoDto<int>))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        public IHttpActionResult CadastrarFuncionario([FromBody] Models.Funcionarios.CadastroAtualizacao.CadastroAtualizacaoDto dadosParaCadastro)
+        public IHttpActionResult CadastrarFuncionario([FromBody] Models.Funcionarios.V1.CadastroAtualizacao.CadastroAtualizacaoDto dadosParaCadastro)
         {
             using (var sessao = new GDATransaction())
             {

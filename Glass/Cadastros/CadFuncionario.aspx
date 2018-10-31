@@ -34,7 +34,7 @@
                         Data Nasc.
                     </label>
                 </span>
-                <campo-data-hora :data-hora.sync="funcionario.documentacaoEDadosPessoais.dataNascimento" required></campo-data-hora>
+                <campo-data-hora :data-hora.sync="funcionario.documentosEDadosPessoais.dataNascimento" required></campo-data-hora>
                 <span class="cabecalho">
                     <label>
                         Endereço
@@ -57,7 +57,7 @@
                     </label>
             </span>
             <span>
-                    <input type="text" v-model="funcionario.endereco.cidade.nome" required />
+                    <input type="text" v-model="funcionario.endereco.cidade" required />
             </span>
                 <span class="cabecalho">
                     <label>
@@ -73,14 +73,14 @@
                     </label>
             </span>
             <span>
-                    <input type="text" v-model="funcionario.documentacaoEDadosPessoais.telefoneCelular" required />
+                    <input type="text" v-model="funcionario.documentosEDadosPessoais.telefoneCelular" required />
             </span>
                 <span class="cabecalho">
                     <label>
                         Data Nasc.
                     </label>
                 </span>
-                <campo-data-hora :data-hora.sync="funcionario.documentacaoEDadosPessoais.dataNascimento" required></campo-data-hora>
+                <campo-data-hora :data-hora.sync="funcionario.documentosEDadosPessoais.dataNascimento" required></campo-data-hora>
                 <span class="cabecalho">
                     <label>
                         Situação
@@ -95,7 +95,7 @@
                         </label>
                     </span>
                     <span>
-                        <input type="number" v-model.number="funcionario.documentacaoEDadosPessoais.gratificacao" />
+                        <input type="number" v-model.number="funcionario.documentosEDadosPessoais.gratificacao" />
                     </span>
                 <span class="cabecalho">
                     <label>
@@ -103,7 +103,7 @@
                     </label>
             </span>
             <span>
-                    <input type="text" v-model="funcionario.documentacaoEDadosPessoais.email" required />
+                    <input type="text" v-model="funcionario.documentosEDadosPessoais.email" required />
             </span>
                 <span class="cabecalho">
                     <label>
@@ -111,7 +111,7 @@
                     </label>
             </span>
             <span>
-                    <input type="text" v-model="funcionario.documentacaoEDadosPessoais.numeroCarteiraTrabalho" required />
+                    <input type="text" v-model="funcionario.documentosEDadosPessoais.numeroCarteiraTrabalho" required />
             </span>
                 <span class="cabecalho">
                     <label>
@@ -137,14 +137,13 @@
             <span>
                     <input type="text" v-model="funcionario.numeroDiasAtrasarPedido" required />
             </span>
-        </div>
         <span class="cabecalho">
                     <label>
                         RG
                     </label>
             </span>
             <span>
-                    <input type="text" v-model="funcionario.documentacaoEDadosPessoais.rg" required />
+                    <input type="text" v-model="funcionario.documentosEDadosPessoais.rg" required />
             </span>
         <span class="cabecalho">
                     <label>
@@ -152,7 +151,7 @@
                     </label>
             </span>
             <span>
-                    <input type="text" v-model="funcionario.documentacaoEDadosPessoais.cpf" required />
+                <campo-cpf v-bind:cpf.sync="funcionario.documentosEDadosPessoais.cpf" required></campo-cpf>
             </span>
         <span class="cabecalho">
                     <label>
@@ -164,12 +163,12 @@
                 </span>
         <span class="cabecalho">
                     <label>
-                        Tipo Pedido
+                        Resgistrado
                     </label>
                 </span>
                 <span>
                     <span>
-                        <input type="checkbox" id="registrado" v-model="funcionario.documentacaoEDadosPessoais.registrado" />
+                        <input type="checkbox" id="registrado" v-model="funcionario.documentosEDadosPessoais.registrado" />
                     </span>
                 </span>
         <span class="cabecalho">
@@ -186,7 +185,7 @@
                         </label>
                     </span>
                     <span>
-                        <input type="number" v-model.number="funcionario.endereco.cep" />
+                        <campo-cep v-bind:endereco.sync="funcionario.endereco.cep" v-bind="$attrs"></campo-cep>
                     </span>
         <span class="cabecalho">
                     <label>
@@ -194,7 +193,7 @@
                     </label>
                 </span>
                 <span>
-                    <lista-selecao-id-valor :item-selecionado.sync="funcionario.endereco.cidade.uf" required></lista-selecao-id-valor>
+                    <lista-selecao-id-valor :item-selecionado.sync="funcionario.id" required></lista-selecao-id-valor>
                 </span>
         <span class="cabecalho">
                     <label>
@@ -202,7 +201,7 @@
                     </label>
             </span>
             <span>
-                    <input type="text" v-model="funcionario.documentacaoEDadosPessoais.telefoneResidencial" required />
+                    <input type="text" v-model="funcionario.documentosEDadosPessoais.telefoneResidencial" required />
             </span>
         <span class="cabecalho">
                     <label>
@@ -210,21 +209,23 @@
                     </label>
             </span>
             <span>
-                    <input type="text" v-model="funcionario.documentacaoEDadosPessoais.telefoneContato" required />
+                    <input type="text" v-model="funcionario.documentosEDadosPessoais.telefoneContato" required />
             </span>
         <span class="cabecalho">
                     <label>
                         Data Saída
                     </label>
                 </span>
-                <campo-data-hora :data-hora.sync="funcionario.documentacaoEDadosPessoais.dataSaida" required></campo-data-hora>
+                <span>
+                <campo-data-hora :data-hora.sync="funcionario.documentosEDadosPessoais.dataSaida" required></campo-data-hora>
+                    </span>
         <span class="cabecalho">
                         <label>
                             Salário
                         </label>
                     </span>
                     <span>
-                        <input type="number" v-model.number="funcionario.documentacaoEDadosPessoais.salario" />
+                        <input type="number" v-model.number="funcionario.documentosEDadosPessoais.salario" />
                     </span>
         <span class="cabecalho">
                         <label>
@@ -232,7 +233,7 @@
                         </label>
                     </span>
                     <span>
-                        <input type="number" v-model.number="funcionario.documentacaoEDadosPessoais.auxilioAlimentacao" />
+                        <input type="number" v-model.number="funcionario.documentosEDadosPessoais.auxilioAlimentacao" />
                     </span>
         <span class="cabecalho">
                     <label>
@@ -240,7 +241,7 @@
                     </label>
             </span>
             <span>
-                    <input type="text" v-model="funcionario.documentacaoEDadosPessoais.ramal" required />
+                    <input type="text" v-model="funcionario.documentosEDadosPessoais.ramal" required />
             </span>
         <span class="cabecalho">
                     <label>
@@ -248,7 +249,7 @@
                     </label>
             </span>
             <span>
-                    <input type="text" v-model="funcionario.documentacaoEDadosPessoais.numeroPis" required />
+                    <input type="text" v-model="funcionario.documentosEDadosPessoais.numeroPis" required />
             </span>
         <span class="cabecalho">
                         <label for="tipo">
@@ -256,7 +257,7 @@
                         </label>
                 </span>
         <span class="form-group">
-            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.tipo"
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="funcionario.idsTiposPedidos"
                 v-bind:funcao-recuperar-itens="obterItensTipoPedido" v-bind:ordenar="false"></lista-selecao-multipla>
         </span>
         <span class="cabecalho">
@@ -266,7 +267,7 @@
                 </span>
                 <span>
                     <span>
-                        <input type="checkbox" id="habilitarChatWebglass" v-model="funcionario.documentacaoEDadosPessoais.registrado" />
+                        <input type="checkbox" id="habilitarChatWebglass" v-model="funcionario.documentosEDadosPessoais.registrado" />
                     </span>
                 </span>
         <span class="cabecalho">
@@ -276,7 +277,7 @@
                 </span>
                 <span>
                     <span>
-                        <input type="checkbox" id="exibirControleUsuarios" v-model="funcionario.documentacaoEDadosPessoais.registrado" />
+                        <input type="checkbox" id="exibirControleUsuarios" v-model="funcionario.documentosEDadosPessoais.registrado" />
                     </span>
                 </span>
         <span class="cabecalho">
@@ -287,27 +288,25 @@
             <span>
                     <input type="text" v-model="funcionario.observacao" required />
             </span>
-        <span class="botoes">
-            <button @click.prevent="inserirPedido" v-if="inserindo">
-                            Inserir
-                        </button>
-                    <span>
-                        <button @click.prevent="atualizar" v-else-if="editando">
-                            Atualizar
-                        </button>
-                    </span>
-            <span>
-                        <button @click.prevent="alterarSenha">
-                            Alterar Senha
-                        </button>
-                    </span>
-            <span>
-                        <button @click.prevent="cancelar">
-                            Cancelar
-                        </button>
-                    </span>
-                </span>
+                </div>
         </section>
+        <span class="botoes">
+            <span>
+            <button @click.prevent="inserirFuncionario" v-if="inserindo">
+                    Inserir
+                </button>
+                <button @click.prevent="atualizar" v-else-if="editando">
+                    Atualizar
+                </button>
+
+                <button @click.prevent="alterarSenha">
+                    Alterar Senha
+                </button>
+                <button @click.prevent="cancelar">
+                    Cancelar
+                </button>
+
+            </span>
     </div>
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>

@@ -1,12 +1,8 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.Patch],
+  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('id', 'asc')],
 
   data: {
-    dadosOrdenacao_: {
-      campo: 'nome',
-      direcao: 'asc'
-    },
     configuracoes: {},
     condutor: {},
     condutorOriginal: {},
@@ -25,19 +21,6 @@
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
       return Servicos.Condutores.obter(filtro, pagina, numeroRegistros, ordenacao);
-    },
-
-    /**
-     * Realiza a ordenação da lista de condutores.
-     * @param {string} campo O nome do campo pelo qual o resultado será ordenado.
-     */
-    ordenar: function (campo) {
-      if (campo !== this.dadosOrdenacao_.campo) {
-        this.dadosOrdenacao_.campo = campo;
-        this.dadosOrdenacao_.direcao = '';
-      } else {
-        this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
-      }
     },
 
     /**
@@ -166,17 +149,5 @@
 
       return form.checkValidity();
     },
-  },
-
-  computed: {
-    /**
-     * Propriedade computada que indica a ordenação para a lista.
-     * @type {string}
-     */
-    ordenacao: function () {
-      var direcao = this.dadosOrdenacao_.direcao ? ' ' + this.dadosOrdenacao_.direcao : '';
-      return this.dadosOrdenacao_.campo + direcao;
-    }
   }
-
 });

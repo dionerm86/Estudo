@@ -5,7 +5,7 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Funcionarios.Configuracoes
+namespace Glass.API.Backend.Models.Funcionarios.V1.Configuracoes
 {
     /// <summary>
     /// Classe que encapsula as configurações para tela de cadastro de funcionário.

@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Funcionarios.CadastroAtualizacao
+namespace Glass.API.Backend.Models.Funcionarios.V1.CadastroAtualizacao
 {
     /// <summary>
     /// Classe que encapsula os dados de cadastro ou atualização do funcionário.
