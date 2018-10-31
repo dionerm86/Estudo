@@ -951,37 +951,61 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o saldo de lançamentos avulsos do caixa geral pelo período informado
+        /// Recupera o saldo de lançamentos avulsos do caixa geral pelo período informado.
         /// </summary>
-        /// <param name="dataSaldo"></param>
-        /// <returns></returns>
-        public decimal GetSaldoLancAvulsos(DateTime? dataIni, DateTime? dataFim, uint? idFornec, int? idLoja)
+        /// <param name="dataIni">Data de inicio da busca de lançamentos.</param>
+        /// <param name="dataFim">Data fim da busca de lançamentos.</param>
+        /// <param name="idFornec">Identificador do fornecedor a ser filtrado.</param>
+        /// <param name="idLoja">Identificador da loja a ser filtrada.</param>
+        /// <param name="planoConta">Descrição do plano de conta a ser filtrado.</param>
+        /// <returns>Saldo de lançamentos avulsos do caixa geral.</returns>
+        public decimal GetSaldoLancAvulsos(DateTime? dataIni, DateTime? dataFim, uint? idFornec, int? idLoja, string planoConta)
         {
-            if (dataIni == null && dataFim == null)
+            if ((dataIni == null) &&
+                (dataFim == null) &&
+                (idFornec.GetValueOrDefault() == 0) &&
+                (idLoja.GetValueOrDefault() == 0) &&
+                string.IsNullOrWhiteSpace(planoConta))
+            {
                 return 0;
+            }
 
-            string sql = "Select Sum(valormov) from caixa_geral where lancmanual = 1 and tipoMov = 2 ";
+            var joinsPlanoConta = !string.IsNullOrEmpty(planoConta) ?
+                @"Left Join plano_contas pl On (cg.IdConta=pl.IdConta)
+                Left Join grupo_conta g On (pl.IdGrupo = g.IdGrupo)
+                Left Join categoria_conta cc On(g.idCategoriaConta = cc.idCategoriaConta)" :
+                string.Empty;
+
+            string sql = $@"
+                Select Sum(valormov) from caixa_geral cg
+                {joinsPlanoConta}
+                where cg.lancmanual = 1 and cg.tipoMov = 2 ";
             List<GDAParameter> lstParam = new List<GDAParameter>();
 
             if (dataIni != null)
             {
-                sql += "and datamov >= ?dataIni ";
+                sql += "and cg.datamov >= ?dataIni ";
                 lstParam.Add(new GDAParameter("?dataIni", DateTime.Parse(dataIni.Value.ToString("dd/MM/yyyy 00:00:00"))));
             }
             if (dataFim != null)
             {
-                sql += "and datamov <= ?dataFim ";
+                sql += "and cg.datamov <= ?dataFim ";
                 lstParam.Add(new GDAParameter("?dataFim", DateTime.Parse(dataFim.Value.ToString("dd/MM/yyyy 23:59:59"))));
             }
             if (idFornec > 0)
             {
-                sql += " AND idfornec = ?idFornec";
+                sql += " AND cg.idfornec = ?idFornec";
                 lstParam.Add(new GDAParameter("?idFornec", idFornec));
             }
             if (idLoja > 0)
             {
-                sql += " AND IdLoja = ?idLoja";
+                sql += " AND cg.IdLoja = ?idLoja";
                 lstParam.Add(new GDAParameter("?idLoja", idLoja));
+            }
+            if (!string.IsNullOrEmpty(planoConta))
+            {
+                sql += " and (pl.descricao like ?planoConta or g.descricao like ?planoConta or cc.descricao like ?planoConta)";
+                lstParam.Add(new GDAParameter("?planoConta", planoConta));
             }
 
             return ExecuteScalar<uint>(sql, lstParam.ToArray());

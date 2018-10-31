@@ -336,44 +336,66 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o saldo de lançamentos avulsos do caixa diario pelo período informado
+        /// Recupera o saldo de lançamentos avulsos do caixa diario pelo período informado.
         /// </summary>
-        /// <param name="dataSaldo"></param>
-        /// <returns></returns>
-        public decimal GetSaldoLancAvulsos(DateTime? dataIni, DateTime? dataFim, uint? idFornec, int? idLoja)
+        /// <param name="dataIni">Data de inicio da busca de lançamentos.</param>
+        /// <param name="dataFim">Data fim da busca de lançamentos.</param>
+        /// <param name="idFornec">Identificador do fornecedor a ser filtrado.</param>
+        /// <param name="idLoja">Identificador da loja a ser filtrada.</param>
+        /// <param name="planoConta">Descrição do plano de conta a ser filtrado.</param>
+        /// <returns>Saldo de lançamentos avulsos do caixa diário.</returns>
+        public decimal GetSaldoLancAvulsos(DateTime? dataIni, DateTime? dataFim, uint? idFornec, int? idLoja, string planoConta)
         {
-            if (dataIni == null && dataFim == null)
+            if ((dataIni == null) &&
+                (dataFim == null) &&
+                (idFornec.GetValueOrDefault() == 0) &&
+                (idLoja.GetValueOrDefault() == 0) &&
+                string.IsNullOrWhiteSpace(planoConta))
+            {
                 return 0;
+            }
 
-            string sql = @"
-                Select Sum(valor) from caixa_diario
+            var joinsPlanoConta = !string.IsNullOrEmpty(planoConta) ?
+                @"Left Join plano_contas pl On (cd.IdConta=pl.IdConta)
+                Left Join grupo_conta g On (pl.IdGrupo = g.IdGrupo)
+                Left Join categoria_conta cc On(g.idCategoriaConta = cc.idCategoriaConta)" :
+                string.Empty;
+
+            string sql = $@"
+                Select Sum(valor) from caixa_diario cd
+                {joinsPlanoConta}
                 Where tipoMov = 2
-                    And idacerto is null and idcheque is null and idpedido is null and idLiberarPedido is null and idcontar is null
-                    And idObra is null and idCheque is null and idFornec is null and idTrocaDevolucao is null and idSinal is null
-                    And idConta not in (" + (int)UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral) + "," +
+                    And cd.idacerto is null and cd.idcheque is null and cd.idpedido is null and cd.idLiberarPedido is null and cd.idcontar is null
+                    And cd.idObra is null and cd.idCheque is null and cd.idFornec is null and cd.idTrocaDevolucao is null and cd.idSinal is null
+                    And cd.idConta not in (" + (int)UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral) + "," +
                     (int)UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeralParaDiario) + ")";
 
             List<GDAParameter> lstParam = new List<GDAParameter>();
 
             if (dataIni != null)
             {
-                sql += "and datacad >= ?dataIni ";
+                sql += "and cd.datacad >= ?dataIni ";
                 lstParam.Add(new GDAParameter("?dataIni", DateTime.Parse(dataIni.Value.ToString("dd/MM/yyyy 00:00:00"))));
             }
             if (dataFim != null)
             {
-                sql += "and datacad <= ?dataFim ";
+                sql += "and cd.datacad <= ?dataFim ";
                 lstParam.Add(new GDAParameter("?dataFim", DateTime.Parse(dataFim.Value.ToString("dd/MM/yyyy 23:59:59"))));
             }
             if (idFornec > 0)
             {
-                sql += " AND idfornec = ?idFornec";
+                sql += " AND cd.idfornec = ?idFornec";
                 lstParam.Add(new GDAParameter("?idFornec", idFornec));
             }
             if (idLoja > 0)
             {
-                sql += " AND IdLoja = ?idLoja";
+                sql += " AND cd.IdLoja = ?idLoja";
                 lstParam.Add(new GDAParameter("?idLoja", idLoja));
+            }
+            if (!string.IsNullOrEmpty(planoConta))
+            {
+                sql += " and (pl.descricao like ?planoConta or g.descricao like ?planoConta or cc.descricao like ?planoConta)";
+                lstParam.Add(new GDAParameter("?planoConta", planoConta));
             }
 
             return ExecuteScalar<uint>(sql, lstParam.ToArray());
