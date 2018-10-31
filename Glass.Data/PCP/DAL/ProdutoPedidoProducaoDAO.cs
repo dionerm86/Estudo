@@ -8294,6 +8294,11 @@ namespace Glass.Data.DAL
 
         public int ObterPecasFornadaCount(int idFornada)
         {
+            if (idFornada == 0)
+            {
+                return 0;
+            }
+
             var sql = SqlPecasFornada(idFornada, false);
 
             return objPersistence.ExecuteSqlQueryCount(sql);
