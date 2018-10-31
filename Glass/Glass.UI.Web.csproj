@@ -495,6 +495,9 @@
     <Content Include="Listas\LstCfop.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
+    <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.Filtro.js" />
+    <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.js" />
+    <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Templates\LstRegrasNaturezaOperacao.Filtro.html" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
@@ -703,7 +706,6 @@
     <Content Include="Cadastros\CadRecebChequeDevolvido.aspx" />
     <Content Include="Cadastros\CadReceberSinal.aspx" />
     <Content Include="Cadastros\CadReceitaDiversa.aspx" />
-    <Content Include="Cadastros\CadRegraNaturezaOperacao.aspx" />
     <Content Include="Cadastros\CadRetificarComissao.aspx" />
     <Content Include="Cadastros\CadRetificarConferencia.aspx" />
     <Content Include="Cadastros\CadRetificarDepositoCheque.aspx" />
@@ -1676,7 +1678,6 @@
     <Content Include="Utils\SetMotivoCancProdImpressao.aspx" />
     <Content Include="Utils\SetMotivoCancProj.aspx" />
     <Content Include="Utils\SetMotivoCancReceb.aspx" />
-    <Content Include="Utils\SetMotivoCancRegraNatOp.aspx" />
     <Content Include="Utils\SetMotivoPerdaRetalho.aspx" />
     <Content Include="Utils\SetMotivoCancRetalho.aspx" />
     <Content Include="Utils\SetMotivoCancTroca.aspx" />
@@ -1756,6 +1757,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoAreaM2.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaCidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaCliente.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaNaturezaOperacao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaAplicacao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaProcesso.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaProduto.js" />
@@ -1877,6 +1879,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoAreaM2.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaCidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaCliente.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoBuscaNaturezaOperacao.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaEtiquetaAplicacao.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaEtiquetaProcesso.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaProduto.html" />
@@ -4429,13 +4432,6 @@
     </Compile>
     <Compile Include="Cadastros\CadReceitaDiversa.aspx.designer.cs">
       <DependentUpon>CadReceitaDiversa.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Cadastros\CadRegraNaturezaOperacao.aspx.cs">
-      <DependentUpon>CadRegraNaturezaOperacao.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Cadastros\CadRegraNaturezaOperacao.aspx.designer.cs">
-      <DependentUpon>CadRegraNaturezaOperacao.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\CadRetificarComissao.aspx.cs">
       <DependentUpon>CadRetificarComissao.aspx</DependentUpon>
@@ -8340,13 +8336,6 @@
     </Compile>
     <Compile Include="Utils\SetMotivoCancReceb.aspx.designer.cs">
       <DependentUpon>SetMotivoCancReceb.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Utils\SetMotivoCancRegraNatOp.aspx.cs">
-      <DependentUpon>SetMotivoCancRegraNatOp.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Utils\SetMotivoCancRegraNatOp.aspx.designer.cs">
-      <DependentUpon>SetMotivoCancRegraNatOp.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\SetMotivoPerdaRetalho.aspx.cs">
       <DependentUpon>SetMotivoPerdaRetalho.aspx</DependentUpon>

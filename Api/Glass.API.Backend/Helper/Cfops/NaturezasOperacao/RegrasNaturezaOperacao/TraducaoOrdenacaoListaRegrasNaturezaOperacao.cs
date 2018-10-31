@@ -29,21 +29,6 @@ namespace Glass.API.Backend.Helper.Cfops.NaturezasOperacao.RegrasNaturezaOperaca
         {
             switch (campo.ToLowerInvariant())
             {
-                case "tipocliente":
-                    return "TipoCliente";
-
-                case "grupoproduto":
-                    return "GrupoProduto, SubgrupoProduto";
-
-                case "cor":
-                    return "CodigoCorVidro, CodigoCorAluminio, CodigoCorFerragem, Espessura";
-
-                case "ufsdestino":
-                    return "UfDest";
-
-                case "loja":
-                    return campo;
-
                 default:
                     return this.OrdenacaoPadrao;
             }

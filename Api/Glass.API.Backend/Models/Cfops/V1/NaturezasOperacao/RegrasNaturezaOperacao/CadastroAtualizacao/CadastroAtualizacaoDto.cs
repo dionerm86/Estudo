@@ -49,17 +49,6 @@ namespace Glass.API.Backend.Models.Cfops.V1.NaturezasOperacao.RegrasNaturezaOper
         }
 
         /// <summary>
-        /// Obtém ou define a espessura da regra de natureza de operação.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("espessura")]
-        public float? Espessura
-        {
-            get { return this.ObterValor(c => c.Espessura); }
-            set { this.AdicionarValor(c => c.Espessura, value); }
-        }
-
-        /// <summary>
         /// Obtém ou define as ufs de destino da regra de natureza de operação.
         /// </summary>
         [DataMember]

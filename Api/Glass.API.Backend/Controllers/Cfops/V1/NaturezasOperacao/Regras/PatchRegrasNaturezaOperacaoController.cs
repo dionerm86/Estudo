@@ -3,9 +3,9 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Helper.Cfops.NaturezasOperacao.RegrarNaturezaOperacao;
+using Glass.API.Backend.Helper.Cfops.NaturezasOperacao.RegrasNaturezaOperacao;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Cfops.V1.CadastroAtualizacao;
+using Glass.API.Backend.Models.Cfops.V1.NaturezasOperacao.RegrasNaturezaOperacao.CadastroAtualizacao;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;

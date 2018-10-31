@@ -16,6 +16,25 @@ Servicos.Cidades = (function(http) {
     },
 
     /**
+     * Retorna a lista de UFs do sistema para filtro.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    listarUfsParaFiltro: function () {
+      return http().get(API + 'ufs')
+        .then(function (resposta) {
+          resposta.data.sort(function (a, b) {
+            return a.localeCompare(b);
+          });
+
+          return {
+            data: resposta.data.map(function (uf) {
+              return { uf };
+            })
+          };
+        });
+    },
+
+    /**
      * Recupera a lista de cidades a partir da UF, podendo filtrar por ID ou nome.
      * @param {!string} uf A sigla da UF para busca da lista de cidades.
      * @param {?number} [idCidade=null] O identificador da cidade para filtro na busca.

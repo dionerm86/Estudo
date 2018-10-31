@@ -3,8 +3,6 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Helper;
-using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -35,7 +33,7 @@ namespace Glass.API.Backend.Controllers.Cfops.V1.NaturezasOperacao
                     .Select(c => new IdNomeDto()
                     {
                         Id = c.IdNaturezaOperacao,
-                        Nome = c.CodInterno,
+                        Nome = c.CodCfop,
                     });
 
                 return this.Lista(naturezas);

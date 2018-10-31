@@ -559,7 +559,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                       l.NomeFantasia AS NomeFantasiaLoja, l.RazaoSocial AS RazaoSocialLoja, tc.Descricao AS DescricaoTipoCliente,
                       gp.Descricao AS DescricaoGrupoProduto, sgp.Descricao AS DescricaoSubgrupoProduto, rno.UfDest,
                       cv.Descricao AS DescricaoCorVidro, cf.Descricao AS DescricaoCorFerragem, ca.Descricao AS DescricaoCorAluminio, 
-                      rno.IdTipoCliente, rno.IdGrupoProd, rno.IdSubgrupoProd, rno.IdCorVidro, rno.IdCorFerragem, rno.IdCorAluminio, 
+                      rno.IdGrupoProd, rno.IdSubgrupoProd, rno.IdCorVidro, rno.IdCorFerragem, rno.IdCorAluminio, 
                       rno.IdNaturezaOperacaoProdIntra, rno.IdNaturezaOperacaoRevIntra, rno.IdNaturezaOperacaoProdInter, rno.IdNaturezaOperacaoRevInter,
                       rno.IdNaturezaOperacaoProdStIntra, rno.IdNaturezaOperacaoRevStIntra, rno.IdNaturezaOperacaoProdStInter, rno.IdNaturezaOperacaoRevStInter,
                       ISNULL(nopi.CodInterno, cfpi.CodInterno) AS DescricaoNaturezaOperacaoProducaoIntra,

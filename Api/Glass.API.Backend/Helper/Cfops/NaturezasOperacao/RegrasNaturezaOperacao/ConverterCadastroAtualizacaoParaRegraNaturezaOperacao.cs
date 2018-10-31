@@ -48,8 +48,7 @@ namespace Glass.API.Backend.Helper.Cfops.NaturezasOperacao.RegrasNaturezaOperaca
         {
             destino.IdLoja = this.cadastro.ObterValorNormalizado(c => c.IdLoja, destino.IdLoja);
             destino.IdTipoCliente = this.cadastro.ObterValorNormalizado(c => c.IdTipoCliente, destino.IdTipoCliente);
-            destino.Espessura = this.cadastro.ObterValorNormalizado(c => c.Espessura, destino.Espessura);
-            destino.UfDest = string.Join(",", this.cadastro.ObterValorNormalizado(c => c.UfsDestino, destino.UfDest?.Split(',')));
+            destino.UfDest = string.Join(",", this.cadastro.ObterValorNormalizado(c => c.UfsDestino, destino.UfDest?.Split(',') ?? null) ?? new string[0]);
 
             this.ConverterDadosProduto(destino);
             this.ConverterDadosNaturezaOperacaoProducao(destino);
@@ -65,13 +64,14 @@ namespace Glass.API.Backend.Helper.Cfops.NaturezasOperacao.RegrasNaturezaOperaca
 
             destino.IdGrupoProd = this.cadastro.Produto.ObterValorNormalizado(c => c.IdGrupoProduto, destino.IdGrupoProd);
             destino.IdSubgrupoProd = this.cadastro.Produto.ObterValorNormalizado(c => c.IdSubgrupoProduto, destino.IdSubgrupoProd);
+            destino.Espessura = this.cadastro.Produto.ObterValorNormalizado(c => c.Espessura, destino.Espessura);
 
             this.ConverterDadosCores(destino);
         }
 
         private void ConverterDadosCores(RegraNaturezaOperacao destino)
         {
-            if (!this.cadastro.VerificarCampoInformado(c => c.Produto.Cores))
+            if (!this.cadastro.Produto.VerificarCampoInformado(c => c.Cores))
             {
                 return;
             }
@@ -101,10 +101,10 @@ namespace Glass.API.Backend.Helper.Cfops.NaturezasOperacao.RegrasNaturezaOperaca
                 return;
             }
 
-            destino.IdNaturezaOperacaoRevInter = this.cadastro.NaturezaOperacaoProducao.ObterValorNormalizado(c => c.Interestadual, destino.IdNaturezaOperacaoRevInter);
-            destino.IdNaturezaOperacaoRevIntra = this.cadastro.NaturezaOperacaoProducao.ObterValorNormalizado(c => c.Intraestadual, destino.IdNaturezaOperacaoRevIntra);
-            destino.IdNaturezaOperacaoRevStInter = this.cadastro.NaturezaOperacaoProducao.ObterValorNormalizado(c => c.InterestadualComSt, destino.IdNaturezaOperacaoRevStInter);
-            destino.IdNaturezaOperacaoRevStIntra = this.cadastro.NaturezaOperacaoProducao.ObterValorNormalizado(c => c.IntraestadualComSt, destino.IdNaturezaOperacaoRevStIntra);
+            destino.IdNaturezaOperacaoRevInter = this.cadastro.NaturezaOperacaoRevenda.ObterValorNormalizado(c => c.Interestadual, destino.IdNaturezaOperacaoRevInter);
+            destino.IdNaturezaOperacaoRevIntra = this.cadastro.NaturezaOperacaoRevenda.ObterValorNormalizado(c => c.Intraestadual, destino.IdNaturezaOperacaoRevIntra);
+            destino.IdNaturezaOperacaoRevStInter = this.cadastro.NaturezaOperacaoRevenda.ObterValorNormalizado(c => c.InterestadualComSt, destino.IdNaturezaOperacaoRevStInter);
+            destino.IdNaturezaOperacaoRevStIntra = this.cadastro.NaturezaOperacaoRevenda.ObterValorNormalizado(c => c.IntraestadualComSt, destino.IdNaturezaOperacaoRevStIntra);
         }
     }
 }

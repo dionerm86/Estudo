@@ -51,6 +51,8 @@ namespace Glass.API.Backend.Models.Cfops.V1.NaturezasOperacao.RegrasNaturezaOper
                     Nome = regra.DescricaoSubgrupoProduto,
                 },
 
+                Espessura = regra.Espessura,
+
                 Cores = new CoresDto
                 {
                     Vidro = new IdNomeDto

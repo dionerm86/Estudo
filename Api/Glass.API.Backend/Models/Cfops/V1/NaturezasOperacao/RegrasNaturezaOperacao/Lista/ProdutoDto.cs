@@ -29,6 +29,13 @@ namespace Glass.API.Backend.Models.Cfops.V1.NaturezasOperacao.RegrasNaturezaOper
         public IdNomeDto SubgrupoProduto { get; set; }
 
         /// <summary>
+        /// Obtém ou define a espessura do produto da regra de natureza de operação.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("espessura")]
+        public float? Espessura { get; set; }
+
+        /// <summary>
         /// Obtém ou define as cores da regra de natureza de operação.
         /// </summary>
         [DataMember]

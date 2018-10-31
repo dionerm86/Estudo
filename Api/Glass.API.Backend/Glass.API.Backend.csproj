@@ -208,7 +208,6 @@
     <Compile Include="Controllers\Cfops\V1\DeleteCfopsController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\GetNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\NaturezasOperacaoController.cs" />
-    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\DeleteRegrasNaturezaOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\GetRegrasNaturezaOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\PatchRegrasNaturezaOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\PostRegrasNaturezaOperacaoController.cs" />

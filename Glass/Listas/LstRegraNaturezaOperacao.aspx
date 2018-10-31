@@ -1,180 +1,319 @@
-<%@ Page Title="Regras de Natureza de Operação" Language="C#" MasterPageFile="~/Painel.master"
-    AutoEventWireup="true" CodeBehind="LstRegraNaturezaOperacao.aspx.cs" Inherits="Glass.UI.Web.Listas.LstRegraNaturezaOperacao" %>
+<%@ Page Title="Regras de Natureza de Operação" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" 
+    CodeBehind="LstRegraNaturezaOperacao.aspx.cs" Inherits="Glass.UI.Web.Listas.LstRegraNaturezaOperacao" EnableEventValidation="false" EnableViewStateMac="false" %>
 
-<%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
-<%@ Register src="../Controls/ctrlSelGrupoSubgrupoProd.ascx" tagname="ctrlSelGrupoSubgrupoProd" tagprefix="uc2" %>
-<%@ Register src="../Controls/ctrlSelCorProd.ascx" tagname="ctrlSelCorProd" tagprefix="uc3" %>
-<%@ Register src="../Controls/ctrlNaturezaOperacao.ascx" tagname="ctrlNaturezaOperacao" tagprefix="uc4" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-
-    <script type="text/javascript">
-        function excluir(id)
-        {
-            openWindow(200, 400, "../Utils/SetMotivoCancRegraNatOp.aspx?id=" + id);
-        }
-    </script>
-    <div class="filtro">
-        <div>
-            <span>
-                <asp:Label ID="Label3" runat="server" Text="Loja" AssociatedControlID="drpLoja"></asp:Label>
-                <asp:DropDownList ID="drpLoja" runat="server" AppendDataBoundItems="True" 
-                    DataSourceID="odsLoja" DataTextField="NomeFantasia" DataValueField="IdLoja">
-                    <asp:ListItem></asp:ListItem>
-                </asp:DropDownList>
-                <asp:ImageButton ID="imgPesq" runat="server" CssClass="botaoPesquisar"
-                    ImageUrl="~/Images/Pesquisar.gif" onclick="imgPesq_Click" />
-            </span>
-            <span>
-                <asp:Label ID="Label4" runat="server" Text="Tipo de Cliente" AssociatedControlID="drpTipoCliente"></asp:Label>
-                <asp:DropDownList ID="drpTipoCliente" runat="server" 
-                    AppendDataBoundItems="True" DataSourceID="odsTipoCliente" 
-                    DataTextField="Name" DataValueField="Id">
-                    <asp:ListItem></asp:ListItem>
-                </asp:DropDownList>
-                <asp:ImageButton ID="ImageButton1" runat="server" CssClass="botaoPesquisar"
-                    ImageUrl="~/Images/Pesquisar.gif" onclick="imgPesq_Click" />
-            </span>
-            <span>
-                <asp:Label ID="Label5" runat="server" Text="Grupo/subgrupo" AssociatedControlID="selGrupoSubgrupoProd"></asp:Label>
-                <uc2:ctrlSelGrupoSubgrupoProd ID="selGrupoSubgrupoProd" runat="server" />
-                <asp:ImageButton ID="ImageButton3" runat="server" CssClass="botaoPesquisar"
-                    ImageUrl="~/Images/Pesquisar.gif" onclick="imgPesq_Click" />
-            </span>
-        </div>
-        <div>
-            <span>
-                <asp:Label ID="Label6" runat="server" Text="Cor" AssociatedControlID="selCorProd"></asp:Label>
-                <uc3:ctrlSelCorProd ID="selCorProd" runat="server" />
-                <asp:ImageButton ID="ImageButton4" runat="server" CssClass="botaoPesquisar"
-                    ImageUrl="~/Images/Pesquisar.gif" onclick="imgPesq_Click" />
-            </span>
-            <span>
-                <asp:Label ID="Label7" runat="server" Text="Espessura" AssociatedControlID="txtEspessura"></asp:Label>
-                <asp:TextBox ID="txtEspessura" runat="server" onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
-                <asp:ImageButton ID="ImageButton5" runat="server" CssClass="botaoPesquisar"
-                    ImageUrl="~/Images/Pesquisar.gif" onclick="imgPesq_Click" />
-            </span>
-            <span>
-                <asp:Label ID="Label8" runat="server" Text="Natureza de Operação" AssociatedControlID="selNaturezaOperacao"></asp:Label>
-                <uc4:ctrlNaturezaOperacao ID="selNaturezaOperacao" runat="server" FazerPostBackBotaoPesquisar="true" />
-            </span>
-            <span>
-                <asp:Label ID="Label14" runat="server" Text="Uf Destino" ForeColor="#0066FF"></asp:Label>
-            </span>
-            <span>
-                <sync:CheckBoxListDropDown ID="cblUfDestino" runat="server" CheckAll="False" DataSourceID="odsUf"
-                    DataTextField="Name" DataValueField="Id" ImageURL="~/Images/DropDown.png" OpenOnStart="False" Width="160px">
-                    <asp:ListItem></asp:ListItem>
-                </sync:CheckBoxListDropDown>
-            </span>
-        </div>
+    <%=
+        Glass.UI.Web.IncluirTemplateTela.Script(
+            "~/Vue/Cfops/NaturezasOperacao/RegrasNaturezaOperacao/Templates/LstRegrasNaturezaOperacao.Filtro.html")
+    %>
+    <div id="app">
+        <section>
+            <regras-natureza-operacao-filtros :filtro.sync="filtro"></regras-natureza-operacao-filtros>
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma regra de natureza de operação encontrada."
+                :numero-registros="10" :exibir-inclusao="true" :linha-editando="numeroLinhaEdicao">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        Loja
+                    </th>
+                    <th>
+                        Tipo cliente
+                    </th>
+                    <th>
+                        Grupo/Subgrupo
+                    </th>
+                    <th>
+                        Cor/Espessura
+                    </th>
+                    <th>
+                        UF's destino
+                    </th>
+                    <th>
+                        Natureza operação produção
+                    </th>
+                    <th>
+                        Natureza operação revenda
+                    </th>
+                    <th></th>
+                </template>
+                <template slot="item" slot-scope="{ item, index }">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="editar(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/Edit.gif">
+                        </button>
+                        <button @click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td v-if="item.loja">{{ item.loja.nome }}</td>
+                    <td v-if="item.tipoCliente">{{ item.tipoCliente.nome }}</td>
+                    <td>
+                        <template v-if="item.produto && item.produto.grupoProduto">
+                            {{ item.produto.grupoProduto.nome }}
+                        </template>
+                        <template v-if="item.produto && item.produto.subgrupoProduto && item.produto.subgrupoProduto.id">
+                            / {{ item.produto.subgrupoProduto.nome }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.produto && item.produto.cores && item.produto.cores.vidro">
+                            {{ item.produto.cores.vidro.nome }}
+                        </template>
+                        <template v-else-if="item.produto && item.produto.cores && item.produto.cores.ferragem">
+                            {{ item.produto.cores.ferragem.nome }}
+                        </template>
+                        <template v-else-if="item.produto && item.produto.cores && item.produto.cores.aluminio">
+                            {{ item.produto.cores.aluminio.nome }}
+                        </template>
+                        <template v-if="item.produto && item.produto.espessura > 0">
+                            / {{ item.produto.espessura }}mm
+                        </template>
+                    </td>
+                    <td>{{ obterUfsDestino(item) }}</td>
+                    <td>
+                        <span class="form-group" v-if="item.naturezaOperacaoProducao && item.naturezaOperacaoProducao.intraestadual && item.naturezaOperacaoProducao.intraestadual.id > 0">
+                            Intra.: {{ item.naturezaOperacaoProducao.intraestadual.nome }}
+                        </span>
+                        <span class="form-group" v-if="item.naturezaOperacaoProducao && item.naturezaOperacaoProducao.interestadual && item.naturezaOperacaoProducao.interestadual.id > 0">
+                            Inter.: {{ item.naturezaOperacaoProducao.interestadual.nome }}
+                        </span>
+                        <span class="form-group" v-if="item.naturezaOperacaoProducao && item.naturezaOperacaoProducao.intraestadualComSt && item.naturezaOperacaoProducao.intraestadualComSt.id > 0">
+                            Intra. ST: {{ item.naturezaOperacaoProducao.intraestadualComSt.nome }}
+                        </span>
+                        <span class="form-group" v-if="item.naturezaOperacaoProducao && item.naturezaOperacaoProducao.interestadualComSt && item.naturezaOperacaoProducao.interestadualComSt.id > 0">
+                            Inter. ST: {{ item.naturezaOperacaoProducao.interestadualComSt.nome }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="form-group" v-if="item.naturezaOperacaoRevenda && item.naturezaOperacaoRevenda.intraestadual && item.naturezaOperacaoRevenda.intraestadual.id > 0">
+                            Intra.: {{ item.naturezaOperacaoRevenda.intraestadual.nome }}
+                        </span>
+                        <span class="form-group" v-if="item.naturezaOperacaoRevenda && item.naturezaOperacaoRevenda.interestadual && item.naturezaOperacaoRevenda.interestadual.id > 0">
+                            Inter.: {{ item.naturezaOperacaoRevenda.interestadual.nome }}
+                        </span>
+                        <span class="form-group" v-if="item.naturezaOperacaoRevenda && item.naturezaOperacaoRevenda.intraestadualComSt && item.naturezaOperacaoRevenda.intraestadualComSt.id > 0">
+                            Intra. ST: {{ item.naturezaOperacaoRevenda.intraestadualComSt.nome }}
+                        </span>
+                        <span class="form-group" v-if="item.naturezaOperacaoRevenda && item.naturezaOperacaoRevenda.interestadualComSt && item.naturezaOperacaoRevenda.interestadualComSt.id > 0">
+                            Inter. ST: {{ item.naturezaOperacaoRevenda.interestadualComSt.nome }}
+                        </span>
+                    </td>
+                    <td>
+                        <log-alteracao tabela="RegraNaturezaOperacao" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logAlteracoes"></log-alteracao>
+                    </td>
+                </template>
+                <template slot="itemEditando">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="atualizar" title="Atualizar">
+                            <img src="../Images/ok.gif">
+                        </button>
+                        <button @click.prevent="cancelar" title="Cancelar">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <lista-selecao-lojas :loja.sync="lojaAtual" :ativas="true" required></lista-selecao-lojas>
+                    </td>
+                    <td>
+                        <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoClienteAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensTipoCliente"
+                            v-bind:ordenar="false"></lista-selecao-id-valor>
+                    </td>
+                    <td style="white-space: nowrap">
+                        <div>
+                            <lista-selecao-id-valor v-bind:item-selecionado.sync="grupoProdutoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensGrupoProduto"
+                                v-bind:ordenar="false"></lista-selecao-id-valor>
+                        </div>
+                        <div>
+                            <lista-selecao-id-valor v-bind:item-selecionado.sync="subgrupoProdutoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensSubgrupoProduto"
+                                v-bind:ordenar="false" v-bind:filtro-recuperar-itens="filtroSubgrupos"></lista-selecao-id-valor>
+                        </div>
+                    </td>
+                    <td style="white-space: nowrap">
+                        <div>
+                            <span v-if="regraNatureza && regraNatureza.produto && regraNatureza.produto.idGrupoProduto === configuracoes.idGrupoVidro">
+                                <label>Cor: </label>
+                                <lista-selecao-id-valor v-bind:item-selecionado.sync="corVidroAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensCorVidro"
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
+                            </span>
+                            <span v-if="regraNatureza && regraNatureza.produto && regraNatureza.produto.idGrupoProduto === configuracoes.idGrupoFerragem">
+                                <label>Cor: </label>
+                                <lista-selecao-id-valor v-bind:item-selecionado.sync="corFerragemAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensCorFerragem"
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
+                            </span>
+                            <span v-if="regraNatureza && regraNatureza.produto && regraNatureza.produto.idGrupoProduto === configuracoes.idGrupoAluminio">
+                                <label>Cor: </label>
+                                <lista-selecao-id-valor v-bind:item-selecionado.sync="corAluminioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensCorAluminio"
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
+                            </span>
+                        </div>
+                        <div v-if="regraNatureza.produto">
+                            <span>
+                                <label>Espessura: </label>
+                                <input type="number" v-model.number="regraNatureza.produto.espessura" style="width: 50px" />
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <lista-selecao-multipla v-bind:ids-selecionados.sync="regraNatureza.ufsDestino" texto-selecionar="Sel." campo-id="uf" campo-nome="uf"
+                            v-bind:funcao-recuperar-itens="obterItensUf" v-bind:ordenar="false"></lista-selecao-multipla>
+                    </td>
+                    <td style="white-space: nowrap">
+                        <div>
+                            <span>
+                                <label>Intra.: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoProducaoIntraestadualAtual" required></campo-busca-natureza-operacao>
+                            </span>
+                            <span>
+                                <label>Intra. ST: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoProducaoIntraestadualComStAtual"></campo-busca-natureza-operacao>
+                            </span>
+                        </div>
+                        <div>
+                            <span>
+                                <label>Inter.: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoProducaoInterestadualAtual" required></campo-busca-natureza-operacao>
+                            </span>
+                            <span>
+                                <label>Inter. ST: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoProducaoInterestadualComStAtual"></campo-busca-natureza-operacao>
+                            </span>
+                        </div>
+                    </td>
+                    <td style="white-space: nowrap">
+                        <div>
+                            <span>
+                                <label>Intra.: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoRevendaIntraestadualAtual" required></campo-busca-natureza-operacao>
+                            </span>
+                            <span>
+                                <label>Intra. ST: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoRevendaIntraestadualComStAtual"></campo-busca-natureza-operacao>
+                            </span>
+                        </div>
+                        <div>
+                            <span>
+                                <label>Inter.: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoRevendaInterestadualAtual" required></campo-busca-natureza-operacao>
+                            </span>
+                            <span>
+                                <label>Inter. ST: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoRevendaInterestadualComStAtual"></campo-busca-natureza-operacao>
+                            </span>
+                        </div>
+                    </td>
+                    <td></td>
+                </template>
+                <template slot="itemIncluir">
+                    <td style="white-space: nowrap">
+                        <button v-on:click.prevent="iniciarCadastro" title="Nova regra de natureza de operação..." v-if="!inserindo">
+                            <img src="../Images/Insert.gif">
+                        </button>
+                        <button v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">
+                            <img src="../Images/Ok.gif">
+                        </button>
+                        <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <lista-selecao-lojas :loja.sync="lojaAtual" :ativas="true" v-if="inserindo" required></lista-selecao-lojas>
+                    </td>
+                    <td>
+                        <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoClienteAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensTipoCliente"
+                            v-bind:ordenar="false" v-if="inserindo"></lista-selecao-id-valor>
+                    </td>
+                    <td style="white-space: nowrap">
+                        <div>
+                            <lista-selecao-id-valor v-bind:item-selecionado.sync="grupoProdutoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensGrupoProduto"
+                                v-bind:ordenar="false" v-if="inserindo"></lista-selecao-id-valor>
+                        </div>
+                        <div>
+                            <lista-selecao-id-valor v-bind:item-selecionado.sync="subgrupoProdutoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensSubgrupoProduto"
+                                v-bind:ordenar="false" v-bind:filtro-recuperar-itens="filtroSubgrupos" v-if="inserindo"></lista-selecao-id-valor>
+                        </div>
+                    </td>
+                    <td style="white-space: nowrap">
+                        <div v-if="inserindo">
+                            <span v-if="regraNatureza && regraNatureza.produto && regraNatureza.produto.idGrupoProduto === configuracoes.idGrupoVidro">
+                                <label>Cor: </label>
+                                <lista-selecao-id-valor v-bind:item-selecionado.sync="corVidroAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensCorVidro"
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
+                            </span>
+                            <span v-if="regraNatureza && regraNatureza.produto && regraNatureza.produto.idGrupoProduto === configuracoes.idGrupoFerragem">
+                                <label>Cor: </label>
+                                <lista-selecao-id-valor v-bind:item-selecionado.sync="corFerragemAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensCorFerragem"
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
+                            </span>
+                            <span v-if="regraNatureza && regraNatureza.produto && regraNatureza.produto.idGrupoProduto === configuracoes.idGrupoAluminio">
+                                <label>Cor: </label>
+                                <lista-selecao-id-valor v-bind:item-selecionado.sync="corAluminioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensCorAluminio"
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
+                            </span>
+                        </div>
+                        <div v-if="inserindo && regraNatureza.produto">
+                            <span>
+                                <label>Espessura: </label>
+                                <input type="number" v-model.number="regraNatureza.produto.espessura" style="width: 50px" />
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <lista-selecao-multipla v-bind:ids-selecionados.sync="regraNatureza.ufsDestino" texto-selecionar="Sel." campo-id="uf" campo-nome="uf"
+                            v-bind:funcao-recuperar-itens="obterItensUf" v-bind:ordenar="false" v-if="inserindo"></lista-selecao-multipla>
+                    </td>
+                    <td style="white-space: nowrap">
+                        <div v-if="inserindo">
+                            <span>
+                                <label>Intra.: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoProducaoIntraestadualAtual" required></campo-busca-natureza-operacao>
+                            </span>
+                            <span>
+                                <label>Intra. ST: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoProducaoIntraestadualComStAtual"></campo-busca-natureza-operacao>
+                            </span>
+                        </div>
+                        <div v-if="inserindo">
+                            <span>
+                                <label>Inter.: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoProducaoInterestadualAtual" required></campo-busca-natureza-operacao>
+                            </span>
+                            <span>
+                                <label>Inter. ST: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoProducaoInterestadualComStAtual"></campo-busca-natureza-operacao>
+                            </span>
+                        </div>
+                    </td>
+                    <td style="white-space: nowrap">
+                        <div v-if="inserindo">
+                            <span>
+                                <label>Intra.: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoRevendaIntraestadualAtual" required></campo-busca-natureza-operacao>
+                            </span>
+                            <span>
+                                <label>Intra. ST: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoRevendaIntraestadualComStAtual"></campo-busca-natureza-operacao>
+                            </span>
+                        </div>
+                        <div v-if="inserindo">
+                            <span>
+                                <label>Inter.: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoRevendaInterestadualAtual" required></campo-busca-natureza-operacao>
+                            </span>
+                            <span>
+                                <label>Inter. ST: </label>
+                                <campo-busca-natureza-operacao v-bind:natureza-operacao.sync="naturezaOperacaoRevendaInterestadualComStAtual"></campo-busca-natureza-operacao>
+                            </span>
+                        </div>
+                    </td>
+                    <td></td>
+                </template>
+            </lista-paginada>
+        </section>
     </div>
-    <div class="inserir">
-        <asp:HyperLink ID="lnkInserir" runat="server" NavigateUrl="~/Cadastros/CadRegraNaturezaOperacao.aspx"> Nova Regra de Natureza de Operação</asp:HyperLink>
-    </div>
-    <asp:GridView ID="grdRegraNaturezaOperacao" runat="server" DataSourceID="odsRegraNaturezaOperacao"
-        AllowPaging="True" AutoGenerateColumns="False" CssClass="gridStyle"
-        DataKeyNames="IdRegraNaturezaOperacao" GridLines="None">
-        <Columns>
-            <asp:TemplateField>
-                <ItemTemplate>
-                    <asp:HyperLink ID="lnkEditar" runat="server" ImageUrl="~/Images/EditarGrid.gif" NavigateUrl='<%# Eval("IdRegraNaturezaOperacao", "~/Cadastros/CadRegraNaturezaOperacao.aspx?id={0}") %>'></asp:HyperLink>
-                    <asp:ImageButton ID="ImageButton2" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                        OnClientClick='<%# Eval("IdRegraNaturezaOperacao", "excluir({0}); return false") %>' />
-                </ItemTemplate>
-                <ItemStyle Wrap="False" />
-            </asp:TemplateField>
-            <asp:BoundField DataField="NomeLoja" HeaderText="Loja" SortExpression="Loja" />
-            <asp:BoundField DataField="DescricaoTipoCliente" HeaderText="Tipo de Cliente" SortExpression="TipoCliente" />
-            <asp:TemplateField HeaderText="Grupo/Subgrupo" SortExpression="GrupoProduto, SubgrupoProduto">
-                <ItemTemplate>
-                    <asp:Label ID="Label1" runat="server" Text='<%# ObtemDescricaoGrupoSubgrupo(Eval("DescricaoGrupoProduto"), Eval("DescricaoSubgrupoProduto")) %>'></asp:Label>
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:TemplateField HeaderText="Cor/Espessura" 
-                SortExpression="CodigoCorVidro, CodigoCorAluminio, CodigoCorFerragem, Espessura">
-                <ItemTemplate>
-                    <asp:Label ID="Label2" runat="server" 
-                        Text='<%# ObtemCorEspessura(Eval("DescricaoCorVidro"), Eval("DescricaoCorAluminio"), Eval("DescricaoCorFerragem"), Eval("Espessura")) %>'></asp:Label>
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:TemplateField HeaderText="Ufs Destino"
-                SortExpression="UfDest">
-                <ItemTemplate>
-                    <asp:Label ID="lblUfDestino" runat="server"
-                        Text='<%#Eval("UfDest") %>'></asp:Label>
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:BoundField DataField="DescricaoNaturezaOperacaoProducaoIntra" HeaderText="Nat. Oper. Produção Intra."
-                SortExpression="CodigoNaturezaOperacaoProducaoIntra" />
-            <asp:BoundField DataField="DescricaoNaturezaOperacaoRevendaIntra" HeaderText="Nat. Oper. Revenda Intra."
-                SortExpression="CodigoNaturezaOperacaoRevendaIntra" />
-            <asp:BoundField DataField="DescricaoNaturezaOperacaoProducaoInter" 
-                HeaderText="Nat. Oper. Produção Inter." 
-                SortExpression="CodigoNaturezaOperacaoProducaoInter" />
-            <asp:BoundField DataField="DescricaoNaturezaOperacaoRevendaInter" 
-                HeaderText="Nat. Oper. Revenda Inter." 
-                SortExpression="CodigoNaturezaOperacaoRevendaInter" />
-            <asp:BoundField DataField="DescricaoNaturezaOperacaoProducaoStIntra" HeaderText="Nat. Oper. Produção ST Intra. *"
-                SortExpression="CodigoNaturezaOperacaoProducaoStIntra" />
-            <asp:BoundField DataField="DescricaoNaturezaOperacaoRevendaStIntra" HeaderText="Nat. Oper. Revenda ST Intra. *"
-                SortExpression="CodigoNaturezaOperacaoRevendaStIntra" />
-            <asp:BoundField DataField="DescricaoNaturezaOperacaoProducaoStInter" 
-                HeaderText="Nat. Oper. Produção ST Inter. *" 
-                SortExpression="CodigoNaturezaOperacaoProducaoStInter" />
-            <asp:BoundField DataField="DescricaoNaturezaOperacaoRevendaStInter" 
-                HeaderText="Nat. Oper. Revenda ST Inter. *" 
-                SortExpression="CodigoNaturezaOperacaoRevendaStInter" />
-            <asp:TemplateField>
-                <ItemTemplate>
-                    <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" IdRegistro='<%# (uint)(int)Eval("IdRegraNaturezaOperacao") %>'
-                        Tabela="RegraNaturezaOperacao" />
-                </ItemTemplate>
-            </asp:TemplateField>
-        </Columns>
-        <PagerStyle CssClass="pgr" />
-        <AlternatingRowStyle CssClass="alt" />
-    </asp:GridView>
-    <div style="color: blue; font-style: italic">
-        * Estes campos serão utilizados quando o MVA do produto for maior que 0 (zero).
-    </div>
-    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsRegraNaturezaOperacao" runat="server"
-        SelectMethod="PesquisarRegrasNaturezaOperacao"
-        TypeName="Glass.Fiscal.Negocios.ICfopFluxo"
-        EnablePaging="True" MaximumRowsParameterName="pageSize" SortParameterName="sortExpression">
-        <SelectParameters>
-            <asp:ControlParameter ControlID="drpLoja" Name="idLoja" 
-                PropertyName="SelectedValue" Type="Int32" />
-            <asp:ControlParameter ControlID="drpTipoCliente" Name="idTipoCliente" 
-                PropertyName="SelectedValue" Type="Int32" />
-            <asp:ControlParameter ControlID="selGrupoSubgrupoProd" Name="idGrupoProd" 
-                PropertyName="CodigoGrupoProduto" Type="Int32" />
-            <asp:ControlParameter ControlID="selGrupoSubgrupoProd" Name="idSubgrupoProd" 
-                PropertyName="CodigoSubgrupoProduto" Type="Int32" />
-            <asp:ControlParameter ControlID="selCorProd" Name="idCorVidro" 
-                PropertyName="IdCorVidro" Type="Int32" />
-            <asp:ControlParameter ControlID="selCorProd" Name="idCorFerragem" 
-                PropertyName="IdCorFerragem" Type="Int32" />
-            <asp:ControlParameter ControlID="selCorProd" Name="idCorAluminio" 
-                PropertyName="IdCorAluminio" Type="Int32" />
-            <asp:ControlParameter ControlID="txtEspessura" Name="espessura" 
-                PropertyName="Text" Type="Single" />
-            <asp:ControlParameter ControlID="selNaturezaOperacao" Name="idNaturezaOperacao" 
-                PropertyName="CodigoNaturezaOperacao" Type="Int32" />
-            <asp:ControlParameter ControlID="cblUfDestino" Name="ufsDestino" PropertyName="SelectedItem"/>
-        </SelectParameters>
-    </colo:VirtualObjectDataSource>
-    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsLoja" runat="server"
-        SelectMethod="GetAll" TypeName="Glass.Data.DAL.LojaDAO" 
-        CacheExpirationPolicy="Absolute" ConflictDetection="OverwriteChanges" 
-        MaximumRowsParameterName="" SkinID="" StartRowIndexParameterName="">
-    </colo:VirtualObjectDataSource>
-    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoCliente" runat="server"
-        SelectMethod="ObtemDescritoresTipoCliente" TypeName="Glass.Global.Negocios.IClienteFluxo" 
-        CacheExpirationPolicy="Absolute" ConflictDetection="OverwriteChanges" 
-        MaximumRowsParameterName="" SkinID="" StartRowIndexParameterName="">
-    </colo:VirtualObjectDataSource>
-        <colo:VirtualObjectDataSource ID="odsUf" runat="server" Culture="pt-BR"
-        SelectMethod="ObtemUfs" TypeName="Glass.Global.Negocios.ILocalizacaoFluxo">
-    </colo:VirtualObjectDataSource>
+     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/Cfops/NaturezasOperacao/RegrasNaturezaOperacao/Componentes/LstRegrasNaturezaOperacao.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/Cfops/NaturezasOperacao/RegrasNaturezaOperacao/Componentes/LstRegrasNaturezaOperacao.js" />
+        </Scripts>
+    </asp:ScriptManager>
 </asp:Content>
