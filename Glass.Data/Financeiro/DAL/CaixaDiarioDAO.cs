@@ -286,11 +286,11 @@ namespace Glass.Data.DAL
         public CaixaDiario GetMovimentacao(GDASession session, int idCxDiario)
         {
             var sql = @"
-                Select c.*, f.Nome as DescrUsuCad, p.Descricao as DescrPlanoConta, l.NomeFantasia as NomeLoja 
-                From caixa_diario c 
+                Select c.*, f.Nome as DescrUsuCad, p.Descricao as DescrPlanoConta, l.NomeFantasia as NomeLoja
+                From caixa_diario c
                     Left Join funcionario f On c.UsuCad=f.IdFunc
-                    Left Join loja l On c.IdLoja=l.IdLoja 
-                    Left Join plano_contas p On c.IdConta=p.IdConta 
+                    Left Join loja l On c.IdLoja=l.IdLoja
+                    Left Join plano_contas p On c.IdConta=p.IdConta
                 Where c.idCaixaDiario=" + idCxDiario;
 
             var lstMov = objPersistence.LoadData(session, sql).ToList();
@@ -340,16 +340,16 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="dataSaldo"></param>
         /// <returns></returns>
-        public decimal GetSaldoLancAvulsos(DateTime? dataIni, DateTime? dataFim)
+        public decimal GetSaldoLancAvulsos(DateTime? dataIni, DateTime? dataFim, uint? idFornec, int? idLoja)
         {
             if (dataIni == null && dataFim == null)
                 return 0;
-            
+
             string sql = @"
-                Select Sum(valor) from caixa_diario 
+                Select Sum(valor) from caixa_diario
                 Where tipoMov = 2
-                    And idacerto is null and idcheque is null and idpedido is null and idLiberarPedido is null and idcontar is null 
-                    And idObra is null and idCheque is null and idFornec is null and idTrocaDevolucao is null and idSinal is null 
+                    And idacerto is null and idcheque is null and idpedido is null and idLiberarPedido is null and idcontar is null
+                    And idObra is null and idCheque is null and idFornec is null and idTrocaDevolucao is null and idSinal is null
                     And idConta not in (" + (int)UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral) + "," +
                     (int)UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeralParaDiario) + ")";
 
@@ -364,6 +364,16 @@ namespace Glass.Data.DAL
             {
                 sql += "and datacad <= ?dataFim ";
                 lstParam.Add(new GDAParameter("?dataFim", DateTime.Parse(dataFim.Value.ToString("dd/MM/yyyy 23:59:59"))));
+            }
+            if (idFornec > 0)
+            {
+                sql += " AND idfornec = ?idFornec";
+                lstParam.Add(new GDAParameter("?idFornec", idFornec));
+            }
+            if (idLoja > 0)
+            {
+                sql += " AND IdLoja = ?idLoja";
+                lstParam.Add(new GDAParameter("?idLoja", idLoja));
             }
 
             return ExecuteScalar<uint>(sql, lstParam.ToArray());
@@ -484,10 +494,10 @@ namespace Glass.Data.DAL
             var caixa = new CaixaDiario();
 
             var sql = @"
-                Select c.*, f.Nome as DescrUsuCad 
-                From caixa_diario c 
-                    Left Join funcionario f On c.UsuCad=f.IdFunc 
-                Where idSinal in (Select idSinal From pedido Where idPedido=" + idPedido + @") 
+                Select c.*, f.Nome as DescrUsuCad
+                From caixa_diario c
+                    Left Join funcionario f On c.UsuCad=f.IdFunc
+                Where idSinal in (Select idSinal From pedido Where idPedido=" + idPedido + @")
                     And idConta In (" + UtilsPlanoConta.ContasSinalPedido() + ")";
 
             var lst = objPersistence.LoadData(sessao, sql).ToList();
@@ -975,20 +985,20 @@ namespace Glass.Data.DAL
             string sql = @"
                 Select c.*, f.Nome as DescrUsuCad, CONCAT(p.Descricao, COALESCE(IF(COALESCE(p.descricao, '') <> '', CONCAT(' (', c.Obs ,')'), ''),'')) as DescrPlanoConta, l.NomeFantasia as NomeLoja, cli.Nome as NomeCliente,
                     coalesce(forn.RazaoSocial, forn.NomeFantasia) as NomeFornecedor
-                From caixa_diario c 
-                    Left Join funcionario f On c.UsuCad=f.IdFunc 
-                    Left Join loja l On c.IdLoja=l.IdLoja 
+                From caixa_diario c
+                    Left Join funcionario f On c.UsuCad=f.IdFunc
+                    Left Join loja l On c.IdLoja=l.IdLoja
                     Left Join cliente cli On cli.id_Cli=c.idCliente
                     Left Join fornecedor forn On forn.idFornec=c.idFornec
-                    Left Join plano_contas p On c.IdConta=p.IdConta 
-                Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(?data) 
-                    And MONTH(c.DataCad)=MONTH(?data) 
-                    And YEAR(c.DataCad)=YEAR(?data) 
+                    Left Join plano_contas p On c.IdConta=p.IdConta
+                Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(?data)
+                    And MONTH(c.DataCad)=MONTH(?data)
+                    And YEAR(c.DataCad)=YEAR(?data)
                     And c.IdLoja=" + idLoja;
 
             if (idFunc > 0)
                 sql += " and c.usuCad=" + idFunc + " And c.idConta<>" + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral);
-            
+
             sql += " Order by c.idCaixaDiario";
 
             GDAParameter param = new GDAParameter("?data", data);
@@ -1035,8 +1045,8 @@ namespace Glass.Data.DAL
         /// <param name="lstCx"></param>
         private void RecalculaSaldos(GDASession session, uint idFunc, ref List<CaixaDiario> lstCx)
         {
-            // Se houver filtro por funcionário, calcula o saldo de 
-            // cada operação realizada por ele e estornos, uma vez que o que está salvo no BD considera todas 
+            // Se houver filtro por funcionário, calcula o saldo de
+            // cada operação realizada por ele e estornos, uma vez que o que está salvo no BD considera todas
             // as movimentações do caixa diário
             if (idFunc > 0)
             {
@@ -1066,7 +1076,7 @@ namespace Glass.Data.DAL
                     };
 
                     // Só altera se o saldo tiver sido alterado
-                    if (lstCx[i].Saldo != ObtemSaldoMovAnterior(session, lstCx[i].IdCaixaDiario) 
+                    if (lstCx[i].Saldo != ObtemSaldoMovAnterior(session, lstCx[i].IdCaixaDiario)
                         && (lstCx[i].MudarSaldo.GetValueOrDefault() || idsContaTransferencia.Contains(lstCx[i].IdConta)))
                     {
                         if (lstCx[i].TipoMov == 1)
@@ -1090,10 +1100,10 @@ namespace Glass.Data.DAL
         {
             string sql = @"
                 Select Count(*) > 0
-                From caixa_diario c 
-                Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(?data) 
-                    And MONTH(c.DataCad)=MONTH(?data) 
-                    And YEAR(c.DataCad)=YEAR(?data) 
+                From caixa_diario c
+                Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(?data)
+                    And MONTH(c.DataCad)=MONTH(?data)
+                    And YEAR(c.DataCad)=YEAR(?data)
                     And c.IdLoja=" + idLoja;
 
             return ExecuteScalar<bool>(sessao, sql, new GDAParameter("?data", data));
@@ -1123,15 +1133,15 @@ namespace Glass.Data.DAL
             string sql = @"
                 Select c.*, f.Nome as DescrUsuCad, p.Descricao as DescrPlanoConta, l.NomeFantasia as NomeLoja, cli.Nome as NomeCliente,
                     coalesce(forn.RazaoSocial, forn.NomeFantasia) as NomeFornecedor
-                From caixa_diario c 
-                    Left Join funcionario f On c.UsuCad=f.IdFunc 
-                    Left Join loja l On c.IdLoja=l.IdLoja 
+                From caixa_diario c
+                    Left Join funcionario f On c.UsuCad=f.IdFunc
+                    Left Join loja l On c.IdLoja=l.IdLoja
                     Left Join cliente cli On cli.id_Cli=c.idCliente
                     Left Join fornecedor forn On forn.idFornec=c.idFornec
-                    Left Join plano_contas p On c.IdConta=p.IdConta 
+                    Left Join plano_contas p On c.IdConta=p.IdConta
                 Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(?data)
-                    And MONTH(c.DataCad)=MONTH(?data) 
-                    And YEAR(c.DataCad)=YEAR(?data) 
+                    And MONTH(c.DataCad)=MONTH(?data)
+                    And YEAR(c.DataCad)=YEAR(?data)
                     And c.IdLoja=" + idLoja;
 
             var filtroFunc = String.Empty;
@@ -1278,7 +1288,7 @@ namespace Glass.Data.DAL
         {
             string sql = @"
                 Select * From caixa_diario
-                Where idPedido=" + idPedido + @" 
+                Where idPedido=" + idPedido + @"
                     And idConta in (" + UtilsPlanoConta.ContasSinalPedido() + "," + UtilsPlanoConta.ResumoDiarioContasCreditoGerado() + @")
                 Order By idCaixaDiario Desc";
 
@@ -1618,7 +1628,7 @@ namespace Glass.Data.DAL
         {
             if (idCaixaDiario == 0)
                 return null;
-            
+
             idCaixaDiario = idCaixaDiario - 1;
 
             while (idCaixaDiario > 0 && objPersistence.ExecuteSqlQueryCount(
@@ -1885,7 +1895,7 @@ namespace Glass.Data.DAL
                     {
                         throw new Exception("Apenas funcionário Caixa pode efetuar retirada do caixa.");
                     }
-                    
+
                     if (saldo == 0 && GetMovimentacoes(transaction, (uint)idLoja, 0, DateTime.Now).Length <= 1)
                     {
                         saldo = GetSaldoDiaAnterior(transaction, (uint)idLoja);
@@ -2020,7 +2030,7 @@ namespace Glass.Data.DAL
                 caixaDiario.DataCad = DateTime.Now;
 
                 base.Insert(sessao, caixaDiario);
-                
+
                 objInsert.Saldo += saldoRemanescente;
             }
 
