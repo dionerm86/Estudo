@@ -110,7 +110,7 @@ namespace Glass.Integracao.Khan
         /// <summary>
         /// Obtém os Jobs do integrador.
         /// </summary>
-        public IEnumerable<IJobIntegracao> Jobs => this.integradorSchedulerRegistry?.Jobs ?? Array.Empty<IJobIntegracao>();
+        public IEnumerable<IJobIntegracao> Jobs => this.integradorSchedulerRegistry?.Jobs ?? new IJobIntegracao[0];
 
         /// <inheritdoc />
         public LoggerIntegracao Logger { get; }

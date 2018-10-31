@@ -955,7 +955,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         protected bool IsPedidoRevenda()
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
-                return PedidoDAO.Instance.IsRevenda(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                return PedidoDAO.Instance.IsRevenda(null ,Glass.Conversoes.StrParaUint(Request["idPedido"]));
             else
                 return false;
         }

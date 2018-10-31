@@ -1,4 +1,4 @@
-var Servicos = Servicos || {};
+﻿var Servicos = Servicos || {};
 
 /**
  * Objeto com os serviços para a API de notas fiscais.
@@ -22,6 +22,14 @@ Servicos.Cfops = (function(http) {
     },
 
     /**
+     * Recupera o objeto com as configurações utilizadas na tela de listagem de CFOP.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterConfiguracoesLista: function () {
+      return http().get(API + 'configuracoes');
+    },
+
+    /**
      * Retorna os itens para filtro de cfops.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
@@ -33,8 +41,56 @@ Servicos.Cfops = (function(http) {
      * Retorna os itens para o controle de tipos de cfop.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterTipos: function () {
+    obterTiposCfop: function () {
       return http().get(API + 'tipos');
+    },
+
+    /**
+     * Retorna os itens para o controle de tipos de mercadoria.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterTiposMercadoria: function () {
+      return http().get(API + 'tiposMercadoria');
+    },
+
+    /**
+     * Insere um CFOP.
+     * @param {!Object} cfop O objeto com os dados do CFOP a ser inserido.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    inserir: function (cfop) {
+      return http().post(API, cfop);
+    },
+
+    /**
+     * Altera os dados de um CFOP.
+     * @param {!number} idCfop O identificador do item que será alterado.
+     * @param {!Object} cfop O objeto com os dados do item a serem alterados.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    atualizar: function (idCfop, cfop) {
+      if (!idCfop) {
+        throw new Error('CFOP é obrigatório.');
+      }
+
+      if (!cfop || cfop === {}) {
+        return Promise.resolve();
+      }
+
+      return http().patch(API + idCfop, cfop);
+    },
+
+    /**
+     * Remove um CFOP.
+     * @param {!number} idCfop O identificador do CFOP que será excluído.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    excluir: function (idCfop) {
+      if (!idCfop) {
+        throw new Error('CFOP é obrigatório.');
+      }
+
+      return http().delete(API + idCfop);
     }
   };
 }) (function () {

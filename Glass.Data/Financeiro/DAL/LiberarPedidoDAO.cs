@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using GDA;
@@ -967,7 +967,7 @@ namespace Glass.Data.DAL
             // Verifica se o pedido possui sinal ou pagamento antecipado a receber.
             if (!PCPConfig.TelaPedidoPcp.PermitirFinalizarComDiferencaEPagtoAntecip && pedidosPossuemSinalPagamentoAntecipadoAReceber)
             {
-                throw new Exception(string.Format("Falha ao liberar pedidos. Erro: {0}", mensagemSinalPagamentoAntecipado));
+                throw new Exception(string.Format("Falha ao liberar pedidos. Erro: {0}", string.Join(", ", mensagemSinalPagamentoAntecipado)));
             }
 
             // Verifica se foram informados cheques na liberação do pedido e se eles foram recuperados no parâmetro valoresPagos.
@@ -3492,7 +3492,7 @@ namespace Glass.Data.DAL
                 /* Chamado 46018.
                  * Caso o estoque do produto tenha que ser baixado através de um volume e ele já tiver sido expedido, não verifica o estoque dele.
                  * A configuração UsarControleOrdemCarga é utilizada somente para constatar que não serão permitidas liberações parciais. */
-                if (OrdemCargaConfig.UsarControleOrdemCarga && !naoVolume && ProdutosPedidoDAO.Instance.ObtemQtdSaida(idsProdutosPedido[i]) == qtdeLiberar[i])
+                if (OrdemCargaConfig.UsarControleOrdemCarga && !naoVolume && ProdutosPedidoDAO.Instance.ObterQtdSaida(session, idsProdutosPedido[i]) == qtdeLiberar[i])
                     continue;
 
                 int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)idProd);

@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass.Configuracoes;
 using Glass.Data.Helper;
 using Glass.Data.Helper.Calculos;
@@ -1749,13 +1749,17 @@ namespace Glass.Data.DAL
         private bool ValidarSaidaProduto(GDASession sessao, uint idProdPed, float qtdSaida, uint idPedido)
         {
             var tipoPedido = PedidoDAO.Instance.ObterTipoPedido(sessao, idPedido);
-            if (tipoPedido == Pedido.TipoPedidoEnum.MaoDeObra)
+
+            /* Pedidos de mão de obra são movimentados com base na quantidade do ambiente,
+             * por isso, bloquear a movimentação de acordo com o produto, faz com que uma movimentação válida seja bloqueada.
+             * Pedidos de produção não movimentam a reserva/liberação. O método que atualiza a reserva dos produtos desconsidera esse tipo de pedido. */
+            if (tipoPedido == Pedido.TipoPedidoEnum.MaoDeObra || tipoPedido == Pedido.TipoPedidoEnum.Producao)
             {
                 return true;
             }
 
-            var quantidadeProduto = ObtemValorCampo<float>(sessao, "Qtde", $"IdProdPed={idProdPed}");
-            var quantidadeSaidaAtualProduto = ObtemValorCampo<float>(sessao, "QtdSaida", $"IdProdPed={idProdPed}");
+            var quantidadeProduto = this.ObtemQtde(sessao, idProdPed);
+            var quantidadeSaidaAtualProduto = this.ObterQtdSaida(sessao, idProdPed);
 
             qtdSaida += quantidadeSaidaAtualProduto;
 
@@ -3616,15 +3620,16 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Obtém valores de campos específicos
+        /// Obtém o valor do campo QtdSaida, do produto de pedido informado.
         /// </summary>
-        /// <param name="idProdPed"></param>
-        /// <returns></returns>
-        public float ObtemQtdSaida(uint idProdPed)
+        /// <param name="session">session.</param>
+        /// <param name="idProdPed">idProdPed.</param>
+        /// <returns>Retorna o valor do campo QtdSaida, do produto de pedido informado.</returns>
+        public float ObterQtdSaida(GDASession session, uint idProdPed)
         {
-            string sql = "Select Coalesce(qtdSaida, 0) From produtos_pedido Where idProdPed=" + idProdPed;
+            var sql = $"SELECT COALESCE(QtdSaida, 0) FROM produtos_pedido WHERE IdProdPed = {idProdPed}";
 
-            return float.Parse(objPersistence.ExecuteScalar(sql).ToString());
+            return this.objPersistence.ExecuteScalar(sql)?.ToString()?.StrParaFloat() ?? 0;
         }
 
         /// <summary>
@@ -5924,6 +5929,28 @@ namespace Glass.Data.DAL
             var pedido = PedidoDAO.Instance.ObterDataEntregaEDataEntregaSistema(sessao, (int)idPedido);
 
             return pedido.DataEntregaSistema != null && (pedido.DataEntregaSistema.Value.Date == pedido.DataEntrega.Value.Date || !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega));
+        }
+
+        /// <summary>
+        /// Verifica se os produtos do pedido de Revenda j� deram sa�da total. 
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        internal bool VerificarSaidaProduto(GDASession sessao, uint idPedido)
+        {
+            if(idPedido == 0 || !PedidoDAO.Instance.IsRevenda(sessao, idPedido))
+            {
+                return false;
+            }
+
+            var sql = $@"SELECT (SUM(QtdSaida) + 1) >= SUM(Qtde) = COUNT(*)
+                FROM produtos_pedido
+                WHERE IdPedido = {idPedido} 
+                    AND InvisivelPedido = 0";
+
+            return ExecuteScalar<bool>(sessao, sql);
+
         }
     }
 }

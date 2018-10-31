@@ -308,7 +308,7 @@
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <a href="#" onclick="setCheque(<%# Eval("IdCheque") %>, <%# Eval("IdCliente") != null ? Eval("IdCliente") : "0" %>, <%# Eval("Num") %>, '<%# Eval("Titular").ToString().Replace("'", "") %>', '<%# Eval("Banco").ToString().Replace("'", "") %>', '<%# Eval("Agencia").ToString().Replace("'", "") %>', '<%# Eval("Conta").ToString().Replace("'", "") %>', '<%# Eval("Valor", "{0:C}") %>', '<%# Eval("ValorRestante", "{0:C}") %>', '<%# Eval("DataVenc", "{0:d}") %>', '<%# (Eval("Obs") != null ? Eval("Obs") : String.Empty).ToString().Replace("'", "").Replace("\r", "").Replace("\n", "") %>', window);">
+                                <a href="#" onclick="setCheque(<%# Eval("IdCheque") %>, <%# Eval("IdCliente") != null ? Eval("IdCliente") : "0" %>, <%# Eval("Num") %>, '<%# Eval("Titular").ToString().Replace("'", "") %>', '<%# Eval("Banco").ToString().Replace("'", "") %>', '<%# Eval("Agencia").ToString().Replace("'", "") %>', '<%# Eval("Conta").ToString().Replace("'", "") %>', '<%# Eval("Valor", "{0:C}") %>', '<%# Eval("ValorRestante", "{0:C}") %>', '<%# Eval("DataVenc", "{0:d}") %>', '<%# (Eval("Obs") != null ? Eval("Obs") : String.Empty).ToString().Replace("'", "").Replace("\"","").Replace("\r", "").Replace("\n", "") %>', window);">
                                     <img alt="Selecionar" border="0" src="../Images/insert.gif" title="Selecionar" /></a>
                             </ItemTemplate>
                         </asp:TemplateField>

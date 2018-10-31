@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace Glass.Data.DAL
             var sql = @"SELECT" + campos +
                 @" FROM cte_cidade_descarga_mdfe ccd
                 LEFT JOIN conhecimento_transporte ct ON (ccd.IdCTe=ct.IdCTe)
-                LEFT JOIN participante_cte pct ON (ct.IdCTe=pct.IdCTe)
+                LEFT JOIN participante_cte pct ON (ct.IdCTe = pct.IdCTe AND pct.IdLoja IS NOT NULL AND pct.IdLoja > 0)
                 LEFT JOIN loja l ON (l.IdLoja=pct.IdLoja)
                 LEFT JOIN cliente c ON (c.Id_cli=pct.IdCliente)
                 WHERE ccd.IdCidadeDescarga={0}
@@ -59,17 +59,19 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a nota fiscal já foi inserida no Mdfe
+        /// Obtém o número do MDFe associado ao CTe informado, através da chave de acesso.
         /// </summary>
-        /// <param name="idNfe"></param>
-        /// <returns></returns>
-        public bool VerificarCteJaIncluso(string chaveAcesso)
+        /// <param name="chaveAcesso">chaveAcesso.</param>
+        /// <returns>Retorna o número do MDFe associado ao CTe informado, através da chave de acesso.</returns>
+        public int? ObterNumeroMdfeAssociadoCte(GDASession session, string chaveAcesso)
         {
-            return objPersistence.ExecuteSqlQueryCount(
-                $@"SELECT ccdm.IdCidadeDescarga FROM cidade_descarga_mdfe cdm
-	                    INNER JOIN cte_cidade_descarga_mdfe ccdm ON (ccdm.IdCidadeDescarga = cdm.IdCidadeDescarga)
-	                    INNER JOIN manifesto_eletronico me ON (me.IdManifestoEletronico = cdm.IdManifestoEletronico)
-                    WHERE ccdm.ChaveAcesso={ chaveAcesso } AND me.Situacao <> { (int)SituacaoEnum.Cancelado }") > 0;
+            var sqlObterNumeroMdfe = $@"SELECT me.NumeroManifestoEletronico FROM cidade_descarga_mdfe cdm
+	                INNER JOIN cte_cidade_descarga_mdfe ccdm ON (ccdm.IdCidadeDescarga = cdm.IdCidadeDescarga)
+	                INNER JOIN manifesto_eletronico me ON (me.IdManifestoEletronico = cdm.IdManifestoEletronico)
+                WHERE ccdm.ChaveAcesso = ?chaveAcesso AND
+                    me.Situacao <> {(int)SituacaoEnum.Cancelado}";
+
+            return this.ExecuteScalar<int?>(session, sqlObterNumeroMdfe, new GDAParameter("?chaveAcesso", chaveAcesso));
         }
 
         #region Metodos Sobrescritos
