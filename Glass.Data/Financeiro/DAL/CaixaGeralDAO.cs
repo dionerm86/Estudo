@@ -15,7 +15,7 @@ namespace Glass.Data.DAL
         #region Busca as movimentações do caixa geral no período passado
 
         /// <summary>
-        /// Busca as movimentações do caixa geral no período informado, sobrecarga criada para receber por parâmetro o LoginUsuario, 
+        /// Busca as movimentações do caixa geral no período informado, sobrecarga criada para receber por parâmetro o LoginUsuario,
         /// no caso em que este relatório é chamado pela thread do relatório
         /// </summary>
         /// <param name="idCaixaGeral"></param>
@@ -172,7 +172,7 @@ namespace Glass.Data.DAL
             // Se o funcionário logado for financeiro, retorna apenas as movimentações feitas pelo mesmo e de estorno
             if (Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento) && !FinanceiroConfig.CaixaGeral.CxGeralSaldoTotal)
             {
-                where += " And (c.UsuCad In (select idFunc from config_funcao_func where idFuncaoMenu=" + Config.ObterIdFuncaoMenu(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) + 
+                where += " And (c.UsuCad In (select idFunc from config_funcao_func where idFuncaoMenu=" + Config.ObterIdFuncaoMenu(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) +
                     ") Or c.idConta In (" + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoDinheiro) +
                     ", " + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoCartao) +
                     ", " + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoCheque) +
@@ -183,17 +183,17 @@ namespace Glass.Data.DAL
                 criterioRpt = "'" + criterioRpt + "' as Criterio, ";
 
             string sql = @"
-                Select c.*," + criterioRpt + @" coalesce(forn.RazaoSocial, forn.NomeFantasia) as nomeFornecedor, 
-                    f.Nome as DescrUsuCad, p.Descricao as DescrPlanoConta, g.Descricao as DescrGrupoConta, l.NomeFantasia as NomeLoja, 
+                Select c.*," + criterioRpt + @" coalesce(forn.RazaoSocial, forn.NomeFantasia) as nomeFornecedor,
+                    f.Nome as DescrUsuCad, p.Descricao as DescrPlanoConta, g.Descricao as DescrGrupoConta, l.NomeFantasia as NomeLoja,
                     cli.Nome as NomeCliente, " + ContasReceberDAO.Instance.SqlCampoDescricaoContaContabil("cr") + @" as descricaoContaReceberContabil
-                From caixa_geral c 
+                From caixa_geral c
                     Left Join funcionario f On (c.UsuCad=f.IdFunc)
                     Left Join cliente cli On (cli.Id_Cli=c.IdCliente)
-                    Left Join fornecedor forn On (c.idFornec=forn.idFornec) 
+                    Left Join fornecedor forn On (c.idFornec=forn.idFornec)
                     Left Join loja l On (c.IdLoja=l.IdLoja) "
                     + (tipoConta > 0 ? " Left Join contas_pagar cp On (c.IdPagto = cp.IdPagto)" : "") +
-                    @"Left Join plano_contas p On (c.IdConta=p.IdConta) 
-                    Left Join grupo_conta g On (p.IdGrupo=g.IdGrupo) 
+                    @"Left Join plano_contas p On (c.IdConta=p.IdConta)
+                    Left Join grupo_conta g On (p.IdGrupo=g.IdGrupo)
                     Left Join contas_receber cr on (c.idContaR=cr.idContaR)
                 Where 1 " + where + (tipoConta > 0 ? " group by c.idCaixaGeral" : "") +
                 " Order By IdCaixaGeral Asc";
@@ -212,8 +212,8 @@ namespace Glass.Data.DAL
             if (apenasDinheiro)
                 saldoInicialApenasDinheiro = GetSaldoByFormaPagto(Pagto.FormaPagto.Dinheiro, 0, "01/01/1990", lstCaixa[0].DataMov.AddDays(-1).ToString("dd/MM/yyyy"), 1, idLoja);
 
-            // Se o funcionário logado for financeiro, ou se houver filtro por funcionário ou apenas dinheiro, calcula o saldo de 
-            // cada operação realizada por ele e estornos, uma vez que o que está salvo no BD considera todas 
+            // Se o funcionário logado for financeiro, ou se houver filtro por funcionário ou apenas dinheiro, calcula o saldo de
+            // cada operação realizada por ele e estornos, uma vez que o que está salvo no BD considera todas
             // as movimentações do caixa geral
             if ((Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento)) || idFunc > 0 || idLoja > 0 ||
                 apenasDinheiro)
@@ -241,7 +241,7 @@ namespace Glass.Data.DAL
                     }
 
                     // Só altera se o saldo tiver sido alterado
-                    if (lstCaixa[i].Saldo != ObtemSaldoMovAnterior(lstCaixa[i].IdCaixaGeral, idLoja))
+                    if (lstCaixa[i].Saldo != ObtemSaldoMovAnterior(lstCaixa[i].IdCaixaGeral, 0))
                     {
                         if (lstCaixa[i].TipoMov == 1)
                             saldo += lstCaixa[i].ValorMov;
@@ -377,7 +377,7 @@ namespace Glass.Data.DAL
         public CaixaGeral GetMovimentacao(uint idCxGeral)
         {
             string sql = @"
-                Select c.*, f.Nome as DescrUsuCad, p.Descricao as DescrPlanoConta, l.NomeFantasia as NomeLoja 
+                Select c.*, f.Nome as DescrUsuCad, p.Descricao as DescrPlanoConta, l.NomeFantasia as NomeLoja
                 From caixa_geral c
                     Left Join funcionario f On c.UsuCad=f.IdFunc
                     Left Join loja l On f.IdLoja=l.IdLoja
@@ -1165,10 +1165,10 @@ namespace Glass.Data.DAL
         public CaixaGeral GetPedidoSinal(GDASession sessao, uint idPedido)
         {
             string sql = @"
-                Select c.*, f.Nome as DescrUsuCad 
-                From caixa_geral c 
-                    Left Join funcionario f On c.UsuCad=f.IdFunc 
-                Where idSinal in (Select idSinal From pedido Where idPedido=" + idPedido + @") 
+                Select c.*, f.Nome as DescrUsuCad
+                From caixa_geral c
+                    Left Join funcionario f On c.UsuCad=f.IdFunc
+                Where idSinal in (Select idSinal From pedido Where idPedido=" + idPedido + @")
                     And idConta In (" + UtilsPlanoConta.ContasSinalPedido() + ")";
 
             List<CaixaGeral> lst = objPersistence.LoadData(sessao, sql).ToList();
@@ -1199,8 +1199,8 @@ namespace Glass.Data.DAL
         public CaixaGeral[] GetByPedidoAVista(GDASession session, uint idPedido)
         {
             string sql = @"
-                Select * From caixa_geral 
-                Where idConta In (" + UtilsPlanoConta.ContasAVista() + "," + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoVendaGerado) + @") 
+                Select * From caixa_geral
+                Where idConta In (" + UtilsPlanoConta.ContasAVista() + "," + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoVendaGerado) + @")
                     And idPedido=" + idPedido + @" And idTrocaDevolucao is null
                 Order By idCaixaGeral Desc";
 
@@ -1230,8 +1230,8 @@ namespace Glass.Data.DAL
         public CaixaGeral[] GetBySinal(GDASession sessao, uint idSinal)
         {
             string sql = @"
-                Select * From caixa_geral 
-                Where idSinal=" + idSinal + @" 
+                Select * From caixa_geral
+                Where idSinal=" + idSinal + @"
                     And idConta in (" + UtilsPlanoConta.ContasSinalPedido() + "," + UtilsPlanoConta.ResumoDiarioContasCreditoGerado() + @")
                 Order By idCaixaGeral Desc";
 
@@ -1267,9 +1267,9 @@ namespace Glass.Data.DAL
                 tipo == 2 ? UtilsPlanoConta.ContasSinalPedido() + "," + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoEntradaGerado) : String.Empty;
 
             string sql = @"
-                Select * From caixa_geral 
-                Where idConta In (" + idConta + @") 
-                    And idLiberarPedido=" + idLiberacao + @" 
+                Select * From caixa_geral
+                Where idConta In (" + idConta + @")
+                    And idLiberarPedido=" + idLiberacao + @"
                 Order By idCaixaGeral Desc";
 
             return objPersistence.LoadData(session, sql).ToArray();
@@ -1866,7 +1866,7 @@ namespace Glass.Data.DAL
                         mov.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro) ||
                         mov.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque))
                         throw new Exception("Essa movimentação foi gerada pelo sistema. Só é possível cancelar movimentações manuais.");
-                    
+
                     // Atualiza o saldo
                     objPersistence.ExecuteCommand(transaction, string.Format("UPDATE caixa_geral SET Saldo=Saldo {0} ?valor WHERE IdCaixaGeral>{1}",
                         mov.TipoMov == 1 ? "-" : "+", mov.IdCaixaGeral), new GDAParameter("?valor", mov.ValorMov));
@@ -1955,7 +1955,7 @@ namespace Glass.Data.DAL
                         transaction.Rollback();
                         transaction.Close();
                     }
-                    
+
 
                     throw;
                 }
