@@ -553,8 +553,8 @@
         //Valida se as datas tem valor
         if (dataSaidaSeparada != null && dataEmissaoSeparada != null) {
             //Converte a data de um array de string para uma Data
-            var dataDeSaida = new Date(dataSaidaSeparada[2], dataSaidaSeparada[1], dataSaidaSeparada[0], horaSaidaSeparada != null ? horaSaidaSeparada[0] : 0, horaSaidaSeparada != null ? horaSaidaSeparada[1] : 0);
-            var dataDeEmissao = new Date(dataEmissaoSeparada[2], dataEmissaoSeparada[1], dataEmissaoSeparada[0], horaEmissaoSeparada != null ? horaEmissaoSeparada[0] : 0, horaEmissaoSeparada != null? horaEmissaoSeparada[1] : 0);
+            var dataDeSaida = new Date(dataSaidaSeparada[2], dataSaidaSeparada[1] - 1, dataSaidaSeparada[0], horaSaidaSeparada != null ? horaSaidaSeparada[0] : 0, horaSaidaSeparada != null ? horaSaidaSeparada[1] : 0);
+            var dataDeEmissao = new Date(dataEmissaoSeparada[2], dataEmissaoSeparada[1] - 1, dataEmissaoSeparada[0], horaEmissaoSeparada != null ? horaEmissaoSeparada[0] : 0, horaEmissaoSeparada != null? horaEmissaoSeparada[1] : 0);
 
             if (dataDeSaida < dataDeEmissao) {
                 alert("Data de saída/entrada não pode ser inferior à data de emissão");
