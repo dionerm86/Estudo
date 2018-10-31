@@ -975,7 +975,11 @@ namespace Glass.Data.DAL
             #endregion
 
             #region Geração da conta recebida referente ao recebimento do sinal
-            
+
+            var idFuncComissaoRec = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas 
+                ? (int?)PedidoDAO.Instance.ObtemIdFunc(session, pedidos[0].IdPedido) 
+                : null;
+
             for (var i = 0; i < valoresRecebimento.Count(); i++)
             {
                 if (idsFormaPagamento.ElementAtOrDefault(i) == 0 || valoresRecebimento.ElementAtOrDefault(i) == 0)
@@ -997,7 +1001,7 @@ namespace Glass.Data.DAL
                 contaRecebidaSinal.NumParc = 1;
                 contaRecebidaSinal.NumParcMax = 1;
                 contaRecebidaSinal.Usucad = usuarioLogado.CodUser;
-                contaRecebidaSinal.IdFuncComissaoRec = contaRecebidaSinal.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(session, contaRecebidaSinal.IdCliente) : null;
+                contaRecebidaSinal.IdFuncComissaoRec = idFuncComissaoRec;
 
                 var idContaR = ContasReceberDAO.Instance.InsertBase(session, contaRecebidaSinal);
 
@@ -1140,6 +1144,17 @@ namespace Glass.Data.DAL
             #endregion
 
             return mensagemRetorno;
+        }
+
+        private int ObterIdFuncComissaoRec(GDASession session, uint idLiberarPedido)
+        {
+            if (idLiberarPedido == 0)
+            {
+                return 0;
+            }
+
+            var idPedido = PedidoDAO.Instance.GetIdsByLiberacao(session, idLiberarPedido).First();
+            return (int)PedidoDAO.Instance.ObtemIdFunc(session, idPedido);
         }
 
         /// <summary>

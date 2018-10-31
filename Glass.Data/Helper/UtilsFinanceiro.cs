@@ -901,7 +901,7 @@ namespace Glass.Data.Helper
                    
                     novaConta.IsParcelaCartao = true;
                     novaConta.IdContaRCartao = conta != null && conta.IdContaR > 0 ? conta.IdContaR : (uint?)null;
-                    novaConta.IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null;
+                    novaConta.IdFuncComissaoRec = conta.IdFuncComissaoRec;
 
                     // Gera as contas a receber do cartão de crédito das formas de pagamento
                     for (int i = 0; i < valoresReceb.Length; i++)
