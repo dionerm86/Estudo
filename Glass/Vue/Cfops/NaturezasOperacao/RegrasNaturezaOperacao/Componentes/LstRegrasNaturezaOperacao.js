@@ -505,7 +505,7 @@
     ufsDestinoAtuais: {
       handler: function (atual) {
         if (this.regraNatureza) {
-          this.regraNatureza.ufsDestino = atual ? atual.split(',') : null;
+          this.regraNatureza.ufsDestino = atual ? atual : null;
         }
       },
       deep: true
