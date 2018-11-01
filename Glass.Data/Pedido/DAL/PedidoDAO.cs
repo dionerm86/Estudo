@@ -14048,6 +14048,8 @@ namespace Glass.Data.DAL
 
             if (!PedidoConfig.ImpedirConfirmacaoPedidoPagamento)
             {
+                idsPedidosOk.AddRange(pedidos.Select(f => (int)f.IdPedido));
+
                 return false;
             }
 
