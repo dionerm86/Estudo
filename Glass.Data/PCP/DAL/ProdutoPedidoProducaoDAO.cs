@@ -5414,9 +5414,12 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public int ObterIdFornadaPeloIdProdPedProducao(GDASession sessao, int idProdPedProducao)
         {
-            var idFornada = ObtemValorCampo<int?>(sessao, "IdFornada", "IdProdPedProducao=?idProdPedProducao", new GDAParameter("?idProdPedProducao", idProdPedProducao));
+            if (idProdPedProducao == 0)
+            {
+                return 0;
+            }
 
-            return idFornada ?? 0;
+            return ObtemValorCampo<int>(sessao, "IdFornada", $"IdProdPedProducao = {idProdPedProducao}");
         }
 
         #region Insere nova peça
