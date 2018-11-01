@@ -216,6 +216,11 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Contabilistas\DeleteContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\GetContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\PatchContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\ContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\PostContabilistasController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\FornecedoresController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\DeleteFornecedoresController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\GetFornecedoresController.cs" />
@@ -429,6 +434,8 @@
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Contabilistas\ConverterCadastroAtualizacaoParaContabilista.cs" />
+    <Compile Include="Helper\Contabilistas\TraducaoOrdenacaoListaContabilistas.cs" />
     <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
     <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
@@ -535,6 +542,12 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\EnderecoDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\DadosContatoDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Contabilistas\Lista\DadosContatoDto.cs" />
+    <Compile Include="Models\Contabilistas\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Contabilistas\Lista\ListaDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\GruposConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CategoriasConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />

@@ -21,6 +21,13 @@ namespace Glass.API.Backend.Models.Genericas.V1
         public string Logradouro { get; set; }
 
         /// <summary>
+        /// Obtém ou define o número do logradouro.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("numero")]
+        public string Numero { get; set; }
+
+        /// <summary>
         /// Obtém ou define o logradouro.
         /// </summary>
         [DataMember]
