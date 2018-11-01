@@ -6,6 +6,43 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
+
+        function confirmarFinalizarVarios() {
+            var tabela = document.getElementById("<%= grdPedidos.ClientID %>");
+            var inputs = tabela.getElementsByTagName("input");
+            var idsPedido = [];
+
+            for (i = 0; i < inputs.length; i++) {
+                if (inputs[i].id.indexOf("chkTodos") > -1) {
+                    continue;
+                }
+
+                if (inputs[i].type == "checkbox" && inputs[i].checked) {
+                    var idPedido = inputs[i + 1].value;
+                    var confirmarFinalizar = inputs[i + 2].value;
+                    idsPedido.push(idPedido.toString() + "," + confirmarFinalizar.toString());
+                    i += 4;
+                }
+            }
+
+            openWindow(250, 500, "../Utils/SetFinalizarFinanceiro.aspx?ids=" + idsPedido.join(';'));
+
+            return false;
+        }
+
+        function checkAll(checked) {
+            var tabela = document.getElementById("<%= grdPedidos.ClientID %>");
+            var inputs = tabela.getElementsByTagName("input");
+
+            for (i = 0; i < inputs.length; i++) {
+                if (inputs[i].id.indexOf("chkTodos") > -1 || inputs[i].type != "checkbox") {
+                    continue;
+                }
+
+                inputs[i].checked = checked;
+            }
+        }
+
         function openRpt(idPedido, isReposicao, tipo) {
             if (!isReposicao)
                 openWindow(600, 800, "../Relatorios/RelPedido.aspx?idPedido=" + idPedido + "&tipo=" + tipo);
@@ -145,7 +182,7 @@
                         <td>
                             <asp:TextBox ID="txtEndereco" runat="server" Width="150px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
                                 MaxLength="80"></asp:TextBox>
-                            <asp:LinkButton ID="lnkPesquisar3" runat="server" OnClick="lnkPesquisar_Click"><img border="0" 
+                            <asp:LinkButton ID="lnkPesquisar3" runat="server" OnClick="lnkPesquisar_Click"><img border="0"
                                 src="../Images/Pesquisar.gif" /></asp:LinkButton>
                         </td>
                         <td>
@@ -154,7 +191,7 @@
                         <td>
                             <asp:TextBox ID="txtBairro" runat="server" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
                                 MaxLength="50"></asp:TextBox>
-                            <asp:LinkButton ID="lnkPesquisar4" runat="server" OnClick="lnkPesquisar_Click"><img border="0" 
+                            <asp:LinkButton ID="lnkPesquisar4" runat="server" OnClick="lnkPesquisar_Click"><img border="0"
                                 src="../Images/Pesquisar.gif" /></asp:LinkButton>
                         </td>
                         <td>
@@ -243,6 +280,17 @@
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
+                                <asp:CheckBox ID="chkMarcar" runat="server" />
+                                <asp:HiddenField ID="hdfIdPedido" runat="server" Value='<%# Eval("Codigo") %>' />
+                                <asp:HiddenField ID="hdfConfirmarFinalizar" runat="server" Value='<%# (bool)Eval("Finalizar") ? 1 : 2 %>' />
+                            </ItemTemplate>
+                            <HeaderTemplate>
+                                <asp:CheckBox ID="chkTodos" runat="server" onclick="checkAll(this.checked)" />
+                            </HeaderTemplate>
+                            <ItemStyle Wrap="False" />
+                        </asp:TemplateField>
+                        <asp:TemplateField>
+                            <ItemTemplate>
                                 <asp:ImageButton ID="imbPedido" runat="server" ImageUrl="~/Images/Relatorio.gif"
                                     OnClientClick='<%# "openRpt(" + Eval("Codigo") + ", " + Eval("UsarControleReposicao").ToString().ToLower() + ", 0); return false" %>'
                                     Visible='<%# Eval("ExibirRelatorio") %>' />
@@ -291,6 +339,10 @@
                     <PagerStyle CssClass="pgr" />
                     <AlternatingRowStyle CssClass="alt" />
                 </asp:GridView>
+                <br />
+                <asp:Button ID="btnConfirmarFinalizar" runat="server" Text="Confirmar/Finalizar Pedidos Marcados" OnClientClick="confirmarFinalizarVarios();" />
+                <br />
+                <br />
                 <table>
                     <tr>
                         <td style="text-align: left; vertical-align: top;">
@@ -345,7 +397,7 @@
             <td align="center">
                 <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRptLista(false);"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir</asp:LinkButton>
                 &nbsp;&nbsp;&nbsp;
-                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRptLista(true); return false;"><img border="0" 
+                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRptLista(true); return false;"><img border="0"
                     src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
             </td>
         </tr>
