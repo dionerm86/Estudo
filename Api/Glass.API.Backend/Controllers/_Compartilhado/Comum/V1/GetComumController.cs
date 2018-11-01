@@ -35,5 +35,24 @@ namespace Glass.API.Backend.Controllers.Comum.V1
                 return this.Lista(tipos);
             }
         }
+
+        /// <summary>
+        /// Recupera a lista de tipos de pessoa.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos tipos de pessoa.</returns>
+        [HttpGet]
+        [Route("tiposPessoa")]
+        [SwaggerResponse(200, "Tipos de pessoa encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de pessoa não encontrados.")]
+        public IHttpActionResult ObterTiposPessoa()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = new ConversorEnum<Data.Model.TipoPessoa>()
+                    .ObterTraducao();
+
+                return this.Lista(tipos);
+            }
+        }
     }
 }

@@ -47,7 +47,7 @@ namespace Glass.API.Backend.Helper.Contabilistas
         private void ConverterDtoParaModelo(Contabilista destino)
         {
             destino.Nome = this.cadastro.ObterValorNormalizado(c => c.Nome, destino.Nome);
-            destino.TipoPessoa = this.cadastro.ObterValorNormalizado(c => c.TipoPessoa, destino.TipoPessoa);
+            destino.TipoPessoa = this.cadastro.ObterValorNormalizado(c => c.TipoPessoa, destino.TipoPessoa == "F" ? TipoPessoa.Fisica : TipoPessoa.Juridica) == TipoPessoa.Fisica ? "F" : "J";
             destino.CpfCnpj = this.cadastro.ObterValorNormalizado(c => c.CpfCnpj, destino.CpfCnpj);
             destino.Crc = this.cadastro.ObterValorNormalizado(c => c.Crc, destino.Crc);
             destino.Situacao = (int)this.cadastro.ObterValorNormalizado(c => c.Situacao, (Situacao)destino.Situacao);
@@ -79,8 +79,12 @@ namespace Glass.API.Backend.Helper.Contabilistas
             destino.Numero = this.cadastro.Endereco.ObterValorNormalizado(c => c.Numero, destino.Numero);
             destino.Compl = this.cadastro.Endereco.ObterValorNormalizado(c => c.Complemento, destino.Compl);
             destino.Bairro = this.cadastro.Endereco.ObterValorNormalizado(c => c.Bairro, destino.Bairro);
-            destino.IdCidade = (uint)this.cadastro.Endereco.ObterValorNormalizado(c => c.Cidade, (int)destino.IdCidade);
             destino.Cep = this.cadastro.Endereco.ObterValorNormalizado(c => c.Cep, destino.Cep);
+
+            if (this.cadastro.Endereco.VerificarCampoInformado(c => c.Cidade))
+            {
+                destino.IdCidade = (uint)this.cadastro.Endereco.Cidade.ObterValorNormalizado(c => c.Id, (int)destino.IdCidade);
+            }
         }
     }
 }

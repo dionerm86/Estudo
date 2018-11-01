@@ -63,7 +63,7 @@ namespace Glass.API.Backend.Models.Contabilistas.V1.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("cidade")]
-        public int Cidade
+        public CidadeDto Cidade
         {
             get { return this.ObterValor(c => c.Cidade); }
             set { this.AdicionarValor(c => c.Cidade, value); }

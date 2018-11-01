@@ -499,6 +499,7 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Contabilistas\Componentes\LstContabilistas.js" />
     <Content Include="Vue\PlanosConta\Componentes\LstPlanosConta.Filtro.js" />
     <Content Include="Vue\PlanosConta\CategoriasConta\Componentes\LstCategoriasConta.js" />
     <Content Include="Vue\PlanosConta\GruposConta\Componentes\LstGruposConta.js" />
@@ -1761,6 +1762,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaProduto.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCep.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCnpj.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoTelefone.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCpf.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoDescontoQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoEndereco.js" />
@@ -1776,6 +1778,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ControleSelecaoParticipanteFiscal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoFuncionarios.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoTiposPessoa.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSituacoes.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSetores.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
@@ -1807,6 +1810,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comum.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Contabilistas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Condutores.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Seguradoras.js" />
@@ -1882,6 +1886,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaProduto.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCep.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCnpj.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoTelefone.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCpf.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoDescontoQuantidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoEndereco.html" />
@@ -1897,6 +1902,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ControleSelecaoParticipanteFiscal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoFuncionarios.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoTiposPessoa.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoSituacoes.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoSetores.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />

@@ -542,6 +542,7 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\CidadeDto.cs" />
     <Compile Include="Models\Contabilistas\CadastroAtualizacao\EnderecoDto.cs" />
     <Compile Include="Models\Contabilistas\CadastroAtualizacao\DadosContatoDto.cs" />
     <Compile Include="Models\Contabilistas\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />

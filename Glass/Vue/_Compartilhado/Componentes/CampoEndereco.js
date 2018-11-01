@@ -21,6 +21,17 @@
       twoWay: false,
       default: true,
       validator: Mixins.Validacao.validarBooleanOuVazio
+    },
+
+    /**
+     * Indica se o campo para o número será exibido.
+     * @type {?boolean}
+     */
+    exibirNumero: {
+      required: false,
+      twoWay: false,
+      default: false,
+      validator: Mixins.Validacao.validarBooleanOuVazio
     }
   },
 
