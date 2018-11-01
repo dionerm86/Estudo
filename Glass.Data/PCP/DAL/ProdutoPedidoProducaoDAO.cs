@@ -5268,7 +5268,9 @@ namespace Glass.Data.DAL
                     throw new Exception("Não é possível marcar reposição de mão de obra caso o pedido possua somente um produto de mão de obra. Cancele o pedido.");
                 }
 
-                retorno = AtualizaSituacao(transaction, idFuncPerda, numChapa, numEtiqueta, idSetorRepos, true, false, tipoPerdaRepos, subtipoPerdaRepos, obs, null, 0, null, null, false, null, false, 0);
+                var idFornada = ObterIdFornadaPeloIdProdPedProducao(transaction, (int)idProdPedProducao);
+
+                retorno = AtualizaSituacao(transaction, idFuncPerda, numChapa, numEtiqueta, idSetorRepos, true, false, tipoPerdaRepos, subtipoPerdaRepos, obs, null, 0, null, null, false, null, false, idFornada);
 
                 if (LiberarPedidoDAO.Instance.IsPedidoLiberado(transaction, idPedido) && isMaoDeObra)
                 {
@@ -5451,6 +5453,22 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        /// <summary>
+        /// Obtem o Id da fornada do produto pedido produção
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idProdPedProducao"></param>
+        /// <returns></returns>
+        public int ObterIdFornadaPeloIdProdPedProducao(GDASession sessao, int idProdPedProducao)
+        {
+            if (idProdPedProducao == 0)
+            {
+                return 0;
+            }
+
+            return ObtemValorCampo<int>(sessao, "IdFornada", $"IdProdPedProducao = {idProdPedProducao}");
+        }
 
         #region Insere nova peça
 
