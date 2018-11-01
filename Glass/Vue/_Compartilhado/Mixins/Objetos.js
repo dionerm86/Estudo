@@ -39,7 +39,7 @@ Mixins.Objetos = {
      * @returns {Object} O novo objeto, clone do original.
      */
     clonar: function (objeto) {
-      return this.merge({}, objeto);
+      return this.merge(null, objeto);
     },
 
     /**
