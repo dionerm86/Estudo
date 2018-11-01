@@ -55,7 +55,7 @@
     ufsAtuais: {
       get: function () {
         return this.ufs
-          ? this.listaUfs
+          ? (this.listaUfs || this.ufs)
               .filter(function (uf) {
                 return this.ufs.indexOf(uf.nome) > -1;
               }, this)
