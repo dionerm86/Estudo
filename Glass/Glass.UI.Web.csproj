@@ -1778,6 +1778,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ControleSelecaoParticipanteFiscal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoFuncionarios.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoMultiplaUf.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSituacoes.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSetores.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
@@ -1900,6 +1901,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ControleSelecaoParticipanteFiscal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoFuncionarios.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoMultiplaUf.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoSituacoes.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoSetores.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />

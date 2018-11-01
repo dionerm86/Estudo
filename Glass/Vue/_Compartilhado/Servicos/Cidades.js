@@ -1,4 +1,4 @@
-var Servicos = Servicos || {};
+﻿var Servicos = Servicos || {};
 
 /**
  * Objeto com os serviços para a API de cidades.
@@ -13,25 +13,6 @@ Servicos.Cidades = (function(http) {
      */
     listarUfs: function () {
       return http().get(API + 'ufs');
-    },
-
-    /**
-     * Retorna a lista de UFs do sistema para filtro.
-     * @returns {Promise} Uma promise com o resultado da operação.
-     */
-    listarUfsParaFiltro: function () {
-      return http().get(API + 'ufs')
-        .then(function (resposta) {
-          resposta.data.sort(function (a, b) {
-            return a.localeCompare(b);
-          });
-
-          return {
-            data: resposta.data.map(function (uf) {
-              return { uf };
-            })
-          };
-        });
     },
 
     /**

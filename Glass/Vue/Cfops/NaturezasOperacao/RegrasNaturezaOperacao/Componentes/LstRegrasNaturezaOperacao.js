@@ -23,7 +23,8 @@
     naturezaOperacaoRevendaIntraestadualAtual: {},
     naturezaOperacaoRevendaInterestadualAtual: {},
     naturezaOperacaoRevendaIntraestadualComStAtual: {},
-    naturezaOperacaoRevendaInterestadualComStAtual: {}
+    naturezaOperacaoRevendaInterestadualComStAtual: {},
+    ufsDestinoAtuais: null
   },
 
   methods: {
@@ -101,14 +102,6 @@
      */
     obterItensCorAluminio: function () {
       return Servicos.Produtos.CoresAluminio.obterParaControle();
-    },
-
-    /**
-     * Retorna os itens para o controle de ufs de destino.
-     * @returns {Promise} Uma Promise com o resultado da busca.
-     */
-    obterItensUf: function () {
-      return Servicos.Cidades.listarUfsParaFiltro();
     },
 
     /**
@@ -229,6 +222,7 @@
       this.naturezaOperacaoRevendaInterestadualAtual = regraNatureza && regraNatureza.naturezaOperacaoRevenda ? this.clonar(regraNatureza.naturezaOperacaoRevenda.interestadual) : null;
       this.naturezaOperacaoRevendaIntraestadualComStAtual = regraNatureza && regraNatureza.naturezaOperacaoRevenda ? this.clonar(regraNatureza.naturezaOperacaoRevenda.intraestadualComSt) : null;
       this.naturezaOperacaoRevendaInterestadualComStAtual = regraNatureza && regraNatureza.naturezaOperacaoRevenda ? this.clonar(regraNatureza.naturezaOperacaoRevenda.interestadualComSt) : null;
+      this.ufsDestinoAtuais = regraNatureza ? regraNatureza.ufsDestino : null;
 
       this.regraNatureza = {
         id: regraNatureza ? regraNatureza.id : null,
@@ -499,6 +493,19 @@
       handler: function (atual) {
         if (this.regraNatureza && this.regraNatureza.naturezaOperacaoRevenda) {
           this.regraNatureza.naturezaOperacaoRevenda.interestadualComSt = atual ? atual.id : null;
+        }
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'ufsDestinoAtuais'.
+     * Atualiza a variável de natureza de operação atual com as UFs selecionadas no controle.
+     */
+    ufsDestinoAtuais: {
+      handler: function (atual) {
+        if (this.regraNatureza) {
+          this.regraNatureza.ufsDestino = atual ? atual.split(',') : null;
         }
       },
       deep: true

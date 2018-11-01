@@ -1,4 +1,4 @@
-Vue.component('regras-natureza-operacao-filtros', {
+﻿Vue.component('regras-natureza-operacao-filtros', {
   mixins: [Mixins.Objetos],
   props: {
     /**
@@ -98,14 +98,6 @@ Vue.component('regras-natureza-operacao-filtros', {
      */
     obterItensFiltroCorAluminio: function () {
       return Servicos.Produtos.CoresAluminio.obterParaControle();
-    },
-
-    /**
-     * Retorna os itens para o controle de ufs de destino.
-     * @returns {Promise} Uma Promise com o resultado da busca.
-     */
-    obterItensFiltroUf: function () {
-      return Servicos.Cidades.listarUfsParaFiltro();
     }
   },
 

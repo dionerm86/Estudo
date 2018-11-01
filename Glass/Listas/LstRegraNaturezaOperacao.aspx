@@ -1,4 +1,4 @@
-<%@ Page Title="Regras de Natureza de Operação" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" 
+ï»¿<%@ Page Title="Regras de Natureza de OperaÃ§Ã£o" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" 
     CodeBehind="LstRegraNaturezaOperacao.aspx.cs" Inherits="Glass.UI.Web.Listas.LstRegraNaturezaOperacao" EnableEventValidation="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
@@ -9,7 +9,7 @@
     <div id="app">
         <section>
             <regras-natureza-operacao-filtros :filtro.sync="filtro"></regras-natureza-operacao-filtros>
-            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma regra de natureza de operação encontrada."
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma regra de natureza de operaÃ§Ã£o encontrada."
                 :numero-registros="10" :exibir-inclusao="true" :linha-editando="numeroLinhaEdicao">
                 <template slot="cabecalho">
                     <th></th>
@@ -29,10 +29,10 @@
                         UF's destino
                     </th>
                     <th>
-                        Natureza operação produção
+                        Natureza operaÃ§Ã£o produÃ§Ã£o
                     </th>
                     <th>
-                        Natureza operação revenda
+                        Natureza operaÃ§Ã£o revenda
                     </th>
                     <th></th>
                 </template>
@@ -154,8 +154,7 @@
                         </div>
                     </td>
                     <td>
-                        <lista-selecao-multipla v-bind:ids-selecionados.sync="regraNatureza.ufsDestino" texto-selecionar="Sel." campo-id="uf" campo-nome="uf"
-                            v-bind:funcao-recuperar-itens="obterItensUf" v-bind:ordenar="false"></lista-selecao-multipla>
+                        <lista-selecao-multipla-uf v-bind:ufs.sync="ufsDestinoAtuais"></lista-selecao-multipla-uf>
                     </td>
                     <td style="white-space: nowrap">
                         <div>
@@ -205,7 +204,7 @@
                 </template>
                 <template slot="itemIncluir">
                     <td style="white-space: nowrap">
-                        <button v-on:click.prevent="iniciarCadastro" title="Nova regra de natureza de operação..." v-if="!inserindo">
+                        <button v-on:click.prevent="iniciarCadastro" title="Nova regra de natureza de operaÃ§Ã£o..." v-if="!inserindo">
                             <img src="../Images/Insert.gif">
                         </button>
                         <button v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">
@@ -258,8 +257,7 @@
                         </div>
                     </td>
                     <td>
-                        <lista-selecao-multipla v-bind:ids-selecionados.sync="regraNatureza.ufsDestino" texto-selecionar="Sel." campo-id="uf" campo-nome="uf"
-                            v-bind:funcao-recuperar-itens="obterItensUf" v-bind:ordenar="false" v-if="inserindo"></lista-selecao-multipla>
+                        <lista-selecao-multipla-uf v-bind:ufs.sync="ufsDestinoAtuais" v-if="inserindo"></lista-selecao-multipla-uf>
                     </td>
                     <td style="white-space: nowrap">
                         <div v-if="inserindo">

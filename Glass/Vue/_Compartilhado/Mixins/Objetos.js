@@ -1,4 +1,4 @@
-var Mixins = Mixins || {};
+﻿var Mixins = Mixins || {};
 
 /**
  * Objeto com o mixin para com métodos para manipulação de objetos.
@@ -16,7 +16,7 @@ Mixins.Objetos = {
         throw new Error('Dados de origem são obrigatórios para a função merge.');
       }
 
-      destino = destino || {};
+      destino = destino || (Array.isArray(origem) ? [] : {});
 
       const verificarEVazio = function (item) {
         return item === null || item === undefined || item === '';

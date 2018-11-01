@@ -1,4 +1,4 @@
-<section class="filtros">
+ï»¿<section class="filtros">
     <div>
         <span class="form-group">
             <label for="idLoja">Loja</label>
@@ -38,7 +38,7 @@
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
-            <label>Cor alumínio</label>
+            <label>Cor alumÃ­nio</label>
             <lista-selecao-id-valor v-bind:item-selecionado.sync="corAluminioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroCorAluminio"
                 v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
@@ -49,14 +49,13 @@
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span>
-            <label>Natureza de operação</label>
+            <label>Natureza de operaÃ§Ã£o</label>
             <campo-busca-natureza-operacao v-bind:naturezaOperacao.sync="naturezaOperacaoAtual"></campo-busca-natureza-operacao>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label for="tipo">UF destino</label>
-            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.ufsDestino" texto-selecionar="Selecione a UF" campo-id="uf" campo-nome="uf"
-                v-bind:funcao-recuperar-itens="obterItensFiltroUf" v-bind:ordenar="false"></lista-selecao-multipla>
+            <lista-selecao-multipla-uf v-bind:ufs.sync="filtroAtual.ufsDestino"></lista-selecao-multipla-uf>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
