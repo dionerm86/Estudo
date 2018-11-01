@@ -5660,7 +5660,7 @@ namespace Glass.Data.DAL
                 var debitosCliente = ContasReceberDAO.Instance.GetDebitos(sessao, idCliente, null);
                 var totalPedido = GetTotal(sessao, (uint)idPedido);
 
-                if ((!VerificaSinalPagamentoReceber(sessao, new List<int> { idPedido }, out mensagemErro) && mensagemErro.Count > 0) ||
+                if ((VerificaSinalPagamentoReceber(sessao, new List<int> { idPedido }, out mensagemErro) && mensagemErro.Count > 0) ||
                     (limiteCliente - (debitosCliente + totalPedido) < 0))
                 {
                     idsPedidosErro.Add(idPedido);
@@ -7583,7 +7583,7 @@ namespace Glass.Data.DAL
                 idsPedidoOk = new List<int>();
                 idsPedidoErro = new List<int>();
                 var situacaoCliente = ClienteDAO.Instance.GetSituacao(pedidos[0].IdCli);
-                var possuiSinalPagamentoReceber = !VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idsPedidoOk, out idsPedidoErro);
+                var possuiSinalPagamentoReceber = VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idsPedidoOk, out idsPedidoErro);
 
                 // Se, bloquear confirmação de pedido com sinal à receber.
                 if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && possuiSinalPagamentoReceber && idsPedidoOk.Count == 0)
@@ -14012,7 +14012,7 @@ namespace Glass.Data.DAL
 
             if (!(idsPedidos?.Any(f => f > 0) ?? false))
             {
-                return true;
+                return false;
             }
 
             return VerificaSinalPagamentoReceber(sessao, GetByString(null, string.Join(",", idsPedidos)), out mensagemErro);
@@ -14048,6 +14048,8 @@ namespace Glass.Data.DAL
 
             if (!PedidoConfig.ImpedirConfirmacaoPedidoPagamento)
             {
+                idsPedidosOk.AddRange(pedidos.Select(f => (int)f.IdPedido));
+
                 return false;
             }
 
@@ -14090,7 +14092,7 @@ namespace Glass.Data.DAL
                 mensagemErro.Add($"O{incluirS} pedido{incluirS} {string.Join(", ", idsPedidoPagtoAntecipado.ToList())} deve{incluirM} ser pago{incluirS} antecipadamente.\n");
             }
 
-            return !(mensagemErro.Count > 0);
+            return mensagemErro.Count > 0;
         }
 
         #endregion

@@ -760,7 +760,7 @@ namespace Glass.Data.DAL
             var mensagemSinalPagamentoAntecipado = new List<string>();
             // Variável criada para retornar a mensagem de validação de estoque dos pedidos.
             var mensagemEstoque = string.Empty;
-            var pedidosPossuemSinalPagamentoAntecipadoAReceber = !PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, idsPedido.ToList(), out mensagemSinalPagamentoAntecipado);
+            var pedidosPossuemSinalPagamentoAntecipadoAReceber = PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, idsPedido.ToList(), out mensagemSinalPagamentoAntecipado);
             var pedidosPossuemEstoque = PedidoPossuiEstoque(session, idsProdutoPedido.Select(f => (uint)f).ToArray(), quantidadesLiberar.ToArray(), out mensagemEstoque);
             var indiceCheques = UtilsFinanceiro.IndexFormaPagto(Pagto.FormaPagto.ChequeProprio, idsFormaPagamento.Select(f => (uint)f).ToArray());
             var idSetorEntregue = (int)Utils.ObtemIdSetorEntregue().GetValueOrDefault();
@@ -1793,7 +1793,7 @@ namespace Glass.Data.DAL
 
             var mensagem = new List<string>();
 
-            if (!PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, idsPedido?.Split(',')?.Select(f => f.StrParaInt())?.ToList(), out mensagem))
+            if (PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, idsPedido?.Split(',')?.Select(f => f.StrParaInt())?.ToList(), out mensagem))
             {
                 throw new Exception("Falha ao liberar pedidos. Erro: " + string.Join(", ", mensagem));
             }
