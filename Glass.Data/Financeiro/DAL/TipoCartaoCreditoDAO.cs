@@ -261,20 +261,42 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public List<uint> PlanosContaEmUsoTipoCartao(uint idTipoCartao)
         {
-            return ExecuteMultipleScalar<uint>(string.Format(@"
-                SELECT idConta FROM(
-                SELECT idTipoCartao, idContaFunc AS idConta FROM tipo_cartao_credito UNION ALL
-                SELECT idTipoCartao, idContaEntrada AS idConta FROM tipo_cartao_credito UNION ALL
-                SELECT idTipoCartao, idContaEstorno AS idConta FROM tipo_cartao_credito UNION ALL
-                SELECT idTipoCartao, idContaEstornoRecPrazo AS idConta FROM tipo_cartao_credito UNION ALL
-                SELECT idTipoCartao, idContaEstornoEntrada AS idConta FROM tipo_cartao_credito UNION ALL
-                SELECT idTipoCartao, idContaEstornoChequeDev AS idConta FROM tipo_cartao_credito UNION ALL
-                SELECT idTipoCartao, idContaDevolucaoPagto AS idConta FROM tipo_cartao_credito UNION ALL
-                SELECT idTipoCartao, idContaEstornoDevolucaoPagto AS idConta FROM tipo_cartao_credito UNION ALL
-                SELECT idTipoCartao, idContaVista AS idConta FROM tipo_cartao_credito UNION ALL
-                SELECT idTipoCartao, idContaRecPrazo AS idConta FROM tipo_cartao_credito UNION ALL
-                SELECT idTipoCartao, idContaRecChequeDev AS idConta FROM tipo_cartao_credito) AS planos_conta_em_uso_tipo_cartao
-                    WHERE idTipoCartao <> {0} AND idConta <> 0 ORDER BY idConta;", idTipoCartao));
+            return ExecuteMultipleScalar<uint>($@"
+                SELECT idConta FROM({PlanoContasTipoCartao()}) AS planos_conta_em_uso_tipo_cartao
+                    WHERE idTipoCartao <> {idTipoCartao} AND idConta <> 0 ORDER BY idConta;");
+        }
+
+        private string PlanoContasTipoCartao()
+        {
+            return @"SELECT IdTipoCartao, IdContaFunc AS idConta FROM tipo_cartao_credito UNION ALL
+                SELECT IdTipoCartao, IdContaEntrada AS idConta FROM tipo_cartao_credito UNION ALL
+                SELECT IdTipoCartao, IdContaEstorno AS idConta FROM tipo_cartao_credito UNION ALL
+                SELECT IdTipoCartao, IdContaEstornoRecPrazo AS idConta FROM tipo_cartao_credito UNION ALL
+                SELECT IdTipoCartao, IdContaEstornoEntrada AS idConta FROM tipo_cartao_credito UNION ALL
+                SELECT IdTipoCartao, IdContaEstornoChequeDev AS idConta FROM tipo_cartao_credito UNION ALL
+                SELECT IdTipoCartao, IdContaDevolucaoPagto AS idConta FROM tipo_cartao_credito UNION ALL
+                SELECT IdTipoCartao, IdContaEstornoDevolucaoPagto AS idConta FROM tipo_cartao_credito UNION ALL
+                SELECT IdTipoCartao, IdContaVista AS idConta FROM tipo_cartao_credito UNION ALL
+                SELECT IdTipoCartao, IdContaRecPrazo AS idConta FROM tipo_cartao_credito UNION ALL
+                SELECT IdTipoCartao, IdContaRecChequeDev AS idConta FROM tipo_cartao_credito";
+        }
+
+        /// <summary>
+        /// Verifica se existem planos de conta que estão associados a mais de um tipo de cartao e/ou associados a mais de um tipo de recebimento/estorno.
+        /// </summary>
+        /// <param name="sessao">Sessao do GDA.</param>
+        /// <returns>Retorna uma comparação lógica que é resultado do teste se existem planos de conta associados a mais de um tipo de recebimento/estorno e ou tipo de cartao.</returns>
+        public bool VerificarPlanosContaReplicados(GDASession sessao)
+        {
+           return objPersistence.LoadResult(sessao, PlanoContasTipoCartao())
+                .Select(f =>
+                new
+                {
+                    IdTipoCartao = f.GetUInt32(0),
+                    IdConta = f.GetUInt32(1)
+                }).GroupBy(p => p.IdConta)
+                .Where(group => group.Count() > 1)
+                .Any();
         }
 
         public TipoCartaoCredito ObterTipoCartao(uint operadora, string bandeira, string tipoVenda)

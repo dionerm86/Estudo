@@ -835,6 +835,11 @@ namespace Glass.Data.DAL
                 // Transfere o valor em cartão para o caixa geral
                 if (cxDiario.TotalCartao > 0)
                 {
+                    if (TipoCartaoCreditoDAO.Instance.VerificarPlanosContaReplicados(transaction))
+                    {
+                        throw new Exception("Existem planos de conta duplicados no cadastro de Cartões.");
+                    }
+
                     // Transfere o total de cartão de CRÉDITO para o caixa geral
                     valor = cxDiario.Cartoes.Where(f => f.Tipo == TipoCartaoEnum.Credito).Sum(f => f.Valor);
 
