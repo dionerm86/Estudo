@@ -3785,7 +3785,7 @@ namespace Glass.Data.DAL
 
                     string separador = "<br />";
                     string[] etiquetas = GetEtiquetasByPlanoCorte(sessao, codEtiqueta.Substring(1));
-                    string retornoPlanoCorte = "";
+                    string retornoPlanoCorte = string.Empty;
                     string msg = String.Empty;
 
                     #region Salva na tabela de controle
@@ -3830,8 +3830,10 @@ namespace Glass.Data.DAL
                         ErroDAO.Instance.InserirFromException(String.Format("AtualizaSituacao - Chapa: {0} Plano: {1}", codMateriaPrima, codEtiqueta),
                             new Exception(msg));
 
-                    if (retornoPlanoCorte == "")
-                        throw new Exception("Esse plano de corte não possui peças para serem marcadas nesse setor." + msg);
+                    if (retornoPlanoCorte == string.Empty)
+                    {
+                        throw new Exception($"O plano de corte ({codEtiqueta}) não possui peças para serem marcadas nesse setor. {msg}");
+                    }
 
                     /* Chamado 17508. */
                     retornoPlanoCorte = !string.IsNullOrEmpty(msg) ? msg + "-" + retornoPlanoCorte : retornoPlanoCorte;
