@@ -216,6 +216,10 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Projetos\V1\GruposProjeto\GetGruposProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\GruposProjeto\GruposProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\ModelosProjeto\GetModelosProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\ModelosProjeto\ModelosProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\ProjetosController.cs" />
     <Compile Include="Controllers\Projetos\V1\DeleteProjetosController.cs" />
     <Compile Include="Controllers\Projetos\V1\GetProjetosController.cs" />
@@ -432,6 +436,7 @@
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Projetos\ModelosProjeto\TraducaoOrdenacaoListaModelosProjeto.cs" />
     <Compile Include="Helper\Projetos\TraducaoOrdenacaoListaProjetos.cs" />
     <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
     <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
@@ -581,6 +586,9 @@
     <Compile Include="Models\Projetos\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Projetos\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Projetos\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Projetos\V1\ModelosProjeto\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Projetos\V1\ModelosProjeto\Lista\ListaDto.cs" />
+    <Compile Include="Models\Projetos\V1\ModelosProjeto\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />

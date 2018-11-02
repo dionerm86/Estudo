@@ -25,7 +25,7 @@ namespace Glass.API.Backend.Models.Projetos.V1.Lista
         }
 
         /// <summary>
-        /// Obtém ou define o identifiador do projeto.
+        /// Obtém ou define o identificador do projeto.
         /// </summary>
         [JsonProperty("id")]
         public int? Id { get; set; }
