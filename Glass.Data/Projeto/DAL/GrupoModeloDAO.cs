@@ -100,19 +100,24 @@ namespace Glass.Data.DAL
             return base.Update(objUpdate);
         }
 
+        public override int DeleteByPrimaryKey(GDASession sessao, int key)
+        {
+            if (ExecuteScalar<bool>(sessao, "Select Count(*)>0 From projeto_modelo Where idGrupoModelo=" + key))
+            {
+                throw new InvalidOperationException("Este grupo não pode ser excluído pois existem projetos cadastrados no mesmo.");
+            }
+
+            return base.DeleteByPrimaryKey(sessao, key);
+        }
+
         public override int DeleteByPrimaryKey(uint Key)
         {
-            // Verifica se este grupo está sendo usado em algum ProjetoModelo
-            if (CurrentPersistenceObject.ExecuteSqlQueryCount("Select Count(*) From projeto_modelo Where idGrupoModelo=" + Key) > 0)
-                throw new Exception("Este grupo não pode ser excluído pois existem projetos cadastrados no mesmo.");
-
-            LogAlteracaoDAO.Instance.ApagaLogGrupoModelo(Key);
-            return GDAOperations.Delete(new GrupoModelo { IdGrupoModelo = Key });
+            return DeleteByPrimaryKey(null, (int)Key);
         }
 
         public override int Delete(GrupoModelo objDelete)
         {
-            return DeleteByPrimaryKey(objDelete.IdGrupoModelo);
+            return DeleteByPrimaryKey(null, (int)objDelete.IdGrupoModelo);
         }
 
         #endregion

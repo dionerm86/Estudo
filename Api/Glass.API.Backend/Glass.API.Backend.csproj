@@ -216,8 +216,11 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Projetos\V1\GruposProjeto\DeleteGruposProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\GruposProjeto\GetGruposProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\GruposProjeto\GruposProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\GruposProjeto\PatchGruposProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\GruposProjeto\PostGruposProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\ModelosProjeto\GetModelosProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\ModelosProjeto\ModelosProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\ProjetosController.cs" />
@@ -460,6 +463,8 @@
     <Compile Include="Helper\Cfops\TraducaoOrdenacaoListaCfops.cs" />
     <Compile Include="Helper\Condutores\ConverterCadastroAtualizacaoParaCondutor.cs" />
     <Compile Include="Helper\Condutores\TraducaoOrdenacaoListaCondutores.cs" />
+    <Compile Include="Helper\Projetos\GruposProjeto\ConverterCadastroAtualizacaoParaGrupoProjeto.cs" />
+    <Compile Include="Helper\Projetos\GruposProjeto\TraducaoOrdenacaoListaGruposProjeto.cs" />
     <Compile Include="Helper\Rotas\TraducaoOrdenacaoListaRotas.cs" />
     <Compile Include="Helper\Seguradoras\TraducaoOrdenacaoListaSeguradoras.cs" />
     <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
@@ -583,12 +588,16 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
+    <Compile Include="Models\Projetos\V1\GruposProjeto\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Projetos\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Projetos\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Projetos\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Projetos\V1\ModelosProjeto\Lista\FiltroDto.cs" />
     <Compile Include="Models\Projetos\V1\ModelosProjeto\Lista\ListaDto.cs" />
     <Compile Include="Models\Projetos\V1\ModelosProjeto\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Projetos\V1\GruposProjeto\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Projetos\V1\GruposProjeto\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Projetos\V1\GruposProjeto\Lista\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />

@@ -1980,15 +1980,6 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Apaga o Log de Alterações para o grupo de modelos de projeto.
-        /// </summary>
-        /// <param name="idGrupoModelo"></param>
-        public void ApagaLogGrupoModelo(uint idGrupoModelo)
-        {
-            ApagaLog(LogAlteracao.TabelaAlteracao.GrupoModelo, idGrupoModelo);
-        }
-
-        /// <summary>
         /// Apaga o Log de Alterações para a posição da peça individual do modelo de projeto.
         /// </summary>
         /// <param name="idPosicaoPecaIndividual"></param>
