@@ -61,33 +61,33 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="descricao"></param>
         /// <returns></returns>
-        private bool EstaEmUso(string descricao)
+        private bool EstaEmUso(GDASession sessao, string descricao)
         {
-            if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From peca_projeto_modelo Where InStr(calculoQtde, ?calcQtd)>0", 
+            if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From peca_projeto_modelo Where InStr(calculoQtde, ?calcQtd)>0", 
                 new GDAParameter("?calcQtd", MedidaProjetoModelo.TrataDescricao(descricao).ToUpper())) > 0)
                 return true;
 
-            if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From peca_projeto_modelo Where InStr(calculoAltura, ?calcAlt)>0", 
+            if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From peca_projeto_modelo Where InStr(calculoAltura, ?calcAlt)>0", 
                 new GDAParameter("?calcAlt", MedidaProjetoModelo.TrataDescricao(descricao).ToUpper())) > 0)
                 return true;
             
-            if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From peca_projeto_modelo Where InStr(calculoLargura, ?calcLarg)>0", 
+            if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From peca_projeto_modelo Where InStr(calculoLargura, ?calcLarg)>0", 
                 new GDAParameter("?calcLarg", MedidaProjetoModelo.TrataDescricao(descricao).ToUpper())) > 0)
                 return true;
 
-            if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From material_projeto_modelo Where InStr(calculoQtde, ?calcQtd)>0", 
+            if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From material_projeto_modelo Where InStr(calculoQtde, ?calcQtd)>0", 
                 new GDAParameter("?calcQtd", MedidaProjetoModelo.TrataDescricao(descricao).ToUpper())) > 0)
                 return true;
             
-            if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From material_projeto_modelo Where InStr(calculoAltura, ?calcAlt)>0", 
+            if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From material_projeto_modelo Where InStr(calculoAltura, ?calcAlt)>0", 
                 new GDAParameter("?calcAlt", MedidaProjetoModelo.TrataDescricao(descricao).ToUpper())) > 0)
                 return true;
             
-            if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From posicao_peca_modelo Where InStr(calc, ?calc)>0", 
+            if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From posicao_peca_modelo Where InStr(calc, ?calc)>0", 
                 new GDAParameter("?calc", MedidaProjetoModelo.TrataDescricao(descricao).ToUpper())) > 0)
                 return true;
 
-            if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From posicao_peca_individual Where InStr(calc, ?calc)>0",
+            if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From posicao_peca_individual Where InStr(calc, ?calc)>0",
                 new GDAParameter("?calc", MedidaProjetoModelo.TrataDescricao(descricao).ToUpper())) > 0)
                 return true;
 
@@ -169,21 +169,24 @@ namespace Glass.Data.DAL
 
         #region Métodos sobrescritos
 
-        public override int Update(MedidaProjeto objUpdate)
+        public override int Update(GDASession session, MedidaProjeto objUpdate)
         {
-            string descrAntiga = ObtemValorCampo<string>("descricao", "idMedidaProjeto=" + objUpdate.IdMedidaProjeto);
+            string descrAntiga = ObtemValorCampo<string>(session, "descricao", "idMedidaProjeto=" + objUpdate.IdMedidaProjeto);
 
             // Verifica se a descrição antiga e a nova desta medida já está sendo usada
-            if (descrAntiga != objUpdate.Descricao && (EstaEmUso(descrAntiga) || EstaEmUso(objUpdate.Descricao)))
-                throw new Exception("A descrição desta medida não pode ser alterada por haver expressões de cálculo relacionadas à mesma.");
+            if (descrAntiga != objUpdate.Descricao && (EstaEmUso(session, descrAntiga) || EstaEmUso(session, objUpdate.Descricao)))
+            {
+                throw new InvalidOperationException("A descrição desta medida não pode ser alterada por haver expressões de cálculo relacionadas à mesma.");
+            }
 
-            LogAlteracaoDAO.Instance.LogMedidaProjeto(objUpdate);
-            return base.Update(objUpdate);
+            LogAlteracaoDAO.Instance.LogMedidaProjeto(session, objUpdate);
+
+            return base.Update(session, objUpdate);
         }
 
-        public override uint Insert(MedidaProjeto objInsert)
+        public override int Update(MedidaProjeto objUpdate)
         {
-            return Insert(null, objInsert);
+            return Update(null, objUpdate);
         }
 
         public override uint Insert(GDASession session, MedidaProjeto objInsert)
@@ -195,18 +198,29 @@ namespace Glass.Data.DAL
             return base.Insert(session, objInsert);
         }
 
+        public override uint Insert(MedidaProjeto objInsert)
+        {
+            return Insert(null, objInsert);
+        }
+
+        public override int DeleteByPrimaryKey(GDASession sessao, uint Key)
+        {
+            if (EstaEmUso(sessao, ObtemValorCampo<string>(sessao, "descricao", "idMedidaProjeto=" + Key)))
+            {
+                throw new Exception("Esta medida não pode ser excluída por haver expressões de cálculo relacionadas à mesma.");
+            }
+
+            return base.DeleteByPrimaryKey(sessao, Key);
+        }
+
         public override int DeleteByPrimaryKey(uint Key)
         {
-            if (EstaEmUso(ObtemValorCampo<string>("descricao", "idMedidaProjeto=" + Key)))
-                throw new Exception("Esta medida não pode ser excluída por haver expressões de cálculo relacionadas à mesma.");
-
-            LogAlteracaoDAO.Instance.ApagaLogMedidaProjeto(Key);
-            return base.DeleteByPrimaryKey(Key);
+            return DeleteByPrimaryKey(null, Key);
         }
 
         public override int Delete(MedidaProjeto objDelete)
         {
-            return DeleteByPrimaryKey(objDelete.IdMedidaProjeto);
+            return DeleteByPrimaryKey(null, objDelete.IdMedidaProjeto);
         }
 
         #endregion

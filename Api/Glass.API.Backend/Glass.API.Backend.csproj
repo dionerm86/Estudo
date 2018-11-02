@@ -216,6 +216,11 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Projetos\V1\MedidasProjeto\DeleteMedidasProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\MedidasProjeto\GetMedidasProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\MedidasProjeto\MedidasProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\MedidasProjeto\PatchMedidasProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\MedidasProjeto\PostMedidasProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\GruposProjeto\DeleteGruposProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\GruposProjeto\GetGruposProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\GruposProjeto\GruposProjetoController.cs" />
@@ -439,6 +444,8 @@
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Projetos\MedidasProjeto\ConverterCadastroAtualizacaoParaMedidaProjeto.cs" />
+    <Compile Include="Helper\Projetos\MedidasProjeto\TraducaoOrdenacaoListaMedidasProjeto.cs" />
     <Compile Include="Helper\Projetos\ModelosProjeto\TraducaoOrdenacaoListaModelosProjeto.cs" />
     <Compile Include="Helper\Projetos\TraducaoOrdenacaoListaProjetos.cs" />
     <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
@@ -588,6 +595,10 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
+    <Compile Include="Models\Projetos\V1\MedidasProjeto\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Projetos\V1\MedidasProjeto\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Projetos\V1\MedidasProjeto\Lista\ListaDto.cs" />
+    <Compile Include="Models\Projetos\V1\MedidasProjeto\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Projetos\V1\GruposProjeto\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Projetos\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Projetos\V1\Lista\ListaDto.cs" />
