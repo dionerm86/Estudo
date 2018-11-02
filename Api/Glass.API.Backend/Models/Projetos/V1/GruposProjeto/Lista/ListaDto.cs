@@ -28,8 +28,8 @@ namespace Glass.API.Backend.Models.Projetos.V1.GruposProjeto.Lista
             this.Esquadria = grupo.Esquadria;
             this.Situacao = new IdNomeDto
             {
-                Id = (int)grupo.Situacao,
-                Nome = Colosoft.Translator.Translate(grupo.Situacao).Format(),
+                Id = grupo.Situacao,
+                Nome = Colosoft.Translator.Translate((Situacao)grupo.Situacao).Format(),
             };
 
             this.Permissoes = new PermissoesDto

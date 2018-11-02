@@ -535,6 +535,7 @@
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.js" />
     <Content Include="Vue\Fornecedores\Templates\LstFornecedores.Filtro.html" />
     <Content Include="Vue\Condutores\Componentes\CadCondutores.js" />
+    <Content Include="Vue\Projetos\GruposProjeto\Componentes\LstGruposProjeto.js" />
     <Content Include="Vue\Rotas\Componentes\LstRotas.js" />
     <Content Include="Vue\TabelasDescontoAcrescimoCliente\Componentes\LstTabelasDescontoAcrescimoCliente.js" />
     <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
