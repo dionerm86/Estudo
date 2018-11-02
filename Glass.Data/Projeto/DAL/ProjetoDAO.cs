@@ -1169,8 +1169,6 @@ namespace Glass.Data.DAL
             }
         }
 
-        public void
-
         #endregion
     }
 }
