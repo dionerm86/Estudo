@@ -62,10 +62,10 @@ namespace Glass.API.Backend.Controllers.Projetos.V1.ModelosProjeto
         /// </summary>
         /// <returns>Uma lista JSON com os itens encontrados.</returns>
         [HttpGet]
-        [Route("filtro")]
+        [Route("situacoes")]
         [SwaggerResponse(200, "Situações de modelo de projeto encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Situações de modelo de projeto não encontradas.")]
-        public IHttpActionResult ObterFiltro()
+        public IHttpActionResult ObterSituacoes()
         {
             using (var sessao = new GDATransaction())
             {

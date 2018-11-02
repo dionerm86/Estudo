@@ -501,6 +501,9 @@
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.Filtro.js" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.js" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Templates\LstModelosProjeto.Filtro.html" />
     <Content Include="Vue\Projetos\Templates\LstProjetos.Filtro.html" />
     <Content Include="Vue\PlanosConta\Componentes\LstPlanosConta.Filtro.js" />
     <Content Include="Vue\PlanosConta\CategoriasConta\Componentes\LstCategoriasConta.js" />

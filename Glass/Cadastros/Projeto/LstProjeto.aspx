@@ -1,4 +1,5 @@
-<%@ Page Title="Projetos Efetuados" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstProjeto.aspx.cs" Inherits="Glass.UI.Web.Cadastros.Projeto.LstProjeto" %>
+<%@ Page Title="Projetos Efetuados" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" 
+    CodeBehind="LstProjeto.aspx.cs" Inherits="Glass.UI.Web.Cadastros.Projeto.LstProjeto" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" Runat="Server">
     <%=
