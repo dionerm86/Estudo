@@ -216,6 +216,9 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Projetos\V1\ProjetosController.cs" />
+    <Compile Include="Controllers\Projetos\V1\DeleteProjetosController.cs" />
+    <Compile Include="Controllers\Projetos\V1\GetProjetosController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\FornecedoresController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\DeleteFornecedoresController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\GetFornecedoresController.cs" />
@@ -429,6 +432,7 @@
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Projetos\TraducaoOrdenacaoListaProjetos.cs" />
     <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
     <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
@@ -574,6 +578,9 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
+    <Compile Include="Models\Projetos\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Projetos\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Projetos\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Rotas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Rotas\V1\Lista\ListaDto.cs" />
