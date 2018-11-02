@@ -29,12 +29,13 @@ namespace Glass.API.Backend.Models.Projetos.V1.MedidasProjeto.Lista
             this.ExibirApenasEmCalculosDeFerragensEAluminios = medida.ExibirApenasFerragensAluminios;
             this.GrupoMedidaProjeto = new IdNomeDto
             {
-                Id = (int)medida.IdGrupoMedProj,
+                Id = (int?)medida.IdGrupoMedProj,
                 Nome = medida.DescrGrupo,
             };
 
             this.Permissoes = new PermissoesDto
             {
+                Excluir = medida.EditarVisible,
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.MedidaProjeto, medida.IdMedidaProjeto, null),
             };
         }

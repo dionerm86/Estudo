@@ -64,7 +64,7 @@
                 </template>
                 <template slot="itemIncluir">
                     <td style="white-space: nowrap">
-                        <button v-on:click.prevent="iniciarCadastro" title="Novo turno..." v-if="!inserindo">
+                        <button v-on:click.prevent="iniciarCadastro" title="Novo grupo de projeto..." v-if="!inserindo">
                             <img src="../../Images/Insert.gif">
                         </button>
                         <button v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">

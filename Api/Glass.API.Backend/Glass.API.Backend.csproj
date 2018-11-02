@@ -216,6 +216,8 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Projetos\V1\GruposMedidaProjeto\GetGruposMedidaProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\GruposMedidaProjeto\GruposMedidaProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\MedidasProjeto\DeleteMedidasProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\MedidasProjeto\GetMedidasProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\MedidasProjeto\MedidasProjetoController.cs" />

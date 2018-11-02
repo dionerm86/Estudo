@@ -102,6 +102,86 @@ Servicos.Projetos = (function(http) {
     },
 
     /**
+     * Objeto com os serviços para a API de medidas de projeto.
+     */
+    Medidas: {
+      /**
+       * Recupera a lista de medidas de projeto.
+       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'medidas', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Remove uma medida de projeto.
+       * @param {!number} id O identificador da medida de projeto que será excluída.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      excluir: function (id) {
+        if (!id) {
+          throw new Error('Medida de projeto é obrigatória.');
+        }
+
+        return http().delete(API + 'medidas/' + id);
+      },
+
+      /**
+       * Insere uma medida de projeto.
+       * @param {!Object} medidaProjeto O objeto com os dados da medida de projeto a ser inserida.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      inserir: function (medidaProjeto) {
+        return http().post(API + 'medidas', medidaProjeto);
+      },
+
+      /**
+       * Altera os dados de uma medida de projeto.
+       * @param {!number} id O identificador do item que será alterado.
+       * @param {!Object} medida O objeto com os dados do item a serem alterados.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      atualizar: function (id, medidaProjeto) {
+        if (!id) {
+          throw new Error('Medida de projeto é obrigatória.');
+        }
+
+        if (!medidaProjeto || medidaProjeto === {}) {
+          return Promise.resolve();
+        }
+
+        return http().patch(API + 'medidas/' + id, medidaProjeto);
+      },
+
+      /**
+       * Recupera a lista de medidas de projeto para uso no controle de seleção.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function () {
+        return http().get(API + 'medidas/filtro');
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de grupos de medida de projeto.
+     */
+    GruposMedida: {
+      /**
+       * Recupera a lista de grupos de medidas de projeto para uso no controle de seleção.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function () {
+        return http().get(API + 'gruposMedida/filtro');
+      }
+    },
+
+    /**
      * Recupera a lista de projetos.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
      * @param {number} pagina O número da página de resultados a ser exibida.

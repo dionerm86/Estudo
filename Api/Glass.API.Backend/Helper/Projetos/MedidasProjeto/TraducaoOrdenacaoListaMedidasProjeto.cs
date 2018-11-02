@@ -42,7 +42,7 @@ namespace Glass.API.Backend.Helper.Projetos.MedidasProjeto
                     return "IdGrupoMedProj";
 
                 case "valorpadrao":
-                    return campo;
+                    return "ValorPadrao";
 
                 default:
                     return this.OrdenacaoPadrao;

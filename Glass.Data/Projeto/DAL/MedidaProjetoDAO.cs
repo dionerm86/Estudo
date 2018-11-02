@@ -15,33 +15,31 @@ namespace Glass.Data.DAL
 
             string where = "";
 
-            string sort = " order by mp.descricao asc";
-
             if (!string.IsNullOrEmpty(descricao))
                 where += " and mp.descricao like '%" + descricao + "%'";
 
             string sql = @"
                 Select " + campos + @" 
-                From medida_projeto mp Left Join grupo_medida_projeto gmp On (mp.idGrupoMedProj=gmp.idGrupoMedProj) where 1 " + where + sort;
+                From medida_projeto mp Left Join grupo_medida_projeto gmp On (mp.idGrupoMedProj=gmp.idGrupoMedProj) where 1 " + where;
 
             return sql;
         }
 
-        public IList<MedidaProjeto> GetMedidas()
+        public List<MedidaProjeto> GetMedidas()
         {
             return objPersistence.LoadData(SqlList(null, true)).ToList();
         }
 
-        public IList<MedidaProjeto> GetList(string descricao, string sortExpression, int startRow, int pageSize)
+        public List<MedidaProjeto> GetList(string descricao, string sortExpression, int startRow, int pageSize)
         {
             if (GetCountReal(descricao) == 0)
             {
                 var lst = new List<MedidaProjeto>();
                 lst.Add(new MedidaProjeto());
-                return lst.ToArray();
+                return lst;
             }
 
-            return LoadDataWithSortExpression(SqlList(descricao, true), sortExpression, startRow, pageSize, null);
+            return objPersistence.LoadDataWithSortExpression(SqlList(descricao, true), new InfoSortExpression(sortExpression), new InfoPaging(startRow, pageSize), null);
         }
 
         public int GetCountReal(string descricao)

@@ -14,11 +14,11 @@ namespace Glass.API.Backend.Models.Projetos.V1.MedidasProjeto.Lista
     public class PermissoesDto
     {
         /// <summary>
-        /// Obtém ou define um valor que indica se a medida de projeto pode ser alterada.
+        /// Obtém ou define um valor que indica se a medida de projeto pode ser excluída.
         /// </summary>
         [DataMember]
-        [JsonProperty("editar")]
-        public bool Editar { get; set; }
+        [JsonProperty("excluir")]
+        public bool Excluir { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se a medida de projeto possui log de alterações.
