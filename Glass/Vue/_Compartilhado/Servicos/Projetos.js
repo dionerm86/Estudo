@@ -182,6 +182,72 @@ Servicos.Projetos = (function(http) {
     },
 
     /**
+     * Objeto com os serviços para a API de ferragens.
+     */
+    Ferragens: {
+      /**
+       * Objeto com os serviços para a API de fabricantes de ferragens.
+       */
+      Fabricantes: {
+        /**
+         * Recupera a lista de grupos de medidas de projeto para uso no controle de seleção.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        obterParaControle: function () {
+          return http().get(API + 'ferragens/fabricantes/filtro');
+        }
+      },
+
+      /**
+       * Recupera a lista de ferragens.
+       * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'ferragens', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Recupera as configurações para a tela de ferragens.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterConfiguracoesLista: function () {
+        return http().get(API + 'ferragens/configuracoes');
+      },
+
+      /**
+       * Remove uma ferragem.
+       * @param {!number} id O identificador da ferragem que será excluída.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      excluir: function (id) {
+        if (!id) {
+          throw new Error('Ferragem é obrigatória.');
+        }
+
+        return http().delete(API + 'ferragens/' + id);
+      },
+
+      /**
+       * Altera a situação da ferragem.
+       * @param {!number} id O identificador do item que será alterado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      alterarSituacao: function (id) {
+        if (!id) {
+          throw new Error('Ferragem é obrigatória.');
+        }
+
+        return http().patch(API + 'ferragens/' + id + '/situacao');
+      }
+    },
+
+    /**
      * Recupera a lista de projetos.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
      * @param {number} pagina O número da página de resultados a ser exibida.

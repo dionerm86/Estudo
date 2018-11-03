@@ -32,13 +32,13 @@ namespace Glass.API.Backend.Helper.Projetos.Ferragens
                 case "nome":
                     return "Nome";
 
-                case "faricante":
+                case "fabricante":
                     return "NomeFabricante";
 
                 case "situacao":
                     return "Situacao";
 
-                case "dataAlteracao":
+                case "dataalteracao":
                     return "DataAlteracao";
 
                 default:

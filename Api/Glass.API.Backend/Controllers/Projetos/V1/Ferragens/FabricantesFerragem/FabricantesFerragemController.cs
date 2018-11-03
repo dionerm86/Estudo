@@ -5,7 +5,7 @@
 using GDA;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.Projetos.V1.Ferragens.FabricantesFerragens
+namespace Glass.API.Backend.Controllers.Projetos.V1.Ferragens.FabricantesFerragem
 {
     /// <summary>
     /// Controller de fabricantes de ferragens.
