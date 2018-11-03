@@ -6851,6 +6851,19 @@ namespace Glass.Data.DAL
                         if (contasQuitar == null || contasQuitar.Count == 0)
                             throw new Exception("Não há nenhuma conta a receber para ser quitada, verifique se já foram quitadas.");
 
+                        var contasReceber = GetByPks(
+                            transaction,
+                            string.Join(", ", contasQuitar.Select(c => c.Value))).ToList();
+
+                        var falhas = string.Join(
+                            Environment.NewLine,
+                            contasReceber.Where(c => c.Recebida).Select(c => $"Cód.:{c.IdContaR} - Ref.:{c.Referencia}"));
+
+                        if (!string.IsNullOrWhiteSpace(falhas))
+                        {
+                            throw new Exception($"Contas já recebidas:{Environment.NewLine}{falhas}");
+                        }
+
                         decimal valorTotalJurosCartao = 0;
                         decimal valorTotalMov = 0;
                         var tipoMov = 0;
@@ -6872,10 +6885,9 @@ namespace Glass.Data.DAL
                             foreach (var idContaR in contasQuitar.Where(b => b.Key == idContaBanco).Select(r => r.Value))
                             {
                                 // Recupera os dados da conta a receber (parcela do cartão)
-                                var conta = GetElementByPrimaryKey(transaction, idContaR);
-
-                                if (conta.Recebida)
-                                    throw new Exception("Esta parcela já foi quitada. Ref.:" + conta.Referencia);
+                                var conta = contasReceber
+                                    .Where(c => c.IdContaR == idContaR)
+                                    .First();
 
                                 // Necessário para recuperar as contas ao cancelar arquivo.
                                 conta.IdArquivoQuitacaoParcelaCartao = idArquivoQuitacaoParcelaCartao;
@@ -6904,6 +6916,7 @@ namespace Glass.Data.DAL
 
                                 MarcaContaComoRecebida(transaction, conta, dataMov);
                             }
+
                             // Gera uma unica movimentação bancaria para todas as parcelas recebidas.
                             GerarMovimentacaoBancariaArquivoQuitacaoParcelaCartao(transaction, idArquivoQuitacaoParcelaCartao, idContaBanco,
                                 FinanceiroConfig.PlanoContaQuitacaoParcelaCartao, dataMov, tipoMov, valorTotalMov);

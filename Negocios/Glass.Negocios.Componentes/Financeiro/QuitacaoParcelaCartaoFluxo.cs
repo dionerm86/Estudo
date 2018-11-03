@@ -279,7 +279,12 @@ namespace Glass.Financeiro.Negocios.Componentes
                 var cartoes = PesquisarCartoesNaoIdentificadosQuitarParcelas(null, q.UltimosDigitosCartao, q.NumAutCartao, q.NumParcela.ToString()).ToList();
 
                 foreach (var c in cartoes)
-                    contasQuitar.Add(new KeyValuePair<uint, uint>((uint)c.IdContaBanco, (uint)c.IdContaR));
+                {
+                    if (!contasQuitar.Where(p => p.Key == (uint)c.IdContaBanco && p.Value == (uint)c.IdContaR).Any())
+                    {
+                        contasQuitar.Add(new KeyValuePair<uint, uint>((uint)c.IdContaBanco, (uint)c.IdContaR));
+                    }
+                }
 
                 // Salva a quitação
                 InserirNovoQuitacaoParcelaCartao(q);
