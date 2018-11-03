@@ -190,6 +190,60 @@ Servicos.Projetos = (function(http) {
        */
       Fabricantes: {
         /**
+         * Recupera a lista de fabricantes de ferragens.
+         * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
+         * @param {number} pagina O número da página de resultados a ser exibida.
+         * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+         * @param {string} ordenacao A ordenação para o resultado.
+         * @returns {Promise} Uma promise com o resultado da busca.
+         */
+        obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+          return http().get(API + 'ferragens/fabricantes', {
+            params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+          });
+        },
+
+        /**
+         * Remove um fabricante de ferragem.
+         * @param {!number} id O identificador do fabricante de ferragem que será excluído.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        excluir: function (id) {
+          if (!id) {
+            throw new Error('Fabricante de ferragem é obrigatório.');
+          }
+
+          return http().delete(API + 'ferragens/fabricantes/' + id);
+        },
+
+        /**
+         * Insere um fabricante de ferragem.
+         * @param {!Object} fabricanteFerragem O objeto com os dados do item a ser inserido.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        inserir: function (fabricanteFerragem) {
+          return http().post(API + 'ferragens/fabricantes', fabricanteFerragem);
+        },
+
+        /**
+         * Altera os dados de um fabricante de ferragem.
+         * @param {!number} id O identificador do item que será alterado.
+         * @param {!Object} medida O objeto com os dados do item a serem alterados.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        atualizar: function (id, fabricanteFerragem) {
+          if (!id) {
+            throw new Error('Fabricante de ferragem é obrigatório.');
+          }
+
+          if (!fabricanteFerragem || fabricanteFerragem === {}) {
+            return Promise.resolve();
+          }
+
+          return http().patch(API + 'ferragens/fabricantes/' + id, fabricanteFerragem);
+        },
+
+        /**
          * Recupera a lista de grupos de medidas de projeto para uso no controle de seleção.
          * @returns {Promise} Uma promise com o resultado da operação.
          */
