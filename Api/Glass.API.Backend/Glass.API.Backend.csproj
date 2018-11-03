@@ -217,8 +217,11 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\DeleteFerragensController.cs" />
+    <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\DeleteFabricantesFerragemController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\FabricantesFerragemController.cs" />
-    <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\GetFabricantesFerragensController.cs" />
+    <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\GetFabricantesFerragemController.cs" />
+    <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\PatchFabricantesFerragemController.cs" />
+    <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\PostFabricantesFerragemController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\GetFerragensController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\PatchFerragensController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FerragensController.cs" />
@@ -452,6 +455,8 @@
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\ConverterCadastroAtualizacaoParaFabricanteFerragem.cs" />
+    <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\TraducaoOrdenacaoListaFabricantesFerragem.cs" />
     <Compile Include="Helper\Projetos\MedidasProjeto\ConverterCadastroAtualizacaoParaMedidaProjeto.cs" />
     <Compile Include="Helper\Projetos\MedidasProjeto\TraducaoOrdenacaoListaMedidasProjeto.cs" />
     <Compile Include="Helper\Projetos\Ferragens\TraducaoOrdenacaoListaFerragens.cs" />
@@ -605,6 +610,9 @@
     <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
     <Compile Include="Models\Projetos\V1\Ferragens\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Projetos\V1\Ferragens\FabricantesFerragem\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Projetos\V1\Ferragens\FabricantesFerragem\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Projetos\V1\Ferragens\FabricantesFerragem\Lista\ListaDto.cs" />
     <Compile Include="Models\Projetos\V1\MedidasProjeto\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Projetos\V1\MedidasProjeto\Lista\FiltroDto.cs" />
     <Compile Include="Models\Projetos\V1\MedidasProjeto\Lista\ListaDto.cs" />

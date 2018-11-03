@@ -19,16 +19,16 @@ namespace Glass.API.Backend.Controllers.Projetos.V1.MedidasProjeto
     public partial class MedidasProjetoController : BaseController
     {
         /// <summary>
-        /// Atualiza ums medida de projeto.
+        /// Atualiza uma medida de projeto.
         /// </summary>
-        /// <param name="id">O identificador ds medida de projeto que será alterads.</param>
+        /// <param name="id">O identificador da medida de projeto que será alterada.</param>
         /// <param name="dadosParaAlteracao">Os novos dados que serão alterados na medida de projeto indicada.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPatch]
         [Route("{id:int}")]
-        [SwaggerResponse(202, "Medidas de projeto alterado.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(202, "Medida de projeto alterada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(404, "Medidas de projeto não encontrado para o id informado.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Medida de projeto não encontrada para o id informado.", Type = typeof(MensagemDto))]
         public IHttpActionResult AtualizarMedidaProjeto(int id, [FromBody] CadastroAtualizacaoDto dadosParaAlteracao)
         {
             using (var sessao = new GDATransaction())
@@ -53,7 +53,7 @@ namespace Glass.API.Backend.Controllers.Projetos.V1.MedidasProjeto
 
                     sessao.Commit();
 
-                    return this.Aceito($"Medidas de projeto atualizado com sucesso!");
+                    return this.Aceito($"Medida de projeto atualizada com sucesso!");
                 }
                 catch (Exception ex)
                 {
