@@ -27,7 +27,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Setores
         [HttpGet]
         [Route("configuracoes")]
         [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Producao.V1.Setores.Configuracoes.ListaDto))]
-        public IHttpActionResult ObterConfiguracoesListaPedidos()
+        public IHttpActionResult ObterConfiguracoesListaSetores()
         {
             using (var sessao = new GDATransaction())
             {
