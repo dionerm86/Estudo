@@ -33,6 +33,7 @@
         <label>
             Cidade
         </label>
-        <campo-busca-cidade v-bind:cidade.sync="enderecoAtual.cidade"></campo-busca-cidade>
+        <campo-busca-cidade v-bind:cidade.sync="enderecoAtual.cidade" v-bind:uf.sync="enderecoAtual.cidade.uf"
+            v-if="enderecoAtual.cidade"></campo-busca-cidade>
     </span>
 </span>

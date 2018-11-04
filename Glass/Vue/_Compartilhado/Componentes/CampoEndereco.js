@@ -42,7 +42,7 @@
      */
     enderecoAtual: {
       get: function () {
-        return this.endereco;
+        return this.endereco || {};
       },
       set: function (valor) {
         if (!this.equivalentes(valor, this.endereco)) {

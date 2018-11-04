@@ -1,4 +1,4 @@
-<%@ Page Title="Contabilista" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstContabilista.aspx.cs" 
+ï»¿<%@ Page Title="Contabilista" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstContabilista.aspx.cs" 
     Inherits="Glass.UI.Web.Listas.LstContabilista" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" Runat="Server">
@@ -18,7 +18,7 @@
                         <a href="#" @click.prevent="ordenar('crc')">CRC</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('endereco')">Endereço</a>
+                        <a href="#" @click.prevent="ordenar('endereco')">EndereÃ§o</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('telefone')">Fone</a>
@@ -30,7 +30,7 @@
                         <a href="#" @click.prevent="ordenar('email')">Email</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
+                        <a href="#" @click.prevent="ordenar('situacao')">SituaÃ§Ã£o</a>
                     </th>
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
@@ -83,7 +83,7 @@
                         <input type="text" v-model="contabilista.crc" maxlength="15" style="width: 100px" />
                     </td>
                     <td>
-                        <campo-endereco :endereco="contabilista.endereco" :exibir-numero="true"></campo-endereco>
+                        <campo-endereco :endereco.sync="contabilista.endereco" :exibir-numero="true"></campo-endereco>
                     </td>
                     <td v-if="contabilista.dadosContato">
                         <campo-telefone v-bind:telefone.sync="contabilista.dadosContato.telefone"></campo-telefone>
@@ -126,7 +126,7 @@
                         <input type="text" v-model="contabilista.crc" maxlength="15" style="width: 100px" v-if="inserindo" />
                     </td>
                     <td>
-                        <campo-endereco :endereco="contabilista.endereco" :exibir-numero="true" v-if="inserindo"></campo-endereco>
+                        <campo-endereco :endereco.sync="contabilista.endereco" :exibir-numero="true" v-if="inserindo"></campo-endereco>
                     </td>
                     <td>
                         <campo-telefone v-bind:telefone.sync="contabilista.dadosContato.telefone" v-if="inserindo && contabilista && contabilista.dadosContato"></campo-telefone>
