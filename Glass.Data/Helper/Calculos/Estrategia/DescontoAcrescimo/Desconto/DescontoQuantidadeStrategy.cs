@@ -1,10 +1,10 @@
-﻿using System;
+﻿using GDA;
 using Glass.Data.Model;
-using GDA;
+using System;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
 {
-    class DescontoQuantidadeStrategy : BaseDescontoStrategy<DescontoQuantidadeStrategy>
+    class DescontoQuantidadeStrategy : BaseStrategy<DescontoQuantidadeStrategy>
     {
         private DescontoQuantidadeStrategy() { }
 
