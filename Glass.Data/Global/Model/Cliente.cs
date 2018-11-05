@@ -706,6 +706,7 @@ namespace Glass.Data.Model
         /// <summary>
         /// Obtém ou define o Percentual da bonificação do cliente.
         /// </summary>
+        [Log("Percentual de Bonificação", true)]
         [PersistenceProperty("PERCENTUALBONIFICACAO")]
         public decimal? PercentualBonificacao { get; set; }
 
