@@ -412,7 +412,7 @@ namespace Glass.UI.Web.Relatorios
                             Glass.Conversoes.StrParaInt(Request["tipoDesconto"]), Request["agruparCli"] == "1" && Request["agrupar"] == "false",
                             Request["agruparPedido"] == "1" && Request["agrupar"] == "false", Request["agruparLiberacao"] == "1", Request["agruparAmbiente"] == "1",
                             Glass.Conversoes.StrParaInt(Request["buscarNotaFiscal"]), Request["idLiberacao"].StrParaInt(), Glass.Conversoes.StrParaInt(Request["ordenacao"]),
-                            Request["idFuncLiberacao"].StrParaIntNullable(), Request["liberacaoNf"].StrParaIntNullable());
+                            Request["idFuncLiberacao"].StrParaIntNullable(), Request["liberacaoNf"].StrParaIntNullable(), Glass.Conversoes.StrParaUint(Request["idFuncPedido"]));
 
                         var lstProdCorEsp = lstProd
                             .Where(f => f.IdGrupoProd == (int)NomeGrupoProd.Vidro)
@@ -649,9 +649,9 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("ExibirAPagar", (Request["exibirAPagar"] == "true").ToString()));
 
                         var lancamentosAvulsosCG = CaixaGeralDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(Request["dtIniPago"].ToString()),
-                            Glass.Conversoes.StrParaDate(Request["dtFimPago"].ToString()), Request["idFornec"].StrParaUint());
+                            Glass.Conversoes.StrParaDate(Request["dtFimPago"].ToString()), Request["idFornec"].StrParaUint(), Request["idLoja"].StrParaInt(), Request["planoConta"]);
                         var lancamentosAvulsosCD = Glass.Data.DAL.CaixaDiarioDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(Request["dtIniPago"].ToString()),
-                            Glass.Conversoes.StrParaDate(Request["dtFimPago"].ToString()));
+                            Glass.Conversoes.StrParaDate(Request["dtFimPago"].ToString()), Request["idFornec"].StrParaUint(), Request["idLoja"].StrParaInt(), Request["planoConta"]);
 
                         var valorPagtoPermuta = ContasPagarDAO.Instance.ObtemValorPagtoPermuta(string.Join(",", contasPagas.Select(f => f.IdContaPg.ToString()).ToArray()));
                         var valorPagtoEncontroContas = ContasPagarDAO.Instance.ObtemValorPagtoEncontroContas(string.Join(",", contasPagas.Select(f => f.IdContaPg.ToString()).ToArray()));

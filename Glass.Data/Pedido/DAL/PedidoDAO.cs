@@ -5660,7 +5660,7 @@ namespace Glass.Data.DAL
                 var debitosCliente = ContasReceberDAO.Instance.GetDebitos(sessao, idCliente, null);
                 var totalPedido = GetTotal(sessao, (uint)idPedido);
 
-                if ((!VerificaSinalPagamentoReceber(sessao, new List<int> { idPedido }, out mensagemErro) && mensagemErro.Count > 0) ||
+                if ((VerificaSinalPagamentoReceber(sessao, new List<int> { idPedido }, out mensagemErro) && mensagemErro.Count > 0) ||
                     (limiteCliente - (debitosCliente + totalPedido) < 0))
                 {
                     idsPedidosErro.Add(idPedido);
@@ -7583,7 +7583,7 @@ namespace Glass.Data.DAL
                 idsPedidoOk = new List<int>();
                 idsPedidoErro = new List<int>();
                 var situacaoCliente = ClienteDAO.Instance.GetSituacao(pedidos[0].IdCli);
-                var possuiSinalPagamentoReceber = !VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idsPedidoOk, out idsPedidoErro);
+                var possuiSinalPagamentoReceber = VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idsPedidoOk, out idsPedidoErro);
 
                 // Se, bloquear confirmação de pedido com sinal à receber.
                 if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && possuiSinalPagamentoReceber && idsPedidoOk.Count == 0)
@@ -14012,7 +14012,7 @@ namespace Glass.Data.DAL
 
             if (!(idsPedidos?.Any(f => f > 0) ?? false))
             {
-                return true;
+                return false;
             }
 
             return VerificaSinalPagamentoReceber(sessao, GetByString(null, string.Join(",", idsPedidos)), out mensagemErro);
@@ -14030,21 +14030,35 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se os pedidos tem sinal/pagamento antecipado a receber.
+        /// Método que verifica se os pedidos tem Sinal ou Pagamento Antecipado para receber.
         /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="pedidos">Lista com os pedidos a serem verificados.</param>
+        /// <param name="mensagemErro">Lista com as mensagens de erro ao validar o pedido.</param>
+        /// <param name="idsPedidosOk">Lista com os ids dos pedidos que estão corretos.</param>
+        /// <param name="idsPedidosErro">Lista com os ids dos pedidos que estão com erro.</param>
+        /// <returns>Um valor booleano que verifica se o pedido possui sinal/pagamento antecipado.</returns>
         public bool VerificaSinalPagamentoReceber(GDASession sessao, IEnumerable<Pedido> pedidos, out List<string> mensagemErro, out List<int> idsPedidosOk, out List<int> idsPedidosErro)
         {
             var idsPedidoSinal = new List<int>();
             var idsPedidoPagtoAntecipado = new List<int>();
             idsPedidosOk = new List<int>();
             idsPedidosErro = new List<int>();
+            mensagemErro = new List<string>();
+
+            if (!PedidoConfig.ImpedirConfirmacaoPedidoPagamento)
+            {
+                idsPedidosOk.AddRange(pedidos.Select(f => (int)f.IdPedido));
+
+                return false;
+            }
 
             // Verifica, em cada pedido, se há sinal/pagamento antecipado a receber
             foreach (var pedido in pedidos)
             {
                 var erro = string.Empty;
 
-                if (!VerificaSinalPagamentoReceber(sessao, pedido, out erro))
+                if (!this.VerificaSinalPagamentoReceber(sessao, pedido, out erro))
                 {
                     if (erro.IndexOf("sinal") > -1)
                     {
@@ -14063,13 +14077,11 @@ namespace Glass.Data.DAL
                 }
             }
 
-            mensagemErro = new List<string>();
-
             if (idsPedidoSinal?.Any(f => f > 0) ?? false)
             {
                 var incluirS = idsPedidoSinal.Count > 1 ? "s" : string.Empty;
 
-                mensagemErro.Add($"O{ incluirS } pedido{ incluirS } { string.Join(", ", idsPedidoSinal) } tem sinal a receber.\n");
+                mensagemErro.Add($"O{incluirS} pedido{incluirS} {string.Join(", ", idsPedidoSinal)} tem sinal a receber.\n");
             }
 
             if (idsPedidoPagtoAntecipado?.Any(f => f > 0) ?? false)
@@ -14077,10 +14089,10 @@ namespace Glass.Data.DAL
                 var incluirS = idsPedidoPagtoAntecipado.Count > 1 ? "s" : string.Empty;
                 var incluirM = idsPedidoPagtoAntecipado.Count > 1 ? "m" : string.Empty;
 
-                mensagemErro.Add($"O{ incluirS } pedido{ incluirS } { string.Join(", ", idsPedidoPagtoAntecipado.ToList()) } deve{ incluirM } ser pago{ incluirS } antecipadamente.\n");
+                mensagemErro.Add($"O{incluirS} pedido{incluirS} {string.Join(", ", idsPedidoPagtoAntecipado.ToList())} deve{incluirM} ser pago{incluirS} antecipadamente.\n");
             }
 
-            return !(mensagemErro.Count > 0);
+            return mensagemErro.Count > 0;
         }
 
         #endregion
