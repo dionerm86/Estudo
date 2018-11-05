@@ -2399,8 +2399,8 @@ namespace Glass.Data.DAL
             }
 
             // Obra
-            var idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(session, idPedido) : null;
-            if (idObra > 0)
+            var idObra = PedidoDAO.Instance.GetIdObra(session, idPedido);
+            if (PedidoConfig.DadosPedido.UsarControleNovoObra && idObra > 0)
             {
                 var lstProdSemComposicao = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false, true, true).ToArray();
 
@@ -2472,6 +2472,18 @@ namespace Glass.Data.DAL
             try
             {
                 UpdateTotalPedido(session, pedAtual);
+                if (idObra>0)
+                {
+                    PedidoDAO.Instance.AtualizaSaldoObra(
+                        session,
+                        pedAtual.IdPedido,
+                        null,
+                        idObra,
+                        pedAtual.Total,
+                        pedAtual.Total,
+                        true); 
+                }
+
                 AtualizaSituacaoImpressao(session, idPedido);
 
                 //Verifica se deve gerar projeto para cnc
