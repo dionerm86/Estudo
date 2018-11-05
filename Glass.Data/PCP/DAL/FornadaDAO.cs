@@ -198,7 +198,10 @@ namespace Glass.Data.DAL
                 {
                     transaction.Rollback();
                     transaction.Close();
-                    throw ex;
+
+                    ErroDAO.Instance.InserirFromException("Fornada", ex);
+
+                    throw;
                 }
             }
         }
