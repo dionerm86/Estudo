@@ -7813,18 +7813,25 @@ namespace Glass.Data.DAL
         {
             // Define que apenas administrador pode reabrir pedido
             var apenasAdminReabrePedido = PCPConfig.ReabrirPCPSomenteAdmin;
+
             // Define que todos usuários podem reabrir pedido confirmado PCP, exceto o vendedor (a menos que seja pedido de revenda)
             var apenasVendedorNaoReabrePedidoConfirmadoPCP = PedidoConfig.ReabrirPedidoConfirmadoPCPTodosMenosVendedor;
 
             /* Chamado 52903. */
-            if (!PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli == UserInfo.GetUserInfo.IdCliente)
+            if (!PedidoConfig.ParceiroPodeEditarPedido && idCli == UserInfo.GetUserInfo.IdCliente)
+            {
                 return false;
+            }
             else if (geradoParceiro && !PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
+            {
                 return false;
+            }
 
             // Não deixa reabrir se recebeu sinal
             if (PedidoConfig.ReabrirPedidoNaoPermitidoComSinalRecebido && recebeuSinal)
+            {
                 return false;
+            }
 
             // Se não for Gerente/Auxiliar verifica se o pedido é do usuário logado
             var flagVendedor = true;
