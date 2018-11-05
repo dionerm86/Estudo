@@ -725,7 +725,7 @@ namespace Glass.Data.DAL
             }
 
             // Chamados 17870, 38407 e Chamado 39027.
-            if (pedidos.Count() > 1 && Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
+            if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber && pedidos.Count() > 1)
             {
                 throw new Exception(string.Format("Não é possível receber o {0} de mais de um pedido por vez, pois, o controle de comissão de contas recebidas está habilitado.",
                     tipoRecebimento.ToLower()));
@@ -734,6 +734,10 @@ namespace Glass.Data.DAL
             #endregion
 
             #region Validações dos dados dos pedidos
+            if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && pedidos.Select(f => f.IdFunc).Distinct().Count()>1)
+            {
+                throw new Exception(string.Format("Não é possivel receber o {0} de pedidos de Vendedores diferentes", tipoRecebimento));
+            }
 
             foreach (var pedido in pedidos)
             {
