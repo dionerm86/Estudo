@@ -24,40 +24,11 @@
 
   data: function () {
     return {
-      colunas: [],
       exibirFalha: false,
     }
   },
 
   methods: {
-
-    /**
-     * Carrega as colunas para compor a visualização
-     * dos dados do item do histórico.
-     **/
-    carregarColunas: function () {
-
-      this.colunas = [];
-      for (var i=0; i<this.itemEsquema.identificadores.length; i++) {
-        this.colunas.push({
-          descricao: null,
-          valor: this.item.identificadores[i]
-        });
-      }
-
-      this.colunas.push({
-        descricao: 'Tipo',
-        valor: this.item.tipo,
-      });
-      this.colunas.push({
-        descricao: 'Mensagem',
-        valor: this.item.mensagem,
-      });
-      this.colunas.push({
-        descricao: 'Data',
-        valor: this.item.data,
-      });
-    },
 
     alterarExibicaoFalha: function () {
 
@@ -65,11 +36,6 @@
         this.exibirFalha = !this.exibirFalha;
       }
     },
-  },
-
-  mounted: function () {
-
-    this.carregarColunas();
   },
 
   template: '#LstIntegradores-ItemHistorico-template'

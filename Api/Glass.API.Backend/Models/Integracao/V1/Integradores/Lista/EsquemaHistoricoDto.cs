@@ -35,7 +35,7 @@ namespace Glass.API.Backend.Models.Integracao.V1.Integradores.Lista
         public int Id { get; }
 
         /// <summary>
-        /// Obtém o nomes do esquema.
+        /// Obtém o nome do esquema.
         /// </summary>
         [DataMember]
         [JsonProperty("nome")]

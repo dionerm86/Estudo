@@ -17,8 +17,8 @@ namespace Glass.API.Backend.Models.Integracao.V1.Integradores.Lista
         public string Tipo { get; set; }
 
         /// <summary>
-        /// Obtém os identificadores do item que está sendo pesquisado.
+        /// Obtém ou define os identificadores do item que está sendo pesquisado.
         /// </summary>
-        public List<string> Identificadores { get; } = new List<string>();
+        public IEnumerable<string> Identificadores { get; set; } = new List<string>();
     }
 }

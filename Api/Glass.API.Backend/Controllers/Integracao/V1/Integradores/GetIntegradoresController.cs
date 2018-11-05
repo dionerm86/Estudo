@@ -53,5 +53,25 @@ namespace Glass.API.Backend.Controllers.Integracao.V1.Integradores
             var logger = new Models.Integracao.V1.Integradores.Logger.LoggerIntegracaoDto(integrador1.Logger);
             return this.Json(logger);
         }
+
+        /// <summary>
+        /// Obtém os tipos de item de histórico suportados pelo sistema.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos tipos de item de histórico.</returns>
+        [HttpGet]
+        [Route("tipositemhistorico")]
+        [SwaggerResponse(200, "Tipos de item de histórico encontrados.", Type = typeof(IEnumerable<Models.Genericas.V1.IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de item de histórico não encontrados.")]
+        public IHttpActionResult ObterTiposItemHistorico()
+        {
+            var tiposItemHistorico = Colosoft.Translator.GetTranslates<Glass.Integracao.Historico.TipoItemHistorico>()
+                .Select(f => new Models.Genericas.V1.IdNomeDto
+                {
+                    Id = f.Value,
+                    Nome = f.Translation,
+                });
+
+            return this.Lista(tiposItemHistorico);
+        }
     }
 }

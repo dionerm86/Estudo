@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Integradores" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstIntegradores.aspx.cs" Inherits="Glass.UI.Web.Listas.LstIntegradores" %>
+﻿<%@ Page Title="Integradores" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstIntegradores.aspx.cs" Inherits="Glass.UI.Web.Listas.LstIntegradores" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ContentPlaceHolderID="Header" runat="server">
     <link href="<%= ResolveClientUrl("~/Vue/Integracao/Integradores/Assets/LstIntegradores.css") %>" rel="stylesheet"/></asp:Content>

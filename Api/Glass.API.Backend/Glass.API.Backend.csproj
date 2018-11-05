@@ -228,7 +228,6 @@
     <Compile Include="Controllers\Integracao\V1\Integradores\GetIntegradoresController.cs" />
     <Compile Include="Controllers\Integracao\V1\Integradores\IntegradoresController.cs" />
     <Compile Include="Controllers\Integracao\V1\Integradores\PostIntegradoresController.cs" />
-    <Compile Include="Controllers\Integracao\V1\Integradores\PutIntegradoresController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\DeletePlanosContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\DeleteCategoriasContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\CategoriasContas\GetCategoriasContaController.cs" />

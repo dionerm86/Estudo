@@ -15,10 +15,9 @@
                                style="margin-right: 10px;" />
                         <select v-model="tipoItem">
                             <option value="" selected>Tipo de item...</option>
-                            <option>Integrando</option>
-                            <option>Integrado</option>
-                            <option>Informativo</option>
-                            <option>Falha</option>
+                            <option v-for="tipo in tiposItemHistorico" value="tipo.id">
+                                {{tipo.nome}}
+                            </option>
                         </select>
                     </div>
                     <div class="try-out">
@@ -32,8 +31,17 @@
                     <table>
                         <thead>
                             <tr>
-                                <th v-for="coluna in cabecalho" class="col col_header">
-                                    {{coluna}}
+                                <th v-for="identificador in itemEsquema.identificadores" class="col col_header">
+                                    {{identificador.nome}}
+                                </th>
+                                <th class="col col_header">
+                                    Tipo
+                                </th>
+                                <th class="col col_header">
+                                    Mensagem
+                                </th>
+                                <th class="col col_header">
+                                    Data
                                 </th>
                             </tr>
                         </thead>

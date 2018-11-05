@@ -27,14 +27,13 @@
       podeExibirDetalhes: false,
       atualizando: false,
       itens: [],
-      cabecalho: [],
       itensFiltro: [],
       tipoItem: '',
+      tiposItemHistorico: [],
     }
   },
 
   methods: {
-
     /**
      * Altera a exibição dos detalhes.
      **/
@@ -44,25 +43,6 @@
       if (this.podeExibirDetalhes) {
         this.atualizar();
       }
-    },
-
-    /**
-     * Carrega o cabeçalho com base no configuração do
-     * do item do esquema do histório.
-     **/
-    carregarCabecalho: function () {
-
-      var cabecalho1 = [];
-
-      this.itemEsquema.identificadores.forEach(function (identificador) {
-        cabecalho1.push(identificador.nome);
-      });
-
-      cabecalho1.push('Tipo');
-      cabecalho1.push('Mensagem');
-      cabecalho1.push('Data');
-
-      this.cabecalho = cabecalho1;
     },
 
     /**
@@ -81,7 +61,7 @@
     },
 
     /**
-     * Atualiza os dados da item
+     * Atualiza os dados do item.
      **/
     atualizar: function () {
 
@@ -114,10 +94,29 @@
           }
         });
     },
+
+    /**
+     * Carrega os tipos de itens de histórico.
+     **/
+    carregarTiposItensHistorico: function () {
+
+      var self = this;
+      Servicos.Integracao.Integradores.obterTiposItemHistorico()
+        .then(function (resposta) {
+          if (resposta.status == 200) {
+            self.tiposItemHistorico = resposta.data;
+          }
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            self.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
+    },
   },
 
   mounted: function () {
-    this.carregarCabecalho();
+    this.carregarTiposItensHistorico();
     this.carregarItensFiltro();
   },
 

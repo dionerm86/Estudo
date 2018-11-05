@@ -2,6 +2,8 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using System.ComponentModel;
+
 namespace Glass.Integracao.Historico
 {
     /// <summary>
@@ -32,6 +34,7 @@ namespace Glass.Integracao.Historico
         /// <summary>
         /// Indica um item de atenção.
         /// </summary>
+        [Description("Atenção")]
         Atencao = 5,
     }
 }

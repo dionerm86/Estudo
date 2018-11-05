@@ -60,6 +60,14 @@ Servicos.Integracao = (function(http) {
       },
 
       /**
+       * Obtém os tipos de item de histórico.
+       * @returns {Promise} Um promise com os tipos de itens de histórico.
+       **/
+      obterTiposItemHistorico: function () {
+        return http().get(API + 'integradores/tipositemhistorico');
+      },
+
+      /**
        * Executa a operação de integração.
        * @param {string} integrador Nome do integrador onde a operação será executada.
        * @param {string} operacao Nome da operação que será executada.
@@ -98,7 +106,7 @@ Servicos.Integracao = (function(http) {
           throw new Error('O nome do job deve ser informado.');
         }
 
-        return http().put(API + 'integradores/' + integrador + '/executarJob/' + job);
+        return http().post(API + 'integradores/' + integrador + '/executarJob/' + job);
       }
     },
   };

@@ -12,7 +12,7 @@ using System.Web;
 namespace Glass.API.Backend.Models.Integracao.V1.Integradores.Lista
 {
     /// <summary>
-    /// Classe que encapsula os dados de um integradores para a tela de listagem.
+    /// Classe que encapsula os dados de um integrador para a tela de listagem.
     /// </summary>
     [DataContract(Name = "Integrador")]
     public class IntegradorDto
@@ -27,6 +27,7 @@ namespace Glass.API.Backend.Models.Integracao.V1.Integradores.Lista
             this.Ativo = integrador.Ativo;
             this.Configuracao = integrador.Configuracao.NomesParametro
                 .Select(f => new ConfiguracaoIntegradorDto(f, integrador.Configuracao[f], integrador.Configuracao.VerificarSomenteLeitura(f)));
+
             this.Operacoes = integrador.Operacoes.Select(f => new OperacaoIntegracaoDto(f)).ToList();
             this.Jobs = integrador.Jobs.Select(f => new JobIntegracaoDto(f)).ToList();
             this.EsquemaHistorico = integrador.EsquemaHistorico != null ? new EsquemaHistoricoDto(integrador.EsquemaHistorico) : null;

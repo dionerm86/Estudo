@@ -13,7 +13,7 @@ namespace Glass.API.Backend.Models.Integracao.V1.Integradores.Lista
     /// Classe que encapsula os dados de um item do esquema do histórico.
     /// </summary>
     [DataContract(Name = "ItemEsquemaHistorico")]
-    public class ItemEsquemaHistoricoDto
+    public class ItemEsquemaHistoricoDto : Genericas.V1.IdNomeDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ItemEsquemaHistoricoDto"/>.
@@ -26,20 +26,6 @@ namespace Glass.API.Backend.Models.Integracao.V1.Integradores.Lista
             this.Descricao = item.Descricao;
             this.Identificadores = item.Identificadores.Select(f => new IdentificadorItemEsquemaHistoricoDto(f));
         }
-
-        /// <summary>
-        /// Obtém o identificador do item.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("id")]
-        public int Id { get; }
-
-        /// <summary>
-        /// Obtém o nome do item.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("nome")]
-        public string Nome { get; }
 
         /// <summary>
         /// Obtém a descrição do item.
