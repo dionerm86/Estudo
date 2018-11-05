@@ -2435,20 +2435,18 @@ namespace Glass.Data.DAL
         /// Copia o log de alterações de imagens-produção da peça do pedido para a peça do pedido espelho.
         /// </summary>
         /// <param name="sessao">Transação.</param>
-        /// <param name="idPecaItemProj">Identificador da peça do item do projeto associado ao produto do pedido.</param>
-        /// <param name="idPecaItemProjEsp">Identificador da peça do item do projeto associado ao produto do pedido espelho.</param>
-        public void CopiarLogAlteracaoImagemProducao(GDASession sessao, int idPecaItemProj, int idPecaItemProjEsp)
+        /// <param name="idLogComercial">Identificador do log da peça do item do projeto associado ao produto do pedido.</param>
+        /// <param name="idLogPCP">Identificador do log da peça do item do projeto associado ao produto do pedido espelho.</param>
+        public void CopiarLogAlteracaoImagemProducao(GDASession sessao, int idLogComercial, int idLogPCP)
         {
             var sql = $@"
                 SELECT *
                 FROM log_alteracao
-                WHERE Tabela = {(int)LogAlteracao.TabelaAlteracao.ImagemProducao} AND IdRegistroAlt = " + idPecaItemProj;
-
-            var logAlteracao = this.objPersistence.LoadData(sessao, sql);
-
+                WHERE Tabela = {(int)LogAlteracao.TabelaAlteracao.ImagemProducao} AND IdRegistroAlt = " + idLogComercial;
+            var logAlteracao = this.objPersistence.LoadData(sessao, sql).ToList();
             foreach (var alteracao in logAlteracao)
             {
-                alteracao.IdRegistroAlt = idPecaItemProjEsp;
+                alteracao.IdRegistroAlt = idLogPCP;
                 this.Insert(sessao, alteracao);
             }
         }

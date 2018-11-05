@@ -3839,15 +3839,14 @@ namespace Glass.Data.DAL
             {
                 // Clona as peças
                 uint idPecaItemProjOld = pip.IdPecaItemProj;
+                uint idLogOld = pip.IdLog;
 
                 pip.IdPecaItemProj = 0;
                 pip.IdItemProjeto = idItemProjetoPedEsp;
                 uint idPecaItemProj = PecaItemProjetoDAO.Instance.Insert(sessao, pip);
+                var novaPecaItemProj = PecaItemProjetoDAO.Instance.GetElement(sessao, idPecaItemProj);
 
-                if (pip.ImagemEditada)
-                {
-                    LogAlteracaoDAO.Instance.CopiarLogAlteracaoImagemProducao(sessao, (int)idPecaItemProjOld, (int)idPecaItemProj);
-                }
+                LogAlteracaoDAO.Instance.CopiarLogAlteracaoImagemProducao(sessao, (int)idLogOld, (int)novaPecaItemProj.IdLog);
 
                 foreach (FiguraPecaItemProjeto fig in FiguraPecaItemProjetoDAO.Instance.GetForClone(sessao, idPecaItemProjOld))
                 {
