@@ -288,15 +288,9 @@ namespace Glass.Data.DAL
         /// <returns>Retorna uma comparação lógica que é resultado do teste se existem planos de conta associados a mais de um tipo de recebimento/estorno e ou tipo de cartao.</returns>
         public bool VerificarPlanosContaReplicados(GDASession sessao)
         {
-           return objPersistence.LoadResult(sessao, PlanoContasTipoCartao())
-                .Select(f =>
-                new
-                {
-                    IdTipoCartao = f.GetUInt32(0),
-                    IdConta = f.GetUInt32(1)
-                }).GroupBy(p => p.IdConta)
-                .Where(group => group.Count() > 1)
-                .Any();
+            return objPersistence.LoadResult(sessao, PlanoContasTipoCartao())
+                .GroupBy(p => p.GetUInt32(1))
+                .Any(group => group.Count() > 1);
         }
 
         public TipoCartaoCredito ObterTipoCartao(uint operadora, string bandeira, string tipoVenda)
