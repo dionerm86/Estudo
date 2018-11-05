@@ -2472,7 +2472,7 @@ namespace Glass.Data.DAL
             try
             {
                 UpdateTotalPedido(session, pedAtual);
-                if (idObra>0)
+                if (idObra > 0)
                 {
                     PedidoDAO.Instance.AtualizaSaldoObra(
                         session,
@@ -2481,7 +2481,7 @@ namespace Glass.Data.DAL
                         idObra,
                         pedAtual.Total,
                         pedAtual.Total,
-                        true); 
+                        true);
                 }
 
                 AtualizaSituacaoImpressao(session, idPedido);

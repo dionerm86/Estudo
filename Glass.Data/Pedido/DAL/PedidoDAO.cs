@@ -611,8 +611,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza o saldo da obra no pedido e no saldo geral da obra
         /// </summary>
-        public void AtualizaSaldoObra(GDASession sessao, uint idPedido, Obra obraAtual, uint? idObra, decimal totalPedidoAtual,
-            decimal totalPedidoAnterior, bool pedidoJaCalculadoNoSaldoDaObra)
+        public void AtualizaSaldoObra(
+            GDASession sessao,
+            uint idPedido,
+            Obra obraAtual,
+            uint? idObra,
+            decimal totalPedidoAtual,
+            decimal totalPedidoAnterior,
+            bool pedidoJaCalculadoNoSaldoDaObra)
         {
             if (idObra > 0)
             {
