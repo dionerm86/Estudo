@@ -176,12 +176,12 @@
                 {
                     setProdEtiqueta(items[0], items[1], items[2], "", "", items[3], items[4], items[5], items[6],
                         items[7], items[6] - items[7], items[8], items[9], items[10], items[11], null, null,
-                        items[12] != '', items[12], null, items[13], null);
+                        items[12] != '', items[12], null, items[13], null, null, null);
                 }
                 else
                 {
                     setProdEtiqueta("", "", "", items[0], items[1], items[2], "", "", items[3], items[4],
-                        items[3] - items[4], items[5], items[6], "", items[7], null, null, false, "", null, null, items[9]);
+                        items[3] - items[4], items[5], items[6], "", items[7], null, null, false, "", null, null, items[9], null, null);
                 }
             }
             
@@ -214,36 +214,86 @@
             
             return linhas[0].cells.length - 2;
         }
-        
-        function verificaEtiquetasExportadas(controle, idProdPed, qtdeImprimir)
-        {
-            LstEtiquetaImprimir.NumeroEtiquetasExportadas(idProdPed, qtdeImprimir, function(response)
-            {
-                var linha = controle;
-                while (linha.nodeName.toLowerCase() != "tr")
-                    linha = linha.parentNode;
-                
-                linha.cells[numeroColunaEtiquetasExportadas()].innerHTML  = response.value;
-            });
+
+        /**
+         * Cria a label que exibe a quantidade de etiquetas exportadas para o produto de pedido adicionado na tela.
+         * Esse método deve ser chamado ao adicionar o produto na tela e também no momento em que o usuário altera a quantidade a ser impressa.
+         * A quantidade de peças exportadas não pode ser maior que a quantidade a ser impressa, informada na tela, do produto.
+         * @param {Object} controle Campo onde a quantidade a ser impressa é informada.
+         * @param {number} quantidadeImprimir Quantidade a ser impressa para o produto.
+         * @param {number} quantidadeEtiquetasExportadas Quantidade de etiquetas exportadas para o produto.
+         */
+        function criarControleEtiquetasExportadas(controle, quantidadeImprimir, quantidadeEtiquetasExportadas) {
+            if (quantidadeEtiquetasExportadas === undefined ||
+                quantidadeEtiquetasExportadas === null ||
+                quantidadeEtiquetasExportadas === "" ||
+                quantidadeEtiquetasExportadas === 0) {
+                return false;
+            }
+            
+            var quantidadeExibirControle = Math.min(quantidadeImprimir, quantidadeEtiquetasExportadas);
+
+            var plural = "";
+
+            if (quantidadeExibirControle > 1) {
+                plural = "s";
+            }
+
+            var controleEtiquetasExportadas = "";
+
+            if (quantidadeExibirControle > 0) {
+                controleEtiquetasExportadas = "<span style='color: red'>" + quantidadeExibirControle + " etiqueta" + plural + " exportada" + plural + "</span>";
+            }
+            
+            var linha = controle;
+
+            while (linha.nodeName.toLowerCase() != "tr") {
+                linha = linha.parentNode;
+            }
+
+            linha.cells[numeroColunaEtiquetasExportadas()].innerHTML = controleEtiquetasExportadas;
         }
         
         function formataObjId(etiqRepos, objId) {
             return (etiqRepos + objId).replace(/-/g, "_").replace(/\//g, "_");
         }
 
-        /*
-            Função chamada em:
-            - Nesta tela na função javascript getProduto();
-            - Utils/SelArquivoOtimizado.aspx, no método ASP btnImportarArquivo_Click
-            - Utils/SelProdEtiqueta, na função javascript setProdEtiqueta
-            - Utils/SelProdEtiqueta, na função ASP lnkAddAll_Click
-            - Utils/SelEtiquetaNFe, na função javascript setProdEtiqueta
-            - Utils/SelEtiquetaNFe, na função ASP lnkAddAll_Click
-            - Utils/SelPedidoEspelhoImpressaoEtiqueta, na função javascript setPedido
-            - Utils/SelPedidoEspelhoImpressaoEtiqueta, na funçao ASP lnkAddAll_Click
-        */
-        function setProdEtiqueta(idProdPed, idAmbiente, idPedido, idProdNf, idNf, descrProd, codProc, codApl, qtd, qtdImpresso, 
-            qtdImprimir, altura, largura, obs, totM, planoCorte, selInstWin, arquivoOtimizado, etiquetas, atualizarTotais, totMCalc, lote, podeExcluir) {
+        /**
+         * Método chamado nas seguintes telas:
+         * - Nesta tela na função javascript getProduto.
+         * - Utils/SelArquivoOtimizado.aspx, no método ASP btnImportarArquivo_Click.
+         * - Utils/SelProdEtiqueta, na função javascript setProdEtiqueta.
+         * - Utils/SelProdEtiqueta, na função ASP lnkAddAll_Click.
+         * - Utils/SelEtiquetaNFe, na função javascript setProdEtiqueta.
+         * - Utils/SelEtiquetaNFe, na função ASP lnkAddAll_Click.
+         * - Utils/SelPedidoEspelhoImpressaoEtiqueta, na função javascript setPedido.
+         * - Utils/SelPedidoEspelhoImpressaoEtiqueta, na funçao ASP lnkAddAll_Click.
+         */
+        function setProdEtiqueta(
+            idProdPed,
+            idAmbiente,
+            idPedido,
+            idProdNf,
+            idNf,
+            descrProd,
+            codProc,
+            codApl,
+            qtd,
+            qtdImpresso, 
+            qtdImprimir,
+            altura,
+            largura,
+            obs,
+            totM,
+            planoCorte,
+            selInstWin,
+            arquivoOtimizado,
+            etiquetas,
+            atualizarTotais,
+            totMCalc,
+            lote,
+            podeExcluir,
+            quantidadeEtiquetasExportadas) {
             
             document.getElementById("tabelaAlteraDataFab").style.display = "";
             
@@ -310,7 +360,7 @@
             // txtQtdImprimir (Qtd que o usuário planeja imprimir) e hdfQtdImprimir (Qtd máxima que poderá ser impressa)
             var inputQtdImp = "<input name='txtQtdImp_" + etiqRepos + id + "' type='text' id='txtQtdImp_" + etiqRepos + id + "' " +
                 (arquivoOtimizado ? "disabled='true'" : "") + " value='" + qtdImprimir + "' style='width: 30px' onkeypress='return soNumeros(event, true, true)' " +
-                "onchange='verificaEtiquetasExportadas(this, \"" + idProdPed + "\", this.value)' />" +
+                "onchange='criarControleEtiquetasExportadas(this, this.value, " + quantidadeEtiquetasExportadas + ")' />" +
                 "<input type='hidden' name='hdfQtdImp_" + etiqRepos + id + "' id='hdfQtdImp_" + etiqRepos + id + "' value='" + qtdImprimir + "' />" +
                 "<input type='hidden' name='hdfQtdImpresso_" + etiqRepos + id + "' id='hdfQtdImpresso_" + etiqRepos + id + "' value='" + qtdImpresso + "' />";
 

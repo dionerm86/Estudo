@@ -10,7 +10,24 @@
 
     <script type="text/javascript">
  
-        function setProdEtiqueta(idProdPed, idAmbiente, idPedido, descrProd, codProc, codApl, qtd, qtdImpresso, altura, largura, totM, obs, numEtiqueta, calcularTotM, atualizarTotais, totM2Calc)
+        function setProdEtiqueta(
+            idProdPed,
+            idAmbiente,
+            idPedido,
+            descrProd,
+            codProc,
+            codApl,
+            qtd,
+            qtdImpresso,
+            altura,
+            largura,
+            totM,
+            obs,
+            numEtiqueta,
+            calcularTotM,
+            atualizarTotais,
+            totM2Calc,
+            quantidadeEtiquetasExportadas)
         {
             if (SelProdEtiqueta.PodeImprimirPedidoImportado(idPedido).value.toLowerCase() == "false") {
                 alert("O pedido importado ainda não foi conferido, confira o mesmo antes de imprimir");
@@ -36,12 +53,36 @@
                     return false;
                 }
 
-                if (isLamComp.value == "true")
+                if (isLamComp.value == "true") {
                     return false;
+                }
             }
  
-            window.opener.setProdEtiqueta(idProdPed, idAmbiente, idPedido, null, null, descrProd, codProc, codApl, qtd, qtdImpresso,
-                qtd - qtdImpresso, altura, largura, obs, totM, null, window, numEtiqueta != "", numEtiqueta, atualizarTotais, totM2Calc, null);
+            window.opener.setProdEtiqueta(
+                idProdPed,
+                idAmbiente,
+                idPedido,
+                null,
+                null,
+                descrProd,
+                codProc,
+                codApl,
+                qtd,
+                qtdImpresso,
+                qtd - qtdImpresso,
+                altura,
+                largura,
+                obs,
+                totM,
+                null,
+                window,
+                numEtiqueta != "",
+                numEtiqueta,
+                atualizarTotais,
+                totM2Calc,
+                null,
+                null,
+                quantidadeEtiquetasExportadas);
         }
 
     </script>

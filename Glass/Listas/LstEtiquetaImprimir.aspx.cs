@@ -419,18 +419,6 @@ namespace Glass.UI.Web.Listas
             return retorno + "|" + script + "|" + dadosScript[0].Trim();
         }
 
-        [Ajax.AjaxMethod]
-        public string NumeroEtiquetasExportadas(string idProdPed, string qtdeImprimir)
-        {
-            int numero = Glass.Data.DAL.ArquivoOtimizacaoDAO.Instance.NumeroEtiquetasExportadas(
-                Glass.Conversoes.StrParaUint(idProdPed), Glass.Conversoes.StrParaInt(qtdeImprimir));
-
-            return numero == 0 ? String.Empty :
-                 String.Format("<span style='color: red'>{0} etiqueta{1} exportada{1}</span>",
-                 numero,
-                 numero > 1 ? "s" : String.Empty);
-        }
-
         protected void btnNova_Click(object sender, EventArgs e)
         {
             Response.Redirect("LstEtiquetaImprimir.aspx");

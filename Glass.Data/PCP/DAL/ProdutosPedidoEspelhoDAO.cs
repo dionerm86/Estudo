@@ -1897,6 +1897,31 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Obtém dados exportação etiqueta
+
+        /// <summary>
+        /// Obtém a quantidade de etiquetas exportadas, por produto de pedido espelho.
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <param name="idsProdPed">idsProdPed.</param>
+        /// <returns>Retorna uma lista de produtos de pedido espelho, preenchendo somente os campos IdProdPed e QuantidadeEtiquetasExportadas.</returns>
+        public List<ProdutosPedidoEspelho> ObterQuantidadeEtiquetasExportadas(GDASession session, List<int> idsProdPed)
+        {
+            var sql = $@"SELECT ppp.IdProdPed,
+                    SUM(ao.Direcao = {(int)ArquivoOtimizacao.DirecaoEnum.Exportar}) -
+                        SUM(ao.Direcao = {(int)ArquivoOtimizacao.DirecaoEnum.Importar}) AS QuantidadeExportada
+                FROM produto_pedido_producao ppp
+                    INNER JOIN etiqueta_arquivo_otimizacao eao ON (ppp.NumEtiqueta = eao.NumEtiqueta)
+                    INNER JOIN arquivo_otimizacao ao ON (eao.IdArquivoOtimiz = ao.IdArquivoOtimiz)
+                WHERE ppp.IdProdPed IN ({string.Join(",", idsProdPed)})
+                GROUP BY ppp.IdProdPed
+                HAVING QuantidadeExportada > 0;";
+
+            return objPersistence.LoadData(session, sql);
+        }
+
+        #endregion
+
         #region Retorna todos os produtos de um ambiente
 
         /// <summary>
