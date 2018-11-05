@@ -63,7 +63,7 @@
                 <table>
                     <tr>
                         <td align="center">
-                            <asp:Label ID="lblContas" runat="server" Text="Selecione as contas recebidas que continuarão no arquivo remessa" Font-Bold="true"></asp:Label></td>
+                            <asp:Label ID="lblContas" runat="server" Text="Selecione as contas que continuarão no arquivo remessa" Font-Bold="true"></asp:Label></td>
                     </tr>
                     <tr>
                         <td>
