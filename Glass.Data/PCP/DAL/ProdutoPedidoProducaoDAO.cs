@@ -7393,7 +7393,7 @@ namespace Glass.Data.DAL
                 s.descricao as descrSetor, sr.descricao as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pp.ValorVendido as ValorUnit, ped.CodCliente, @TotM:=round(pp.TotM/(pp.qtde*if(ped.tipoPedido=" +
                 (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, (ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado,
                 (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido,
-                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, sp.TipoCalculo, IF (sp.TipoCalculo=1, pp.ValorVendido, pp.ValorVendido * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
+                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, sp.TipoCalculo, IF (sp.TipoCalculo = 1, pp.ValorVendido, pp.ValorVendido * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
 
             string campos3 = selecionar ? @"
                 null, null, pt.idProdPed, null, td.idFunc, null,
@@ -7412,7 +7412,7 @@ namespace Glass.Data.DAL
                 if(td.tipo=" + (int)TrocaDevolucao.TipoTrocaDev.Troca + @", 'Troca', 'Devolução') as descrSetorRepos, pt.CustoProd AS ValorCustoUnitario, pt.ValorVendido as ValorUnit,
                 ped.CodCliente, @TotM:=pt.TotM as TotM2, (ped.situacao= " + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, ped.tipoPedido=" +
                 (int)Pedido.TipoPedidoEnum.MaoDeObra + @" as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido,
-                ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @" as PedidoProducao, cast(pt.qtde as decimal(12,2)) as qtde, sp.TipoCalculo, IF (sp.TipoCalculo=1, pt.ValorVendido, pt.ValorVendido * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
+                ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @" as PedidoProducao, cast(pt.qtde as decimal(12,2)) as qtde, sp.TipoCalculo, IF (sp.TipoCalculo = 1, pt.ValorVendido, pt.ValorVendido * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
 
             string campos4 = selecionar ? @"
                 null, nf.numeroNFe, null, null, pcv.idFuncPerda, null,
@@ -7423,7 +7423,7 @@ namespace Glass.Data.DAL
                 null, null, null as IdCliente, null as nomeCliente, null as CodAplicacao,
                 null as CodProcesso, null as IdPedidoExibir, 'Chapa de Vidro' as descrSetor, 'Chapa de Vidro' as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pnf.ValorUnitario as ValorUnit,
                 null, @TotM:=round(pnf.TotM / pnf.qtde, 4) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra,
-                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, IF (sp.TipoCalculo=1, pnf.ValorUnitario, pnf.ValorUnitario * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
+                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, IF (sp.TipoCalculo = 1, pnf.ValorUnitario, pnf.ValorUnitario * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
 
             string campos5 = selecionar ? @"
                 null, nf.numeroNFe, null, null, pcv.idFuncPerda, null,
@@ -7434,7 +7434,7 @@ namespace Glass.Data.DAL
                 null, null, null as IdCliente, null as nomeCliente, null as CodAplicacao,
                 null as CodProcesso, null as IdPedidoExibir, 'Retalho de Produção' as descrSetor, 'Retalho de Producao' as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pnf.ValorUnitario as ValorUnit,
                 null, @TotM:=round((p.Altura * p.Largura) / 1000000, 2) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra,
-                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, IF (sp.TipoCalculo=1, pnf.ValorUnitario, pnf.ValorUnitario * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
+                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, IF (sp.TipoCalculo = 1, pnf.ValorUnitario, pnf.ValorUnitario * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
 
             string sql =
                 "(select " + campos1 + @"
