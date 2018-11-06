@@ -222,8 +222,8 @@
       this.naturezaOperacaoRevendaInterestadualAtual = regraNatureza && regraNatureza.naturezaOperacaoRevenda ? this.clonar(regraNatureza.naturezaOperacaoRevenda.interestadual) : null;
       this.naturezaOperacaoRevendaIntraestadualComStAtual = regraNatureza && regraNatureza.naturezaOperacaoRevenda ? this.clonar(regraNatureza.naturezaOperacaoRevenda.intraestadualComSt) : null;
       this.naturezaOperacaoRevendaInterestadualComStAtual = regraNatureza && regraNatureza.naturezaOperacaoRevenda ? this.clonar(regraNatureza.naturezaOperacaoRevenda.interestadualComSt) : null;
-      this.ufsDestinoAtuais = regraNatureza ? regraNatureza.ufsDestino : null;
-
+      this.ufsDestinoAtuais = regraNatureza ? this.clonar(regraNatureza.ufsDestino) : null;
+      
       this.regraNatureza = {
         id: regraNatureza ? regraNatureza.id : null,
         idLoja: regraNatureza && regraNatureza.loja ? regraNatureza.loja.id : null,
@@ -238,7 +238,7 @@
           },
           espessura: regraNatureza && regraNatureza.produto && regraNatureza.produto ? regraNatureza.produto.espessura : null
         },
-        ufsDestino: regraNatureza ? regraNatureza.ufsDestino : null,
+        ufsDestino: regraNatureza ? this.clonar(regraNatureza.ufsDestino) : null,
         naturezaOperacaoProducao: {
           intraestadual: regraNatureza && regraNatureza.naturezaOperacaoProducao && regraNatureza.naturezaOperacaoProducao.intraestadual ? regraNatureza.naturezaOperacaoProducao.intraestadual.id : null,
           interestadual: regraNatureza && regraNatureza.naturezaOperacaoProducao && regraNatureza.naturezaOperacaoProducao.interestadual ? regraNatureza.naturezaOperacaoProducao.interestadual.id : null,
@@ -505,7 +505,7 @@
     ufsDestinoAtuais: {
       handler: function (atual) {
         if (this.regraNatureza) {
-          this.regraNatureza.ufsDestino = atual ? atual : null;
+          this.regraNatureza.ufsDestino = atual;
         }
       },
       deep: true
