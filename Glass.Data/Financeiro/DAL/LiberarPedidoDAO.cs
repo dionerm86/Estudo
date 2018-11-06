@@ -396,6 +396,8 @@ namespace Glass.Data.DAL
 
             #endregion
 
+            VerificarComissaoContasReceber(session, idsPedido.Select(p => (uint)p).ToList());
+
             #region Recuperação da loja
 
             // Recupera a loja do primeiro pedido liberado.
@@ -1119,6 +1121,8 @@ namespace Glass.Data.DAL
 
             #region Geração das contas recebidas
 
+            VerificarComissaoContasReceber(session, idsPedido.Select(p => (uint)p).ToList());
+
             //Gera uma conta recebida para cada tipo de pagamento
             // Se for pago com crédito, gera a conta recebida do credito
             if (liberarPedido.CreditoUtilizado > 0)
@@ -1180,8 +1184,8 @@ namespace Glass.Data.DAL
                     Renegociada = false,
                     NumParc = 1,
                     NumParcMax = 1,
-                    IdFuncComissaoRec = liberarPedido.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(session, liberarPedido.IdCliente) : null
-                });
+                    IdFuncComissaoRec = ObterIdFuncComissaoRec(session, (uint)idLiberarPedido)
+            });
 
                 if (idsFormaPagamento.ElementAt(i) == (uint)Pagto.FormaPagto.Cartao)
                 {
@@ -1320,6 +1324,17 @@ namespace Glass.Data.DAL
 
             // Envia o e-mail.
             Email.EnviaEmailLiberacao(session, (uint)idLiberarPedido);
+        }
+
+        private int ObterIdFuncComissaoRec(GDASession session, uint idLiberarPedido)
+        {
+            if(idLiberarPedido == 0)
+            {
+                return 0;
+            }
+
+            var idPedido = PedidoDAO.Instance.GetIdsByLiberacao(session, idLiberarPedido).First();
+            return (int)PedidoDAO.Instance.ObtemIdFunc(session, idPedido);
         }
 
         /// <summary>
@@ -1734,11 +1749,13 @@ namespace Glass.Data.DAL
             string[] numAutCartao, string idsOc)
         {
             uint idLiberarPedido = 0;
+            var idsPedidos = Array.ConvertAll(idsPedido.Trim(',').Split(','), x => x.StrParaUint()).ToList();
 
             // #69907 - Altera a OBS do pedido para bloquear qualquer outra alteração na tabela fora dessa transação
-            var idPedidoTemp = Array.ConvertAll(idsPedido.Trim(',').Split(','), x => x.StrParaUint())[0];
-            var obsPedido = PedidoDAO.Instance.ObtemObs(session, idPedidoTemp);
-            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET obs='Liberando Pedido' WHERE IdPedido={0}", idPedidoTemp));
+            var obsPedido = PedidoDAO.Instance.ObtemObs(session, idsPedidos.First());
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET obs='Liberando Pedido' WHERE IdPedido={0}", idsPedido.First()));
+
+            VerificarComissaoContasReceber(session, idsPedidos);
 
             LoginUsuario login = UserInfo.GetUserInfo;
             var tipoFunc = login.TipoUsuario;
@@ -2110,8 +2127,8 @@ namespace Glass.Data.DAL
                         Renegociada = false,
                         NumParc = 1,
                         NumParcMax = 1,
-                        IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
-                });
+                        IdFuncComissaoRec = ObterIdFuncComissaoRec(session, idLiberarPedido)
+                    });
 
                     #region Salva o pagamento da conta
 
@@ -2149,8 +2166,8 @@ namespace Glass.Data.DAL
                         Renegociada = false,
                         NumParc = 1,
                         NumParcMax = 1,
-                        IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
-                });
+                        IdFuncComissaoRec = ObterIdFuncComissaoRec(session, idLiberarPedido)
+                    });
 
                     #region Salva o pagamento da conta
 
@@ -2236,7 +2253,7 @@ namespace Glass.Data.DAL
                     NumParc = numParc++,
                     NumParcMax = numParcelas,
                     IdFormaPagto = formaPagtoPrazo,
-                    IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
+                    IdFuncComissaoRec = ObterIdFuncComissaoRec(session, idLiberarPedido)
                 };
 
                 if (ContemPedidosReposicao(session, idLiberarPedido))
@@ -2420,9 +2437,27 @@ namespace Glass.Data.DAL
                 new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
 
             // #69907 - Ao final da transação volta a situação original do pedido
-            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET obs=?obs WHERE IdPedido={0}", idPedidoTemp), new GDAParameter("?obs", obsPedido));
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET obs=?obs WHERE IdPedido={0}", idsPedidos.First()), new GDAParameter("?obs", obsPedido));
 
             return idLiberarPedido;
+        }
+
+        /// <summary>
+        /// Verifica se pode ser gerada a comissão de contas a receber através de uma lista com Identificadores do Pedido caso o sistema esteja parametrizado.
+        /// </summary>
+        /// <param name="session">Sessão do GDA.</param>
+        /// <param name="idsPedidos">Lista de identificadores de Pedido.</param>
+        private static void VerificarComissaoContasReceber(GDASession session, List<uint> idsPedidos)
+        {
+            var vendedoresPedidos = new List<Tuple<uint, uint>>();
+
+            if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && !PedidoDAO.Instance.VerificarPedidosMesmoVendedor(session, idsPedidos,out vendedoresPedidos))
+            {
+                var mensagemVendedoresPedidos = string.Join($"{System.Environment.NewLine}", vendedoresPedidos.GroupBy(p => p.Item2)
+                    .Select(p => $"Funcionário: {FuncionarioDAO.Instance.GetNome(session, p.Key)}. Pedido(s): {string.Join(", ", p.Select(f => f.Item1))}"));
+
+                throw new Exception($"Não é possivel liberar pedidos em que os funcionários a receber comissão sejam diferentes.{System.Environment.NewLine}{mensagemVendedoresPedidos}.");
+            }
         }
 
         #endregion

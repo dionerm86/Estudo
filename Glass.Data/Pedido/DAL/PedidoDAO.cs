@@ -6503,7 +6503,7 @@ namespace Glass.Data.DAL
                     {
                         try
                         {
-                            ConfirmarLiberacaoPedido(session, new List<int> { (int)idPedido }, true);
+                            ConfirmarLiberacaoPedido(session, new List<int> { (int)idPedido } , true);
                         }
                         catch (ValidacaoPedidoFinanceiroException f)
                         {
@@ -7023,7 +7023,7 @@ namespace Glass.Data.DAL
                                         IdConta = UtilsPlanoConta.GetPlanoPrazo(idFormaPagto.Value),
                                         NumParc = numParc,
                                         IdFormaPagto = idFormaPagto.Value,
-                                        IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
+                                        IdFuncComissaoRec = (int)ObtemIdFunc(null, idPedido)
                                     };
                                     numParc++;
                                     conta.IdContaR = ContasReceberDAO.Instance.Insert(trans, conta);
@@ -7097,7 +7097,7 @@ namespace Glass.Data.DAL
                                     UsuRec = UserInfo.GetUserInfo.CodUser,
                                     NumParc = 1,
                                     NumParcMax = 1,
-                                    IdFuncComissaoRec = ped.IdCli > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(ped.IdCli) : null
+                                    IdFuncComissaoRec = (int)ObtemIdFunc(null, idPedido)
                                 };
 
                                 var idContaR = ContasReceberDAO.Instance.Insert(trans, contaRecSinal);
@@ -11164,7 +11164,7 @@ namespace Glass.Data.DAL
 
             if (Instance.IsRevenda(sessao, idPedido))
             {
-                return situacaoProducao == SituacaoProdutoProducao.Entregue 
+                return situacaoProducao == SituacaoProdutoProducao.Entregue
                     && ProdutosPedidoDAO.Instance.VerificarSaidaProduto(sessao, idPedido);
             }
 
@@ -12200,6 +12200,22 @@ namespace Glass.Data.DAL
         public uint ObtemIdFunc(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<uint>(sessao, "idFunc", "idPedido=" + idPedido);
+        }
+
+        /// <summary>
+        /// Verifica através de uma lista de identificadores de pedido se os pedidos são do mesmo vendedor.
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="idsPedidos">Lista com os Identificadores dos Pedidos.</param>
+        /// <returns>Retorna uma variável lógica que possui o valor do teste se os pedidos são do mesmo vendedor.</returns>
+        public bool VerificarPedidosMesmoVendedor(GDASession sessao, List<uint> idsPedidos, out List<Tuple<uint,uint>> vendedoresPedidos)
+        {
+            vendedoresPedidos = idsPedidos
+                .Select(p => new Tuple<uint, uint>(p, ObtemIdFunc(sessao, p))).ToList();
+
+            return vendedoresPedidos.Select(p => p.Item2)
+                .Distinct()
+                .Count() == 1;
         }
 
         public uint? ObtemIdFuncVenda(GDASession session, uint idPedido)

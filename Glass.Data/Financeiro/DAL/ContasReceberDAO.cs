@@ -3319,6 +3319,7 @@ namespace Glass.Data.DAL
                         contaReceberRestante.IdFormaPagto = contaReceberParcial.IdFormaPagto;
                         contaReceberRestante.DataPrimNeg = contaReceberParcial.DataPrimNeg;
                         contaReceberRestante.TipoConta = contasReceber.FirstOrDefault(f => f.TipoConta > 0)?.TipoConta ?? new byte();
+                        contaReceberRestante.IdFuncComissaoRec = contasReceber.First().IdFuncComissaoRec;
                         retorno.idContaParcial = Insert(session, contaReceberRestante);
 
                         removerProximas = true;
