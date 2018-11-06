@@ -100,28 +100,9 @@
     obterTiposItemHistorico: function () {
       return Servicos.Integracao.Integradores.obterTiposItemHistorico();
     },
-
-    /**
-     * Carrega os tipos de itens de histórico.
-     **/
-    carregarTiposItensHistorico: function () {
-      var self = this;
-      Servicos.Integracao.Integradores.obterTiposItemHistorico()
-        .then(function (resposta) {
-          if (resposta.status == 200) {
-            self.tiposItemHistorico = resposta.data;
-          }
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            self.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
-    },
   },
 
   mounted: function () {
-    this.carregarTiposItensHistorico();
     this.carregarItensFiltro();
   },
 
