@@ -6,6 +6,7 @@ using Glass.Data.DAL;
 using Glass.Log;
 using System.Linq;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Glass.Data.Model
 {
@@ -16,11 +17,28 @@ namespace Glass.Data.Model
     {
         #region Enumeradores
 
+        /// <summary>
+        /// Enumerador com as possíveis situações de modelo de projeto
+        /// </summary>
         public enum SituacaoEnum
         {
+            /// <summary>
+            /// Situação ativa
+            /// </summary>
+            [Description("Ativo")]
             Ativo = 1,
+
+            /// <summary>
+            /// Situação inativa
+            /// </summary>
+            [Description("Inativo")]
             Inativo = 2,
-            Bloqueado = 3
+
+            /// <summary>
+            /// Situação bloqueada
+            /// </summary>
+            [Description("Bloqueado")]
+            Bloqueado = 3,
         }
 
         #endregion

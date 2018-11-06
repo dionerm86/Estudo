@@ -1045,10 +1045,10 @@ namespace Glass.Data.DAL
         /// Cria o Log de Alterações para a medida do projeto.
         /// </summary>
         /// <param name="medidaProjeto"></param>
-        public void LogMedidaProjeto(MedidaProjeto medidaProjeto)
+        public void LogMedidaProjeto(GDASession sessao, MedidaProjeto medidaProjeto)
         {
-            MedidaProjeto atual = MedidaProjetoDAO.Instance.GetElementByPrimaryKey(medidaProjeto.IdMedidaProjeto);
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.MedidaProjeto, medidaProjeto.IdMedidaProjeto, atual, medidaProjeto);
+            MedidaProjeto atual = MedidaProjetoDAO.Instance.GetElementByPrimaryKey(sessao, medidaProjeto.IdMedidaProjeto);
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.MedidaProjeto, medidaProjeto.IdMedidaProjeto, atual, medidaProjeto);
         }
 
         /// <summary>
@@ -1977,15 +1977,6 @@ namespace Glass.Data.DAL
         public void ApagaLogMaterialProjetoModelo(uint idMaterialProjetoModelo)
         {
             ApagaLog(LogAlteracao.TabelaAlteracao.MaterialProjetoModelo, idMaterialProjetoModelo);
-        }
-
-        /// <summary>
-        /// Apaga o Log de Alterações para o grupo de modelos de projeto.
-        /// </summary>
-        /// <param name="idGrupoModelo"></param>
-        public void ApagaLogGrupoModelo(uint idGrupoModelo)
-        {
-            ApagaLog(LogAlteracao.TabelaAlteracao.GrupoModelo, idGrupoModelo);
         }
 
         /// <summary>

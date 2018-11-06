@@ -339,6 +339,7 @@ namespace Glass.Data.Helper
             MaximoDiasEnviarEmailCobrancaAposVencimento = 377,
             DesmembrarOrcamentoPorSubgrupoGerarPedido = 378,
             ConsiderarApenasDebitoComoPagtoAvista = 379,
+            UsarPercentualBonificacaoCliente = 384,
 
             #region Configs Suporte (Antiga config interna)
 
