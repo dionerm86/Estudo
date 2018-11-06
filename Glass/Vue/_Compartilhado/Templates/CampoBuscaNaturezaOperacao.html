@@ -1,0 +1,5 @@
+<campo-busca-com-popup ref="base" v-bind:id.sync="idNaturezaOperacao" v-bind:nome.sync="nomeNaturezaOperacao"
+    v-bind:item-selecionado.sync="naturezaOperacaoAtual" campo-id="id" campo-nome="nome"
+    v-bind:funcao-buscar-itens="buscarNaturezasOperacao" v-bind:pre-carregar-itens="true"
+    v-bind:url-popup="caminhoRelativo('/Utils/SelNaturezaOperacao.aspx')" v-bind:largura-popup="700"
+    v-bind:altura-popup="455" style="width: 90px" v-bind="$attrs"></campo-busca-com-popup>

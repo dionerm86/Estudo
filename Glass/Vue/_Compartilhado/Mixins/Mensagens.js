@@ -30,6 +30,21 @@ Vue.mixin({
       }
 
       return confirm(texto);
+    },
+
+    /**
+     * Função para requisição de uma informação ao usuário.
+     * @param {string} titulo O título a ser exibido para a mensagem.
+     * @param {?string} [texto] O texto da mensagem.
+     * @returns Um valor string que retorna o valor preenchido pelo usuário.
+     */
+    requisitarInformacao: function (titulo, texto) {
+      if (titulo && !texto) {
+        texto = titulo;
+        titulo = null;
+      }
+
+      return prompt(texto);
     }
   }
 });
