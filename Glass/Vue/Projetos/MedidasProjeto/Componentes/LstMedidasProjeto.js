@@ -30,7 +30,7 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensGrupoMedida: function() {
-      return Servicos.Projetos.GruposMedida.obterParaControle();
+      return Servicos.Projetos.Medidas.Grupos.obterParaControle();
     },
 
     /**

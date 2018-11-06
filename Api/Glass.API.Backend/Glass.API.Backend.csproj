@@ -225,8 +225,8 @@
     <Compile Include="Controllers\Projetos\V1\Ferragens\GetFerragensController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\PatchFerragensController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FerragensController.cs" />
-    <Compile Include="Controllers\Projetos\V1\GruposMedidaProjeto\GetGruposMedidaProjetoController.cs" />
-    <Compile Include="Controllers\Projetos\V1\GruposMedidaProjeto\GruposMedidaProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\MedidasProjeto\GruposMedidaProjeto\GetGruposMedidaProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\MedidasProjeto\GruposMedidaProjeto\GruposMedidaProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\MedidasProjeto\DeleteMedidasProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\MedidasProjeto\GetMedidasProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\MedidasProjeto\MedidasProjetoController.cs" />

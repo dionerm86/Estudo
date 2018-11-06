@@ -106,6 +106,19 @@ Servicos.Projetos = (function(http) {
      */
     Medidas: {
       /**
+       * Objeto com os serviços para a API de grupos de medida de projeto.
+       */
+      Grupos: {
+        /**
+         * Recupera a lista de grupos de medidas de projeto para uso no controle de seleção.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        obterParaControle: function () {
+          return http().get(API + 'medidas/grupos/filtro');
+        }
+      },
+
+      /**
        * Recupera a lista de medidas de projeto.
        * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
        * @param {number} pagina O número da página de resultados a ser exibida.
@@ -165,19 +178,6 @@ Servicos.Projetos = (function(http) {
        */
       obterParaControle: function () {
         return http().get(API + 'medidas/filtro');
-      }
-    },
-
-    /**
-     * Objeto com os serviços para a API de grupos de medida de projeto.
-     */
-    GruposMedida: {
-      /**
-       * Recupera a lista de grupos de medidas de projeto para uso no controle de seleção.
-       * @returns {Promise} Uma promise com o resultado da operação.
-       */
-      obterParaControle: function () {
-        return http().get(API + 'gruposMedida/filtro');
       }
     },
 

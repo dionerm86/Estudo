@@ -6,12 +6,12 @@ using GDA;
 using Glass.Data.DAL;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.Projetos.V1.GruposMedidaProjeto
+namespace Glass.API.Backend.Controllers.Projetos.V1.MedidasProjeto.GruposMedidaProjeto
 {
     /// <summary>
     /// Controller de grupos de medida de projeto.
     /// </summary>
-    [RoutePrefix("api/v1/projetos/gruposMedida")]
+    [RoutePrefix("api/v1/projetos/medidas/grupos")]
     public partial class GruposMedidaProjetoController : BaseController
     {
         private IHttpActionResult ValidarIdGrupoMedidaProjeto(int id)

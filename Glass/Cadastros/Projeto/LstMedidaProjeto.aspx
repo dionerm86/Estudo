@@ -17,7 +17,7 @@
                         <a href="#" @click.prevent="ordenar('nome')">Descrição</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('ValorPadrao')">Valor padrão</a>
+                        <a href="#" @click.prevent="ordenar('valorPadrao')">Valor padrão</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('exibirApenasEmCalculosDeMedidaExata')">Exibir apenas em cálculos de medida exata</a>

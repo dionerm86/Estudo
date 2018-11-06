@@ -14,7 +14,7 @@ namespace Glass.API.Backend.Helper.Projetos.Ferragens.FabricantesFerragem
     internal class ConverterCadastroAtualizacaoParaFabricanteFerragem
     {
         private readonly CadastroAtualizacaoDto cadastro;
-        private readonly Lazy<FabricanteFerragem> grupoProjeto;
+        private readonly Lazy<FabricanteFerragem> fabricanteFerragem;
 
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ConverterCadastroAtualizacaoParaFabricanteFerragem"/>.
@@ -26,7 +26,7 @@ namespace Glass.API.Backend.Helper.Projetos.Ferragens.FabricantesFerragem
             FabricanteFerragem atual = null)
         {
             this.cadastro = cadastro;
-            this.grupoProjeto = new Lazy<FabricanteFerragem>(() =>
+            this.fabricanteFerragem = new Lazy<FabricanteFerragem>(() =>
             {
                 var destino = atual ?? new FabricanteFerragem();
                 this.ConverterDtoParaModelo(destino);
@@ -41,7 +41,7 @@ namespace Glass.API.Backend.Helper.Projetos.Ferragens.FabricantesFerragem
         /// <returns>A model de fabricante de ferragem preenchida.</returns>
         public FabricanteFerragem ConverterParaFabricanteFerragem()
         {
-            return this.grupoProjeto.Value;
+            return this.fabricanteFerragem.Value;
         }
 
         private void ConverterDtoParaModelo(FabricanteFerragem destino)
