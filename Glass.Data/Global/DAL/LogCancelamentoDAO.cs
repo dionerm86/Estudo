@@ -311,7 +311,7 @@ namespace Glass.Data.DAL
                 log.IdRegistroCanc = id;
                 log.NumEvento = numEvento;
                 log.Motivo = motivo;
-                log.IdFuncCanc = UserInfo.GetByIdFunc(idFunc).CodUser;
+                log.IdFuncCanc = UserInfo.GetUserInfo?.CodUser ?? 0;
                 log.DataCanc = DateTime.Now;
                 log.CancelamentoManual = manual;
                 log.Campo = p.Atributo.Campo;

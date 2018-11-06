@@ -495,10 +495,26 @@
     <Content Include="Listas\LstCfop.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
+    <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.Filtro.js" />
+    <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.js" />
+    <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Templates\LstRegrasNaturezaOperacao.Filtro.html" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
+    <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
+    <Content Include="Vue\Projetos\Ferragens\FabricantesFerragem\Componentes\LstFabricantesFerragem.js" />
+    <Content Include="Vue\Projetos\MedidasProjeto\Componentes\LstMedidasProjeto.js" />
+    <Content Include="Vue\Projetos\MedidasProjeto\Componentes\LstMedidasProjeto.Filtro.js" />
+    <Content Include="Vue\Projetos\MedidasProjeto\Templates\LstMedidasProjeto.Filtro.html" />
+    <Content Include="Vue\Projetos\Ferragens\Componentes\LstFerragens.Filtro.js" />
+    <Content Include="Vue\Projetos\Ferragens\Componentes\LstFerragens.js" />
+    <Content Include="Vue\Projetos\Ferragens\Templates\LstFerragens.Filtro.html" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.Filtro.js" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.js" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Templates\LstModelosProjeto.Filtro.html" />
+    <Content Include="Vue\Projetos\Templates\LstProjetos.Filtro.html" />
     <Content Include="Vue\Contabilistas\Componentes\LstContabilistas.js" />
     <Content Include="Vue\PlanosConta\Componentes\LstPlanosConta.Filtro.js" />
     <Content Include="Vue\PlanosConta\CategoriasConta\Componentes\LstCategoriasConta.js" />
@@ -530,6 +546,7 @@
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.js" />
     <Content Include="Vue\Fornecedores\Templates\LstFornecedores.Filtro.html" />
     <Content Include="Vue\Condutores\Componentes\CadCondutores.js" />
+    <Content Include="Vue\Projetos\GruposProjeto\Componentes\LstGruposProjeto.js" />
     <Content Include="Vue\Rotas\Componentes\LstRotas.js" />
     <Content Include="Vue\TabelasDescontoAcrescimoCliente\Componentes\LstTabelasDescontoAcrescimoCliente.js" />
     <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
@@ -704,7 +721,6 @@
     <Content Include="Cadastros\CadRecebChequeDevolvido.aspx" />
     <Content Include="Cadastros\CadReceberSinal.aspx" />
     <Content Include="Cadastros\CadReceitaDiversa.aspx" />
-    <Content Include="Cadastros\CadRegraNaturezaOperacao.aspx" />
     <Content Include="Cadastros\CadRetificarComissao.aspx" />
     <Content Include="Cadastros\CadRetificarConferencia.aspx" />
     <Content Include="Cadastros\CadRetificarDepositoCheque.aspx" />
@@ -1677,7 +1693,6 @@
     <Content Include="Utils\SetMotivoCancProdImpressao.aspx" />
     <Content Include="Utils\SetMotivoCancProj.aspx" />
     <Content Include="Utils\SetMotivoCancReceb.aspx" />
-    <Content Include="Utils\SetMotivoCancRegraNatOp.aspx" />
     <Content Include="Utils\SetMotivoPerdaRetalho.aspx" />
     <Content Include="Utils\SetMotivoCancRetalho.aspx" />
     <Content Include="Utils\SetMotivoCancTroca.aspx" />
@@ -1757,6 +1772,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoAreaM2.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaCidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaCliente.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaNaturezaOperacao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaAplicacao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaProcesso.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaProduto.js" />
@@ -1778,6 +1794,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ControleSelecaoParticipanteFiscal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoFuncionarios.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoMultiplaUf.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoTiposPessoa.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSituacoes.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSetores.js" />
@@ -1809,6 +1826,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Projetos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comum.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Contabilistas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
@@ -1881,6 +1899,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoAreaM2.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaCidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaCliente.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoBuscaNaturezaOperacao.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaEtiquetaAplicacao.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaEtiquetaProcesso.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaProduto.html" />
@@ -1902,6 +1921,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ControleSelecaoParticipanteFiscal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoFuncionarios.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoMultiplaUf.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoTiposPessoa.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoSituacoes.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoSetores.html" />
@@ -4435,13 +4455,6 @@
     </Compile>
     <Compile Include="Cadastros\CadReceitaDiversa.aspx.designer.cs">
       <DependentUpon>CadReceitaDiversa.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Cadastros\CadRegraNaturezaOperacao.aspx.cs">
-      <DependentUpon>CadRegraNaturezaOperacao.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Cadastros\CadRegraNaturezaOperacao.aspx.designer.cs">
-      <DependentUpon>CadRegraNaturezaOperacao.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\CadRetificarComissao.aspx.cs">
       <DependentUpon>CadRetificarComissao.aspx</DependentUpon>
@@ -8346,13 +8359,6 @@
     </Compile>
     <Compile Include="Utils\SetMotivoCancReceb.aspx.designer.cs">
       <DependentUpon>SetMotivoCancReceb.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Utils\SetMotivoCancRegraNatOp.aspx.cs">
-      <DependentUpon>SetMotivoCancRegraNatOp.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Utils\SetMotivoCancRegraNatOp.aspx.designer.cs">
-      <DependentUpon>SetMotivoCancRegraNatOp.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\SetMotivoPerdaRetalho.aspx.cs">
       <DependentUpon>SetMotivoPerdaRetalho.aspx</DependentUpon>

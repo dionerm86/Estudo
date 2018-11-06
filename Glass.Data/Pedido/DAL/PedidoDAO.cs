@@ -4540,7 +4540,7 @@ namespace Glass.Data.DAL
             string nomeCliExterno, string codRotaExterna, bool selecionar)
         {
             var campos = @"p.*, c.nomeFantasia as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja,
-                (SELECT r.codInterno FROM rota r WHERE r.idRota IN (Select rc.idRota From rota_cliente rc Where rc.idCliente=p.idCli)) As codRota, 
+                (SELECT r.codInterno FROM rota r WHERE r.idRota IN (Select rc.idRota From rota_cliente rc Where rc.idCliente=p.idCli)) As codRota,
                 CAST(SUM(pp.qtde) as SIGNED) as QuantidadePecasPedido, COALESCE(vpp.qtde, 0) as QtdePecasVolume, SUM(pp.TotM) as TotMVolume,
                 SUM(pp.peso) as PesoVolume";
 
@@ -4560,7 +4560,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN funcionario f On (p.idFunc=f.idFunc)
                     LEFT JOIN loja l On (p.IdLoja = l.IdLoja)
                     LEFT JOIN grupo_prod gp ON (prod.idGrupoProd = gp.idGrupoProd)
-                    LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd 
+                    LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd
                         AND (sgp.PermitirItemRevendaNaVenda IS NULL OR sgp.PermitirItemRevendaNaVenda = 0))
                     LEFT JOIN (
                         SELECT v1.idPedido, SUM(vpp1.qtde) AS qtde
@@ -4641,9 +4641,9 @@ namespace Glass.Data.DAL
             {
                 sql += @" AND p.IdPedido IN (
                     SELECT IdPedido
-                    FROM produtos_liberar_pedido 
+                    FROM produtos_liberar_pedido
                     WHERE IdLiberarPedido IN (
-                        SELECT IdLiberarPedido 
+                        SELECT IdLiberarPedido
                         FROM liberarpedido WHERE DataLiberacao>=?dataLibIni))";
             }
 
@@ -4651,15 +4651,15 @@ namespace Glass.Data.DAL
             {
                 sql += @" AND p.IdPedido IN (
                     SELECT IdPedido
-                    FROM produtos_liberar_pedido 
+                    FROM produtos_liberar_pedido
                     WHERE IdLiberarPedido IN (
-                        SELECT IdLiberarPedido 
+                        SELECT IdLiberarPedido
                         FROM liberarpedido WHERE DataLiberacao<=?dataLibFim))";
             }
 
             if (!string.IsNullOrEmpty(codRota))
             {
-                sql += @" And c.id_Cli IN (Select idCliente From rota_cliente Where idRota In 
+                sql += @" And c.id_Cli IN (Select idCliente From rota_cliente Where idRota In
                     (Select idRota From rota where codInterno like ?codRota))";
             }
 
@@ -5660,7 +5660,7 @@ namespace Glass.Data.DAL
                 var debitosCliente = ContasReceberDAO.Instance.GetDebitos(sessao, idCliente, null);
                 var totalPedido = GetTotal(sessao, (uint)idPedido);
 
-                if ((!VerificaSinalPagamentoReceber(sessao, new List<int> { idPedido }, out mensagemErro) && mensagemErro.Count > 0) ||
+                if ((VerificaSinalPagamentoReceber(sessao, new List<int> { idPedido }, out mensagemErro) && mensagemErro.Count > 0) ||
                     (limiteCliente - (debitosCliente + totalPedido) < 0))
                 {
                     idsPedidosErro.Add(idPedido);
@@ -6503,7 +6503,7 @@ namespace Glass.Data.DAL
                     {
                         try
                         {
-                            ConfirmarLiberacaoPedido(session, new List<int> { (int)idPedido }, true);
+                            ConfirmarLiberacaoPedido(session, new List<int> { (int)idPedido } , true);
                         }
                         catch (ValidacaoPedidoFinanceiroException f)
                         {
@@ -7023,7 +7023,7 @@ namespace Glass.Data.DAL
                                         IdConta = UtilsPlanoConta.GetPlanoPrazo(idFormaPagto.Value),
                                         NumParc = numParc,
                                         IdFormaPagto = idFormaPagto.Value,
-                                        IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
+                                        IdFuncComissaoRec = (int)ObtemIdFunc(null, idPedido)
                                     };
                                     numParc++;
                                     conta.IdContaR = ContasReceberDAO.Instance.Insert(trans, conta);
@@ -7097,7 +7097,7 @@ namespace Glass.Data.DAL
                                     UsuRec = UserInfo.GetUserInfo.CodUser,
                                     NumParc = 1,
                                     NumParcMax = 1,
-                                    IdFuncComissaoRec = ped.IdCli > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(ped.IdCli) : null
+                                    IdFuncComissaoRec = (int)ObtemIdFunc(null, idPedido)
                                 };
 
                                 var idContaR = ContasReceberDAO.Instance.Insert(trans, contaRecSinal);
@@ -7583,7 +7583,7 @@ namespace Glass.Data.DAL
                 idsPedidoOk = new List<int>();
                 idsPedidoErro = new List<int>();
                 var situacaoCliente = ClienteDAO.Instance.GetSituacao(pedidos[0].IdCli);
-                var possuiSinalPagamentoReceber = !VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idsPedidoOk, out idsPedidoErro);
+                var possuiSinalPagamentoReceber = VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idsPedidoOk, out idsPedidoErro);
 
                 // Se, bloquear confirmação de pedido com sinal à receber.
                 if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && possuiSinalPagamentoReceber && idsPedidoOk.Count == 0)
@@ -7813,18 +7813,25 @@ namespace Glass.Data.DAL
         {
             // Define que apenas administrador pode reabrir pedido
             var apenasAdminReabrePedido = PCPConfig.ReabrirPCPSomenteAdmin;
+
             // Define que todos usuários podem reabrir pedido confirmado PCP, exceto o vendedor (a menos que seja pedido de revenda)
             var apenasVendedorNaoReabrePedidoConfirmadoPCP = PedidoConfig.ReabrirPedidoConfirmadoPCPTodosMenosVendedor;
 
             /* Chamado 52903. */
-            if (!PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli == UserInfo.GetUserInfo.IdCliente)
+            if (!PedidoConfig.ParceiroPodeEditarPedido && idCli == UserInfo.GetUserInfo.IdCliente)
+            {
                 return false;
+            }
             else if (geradoParceiro && !PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
+            {
                 return false;
+            }
 
             // Não deixa reabrir se recebeu sinal
             if (PedidoConfig.ReabrirPedidoNaoPermitidoComSinalRecebido && recebeuSinal)
+            {
                 return false;
+            }
 
             // Se não for Gerente/Auxiliar verifica se o pedido é do usuário logado
             var flagVendedor = true;
@@ -11164,7 +11171,7 @@ namespace Glass.Data.DAL
 
             if (Instance.IsRevenda(sessao, idPedido))
             {
-                return situacaoProducao == SituacaoProdutoProducao.Entregue 
+                return situacaoProducao == SituacaoProdutoProducao.Entregue
                     && ProdutosPedidoDAO.Instance.VerificarSaidaProduto(sessao, idPedido);
             }
 
@@ -12200,6 +12207,22 @@ namespace Glass.Data.DAL
         public uint ObtemIdFunc(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<uint>(sessao, "idFunc", "idPedido=" + idPedido);
+        }
+
+        /// <summary>
+        /// Verifica através de uma lista de identificadores de pedido se os pedidos são do mesmo vendedor.
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="idsPedidos">Lista com os Identificadores dos Pedidos.</param>
+        /// <returns>Retorna uma variável lógica que possui o valor do teste se os pedidos são do mesmo vendedor.</returns>
+        public bool VerificarPedidosMesmoVendedor(GDASession sessao, List<uint> idsPedidos, out List<Tuple<uint,uint>> vendedoresPedidos)
+        {
+            vendedoresPedidos = idsPedidos
+                .Select(p => new Tuple<uint, uint>(p, ObtemIdFunc(sessao, p))).ToList();
+
+            return vendedoresPedidos.Select(p => p.Item2)
+                .Distinct()
+                .Count() == 1;
         }
 
         public uint? ObtemIdFuncVenda(GDASession session, uint idPedido)
@@ -14012,7 +14035,7 @@ namespace Glass.Data.DAL
 
             if (!(idsPedidos?.Any(f => f > 0) ?? false))
             {
-                return true;
+                return false;
             }
 
             return VerificaSinalPagamentoReceber(sessao, GetByString(null, string.Join(",", idsPedidos)), out mensagemErro);
@@ -14048,6 +14071,8 @@ namespace Glass.Data.DAL
 
             if (!PedidoConfig.ImpedirConfirmacaoPedidoPagamento)
             {
+                idsPedidosOk.AddRange(pedidos.Select(f => (int)f.IdPedido));
+
                 return false;
             }
 
@@ -14090,7 +14115,7 @@ namespace Glass.Data.DAL
                 mensagemErro.Add($"O{incluirS} pedido{incluirS} {string.Join(", ", idsPedidoPagtoAntecipado.ToList())} deve{incluirM} ser pago{incluirS} antecipadamente.\n");
             }
 
-            return !(mensagemErro.Count > 0);
+            return mensagemErro.Count > 0;
         }
 
         #endregion
@@ -16346,7 +16371,7 @@ namespace Glass.Data.DAL
             pedido.TipoPedido = orcamento.TipoOrcamento.GetValueOrDefault((int)Pedido.TipoPedidoEnum.Venda);
             pedido.ValorEntrega = orcamento.ValorEntrega;
 
-            // O if abaixo foi comentado por que ao gerar pedido de um orçamento calculado com o tipo entrega "Entrega", o pedido ao invés 
+            // O if abaixo foi comentado por que ao gerar pedido de um orçamento calculado com o tipo entrega "Entrega", o pedido ao invés
             // de pegar o valor de obra estava pegando o valor de balcão, fazendo com o valor do pedido ficasse diferente do orçamento
             /*if (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)*/
             pedido.DataEntrega = GetDataEntregaMinima(
@@ -16522,7 +16547,7 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-        
+
         #region Buscar pedidos prontos e não entregues
 
         public bool ExistemPedidosProntosNaoEntreguesPeriodo(int qtdeDias)

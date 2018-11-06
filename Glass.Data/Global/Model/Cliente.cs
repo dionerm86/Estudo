@@ -703,6 +703,13 @@ namespace Glass.Data.Model
         [PersistenceForeignKey(typeof(GrupoCliente), "IdGrupoCliente")]
         public int? IdGrupoCliente { get; set; }
 
+        /// <summary>
+        /// Obtém ou define o Percentual da bonificação do cliente.
+        /// </summary>
+        [Log("Percentual de Bonificação")]
+        [PersistenceProperty("PERCENTUALBONIFICACAO")]
+        public decimal? PercentualBonificacao { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
