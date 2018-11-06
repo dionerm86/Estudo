@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.WebControls;
 
 namespace Glass.UI.Web.Cadastros
@@ -8,7 +9,14 @@ namespace Glass.UI.Web.Cadastros
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
 
+            if (!string.IsNullOrWhiteSpace(this.Request["id"]))
+            {
+                this.txtNumRemessa.Text = this.Request["id"];
+                this.txtNumRemessa.Enabled = false;
+                grdContasReceber.Columns[1].Visible = false;
+            }
         }
 
         protected void grdContasReceber_DataBound(object sender, EventArgs e)
@@ -20,36 +28,36 @@ namespace Glass.UI.Web.Cadastros
             lblNaoRemover.Visible = possuiItens;
         }
 
-        protected void grdContasReceber_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-
-            if (e.Row.RowType == DataControlRowType.DataRow)
-            {
-                if (((Data.Model.ContasReceber)e.Row.DataItem).Recebida)
-                    for (int i = 0; i < e.Row.Cells.Count; i++)
-                        e.Row.Cells[i].ForeColor = System.Drawing.Color.Red;
-            }
-
-        }
-
         protected void btnRetificarArquivoRemessa_Click(object sender, EventArgs e)
         {
             try
             {
-                var idsContaR = new List<int>();
+                var idsContaRRemessa = new List<Tuple<int, int>>();
 
                 // Pega o id das contas que serão removidas da comissão já paga
                 foreach (GridViewRow r in grdContasReceber.Rows)
+                {
                     if (!((CheckBox)r.FindControl("chkSel")).Checked)
-                        idsContaR.Add(((HiddenField)r.FindControl("hdfIdContaR")).Value.StrParaInt());
+                    {
+                        var idContaR = ((HiddenField)r.FindControl("hdfIdContaR")).Value.StrParaInt();
+                        var idArquivoRemessa = ((HiddenField)r.FindControl("hdfIdArquivoRemessa")).Value.StrParaInt();
 
-                if (Request["id"].StrParaInt() == 0)
-                    throw new Exception("Arquivo remessa não encontrado.");
+                        idsContaRRemessa.Add(new Tuple<int, int>(idContaR, idArquivoRemessa));
+                    }
+                }
 
-                if (idsContaR == null || idsContaR.Count == 0)
-                    throw new Exception("Nenhuma conta foi removida");
+                if (idsContaRRemessa.Count == 0)
+                {
+                    throw new InvalidOperationException("Nenhuma conta foi removida");
+                }
 
-                Data.DAL.ArquivoRemessaDAO.Instance.RetificarArquivoRemessa(idsContaR, Request["id"].StrParaInt());
+                var idsRemessa = idsContaRRemessa.Select(f => f.Item2).Distinct();
+
+                foreach (var idRemessa in idsRemessa)
+                {
+                    var idsConta = idsContaRRemessa.Where(f => f.Item2 == idRemessa).Select(f => f.Item1);
+                    Data.DAL.ArquivoRemessaDAO.Instance.RetificarArquivoRemessa(idsConta, idRemessa);
+                }
 
                 MensagemAlerta.ShowMsg("Arquivo remessa retificado", Page);
 
@@ -59,6 +67,10 @@ namespace Glass.UI.Web.Cadastros
             {
                 MensagemAlerta.ErrorMsg("Falha ao retificar", ex, Page);
             }
+        }
+
+        protected void imgPesq_Click(object sender, System.Web.UI.ImageClickEventArgs e)
+        {
         }
     }
 }
