@@ -63,7 +63,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                         throw;
                     }
 
-                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, ex.IdsPedido, Glass.MensagemAlerta.FormatErrorMsg("", ex));
+                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(ex.IdsPedido, Glass.MensagemAlerta.FormatErrorMsg("", ex));
                 }
                 catch (Exception ex1)
                 {

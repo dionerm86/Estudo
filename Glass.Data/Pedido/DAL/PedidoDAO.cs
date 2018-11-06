@@ -5648,37 +5648,55 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Disponibiliza os pedidos para serem confirmados pelo financeiro.
         /// </summary>
-        public void DisponibilizaConfirmacaoFinanceiro(GDASession sessao, List<int> idsPedido, string mensagem)
+        public void DisponibilizaConfirmacaoFinanceiro(List<int> idsPedido, string mensagem)
         {
-            var idsPedidosErro = new List<int>();
-
-            foreach (var idPedido in idsPedido)
+            using (var transaction = new GDATransaction())
             {
-                var mensagemErro = new List<string>();
-                var idCliente = ObtemIdCliente(sessao, (uint)idPedido);
-                var limiteCliente = ClienteDAO.Instance.ObtemLimite(sessao, idCliente);
-                var debitosCliente = ContasReceberDAO.Instance.GetDebitos(sessao, idCliente, null);
-                var totalPedido = GetTotal(sessao, (uint)idPedido);
-
-                if ((VerificaSinalPagamentoReceber(sessao, new List<int> { idPedido }, out mensagemErro) && mensagemErro.Count > 0) ||
-                    (limiteCliente - (debitosCliente + totalPedido) < 0))
+                try
                 {
-                    idsPedidosErro.Add(idPedido);
+                    transaction.BeginTransaction();
+
+                    var idsPedidosErro = new List<int>();
+
+                    foreach (var idPedido in idsPedido)
+                    {
+                        var mensagemErro = new List<string>();
+                        var idCliente = ObtemIdCliente(transaction, (uint)idPedido);
+                        var limiteCliente = ClienteDAO.Instance.ObtemLimite(transaction, idCliente);
+                        var debitosCliente = ContasReceberDAO.Instance.GetDebitos(transaction, idCliente, null);
+                        var totalPedido = GetTotal(transaction, (uint)idPedido);
+
+                        if ((VerificaSinalPagamentoReceber(transaction, new List<int> { idPedido }, out mensagemErro) && mensagemErro.Count > 0) ||
+                            (limiteCliente - (debitosCliente + totalPedido) < 0))
+                        {
+                            idsPedidosErro.Add(idPedido);
+                        }
+                    }
+
+                    if (idsPedidosErro.Any(f => f > 0))
+                    {
+                        var sql = $@"UPDATE pedido SET
+                            Situacao = {(int)Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro},
+                            IdFuncConfirmarFinanc = {UserInfo.GetUserInfo.CodUser}
+                        WHERE IdPedido IN ({string.Join(",", idsPedidosErro)})";
+
+                        objPersistence.ExecuteCommand(transaction, sql);
+
+                        foreach (var idPedido in idsPedidosErro)
+                        {
+                            ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(transaction, (uint)idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
+                        }
+                    }
+
+                    transaction.Commit();
+                    transaction.Close();
                 }
-            }
-
-            if (idsPedidosErro.Any(f => f > 0))
-            {
-                var sql = $@"UPDATE pedido SET
-                    Situacao = { (int)Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro },
-                    IdFuncConfirmarFinanc = { UserInfo.GetUserInfo.CodUser }
-                WHERE IdPedido IN ({ string.Join(",", idsPedidosErro) })";
-
-                objPersistence.ExecuteCommand(sessao, sql);
-
-                foreach (var idPedido in idsPedidosErro)
+                catch (Exception ex)
                 {
-                    ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(sessao, (uint)idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    throw ex;
                 }
             }
         }
