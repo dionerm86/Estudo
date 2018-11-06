@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -17,7 +17,7 @@ namespace Glass.UI.Web.Listas
         #region Propriedades
 
         /// <summary>
-        /// Itens da otimizaÁ„o.
+        /// Itens da otimiza√ß√£o.
         /// </summary>
         public IEnumerable<EtiquetaProducao> ItensOtimizacao { get; set; }
 
@@ -64,7 +64,7 @@ namespace Glass.UI.Web.Listas
     
                 Page.ClientScript.RegisterStartupScript(GetType(), "init", script.ToString(), true);
     
-                // Limpa os campos para n„o haver erros ao buscar os produtos
+                // Limpa os campos para n√£o haver erros ao buscar os produtos
                 hdfIdsPedidoNFe.Value = "";
                 hdfIdProdPedNf.Value = "";
             }
@@ -75,176 +75,285 @@ namespace Glass.UI.Web.Listas
                 drpLoja.SelectedValue = UserInfo.GetUserInfo.IdLoja.ToString();
             }
         }
-    
+
         /// <summary>
-        /// Retorna os produtos do grupo vidro ou de pedido m„o de obra do pedido passado para serem impressos
+        /// Obt√©m os produtos do grupo vidro ou de pedido m√£o de obra do pedido passado para serem impressos.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <param name="noCache"></param>
-        /// <returns></returns>
+        /// <param name="idPedidoStr">idPedidoStr.</param>
+        /// <param name="idLojaStr">idLojaStr.</param>
+        /// <param name="idProcessoStr">idProcessoStr.</param>
+        /// <param name="idAplicacaoStr">idAplicacaoStr.</param>
+        /// <param name="idsProdPedAmbiente">idsProdPedAmbiente.</param>
+        /// <param name="idCorVidroStr">idCorVidroStr.</param>
+        /// <param name="espessuraStr">espessuraStr.</param>
+        /// <param name="idSubgrupoProdStr">idSubgrupoProdStr.</param>
+        /// <param name="alturaMinStr">alturaMinStr.</param>
+        /// <param name="alturaMaxStr">alturaMaxStr.</param>
+        /// <param name="larguraMinStr">larguraMinStr.</param>
+        /// <param name="larguraMaxStr">larguraMaxStr.</param>
+        /// <param name="noCache">noCache.</param>
+        /// <returns>Retorna os produtos do grupo vidro ou de pedido m√£o de obra do pedido passado para serem impressos.</returns>
         [Ajax.AjaxMethod()]
-        public string GetProdByPedido(string idPedidoStr, string idLojaStr, string idProcessoStr, string idAplicacaoStr, string idsProdPedAmbiente,
-            string idCorVidroStr, string espessuraStr, string idSubgrupoProdStr, string alturaMinStr, string alturaMaxStr, 
-            string larguraMinStr, string larguraMaxStr, string noCache)
+        public string GetProdByPedido(
+            string idPedidoStr,
+            string idLojaStr,
+            string idProcessoStr,
+            string idAplicacaoStr,
+            string idsProdPedAmbiente,
+            string idCorVidroStr,
+            string espessuraStr,
+            string idSubgrupoProdStr,
+            string alturaMinStr,
+            string alturaMaxStr,
+            string larguraMinStr,
+            string larguraMaxStr,
+            string noCache)
         {
             try
             {
-                uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
-    
-                // Verifica se j· foi gerado um espelho para este pedido
-                if (!PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido))
-                    return "Erro\tAinda n„o foi gerada uma conferÍncia para este pedido.";
-    
-                // Verifica se o espelho n„o est· em aberto
-                if (PedidoEspelhoDAO.Instance.ObtemSituacao(idPedido) == PedidoEspelho.SituacaoPedido.Processando ||
-                    PedidoEspelhoDAO.Instance.ObtemSituacao(idPedido) == PedidoEspelho.SituacaoPedido.Aberto)
-                    return "Erro\tEsta conferÍncia do pedido " + idPedido + " ainda n„o foi finalizada.";
-    
-                StringBuilder str = new StringBuilder();
+                var idPedido = idPedidoStr.StrParaUint();
 
-                int? idLoja = Glass.Conversoes.StrParaIntNullable(idLojaStr);
-                uint idProcesso = Glass.Conversoes.StrParaUint(idProcessoStr);
-                uint idAplicacao = Glass.Conversoes.StrParaUint(idAplicacaoStr);
-                uint idCorVidro = Glass.Conversoes.StrParaUint(idCorVidroStr);
-                float espessura = Glass.Conversoes.StrParaFloat(espessuraStr);
-                uint idSubgrupoProd = Glass.Conversoes.StrParaUint(idSubgrupoProdStr);
-                float alturaMin = Glass.Conversoes.StrParaFloat(alturaMinStr);
-                float alturaMax = Glass.Conversoes.StrParaFloat(alturaMaxStr);
-                int larguraMin = Glass.Conversoes.StrParaInt(larguraMinStr);
-                int larguraMax = Glass.Conversoes.StrParaInt(larguraMaxStr);
+                // Verifica se j√° foi gerado um espelho para este pedido.
+                if (!PedidoEspelhoDAO.Instance.ExisteEspelho(null, idPedido))
+                {
+                    return "Erro\tAinda n√£o foi gerada uma confer√™ncia para este pedido.";
+                }
 
-                bool permissaoImpEtiq = Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas);
-                bool permissaoImpMaoDeObra = Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
-                bool pedidoMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
+                var situacaoPedidoEspelho = PedidoEspelhoDAO.Instance.ObtemSituacao(null, idPedido);
+
+                // Verifica se o espelho n√£o est√° em aberto.
+                if (situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Processando ||
+                    situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Aberto)
+                {
+                    return "Erro\tEsta confer√™ncia do pedido " + idPedido + " ainda n√£o foi finalizada.";
+                }
+
+                var idLoja = idLojaStr.StrParaIntNullable();
+                var idProcesso = idProcessoStr.StrParaUint();
+                var idAplicacao = idAplicacaoStr.StrParaUint();
+                var idCorVidro = idCorVidroStr.StrParaUint();
+                var espessura = espessuraStr.StrParaFloat();
+                var idSubgrupoProd = idSubgrupoProdStr.StrParaUint();
+                var alturaMin = alturaMinStr.StrParaFloat();
+                var alturaMax = alturaMaxStr.StrParaFloat();
+                var larguraMin = larguraMinStr.StrParaInt();
+                var larguraMax = larguraMaxStr.StrParaInt();
+
+                var permissaoImpEtiq = Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas);
+                var permissaoImpMaoDeObra = Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
+                var pedidoMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
 
                 if (!permissaoImpEtiq && !permissaoImpMaoDeObra)
-                    return "Erro\tVocÍ n„o tem permiss„o para imprimir etiquetas.";
+                {
+                    return "Erro\tVoc√™ n√£o tem permiss√£o para imprimir etiquetas.";
+                }
+
+                var produtosImprimir = new List<string>();
 
                 if (!pedidoMaoDeObra)
                 {
-                    // Verifica se o funcion·rio pode imprimir qualquer tipo de etiquetas
+                    // Verifica se o funcion√°rio pode imprimir qualquer tipo de etiquetas.
                     if (!permissaoImpEtiq)
                     {
                         if (permissaoImpMaoDeObra)
-                            return "Erro\tVocÍ pode imprimir etiquetas apenas de pedidos de m„o de obra.";
-                        else
-                            return "Erro\tVocÍ n„o tem permiss„o para imprimir etiquetas.";
-                    }
-    
-                    var lstProd = ProdutosPedidoEspelhoDAO.Instance.GetProdToEtiq(idPedido, idProcesso, idAplicacao, idCorVidro, espessura, idSubgrupoProd,
-                        alturaMin, alturaMax, larguraMin, larguraMax, idLoja);
-    
-                    // Filtra pelos produtos desejados
-                    if (!String.IsNullOrEmpty(idsProdPedAmbiente))
-                    {
-                        List<uint> ids = idsProdPedAmbiente.Split(',').Select(x => Glass.Conversoes.StrParaUint(x)).ToList(); //  new List<uint>(Array.ConvertAll(idsProdPedAmbiente.Split(','), x => Glass.Conversoes.StrParaUint(x)));
-                        lstProd = lstProd.Where(x => ids.Contains(x.IdProdPed)).ToList(); //  Array.FindAll(lstProd, x => ids.Contains(x.IdProdPed));
-                    }
-    
-                    // Verifica se h· produtos a serem adicionados
-                    if (String.IsNullOrEmpty(idsProdPedAmbiente) && lstProd.Count == 0)
-                    {
-                        string idsImpressoes = ImpressaoEtiquetaDAO.Instance.GetIdsByPedido(null, idPedido);
-
-                        string producao = PedidoDAO.Instance.IsProducao(null, idPedido) ? ", que n„o seja para estoque," : "";
-                        string msg = "Erro\tN„o h· nenhum produto" + producao + " que atende aos filtros selecionados neste Pedido que n„o tenha sido impresso.";
-    
-                        if (!String.IsNullOrEmpty(idsImpressoes))
-                            msg += "\nImpressıes: " + idsImpressoes;
-    
-                        return msg;
-                    }
-    
-                    foreach (ProdutosPedidoEspelho p in lstProd)
-                    {
-                        if (p.PecaReposta && p.NumEtiqueta == null)
-                            throw new Exception("A etiqueta da peÁa repostas est· nula. IdProdPed: " + p.IdProdPed);
-
-                        float qtde = p.Qtde;
-
-                        if (p.PecaReposta)
-                            qtde = 1;
-                        else if (p.IsProdutoLaminadoComposicao)
-                            qtde = (int)p.QtdeImpressaoProdLamComposicao;
-                        else if (p.IsProdFilhoLamComposicao)
                         {
-                            qtde = ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(p.IdProdPedParent.Value) * p.Qtde;
+                            return "Erro\tVoc√™ pode imprimir etiquetas apenas de pedidos de m√£o de obra.";
+                        }
+                        else
+                        {
+                            return "Erro\tVoc√™ n√£o tem permiss√£o para imprimir etiquetas.";
+                        }
+                    }
 
-                            var idProdPedParentPai = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(null, p.IdProdPedParent.Value);
+                    var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetProdToEtiq(
+                        idPedido,
+                        idProcesso,
+                        idAplicacao,
+                        idCorVidro,
+                        espessura,
+                        idSubgrupoProd,
+                        alturaMin,
+                        alturaMax,
+                        larguraMin,
+                        larguraMax,
+                        idLoja);
 
-                            if (idProdPedParentPai.GetValueOrDefault(0) > 0)
-                                qtde *= ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(idProdPedParentPai.Value);
+                    // Filtra pelos produtos desejados.
+                    if (!string.IsNullOrWhiteSpace(idsProdPedAmbiente))
+                    {
+                        var ids = idsProdPedAmbiente.Split(',').Select(x => x.StrParaUint()).ToList();
+                        produtosPedidoEspelho = produtosPedidoEspelho.Where(x => ids.Contains(x.IdProdPed)).ToList();
+                    }
+
+                    // Verifica se h√° produtos a serem adicionados.
+                    if (string.IsNullOrWhiteSpace(idsProdPedAmbiente) && produtosPedidoEspelho.Count == 0)
+                    {
+                        var idsImpressoes = ImpressaoEtiquetaDAO.Instance.GetIdsByPedido(null, idPedido);
+                        var producao = PedidoDAO.Instance.IsProducao(null, idPedido) ? ", que n√£o seja para estoque," : string.Empty;
+                        var mensagem = $"Erro\tN√£o h√° nenhum produto{producao} que atende aos filtros selecionados neste Pedido que n√£o tenha sido impresso.";
+
+                        if (!string.IsNullOrWhiteSpace(idsImpressoes))
+                        {
+                            mensagem += $"\nImpress√µes: {idsImpressoes}.";
                         }
 
-                        var qtdeCalcular = qtde > 0 ? qtde : p.Qtde;
+                        return mensagem;
+                    }
 
-                        var totM2 = p.PecaReposta ? p.TotM / p.Qtde : p.TotM / p.Qtde * (qtdeCalcular - p.QtdImpresso);
-                        var totM2Calc = p.PecaReposta ? p.TotM2Calc / p.Qtde : p.TotM2Calc / p.Qtde * (qtdeCalcular - p.QtdImpresso);
+                    var idsProdPedQuantidadeEtiquetasExportadas = ProdutosPedidoEspelhoDAO.Instance.ObterQuantidadeEtiquetasExportadas(
+                        null,
+                        produtosPedidoEspelho.Select(f => (int)f.IdProdPed).ToList());
 
-                        str.Append(p.IdProdPed + ";;");
-                        str.Append(p.IdPedido + ";");
-                        str.Append(p.DescricaoProdutoComBenef.Replace("|", "").Replace(";", "") + (p.PecaReposta ? " (Reposta)" : "") + ";");
-                        str.Append(p.CodProcesso != null ? p.CodProcesso.Replace("|", "").Replace(";", "") + ";" : ";");
-                        str.Append(p.CodAplicacao != null ? p.CodAplicacao.Replace("|", "").Replace(";", "") + ";" : ";");
-                        str.Append(qtde + ";");
-                        str.Append((!p.PecaReposta ? p.QtdImpresso : 1).ToString() + ";");
-                        str.Append(p.AlturaProducao + ";");
-                        str.Append((p.Redondo ? "0" : p.LarguraProducao.ToString()) + ";");
-                        str.Append(((p.Obs != null && !PCPConfig.Etiqueta.NaoExibirObsPecaAoImprimirEtiqueta) ? p.Obs.Replace("|", "").Replace(";", "") : "") + ";");
-                        str.Append((totM2).ToString("0.##") + ";");
-                        str.Append((p.PecaReposta && p.NumEtiqueta != null ? p.NumEtiqueta : "").ToString().ToLower() + ";");
-                        str.Append((totM2Calc).ToString("0.##") + "|");
+                    foreach (var produtoPedidoEspelho in produtosPedidoEspelho)
+                    {
+                        if (produtoPedidoEspelho.PecaReposta && produtoPedidoEspelho.NumEtiqueta == null)
+                        {
+                            throw new Exception($"A etiqueta da pe√ßa repostas est√° nula. IdProdPed: {produtoPedidoEspelho.IdProdPed}.");
+                        }
+
+                        var qtde = produtoPedidoEspelho.Qtde;
+
+                        if (produtoPedidoEspelho.PecaReposta)
+                        {
+                            qtde = 1;
+                        }
+                        else if (produtoPedidoEspelho.IsProdutoLaminadoComposicao)
+                        {
+                            qtde = (int)produtoPedidoEspelho.QtdeImpressaoProdLamComposicao;
+                        }
+                        else if (produtoPedidoEspelho.IsProdFilhoLamComposicao)
+                        {
+                            qtde = ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(null, produtoPedidoEspelho.IdProdPedParent.Value) * produtoPedidoEspelho.Qtde;
+
+                            var idProdPedParentPai = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(null, produtoPedidoEspelho.IdProdPedParent.Value);
+
+                            if (idProdPedParentPai > 0)
+                            {
+                                qtde *= ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(null, idProdPedParentPai.Value);
+                            }
+                        }
+
+                        var descricaoProduto = produtoPedidoEspelho.DescricaoProdutoComBenef.Replace("|", string.Empty).Replace(";", string.Empty) +
+                            (produtoPedidoEspelho.PecaReposta ? " (Reposta)" : string.Empty);
+                        var codigoProcesso = produtoPedidoEspelho?.CodProcesso?.Replace("|", string.Empty).Replace(";", string.Empty) ?? string.Empty;
+                        var codigoAplicacao = produtoPedidoEspelho?.CodAplicacao?.Replace("|", string.Empty).Replace(";", string.Empty) ?? string.Empty;
+                        var observacaoGrid = !string.IsNullOrWhiteSpace(produtoPedidoEspelho.Obs) && !PCPConfig.Etiqueta.NaoExibirObsPecaAoImprimirEtiqueta
+                            ? produtoPedidoEspelho.Obs.Replace("|", string.Empty).Replace(";", string.Empty)
+                            : string.Empty;
+                        var numEtiquetaPecaReposta = produtoPedidoEspelho.PecaReposta && !string.IsNullOrWhiteSpace(produtoPedidoEspelho.NumEtiqueta)
+                            ? produtoPedidoEspelho.NumEtiqueta.ToLower()
+                            : string.Empty;
+                        var larguraProducao = produtoPedidoEspelho.Redondo ?
+                            0 :
+                            produtoPedidoEspelho.LarguraProducao;
+                        var quantidadeImpressa = produtoPedidoEspelho.PecaReposta
+                            ? 1
+                            : produtoPedidoEspelho.QtdImpresso;
+                        var quantidadeEtiquetasExportadas =
+                            idsProdPedQuantidadeEtiquetasExportadas?.Where(f => f.IdProdPed == produtoPedidoEspelho.IdProdPed)?.Sum(f => f.QuantidadeExportada) ?? 0;
+                        var qtdeCalcular = qtde > 0
+                            ? qtde
+                            : produtoPedidoEspelho.Qtde;
+                        var totM2 = produtoPedidoEspelho.PecaReposta
+                            ? produtoPedidoEspelho.TotM / produtoPedidoEspelho.Qtde
+                            : produtoPedidoEspelho.TotM / produtoPedidoEspelho.Qtde * (qtdeCalcular - produtoPedidoEspelho.QtdImpresso);
+                        var totM2Calc = produtoPedidoEspelho.PecaReposta
+                            ? produtoPedidoEspelho.TotM2Calc / produtoPedidoEspelho.Qtde
+                            : produtoPedidoEspelho.TotM2Calc / produtoPedidoEspelho.Qtde * (qtdeCalcular - produtoPedidoEspelho.QtdImpresso);
+
+                        produtosImprimir.Add(string.Format(
+                            "{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13};{14}",
+                            produtoPedidoEspelho.IdProdPed,
+                            string.Empty,
+                            produtoPedidoEspelho.IdPedido,
+                            descricaoProduto,
+                            codigoProcesso,
+                            codigoAplicacao,
+                            qtde,
+                            quantidadeImpressa,
+                            produtoPedidoEspelho.AlturaProducao,
+                            larguraProducao,
+                            observacaoGrid,
+                            totM2.ToString("0.##"),
+                            numEtiquetaPecaReposta,
+                            totM2Calc.ToString("0.##"),
+                            quantidadeEtiquetasExportadas));
                     }
                 }
                 else
                 {
-                    var ambientes = AmbientePedidoEspelhoDAO.Instance.GetForEtiquetas(idPedido, idProcesso, idAplicacao, idCorVidro, espessura, 
-                        idSubgrupoProd, alturaMin, alturaMax, larguraMin, larguraMax);
-    
-                    // Filtra pelos produtos desejados
-                    if (!String.IsNullOrEmpty(idsProdPedAmbiente))
+                    var ambientes = AmbientePedidoEspelhoDAO.Instance.GetForEtiquetas(
+                        idPedido,
+                        idProcesso,
+                        idAplicacao,
+                        idCorVidro,
+                        espessura,
+                        idSubgrupoProd,
+                        alturaMin,
+                        alturaMax,
+                        larguraMin,
+                        larguraMax);
+
+                    // Filtra pelos produtos desejados.
+                    if (!string.IsNullOrWhiteSpace(idsProdPedAmbiente))
                     {
-                        List<uint> ids = idsProdPedAmbiente.Split(',').Select(x => Glass.Conversoes.StrParaUint(x.Replace("A", ""))).ToList(); // new List<uint>(Array.ConvertAll(idsProdPedAmbiente.Split(','), x => Glass.Conversoes.StrParaUint(x.Replace("A", ""))));
-                        ambientes = ambientes.Where(x => ids.Contains(x.IdAmbientePedido)).ToList(); // Array.FindAll(ambientes, x => ids.Contains(x.IdAmbientePedido));
+                        var ids = idsProdPedAmbiente.Split(',').Select(x => x.Replace("A", string.Empty).StrParaUint()).ToList();
+                        ambientes = ambientes.Where(x => ids.Contains(x.IdAmbientePedido)).ToList();
                     }
-    
-                    // Verifica se h· produtos a serem adicionados
-                    if (String.IsNullOrEmpty(idsProdPedAmbiente) && ambientes.Count == 0)
+
+                    // Verifica se h√° produtos a serem adicionados.
+                    if (string.IsNullOrEmpty(idsProdPedAmbiente) && ambientes.Count == 0)
                     {
-                        string msg = "Erro\tN„o h· nenhum produto que atende aos filtros selecionados neste Pedido que n„o tenha sido impresso.";
-    
-                        string idsImpressoes = ImpressaoEtiquetaDAO.Instance.GetIdsByPedido(null, idPedido);
-                        if (!String.IsNullOrEmpty(idsImpressoes))
-                            msg += "\nImpressıes: " + idsImpressoes;
-    
+                        var msg = "Erro\tN√£o h√° nenhum produto que atende aos filtros selecionados neste Pedido que n√£o tenha sido impresso.";
+                        var idsImpressoes = ImpressaoEtiquetaDAO.Instance.GetIdsByPedido(null, idPedido);
+
+                        if (!string.IsNullOrWhiteSpace(idsImpressoes))
+                        {
+                            msg += $"\nImpress√µes: {idsImpressoes}";
+                        }
+
                         return msg;
                     }
-    
-                    foreach (AmbientePedidoEspelho a in ambientes)
-                    {
-                        float totM2 = (a.TotM / a.Qtde.Value)*(a.Qtde.Value-a.QtdeImpresso.Value);
 
-                        str.Append(";" + a.IdAmbientePedido + ";");
-                        str.Append(a.IdPedido + ";");
-                        str.Append(a.Ambiente.Replace("|", "").Replace(";", "") + (a.Redondo ? " REDONDO" : "") + ";");
-                        str.Append(a.CodProcesso != null ? a.CodProcesso.Replace("|", "").Replace(";", "") + ";" : ";");
-                        str.Append(a.CodAplicacao != null ? a.CodAplicacao.Replace("|", "").Replace(";", "") + ";" : ";");
-                        str.Append(a.Qtde.Value.ToString() + ";");
-                        str.Append(a.QtdeImpresso.Value.ToString() + ";");
-                        str.Append(a.Altura.Value.ToString() + ";");
-                        str.Append((a.Redondo ? 0 : a.Largura.Value).ToString() + ";;");
-                        str.Append((totM2).ToString("0.##") + ";;|");
+                    foreach (var ambiente in ambientes)
+                    {
+                        var totM2 = ambiente.TotM / ambiente.Qtde.Value * (ambiente.Qtde.Value - ambiente.QtdeImpresso.Value);
+                        var descricaoAmbiente = ambiente.Ambiente.Replace("|", string.Empty).Replace(";", string.Empty) +
+                            (ambiente.Redondo
+                                ? " REDONDO"
+                                : string.Empty);
+                        var codigoProcesso = ambiente?.CodProcesso?.Replace("|", string.Empty).Replace(";", string.Empty) ?? string.Empty;
+                        var codigoAplicacao = ambiente?.CodAplicacao?.Replace("|", string.Empty).Replace(";", string.Empty);
+                        var larguraAmbiente = ambiente.Redondo ? 0 : ambiente.Largura.Value;
+
+                        produtosImprimir.Add(string.Format(
+                            "{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};{13};{14}",
+                            string.Empty,
+                            ambiente.IdAmbientePedido,
+                            ambiente.IdPedido,
+                            descricaoAmbiente,
+                            codigoProcesso,
+                            codigoAplicacao,
+                            ambiente.Qtde,
+                            ambiente.QtdeImpresso,
+                            ambiente.Altura,
+                            larguraAmbiente,
+                            string.Empty,
+                            totM2.ToString("0.##"),
+                            string.Empty,
+                            string.Empty,
+                            string.Empty));
                     }
                 }
-    
-                return "ok\t" + str.ToString().Replace('\t', ' ').TrimEnd('|');
+
+                return $"ok\t{string.Join("|", produtosImprimir.Select(f => f.Replace('\t', ' ')))}";
             }
             catch (Exception ex)
             {
-                return Glass.MensagemAlerta.FormatErrorMsg("Erro\t", ex);
+                return MensagemAlerta.FormatErrorMsg("Erro\t", ex);
             }
         }
-    
+
         [Ajax.AjaxMethod]
         public string GetProdByNFe(string numeroNotaStr, string idFornecStr, string idsProdNf, string idCorVidroStr, 
             string espessuraStr, string alturaMinStr, string alturaMaxStr, string larguraMinStr, string larguraMaxStr, string noCache)
@@ -253,26 +362,26 @@ namespace Glass.UI.Web.Listas
             {
                 if (!Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasNFe) &&
                     !Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas))
-                    return "Erro\tVocÍ n„o tem permiss„o de imprimir de etiquetas de NF-e.";
+                    return "Erro\tVoc√™ n√£o tem permiss√£o de imprimir de etiquetas de NF-e.";
 
                 uint numeroNota = Glass.Conversoes.StrParaUint(numeroNotaStr);
                 uint? idFornec = Glass.Conversoes.StrParaUintNullable(idFornecStr);
     
                 uint idNf = NotaFiscalDAO.Instance.GetIdByNumeroEntradaTerc(numeroNota, idFornec);
     
-                // Verifica se j· foi gerado um espelho para este pedido
+                // Verifica se j√° foi gerado um espelho para este pedido
                 if (idNf == 0)
-                    return "Erro\t" + (idFornec > 0 ? "Essa nota fiscal n„o existe para esse fornecedor." : 
-                        "Essa nota fiscal de importaÁ„o n„o existe");
+                    return "Erro\t" + (idFornec > 0 ? "Essa nota fiscal n√£o existe para esse fornecedor." : 
+                        "Essa nota fiscal de importa√ß√£o n√£o existe");
     
-                // Verifica se o espelho n„o est· em aberto
+                // Verifica se o espelho n√£o est√° em aberto
                 if (idFornec > 0 && !NotaFiscalDAO.Instance.IsFinalizada(null, idNf))
-                    return "Erro\tEssa nota fiscal ainda n„o foi finalizada.";
+                    return "Erro\tEssa nota fiscal ainda n√£o foi finalizada.";
                 else if (idFornec.GetValueOrDefault() == 0 && !NotaFiscalDAO.Instance.IsAutorizada(idNf))
-                    return "Erro\tEssa nota fiscal ainda n„o foi autorizada.";
+                    return "Erro\tEssa nota fiscal ainda n√£o foi autorizada.";
 
                 if(!NotaFiscalDAO.Instance.GerarEtiqueta(idNf))
-                    return "Erro\tEssa nota fiscal n„o deve gerar etiqueta.";
+                    return "Erro\tEssa nota fiscal n√£o deve gerar etiqueta.";
                 
                 uint idCorVidro = Glass.Conversoes.StrParaUint(idCorVidroStr);
                 float espessura = Glass.Conversoes.StrParaFloat(espessuraStr);
@@ -293,14 +402,14 @@ namespace Glass.UI.Web.Listas
                     lstProd = lstProd.Where(x => ids.Contains(x.IdProdNf)).ToList(); //Array.FindAll(lstProd, x => ids.Contains(x.IdProdNf));
                 }
                 
-                // Verifica se h· produtos a serem adicionados
+                // Verifica se h√° produtos a serem adicionados
                 if (String.IsNullOrEmpty(idsProdNf) && lstProd.Count == 0)
                 {
                     string idsImpressoes = ImpressaoEtiquetaDAO.Instance.GetIdsByNFe(idNf);
     
-                    return "Erro\tN„o h· nenhum produto do grupo Vidro (que seja matÈria-prima e que " +
-                        "tenha informaÁıes de altura, largura e quantidade) ou PVB nesta NF-e que n„o tenha sido impresso." + 
-                        (!String.IsNullOrEmpty(idsImpressoes) ? "\nImpressıes: " + idsImpressoes : String.Empty);
+                    return "Erro\tN√£o h√° nenhum produto do grupo Vidro (que seja mat√©ria-prima e que " +
+                        "tenha informa√ß√µes de altura, largura e quantidade) ou PVB nesta NF-e que n√£o tenha sido impresso." + 
+                        (!String.IsNullOrEmpty(idsImpressoes) ? "\nImpress√µes: " + idsImpressoes : String.Empty);
                 }
     
                 foreach (ProdutosNf p in lstProd)
@@ -308,7 +417,7 @@ namespace Glass.UI.Web.Listas
                     float totM2 = p.TotM / p.Qtde * (p.Qtde - p.QtdImpresso);
     
                     str.Append(p.IdProdNf + ";");
-                    str.Append(numeroNota + (idFornec > 0 ? " (Forn.: " + FornecedorDAO.Instance.GetNome(idFornec.Value) + ")" : " (ImportaÁ„o)") + ";");
+                    str.Append(numeroNota + (idFornec > 0 ? " (Forn.: " + FornecedorDAO.Instance.GetNome(idFornec.Value) + ")" : " (Importa√ß√£o)") + ";");
                     str.Append(p.DescrProduto.Replace("|", "").Replace(";", "") + ";");
                     str.Append(p.Qtde.ToString() + ";");
                     str.Append(p.QtdImpresso.ToString() + ";");
@@ -354,7 +463,7 @@ namespace Glass.UI.Web.Listas
             }
             catch (Exception ex)
             {
-                return Glass.MensagemAlerta.FormatErrorMsg("Erro\tFalha ao validar pedidos j· exportados.", ex);
+                return Glass.MensagemAlerta.FormatErrorMsg("Erro\tFalha ao validar pedidos j√° exportados.", ex);
             }
         }
     
@@ -365,7 +474,7 @@ namespace Glass.UI.Web.Listas
             {
                 string ids = valor.Remove(valor.LastIndexOf(','));
                 PedidoEspelhoDAO.Instance.AlterarDataFabrica(ids, Convert.ToDateTime(data), bool.Parse(alterarReposicao));
-                return "AlteraÁ„o feita com sucesso. AtenÁ„o: foram alterados somentes os pedidos nos quais esta nova data de f·brica È menor que a data de entrega.";
+                return "Altera√ß√£o feita com sucesso. Aten√ß√£o: foram alterados somentes os pedidos nos quais esta nova data de f√°brica √© menor que a data de entrega.";
             }
             catch (Exception ex)
             {
@@ -467,19 +576,19 @@ namespace Glass.UI.Web.Listas
         [Ajax.AjaxMethod()]
         public string IsProdutoLaminadoComposicao(string idProdPed)
         {
-            /* Etiqueta de nota ou plano de corte, n„o devem ser verificadas. */
+            /* Etiqueta de nota ou plano de corte, n√£o devem ser verificadas. */
             if (string.IsNullOrEmpty(idProdPed) || idProdPed.Contains("A") || idProdPed.Contains("N") || idProdPed.Contains("_"))
                 return "false";
 
             idProdPed = idProdPed.Replace("R", "");
 
             if (idProdPed.StrParaUintNullable().GetValueOrDefault() == 0)
-                return "Erro|N„o foi possÌvel recuperar o produto da peÁa. ID: " + idProdPed;
+                return "Erro|N√£o foi poss√≠vel recuperar o produto da pe√ßa. ID: " + idProdPed;
 
             var idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(null, idProdPed.StrParaUint());
 
             if (idProd == 0)
-                return "Erro|N„o foi possÌvel recuperar o produto da peÁa. ID: " + idProdPed;
+                return "Erro|N√£o foi poss√≠vel recuperar o produto da pe√ßa. ID: " + idProdPed;
 
             var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)idProd);
 
@@ -550,11 +659,11 @@ namespace Glass.UI.Web.Listas
         #region Tipos Aninhados
 
         /// <summary>
-        /// Reprsenta o wrapper do item de otimizaÁ„o para a etiqueta de producao.
+        /// Reprsenta o wrapper do item de otimiza√ß√£o para a etiqueta de producao.
         /// </summary>
         public class EtiquetaProducao
         {
-            #region Vari·veis Locais
+            #region Vari√°veis Locais
 
             private readonly Glass.Otimizacao.Negocios.ItemOtimizacao _item;
 
@@ -611,7 +720,7 @@ namespace Glass.UI.Web.Listas
             #region Construtores
 
             /// <summary>
-            /// Construtor padr„o.
+            /// Construtor padr√£o.
             /// </summary>
             /// <param name="item"></param>
             public EtiquetaProducao(Glass.Otimizacao.Negocios.ItemOtimizacao item)

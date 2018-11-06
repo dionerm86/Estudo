@@ -1,5 +1,5 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SelProdEtiqueta.aspx.cs"
-    Inherits="Glass.UI.Web.Utils.SelProdEtiqueta" Title="Impressões Pendentes" MasterPageFile="~/Layout.master" %>
+ï»¿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SelProdEtiqueta.aspx.cs"
+    Inherits="Glass.UI.Web.Utils.SelProdEtiqueta" Title="ImpressÃµes Pendentes" MasterPageFile="~/Layout.master" %>
 
 <%@ Register src="../Controls/ctrlData.ascx" tagname="ctrlData" tagprefix="uc1" %>
 <%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc3" %>
@@ -30,7 +30,7 @@
             quantidadeEtiquetasExportadas)
         {
             if (SelProdEtiqueta.PodeImprimirPedidoImportado(idPedido).value.toLowerCase() == "false") {
-                alert("O pedido importado ainda não foi conferido, confira o mesmo antes de imprimir");
+                alert("O pedido importado ainda nÃ£o foi conferido, confira o mesmo antes de imprimir");
                 return false;
             }
 
@@ -123,7 +123,7 @@
                                             OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                                     </td>
                                     <td align="right">
-                                        <asp:Label ID="Label4" runat="server" Text="Descrição Prod." ForeColor="#0066FF"></asp:Label>
+                                        <asp:Label ID="Label4" runat="server" Text="DescriÃ§Ã£o Prod." ForeColor="#0066FF"></asp:Label>
                                     </td>
                                     <td>
                                         <asp:TextBox ID="txtDescr" runat="server" Width="150px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
@@ -192,7 +192,7 @@
                                         <asp:ImageButton ID="imgPesq2" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click" />
                                     </td>
                                     <td>
-                                        <asp:Label ID="lblAplicacao" runat="server" Text="Aplicação" ForeColor="#0066FF"></asp:Label>
+                                        <asp:Label ID="lblAplicacao" runat="server" Text="AplicaÃ§Ã£o" ForeColor="#0066FF"></asp:Label>
                                     </td>
                                     <td>
                                         <asp:TextBox ID="txtAplicacao" runat="server" Width="40px"></asp:TextBox>
@@ -205,7 +205,7 @@
                                     </td>
                                     <td>
                                         <asp:DropDownList ID="drpFastDelivery" runat="server">
-                                            <asp:ListItem Value="0">Não incluir no resultado</asp:ListItem>
+                                            <asp:ListItem Value="0">NÃ£o incluir no resultado</asp:ListItem>
                                             <asp:ListItem Value="1" Selected="True">Incluir no resultado</asp:ListItem>
                                             <asp:ListItem Value="2">Apenas Fast Delivery</asp:ListItem>
                                         </asp:DropDownList>
@@ -214,14 +214,14 @@
                                         <asp:ImageButton ID="ImageButton5" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click" />
                                     </td>
                                     <td>
-                                        <asp:CheckBox ID="chkComposicaoLaminado" runat="server" AutoPostBack="true" ForeColor="#0066FF" Text="Composição duplo/laminado " TextAlign="Left" Checked="true"></asp:CheckBox>
+                                        <asp:CheckBox ID="chkComposicaoLaminado" runat="server" AutoPostBack="true" ForeColor="#0066FF" Text="ComposiÃ§Ã£o duplo/laminado " TextAlign="Left" Checked="true"></asp:CheckBox>
                                     </td>
                                 </tr>
                             </table>
                             <table>
                                 <tr>
                                     <td>
-                                        <asp:Label ID="Label6" runat="server" Text="Data de fábrica" ForeColor="#0066FF"></asp:Label>
+                                        <asp:Label ID="Label6" runat="server" Text="Data de fÃ¡brica" ForeColor="#0066FF"></asp:Label>
                                     </td>
                                     <td>                                        
                                         <uc1:ctrlData ID="ctrlDataFabricaIni" runat="server" ReadOnly="ReadWrite" />
@@ -234,7 +234,7 @@
                                             OnClick="imgPesq_Click" />
                                     </td>
                                     <td>
-                                        <asp:Label ID="Label9" runat="server" Text="Pedidos de mão de obra" ForeColor="#0066FF"></asp:Label>
+                                        <asp:Label ID="Label9" runat="server" Text="Pedidos de mÃ£o de obra" ForeColor="#0066FF"></asp:Label>
                                     </td>
                                     <td>
                                         <asp:DropDownList ID="drpMaoDeObra" runat="server">
@@ -246,13 +246,13 @@
                                         <asp:ImageButton ID="imgPesq1" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click" />
                                     </td>
                                     <td>
-                                        <asp:Label ID="Label7" runat="server" Text="Peças Repostas" ForeColor="#0066FF"></asp:Label>
+                                        <asp:Label ID="Label7" runat="server" Text="PeÃ§as Repostas" ForeColor="#0066FF"></asp:Label>
                                     </td>
                                     <td>
                                         <asp:DropDownList ID="drpPecasRepostas" runat="server">
-                                            <asp:ListItem Value="0">Não incluir no resultado</asp:ListItem>
+                                            <asp:ListItem Value="0">NÃ£o incluir no resultado</asp:ListItem>
                                             <asp:ListItem Value="1">Incluir no resultado</asp:ListItem>
-                                            <asp:ListItem Value="2">Apenas peças repostas</asp:ListItem>
+                                            <asp:ListItem Value="2">Apenas peÃ§as repostas</asp:ListItem>
                                         </asp:DropDownList>
                                     </td>
                                     <td>
@@ -277,7 +277,7 @@
                                 <Columns>
                                     <asp:TemplateField>
                                         <ItemTemplate>
-                                            <a href="#" onclick="setProdEtiqueta('<%# GetIdProdPed(Eval("IdPedido"), Eval("IdProdPed")) %>', '<%# GetIdAmbientePedido(Eval("IdPedido"), Eval("IdAmbientePedido")) %>', '<%# Eval("IdPedido") %>', '<%# Eval("DescrProduto") %>', '<%# Eval("CodProcesso") %>', '<%# Eval("CodAplicacao") %>', '<%# ObterQtde(Eval("IdProdPed"), (bool)Eval("PecaReposta"), Eval("Qtde")) %>', '<%# (bool)Eval("PecaReposta") ? 1 : Eval("QtdImpresso") %>', '<%# Eval("Altura") %>', '<%# Eval("Largura") %>', '<%# ObterM2Impressao(Eval("TotM"),Eval("IdProdPed"), ObterQtde(Eval("IdProdPed"), (bool)Eval("PecaReposta"), Eval("Qtde"))) %>', '<%# Eval("Obs") != null ? Eval("Obs").ToString().Replace("\n", " ").Replace("\t", " ").Replace("\r", " ") : "" %>', '<%# Eval("NumEtiqueta") %>', true, null, '<%# ObterM2Impressao(Eval("TotM2Calc"),Eval("IdProdPed"), ObterQtde(Eval("IdProdPed"), (bool)Eval("PecaReposta"), Eval("Qtde"))) %>');">
+                                            <a href="#" onclick="setProdEtiqueta('<%# GetIdProdPed(Eval("IdPedido"), Eval("IdProdPed")) %>', '<%# GetIdAmbientePedido(Eval("IdPedido"), Eval("IdAmbientePedido")) %>', '<%# Eval("IdPedido") %>', '<%# Eval("DescrProduto") %>', '<%# Eval("CodProcesso") %>', '<%# Eval("CodAplicacao") %>', '<%# ObterQtde(Eval("IdProdPed"), (bool)Eval("PecaReposta"), Eval("Qtde")) %>', '<%# (bool)Eval("PecaReposta") ? 1 : Eval("QtdImpresso") %>', '<%# Eval("Altura") %>', '<%# Eval("Largura") %>', '<%# ObterM2Impressao(Eval("TotM"),Eval("IdProdPed"), ObterQtde(Eval("IdProdPed"), (bool)Eval("PecaReposta"), Eval("Qtde"))) %>', '<%# Eval("Obs") != null ? Eval("Obs").ToString().Replace("\n", " ").Replace("\t", " ").Replace("\r", " ") : "" %>', '<%# Eval("NumEtiqueta") %>', true, null, '<%# ObterM2Impressao(Eval("TotM2Calc"),Eval("IdProdPed"), ObterQtde(Eval("IdProdPed"), (bool)Eval("PecaReposta"), Eval("Qtde"))) %>', '<%# ObterQuantidadeEtiquetasExportadas(Eval("IdProdPed")) %>');">
                                                 <img src="../Images/ok.gif" border="0" title="Selecionar" alt="Selecionar" /></a>
                                         </ItemTemplate>
                                         <ItemStyle Wrap="False" />
@@ -292,7 +292,7 @@
                                     <asp:BoundField DataField="CodAplicacao" HeaderText="Apl." SortExpression="CodAplicacao">
                                     </asp:BoundField>
                                     <asp:BoundField DataField="Qtde" HeaderText="Qtd." SortExpression="Qtde" />
-                                    <asp:BoundField DataField="QtdImpresso" HeaderText="Qtd. Já Impresso" SortExpression="QtdImpresso" />
+                                    <asp:BoundField DataField="QtdImpresso" HeaderText="Qtd. JÃ¡ Impresso" SortExpression="QtdImpresso" />
                                 </Columns>
                                 <PagerStyle />
                                 <EditRowStyle />

@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Web.UI;
 using Glass.Data.Model;
@@ -38,7 +38,7 @@ namespace Glass.UI.Web.Utils
             var script = string.Empty;
 
             // Chamado 45770.
-            // Caso o checkbox chkComposicaoLaminado esteja marcado, deve ignorar a seleÁ„o de produto pai da composiÁ„o.
+            // Caso o checkbox chkComposicaoLaminado esteja marcado, deve ignorar a sele√ß√£o de produto pai da composi√ß√£o.
             if (this.chkComposicaoLaminado.Checked)
             {
                 produtosPedidoEspelho = produtosPedidoEspelho.Where(f => !f.IsProdutoLaminadoComposicao).ToList();
@@ -48,8 +48,8 @@ namespace Glass.UI.Web.Utils
                 null,
                 produtosPedidoEspelho.Select(f => (int)f.IdProdPed).ToList());
 
-            // Chama a funÁ„o de buscar etiquetas desta p·gina (popup), limpa a tela das peÁas antes, 
-            // pois este mÈtodo desativa a validaÁ„o de etiquetas j· adicionadas
+            // Chama a fun√ß√£o de buscar etiquetas desta p√°gina (popup), limpa a tela das pe√ßas antes,
+            // pois este m√©todo desativa a valida√ß√£o de etiquetas j√° adicionadas.
             foreach (var ppe in produtosPedidoEspelho)
             {
                 var ultimoRegistro = produtosPedidoEspelho.IndexOf(ppe) == produtosPedidoEspelho.Count - 1;
@@ -151,6 +151,23 @@ namespace Glass.UI.Web.Utils
             }
 
             return qtde.ToString().Replace(",", ".");
+        }
+
+        protected string ObterQuantidadeEtiquetasExportadas(object objIdProdPed)
+        {
+            var idProdPed = objIdProdPed?.ToString()?.StrParaInt() ?? 0;
+
+            if (idProdPed == 0)
+            {
+                return "0";
+            }
+
+            var idProdPedQuantidadeEtiquetasExportadas = ProdutosPedidoEspelhoDAO.Instance.ObterQuantidadeEtiquetasExportadas(
+                null,
+                new List<int> { idProdPed });
+            var quantidadeEtiquetasExportadas = idProdPedQuantidadeEtiquetasExportadas?.Sum(f => f.QuantidadeExportada) ?? 0;
+
+            return quantidadeEtiquetasExportadas.ToString();
         }
 
         protected string ObterM2Impressao(object objTotM, object objIdProdPed, object objQtde)

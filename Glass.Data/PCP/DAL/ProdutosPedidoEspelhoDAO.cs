@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass.Configuracoes;
 using Glass.Data.Helper;
 using Glass.Data.Helper.Calculos;
@@ -1907,6 +1907,11 @@ namespace Glass.Data.DAL
         /// <returns>Retorna uma lista de produtos de pedido espelho, preenchendo somente os campos IdProdPed e QuantidadeEtiquetasExportadas.</returns>
         public List<ProdutosPedidoEspelho> ObterQuantidadeEtiquetasExportadas(GDASession session, List<int> idsProdPed)
         {
+            if (!(idsProdPed?.Any(f => f > 0)).GetValueOrDefault())
+            {
+                return new List<ProdutosPedidoEspelho>();
+            }
+
             var sql = $@"SELECT ppp.IdProdPed,
                     SUM(ao.Direcao = {(int)ArquivoOtimizacao.DirecaoEnum.Exportar}) -
                         SUM(ao.Direcao = {(int)ArquivoOtimizacao.DirecaoEnum.Importar}) AS QuantidadeExportada
@@ -1917,7 +1922,7 @@ namespace Glass.Data.DAL
                 GROUP BY ppp.IdProdPed
                 HAVING QuantidadeExportada > 0;";
 
-            return objPersistence.LoadData(session, sql);
+            return this.objPersistence.LoadData(session, sql);
         }
 
         #endregion
