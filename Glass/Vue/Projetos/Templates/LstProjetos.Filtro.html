@@ -1,0 +1,22 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Num. projeto</label>
+            <input type="number" v-model.number="filtroAtual.id" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Cliente</label>
+            <input id="idCliente" type="number" v-model.number="filtroAtual.idCliente" style="width: 50px" />
+            <input id="nomeCliente" type="text" v-model="filtroAtual.nomeCliente" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Período cadastro</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoCadastroInicio" v-bind:data-hora-final.sync="filtroAtual.periodoCadastroFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

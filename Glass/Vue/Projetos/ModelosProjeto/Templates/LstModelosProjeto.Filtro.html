@@ -1,0 +1,26 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Código</label>
+            <input type="text" v-model="filtroAtual.codigo" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Descricao</label>
+            <input type="text" v-model="filtroAtual.descricao" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Grupo</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="grupoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroGrupo"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Situação</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="situacaoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroSituacao"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

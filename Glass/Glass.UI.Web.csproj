@@ -502,6 +502,19 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
+    <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
+    <Content Include="Vue\Projetos\Ferragens\FabricantesFerragem\Componentes\LstFabricantesFerragem.js" />
+    <Content Include="Vue\Projetos\MedidasProjeto\Componentes\LstMedidasProjeto.js" />
+    <Content Include="Vue\Projetos\MedidasProjeto\Componentes\LstMedidasProjeto.Filtro.js" />
+    <Content Include="Vue\Projetos\MedidasProjeto\Templates\LstMedidasProjeto.Filtro.html" />
+    <Content Include="Vue\Projetos\Ferragens\Componentes\LstFerragens.Filtro.js" />
+    <Content Include="Vue\Projetos\Ferragens\Componentes\LstFerragens.js" />
+    <Content Include="Vue\Projetos\Ferragens\Templates\LstFerragens.Filtro.html" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.Filtro.js" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.js" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Templates\LstModelosProjeto.Filtro.html" />
+    <Content Include="Vue\Projetos\Templates\LstProjetos.Filtro.html" />
     <Content Include="Vue\PlanosConta\Componentes\LstPlanosConta.Filtro.js" />
     <Content Include="Vue\PlanosConta\CategoriasConta\Componentes\LstCategoriasConta.js" />
     <Content Include="Vue\PlanosConta\GruposConta\Componentes\LstGruposConta.js" />
@@ -532,6 +545,7 @@
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.js" />
     <Content Include="Vue\Fornecedores\Templates\LstFornecedores.Filtro.html" />
     <Content Include="Vue\Condutores\Componentes\CadCondutores.js" />
+    <Content Include="Vue\Projetos\GruposProjeto\Componentes\LstGruposProjeto.js" />
     <Content Include="Vue\Rotas\Componentes\LstRotas.js" />
     <Content Include="Vue\TabelasDescontoAcrescimoCliente\Componentes\LstTabelasDescontoAcrescimoCliente.js" />
     <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
@@ -1809,6 +1823,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Projetos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comum.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Condutores.js" />
