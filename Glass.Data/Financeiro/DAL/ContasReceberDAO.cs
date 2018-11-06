@@ -6853,7 +6853,7 @@ namespace Glass.Data.DAL
 
                         var contasReceber = GetByPks(
                             transaction,
-                            string.Join(", ", contasQuitar.Select(c => c.Value))).ToList();
+                            string.Join(", ", contasQuitar.Select(c => c.Value)));
 
                         var falhas = string.Join(
                             Environment.NewLine,

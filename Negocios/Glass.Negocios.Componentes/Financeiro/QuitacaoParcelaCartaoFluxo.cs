@@ -280,7 +280,7 @@ namespace Glass.Financeiro.Negocios.Componentes
 
                 foreach (var c in cartoes)
                 {
-                    if (!contasQuitar.Where(p => p.Key == (uint)c.IdContaBanco && p.Value == (uint)c.IdContaR).Any())
+                    if (!contasQuitar.Any(p => p.Key == (uint)c.IdContaBanco && p.Value == (uint)c.IdContaR))
                     {
                         contasQuitar.Add(new KeyValuePair<uint, uint>((uint)c.IdContaBanco, (uint)c.IdContaR));
                     }
