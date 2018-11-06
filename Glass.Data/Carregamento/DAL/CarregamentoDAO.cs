@@ -239,7 +239,7 @@ namespace Glass.Data.DAL
                 situacao = (int)Carregamento.SituacaoCarregamentoEnum.PendenteCarregamento;
 
             objPersistence.ExecuteCommand(sessao, string.Format("UPDATE carregamento SET Situacao={0} WHERE IdCarregamento={1}", situacao, idCarregamento));
-            
+
             foreach (var idOC in OrdemCargaDAO.Instance.GetIdsOCsByCarregamento(sessao, (uint)idCarregamento))
                 OrdemCargaDAO.Instance.VerificaOCCarregada(sessao, idCarregamento, idOC, etiqueta);
 
@@ -344,7 +344,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Faturamento       
+        #region Faturamento
 
         /// <summary>
         /// Busca os pedidos pendentes para finalização do faturamento
@@ -355,8 +355,8 @@ namespace Glass.Data.DAL
             var retorno = string.Empty;
 
             var sql = string.Format(@"
-                SELECT p.IdPedido 
-                FROM pedido p 
+                SELECT p.IdPedido
+                FROM pedido p
                 WHERE p.IdPedido IN ({0}) AND p.Situacao NOT IN ({1})", string.Join(", ", idsPedido), (int)Pedido.SituacaoPedido.Confirmado);
 
             var pedidosNaoLiberados = ExecuteMultipleScalar<uint>(sql);
@@ -364,7 +364,7 @@ namespace Glass.Data.DAL
                 retorno += string.Format("Os pedidos ({0}) não estão liberados.", string.Join(", ", pedidosNaoLiberados));
 
             sql = string.Format(@"
-                SELECT pnf.IdPedido 
+                SELECT pnf.IdPedido
                 FROM pedidos_nota_fiscal pnf
                 LEFT JOIN nota_fiscal nf ON (pnf.IdNf = nf.IdNf)
                 WHERE pnf.IdPedido IN ({0}) AND nf.Situacao IN ({1})",
@@ -372,7 +372,7 @@ namespace Glass.Data.DAL
 
             foreach (var item in ExecuteMultipleScalar<uint>(sql))
                 idsPedido.Remove(item);
-            
+
             if(idsPedido.Any())
                 retorno += string.Format("Os pedidos ({0}) não possuem notas fiscais autorizadas.", string.Join(", ", idsPedido));
 
@@ -383,7 +383,7 @@ namespace Glass.Data.DAL
         /// Altera a situação do faturamento dos carregamentos dos pedidos passados
         /// </summary>
         public void AlterarSituacaoFaturamentoCarregamentos(GDASession sessao, IEnumerable<uint> idsPedido)
-        {            
+        {
             string sql =
                 string.Format(@"
                     SELECT *
@@ -398,7 +398,7 @@ namespace Glass.Data.DAL
                         WHERE oc.idCarregamento = c.idCarregamento AND poc.idPedido IN (" + string.Join(",", idsPedido) + @"))
                     ORDER BY c.idCarregamento DESC");
 
-            var carregamentos = LoadDataWithSortExpression(sessao, sql, string.Empty, 0, 10, null);
+            var carregamentos = objPersistence.LoadData(sessao, sql);
 
             foreach (var carregamento in carregamentos)
             {
@@ -421,7 +421,7 @@ namespace Glass.Data.DAL
                     carregamento.SituacaoFaturamento = SituacaoFaturamentoEnum.Faturado;
                 else if (retornoPedidos.Any(f => f == true))
                     carregamento.SituacaoFaturamento = SituacaoFaturamentoEnum.FaturadoParcialmente;
-                else 
+                else
                     carregamento.SituacaoFaturamento = SituacaoFaturamentoEnum.NaoFaturado;
 
                 Instance.Update(sessao, carregamento);
@@ -440,11 +440,11 @@ namespace Glass.Data.DAL
             if (!OrdemCargaConfig.UsarOrdemCargaParcial)
             {
                 return;
-            }                
+            }
 
             var idsUsados = new List<int>();
 
-            //Percorrer as peças liberadas removendo as que não foram liberadas do item carregamento 
+            //Percorrer as peças liberadas removendo as que não foram liberadas do item carregamento
             for (var i = 0; i < idsProdutosPedido.Length; i++)
             {
                 var idProdLiberarPedido = (int)ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(session, idLiberarPedido, idsProdutosPedido[i]);
@@ -465,7 +465,7 @@ namespace Glass.Data.DAL
             foreach (var idCarregamento in ItemCarregamentoDAO.Instance.ObterIdsCarregamento(session, idsUsados))
             {
                 Instance.AtualizaCarregamentoCarregado(session, (uint)idCarregamento, null);
-            }                
+            }
         }
 
         #endregion

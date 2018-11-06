@@ -31,15 +31,15 @@ namespace Glass.UI.Web.Cadastros
             // Se a empresa permitir apenas quem estiver no controle de usuário para incluir/editar cliente
             if (!IsPostBack && !Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarCliente))
                 Response.Redirect("../Listas/LstCliente.aspx");
-    
+
             if (Request["idCli"] != null)
             {
                 dtvCliente.ChangeMode(DetailsViewMode.Edit);
-    
+
                 if (dtvCliente.FindControl("btnAlterarSenha") != null)
                     ((Button)dtvCliente.FindControl("btnAlterarSenha")).Attributes.Add
                         ("OnClick", "openWindow(150, 300, '../Utils/TrocarSenha.aspx?IdCli=" + Request["IdCli"] + "'); return false;");
-    
+
                 hdfCNPJ.Value = ClienteDAO.Instance.ObtemCpfCnpj(Glass.Conversoes.StrParaUint(Request["idCli"]));
             }
             else if (!IsPostBack)
@@ -48,14 +48,14 @@ namespace Glass.UI.Web.Cadastros
                 ((TextBox)dtvCliente.FindControl("txtPercReducaoNfeRevenda")).Text = FinanceiroConfig.PercDescontoRevendaPadrao.ToString();
                 ((CheckBox)dtvCliente.FindControl("chkPagamentoAntesProducao")).Checked = FinanceiroConfig.OpcaoPagtoAntecipadoPadraoMarcada;
             }
-    
+
             if (!IsPostBack)
                 hdfTipoUsuario.Value = UserInfo.GetUserInfo.TipoUsuario.ToString();
-    
+
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadCliente));
         }
-    
+
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
             if (Request["popup"] != null)
@@ -69,7 +69,7 @@ namespace Glass.UI.Web.Cadastros
             var cliente = ((Glass.Global.Negocios.Entidades.Cliente)e.InputParameters[0]);
             _idCliente = cliente.IdCli;
         }
-    
+
         protected void odsCli_Inserted(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception == null)
@@ -151,42 +151,42 @@ namespace Glass.UI.Web.Cadastros
         protected void drpSituacao_Load(object sender, EventArgs e)
         {
             var tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
-    
+
             ((DropDownList)sender).Enabled = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AtivarInativarCliente);
-    
+
             if ((Glass.Configuracoes.ClienteConfig.CadastrarClienteInativo && dtvCliente.CurrentMode == DetailsViewMode.Insert) &&
                 !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
             {
                 ((DropDownList)sender).SelectedValue = SituacaoCliente.Inativo.ToString();
                 ((DropDownList)sender).Enabled = false;
             }
-            
+
             if (!Config.PossuiPermissao(Config.FuncaoMenuCadastro.AtivarInativarCliente))
                 ((DropDownList)sender).Enabled = false;
         }
-    
+
         [Ajax.AjaxMethod()]
         public string CheckIfExists(string cpfCnpj)
         {
             return ClienteDAO.Instance.CheckIfExists(cpfCnpj).ToString().ToLower();
         }
-    
+
         [Ajax.AjaxMethod()]
         public string ComparaCpfCnpj(string cpfCnpjSalvo, string cpfCnpjNovo)
         {
             if (cpfCnpjSalvo == null || cpfCnpjNovo == null)
                 return "false";
-    
-            return (cpfCnpjSalvo.Replace(".", "").Replace("-", "").Replace("/", "") == 
+
+            return (cpfCnpjSalvo.Replace(".", "").Replace("-", "").Replace("/", "") ==
                 cpfCnpjNovo.Replace(".", "").Replace("-", "").Replace("/", "")).ToString().ToLower();
         }
-    
+
         protected void txtPercSinalMin_Load(object sender, EventArgs e)
         {
             // Apenas administrador pode alterar percentual mínimo de sinal
             ((TextBox)sender).Enabled = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AlterarSinalMinimoCliente);
         }
-    
+
         protected void drpFuncionario_DataBound(object sender, EventArgs e)
         {
             if (((DropDownList)sender).SelectedValue == "" && dtvCliente.CurrentMode == DetailsViewMode.Insert && ((DropDownList)sender).Items.FindByValue(UserInfo.GetUserInfo.CodUser.ToString()) != null)
@@ -195,60 +195,60 @@ namespace Glass.UI.Web.Cadastros
             // Habilita a alteração de vendedor somente para quem tiver permissão ou é administrador
             ((DropDownList)sender).Enabled = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AlterarVendedorCadCliente);
         }
-    
+
         protected void chkIgnorarBloqueio_Load(object sender, EventArgs e)
         {
             // Se não houver bloqueio de emissão de pedido caso o cliente não busque pedidos prontos,
             // esconde a opção na tela
-            if (PedidoConfig.NumeroDiasPedidoProntoAtrasado == 0 || 
+            if (PedidoConfig.NumeroDiasPedidoProntoAtrasado == 0 ||
                 (Glass.Configuracoes.ClienteConfig.TelaCadastro.ExibirIgnorarBloqueioApenasAdministrador &&  UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.Administrador) &&
                 !Config.PossuiPermissao(Config.FuncaoMenuCadastro.AlterarBloqueioPedidoCadCliente))
                 ((WebControl)sender).Style.Add("display", "none");
         }
-    
+
         protected void lblRota_Load(object sender, EventArgs e)
         {
             if (!RotaDAO.Instance.ExisteRota())
                 ((Label)sender).Style.Add("display", "none");
         }
-    
+
         protected void drpRota_Load(object sender, EventArgs e)
         {
             if (!RotaDAO.Instance.ExisteRota())
                 ((DropDownList)sender).Style.Add("display", "none");
         }
-    
+
         protected void chkBloquearCheques_Load(object sender, EventArgs e)
         {
             if (Glass.Configuracoes.ClienteConfig.TelaCadastro.MarcarBloquearChequesAoInserir && !IsPostBack)
                 ((CheckBox)sender).Checked = true;
         }
-    
+
         protected void txtLimite_Load(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(((TextBox)sender).Text) && ((TextBox)sender).ID == "txtLimite")
                 ((TextBox)sender).Text = FinanceiroConfig.LimitePadraoCliente.ToString();
-    
+
             ((TextBox)sender).Enabled = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AlterarLimiteCliente);
         }
-    
+
         protected void UrlSistema_Load(object sender, EventArgs e)
         {
             if (!Config.PossuiPermissao(Config.FuncaoMenuPedido.ExportarImportarPedido))
                 ((Control)sender).Visible = false;
         }
-    
+
         protected void chkGerarOrcamento_Load(object sender, EventArgs e)
         {
             ((WebControl)sender).Visible = PCPConfig.GerarOrcamentoFerragensAluminiosPCP;
         }
-    
+
         protected void drpTabelaDescontoAcrescimo_Load(object sender, EventArgs e)
         {
             // Desabilita a opção de inserir tabela de desconto se for vendedor
-            ((DropDownList)sender).Enabled = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AlterarTabelaDescontoAcrescimoCliente);     
+            ((DropDownList)sender).Enabled = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AlterarTabelaDescontoAcrescimoCliente);
         }
-    
+
         protected bool HabilitarCampoCredito()
         {
             return false;
@@ -263,17 +263,26 @@ namespace Glass.UI.Web.Cadastros
         {
             return Glass.Configuracoes.ClienteConfig.TelaCadastro.PermitirCpfCnpjTudo9AoInserir;
         }
-    
+
         protected bool ExigirEmailClienteAoInserirOuAtualizar()
         {
             return Glass.Configuracoes.ClienteConfig.TelaCadastro.ExigirEmailClienteAoInserirOuAtualizar;
         }
-    
+
+        /// <summary>
+        /// Recupera a configuração de bonificação do cliente.
+        /// </summary>
+        /// <returns>Configuração de bonificação do cliente.</returns>
+        protected bool UsarPercentualBonificacaoCliente()
+        {
+            return Glass.Configuracoes.Liberacao.UsarPercentualBonificacaoCliente;
+        }
+
         protected bool NaoExigirEnderecoConsumidorFinal()
         {
             return Geral.NaoExigirEnderecoConsumidorFinal;
         }
-    
+
         protected bool ExibirInformacoesFinanceiras()
         {
             return Glass.Configuracoes.ClienteConfig.TelaCadastro.ExibirInformacoesFinanceiras;
@@ -297,27 +306,27 @@ namespace Glass.UI.Web.Cadastros
         {
             return FinanceiroConfig.LimitarChequesPorCpfOuCnpj ? "padding: 2px" : "display: none";
         }
-    
+
         public bool ExibirPercRedNfe()
         {
             return UserInfo.GetUserInfo.IsAdministrador || Config.PossuiPermissao(Config.FuncaoMenuCadastro.AlterarPercRedNfe);
         }
-    
+
         protected string ExibirPercentualComissao()
         {
             return PedidoConfig.Comissao.PerComissaoPedido ? "" : "display: none";
         }
-    
+
         protected string ExibirEstoqueClientes()
         {
             return EstoqueConfig.ControlarEstoqueVidrosClientes ? "" : "display: none";
         }
-    
+
         protected string ExibirNaoEnviarEmailLiberacao()
         {
             return PedidoConfig.LiberarPedido ? "" : "display: none";
         }
-    
+
         protected string UsarControleOrdemCarga()
         {
             return OrdemCargaConfig.UsarControleOrdemCarga ? "" : "display: none";

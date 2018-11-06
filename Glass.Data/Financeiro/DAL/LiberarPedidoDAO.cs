@@ -1322,6 +1322,8 @@ namespace Glass.Data.DAL
 
             #endregion
 
+            UtilsFinanceiro.GerarCréditoBonificacaoCliente(session, liberarPedido.IdCliente, liberarPedido.IdLiberarPedido, recebimentoCaixaDiario);
+
             // Envia o e-mail.
             Email.EnviaEmailLiberacao(session, (uint)idLiberarPedido);
         }
