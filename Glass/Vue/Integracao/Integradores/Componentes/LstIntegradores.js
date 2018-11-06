@@ -19,7 +19,6 @@ const app = new Vue({
      * Carrega os integradores.
      **/
     carregarIntegradores: function() {
-
       var self = this;
       this.obterLista()
         .then(function(resposta) {

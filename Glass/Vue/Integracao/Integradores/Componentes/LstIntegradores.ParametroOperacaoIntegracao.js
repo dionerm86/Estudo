@@ -10,6 +10,11 @@
       twoWay: false,
       validator: Mixins.Validacao.validarObjeto
     },
+
+    /**
+     * Indica se o parâmetro está em modo somente leitura.
+     * @type {Boolean}
+     **/
     somenteLeitura: {
       required: false,
       twoWay: false,

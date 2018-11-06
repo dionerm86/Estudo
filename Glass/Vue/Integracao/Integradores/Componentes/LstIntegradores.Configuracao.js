@@ -18,7 +18,6 @@
   },
 
   methods: {
-
     /**
      * Realiza a edição das configurações.
      **/
@@ -37,7 +36,7 @@
      * Salva os dados da configuração.
      **/
     salvar: function () {
-      alert('Ainda não implementado');
+      this.exibirMensagem('Erro', 'Ainda não implementado');
     }
   },
 

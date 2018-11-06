@@ -94,6 +94,7 @@
   <ItemGroup>
     <Compile Include="ConfiguracaoKhan.cs" />
     <Compile Include="ConversorNotaFiscalPedido.cs" />
+    <Compile Include="EsquemaHistoricoKhan.cs" />
     <Compile Include="HistoricoKhan.cs" />
     <Compile Include="IntegradorKhan.cs" />
     <Compile Include="IntegradorScheculerRegistry.cs" />

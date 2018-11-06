@@ -3,7 +3,7 @@
   props: {
     /**
      * Dados do integrador associado.
-     * @tyoe {Object}
+     * @type {Object}
      **/
     integrador: {
       required: true,
@@ -21,12 +21,10 @@
   },
 
   methods: {
-
     /**
      * Atualiza os dados do logger.
      **/
     atualizar: function () {
-
       var self = this;
       this.atualizando = true;
 

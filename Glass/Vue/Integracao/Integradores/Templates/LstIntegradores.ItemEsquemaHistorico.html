@@ -13,12 +13,7 @@
                                v-bind:placeholder="filtro.identificador.nome"
                                v-model="filtro.valor"
                                style="margin-right: 10px;" />
-                        <select v-model="tipoItem">
-                            <option value="" selected>Tipo de item...</option>
-                            <option v-for="tipo in tiposItemHistorico" value="tipo.id">
-                                {{tipo.nome}}
-                            </option>
-                        </select>
+                        <lista-selecao-id-valor :item-selecionado.sync="tipoItem" :incluir-item-vazio="true" texto-selecionar="Todos" :funcao-recuperar-itens="obterTiposItemHistorico"></lista-selecao-id-valor>
                     </div>
                     <div class="try-out">
                         <button class="btn try-out__btn" type="button" :disabled="atualizando" @click.prevent="atualizar()">

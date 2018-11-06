@@ -2,6 +2,8 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using System.ComponentModel;
+
 namespace Glass.Integracao
 {
     /// <summary>
@@ -12,6 +14,7 @@ namespace Glass.Integracao
         /// <summary>
         /// Identifica que o job ainda não foi iniciado.
         /// </summary>
+        [Description("Não iniciado")]
         NaoIniciado,
 
         /// <summary>

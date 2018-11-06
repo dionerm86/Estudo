@@ -28,7 +28,7 @@
       atualizando: false,
       itens: [],
       itensFiltro: [],
-      tipoItem: '',
+      tipoItem: null,
       tiposItemHistorico: [],
     }
   },
@@ -49,7 +49,6 @@
      * Carrega os itens do filtro.
      **/
     carregarItensFiltro: function () {
-
       this.itensFiltro = [];
       var self = this;
       this.itemEsquema.identificadores.forEach(function (identificador) {
@@ -64,7 +63,6 @@
      * Atualiza os dados do item.
      **/
     atualizar: function () {
-
       if (this.atualizando) {
         return;
       }
@@ -79,7 +77,7 @@
         identificadores.push(itemFiltro.valor);
       });
 
-      Servicos.Integracao.Integradores.obterItensHistorico(this.integrador.nome, this.itemEsquema.nome, this.tipoItem, identificadores)
+      Servicos.Integracao.Integradores.obterItensHistorico(this.integrador.nome, this.itemEsquema.nome, this.tipoItem ? this.tipoItem.id : null, identificadores)
         .then(function (resposta) {
           self.atualizando = false;
 
@@ -96,10 +94,17 @@
     },
 
     /**
+     * Obtpem os tipos de item de histórico.
+     * @returns {Promise} Um promise com os tipos de item.
+     **/
+    obterTiposItemHistorico: function () {
+      return Servicos.Integracao.Integradores.obterTiposItemHistorico();
+    },
+
+    /**
      * Carrega os tipos de itens de histórico.
      **/
     carregarTiposItensHistorico: function () {
-
       var self = this;
       Servicos.Integracao.Integradores.obterTiposItemHistorico()
         .then(function (resposta) {

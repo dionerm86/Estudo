@@ -36,7 +36,6 @@
      * Carrega os parametros da operação
      */
     carregarParametros: function () {
-
       var parametros1 = [];
       this.operacao.parametros.forEach(function (parametro) {
         parametros1.push({
@@ -73,7 +72,6 @@
      * Executa a operação no servidor.
      **/
     executar: function () {
-
       var parametros2 = [];
 
       this.parametros.forEach(function (parametro) {

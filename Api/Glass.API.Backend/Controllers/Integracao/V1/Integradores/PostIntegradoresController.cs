@@ -107,16 +107,7 @@ namespace Glass.API.Backend.Controllers.Integracao.V1.Integradores
                 return this.NaoEncontrado($"Não foi possível encontrar o item '{itemEsquema}' do esquema de histórico do integrador '{integrador}'.");
             }
 
-            Glass.Integracao.Historico.TipoItemHistorico? tipo = null;
-            Glass.Integracao.Historico.TipoItemHistorico tipo2;
-
-            if (!string.IsNullOrEmpty(filtro?.Tipo) &&
-                Enum.TryParse<Glass.Integracao.Historico.TipoItemHistorico>(filtro.Tipo, out tipo2))
-            {
-                tipo = tipo2;
-            }
-
-            var itens = this.ProvedorHistorico.ObterItens(itemEsquema1, tipo, filtro?.Identificadores);
+            var itens = this.ProvedorHistorico.ObterItens(itemEsquema1, filtro?.Tipo, filtro?.Identificadores);
 
             return this.Json(itens.Take(10).Select(item => new Models.Integracao.V1.Integradores.Lista.ItemHistoricoDto(item)));
         }

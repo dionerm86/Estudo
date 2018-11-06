@@ -3,11 +3,6 @@
 // </copyright>
 
 using Glass.Integracao.Historico;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Glass.Integracao.Khan
 {
@@ -25,7 +20,7 @@ namespace Glass.Integracao.Khan
             };
 
             Produtos = new ItemEsquema<Global.Negocios.Entidades.Produto>(
-                1,
+                (int)EsquemaHistoricoKhan.Produtos,
                 "Produto",
                 "Integração dos produtos",
                 identificadoresProduto,
@@ -37,7 +32,7 @@ namespace Glass.Integracao.Khan
             };
 
             NotasFiscais = new ItemEsquema<Data.Model.NotaFiscal>(
-                2,
+                (int)EsquemaHistoricoKhan.NotasFiscais,
                 "NotaFiscal",
                 "Integração das notas fiscais",
                 identificadoresNotaFiscal,

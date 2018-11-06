@@ -75,7 +75,6 @@ Servicos.Integracao = (function(http) {
        * @returns {Promise} Um promise com o resultado da operação.
        **/
       executarOperacao: function (integrador, operacao, parametros) {
-
         if (!integrador) {
           throw new Error('O integrador deve ser informado.');
         }
@@ -97,7 +96,6 @@ Servicos.Integracao = (function(http) {
        * @returns {Promise} Um promise da execução.
        **/
       executarJob: function (integrador, job) {
-
         if (!integrador) {
           throw new Error('O integrador deve ser informado.');
         }

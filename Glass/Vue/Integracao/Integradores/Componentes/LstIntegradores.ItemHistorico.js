@@ -29,9 +29,7 @@
   },
 
   methods: {
-
     alterarExibicaoFalha: function () {
-
       if (this.item.falha != null) {
         this.exibirFalha = !this.exibirFalha;
       }

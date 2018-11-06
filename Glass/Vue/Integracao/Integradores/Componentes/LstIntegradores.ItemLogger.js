@@ -3,7 +3,7 @@
   props: {
     /**
      * Dados do item do logger.
-     * @tyoe {Object}
+     * @type {Object}
      **/
     item: {
       required: true,
@@ -18,12 +18,10 @@
   },
 
   methods: {
-
     /**
      * Altera a exibição dos dados do erro.
      **/
     alterarExibicaoErro: function () {
-
       if (this.item.categoria == 'Exception') {
         this.podeExibirErro = !this.podeExibirErro;
       }

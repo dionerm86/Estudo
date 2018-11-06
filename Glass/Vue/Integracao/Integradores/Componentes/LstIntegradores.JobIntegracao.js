@@ -30,7 +30,6 @@
   },
 
   methods: {
-
     /**
      * Altera a exibição dos detalhes.
      **/
@@ -42,7 +41,6 @@
      * Executa o job no servidor.
      **/
     executar: function () {
-
       var self = this;
 
       this.executando = true;
