@@ -2108,6 +2108,19 @@ namespace Glass.Data.DAL
             return sql.Replace("$$$", criterio);
         }
 
+        /// <summary>
+        /// Método que verifica se o pedido informado já deu saída de acordo com as configurações
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="idPedido">Identificador do pedido a ser verificado.</param>
+        /// <returns>Retorna o resultado de um teste lógico que verifica se o pedido já efetuou a saída de estoque.</returns>
+        internal bool VerificaSaidaEstoqueConfirmacao(GDASession sessao, int idPedido)
+        {
+            return !PedidoConfig.LiberarPedido 
+                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar 
+                && ObtemSituacao(sessao, (uint)idPedido) == Pedido.SituacaoPedido.Confirmado;
+        }
+
         #endregion
 
         #region Listagem/RelatÃ³rio de vendas de pedidos
@@ -7249,7 +7262,7 @@ namespace Glass.Data.DAL
 
                                 if (FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar && qtdSaida > 0)
                                 {
-                                    ProdutosPedidoDAO.Instance.MarcarSaida(trans, p.IdProdPed, p.Qtde - p.QtdSaida, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+                                    ProdutosPedidoDAO.Instance.MarcarSaida(trans, p.IdProdPed, p.Qtde - p.QtdSaida, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty,saidaConfirmacao:true);
 
                                     // DÃ¡ baixa no estoque da loja
                                     MovEstoqueDAO.Instance.BaixaEstoquePedido(trans, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed,
