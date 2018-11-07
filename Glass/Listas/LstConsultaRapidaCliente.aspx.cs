@@ -215,7 +215,7 @@ namespace Glass.UI.Web.Listas
                 ano = f.Split('/')[1].StrParaInt()
             })
              .OrderBy(f => f.ano)
-             .OrderBy(f => f.mes)
+             .ThenBy(f => f.mes)
              .Select(f => new
              {
                  mesAnoCliente = $"{f.mes}/{f.ano}"
@@ -223,7 +223,7 @@ namespace Glass.UI.Web.Listas
 
             var tabela = new DataTable();
 
-            foreach (var mesAno in mesAnoVendaCliente.ToArray())
+            foreach (var mesAno in mesAnoVendaCliente)
             {
                 tabela.Columns.Add(new DataColumn(mesAno.mesAnoCliente.ToString())
                 {
