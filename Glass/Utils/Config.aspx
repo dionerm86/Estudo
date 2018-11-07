@@ -194,7 +194,7 @@
             {
             continue;
             }
-                
+
             if (valor.length == 0)
             {
             alert("O campo '" + tabela.rows[i].cells[0].innerHTML + "' não pode ser vazio.");
@@ -425,7 +425,7 @@
                             <asp:LinkButton ID="lnkControleBenef" runat="server"
                                 OnClick="lnkControleBenef_Click" CausesValidation="False">Controle de Beneficiamentos</asp:LinkButton>
                             &nbsp;&nbsp;
-                            <asp:LinkButton ID="lnkRelatorioDinamico" runat="server" 
+                            <asp:LinkButton ID="lnkRelatorioDinamico" runat="server"
                                 OnClick="lnkRelatorioDinamico_Click" CausesValidation="False">Relatório Dinâmico</asp:LinkButton>
                             <br />
                             <br />
@@ -445,6 +445,9 @@
                             <span runat="server" id="consultaEnvio">&nbsp;&nbsp;
                             <asp:LinkButton ID="lnkConsultaEnvio" runat="server" OnClick="lnkConsultaEnvio_Click">Consultar Envio de</asp:LinkButton>
                             </span>
+                            <br />
+                            <br />
+                            <asp:LinkButton ID="lnkIntegradores" runat="server" CausesValidation="False" PostBackUrl="~/Listas/LstIntegradores.aspx">Integradores</asp:LinkButton>
                         </fieldset>
                         <fieldset runat="server" id="configGeral">
                             <legend>Configurações gerais </legend>
@@ -461,16 +464,16 @@
                         <asp:Button ID="btnSalvarComissao" runat="server" Text="Salvar"
                             OnClientClick="salvarConfig(this, 'comissao'); return false"
                             ValidationGroup="comissao" />
-                         <br />  <br /> 
+                         <br />  <br />
                         <fieldset>
                             <legend>
 	                            Comissão Gerente
-                            </legend>   
+                            </legend>
                             <table>
                                 <tr>
                                     <td nowrap="nowrap">
                                         Selecione o funcionário que receberá comissão de todos os pedidos
-                                    </td>                                    
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -478,20 +481,20 @@
                                             DataTextField="Nome" DataValueField="IdFunc" OnSelectedIndexChanged="drpGerente_SelectedIndexChanged">
                                         </asp:DropDownList>
                                         <colo:VirtualObjectDataSource culture="pt-BR" ID="odsGerente" runat="server" SelectMethod="GetOrdered"
-                                            TypeName="Glass.Data.DAL.FuncionarioDAO">                           
+                                            TypeName="Glass.Data.DAL.FuncionarioDAO">
                                         </colo:VirtualObjectDataSource>
                                     </td>
                                 </tr>
-                            </table>                                                   
+                            </table>
                             <asp:DetailsView ID="dtvComissaoGerente" runat="server"  AutoGenerateRows="false"  OnDataBound="dtvComissaoGerente_DataBound"
                                 DataSourceID="odsComissaoGerente" DefaultMode="Edit" GridLines="None" Width="40%">
-                                <Fields>      
+                                <Fields>
                                     <asp:TemplateField ShowHeader="False">
                                         <EditItemTemplate>
-                                            <asp:HiddenField ID="hdfIdFuncGerente" runat="server" Value='<%# Bind("IdFuncionario") %>' />  
-                                            <asp:Label runat="server" ID="lblGerentes"></asp:Label>                                       
+                                            <asp:HiddenField ID="hdfIdFuncGerente" runat="server" Value='<%# Bind("IdFuncionario") %>' />
+                                            <asp:Label runat="server" ID="lblGerentes"></asp:Label>
                                         </EditItemTemplate>
-                                    </asp:TemplateField>                            
+                                    </asp:TemplateField>
                                     <asp:TemplateField>
                                         <EditItemTemplate>
                                              <table width="100%" cellpadding="0" cellspacing="0" >
@@ -500,7 +503,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left">Venda:</td>
-                                                    <td align="right"> 
+                                                    <td align="right">
                                                          <asp:TextBox ID="txbVenda" runat="server" Text='<%# Bind("PercentualVenda") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
                                                     </td>
                                                     <td>
@@ -534,22 +537,22 @@
                                                         <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObraEspecial" runat="server" Tabela="ComissaoConfigGerente" IdRegistro='<%# Eval("IdComissaoConfigGerente") %>' Campo="Percentual Mão Obra Especial" />
                                                     </td>
                                                 </tr>
-                                            </table>  
+                                            </table>
                                         </EditItemTemplate>
                                     </asp:TemplateField>
                                      <asp:TemplateField ShowHeader="False">
                                         <EditItemTemplate>
-                                            <asp:Button ID="btnSalvar" runat="server" OnClick="btnSalvar_Click" Text="Salvar" 
+                                            <asp:Button ID="btnSalvar" runat="server" OnClick="btnSalvar_Click" Text="Salvar"
                                                 ValidationGroup="comissaoGerente" />
                                         </EditItemTemplate>
                                         <ItemStyle HorizontalAlign="Center" />
                                     </asp:TemplateField>
                                 </Fields>
-                            </asp:DetailsView>                                                  
+                            </asp:DetailsView>
                         </fieldset>
-                        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsComissaoGerente" runat="server" 
+                        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsComissaoGerente" runat="server"
                             SelectMethod="GetForConfig"
-                            TypeName="Glass.Data.DAL.ComissaoConfigGerenteDAO" 
+                            TypeName="Glass.Data.DAL.ComissaoConfigGerenteDAO"
                             DataObjectTypeName="Glass.Data.Model.ComissaoConfigGerente">
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue" Type="UInt32" />
@@ -749,7 +752,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left">Venda:</td>
-                                                    <td align="right"> 
+                                                    <td align="right">
                                                          <asp:TextBox ID="txbVenda" runat="server" Text='<%# Bind("PercentualVenda") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
                                                     </td>
                                                     <td>
@@ -783,7 +786,7 @@
                                                         <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObraEspecial" runat="server" Tabela="ComissaoConfig" IdRegistro='<%# Eval("IdComissaoConfig") %>' Campo="Percentual Mão Obra Especial" />
                                                     </td>
                                                 </tr>
-                                            </table>  
+                                            </table>
                                         </EditItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField>
@@ -1299,7 +1302,7 @@
                         <br />
                         <br />
                         <br />
-                        
+
                     </div>
                     <div id="planoconta">
                         <table>
@@ -1657,14 +1660,14 @@
                         <asp:Button ID="Button1" runat="server" Text="Salvar"
                             OnClientClick="salvarConfig(this, 'rentabilidade'); return false"
                             ValidationGroup="rentabilidade" />
-                         <br />  <br /> 
+                         <br />  <br />
 
                         <table>
                             <tr>
                                 <td nowrap="nowrap">Selecione o funcionário:
                                 </td>
                                 <td>
-                                    <asp:DropDownList ID="drpFuncFaixaRentabilidadeComissao" 
+                                    <asp:DropDownList ID="drpFuncFaixaRentabilidadeComissao"
                                         runat="server" AutoPostBack="True" DataSourceID="odsFunc"
                                         DataTextField="Nome" DataValueField="IdFunc"
                                         OnSelectedIndexChanged="drpFuncFaixaRentabilidadeComissao_SelectedIndexChanged">
@@ -1672,7 +1675,7 @@
                                 </td>
                             </tr>
                         </table>
-                       
+
                         <fieldset>
                             <legend>Faixas de Rentabilidade para Comissão
                             </legend>

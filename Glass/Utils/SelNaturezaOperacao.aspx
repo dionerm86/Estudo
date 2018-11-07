@@ -10,6 +10,15 @@
 
         function setNaturezaOperacao(controle, id, descr)
         {
+            if (GetQueryString("buscaComPopup") === "true") {
+                var idControle = GetQueryString("id-controle");
+                if (idControle) {
+                    window.opener.Busca.Popup.atualizar(idControle, null, descr);
+                    closeWindow();
+                    return;
+                }
+            }
+
             if (selecionado)
                 return;
 

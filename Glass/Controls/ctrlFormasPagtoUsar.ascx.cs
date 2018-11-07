@@ -10,28 +10,28 @@ namespace Glass.UI.Web.Controls
     public partial class ctrlFormasPagtoUsar : BaseUserControl
     {
         #region Campos privados
-    
+
         private int? _formaPagtoPadrao = null;
         private IList<Financeiro.Negocios.Entidades.FormaPagtoCliente> _formasPagto;
-    
+
         #endregion
-    
+
         #region Propriedades
-    
+
         public IEnumerable<Financeiro.Negocios.Entidades.FormaPagtoCliente> FormasPagto
         {
             get { return _formasPagto; }
             set { _formasPagto = value.ToList(); }
         }
-    
+
         public int? FormaPagtoPadrao
         {
             get { return drpFormaPagto.SelectedValue.StrParaIntNullable(); }
             set { _formaPagtoPadrao = value; }
         }
-    
+
         #endregion
-    
+
         protected void Page_Load(object sender, EventArgs e)
         {
             imgTooltip.OnClientClick = "exibirFormasPagto(this, '" + cblFormasPagto.ClientID + "'); return false;";
@@ -59,30 +59,62 @@ namespace Glass.UI.Web.Controls
                 }
             }
         }
-    
-        protected void cblFormasPagto_DataBound(object sender, EventArgs e)
-        {
-            var itens = _formasPagto ?? new Financeiro.Negocios.Entidades.FormaPagtoCliente[0];
 
-            if (_formasPagto == null && FinanceiroConfig.FormaPagamento.FormaPagtoPadraoDesmarcada)
+        protected void CblFormasPagto_DataBound(object sender, EventArgs e)
+        {
+            var itens = this._formasPagto ?? new Financeiro.Negocios.Entidades.FormaPagtoCliente[0];
+
+            if (this._formasPagto == null && FinanceiroConfig.FormaPagamento.FormaPagtoPadraoDesmarcada)
+            {
                 return;
+            }
 
             // Marca as formas de pagamento que o cliente tem permissão
-            foreach (ListItem item in cblFormasPagto.Items)
+            foreach (ListItem item in this.cblFormasPagto.Items)
             {
                 var p = itens.FirstOrDefault(x => x.IdFormaPagto == item.Value.StrParaInt());
                 item.Selected = p == null;
 
                 //Chamado 37161
-                if(_formasPagto == null && item.Value.StrParaInt() == (int)Pagto.FormaPagto.Permuta)
+                if (this._formasPagto == null && item.Value.StrParaInt() == (int)Pagto.FormaPagto.Permuta)
+                {
                     item.Selected = false;
+                }
             }
         }
-    
-        protected void drpFormaPagto_DataBound(object sender, EventArgs e)
+
+        protected void DrpFormaPagto_DataBound(object sender, EventArgs e)
         {
-            if (drpFormaPagto.Items.Count > 0)
-                drpFormaPagto.SelectedIndex = _formaPagtoPadrao != null ? drpFormaPagto.Items.IndexOf(drpFormaPagto.Items.FindByValue(_formaPagtoPadrao.Value.ToString())) : 0;
+            var itens = this._formasPagto ?? new Financeiro.Negocios.Entidades.FormaPagtoCliente[0];
+
+            // Marca as formas de pagamento que o cliente tem permissão
+            foreach (ListItem item in this.cblFormasPagto.Items)
+            {
+                var p = itens.FirstOrDefault(x => x.IdFormaPagto == item.Value.StrParaInt());
+
+                if ((p != null) && (this._formaPagtoPadrao != item.Value.StrParaInt()))
+                {
+                    var itemRemover = new ListItem(item.Text, item.Value);
+                    this.drpFormaPagto.Items.Remove(itemRemover);
+                }
+            }
+
+            if (this.drpFormaPagto.Items.Count > 0)
+            {
+                this.drpFormaPagto.SelectedIndex = this._formaPagtoPadrao != null ?
+                    this.drpFormaPagto.Items.IndexOf(this.drpFormaPagto.Items.FindByValue(this._formaPagtoPadrao.Value.ToString())) : 0;
+            }
+        }
+
+        protected void CblFormasPagto_PreRender(object sender, EventArgs e)
+        {
+            for (int i = 0; i < this.cblFormasPagto.Items.Count; i++)
+            {
+                var metodos = $@"alterarFormaPagtoPadraoDesmarcada(this, '{this.cblFormasPagto.Items[i].Value}', {this._formaPagtoPadrao});
+                       alterarFormasPagtoPadrao(this.checked, {this.cblFormasPagto.Items[i].Value}, '{this.cblFormasPagto.Items[i].Text}', {this._formaPagtoPadrao});";
+
+                this.cblFormasPagto.Items[i].Attributes.Add("onclick", metodos);
+            }
         }
     }
 }

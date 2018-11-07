@@ -129,6 +129,31 @@ namespace Glass.UI.Web.Utils
                     }
                 }
             }
+
+            if (Request["proj"] == "1")
+            {
+
+                for (int i = 0; i < ddlGrupo.Items.Count; i++)
+                {
+                    if (Conversoes.StrParaInt(ddlGrupo.Items[i].Value) != (int)NomeGrupoProd.Vidro)
+                    {
+                        ddlGrupo.Items.Remove(ddlGrupo.Items[i]);
+                        i--;
+                    }
+                }
+
+                var subgruposDesconsiderar = new List<TipoSubgrupoProd> { TipoSubgrupoProd.VidroDuplo, TipoSubgrupoProd.VidroLaminado };
+                ddlSubgrupo.Items.Remove(ddlSubgrupo.Items[0]);
+
+                for (int i = 0; i < ddlSubgrupo.Items.Count; i++)
+                {
+                    if (subgruposDesconsiderar.Contains(SubgrupoProdDAO.Instance.GetElementByPrimaryKey(Conversoes.StrParaInt(ddlSubgrupo.Items[i].Value)).TipoSubgrupo))
+                    {
+                        ddlSubgrupo.Items.Remove(ddlSubgrupo.Items[i]);
+                        i = -1;
+                    }
+                }
+            }
         }       
     }
 }

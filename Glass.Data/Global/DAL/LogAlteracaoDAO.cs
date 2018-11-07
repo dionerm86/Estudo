@@ -98,9 +98,22 @@ namespace Glass.Data.DAL
             return GetCount(tabela, idRegistroAlt, exibirAdmin, campo, false);
         }
 
+        /// <summary>
+        /// Obtém a quantidade de logs de alteração, que correspondem aos filtros informados.
+        /// </summary>
+        /// <param name="tabela">tabela.</param>
+        /// <param name="idRegistroAlt">idRegistroAlt.</param>
+        /// <param name="exibirAdmin">exibirAdmin.</param>
+        /// <param name="campo">campo.</param>
+        /// <param name="buscarVazio">buscarVazio.</param>
+        /// <returns>Retorna a quantidade de logs de alteração, que correspondem aos filtros informados.</returns>
         public int GetCount(int tabela, uint idRegistroAlt, bool exibirAdmin, string campo, bool buscarVazio)
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(tabela, idRegistroAlt, exibirAdmin, null, campo, null, null, false, buscarVazio), GetParams(campo, null, null));
+            var sqlLogAlteracao = this.Sql(tabela, idRegistroAlt, exibirAdmin, null, campo, null, null, false, buscarVazio);
+            var parametrosConsulta = this.GetParams(campo, null, null);
+            var retorno = this.objPersistence.ExecuteSqlQueryCount(sqlLogAlteracao, parametrosConsulta);
+
+            return retorno;
         }
 
         #endregion
@@ -1032,10 +1045,10 @@ namespace Glass.Data.DAL
         /// Cria o Log de Alterações para a medida do projeto.
         /// </summary>
         /// <param name="medidaProjeto"></param>
-        public void LogMedidaProjeto(MedidaProjeto medidaProjeto)
+        public void LogMedidaProjeto(GDASession sessao, MedidaProjeto medidaProjeto)
         {
-            MedidaProjeto atual = MedidaProjetoDAO.Instance.GetElementByPrimaryKey(medidaProjeto.IdMedidaProjeto);
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.MedidaProjeto, medidaProjeto.IdMedidaProjeto, atual, medidaProjeto);
+            MedidaProjeto atual = MedidaProjetoDAO.Instance.GetElementByPrimaryKey(sessao, medidaProjeto.IdMedidaProjeto);
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.MedidaProjeto, medidaProjeto.IdMedidaProjeto, atual, medidaProjeto);
         }
 
         /// <summary>
@@ -1964,15 +1977,6 @@ namespace Glass.Data.DAL
         public void ApagaLogMaterialProjetoModelo(uint idMaterialProjetoModelo)
         {
             ApagaLog(LogAlteracao.TabelaAlteracao.MaterialProjetoModelo, idMaterialProjetoModelo);
-        }
-
-        /// <summary>
-        /// Apaga o Log de Alterações para o grupo de modelos de projeto.
-        /// </summary>
-        /// <param name="idGrupoModelo"></param>
-        public void ApagaLogGrupoModelo(uint idGrupoModelo)
-        {
-            ApagaLog(LogAlteracao.TabelaAlteracao.GrupoModelo, idGrupoModelo);
         }
 
         /// <summary>

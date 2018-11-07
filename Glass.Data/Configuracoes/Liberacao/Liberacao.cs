@@ -44,5 +44,21 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BloquearLiberacaoParcelasDiferentes); }
         }
+
+        /// <summary>
+        /// Obtém um valor que indica se o sistema irá usar percentual de bonificação para o cliente.
+        /// </summary>
+        public static bool UsarPercentualBonificacaoCliente
+        {
+            get
+            {
+                if (DadosLiberacao.LiberarPedidoProdutos)
+                {
+                    return false;
+                }
+
+                return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarPercentualBonificacaoCliente);
+            }
+        }
     }
 }

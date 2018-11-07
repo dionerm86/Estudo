@@ -48,9 +48,19 @@
         public string Titular { get; set; }
 
         /// <summary>
-        /// Código do convencia.
+        /// Código do convênio.
         /// </summary>
         public string CodConvenio { get; set; }
+
+        /// <summary>
+        /// Código do cliente.
+        /// </summary>
+        public string CodCliente { get; set; }
+
+        /// <summary>
+        /// Posto (usado no CNAB).
+        /// </summary>
+        public int? Posto { get; set; }
 
         /// <summary>
         /// Situacação da conta.

@@ -59,7 +59,7 @@
                         <input type="text" v-model="condutor.nome" maxlength="14" style="width: 150px" v-if="inserindo" required />
                     </td>
                     <td>
-                        <campo-cpf v-bind:cpf.sync="condutor.cpf" v-if="inserindo"  required>
+                        <campo-cpf v-bind:cpf.sync="condutor.cpf" v-if="inserindo" required>
                     </td>
                 </template>
             </lista-paginada>

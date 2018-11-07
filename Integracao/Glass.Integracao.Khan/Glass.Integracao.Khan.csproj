@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Glass.Integracao.Khan</RootNamespace>
     <AssemblyName>Glass.Integracao.Khan</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -93,8 +94,11 @@
   <ItemGroup>
     <Compile Include="ConfiguracaoKhan.cs" />
     <Compile Include="ConversorNotaFiscalPedido.cs" />
+    <Compile Include="EsquemaHistoricoKhan.cs" />
+    <Compile Include="HistoricoKhan.cs" />
     <Compile Include="IntegradorKhan.cs" />
     <Compile Include="IntegradorScheculerRegistry.cs" />
+    <Compile Include="Jobs\MonitorIndicadoresFinanceirosJob.cs" />
     <Compile Include="MonitorIndicadoresFinanceiros.cs" />
     <Compile Include="MonitorNotaFiscal.cs" />
     <Compile Include="MonitorProdutos.cs" />

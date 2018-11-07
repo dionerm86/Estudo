@@ -1,0 +1,18 @@
+﻿<tr @click.prevent="alterarExibicaoFalha()">
+    <td v-for="identificador in this.item.identificadores">
+        {{identificador}}
+    </td>
+    <td>
+        {{item.tipo}}
+    </td>
+    <td>
+        {{item.mensagem}}
+        <div v-if="exibirFalha">
+            <div>{{item.falha.tipo}} :: {{item.falha.mensagem}}</div>
+            <div>{{item.falha.pilhaChamada}}</div>
+        </div>
+    </td>
+    <td>
+        {{item.data}}
+    </td>
+</tr>

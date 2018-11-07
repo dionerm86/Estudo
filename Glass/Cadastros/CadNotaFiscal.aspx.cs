@@ -186,6 +186,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 var produto = grdProdutos.FooterRow.FindControl("ctrlSelProd") as Glass.UI.Web.Controls.ctrlSelProduto;
                 var idNf = Glass.Conversoes.StrParaUint(Request["IdNf"]);
+                var crtsCsons = new List<CrtLoja> { CrtLoja.SimplesNacional, CrtLoja.SimplesNacionalExcSub };
 
                 // Cria uma instância do ProdutosPedido
                 ProdutosNf prodNf = new ProdutosNf();
@@ -213,6 +214,20 @@ namespace Glass.UI.Web.Cadastros
                     prodNf.PercRedBcIcms = ((TextBox)grdProdutos.FooterRow.FindControl("txtCsosnPercRedBcIcms")).Text.StrParaFloat();
                     prodNf.PercRedBcIcmsSt = ((TextBox)grdProdutos.FooterRow.FindControl("txtCsosnPercRedBcIcmsSt")).Text.StrParaFloat();
                 }
+
+                var tipoDocumento = Request["tipo"].StrParaInt();
+
+                var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(null, idNf);
+                var crtEmit = LojaDAO.Instance.BuscaCrtLoja(null, idLojaNf);
+
+                if (crtsCsons.Any(csosn => (int)csosn == crtEmit))
+                {
+                    prodNf.Csosn = ((DropDownList)grdProdutos.FooterRow.FindControl("drpCsosnIns")).SelectedValue;
+                }
+                else
+                {
+                    prodNf.Csosn = string.Empty;
+                }                
 
                 prodNf.AliqIcms = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIcmsIns")).Text);
                 prodNf.Mva = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtMva")).Text);
@@ -247,8 +262,6 @@ namespace Glass.UI.Web.Cadastros
                 {
                     throw new Exception("O código do valor fiscal ICMS deve ser selecionado.");
                 }
-
-                var tipoDocumento = Request["tipo"].StrParaInt();
 
                 if (!NaturezaOperacaoDAO.Instance.ValidarCfop((int)prodNf.IdNaturezaOperacao.GetValueOrDefault(0), tipoDocumento))
                 {

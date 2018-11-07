@@ -76,7 +76,7 @@ namespace Glass.Configuracoes
             public static float GetDescontoMaximoPedido(GDA.GDASession sessao, uint idFunc, int tipoVendaPedido, int? idParcela)
             {
                 var idFuncAtual = UserInfo.GetUserInfo.CodUser;
-                if (idFuncAtual != idFunc && UserInfo.IsAdministrador(idFuncAtual))
+                if (idFuncAtual > 0 && idFuncAtual != idFunc && UserInfo.IsAdministrador(idFuncAtual))
                 {
                     idFunc = idFuncAtual;
                 }

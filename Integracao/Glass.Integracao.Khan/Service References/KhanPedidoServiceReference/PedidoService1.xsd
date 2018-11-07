@@ -42,7 +42,7 @@
       <xs:element minOccurs="0" name="nomcad" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="numdoc1" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="numdoc2" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="numitens" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="numitens" type="xs:int" />
       <xs:element minOccurs="0" name="numnf" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="numnf_origem" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="numpar" type="xs:int" />
@@ -94,6 +94,7 @@
       <xs:element minOccurs="0" name="lote" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="numped_int" type="xs:int" />
       <xs:element minOccurs="0" name="obsvint" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="pdes" type="xs:float" />
       <xs:element minOccurs="0" name="prunit" type="xs:float" />
       <xs:element minOccurs="0" name="qtdpro" type="xs:float" />
       <xs:element minOccurs="0" name="seq" type="xs:int" />

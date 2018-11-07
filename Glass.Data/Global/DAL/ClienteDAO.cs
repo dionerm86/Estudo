@@ -1422,6 +1422,22 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        /// <summary>
+        /// Retorna o Percentual de bonificação do cliente.
+        /// </summary>
+        /// <param name="sessao">Transação.</param>
+        /// <param name="idCliente">Identificador do cliente.</param>
+        /// <returns>Percentual de bonificação do cliente.</returns>
+        public decimal GetPercentualBonificacao(GDASession sessao, uint idCliente)
+        {
+            if (idCliente == 0)
+            {
+                return 0;
+            }
+
+            return this.ObtemValorCampo<decimal>(sessao, "PercentualBonificacao", "id_Cli=" + idCliente);
+        }
+
         #region Retorna Crédito
 
         /// <summary>
@@ -3022,7 +3038,7 @@ namespace Glass.Data.DAL
         {
             return Update(null, objUpdate);
         }
-        
+
         public override int Delete(Cliente objDelete)
         {
             return DeleteByPrimaryKey(null, objDelete.IdCli);
@@ -3176,7 +3192,7 @@ namespace Glass.Data.DAL
 
             // Para verificar se o cliente não compra há mais de x dias, além de fazer esta verificação, considera também
             // os clientes que nunca fizeram compras e que foram cadastrados há mais de x dias
-            var sql = $@"SELECT c.Id_Cli FROM cliente c 
+            var sql = $@"SELECT c.Id_Cli FROM cliente c
                     { "{0}" }
                 WHERE REPLACE(REPLACE(REPLACE(c.Cpf_Cnpj, '.', ''), '-', ''), '/', '') NOT IN ({ string.Join(",", cnpjsLoja.Select(f => $"'{ f.Replace(".", "").Replace("-", "").Replace("/", "") }'").ToList()) })
                     AND LOWER(c.Nome)<>'consumidor final'
@@ -3227,8 +3243,8 @@ namespace Glass.Data.DAL
             var sql = $@"SELECT Id_Cli
                 FROM cliente c
                 WHERE REPLACE(REPLACE(REPLACE(c.Cpf_Cnpj, '.', ''), '-', ''), '/', '') NOT IN ({ string.Join(",", cnpjsLoja.Select(f => $"'{ f.Replace(".", "").Replace("-", "").Replace("/", "") }'").ToList()) })
-                    AND LOWER(c.Nome) <> 'consumidor final' 
-                    AND LOWER(c.Tipo_Pessoa) = 'j' 
+                    AND LOWER(c.Nome) <> 'consumidor final'
+                    AND LOWER(c.Tipo_Pessoa) = 'j'
                     AND c.DtUltConSintegra <= DATE_SUB(NOW(), INTERVAL { FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra } DAY)";
 
             var ids = ExecuteMultipleScalar<int>(sql);
@@ -3249,7 +3265,7 @@ namespace Glass.Data.DAL
         {
             var cnpjsLoja = LojaDAO.Instance.ObtemCnpj();
 
-            var sql = $@"SELECT Id_cli 
+            var sql = $@"SELECT Id_cli
                 FROM cliente
                 WHERE REPLACE(REPLACE(REPLACE(c.Cpf_Cnpj, '.', ''), '-', ''), '/', '') NOT IN ({ string.Join(",", cnpjsLoja.Select(f => $"'{ f.Replace(".", "").Replace("-", "").Replace("/", "") }'").ToList()) })
                     AND LOWER(Nome) <> 'consumidor final'

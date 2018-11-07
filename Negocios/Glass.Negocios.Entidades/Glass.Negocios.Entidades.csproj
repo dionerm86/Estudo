@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Glass.Negocios.Entidades</RootNamespace>
     <AssemblyName>Glass.Negocios.Entidades</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -119,6 +119,9 @@
     <Compile Include="Fiscal\IProvedorIcmsProdutoUf.cs" />
     <Compile Include="Fiscal\IProvedorMvaProdutoUf.cs" />
     <Compile Include="Global\GrupoCliente.cs" />
+    <Compile Include="Integracao\EventoItemIntegracao.cs" />
+    <Compile Include="Integracao\FalhaIntegracao.cs" />
+    <Compile Include="Integracao\ItemIntegracao.cs" />
     <Compile Include="Otimizacao\EstoqueChapaEntrada.cs" />
     <Compile Include="Estoque\ProdutoBaixaEstoquePesquisa.cs" />
     <Compile Include="Financeiro\ArquivoCartaoNaoIdentificado.cs" />

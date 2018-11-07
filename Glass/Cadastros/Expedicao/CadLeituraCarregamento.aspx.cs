@@ -39,7 +39,6 @@ namespace Glass.UI.Web.Cadastros.Expedicao
 
                 UserInfo.SetActivity();
 
-
                 hdfFunc.Value = UserInfo.GetUserInfo.CodUser.ToString();
 
                 if (OrdemCargaConfig.OpcaoAtualizarAutomaticamenteMarcada)
@@ -61,7 +60,6 @@ namespace Glass.UI.Web.Cadastros.Expedicao
                 var msgNova = mensagemFluxo.ExistemNovasMensagens((int)UserInfo.GetUserInfo.CodUser);
                 lnkMensagens.Visible = !msgNova;
                 lnkMensagensNaoLidas.Visible = msgNova;
-
                 #endregion
 
 
@@ -129,8 +127,15 @@ namespace Glass.UI.Web.Cadastros.Expedicao
         public void EfetuaLeitura(string idFunc, string idCarregamento, string etiqueta, string idPedidoExp, string numCli, string nomeCli,
             string idOc, string idPedido, string altura, string largura, string numEtqFiltro, string idClienteExterno, string nomeClienteExterno, string idPedidoExterno)
         {
-            WebGlass.Business.OrdemCarga.Fluxo.CarregamentoFluxo.Ajax.EfetuaLeitura(idFunc, idCarregamento, etiqueta, idPedidoExp, numCli, nomeCli,
-                idOc, idPedido, altura, largura, numEtqFiltro, idClienteExterno.StrParaUint(), nomeClienteExterno, idPedidoExterno.StrParaUint());
+            if (UserInfo.GetUserInfo.CodUser.ToString() != idFunc)
+            {
+                throw new Exception("Erro ao recuperar o usuário logado. Faça login novamente!");
+            }
+            else
+            {
+                WebGlass.Business.OrdemCarga.Fluxo.CarregamentoFluxo.Ajax.EfetuaLeitura(idFunc, idCarregamento, etiqueta, idPedidoExp, numCli, nomeCli,
+                    idOc, idPedido, altura, largura, numEtqFiltro, idClienteExterno.StrParaUint(), nomeClienteExterno, idPedidoExterno.StrParaUint());
+            }
         }
 
         /// <summary>
