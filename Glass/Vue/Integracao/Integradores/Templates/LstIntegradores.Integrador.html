@@ -1,0 +1,80 @@
+﻿<section class="integradorblock">
+    <div class="integradorblock-tag" @click.prevent="alterarExibicaoOpcoes()">
+        <h2>
+            <span>{{integrador.nome}}</span>
+        </h2>
+    </div>
+    <div class="wrapper" v-if="podeExibirOpcoes">
+        <span>
+            <div class="opblock-tag-section">
+                <h4 class="opblock-tag" @click.prevent="alterarExibicaoConfiguracao()">
+                    <span>Configuração</span>
+                    <small>
+                        <div class="markdown">Parâmetros da configuração do integrador</div>
+                    </small>
+                </h4>
+                <div v-if="podeExibirConfiguracao" style="height: auto; border: none; margin: 0px; padding: 0px">
+                    <integradores-configuracao :configuracao="integrador.configuracao"></integradores-configuracao>
+                </div>
+            </div>
+        </span>
+        <span>
+            <div class="opblock-tag-section">
+                <h4 class="opblock-tag" @click.prevent="alterarExibicaoOperacoes()">
+                    <span>Operações</span>
+                    <small>
+                        <div class="markdown">Operação disponíveis para o integrador</div>
+                    </small>
+                </h4>
+                <div v-if="podeExibirOperacoes" style="height: auto; border: none; margin: 0px; padding: 0px">
+                    <span v-for="operacao in integrador.operacoes">
+                        <integradores-operacaointegracao :integrador="integrador" :operacao="operacao"></integradores-operacaointegracao>
+                    </span>
+                </div>
+            </div>
+        </span>
+        <span>
+            <div class="opblock-tag-section">
+                <h4 class="opblock-tag" @click.prevent="alterarExibicaoJobs()">
+                    <span>Jobs</span>
+                    <small>
+                        <div class="markdown">Jobs disponíveis para o integrador</div>
+                    </small>
+                </h4>
+                <div v-if="podeExibirJobs" style="height: auto; border: none; margin: 0px; padding: 0px">
+                    <span v-for="job in integrador.jobs">
+                        <integradores-jobintegracao :integrador="integrador" :job="job"></integradores-jobintegracao>
+                    </span>
+                </div>
+            </div>
+        </span>
+        <span>
+            <div class="opblock-tag-section">
+                <h4 class="opblock-tag" @click.prevent="alterarExibicaoHistorico()">
+                    <span>Histórico</span>
+                    <small>
+                        <div class="markdown">Histórico das integrações</div>
+                    </small>
+                </h4>
+                <div v-if="podeExibirHistorico" style="height: auto; border: none; margin: 0px; padding: 0px">
+                    <span v-for="itemEsquema in integrador.esquemaHistorico.itens">
+                        <integradores-itemesquemahistorico :integrador="integrador" :itemEsquema="itemEsquema"></integradores-itemesquemahistorico>
+                    </span>
+                </div>
+            </div>
+        </span>
+        <span>
+            <div class="opblock-tag-section">
+                <h4 class="opblock-tag" @click.prevent="alterarExibicaoLogger()">
+                    <span>Logger</span>
+                    <small>
+                        <div class="markdown">Logger do integrador</div>
+                    </small>
+                </h4>
+                <div v-if="podeExibirLogger" style="height: auto; border: none; margin: 0px; padding: 0px">
+                    <integradores-logger :integrador="integrador"></integradores-logger>
+                </div>
+            </div>
+        </span>
+    </div>
+</section>

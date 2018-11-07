@@ -611,8 +611,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza o saldo da obra no pedido e no saldo geral da obra
         /// </summary>
-        private void AtualizaSaldoObra(GDASession sessao, uint idPedido, Obra obraAtual, uint? idObra, decimal totalPedidoAtual,
-            decimal totalPedidoAnterior, bool pedidoJaCalculadoNoSaldoDaObra)
+        public void AtualizaSaldoObra(
+            GDASession sessao,
+            uint idPedido,
+            Obra obraAtual,
+            uint? idObra,
+            decimal totalPedidoAtual,
+            decimal totalPedidoAnterior,
+            bool pedidoJaCalculadoNoSaldoDaObra)
         {
             if (idObra > 0)
             {
@@ -5648,37 +5654,55 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Disponibiliza os pedidos para serem confirmados pelo financeiro.
         /// </summary>
-        public void DisponibilizaConfirmacaoFinanceiro(GDASession sessao, List<int> idsPedido, string mensagem)
+        public void DisponibilizaConfirmacaoFinanceiro(List<int> idsPedido, string mensagem)
         {
-            var idsPedidosErro = new List<int>();
-
-            foreach (var idPedido in idsPedido)
+            using (var transaction = new GDATransaction())
             {
-                var mensagemErro = new List<string>();
-                var idCliente = ObtemIdCliente(sessao, (uint)idPedido);
-                var limiteCliente = ClienteDAO.Instance.ObtemLimite(sessao, idCliente);
-                var debitosCliente = ContasReceberDAO.Instance.GetDebitos(sessao, idCliente, null);
-                var totalPedido = GetTotal(sessao, (uint)idPedido);
-
-                if ((VerificaSinalPagamentoReceber(sessao, new List<int> { idPedido }, out mensagemErro) && mensagemErro.Count > 0) ||
-                    (limiteCliente - (debitosCliente + totalPedido) < 0))
+                try
                 {
-                    idsPedidosErro.Add(idPedido);
+                    transaction.BeginTransaction();
+
+                    var idsPedidosErro = new List<int>();
+
+                    foreach (var idPedido in idsPedido)
+                    {
+                        var mensagemErro = new List<string>();
+                        var idCliente = ObtemIdCliente(transaction, (uint)idPedido);
+                        var limiteCliente = ClienteDAO.Instance.ObtemLimite(transaction, idCliente);
+                        var debitosCliente = ContasReceberDAO.Instance.GetDebitos(transaction, idCliente, null);
+                        var totalPedido = GetTotal(transaction, (uint)idPedido);
+
+                        if ((VerificaSinalPagamentoReceber(transaction, new List<int> { idPedido }, out mensagemErro) && mensagemErro.Count > 0) ||
+                            (limiteCliente - (debitosCliente + totalPedido) < 0))
+                        {
+                            idsPedidosErro.Add(idPedido);
+                        }
+                    }
+
+                    if (idsPedidosErro.Any(f => f > 0))
+                    {
+                        var sql = $@"UPDATE pedido SET
+                            Situacao = {(int)Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro},
+                            IdFuncConfirmarFinanc = {UserInfo.GetUserInfo.CodUser}
+                        WHERE IdPedido IN ({string.Join(",", idsPedidosErro)})";
+
+                        objPersistence.ExecuteCommand(transaction, sql);
+
+                        foreach (var idPedido in idsPedidosErro)
+                        {
+                            ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(transaction, (uint)idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
+                        }
+                    }
+
+                    transaction.Commit();
+                    transaction.Close();
                 }
-            }
-
-            if (idsPedidosErro.Any(f => f > 0))
-            {
-                var sql = $@"UPDATE pedido SET
-                    Situacao = { (int)Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro },
-                    IdFuncConfirmarFinanc = { UserInfo.GetUserInfo.CodUser }
-                WHERE IdPedido IN ({ string.Join(",", idsPedidosErro) })";
-
-                objPersistence.ExecuteCommand(sessao, sql);
-
-                foreach (var idPedido in idsPedidosErro)
+                catch (Exception ex)
                 {
-                    ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(sessao, (uint)idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    throw ex;
                 }
             }
         }
@@ -9015,19 +9039,37 @@ namespace Glass.Data.DAL
         public bool DescontoPermitido(GDASession sessao, Pedido pedido)
         {
             string somaDesconto = "(select sum(coalesce(valorDescontoQtde,0)" + (PedidoConfig.RatearDescontoProdutos ? "+coalesce(valorDesconto,0)+coalesce(valorDescontoProd,0)" :
-                "") + ") from produtos_pedido where idPedido=p.idPedido)";
+                string.Empty) + ") from produtos_pedido where idPedido=p.idPedido)";
 
             uint idFunc = UserInfo.GetUserInfo.CodUser;
             if (Geral.ManterDescontoAdministrador)
+            {
                 idFunc = pedido.IdFuncDesc.GetValueOrDefault(idFunc);
+            }
+
+            var idFuncCli = UserInfo.GetUserInfo.IdCliente;
+
+            if (idFuncCli > 0 && idFunc == 0)
+            {
+                var descontoEcommerce = ClienteDAO.Instance.ObterPorcentagemDescontoEcommerce(sessao, (int)pedido.IdCli);
+
+                if (descontoEcommerce == pedido.Desconto)
+                {
+                    return true;
+                }
+            }
 
             if (idFunc == 0)
+            {
                 idFunc = pedido.IdFunc;
+            }
 
             float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela);
 
             if (descontoMaximoPermitido == 100)
+            {
                 return true;
+            }
 
             if (FinanceiroConfig.UsarDescontoEmParcela)
             {
@@ -9036,7 +9078,9 @@ namespace Glass.Data.DAL
                 {
                     var desconto = ParcelasDAO.Instance.ObtemDesconto(sessao, idParcela.Value);
                     if (desconto == ObtemDescontoCalculado(sessao, pedido.IdPedido))
+                    {
                         return true;
+                    }
                 }
             }
             else if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
@@ -9057,8 +9101,11 @@ namespace Glass.Data.DAL
 
                 var desconto = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDesconto(tipoVenda, idFormaPagto, idTipoCartao, idParcela, idGrupoProd, idSubgrupoProd);
                 if (desconto == ObtemDescontoCalculado(sessao, pedido.IdPedido))
+                {
                     return true;
+                }
             }
+
             var valorDescontoConsiderar = (Data.DAL.FuncionarioDAO.Instance.ObtemIdTipoFunc(sessao, UserInfo.GetUserInfo.CodUser) == (int)Glass.Seguranca.TipoFuncionario.Administrador ? "100"
                 : descontoMaximoPermitido.ToString().Replace(",", "."));
 
