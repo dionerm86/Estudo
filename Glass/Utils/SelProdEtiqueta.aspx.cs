@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using Glass.Data.Model;
@@ -30,58 +30,89 @@ namespace Glass.UI.Web.Utils
         {
             grdProduto.PageIndex = 0;
         }
-    
+
         protected void lnkAddAll_Click(object sender, EventArgs e)
         {
-            uint idPedido = !String.IsNullOrEmpty(txtNumPedido.Text) ? Glass.Conversoes.StrParaUint(txtNumPedido.Text) : 0;
-            var lstProdPedEsp = odsProduto.Select() as IEnumerable<ProdutosPedidoEspelho>;
-    
-            string script = String.Empty;
+            var idPedido = !string.IsNullOrWhiteSpace(this.txtNumPedido.Text) ? this.txtNumPedido.Text.StrParaUint() : 0;
+            var produtosPedidoEspelho = (this.odsProduto.Select() as IEnumerable<ProdutosPedidoEspelho>).ToList();
+            var script = string.Empty;
 
-            //Chamado 45770
-            //Caso o checkbox chkComposicaoLaminado esteja marcado, deve ignorar a seleção de produto pai da composição
-            if (chkComposicaoLaminado.Checked)
-                lstProdPedEsp = lstProdPedEsp.Where(f => !f.IsProdutoLaminadoComposicao).ToList();
-
-            // Chama a função de buscar etiquetas desta página (popup), limpa a tela das peças antes, 
-            // pois este método desativa a validação de etiquetas já adicionadas
-            foreach (var ppe in lstProdPedEsp)
+            // Chamado 45770.
+            // Caso o checkbox chkComposicaoLaminado esteja marcado, deve ignorar a seleÃ§Ã£o de produto pai da composiÃ§Ã£o.
+            if (this.chkComposicaoLaminado.Checked)
             {
-                var ultimoRegistro = ((List<ProdutosPedidoEspelho>)lstProdPedEsp).IndexOf(ppe) == ((List<ProdutosPedidoEspelho>)lstProdPedEsp).Count - 1;
+                produtosPedidoEspelho = produtosPedidoEspelho.Where(f => !f.IsProdutoLaminadoComposicao).ToList();
+            }
+
+            var idsProdPedQuantidadeEtiquetasExportadas = ProdutosPedidoEspelhoDAO.Instance.ObterQuantidadeEtiquetasExportadas(
+                null,
+                produtosPedidoEspelho.Select(f => (int)f.IdProdPed).ToList());
+
+            // Chama a funÃ§Ã£o de buscar etiquetas desta pÃ¡gina (popup), limpa a tela das peÃ§as antes,
+            // pois este mÃ©todo desativa a validaÃ§Ã£o de etiquetas jÃ¡ adicionadas.
+            foreach (var ppe in produtosPedidoEspelho)
+            {
+                var ultimoRegistro = produtosPedidoEspelho.IndexOf(ppe) == produtosPedidoEspelho.Count - 1;
 
                 var qtde = ppe.Qtde;
 
                 if (ppe.PecaReposta)
+                {
                     qtde = 1;
+                }
                 else if (ppe.IsProdutoLaminadoComposicao)
+                {
                     qtde = (int)ppe.QtdeImpressaoProdLamComposicao;
+                }
                 else if (ppe.IsProdFilhoLamComposicao)
                 {
                     qtde = ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(ppe.IdProdPedParent.Value) * ppe.Qtde;
 
                     var idProdPedParentPai = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(null, ppe.IdProdPedParent.Value);
 
-                    if (idProdPedParentPai.GetValueOrDefault(0) > 0)
+                    if (idProdPedParentPai > 0)
+                    {
                         qtde *= ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(idProdPedParentPai.Value);
+                    }
                 }
 
+                var observacao = !string.IsNullOrWhiteSpace(ppe.Obs)
+                        ? $"'{ppe.Obs.Replace("\n", " ").Replace("\t", " ").Replace("\r", " ")}'"
+                        : "''";
                 var qtdeCalcular = qtde > 0 ? qtde : ppe.Qtde;
-
                 var totM2 = ppe.PecaReposta ? ppe.TotM / ppe.Qtde : ppe.TotM / ppe.Qtde * (qtdeCalcular - ppe.QtdImpresso);
                 var totM2Calc = ppe.PecaReposta ? ppe.TotM2Calc / ppe.Qtde : ppe.TotM2Calc / ppe.Qtde * (qtdeCalcular - ppe.QtdImpresso);
+                var quantidade = ppe.PecaReposta ? 1 : qtde;
+                var quantidadeImpressa = ppe.PecaReposta ? 1 : ppe.QtdImpresso;
+                var quantidadeImprimir = quantidade - quantidadeImpressa;
+                var quantidadeEtiquetasExportadas = idsProdPedQuantidadeEtiquetasExportadas?.Where(f => f.IdProdPed == ppe.IdProdPed)?.Sum(f => f.QuantidadeExportada) ?? 0;
 
-                script += "setProdEtiqueta(" + ppe.IdProdPed + "," + (ppe.IdAmbientePedido > 0 ? ppe.IdAmbientePedido.ToString() : "null") +
-                    "," + ppe.IdPedido + ", '" + ppe.DescrProduto + "','" + ppe.CodProcesso + "','" + ppe.CodAplicacao + "'," + (ppe.PecaReposta ? 1 : qtde) +
-                    "," + (ppe.PecaReposta ? 1 : ppe.QtdImpresso) + "," + ppe.Altura + "," + ppe.Largura + ",'" + (totM2).ToString("0.##") + "', '" +
-                    (!string.IsNullOrEmpty(ppe.Obs) ? ppe.Obs.Replace("\n", " ").Replace("\t", " ").Replace("\r", " ") : string.Empty) + "', '" + ppe.NumEtiqueta +
-                    "', false, " + ultimoRegistro.ToString().ToLower() + ",'" + (totM2Calc).ToString("0.##") + "', null);";
+                script += string.Format(
+                    "setProdEtiqueta({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16});",
+                    ppe.IdProdPed,
+                    ppe.IdAmbientePedido > 0 ? ppe.IdAmbientePedido.ToString() : "null",
+                    ppe.IdPedido,
+                    $"'{ppe.DescrProduto}'",
+                    $"'{ppe.CodProcesso}'",
+                    $"'{ppe.CodAplicacao}'",
+                    quantidade,
+                    quantidadeImpressa,
+                    ppe.Altura,
+                    ppe.Largura,
+                    $"'{totM2.ToString("0.##")}'",
+                    observacao,
+                    $"'{ppe.NumEtiqueta}'",
+                    false,
+                    ultimoRegistro.ToString().ToLower(),
+                    $"'{totM2Calc.ToString("0.##")}'",
+                    quantidadeEtiquetasExportadas);
             }
 
             script += "closeWindow();";
-    
-            ClientScript.RegisterStartupScript(typeof(string), "addAll", script, true);
+
+            this.ClientScript.RegisterStartupScript(typeof(string), "addAll", script, true);
         }
-    
+
         protected string GetIdProdPed(object idPedido, object idProdPed)
         {
             return !PedidoDAO.Instance.IsMaoDeObra(null, Glass.Conversoes.StrParaUint(idPedido.ToString())) ? idProdPed.ToString() : "";
@@ -120,6 +151,23 @@ namespace Glass.UI.Web.Utils
             }
 
             return qtde.ToString().Replace(",", ".");
+        }
+
+        protected string ObterQuantidadeEtiquetasExportadas(object objIdProdPed)
+        {
+            var idProdPed = objIdProdPed?.ToString()?.StrParaInt() ?? 0;
+
+            if (idProdPed == 0)
+            {
+                return "0";
+            }
+
+            var idProdPedQuantidadeEtiquetasExportadas = ProdutosPedidoEspelhoDAO.Instance.ObterQuantidadeEtiquetasExportadas(
+                null,
+                new List<int> { idProdPed });
+            var quantidadeEtiquetasExportadas = idProdPedQuantidadeEtiquetasExportadas?.Sum(f => f.QuantidadeExportada) ?? 0;
+
+            return quantidadeEtiquetasExportadas.ToString();
         }
 
         protected string ObterM2Impressao(object objTotM, object objIdProdPed, object objQtde)
