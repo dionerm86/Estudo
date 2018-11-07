@@ -1284,7 +1284,6 @@
     <Content Include="Listas\LstDebitosPisCofins.aspx" />
     <Content Include="Listas\LstDeclaracaoCheque.aspx" />
     <Content Include="Listas\LstDeducaoDiversa.aspx" />
-    <Content Include="Listas\LstDepartamento.aspx" />
     <Content Include="Listas\LstDeposito.aspx" />
     <Content Include="Listas\LstCartaoNaoIdentificado.aspx" />
     <Content Include="Listas\LstDepositoNaoIdentificado.aspx" />
@@ -1310,7 +1309,6 @@
     <Content Include="Listas\LstFornada.aspx" />
     <Content Include="Listas\LstFornecedor.aspx" />
     <Content Include="Listas\LstFornecedorCredito.aspx" />
-    <Content Include="Listas\LstFuncDepartamento.aspx" />
     <Content Include="Listas\LstFuncionario.aspx" />
     <Content Include="Listas\LstHistoricoCliente.aspx" />
     <Content Include="Listas\LstHistoricoFornec.aspx" />
@@ -5738,13 +5736,6 @@
     <Compile Include="Listas\LstDeducaoDiversa.aspx.designer.cs">
       <DependentUpon>LstDeducaoDiversa.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Listas\LstDepartamento.aspx.cs">
-      <DependentUpon>LstDepartamento.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Listas\LstDepartamento.aspx.designer.cs">
-      <DependentUpon>LstDepartamento.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Listas\LstDeposito.aspx.cs">
       <DependentUpon>LstDeposito.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -5919,13 +5910,6 @@
     </Compile>
     <Compile Include="Listas\LstFornecedorCredito.aspx.designer.cs">
       <DependentUpon>LstFornecedorCredito.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Listas\LstFuncDepartamento.aspx.cs">
-      <DependentUpon>LstFuncDepartamento.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Listas\LstFuncDepartamento.aspx.designer.cs">
-      <DependentUpon>LstFuncDepartamento.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstFuncionario.aspx.cs">
       <DependentUpon>LstFuncionario.aspx</DependentUpon>

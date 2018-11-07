@@ -717,7 +717,6 @@
     <Compile Include="Fiscal\DAL\CTe\SeguroCteDAO.cs" />
     <Compile Include="Fiscal\DAL\CTe\ValePedagioCteRodDAO.cs" />
     <Compile Include="Fiscal\DAL\CTe\VeiculoCteDAO.cs" />
-    <Compile Include="Global\DAL\DepartamentoDAO.cs" />
     <Compile Include="Financeiro\DAL\DepositoNaoIdentificadoDAO.cs" />
     <Compile Include="Fiscal\DAL\AjusteApuracaoIdentificacaoDocFiscalDAO.cs" />
     <Compile Include="Fiscal\DAL\AjusteApuracaoInfoAdicionalDAO.cs" />
@@ -824,7 +823,6 @@
     <Compile Include="Pedido\DAL\AmbientePedidoRentabilidadeDAO.cs" />
     <Compile Include="Pedido\DAL\FotosPedidoDAO.cs" />
     <Compile Include="Estoque\DAL\FotosTrocaDevolucaoDAO.cs" />
-    <Compile Include="Global\DAL\FuncDepartamentoDAO.cs" />
     <Compile Include="Global\DAL\FuncionarioDAO.cs" />
     <Compile Include="Global\DAL\FuncionarioSetorDAO.cs" />
     <Compile Include="Global\DAL\FuncModuloDAO.cs" />
@@ -1325,8 +1323,6 @@
     <Compile Include="Fiscal\Model\MovimentacaoBemAtivoImob.cs" />
     <Compile Include="Financeiro\Model\PagtoAcerto.cs" />
     <Compile Include="Financeiro\Model\PagtoPagto.cs" />
-    <Compile Include="Global\Model\Departamento.cs" />
-    <Compile Include="Global\Model\FuncDepartamento.cs" />
     <Compile Include="Fiscal\Model\PlanoContaContabil.cs" />
     <Compile Include="Fiscal\Model\ProcessoReferenciado.cs" />
     <Compile Include="Global\Model\FormaPagtoCliente.cs" />

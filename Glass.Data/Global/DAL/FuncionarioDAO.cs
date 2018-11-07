@@ -1032,23 +1032,6 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Funcionários por departamento
-
-        /// <summary>
-        /// Retorna os funcionários que ainda não estão em um departamento.
-        /// </summary>
-        /// <param name="idDepartamento"></param>
-        /// <returns></returns>
-        public IList<Funcionario> GetNotInDepartamento(uint idDepartamento)
-        {
-            string sql = "select * from funcionario where idFunc not in (select idFunc from func_departamento where idDepartamento=" +
-                idDepartamento + ") order by nome asc";
-
-            return objPersistence.LoadData(sql).ToList();
-        }
-
-        #endregion
-
         #region Obtém data de atraso ao tirar pedido do funcionário
 
         /// <summary>
