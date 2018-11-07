@@ -125,6 +125,12 @@
                 }
             }
 
+            if (tipoCTe.value == '2' && FindControl("dtvConhecimentoTransporte_ctrlDataAnulacao_txtData","input") != null && FindControl("dtvConhecimentoTransporte_ctrlDataAnulacao_txtData","input").value == "") {
+
+                alert('Campo Data Anulação deve ser preenchido.');
+                return false;
+            }
+
             var isEntradaTerceiros = <%= IsEntradaTerceiros().ToString().ToLower() %>;
 
             if (!isEntradaTerceiros && (tipoCTe.value == '0' || tipoCTe.value == '3'))
@@ -202,16 +208,17 @@
          * @param {?Object} controle O dropDownList referente ao tipo do CT-e.
          */
         function exibirEsconderDataAnulacao(controle){
-            var tipoCTeAnulacao = <%# (int)Glass.Data.Model.Cte.ConhecimentoTransporte.TipoCteEnum.AnulacaoValores %>;
+            var tipoCTeAnulacao = 2;
 
-            if(controle.selectedIndex == tipoCTeAnulacao){
+            if(controle.value == tipoCTeAnulacao){
                 FindControl("divLabelDataAnulacao","div").style.display = "";
                 FindControl("divDataAnulacao","div").style.display = "";
             }else{
                 FindControl("divLabelDataAnulacao","div").style.display = "none";
                 FindControl("divDataAnulacao","div").style.display = "none";
             }
-        }
+        }         
+        
 
     </script>
 
@@ -414,6 +421,12 @@
                                         ErrorMessage="Selecione um tipo de CT-e" ValueToCompare="selecione" Operator="NotEqual"
                                         ValidationGroup="c">*</asp:CompareValidator>
                                 </div>
+                                <div class="dtvHeader" id="divLabelDataAnulacao" style="display:none">
+                                    <asp:Label ID="Label37" runat="server" Text="Data Anulação"></asp:Label>
+                                </div>
+                                <div class="dtvAlternatingRow" id="divDataAnulacao" style="display:none">
+                                    <uc2:ctrlData ID="ctrlDataAnulacao" runat="server"  DataString='<%# Bind("DataAnulacao") %>'/>
+                                </div>
                                 <div class="dtvHeader">
                                     <asp:Label ID="Label10" runat="server" Text="Tipo Serviço *"></asp:Label>
                                 </div>
@@ -429,15 +442,8 @@
                                     <asp:CompareValidator ID="cvdrpTipoServico" ControlToValidate="drpTipoServico" runat="server"
                                         ErrorMessage="Selecione um tipo de serviço" ValueToCompare="selecione" Operator="NotEqual"
                                         ValidationGroup="c">*</asp:CompareValidator>
-                                </div>
-                                <div class="dtvHeader" id="divLabelDataAnulacao" style="display:none">
-                                    <asp:Label ID="Label37" runat="server" Text="Data Anulação"></asp:Label>
-                                </div>
-                                <div class="dtvAlternatingRow" id="divDataAnulacao" style="display:none">
-                                    <uc2:ctrlData ID="ctrlDataAnulacao" runat="server"  ReadOnly="ReadWrite" DataString='<%# Bind("DataAnulacao") %>' 
-                                        ValidateEmptyText="true" ValidationGroup="c" ErrorMessage="Campo Data Anulação deve ser preenchido."/>
-                                </div>
-                            </div>
+                                </div>                                
+                            </div>                            
                             <div class="dtvRow">
                                 <div class="dtvHeader">
                                     <asp:Label ID="Label11" runat="server" Text="Retirada"></asp:Label>
@@ -1456,7 +1462,7 @@
                                     <asp:Label ID="Label8" runat="server" Text="Tipo CT-e *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
-                                    <asp:DropDownList ID="drpTipoCte" runat="server" Height="20px" Width="220px" SelectedValue='<%# Bind("TipoCte") %>'>
+                                    <asp:DropDownList ID="drpTipoCte" runat="server" Height="20px" Width="220px" SelectedValue='<%# Bind("TipoCte") %>' OnLoad="drpTipoCte_Load">
                                         <asp:ListItem Value="selecione" Text="Selecione um Tipo"></asp:ListItem>
                                         <asp:ListItem Value="0" Text="CT-e Normal"></asp:ListItem>
                                         <asp:ListItem Value="1" Text="CT-e de Complemento de Valores"></asp:ListItem>
@@ -1466,7 +1472,7 @@
                                     <asp:CompareValidator ID="cvdrpTipoCte" ControlToValidate="drpTipoCte" runat="server"
                                         ErrorMessage="Selecione um tipo de CT-e" ValueToCompare="selecione" Operator="NotEqual"
                                         ValidationGroup="c">*</asp:CompareValidator>
-                                </div>
+                                </div>                                
                                 <div class="dtvHeader">
                                     <asp:Label ID="Label10" runat="server" Text="Tipo Serviço *"></asp:Label>
                                 </div>
@@ -1483,6 +1489,12 @@
                                         ErrorMessage="Selecione um tipo de serviço" ValueToCompare="selecione" Operator="NotEqual"
                                         ValidationGroup="c">*</asp:CompareValidator>
                                 </div>
+                            </div>
+                            <div class="dtvHeader" id="divLabelDataAnulacao" style="display:none">
+                                    <asp:Label ID="Label37" runat="server" Text="Data Anulação"></asp:Label>
+                            </div>
+                            <div class="dtvAlternatingRow" id="divDataAnulacao" style="display:none">
+                                <uc2:ctrlData ID="ctrlDataAnulacao" runat="server"  DataString='<%# Bind("DataAnulacao") %>'/>
                             </div>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
@@ -1743,7 +1755,7 @@
                                     ImageUrl="~/Images/ok.gif" OnClick="lnkAddChaveAcesso_Click"></asp:ImageButton>
                             </FooterTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Chave de Acesso" SortExpression="ChaveAcesso">
+                        <asp:TemplateField HeaderText="Chave de Acesso">
                             <ItemTemplate>
                                 <asp:Label ID="Label331" runat="server" Text='<%# Eval("ChaveAcesso") %>' onkeypress="return soNumeros(event, true, true);"></asp:Label>
                             </ItemTemplate>
@@ -1756,7 +1768,7 @@
                             </FooterTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="PIN" SortExpression="Pin">
+                        <asp:TemplateField HeaderText="PIN">
                             <ItemTemplate>
                                 <asp:Label ID="Label330" runat="server" Text='<%# Eval("Pin") %>'></asp:Label>
                             </ItemTemplate>
@@ -1768,7 +1780,7 @@
                             </FooterTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
-                        <asp:TemplateField>
+                        <asp:TemplateField HeaderText="Finalidade da Chave de Acesso">
                             <ItemTemplate>
                                 <asp:Label ID="lblFinalidadeChaveAcesso" runat="server" Text='<%# Eval("FinalidadeChaveAcesso") %>'></asp:Label>
                             </ItemTemplate>
@@ -1838,6 +1850,10 @@
         if (typeof pegarValorInfo !== 'undefined' && typeof pegarValorInfo === 'function')
             // Chamado 19338
             setTimeout(function(){ pegarValorInfo("ctl00_ctl00_Pagina_Conteudo_dtvConhecimentoTransporte_ctrlInfoCte_ctrlCargaCte"); }, 2000);
+
+        var controle = FindControl('dtvConhecimentoTransporte_drpTipoCte', 'select');
+        exibirEsconderDataAnulacao(controle);
+
     </script>
 
 </asp:Content>

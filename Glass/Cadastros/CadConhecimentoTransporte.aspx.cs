@@ -467,13 +467,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void drpTipoCte_Load(object sender, EventArgs e)
         {
-            //((DropDownList)sender).Attributes.Add("onChange", "exibirEsconderDataAnulacao(this)");
-
-
-            //foreach (var item in ((DropDownList)sender).Items)
-            //{
-            //    ((ListItem)item).Attributes.Add()
-            //}
+            ((DropDownList)sender).Attributes.Add("onchange", "exibirEsconderDataAnulacao(this)");
         }
     }
 }
