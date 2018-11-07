@@ -33,7 +33,7 @@ namespace Glass.UI.Web.Listas
             var idCliente = Glass.Conversoes.StrParaUint(txtNumCli.Text);
 
             if (idCliente == 0)
-                 return;
+                return;
 
             lblTotalDebitos.Text = ContasReceberDAO.Instance.ObtemTotalDebitosCliente(idCliente).ToString("C");
 
@@ -118,7 +118,7 @@ namespace Glass.UI.Web.Listas
 
                 foreach (Parcelas p in parcelasDisp)
                 {
-                    if(!p.NaoUsar && p.Situacao == Situacao.Ativo)
+                    if (!p.NaoUsar && p.Situacao == Situacao.Ativo)
                         lblFinancParcDisp.Text += "<li>" + p.DescrCompleta + "</li>";
                 }
 
@@ -209,11 +209,23 @@ namespace Glass.UI.Web.Listas
                 return;
             }
 
+            var mesAnoVendaCliente = vendasCliente.MesVenda.Select(f => new
+            {
+                mes = f.Split('/')[0].StrParaInt(),
+                ano = f.Split('/')[1].StrParaInt()
+            })
+             .OrderBy(f => f.ano)
+             .OrderBy(f => f.mes)
+             .Select(f => new
+             {
+                 mesAnoCliente = $"{f.mes}/{f.ano}"
+             });
+
             var tabela = new DataTable();
 
-            foreach (string mesAno in vendasCliente.MesVenda)
+            foreach (var mesAno in mesAnoVendaCliente.ToArray())
             {
-                tabela.Columns.Add(new DataColumn(mesAno)
+                tabela.Columns.Add(new DataColumn(mesAno.mesAnoCliente.ToString())
                 {
                     DataType = typeof(string),
                 });
