@@ -752,6 +752,11 @@
     <Compile Include="Financeiro\DAL\FotosImpostoServDAO.cs" />
     <Compile Include="Financeiro\DAL\FotosLiberacaoDAO.cs" />
     <Compile Include="Handlers\HandlerDownloadArquivo.cs" />
+    <Compile Include="Integracao\Model\EventoItemIntegracao.cs" />
+    <Compile Include="Integracao\Model\FalhaIntegracao.cs" />
+    <Compile Include="Integracao\Model\ItemIntegracao.cs" />
+    <Compile Include="Integracao\Model\SituacaoItemIntegracao.cs" />
+    <Compile Include="Integracao\Model\TipoEventoItemIntegracao.cs" />
     <Compile Include="MDFeUtils\ConfigMDFe.cs" />
     <Compile Include="MDFeUtils\ConsultaSituacao.cs" />
     <Compile Include="MDFeUtils\EnviaXML.cs" />

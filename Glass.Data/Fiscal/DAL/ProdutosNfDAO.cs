@@ -17,23 +17,23 @@ namespace Glass.Data.DAL
 
         private string Sql(uint idNf, bool selecionar)
         {
-            string campos = selecionar ? @"pn.*, p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd, 
-                p.idSubgrupoProd, if(p.AtivarAreaMinima=1, Cast(p.AreaMinima as char), '0') as AreaMinima, 
-                coalesce(no.codInterno, c.codInterno) as CodNaturezaOperacao, c.CodInterno as CodCfop, 
-                (mbai.idProdNf is not null) as temMovimentacaoBemAtivoImob, pcc.descricao as descrPlanoContaContabil, 
+            string campos = selecionar ? @"pn.*, p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd,
+                p.idSubgrupoProd, if(p.AtivarAreaMinima=1, Cast(p.AreaMinima as char), '0') as AreaMinima,
+                coalesce(no.codInterno, c.codInterno) as CodNaturezaOperacao, c.CodInterno as CodCfop,
+                (mbai.idProdNf is not null) as temMovimentacaoBemAtivoImob, pcc.descricao as descrPlanoContaContabil,
                 um.Codigo As Unidade, n.TipoDocumento" : "Count(*)";
 
             string sql = @"
-                Select " + campos + @" From produtos_nf pn 
-                    Left Join produto p On (pn.idProd=p.idProd) 
+                Select " + campos + @" From produtos_nf pn
+                    Left Join produto p On (pn.idProd=p.idProd)
                     Left Join natureza_operacao no On (pn.idNaturezaOperacao=no.idNaturezaOperacao)
-                    Left Join cfop c On (no.idCfop=c.idCfop) 
-                    Left Join movimentacao_bem_ativo_imob mbai on (pn.idProdNf=mbai.idProdNf)   
+                    Left Join cfop c On (no.idCfop=c.idCfop)
+                    Left Join movimentacao_bem_ativo_imob mbai on (pn.idProdNf=mbai.idProdNf)
                     Left Join plano_conta_contabil pcc on (pn.idContaContabil=pcc.idContaContabil)
                     Left Join unidade_medida um On(um.IdUnidadeMedida=p.IdUnidadeMedida)
                     Left Join nota_fiscal n On(n.IdNF=pn.IdNF)
-                Where 1"; 
-            
+                Where 1";
+
             if (idNf > 0)
                 sql += " and pn.idNf=" + idNf;
 
@@ -45,9 +45,9 @@ namespace Glass.Data.DAL
             if (CountInNf(idNf) == 0)
                 return new ProdutosNf[] { new ProdutosNf() };
 
-            string sort = String.IsNullOrEmpty(sortExpression) ? " Order By pn.IdProdNf asc" : "";
+            sortExpression = String.IsNullOrEmpty(sortExpression) ? "pn.IdProdNf asc" : sortExpression;
 
-            var lstProd = LoadDataWithSortExpression(Sql(idNf, true) + sort, sortExpression, startRow, pageSize, null).ToArray();
+            var lstProd = LoadDataWithSortExpression(Sql(idNf, true), sortExpression, startRow, pageSize, null).ToArray();
 
             // Verifica se há algum beneficiamento de bisote ou lapidação
             if (FiscalConfig.NotaFiscalConfig.AcrescentarLapBisProdutoNota)
@@ -87,9 +87,9 @@ namespace Glass.Data.DAL
         public ProdutosNf GetElement(GDASession sessao, uint idProdNf)
         {
             string sql = @"
-                Select pnf.*, p.codInterno, p.descricao as DescrProduto, um.codigo as unidade, umt.codigo as unidadeTrib 
-                From produtos_nf pnf 
-                    Left Join produto p On (pnf.idProd=p.idProd) 
+                Select pnf.*, p.codInterno, p.descricao as DescrProduto, um.codigo as unidade, umt.codigo as unidadeTrib
+                From produtos_nf pnf
+                    Left Join produto p On (pnf.idProd=p.idProd)
                     Left Join unidade_medida um On (p.idUnidadeMedida=um.idUnidadeMedida)
                     Left Join unidade_medida umt On (p.idUnidadeMedidaTrib=umt.idUnidadeMedida)
                 Where IdProdNf=" + idProdNf;
@@ -105,13 +105,13 @@ namespace Glass.Data.DAL
         public ProdutosNf[] ObterProdutosNota(uint numeroNfe, bool apenasEntradas, bool apenasVidros)
         {
             string sql = @"
-                select pnf.*, p.Descricao as DescrProduto, p.CodInterno, 
+                select pnf.*, p.Descricao as DescrProduto, p.CodInterno,
                     concat(g.Descricao, ' ', coalesce(sg.descricao, '')) as DescrTipoProduto
-                from produtos_nf pnf 
+                from produtos_nf pnf
                     inner join nota_fiscal n on(n.IdNf=pnf.IdNf)
                     inner join produto p on(p.IdProd=pnf.IdProd)
-                    Inner Join grupo_prod g On (p.idGrupoProd=g.idGrupoProd) 
-                    left join subgrupo_prod sg on (p.idSubgrupoProd=sg.idSubgrupoProd) 
+                    Inner Join grupo_prod g On (p.idGrupoProd=g.idGrupoProd)
+                    left join subgrupo_prod sg on (p.idSubgrupoProd=sg.idSubgrupoProd)
                 where n.NumeroNFE=" + (numeroNfe == 0 ? -1 : (int)numeroNfe);
 
             if (apenasEntradas)
@@ -173,17 +173,17 @@ namespace Glass.Data.DAL
         public ProdutosNf[] GetByNfExtended(GDASession session, uint idNf)
         {
             string sql = @"
-                Select pn.*, p.CodInterno, p.Descricao as DescrProduto, p.IdGrupoProd, p.idSubgrupoProd, 
-                    um.codigo as Unidade, umt.codigo as UnidadeTrib, p.Espessura 
-                From produtos_nf pn 
-                    Left Join produto p On (pn.idProd=p.idProd) 
+                Select pn.*, p.CodInterno, p.Descricao as DescrProduto, p.IdGrupoProd, p.idSubgrupoProd,
+                    um.codigo as Unidade, umt.codigo as UnidadeTrib, p.Espessura
+                From produtos_nf pn
+                    Left Join produto p On (pn.idProd=p.idProd)
                     Left Join unidade_medida um On (p.idUnidadeMedida=um.idUnidadeMedida)
                     Left Join unidade_medida umt On (p.idUnidadeMedidaTrib=umt.idUnidadeMedida)
                 Where pn.idNf=" + idNf + @"
                 Order by pn.idProdNf asc";
 
             List<ProdutosNf> lstProd = objPersistence.LoadData(session, sql).ToList();
-            
+
             // Verifica se há algum beneficiamento de bisote ou lapidação
             if (FiscalConfig.NotaFiscalConfig.AcrescentarLapBisProdutoNota)
             {
@@ -310,8 +310,8 @@ namespace Glass.Data.DAL
             float percDesconto = NotaFiscalDAO.Instance.ObtemPercDescontoProd(idNf);
 
             string sql = @"
-                Select Round(Sum(Total-(Total*" + percDesconto.ToString().Replace(',', '.') + @")), 2) 
-                From produtos_nf 
+                Select Round(Sum(Total-(Total*" + percDesconto.ToString().Replace(',', '.') + @")), 2)
+                From produtos_nf
                 Where Csosn In ('101', '201') And idNf=" + idNf;
 
             return ExecuteScalar<string>(sql);
@@ -416,7 +416,7 @@ namespace Glass.Data.DAL
             var nf = NotaFiscalDAO.Instance.GetElement(sessao, lstProdNf[0].IdNf);
 
             // Calcula os impostos dos produtos do pedido
-            var impostos = (Data.ICalculoImpostoResultado<Data.Model.ProdutosNf>) 
+            var impostos = (Data.ICalculoImpostoResultado<Data.Model.ProdutosNf>)
                 CalculadoraImpostoHelper.ObterCalculadora<Model.NotaFiscal, Model.ProdutosNf>()
                     .Calcular(sessao, nf, lstProdNf);
 
@@ -535,7 +535,7 @@ namespace Glass.Data.DAL
                     Left Join natureza_operacao no ON (pnf.idNaturezaOperacao=no.idNaturezaOperacao)
                 Where idNf=" + idNf + " Group By no.idCfop, pnf.aliqIcms").ToList();
 
-            // Motivo da retirada: Mesmo que a nota possuir apenas um produto, retorna esta listagem, 
+            // Motivo da retirada: Mesmo que a nota possuir apenas um produto, retorna esta listagem,
             // para que o valor da alíquota do icms não fique errado e gere o sintegra incorretamente.
             //if (lstProdNf.Length <= 1)
             //    return null;
@@ -565,7 +565,7 @@ namespace Glass.Data.DAL
                 "select idNaturezaOperacao from natureza_operacao where idCfop=" + idCfop + ") And aliqIcms=" + aliqIcms.ToString().Replace(",", ".")).ToArray();
 
             int qtdProd = objPersistence.ExecuteSqlQueryCount("Select Count(*) From produtos_nf Where idNf=" + idNf);
-            int qtdProdFrete = objPersistence.ExecuteSqlQueryCount("Select Count(*) From produtos_nf Where idNf=" + idNf + 
+            int qtdProdFrete = objPersistence.ExecuteSqlQueryCount("Select Count(*) From produtos_nf Where idNf=" + idNf +
                 " And idNaturezaOperacao in (select idNaturezaOperacao from natureza_operacao where idCfop=" + idCfop + " And calcIcms=true)");
 
             var vFreteRateado = qtdProdFrete > 0 ? (valorFreteNf / qtdProdFrete) * lstProdNf.Length : (valorFreteNf / qtdProd) * lstProdNf.Length;
@@ -590,7 +590,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public decimal GetBcIcmsByCfopAliq(uint idNf, uint idCfop, float aliqIcms)
         {
-            object bcIcmsByCfop = objPersistence.ExecuteScalar("Select Sum(Coalesce(bcIcms, 0)) From produtos_nf Where idNf=" + idNf + 
+            object bcIcmsByCfop = objPersistence.ExecuteScalar("Select Sum(Coalesce(bcIcms, 0)) From produtos_nf Where idNf=" + idNf +
                 " and idNaturezaOperacao in (select idNaturezaOperacao from natureza_operacao where idCfop=" + idCfop + ")" +
                 " And aliqIcms=" + aliqIcms.ToString().Replace(",", "."));
 
@@ -606,8 +606,8 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public decimal GetValorIcmsByCfopAliq(uint idNf, uint idCfop, float aliqIcms)
         {
-            object valorIcms = objPersistence.ExecuteScalar("Select Sum(Coalesce(valorIcms, 0)) From produtos_nf Where idNf=" + idNf + 
-                " and idNaturezaOperacao in (select idNaturezaOperacao from natureza_operacao where idCfop=" + idCfop + ")" + 
+            object valorIcms = objPersistence.ExecuteScalar("Select Sum(Coalesce(valorIcms, 0)) From produtos_nf Where idNf=" + idNf +
+                " and idNaturezaOperacao in (select idNaturezaOperacao from natureza_operacao where idCfop=" + idCfop + ")" +
                 " And aliqIcms=" + aliqIcms.ToString().Replace(",", "."));
 
             return valorIcms != null ? Glass.Conversoes.StrParaDecimal(valorIcms.ToString()) : 0;
@@ -693,7 +693,7 @@ namespace Glass.Data.DAL
         {
             return ObtemValorCampo<uint>(session, "idNf", "idProdNf=" + idProdNf);
         }
-        
+
         public decimal ObterQtde(GDASession session, int idProdNf)
         {
             return ObtemValorCampo<decimal>(session, "Qtde", string.Format("IdProdNf={0}", idProdNf));
@@ -752,10 +752,10 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public int GetProdPosition(GDASession session, uint idNf, uint idProdNf)
         {
-            string sql = @"Select count(*) From produtos_nf pnf 
+            string sql = @"Select count(*) From produtos_nf pnf
                 Left Join produto p On (pnf.idProd=p.idProd)
                 Left Join nota_fiscal nf On (pnf.idNf=nf.idNf)
-                Where pnf.idProdNf<=" + idProdNf + " And pnf.idNf=" + idNf + 
+                Where pnf.idProdNf<=" + idProdNf + " And pnf.idNf=" + idNf +
                 " And p.tipoMercadoria in (" + (int)TipoMercadoria.MateriaPrima + ")";
 
             return Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(session, sql).ToString());
@@ -770,7 +770,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<ProdutosNf> GetForEntradaEstoque(uint numeroNFe)
         {
-            var sql = string.Format(@"SELECT pnf.*, p.Descricao AS DescrProduto FROM produtos_nf pnf 
+            var sql = string.Format(@"SELECT pnf.*, p.Descricao AS DescrProduto FROM produtos_nf pnf
                     INNER JOIN nota_fiscal nf ON (pnf.IdNf=nf.IdNf) INNER JOIN produto p ON (pnf.IdProd=p.IdProd)
                 WHERE nf.NumeroNFe={0} AND nf.TipoDocumento IN ({1},{2}) AND pnf.QtdeEntrada < pnf.Qtde",
                 numeroNFe, (int)NotaFiscal.TipoDoc.Entrada, (int)NotaFiscal.TipoDoc.EntradaTerceiros);
@@ -832,21 +832,21 @@ namespace Glass.Data.DAL
                 ids += nf.IdNf + ",";
 
             string sql = @"
-                Select pn.*, p.CodInterno, p.Descricao as DescrProduto, p.IdGrupoProd, p.idSubgrupoProd, nf.numeroNfe, 
-                    nf.dataEmissao as dataEmissaoNfe, um.codigo as Unidade, umt.codigo as UnidadeTrib, p.Espessura, 
+                Select pn.*, p.CodInterno, p.Descricao as DescrProduto, p.IdGrupoProd, p.idSubgrupoProd, nf.numeroNfe,
+                    nf.dataEmissao as dataEmissaoNfe, um.codigo as Unidade, umt.codigo as UnidadeTrib, p.Espessura,
                     if(nf.tipodocumento not in (3,4),l.razaoSocial,f.razaoSocial) as emitenteNfe, cf.codInterno as CodCfop,
-                    coalesce(no.codInterno, cf.codInterno) as CodNaturezaOperacao, if(nf.tipoDocumento=1,f.razaoSocial,if(nf.tipodocumento in (2,4), " + 
+                    coalesce(no.codInterno, cf.codInterno) as CodNaturezaOperacao, if(nf.tipoDocumento=1,f.razaoSocial,if(nf.tipodocumento in (2,4), " +
                     (FiscalConfig.NotaFiscalConfig.UsarNomeFantasiaNotaFiscal ? "c.nomeFantasia" : "c.nome") +
                     @", l.razaoSocial)) as destinatarioNfe, func.nome as DescrUsuCad
-                From produtos_nf pn 
-                    Left Join produto p On (pn.idProd=p.idProd) 
+                From produtos_nf pn
+                    Left Join produto p On (pn.idProd=p.idProd)
                     Left Join unidade_medida um On (p.idUnidadeMedida=um.idUnidadeMedida)
                     Left Join unidade_medida umt On (p.idUnidadeMedidaTrib=umt.idUnidadeMedida)
                     Left Join nota_fiscal nf on (pn.idNf=nf.idNf)
                     Left Join natureza_operacao no on (coalesce(pn.idNaturezaOperacao, nf.idNaturezaOperacao)=no.idNaturezaOperacao)
                     Left Join cfop cf ON (no.idCfop=cf.idCfop)
-                    Left Join loja l On (nf.idLoja=l.idLoja) 
-                    Left Join fornecedor f On (nf.idFornec=f.idFornec) 
+                    Left Join loja l On (nf.idLoja=l.idLoja)
+                    Left Join fornecedor f On (nf.idFornec=f.idFornec)
                     Left Join cliente c On (nf.idCliente=c.id_Cli)
                     Left Join funcionario func On (nf.usuCad=func.idFunc)
                 Where pn.idNf in (" + ids.TrimEnd(',') + ")";
@@ -880,8 +880,8 @@ namespace Glass.Data.DAL
 
         #region Busca produtos para impressão de etiquetas
 
-        private string SqlImpressaoEtiqueta(uint idNf, uint numeroNFe, uint idFornecedor, string descricaoProd, 
-            string dataEmissaoIni, string dataEmissaoFim, uint idCorVidro, float espessura, float alturaMin, float alturaMax, 
+        private string SqlImpressaoEtiqueta(uint idNf, uint numeroNFe, uint idFornecedor, string descricaoProd,
+            string dataEmissaoIni, string dataEmissaoFim, uint idCorVidro, float espessura, float alturaMin, float alturaMax,
             int larguraMin, int larguraMax, bool selecionar)
         {
             string sql = "select " + (selecionar ? "pnf.*, p.descricao as descrProduto, " +
@@ -892,10 +892,10 @@ namespace Glass.Data.DAL
                     inner join produto p on (pnf.idProd=p.idProd)
                     inner join grupo_prod g on (p.idGrupoProd=g.idGrupoProd)
                     left join subgrupo_prod s on (p.idSubgrupoProd=s.idSubgrupoProd)
-                where nf.situacao In (" + (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros + "," + (int)NotaFiscal.SituacaoEnum.Autorizada + @") 
+                where nf.situacao In (" + (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros + "," + (int)NotaFiscal.SituacaoEnum.Autorizada + @")
                     and coalesce(pnf.qtdImpresso,0)<pnf.qtde and pnf.altura>0 and pnf.largura>0 and pnf.qtde>0  and nf.GerarEtiqueta
                     and ((p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + " and p.tipoMercadoria=" +
-                    (int)TipoMercadoria.MateriaPrima + ") or s.tipoSubgrupo=" + (int)TipoSubgrupoProd.PVB + @") 
+                    (int)TipoMercadoria.MateriaPrima + ") or s.tipoSubgrupo=" + (int)TipoSubgrupoProd.PVB + @")
                     and nf.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Saída;
 
             if (idNf > 0)
@@ -952,7 +952,7 @@ namespace Glass.Data.DAL
             return lst.ToArray();
         }
 
-        public IList<ProdutosNf> GetForImpressaoEtiqueta(uint idNf, uint idCorVidro, float espessura, float alturaMin, 
+        public IList<ProdutosNf> GetForImpressaoEtiqueta(uint idNf, uint idCorVidro, float espessura, float alturaMin,
             float alturaMax, int larguraMin, int larguraMax)
         {
             return objPersistence.LoadData(SqlImpressaoEtiqueta(idNf, 0, 0, null, null, null, idCorVidro, espessura,
@@ -964,7 +964,7 @@ namespace Glass.Data.DAL
             string sortExpression, int startRow, int pageSize)
         {
             return LoadDataWithSortExpression(SqlImpressaoEtiqueta(0, numeroNFe, idFornecedor, descricaoProd,
-                dataEmissaoIni, dataEmissaoFim, 0, 0, 0, 0, 0, 0, true), sortExpression, startRow, pageSize, 
+                dataEmissaoIni, dataEmissaoFim, 0, 0, 0, 0, 0, 0, true), sortExpression, startRow, pageSize,
                 GetParamsImpressaoEtiqueta(dataEmissaoIni, dataEmissaoFim));
         }
 
@@ -979,7 +979,7 @@ namespace Glass.Data.DAL
             string descricaoProd, string dataEmissaoIni, string dataEmissaoFim)
         {
             var param = new ArrayList();
-            string sql = SqlImpressaoEtiqueta(0, numeroNFe, idFornecedor, descricaoProd, dataEmissaoIni, dataEmissaoFim, 
+            string sql = SqlImpressaoEtiqueta(0, numeroNFe, idFornecedor, descricaoProd, dataEmissaoIni, dataEmissaoFim,
                 0, 0, 0, 0, 0, 0, true) + " order by p.idCorVidro, p.espessura";
 
             return objPersistence.LoadData(sql, GetParamsImpressaoEtiqueta(dataEmissaoIni, dataEmissaoFim)).ToList();
@@ -1022,14 +1022,14 @@ namespace Glass.Data.DAL
         public int ObtemQtdPecasNf(uint idNf)
         {
             var qtdMateriaPrima = ExecuteScalar<decimal>(string.Format(@"
-                Select Sum(pnf.qtde) 
-                From produtos_nf pnf 
+                Select Sum(pnf.qtde)
+                From produtos_nf pnf
                     Inner Join produto p On (pnf.idProd=p.idProd)
-                Where p.tipoMercadoria={0} 
+                Where p.tipoMercadoria={0}
                     And idNf={1}",
                 (int)TipoMercadoria.MateriaPrima,
                 idNf));
-            
+
             if (qtdMateriaPrima > 0)
                 return (int)qtdMateriaPrima;
             else
@@ -1056,7 +1056,7 @@ namespace Glass.Data.DAL
 
             string sql = @"
                 Select pnf.idProdNf From produtos_nf pnf
-                    Inner Join produto p On (pnf.idProd=p.idProd) 
+                    Inner Join produto p On (pnf.idProd=p.idProd)
                 Where pnf.idNf=" + idNf + @" And p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro;
 
             sql += " Order by pnf.IdProdNf Asc";
@@ -1119,8 +1119,8 @@ namespace Glass.Data.DAL
                 FROM produtos_nf pnf
                     INNER JOIN produto_impressao pi ON (pnf.idProdNf = pi.idProdNf)
                     INNER JOIN produto p ON (pnf.idProd = p.idProd)
-                WHERE pi.idNf = ?idNf 
-                    AND pi.posicaoProd = ?posicaoProd 
+                WHERE pi.idNf = ?idNf
+                    AND pi.posicaoProd = ?posicaoProd
                     AND pi.itemEtiqueta = ?itemEtiqueta
                     AND pi.qtdeProd = ?qtdeProd";
 
@@ -1326,15 +1326,15 @@ namespace Glass.Data.DAL
                 {
                     string obsCfop = CfopDAO.Instance.GetObs(session, objInsert.IdCfop.Value);
                     string infCompl = NotaFiscalDAO.Instance.ObtemValorCampo<string>(
-                        session, 
-                        "infCompl", 
+                        session,
+                        "infCompl",
                         $"idNf={objInsert.IdNf}");
 
                     if (!String.IsNullOrEmpty(obsCfop) && (infCompl == null || !infCompl.Contains(obsCfop)))
                     {
                         NotaFiscalDAO.Instance.InsereInfCompl(
-                            session, 
-                            objInsert.IdNf, 
+                            session,
+                            objInsert.IdNf,
                             (!String.IsNullOrEmpty(infCompl) ? ". " : "") + obsCfop);
                     }
                 }
@@ -1577,7 +1577,7 @@ namespace Glass.Data.DAL
                 ProdutoNfBenefDAO.Instance.DeleteByProdNf(sessao, idProdNf);
                 ProdutoNfRentabilidadeDAO.Instance.ApagarPorProdutoNf(sessao, idProdNf);
                 returnValue = GDAOperations.Delete(sessao, prod);
-                
+
             }
             catch (Exception ex)
             {

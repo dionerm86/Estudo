@@ -95,10 +95,10 @@ namespace Glass.Integracao.Khan.KhanIndicadoresServiceReference {
     internal interface IIndicadoresService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IIndicadoresService/ConsultarIndicadores", ReplyAction="http://tempuri.org/IIndicadoresService/ConsultarIndicadoresResponse")]
-        Glass.Integracao.Khan.KhanIndicadoresServiceReference.Indicadores[] ConsultarIndicadores(string Token, string codempresa);
+        System.Collections.Generic.List<Glass.Integracao.Khan.KhanIndicadoresServiceReference.Indicadores> ConsultarIndicadores(string Token, string codempresa);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IIndicadoresService/ConsultarIndicadores", ReplyAction="http://tempuri.org/IIndicadoresService/ConsultarIndicadoresResponse")]
-        System.Threading.Tasks.Task<Glass.Integracao.Khan.KhanIndicadoresServiceReference.Indicadores[]> ConsultarIndicadoresAsync(string Token, string codempresa);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<Glass.Integracao.Khan.KhanIndicadoresServiceReference.Indicadores>> ConsultarIndicadoresAsync(string Token, string codempresa);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -128,11 +128,11 @@ namespace Glass.Integracao.Khan.KhanIndicadoresServiceReference {
                 base(binding, remoteAddress) {
         }
         
-        public Glass.Integracao.Khan.KhanIndicadoresServiceReference.Indicadores[] ConsultarIndicadores(string Token, string codempresa) {
+        public System.Collections.Generic.List<Glass.Integracao.Khan.KhanIndicadoresServiceReference.Indicadores> ConsultarIndicadores(string Token, string codempresa) {
             return base.Channel.ConsultarIndicadores(Token, codempresa);
         }
         
-        public System.Threading.Tasks.Task<Glass.Integracao.Khan.KhanIndicadoresServiceReference.Indicadores[]> ConsultarIndicadoresAsync(string Token, string codempresa) {
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<Glass.Integracao.Khan.KhanIndicadoresServiceReference.Indicadores>> ConsultarIndicadoresAsync(string Token, string codempresa) {
             return base.Channel.ConsultarIndicadoresAsync(Token, codempresa);
         }
     }
