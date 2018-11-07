@@ -1785,13 +1785,13 @@
                                 <asp:Label ID="lblFinalidadeChaveAcesso" runat="server" Text='<%# Eval("FinalidadeChaveAcesso") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:DropDownList ID="drpFinalidadeChaveAcesso" runat="server" SelectedValue='<%# Bind("FinalidadeChaveAcesso") %>'
-                                    DataSourceID="odsFinalidadeChaveAcesso" DataTextField="Translation" DataValueField="Key">
+                                <asp:DropDownList ID="drpFinalidadeChaveAcesso" runat="server" SelectedValue='<%# Bind("FinalidadeChaveAcesso") %>' 
+                                    DataSourceID="odsFinalidadeChaveAcesso" DataTextField="Descr" DataValueField="Id">
                                 </asp:DropDownList>
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <asp:DropDownList ID="drpFinalidadeChaveAcesso" runat="server" DataSourceID="odsFinalidadeChaveAcesso"
-                                    DataTextField="Translation" DataValueField="Key">
+                                    DataTextField="Descr" DataValueField="Id">
                                 </asp:DropDownList>
                             </FooterTemplate>
                         </asp:TemplateField>
@@ -1832,10 +1832,10 @@
                 <asp:QueryStringParameter Name="idCte" QueryStringField="idCte" Type="Int32" />
             </SelectParameters>
         </colo:VirtualObjectDataSource>
-        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFinalidadeChaveAcesso" runat="server"
-            SelectMethod="GetTranslatesFromTypeName" TypeName="Colosoft.Translator">
+        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFinalidadeChaveAcesso" runat="server" SelectMethod="ObterFinalidadeChaveAcesso"
+            TypeName="Glass.Data.Helper.DataSources">
             <SelectParameters>
-                <asp:Parameter Name="typeName" DefaultValue="Glass.Data.Model.FinalidadeChaveAcesso, Glass.Data" />
+                <asp:QueryStringParameter Name="idCte" QueryStringField="idCte" Type="UInt32" />
             </SelectParameters>
         </colo:VirtualObjectDataSource>
         <asp:HiddenField ID="hdfNumProdutos" runat="server" />

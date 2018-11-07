@@ -456,6 +456,11 @@ namespace Glass.Data.DAL.CTe
             return ultimaInsercao > dataAtual;
         }
 
+        public ConhecimentoTransporte.TipoCteEnum ObterTipoCte(uint idCte)
+        {
+            return ObtemValorCampo<ConhecimentoTransporte.TipoCteEnum>("TipoCte", "idCte=" + idCte);
+        }
+
         #endregion
 
         #region Gera um número de lote
@@ -2783,22 +2788,16 @@ namespace Glass.Data.DAL.CTe
         /// <returns></returns>
         public IEnumerable<ChaveAcessoCte> ObterChavesAcesso(int idCte)
         {
-            //var sql = $"SELECT IdChaveAcessoCte, IdCte, ChaveAcesso, Pin, FinalidadeChaveAcesso From Chave_Acesso_Cte Where IdCte={idCte}";
-
             return new GDA.Sql.Query("IdCte=?idCte")
                         .Add("?idCte", idCte)
                         .ToList<Glass.Data.Model.Cte.ChaveAcessoCte>();
+        }
 
-            //return objPersistence.LoadResult(sessao, sql)
-            //    .Select(f =>
-            //        new ChaveAcessoCte
-            //        {
-            //            IdChaveAcessoCte = f["IdChaveAcessoCte"],
-            //            IdCte = f["IdCte"],
-            //            ChaveAcesso = f["ChaveAcesso"],
-            //            PIN = f["Pin"],
-            //            FinalidadeChaveAcesso = ["FinalidadeChaveAcesso"]
-            //        });
+        public IEnumerable<FinalidadeChaveAcesso> ObterFinalidadeChaveAcesso(int idTipoCte)
+        {
+            return new GDA.Sql.Query("IdTipoCte=?idTipoCte")
+                        .Add("?idTipoCte", idTipoCte)
+                        .ToList<Glass.Data.Model.FinalidadeChaveAcesso>();
         }
 
         #endregion

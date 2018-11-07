@@ -53,7 +53,7 @@ namespace Glass.Data.DAL
             return retorno;
         }
 
-        public Cfop[] GetListForRpt()
+        public IList<Cfop> GetListForRpt()
         {
             return ObterListaOrdenadaPeloCodInterno(null);
         }
