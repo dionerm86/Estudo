@@ -72,10 +72,10 @@
                     </td>
                     <td style="white-space: nowrap">
                         <lista-selecao-tipos-pessoa v-bind:tipo-pessoa.sync="tipoPessoaAtual" required></lista-selecao-tipos-pessoa>
-                        <template v-if="contabilista.tipoPessoa == 70">
+                        <template v-if="contabilista.tipoPessoa == 'F'">
                             <campo-cpf v-bind:cpf.sync="contabilista.cpfCnpj" required></campo-cpf>
                         </template>
-                        <template v-if="contabilista.tipoPessoa == 74">
+                        <template v-if="contabilista.tipoPessoa == 'J'">
                             <campo-cnpj v-bind:cnpj.sync="contabilista.cpfCnpj" required></campo-cnpj>
                         </template>
                     </td>
@@ -115,10 +115,10 @@
                     </td>
                     <td style="white-space: nowrap">
                         <lista-selecao-tipos-pessoa v-bind:tipo-pessoa.sync="tipoPessoaAtual" v-if="inserindo" required></lista-selecao-tipos-pessoa>
-                        <template v-if="inserindo && contabilista.tipoPessoa == 70">
+                        <template v-if="inserindo && contabilista.tipoPessoa == 'F'">
                             <campo-cpf v-bind:cpf.sync="contabilista.cpfCnpj" required></campo-cpf>
                         </template>
-                        <template v-if="inserindo && contabilista.tipoPessoa == 74">
+                        <template v-if="inserindo && contabilista.tipoPessoa == 'J'">
                             <campo-cnpj v-bind:cnpj.sync="contabilista.cpfCnpj" required></campo-cnpj>
                         </template>
                     </td>
