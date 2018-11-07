@@ -230,6 +230,7 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Parcelas\V1\PostParcelasController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\DeleteFerragensController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\DeleteFabricantesFerragemController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\FabricantesFerragemController.cs" />
@@ -475,6 +476,7 @@
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Parcelas\ConverterCadastroAtualizacaoParaParcelas.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\ConverterCadastroAtualizacaoParaFabricanteFerragem.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\TraducaoOrdenacaoListaFabricantesFerragem.cs" />
     <Compile Include="Helper\Projetos\MedidasProjeto\ConverterCadastroAtualizacaoParaMedidaProjeto.cs" />
@@ -617,6 +619,7 @@
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ParametroOperacaoIntegracaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Logger\ItemLoggerIntegracaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Logger\LoggerIntegracaoDto.cs" />
+    <Compile Include="Models\Parcelas\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\GruposConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CategoriasConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
