@@ -6,6 +6,16 @@ namespace Glass.Configuracoes
     {
         #region Enumeradores
 
+        /// <summary>
+        /// Enumerador com os tipos que podem ser definidos na configuração ComissaoPorContasRecebidas
+        /// </summary>
+        public enum TipoComissaoContaRec
+        {
+            Desabilitado,
+            VendedorAssociadoPedido,
+            VendedorAssociadoCliente
+        }
+
         public enum TotalComissaoEnum
         {
             TotalSemIcms,
@@ -45,11 +55,15 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Verifica se o controle de comissão de contas recebidas sera mostrado.
+        /// Recupera o tipo de controle de comissão de contas recebidas que será utilizado.
         /// </summary>
-        public static bool ComissaoPorContasRecebidas
+        public static TipoComissaoContaRec ComissaoPorContasRecebidas
         {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ComissaoPorContasRecebidas); }
+            get
+            {
+                var config = Config.GetConfigItem<string>(Config.ConfigEnum.ComissaoPorContasRecebidas);
+                return (TipoComissaoContaRec)System.Enum.Parse(typeof(TipoComissaoContaRec), config);
+            }
         }
 
         /// <summary>

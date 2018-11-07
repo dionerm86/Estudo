@@ -6253,7 +6253,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
+            if (ComissaoDAO.Instance.VerificarComissaoContasRecebidas() && pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
             {
                 var idObraPed = GetIdObra(session, idPedido);
 
@@ -12262,12 +12262,25 @@ namespace Glass.Data.DAL
         /// <param name="sessao">Sessão do GDA.</param>
         /// <param name="idsPedidos">Lista com os Identificadores dos Pedidos.</param>
         /// <returns>Retorna uma variável lógica que possui o valor do teste se os pedidos são do mesmo vendedor.</returns>
-        public bool VerificarPedidosMesmoVendedor(GDASession sessao, List<uint> idsPedidos, out List<Tuple<uint,uint>> vendedoresPedidos)
+        public bool VerificarPedidosMesmoVendedor(GDASession sessao, List<uint> idsPedidos, out List<Tuple<uint, int>> vendedoresPedidos)
         {
-            vendedoresPedidos = idsPedidos
-                .Select(p => new Tuple<uint, uint>(p, ObtemIdFunc(sessao, p))).ToList();
+            if (!ComissaoDAO.Instance.VerificarComissaoContasRecebidas())
+            {
+                vendedoresPedidos = new List<Tuple<uint, int>>
+                {
+                    new Tuple<uint, int>(1, 1)
+                };
+            }
+            else
+            {
+                vendedoresPedidos = idsPedidos
+                    .Select(p => new Tuple<uint, int>(
+                        p, (int)ComissaoDAO.Instance.ObtemIdFuncComissaoRec(sessao, (int)p)))
+                        .ToList();
+            }
 
-            return vendedoresPedidos.Select(p => p.Item2)
+            return vendedoresPedidos
+                .Select(p => p.Item2)
                 .Distinct()
                 .Count() == 1;
         }
@@ -13332,7 +13345,7 @@ namespace Glass.Data.DAL
                     throw new Exception("A obra informada não está confirmada.");
                 }
 
-                if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && ped.TipoVenda == (int)Pedido.TipoVendaPedido.Obra && ped.IdObra.GetValueOrDefault() > 0)
+                if (ComissaoDAO.Instance.VerificarComissaoContasRecebidas() && ped.TipoVenda == (int)Pedido.TipoVendaPedido.Obra && ped.IdObra.GetValueOrDefault() > 0)
                 {
                     var idFunc = ObraDAO.Instance.ObtemIdFunc(session, ped.IdObra.Value);
                     var idLojaFunc = FuncionarioDAO.Instance.ObtemIdLoja(session, idFunc);
