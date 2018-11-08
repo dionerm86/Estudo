@@ -84,6 +84,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                     filtro.ValorNotaFiscalFim != null ? filtro.ValorNotaFiscalFim.ToString().Replace(".", ",") : null,
                     null,
                     filtro.Lote,
+                    filtro.NfeSemAnexo,
                     0,
                     filtro.ObterTraducaoOrdenacao(),
                     filtro.ObterPrimeiroRegistroRetornar(),
@@ -123,6 +124,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                         filtro.ValorNotaFiscalFim.ToString().Replace(".", ","),
                         null,
                         filtro.Lote,
+                        filtro.NfeSemAnexo,
                         filtro.OrdenacaoFiltro));
             }
         }

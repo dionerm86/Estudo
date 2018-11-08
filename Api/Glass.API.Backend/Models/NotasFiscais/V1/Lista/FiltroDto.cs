@@ -191,6 +191,12 @@ namespace Glass.API.Backend.Models.NotasFiscais.V1.Lista
         public decimal? ValorNotaFiscalFim { get; set; }
 
         /// <summary>
+        /// Obtém ou define
+        /// </summary>
+        [JsonProperty("nfeSemAnexo")]
+        public bool NfeSemAnexo { get; set; }
+
+        /// <summary>
         /// Obtém ou define a ordenação a ser usada na listagem.
         /// </summary>
         [JsonProperty("ordenacaoFiltro")]

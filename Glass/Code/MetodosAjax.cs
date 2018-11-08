@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Linq;
 /// <summary>
 /// Summary description for MetodosAjax
@@ -8,7 +8,7 @@ namespace Glass.UI.Web
     public class MetodosAjax
     {
         /// <summary>
-        /// Verifica se o item projeto est· conferido
+        /// Verifica se o item projeto est√° conferido
         /// </summary>
         [Ajax.AjaxMethod()]
         public string EstaConferido(string idItemProjeto)
@@ -78,7 +78,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Retorna o endereÁo do cliente
+        /// Retorna o endere√ßo do cliente
         /// </summary>
         /// <param name="idCli"></param>
         /// <returns></returns>
@@ -193,7 +193,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Retorna o cÛdigo da forma de pagamento que possui o nome passado
+        /// Retorna o c√≥digo da forma de pagamento que possui o nome passado
         /// </summary>
         /// <param name="idFormaPagto"></param>
         /// <returns></returns>
@@ -204,7 +204,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Verifica se a data passada È um dia ˙til
+        /// Verifica se a data passada √© um dia √∫til
         /// </summary>
         /// <param name="idGrupo"></param>
         [Ajax.AjaxMethod()]
@@ -267,7 +267,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Verifica se o grupo passado È vidro
+        /// Verifica se o grupo passado √© vidro
         /// </summary>
         /// <param name="idGrupo"></param>
         [Ajax.AjaxMethod()]
@@ -277,7 +277,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Retorna o crÈdito que o cliente possui
+        /// Retorna o cr√©dito que o cliente possui
         /// </summary>
         /// <param name="idCli"></param>
         /// <returns></returns>
@@ -288,7 +288,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Retorna o crÈdito que o fornecedor possui
+        /// Retorna o cr√©dito que o fornecedor possui
         /// </summary>
         /// <param name="idFornec"></param>
         /// <returns></returns>
@@ -299,7 +299,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Retorna a aplicaÁ„o atravÈs de seu cod. interno
+        /// Retorna a aplica√ß√£o atrav√©s de seu cod. interno
         /// </summary>
         /// <param name="codInterno"></param>
         /// <returns></returns>
@@ -310,7 +310,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Verifica se a aplicaÁ„o informada pode ser usada no pedido
+        /// Verifica se a aplica√ß√£o informada pode ser usada no pedido
         /// </summary>
         /// <param name="idAplicacao"></param>
         /// <param name="idPedido"></param>
@@ -321,7 +321,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Verifica se a aplicaÁ„o informada pode ser usada no pedido
+        /// Verifica se a aplica√ß√£o informada pode ser usada no pedido
         /// </summary>
         /// <param name="idProcesso"></param>
         /// <param name="idPedido"></param>
@@ -332,7 +332,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Verifica se a aplicaÁ„o informada pode ser usada no pedido
+        /// Verifica se a aplica√ß√£o informada pode ser usada no pedido
         /// </summary>
         /// <param name="idAplicacao"></param>
         /// <param name="idPedido"></param>
@@ -343,7 +343,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Retorna o processo atravÈs de seu cod. interno
+        /// Retorna o processo atrav√©s de seu cod. interno
         /// </summary>
         /// <param name="codInterno"></param>
         /// <returns></returns>
@@ -365,7 +365,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Retorna o codigo interno da aplicaÁ„o informada.
+        /// Retorna o codigo interno da aplica√ß√£o informada.
         /// </summary>
         /// <param name="idAplicacao"></param>
         /// <returns></returns>
@@ -376,7 +376,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Renova o ticket de autenticaÁ„o do usu·rio logado
+        /// Renova o ticket de autentica√ß√£o do usu√°rio logado
         /// </summary>
         [Ajax.AjaxMethod()]
         public static void ManterLogado()
@@ -385,7 +385,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Remove o ticket de autenticaÁ„o do usu·rio logado
+        /// Remove o ticket de autentica√ß√£o do usu√°rio logado
         /// </summary>
         [Ajax.AjaxMethod()]
         public static void Logout()
@@ -409,15 +409,15 @@ namespace Glass.UI.Web
         public static string ObterIdNf(string numeroNFe, string idPedido, string modelo, string idLoja, string idCliente, string nomeCliente, string tipoFiscal, string idFornec,
             string nomeFornec, string codRota, string tipoDoc, string situacao, string dataIni, string dataFim, string idCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, string formaPagto, string idsFormaPagtoNotaFiscal, string tipoNf, string finalidade, string formaEmissao,
-            string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal, string lote)
+            string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal, string lote, bool nfeSemAnexo)
         {
             return Glass.Data.Helper.MetodosAjax.ObterIdNf(numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota, tipoDoc,
                 situacao, dataIni, dataFim, idCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, valorInicial, valorFinal, lote);
+                infCompl, codInternoProd, descrProd, valorInicial, valorFinal, lote, nfeSemAnexo);
         }
 
         /// <summary>
-        /// Busca raz„o social e cnpj da loja informada
+        /// Busca raz√£o social e cnpj da loja informada
         /// </summary>
         /// <param name="idLoja"></param>
         /// <returns></returns>
@@ -428,7 +428,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Busca raz„o social e cnpj do fornecedor informado
+        /// Busca raz√£o social e cnpj do fornecedor informado
         /// </summary>
         /// <param name="idFornec"></param>
         /// <returns></returns>
@@ -450,7 +450,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// ObtÈm Beneficiamentos cujo preenchimento È obrigatÛrio
+        /// Obt√©m Beneficiamentos cujo preenchimento √© obrigat√≥rio
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -473,7 +473,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Obtem os dados para autenticaÁ„o no TEF cappta
+        /// Obtem os dados para autentica√ß√£o no TEF cappta
         /// </summary>
         /// <returns></returns>
         [Ajax.AjaxMethod()]
