@@ -11,7 +11,7 @@
                     </label>
                 </span>
                 <span class="colspan3">
-                    <input type="text" required />
+                    <input type="text" v-model="parcela.descricao" required />
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -19,7 +19,7 @@
                     </label>
                 </span>
                 <span class="colspan3">
-                    <lista-selecao-id-valor :item-selecionado.sync="tipoPagto" :funcao-recuperar-itens="obterFormaPagto" required></lista-selecao-id-valor>
+                    <lista-selecao-id-valor :item-selecionado.sync="parcela.tipoPagto" :funcao-recuperar-itens="obterFormaPagto" required></lista-selecao-id-valor>
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -33,7 +33,7 @@
                 </button>
                 </span>
                 <span class="colspan4" style="margin-left: 8px">
-                        <input id="parcelaPadrao" type="checkbox" />
+                        <input id="parcelaPadrao" type="checkbox" v-model="parcela.parcelaPadrao" />
                         <label for="parcelaPadrao">
                             Exibir marcado como padrão?
                         </label>
@@ -44,7 +44,7 @@
                     </label>
                 </span>
                 <span>
-                    <lista-selecao-id-valor :item-selecionado.sync="situacoes" :funcao-recuperar-itens="obterSituacoes" required></lista-selecao-id-valor>
+                    <lista-selecao-id-valor :item-selecionado.sync="parcela.situacoes" :funcao-recuperar-itens="obterSituacoes" required></lista-selecao-id-valor>
                 </span>
                 <span class="botoes">
                     <span>
@@ -64,7 +64,7 @@
     </div>
      <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
-            <asp:ScriptReference Path="~/Vue/Parcelas/Componentes/CadParcela.js" />
+            <asp:ScriptReference Path="~/Vue/Parcelas/Componentes/CadParcelas.js" />
         </Scripts>
     </asp:ScriptManager>
 </asp:Content>

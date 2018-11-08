@@ -15,6 +15,30 @@ namespace Glass.API.Backend.Models.Parcelas.V1.CadastroAtualizacao
     public class CadastroAtualizacaoDto : BaseCadastroAtualizacaoDto<CadastroAtualizacaoDto>
     {
         /// <summary>
+        /// Inicia uma nova instância da classe <see cref="CadastroAtualizacaoDto"/>.
+        /// </summary>
+        /// <param name="parcela">Objeto Parcela. </param>
+        internal CadastroAtualizacaoDto(Glass.Financeiro.Negocios.Entidades.Parcelas parcela)
+        {
+            this.Id = parcela.IdParcela;
+            this.Descricao = parcela.Descricao;
+            this.ParcelaPadrao = parcela.ParcelaPadrao;
+            this.Situacao = parcela.Situacao;
+            this.Dias = parcela.Dias;
+        }
+
+        /// <summary>
+        /// Obtém ou define o identificador da parcela.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("id")]
+        public int Id
+        {
+            get { return this.ObterValor(c => c.Id); }
+            set { this.AdicionarValor(c => c.Id, value); }
+        }
+
+        /// <summary>
         /// Obtém ou define a descrição da parcela.
         /// </summary>
         [DataMember]

@@ -38,6 +38,20 @@ Servicos.Parcelas = (function(http) {
       },
 
       /**
+     * Recupera os detalhes de uma parcela.
+     * @param {!number} idParcela O identificador da parcela que será retornado.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+      obterParcela: function (idParcela) {
+          debugger;
+          if (!idParcela) {
+              throw new Error('A parcela é obrigatório.');
+          }
+
+          return http().get(API + idParcela);
+      },
+
+      /**
        * Remove uma rota.
        * @param {!number} id O identificador da parcela que será excluída.
        * @returns {Promise} Uma promise com o resultado da operação.
@@ -68,6 +82,7 @@ Servicos.Parcelas = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       inserir: function (parcela) {
+          debugger;
           return http().post(API.substr(0, API.length - 1), parcela);
       },
 

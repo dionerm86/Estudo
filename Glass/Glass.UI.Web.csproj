@@ -503,7 +503,7 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
-    <Content Include="Vue\Parcelas\Componentes\CadParcela.js" />
+    <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
     <Content Include="Vue\Projetos\Ferragens\FabricantesFerragem\Componentes\LstFabricantesFerragem.js" />

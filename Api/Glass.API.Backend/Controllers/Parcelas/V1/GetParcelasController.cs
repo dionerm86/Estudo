@@ -9,6 +9,7 @@ using Glass.API.Backend.Models.Parcelas.V1.Filtro;
 using Glass.API.Backend.Models.Parcelas.V1.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -73,12 +74,46 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
         /// <summary>
         /// Recupera as parcelas do sistema para os controles de filtro das telas.
         /// </summary>
+        /// <param name="id">O identificador da parcela.</param>
+        /// <returns>Uma lista JSON com a parcela encontrada.</returns>
+        [HttpGet]
+        [Route("{id:int}")]
+        [SwaggerResponse(200, "Parcela encontrada.", Type = typeof(Models.Parcelas.V1.CadastroAtualizacao.CadastroAtualizacaoDto))]
+        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterParcelas(int id)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var parcela = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Glass.Financeiro.Negocios.IParcelasFluxo>()
+                    .ObtemParcela(id);
+
+                if (parcela == null)
+                {
+                    return this.NaoEncontrado(string.Format("parcela {0} não encontrada.", id));
+                }
+
+                try
+                {
+                    return this.Item(new Models.Parcelas.V1.CadastroAtualizacao.CadastroAtualizacaoDto(parcela));
+                }
+                catch (Exception e)
+                {
+                    return this.ErroInternoServidor("Erro ao recuperar a parcela.", e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Recupera as parcelas do sistema para a edição de parcelas.
+        /// </summary>
         /// <returns>Uma lista JSON com as parcelas encontradas.</returns>
         [HttpGet]
         [Route("filtro")]
         [SwaggerResponse(200, "Parcelas encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Parcelas não encontradas.")]
-        public IHttpActionResult ObterParcelas()
+        public IHttpActionResult ObterParcela()
         {
             using (var sessao = new GDATransaction())
             {
