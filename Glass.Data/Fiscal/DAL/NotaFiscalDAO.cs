@@ -3360,6 +3360,7 @@ namespace Glass.Data.DAL
                     decimal aliqIcmsSt = !nfeComplAjuste ? (decimal)pnf.AliqIcmsSt : (nf.ValorIcmsSt > 0 && nf.BcIcmsSt > 0 ? nf.ValorIcmsSt / nf.BcIcmsSt : 0);
                     decimal valorIcmsSt = !nfeComplAjuste ? pnf.ValorIcmsSt : nf.ValorIcmsSt;
 
+                    var operacaoInterNaoContribuinte = this.VerificarFCPConsumidorFinalNaoContribuinteOperacaoInterestadual(nf, cliente);
                     // Busca os valores referente ao FCP.
                     decimal bcFcp = !nfeComplAjuste ? pnf.BcFcp : nf.BcFcp;
                     decimal aliqFcp = (decimal)pnf.AliqFcp;
@@ -3422,7 +3423,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms10, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms10, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms10, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
-                                if (aliqFcp > 0)
+                                if (aliqFcp > 0 && !operacaoInterNaoContribuinte)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms10, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
                                     ManipulacaoXml.SetNode(doc, icms10, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
@@ -3456,7 +3457,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms20, "vBC", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms20, "pICMS", Formatacoes.TrataValorDouble(pnf.AliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms20, "vICMS", Formatacoes.TrataValorDecimal(pnf.ValorIcms, 2));
-                                if (aliqFcp > 0)
+                                if (aliqFcp > 0 && !operacaoInterNaoContribuinte)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms20, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
                                     ManipulacaoXml.SetNode(doc, icms20, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
@@ -3557,7 +3558,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms70, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms70, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms70, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
-                                if (aliqFcp > 0)
+                                if (aliqFcp > 0 && !operacaoInterNaoContribuinte)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms70, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
                                     ManipulacaoXml.SetNode(doc, icms70, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
@@ -3597,7 +3598,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms90, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms90, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms90, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
-                                if (aliqFcp > 0)
+                                if (aliqFcp > 0 && !operacaoInterNaoContribuinte)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms90, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
                                     ManipulacaoXml.SetNode(doc, icms90, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
@@ -4061,7 +4062,7 @@ namespace Glass.Data.DAL
                                 var percentualIcmsUFRemetente = DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
                                 valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
                                 valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
-                                var valorIcmsFCP = Math.Round(pnf.BcIcms * (FiscalConfig.PercentualFundoPobreza / 100), 2);
+                                var valorIcmsFCP = Math.Round(pnf.BcIcms * (aliqFcp / 100), 2);
 
                                 totalIcmsUFDestino += valorIcmsUFDestino;
                                 totalIcmsUFRemetente += valorIcmsUFRemetente;
@@ -4071,7 +4072,7 @@ namespace Glass.Data.DAL
 
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCFCPUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));// Valor da Base de Cálculo do FCP na UF de destino.
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(FiscalConfig.PercentualFundoPobreza, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(aliqFcp, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInternaDestinatario, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal(percentualIcmsInterestadual, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart", Formatacoes.TrataValorDecimal(percentualIcmsUFDestino * 100, 2));
@@ -4147,8 +4148,12 @@ namespace Glass.Data.DAL
                     ManipulacaoXml.SetNode(doc, icmsTot, "vICMSUFRemet", Formatacoes.TrataValorDecimal(totalIcmsUFRemetente, 2));
                 }
 
+                bool fcpConsumidorFinal = this.VerificarFCPConsumidorFinalNaoContribuinteOperacaoInterestadual(nf, cliente);
+
+                var vFCP = fcpConsumidorFinal ? 0 : nf.ValorFcp;
+
                 // FCP
-                ManipulacaoXml.SetNode(doc, icmsTot, "vFCP", Formatacoes.TrataValorDecimal(nf.ValorFcp, 2));
+                ManipulacaoXml.SetNode(doc, icmsTot, "vFCP", Formatacoes.TrataValorDecimal(vFCP, 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vBCST", Formatacoes.TrataValorDecimal(nf.BcIcmsSt, 2)); // Verificar
                 ManipulacaoXml.SetNode(doc, icmsTot, "vST", Formatacoes.TrataValorDecimal(nf.ValorIcmsSt, 2)); // Verificar
                 ManipulacaoXml.SetNode(doc, icmsTot, "vFCPST", Formatacoes.TrataValorDecimal(nf.ValorFcpSt, 2));
@@ -4479,6 +4484,23 @@ namespace Glass.Data.DAL
             #endregion
 
             return doc;
+        }
+
+        private bool VerificarFCPConsumidorFinalNaoContribuinteOperacaoInterestadual(NotaFiscal nf, Cliente cliente)
+        {
+            if(cliente == null || nf == null)
+            {
+                return false;
+            }
+
+            Cidade cidadeFornec;
+            var primeiroDigitoCfop = (int)nf.CodCfop[0];
+
+            var operacaoInterEstadual = !(new int[]{2, 3, 6, 7}).Contains(primeiroDigitoCfop);
+
+            var naoContribuinte = ObterIndicadorIE(nf, null, cliente, null, out cidadeFornec) == IndicadorIEDestinatario.NaoContribuinte;
+
+            return cliente.TipoFiscal == 1 && naoContribuinte && operacaoInterEstadual;
         }
 
         public void VerificaEstoque(ProdutosNf pnf, ProdutosNf[] lstProdNfValida, uint idLoja)
