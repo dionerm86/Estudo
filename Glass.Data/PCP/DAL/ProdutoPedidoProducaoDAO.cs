@@ -4198,41 +4198,15 @@ namespace Glass.Data.DAL
 
                     var prodPed = ProdutosPedidoDAO.Instance.GetByPedido(sessao, idPedidoNovo.Value).ToList();
 
-                    var produtosEncontrados = prodPed.Where(p =>
-                        p.IdProd == prodPedEsp.IdProd
-                        && p.Altura == prodPedEsp.Altura
-                        && p.Largura == prodPedEsp.Largura)
-                        .OrderByDescending(p => p.Qtde - p.QtdSaida).GroupBy(p => p.IdProd)
-                        .Select(p => new {
-                            p.First().IdProdPed,
-                            IdProd = p.Key,
-                            Qtde = p.Sum(q => q.Qtde),
-                            QtdSaida = p.Sum(q => q.QtdSaida)
-                        });
-
-                    idProdutoNovo = produtosEncontrados.Where(p => (p.Qtde - GetQtdeLiberadaByPedProd(sessao, idPedidoNovo.Value, null, p.IdProd)) > 0)
-                        .Select(p => p.IdProdPed).First();
+                    idProdutoNovo = this.BuscarProdutoRevendaCompativel(sessao, prodPed, prodPedEsp);
 
                     encontrado = idProdutoNovo > 0;
 
-                    if (!encontrado) // Se não encontrar, procura no fluxo
+                    if (!encontrado) // Se nï¿½o encontrar, procura no fluxo
                     {
                         prodPed = ProdutosPedidoDAO.Instance.GetByPedido(sessao, idPedidoNovo.Value, true).ToList();
 
-                        produtosEncontrados = prodPed.Where(p =>
-                            p.IdProd == prodPedEsp.IdProd
-                            && p.Altura == prodPedEsp.Altura
-                            && p.Largura == prodPedEsp.Largura)
-                            .OrderByDescending(p => p.Qtde - p.QtdSaida).GroupBy(p => p.IdProd)
-                            .Select(p => new {
-                                p.First().IdProdPed,
-                                IdProd = p.Key,
-                                Qtde = p.Sum(q => q.Qtde),
-                                QtdSaida = p.Sum(q => q.QtdSaida)
-                            });
-
-                        idProdutoNovo = produtosEncontrados.Where(p => (p.Qtde - GetQtdeLiberadaByPedProd(sessao, idPedidoNovo.Value, null, p.IdProd)) > 0)
-                            .Select(p => p.IdProdPed).First();
+                        idProdutoNovo = this.BuscarProdutoRevendaCompativel(sessao, prodPed, prodPedEsp);
 
                         encontrado = idProdutoNovo > 0;
                     }
@@ -4672,6 +4646,36 @@ namespace Glass.Data.DAL
                         (idPedidoNovo.GetValueOrDefault(0) > 0 ? " Pedido Exp: " + idPedidoNovo.Value : ""), ex);
 
                 throw ex;
+            }
+        }
+
+        private uint BuscarProdutoRevendaCompativel(GDASession sessao, List<ProdutosPedido> prodPed, ProdutosPedidoEspelho prodPedEsp)
+        {
+            var produtosEncontrados = prodPed.Where(p =>
+                p.IdProd == prodPedEsp.IdProd
+                && p.Altura == prodPedEsp.Altura
+                && p.Largura == prodPedEsp.Largura)
+                .OrderByDescending(p => p.Qtde - p.QtdSaida)
+                .GroupBy(p => p.IdProd)
+                .Select(p => new
+                {
+                    p.First().IdProdPed,
+                    IdProd = p.Key,
+                    p.First().IdPedido,
+                    Qtde = p.Sum(q => q.Qtde),
+                    QtdSaida = p.Sum(q => q.QtdSaida),
+                });
+
+            var prodPedVerificar = produtosEncontrados
+                    .Where(p => (p.Qtde - this.GetQtdeLiberadaByPedProd(sessao, p.IdPedido, null, p.IdProd)) > 0);
+
+            if (prodPedVerificar.Any(p => p.IdProdPed > 0))
+            {
+                return prodPedVerificar.Select(p => p.IdProdPed).First();
+            }
+            else
+            {
+                return 0;
             }
         }
 
