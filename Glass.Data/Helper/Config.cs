@@ -340,7 +340,7 @@ namespace Glass.Data.Helper
             DesmembrarOrcamentoPorSubgrupoGerarPedido = 378,
             ConsiderarApenasDebitoComoPagtoAvista = 379,
             UsarPercentualBonificacaoCliente = 384,
-
+            EstadosConsiderarRicmsPr = 385,
             #region Configs Suporte (Antiga config interna)
 
             NomeFuncaoJavascriptCalculoValorAdicional = 1002,
@@ -751,7 +751,6 @@ namespace Glass.Data.Helper
             ListaVendasPedidosVaziaPorPadrao = 1532,
             UsarTLS12NFe = 1533,
             TextoEmailAdministradores = 1534
-
             #endregion
         }
 

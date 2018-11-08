@@ -4041,16 +4041,9 @@ namespace Glass.Data.DAL
                                 var percentualIcmsInterestadual = pnf.CstOrig == 1 ? 4 : origemSulSudesteExcetoES && destinoNorteNordesteCentroOesteES ? 7 : 12;
                                 var valorDifal = (pnf.BcIcms * ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)) - (pnf.BcIcms * ((decimal)percentualIcmsInterestadual / 100));
 
-                                var difalRIcmsPr =
-                                    nomeUfOrigem.ToUpper().Contains("SP") &&
-                                    (nomeUfDestino.ToUpper().Contains("BA") ||
-                                    nomeUfDestino.ToUpper().Contains("MG") ||
-                                    nomeUfDestino.ToUpper().Contains("PA") ||
-                                    nomeUfDestino.ToUpper().Contains("PI") ||
-                                    nomeUfDestino.ToUpper().Contains("PR") ||
-                                    nomeUfDestino.ToUpper().Contains("RS") ||
-                                    nomeUfDestino.ToUpper().Contains("SE") ||
-                                    nomeUfDestino.ToUpper().Contains("TO"));
+                                var estadosDifalRIcmsPr = FiscalConfig.EstadosConsiderarRicmsPr;
+
+                                var difalRIcmsPr = nomeUfOrigem.ToUpper().Contains("SP") && estadosDifalRIcmsPr.Contains(nomeUfDestino.ToUpper());
 
                                 if (difalRIcmsPr)
                                 {
