@@ -17312,5 +17312,22 @@ namespace Glass.Data.DAL
 
             return pedido;
         }
+
+
+        /// <summary>
+        /// Método que verifica se um pedido possui pedido de produção para corte gerado.
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="idPedido">Identificador do pedido a ser verificado</param>
+        /// <returns>Retorna o resultado de um teste lógico da verificação se o pedido informado possui um pedido de corte vinculado.</returns>
+        internal bool VerificarPedidoProducaoParaCorte(GDASession sessao, int idPedido)
+        {
+            if (idPedido == 0)
+            {
+                return false;
+            }
+
+            return ExecuteScalar<bool>(sessao, $"SELECT Count(*) > 0 FROM pedido WHERE IdPedidoRevenda = {idPedido}");
+        }
     }
 }

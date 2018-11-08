@@ -4196,29 +4196,19 @@ namespace Glass.Data.DAL
 
                     bool encontrado = false;
 
-                    // Carrega os produtos
-                    var prodPed = ProdutosPedidoDAO.Instance.GetByPedido(sessao, idPedidoNovo.Value);
+                    var prodPed = ProdutosPedidoDAO.Instance.GetByPedido(sessao, idPedidoNovo.Value).ToList();
 
-                    var idsSubGrupoChapaVidro = SubgrupoProdDAO.Instance.ObterSubgruposChapaVidro(sessao);
+                    idProdutoNovo = this.BuscarProdutoRevendaCompativel(sessao, prodPed, prodPedEsp);
 
-                    // Soma a quantidade total do idProd passado nos produtos do pedido de revenda
-                    var qtdTotalProd = prodPed
-                        .Where(f => f.IdProd == prodPedEsp.IdProd)
-                        .Sum(f => f.Qtde);
+                    encontrado = idProdutoNovo > 0;
 
-                    // Procura o produto no pedido de revenda
-                    var produtoNovo = prodPed.Where(f =>
-                        f.IdProd == prodPedEsp.IdProd &&
-                        f.Altura == prodPedEsp.Altura &&
-                        f.Largura == prodPedEsp.Largura &&
-                        /* Chamado 63214. */
-                        (cancTrocaDev ? true : f.Qtde - f.QtdSaida > 0) &&
-                        qtdTotalProd - GetQtdeLiberadaByPedProd(sessao, f.IdPedido, null, f.IdProd) > 0);
-
-                    if (produtoNovo.Count() > 0)
+                    if (!encontrado) // Se n�o encontrar, procura no fluxo
                     {
-                        encontrado = true;
-                        idProdutoNovo = produtoNovo.FirstOrDefault().IdProdPed;
+                        prodPed = ProdutosPedidoDAO.Instance.GetByPedido(sessao, idPedidoNovo.Value, true).ToList();
+
+                        idProdutoNovo = this.BuscarProdutoRevendaCompativel(sessao, prodPed, prodPedEsp);
+
+                        encontrado = idProdutoNovo > 0;
                     }
 
                     if (!encontrado)
@@ -4656,6 +4646,35 @@ namespace Glass.Data.DAL
                         (idPedidoNovo.GetValueOrDefault(0) > 0 ? " Pedido Exp: " + idPedidoNovo.Value : ""), ex);
 
                 throw ex;
+            }
+        }
+
+        private uint BuscarProdutoRevendaCompativel(GDASession sessao, List<ProdutosPedido> prodPed, ProdutosPedidoEspelho prodPedEsp)
+        {
+            var produtosEncontrados = prodPed.Where(p =>
+                p.IdProd == prodPedEsp.IdProd
+                && p.Altura == prodPedEsp.Altura
+                && p.Largura == prodPedEsp.Largura)
+                .OrderByDescending(p => p.Qtde - p.QtdSaida)
+                .GroupBy(p => p.IdProd)
+                .Select(p => new
+                {
+                    p.FirstOrDefault().IdProdPed,
+                    IdProd = p.Key,
+                    p.FirstOrDefault().IdPedido,
+                    Qtde = p.Sum(q => q.Qtde),
+                });
+
+            var prodPedVerificar = produtosEncontrados
+                    .Where(p => (p.Qtde - this.GetQtdeLiberadaByPedProd(sessao, p.IdPedido, null, p.IdProd)) > 0);
+
+            if (prodPedVerificar.Any(p => p.IdProdPed > 0))
+            {
+                return prodPedVerificar.FirstOrDefault().IdProdPed;
+            }
+            else
+            {
+                return 0;
             }
         }
 
@@ -5848,20 +5867,28 @@ namespace Glass.Data.DAL
         /// </summary>
         public int GetQtdeLiberadaByPedProd(GDASession sessao, uint idPedido, uint? idProdPed, uint idProd)
         {
-            string sql = "select count(*) from produto_pedido_producao where idPedidoExpedicao=" + idPedido;
-
+            var filtro = string.Empty;
             if (idProdPed == null)
-                sql += " and idProdPed in (select idProdPed from produtos_pedido_espelho where idProd=" + idProd + ")";
+            {
+                filtro = $" AND ppe.IdProd = {idProd}";
+            }
             else
-                sql += " and idProdPed=" + idProdPed.Value;
+            {
+                filtro = $" AND ppe.IdProdPed={idProdPed.Value}";
+            }
+
+
+            string sql = $@"SELECT COUNT(*) FROM produto_pedido_producao ppp    
+                INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed) 
+                WHERE ppp.idPedidoExpedicao={idPedido} {filtro}";
 
             var retorno = objPersistence.ExecuteSqlQueryCount(sessao, sql);
 
-            sql = @"
+            sql = $@"
                 SELECT COUNT(*)
-                FROM produto_impressao
-                WHERE idPedidoExpedicao=" + idPedido + @"
-                    AND idProdNf in (SELECT idProdNf FROM produtos_nf WHERE idProd=" + idProd + ")";
+                FROM produto_impressao pi
+                    INNER JOIN produtos_nf pnf ON (pnf.IdProdNf = pi.IdProdNf)
+                WHERE pi.IdPedidoExpedicao={idPedido} AND pnf.IdProd = {idProd}";
 
             return retorno + objPersistence.ExecuteSqlQueryCount(sessao, sql);
         }
