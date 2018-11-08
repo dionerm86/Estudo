@@ -4659,11 +4659,10 @@ namespace Glass.Data.DAL
                 .GroupBy(p => p.IdProd)
                 .Select(p => new
                 {
-                    p.First().IdProdPed,
+                    p.FirstOrDefault().IdProdPed,
                     IdProd = p.Key,
-                    p.First().IdPedido,
+                    p.FirstOrDefault().IdPedido,
                     Qtde = p.Sum(q => q.Qtde),
-                    QtdSaida = p.Sum(q => q.QtdSaida),
                 });
 
             var prodPedVerificar = produtosEncontrados
@@ -4671,7 +4670,7 @@ namespace Glass.Data.DAL
 
             if (prodPedVerificar.Any(p => p.IdProdPed > 0))
             {
-                return prodPedVerificar.Select(p => p.IdProdPed).First();
+                return prodPedVerificar.FirstOrDefault().IdProdPed;
             }
             else
             {
