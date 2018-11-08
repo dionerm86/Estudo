@@ -2789,15 +2789,15 @@ namespace Glass.Data.DAL.CTe
         public IEnumerable<ChaveAcessoCte> ObterChavesAcesso(int idCte)
         {
             return new GDA.Sql.Query("IdCte=?idCte")
-                        .Add("?idCte", idCte)
-                        .ToList<Glass.Data.Model.Cte.ChaveAcessoCte>();
+                .Add("?idCte", idCte)
+                .ToList<Glass.Data.Model.Cte.ChaveAcessoCte>();
         }
 
         public IEnumerable<FinalidadeChaveAcesso> ObterFinalidadeChaveAcesso(int idTipoCte)
         {
             return new GDA.Sql.Query("IdTipoCte=?idTipoCte")
-                        .Add("?idTipoCte", idTipoCte)
-                        .ToList<Glass.Data.Model.FinalidadeChaveAcesso>();
+                .Add("?idTipoCte", idTipoCte)
+                .ToList<Glass.Data.Model.FinalidadeChaveAcesso>();
         }
 
         #endregion

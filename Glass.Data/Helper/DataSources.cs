@@ -778,6 +778,7 @@ namespace Glass.Data.Helper
             var idTipoCte = Data.DAL.CTe.ConhecimentoTransporteDAO.Instance.ObterTipoCte((uint)idCte);
 
             List<GenericModel> finalidadeChaveAcesso = new List<GenericModel>();
+
             switch (idTipoCte)
             {
                 case Model.Cte.ConhecimentoTransporte.TipoCteEnum.Normal:
@@ -797,7 +798,7 @@ namespace Glass.Data.Helper
 
                 default:
                     finalidadeChaveAcesso.Add(new GenericModel((int)FinalidadeChaveAcesso.Normal, FinalidadeChaveAcesso.Normal.Translate().ToString()));
-                    break;                    
+                    break;
             }
 
             return finalidadeChaveAcesso.ToArray();

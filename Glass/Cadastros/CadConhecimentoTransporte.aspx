@@ -217,8 +217,8 @@
                 FindControl("divLabelDataAnulacao","div").style.display = "none";
                 FindControl("divDataAnulacao","div").style.display = "none";
             }
-        }         
-        
+        }
+
 
     </script>
 
@@ -425,7 +425,7 @@
                                     <asp:Label ID="Label37" runat="server" Text="Data Anulação"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow" id="divDataAnulacao" style="display:none">
-                                    <uc2:ctrlData ID="ctrlDataAnulacao" runat="server"  DataString='<%# Bind("DataAnulacao") %>'/>
+                                    <uc2:ctrlData ID="ctrlDataAnulacao" runat="server"  DataString='<%# Bind("DataAnulacao")%>'/>
                                 </div>
                                 <div class="dtvHeader">
                                     <asp:Label ID="Label10" runat="server" Text="Tipo Serviço *"></asp:Label>
@@ -442,8 +442,8 @@
                                     <asp:CompareValidator ID="cvdrpTipoServico" ControlToValidate="drpTipoServico" runat="server"
                                         ErrorMessage="Selecione um tipo de serviço" ValueToCompare="selecione" Operator="NotEqual"
                                         ValidationGroup="c">*</asp:CompareValidator>
-                                </div>                                
-                            </div>                            
+                                </div>
+                            </div>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
                                     <asp:Label ID="Label11" runat="server" Text="Retirada"></asp:Label>
@@ -1472,7 +1472,7 @@
                                     <asp:CompareValidator ID="cvdrpTipoCte" ControlToValidate="drpTipoCte" runat="server"
                                         ErrorMessage="Selecione um tipo de CT-e" ValueToCompare="selecione" Operator="NotEqual"
                                         ValidationGroup="c">*</asp:CompareValidator>
-                                </div>                                
+                                </div>
                                 <div class="dtvHeader">
                                     <asp:Label ID="Label10" runat="server" Text="Tipo Serviço *"></asp:Label>
                                 </div>
@@ -1494,7 +1494,7 @@
                                     <asp:Label ID="Label37" runat="server" Text="Data Anulação"></asp:Label>
                             </div>
                             <div class="dtvAlternatingRow" id="divDataAnulacao" style="display:none">
-                                <uc2:ctrlData ID="ctrlDataAnulacao" runat="server"  DataString='<%# Bind("DataAnulacao") %>'/>
+                                <uc2:ctrlData ID="ctrlDataAnulacao" runat="server"  DataString='<%# Bind("DataAnulacao")%>'/>
                             </div>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
@@ -1761,7 +1761,7 @@
                             </ItemTemplate>
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtNumChaveAcesso" runat="server" Text='<%# Bind("ChaveAcesso") %>' Width="300px" MaxLength="44"
-                                    onkeypress="return soNumeros(event, true, true)" ></asp:TextBox>
+                                    onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <asp:TextBox ID="txtNumChaveAcesso" runat="server" Width="300px" MaxLength="44" onkeypress="return soNumeros(event, true, true);"></asp:TextBox>
@@ -1785,7 +1785,7 @@
                                 <asp:Label ID="lblFinalidadeChaveAcesso" runat="server" Text='<%# Eval("FinalidadeChaveAcesso") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:DropDownList ID="drpFinalidadeChaveAcesso" runat="server" SelectedValue='<%# Bind("FinalidadeChaveAcesso") %>' 
+                                <asp:DropDownList ID="drpFinalidadeChaveAcesso" runat="server" SelectedValue='<%# Bind("FinalidadeChaveAcesso") %>'
                                     DataSourceID="odsFinalidadeChaveAcesso" DataTextField="Descr" DataValueField="Id">
                                 </asp:DropDownList>
                             </EditItemTemplate>
