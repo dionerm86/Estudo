@@ -2109,11 +2109,11 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Método que verifica se o pedido informado já deu saída de acordo com as configurações
+        /// Mï¿½todo que verifica se o pedido informado jï¿½ deu saï¿½da de acordo com as configuraï¿½ï¿½es
         /// </summary>
-        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="sessao">Sessï¿½o do GDA.</param>
         /// <param name="idPedido">Identificador do pedido a ser verificado.</param>
-        /// <returns>Retorna o resultado de um teste lógico que verifica se o pedido já efetuou a saída de estoque.</returns>
+        /// <returns>Retorna o resultado de um teste lï¿½gico que verifica se o pedido jï¿½ efetuou a saï¿½da de estoque.</returns>
         internal bool VerificaSaidaEstoqueConfirmacao(GDASession sessao, int idPedido)
         {
             return !PedidoConfig.LiberarPedido 
@@ -7262,7 +7262,14 @@ namespace Glass.Data.DAL
 
                                 if (FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar && qtdSaida > 0)
                                 {
-                                    ProdutosPedidoDAO.Instance.MarcarSaida(trans, p.IdProdPed, p.Qtde - p.QtdSaida, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty,saidaConfirmacao:true);
+                                    ProdutosPedidoDAO.Instance.MarcarSaida(
+                                        trans,
+                                        p.IdProdPed,
+                                        p.Qtde - p.QtdSaida,
+                                        idSaidaEstoque,
+                                        System.Reflection.MethodBase.GetCurrentMethod().Name,
+                                        string.Empty,
+                                        saidaConfirmacao: true);
 
                                     // DÃ¡ baixa no estoque da loja
                                     MovEstoqueDAO.Instance.BaixaEstoquePedido(trans, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed,
