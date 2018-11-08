@@ -851,7 +851,8 @@ namespace Glass.Data.Helper
             CadastrarProduto,
             PermitirEnvioMensagemInterna,
             PermitirCancelarCni,
-            AnexarArquivosFornecedor                    //30
+            AnexarArquivosFornecedor,                    //30
+            PermitirAlterarRotaCliente
         }
 
         [ModuloAttr(Modulo.Medicao)]
