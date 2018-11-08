@@ -34,9 +34,14 @@ namespace Glass.API.Backend.Controllers.Cfops.V1.NaturezasOperacao
         {
             filtro = filtro ?? new Models.Cfops.V1.NaturezasOperacao.Lista.FiltroDto();
 
+            if (filtro.IdCfop == null || filtro.IdCfop == 0)
+            {
+                return this.ErroValidacao("O identificador do CFOP é obrigatório para buscar as naturezas de operação.");
+            }
+
             var regras = Microsoft.Practices.ServiceLocation.ServiceLocator
                 .Current.GetInstance<Fiscal.Negocios.ICfopFluxo>()
-                .PesquisarNaturezasOperacao(filtro.IdCfop.GetValueOrDefault(), null, null, null);
+                .PesquisarNaturezasOperacao(filtro.IdCfop.GetValueOrDefault());
 
             ((Colosoft.Collections.IVirtualList)regras).Configure(filtro.NumeroRegistros);
             ((Colosoft.Collections.ISortableCollection)regras).ApplySort(filtro.ObterTraducaoOrdenacao());
@@ -78,7 +83,7 @@ namespace Glass.API.Backend.Controllers.Cfops.V1.NaturezasOperacao
         /// </summary>
         /// <returns>Uma lista JSON com os dados dos itens encontrados.</returns>
         [HttpGet]
-        [Route("filtro")]
+        [Route("csosns")]
         [SwaggerResponse(200, "CSOSN's encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "CSOSN's não encontrados.")]
         public IHttpActionResult ObterCsosns()
@@ -101,7 +106,7 @@ namespace Glass.API.Backend.Controllers.Cfops.V1.NaturezasOperacao
         /// </summary>
         /// <returns>Uma lista JSON com os dados dos itens encontrados.</returns>
         [HttpGet]
-        [Route("filtro")]
+        [Route("cstsIcms")]
         [SwaggerResponse(200, "CST's de ICMS encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "CST's de ICMS não encontrados.")]
         public IHttpActionResult ObterCstsIcms()
@@ -124,7 +129,7 @@ namespace Glass.API.Backend.Controllers.Cfops.V1.NaturezasOperacao
         /// </summary>
         /// <returns>Uma lista JSON com os dados dos itens encontrados.</returns>
         [HttpGet]
-        [Route("filtro")]
+        [Route("cstsIpi")]
         [SwaggerResponse(200, "CST's de IPI encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "CST's de IPI não encontrados.")]
         public IHttpActionResult ObterCstsIpi()
@@ -143,7 +148,7 @@ namespace Glass.API.Backend.Controllers.Cfops.V1.NaturezasOperacao
         /// </summary>
         /// <returns>Uma lista JSON com os dados dos itens encontrados.</returns>
         [HttpGet]
-        [Route("filtro")]
+        [Route("cstsPisCofins")]
         [SwaggerResponse(200, "CST's de PIS/COFINS encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "CST's de PIS/COFINS não encontrados.")]
         public IHttpActionResult ObterCstsPisCofins()

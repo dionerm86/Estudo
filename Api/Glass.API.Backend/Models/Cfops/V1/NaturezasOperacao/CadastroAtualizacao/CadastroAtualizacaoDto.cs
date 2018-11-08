@@ -15,6 +15,17 @@ namespace Glass.API.Backend.Models.Cfops.V1.NaturezasOperacao.CadastroAtualizaca
     public class CadastroAtualizacaoDto : BaseCadastroAtualizacaoDto<CadastroAtualizacaoDto>
     {
         /// <summary>
+        /// Obtém ou define o identificador do CFOP.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idCfop")]
+        public int IdCfop
+        {
+            get { return this.ObterValor(c => c.IdCfop); }
+            set { this.AdicionarValor(c => c.IdCfop, value); }
+        }
+
+        /// <summary>
         /// Obtém ou define o código da natureza de operação.
         /// </summary>
         [DataMember]

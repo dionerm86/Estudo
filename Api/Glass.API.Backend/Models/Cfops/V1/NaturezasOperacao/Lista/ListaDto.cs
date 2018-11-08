@@ -23,6 +23,7 @@ namespace Glass.API.Backend.Models.Cfops.V1.NaturezasOperacao.Lista
         internal ListaDto(Fiscal.Negocios.Entidades.NaturezaOperacao natureza)
         {
             this.Id = natureza.IdNaturezaOperacao;
+            this.IdCfop = natureza.IdCfop;
             this.Codigo = natureza.CodInterno;
             this.Mensagem = natureza.Mensagem;
             this.AlterarEstoqueFiscal = natureza.AlterarEstoqueFiscal;
@@ -69,7 +70,7 @@ namespace Glass.API.Backend.Models.Cfops.V1.NaturezasOperacao.Lista
                 CstPisCofins = new IdNomeDto
                 {
                     Id = natureza.CstPisCofins,
-                    Nome = Colosoft.Translator.Translate(natureza.CstPisCofins).Format(),
+                    Nome = natureza.CstPisCofins?.ToString(),
                 },
 
                 CalcularPis = natureza.CalcPis,
@@ -82,6 +83,13 @@ namespace Glass.API.Backend.Models.Cfops.V1.NaturezasOperacao.Lista
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.NaturezaOperacao, (uint)natureza.IdNaturezaOperacao, null),
             };
         }
+
+        /// <summary>
+        /// Obtém ou define o identificador do CFOP.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idCfop")]
+        public int IdCfop { get; set; }
 
         /// <summary>
         /// Obtém ou define a mensagem da natureza de operação.

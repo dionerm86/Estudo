@@ -46,6 +46,7 @@ namespace Glass.API.Backend.Helper.Cfops.NaturezasOperacao
 
         private void ConverterDtoParaModelo(NaturezaOperacao destino)
         {
+            destino.IdCfop = this.cadastro.ObterValorNormalizado(c => c.IdCfop, destino.IdCfop);
             destino.CodInterno = this.cadastro.ObterValorNormalizado(c => c.Codigo, destino.CodInterno);
             destino.Mensagem = this.cadastro.ObterValorNormalizado(c => c.Mensagem, destino.Mensagem);
             destino.AlterarEstoqueFiscal = this.cadastro.ObterValorNormalizado(c => c.AlterarEstoqueFiscal, destino.AlterarEstoqueFiscal);
