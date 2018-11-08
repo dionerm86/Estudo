@@ -5887,7 +5887,7 @@ namespace Glass.Data.DAL
             sql = $@"
                 SELECT COUNT(*)
                 FROM produto_impressao pi
-                INNER JOIN produtos_nf pnf ON (pnf.IdProdNf = pi.IdProdNf)
+                    INNER JOIN produtos_nf pnf ON (pnf.IdProdNf = pi.IdProdNf)
                 WHERE pi.IdPedidoExpedicao={idPedido} AND pnf.IdProd = {idProd}";
 
             return retorno + objPersistence.ExecuteSqlQueryCount(sessao, sql);
