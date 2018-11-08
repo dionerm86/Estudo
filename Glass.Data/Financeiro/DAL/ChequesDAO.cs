@@ -2816,24 +2816,6 @@ namespace Glass.Data.DAL
 
             #region Validações dos dados dos cheques
 
-            if (chequesInconsistentes.Any(c => c.IdCheque > 0))
-            {
-                var s = chequesInconsistentes.Count() > 1
-                    ? "s"
-                    : string.Empty;
-
-                var em = chequesInconsistentes.Count() > 1
-                    ? "em"
-                    : "i";
-
-                var valorRestante = cheques.Sum(c => c.Valor) - acertoCheque.TotalPago - acertoCheque.Desconto + (decimal)acertoCheque.Juros;
-
-                var numCheques = string.Join(",", chequesInconsistentes.Select(c => c.Num));
-
-                throw new InvalidOperationException($"O{s} cheque{s} {numCheques} não possu{em} valor recebido." +
-                    $"Considere diminuir o Valor Restante ({valorRestante}) removendo algum cheque do acerto.");
-            }
-
             foreach (var cheque in cheques)
             {
                 if (cheque.Valor == cheque.ValorReceb && cheque.Situacao != 1 && cheque.Situacao != 3)
@@ -2893,6 +2875,24 @@ namespace Glass.Data.DAL
             {
                 throw new Exception(string.Format("Valor a ser quitado não confere com valor informado. Valor a ser quitado: {0} Valor informado: {1}.",
                     Math.Round(acertoCheque.TotalPagar.GetValueOrDefault(), 2).ToString("C"), Math.Round(acertoCheque.TotalPago.GetValueOrDefault(), 2).ToString("C")));
+            }
+
+            if (chequesInconsistentes.Any(c => c.IdCheque > 0))
+            {
+                var s = chequesInconsistentes.Count() > 1
+                    ? "s"
+                    : string.Empty;
+
+                var em = chequesInconsistentes.Count() > 1
+                    ? "em"
+                    : "i";
+
+                var valorRestante = cheques.Sum(c => c.Valor) - acertoCheque.TotalPago - acertoCheque.Desconto + (decimal)acertoCheque.Juros;
+
+                var numCheques = string.Join(",", chequesInconsistentes.Select(c => c.Num));
+
+                throw new InvalidOperationException($"O{s} cheque{s} {numCheques} não possu{em} valor recebido." +
+                    $"Considere diminuir o Valor Restante ({valorRestante}) removendo algum cheque do acerto.");
             }
 
             #endregion
