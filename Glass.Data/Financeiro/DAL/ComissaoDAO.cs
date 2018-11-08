@@ -887,7 +887,7 @@ namespace Glass.Data.DAL
         /// <returns>Retorna o resultado da comparação lógica que verifica se o controle de Comissao por contas recebidas está habilitado.</returns>
         public bool VerificarComissaoContasRecebidas()
         {
-            return Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas != Configuracoes.ComissaoConfig.TipoComissaoContaRec.Desabilitado;
+            return Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas != TipoComissaoContaRec.Desabilitado;
         }
 
         /// <summary>
@@ -907,7 +907,7 @@ namespace Glass.Data.DAL
                 session,
                 (uint)idPedido);
 
-            return Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas == Configuracoes.ComissaoConfig.TipoComissaoContaRec.VendedorAssociadoPedido
+            return Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas == TipoComissaoContaRec.VendedorAssociadoPedido
                 ? (int)PedidoDAO.Instance.ObtemIdFunc(session, (uint)idPedido)
                 : (int)ClienteDAO.Instance.ObtemIdFunc(session, idCliente);
         }

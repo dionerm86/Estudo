@@ -1,20 +1,11 @@
 ﻿using Glass.Data.Helper;
+using Glass.Data.Model;
 
 namespace Glass.Configuracoes
 {
     public static class ComissaoConfig
     {
         #region Enumeradores
-
-        /// <summary>
-        /// Enumerador com os tipos que podem ser definidos na configuração ComissaoPorContasRecebidas
-        /// </summary>
-        public enum TipoComissaoContaRec
-        {
-            Desabilitado,
-            VendedorAssociadoPedido,
-            VendedorAssociadoCliente
-        }
 
         public enum TotalComissaoEnum
         {

@@ -409,6 +409,7 @@
     <Compile Include="EFD\DataSourcesEFD.cs" />
     <Compile Include="EFD\EFD.cs" />
     <Compile Include="EFD\RecuperaDados.cs" />
+    <Compile Include="Enumeradores\TipoComissaoContaRec.cs" />
     <Compile Include="Estoque\DAL\ChapaTrocadaDevolvidaDAO.cs" />
     <Compile Include="Estoque\DAL\MovEstoqueCentroCustoDAO.cs" />
     <Compile Include="Estoque\DAL\MovInternaEstoqueFiscalDAO.cs" />
