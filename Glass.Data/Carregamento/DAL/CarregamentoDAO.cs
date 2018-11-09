@@ -398,11 +398,15 @@ namespace Glass.Data.DAL
                         WHERE oc.idCarregamento = c.idCarregamento AND poc.idPedido IN (" + string.Join(",", idsPedido) + @"))
                     ORDER BY c.idCarregamento DESC");
 
-            var carregamentos = objPersistence.LoadData(sessao, sql);
+            var carregamentos = objPersistence
+                .LoadData(sessao, sql)
+                .ToList();
 
             foreach (var carregamento in carregamentos)
             {
-                var idsPedidoCarregamento = PedidoDAO.Instance.GetIdsPedidosByCarregamento(sessao, carregamento.IdCarregamento);
+                var idsPedidoCarregamento = PedidoDAO.Instance.GetIdsPedidosByCarregamento(
+                    sessao, 
+                    carregamento.IdCarregamento);
 
                 if (!idsPedidoCarregamento.Any())
                     continue;

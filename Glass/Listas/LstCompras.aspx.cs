@@ -13,19 +13,19 @@ namespace Glass.UI.Web.Listas
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
             Ajax.Utility.RegisterTypeForAjax(typeof(LstCompras));
-    
+
             if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
                 lnkInserir.Visible = false;
-    
+
             chkEmAtraso.Visible = FinanceiroConfig.Compra.UsarControleFinalizacaoCompra;
             chkCentroCustoDivergente.Visible = FiscalConfig.UsarControleCentroCusto && CentroCustoDAO.Instance.GetCountReal() > 0;
         }
-    
+
         protected void lnkInserir_Click(object sender, EventArgs e)
         {
             Response.Redirect("../Cadastros/CadCompra.aspx");
         }
-    
+
         protected void odsCompra_Deleted(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)
@@ -34,19 +34,22 @@ namespace Glass.UI.Web.Listas
                 e.ExceptionHandled = true;
             }
         }
-    
+
         protected void grdCompra_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             try
             {
                 if (e.CommandName == "Reabrir")
+                {
                     CompraDAO.Instance.ReabrirCompra(e.CommandArgument.ToString().StrParaUint());
+                    grdCompra.DataBind();
+                }
                 else if (e.CommandName == "Finalizar")
                 {
                     CompraDAO.Instance.FinalizarCompraComTransacao(e.CommandArgument.ToString().StrParaUint());
                     MensagemAlerta.ShowMsg(string.Format("Compra finalizada com sucesso. Código: {0}.", e.CommandArgument.ToString().StrParaUint()), Page);
                     grdCompra.DataBind();
-                }                   
+                }
             }
             catch (Exception ex)
             {
@@ -54,12 +57,12 @@ namespace Glass.UI.Web.Listas
                 return;
             }
         }
-    
+
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)
         {
             grdCompra.PageIndex = 0;
         }
-    
+
         protected void drpSituacao_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)

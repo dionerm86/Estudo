@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using Glass.Data.Helper;
 using System.IO;
@@ -36,7 +36,7 @@ namespace Glass.UI.Web.Utils
                 if (EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
                     EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.eCutter)
                 {
-                    // Lê o arquivo de otimização enviado
+                    // LÃª o arquivo de otimizaÃ§Ã£o enviado
                     XmlDocument xmlDoc = new XmlDocument();
                     /* Chamado 50941. */
                     xmlDoc.LoadXml(new StreamReader(fluArquivoOtimizado.FileContent).ReadToEnd());
@@ -56,7 +56,7 @@ namespace Glass.UI.Web.Utils
 
                     foreach (XmlNode node in xmlDoc["PF_EXPORT"]["CUT_PLAN"])
                     {
-                        // A tag <PLAN> contém o plano de corte, as tags subsequentes à ela contém as peças
+                        // A tag <PLAN> contÃ©m o plano de corte, as tags subsequentes Ã  ela contÃ©m as peÃ§as
                         if (node.Name == "PLAN")
                         {
                             planoCorte = node.InnerXml.PadLeft(2, '0') + "-" + ContadorPlanoCorteDAO.Instance.GetNext().ToString().PadLeft(8, '0');
@@ -69,7 +69,7 @@ namespace Glass.UI.Web.Utils
 
                         if (vetEtiq == null || vetEtiq.Length < 4 || vetEtiq[0] == "")
                         {
-                            throw new Exception("Algumas peças foram Alteradas ou Incluídas no arquivo. Por favor Otimize novamente!");
+                            throw new Exception("Algumas peÃ§as foram Alteradas ou IncluÃ­das no arquivo. Por favor Otimize novamente!");
                         }
 
                         etiqueta = vetEtiq[0] + "-" + vetEtiq[1] + "." + vetEtiq[2] + "/" + vetEtiq[3];
@@ -77,7 +77,7 @@ namespace Glass.UI.Web.Utils
                         // Busca o produtoPedidoEspelho pela etiqueta
                         bool isPecaReposta = ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(etiqueta, true);
 
-                        // Verifica se a etiqueta já foi impressa
+                        // Verifica se a etiqueta jÃ¡ foi impressa
                         if (!isPecaReposta && ProdutoImpressaoDAO.Instance.EstaImpressa(etiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
                         {
                             etiquetasJaImpressas += etiqueta + ", ";
@@ -103,9 +103,9 @@ namespace Glass.UI.Web.Utils
                         }
                         catch (Exception ex)
                         {
-                            MensagemAlerta.ErrorMsg("A etiqueta '" + etiqueta + "' não possui uma peça associada. " +
-                                "O pedido pode ter sido alterado após a geração do arquivo para o Corte Certo. " +
-                                "Refaça a otimização das etiquetas com um novo arquivo de otimização gerado pelo sistema.", ex, Page);
+                            MensagemAlerta.ErrorMsg("A etiqueta '" + etiqueta + "' nÃ£o possui uma peÃ§a associada. " +
+                                "O pedido pode ter sido alterado apÃ³s a geraÃ§Ã£o do arquivo para o Corte Certo. " +
+                                "RefaÃ§a a otimizaÃ§Ã£o das etiquetas com um novo arquivo de otimizaÃ§Ã£o gerado pelo sistema.", ex, Page);
                             return;
                         }
 
@@ -126,7 +126,7 @@ namespace Glass.UI.Web.Utils
 
                         if (Glass.Conversoes.StrParaInt(vetEtiq[3]) > qtde)
                         {
-                            throw new Exception($"Etiqueta { etiqueta } é inválida. O produto referido tem quantidade { qtde } e a etiqueta indica { vetEtiq[3] }.");
+                            throw new Exception($"Etiqueta { etiqueta } Ã© invÃ¡lida. O produto referido tem quantidade { qtde } e a etiqueta indica { vetEtiq[3] }.");
                         }
 
                         if (prodPed.IdPedido > 0)
@@ -157,7 +157,7 @@ namespace Glass.UI.Web.Utils
                             return;
                         }
 
-                        // Marca a qtd como 1, pois cada produto no arquivo é qtd 1, caso o produto se repita, soma a qtd
+                        // Marca a qtd como 1, pois cada produto no arquivo Ã© qtd 1, caso o produto se repita, soma a qtd
                         prodPed.QtdAImprimir = !isPecaReposta ? 1 : 0;
                         bool jaInserido = false;
                         for (int i = 0; i < lstProdPed.Count; i++)
@@ -182,7 +182,7 @@ namespace Glass.UI.Web.Utils
 
                 if (lstEtiquetas == null || lstEtiquetas.Count == 0)
                 {
-                    throw new Exception("Não há etiquetas para importar.");
+                    throw new Exception("NÃ£o hÃ¡ etiquetas para importar.");
                 }
 
                 string extensao = fluArquivoOtimizado.FileName.Substring(fluArquivoOtimizado.FileName.LastIndexOf("."));
@@ -193,9 +193,9 @@ namespace Glass.UI.Web.Utils
                 // Salva arquivo otimizado
                 fluArquivoOtimizado.SaveAs(Data.Helper.Utils.GetArquivoOtimizacaoPath + a.NomeArquivo);
 
-                #region Ordena as peças por cor/espessura
+                #region Ordena as peÃ§as por cor/espessura
 
-                // Ordena as peças por cor/espessura
+                // Ordena as peÃ§as por cor/espessura
                 lstProdPed.Sort(new Comparison<ProdutosPedidoEspelho>(delegate (ProdutosPedidoEspelho x, ProdutosPedidoEspelho y)
                 {
                     int cor = Comparer<string>.Default.Compare(x.Cor, y.Cor);
@@ -207,12 +207,12 @@ namespace Glass.UI.Web.Utils
 
                 #endregion
 
-                #region Gera um script para inserir estas peças na tela
+                #region Gera um script para inserir estas peÃ§as na tela
 
                 string script = String.Empty;
 
                 if (!string.IsNullOrEmpty(etiquetasJaImpressas))
-                    script += "alert('As etiquetas " + etiquetasJaImpressas + "já foram impressas');";
+                    script += "alert('As etiquetas " + etiquetasJaImpressas + "jÃ¡ foram impressas');";
 
                 foreach (ProdutosPedidoEspelho ppe in lstProdPed)
                 {
@@ -250,7 +250,7 @@ namespace Glass.UI.Web.Utils
                             continue;
                         }
                     }
-                    // Verificar se o produto já foi totalmente impresso
+                    // Verificar se o produto jÃ¡ foi totalmente impresso
                     else if (ppe.Qtde == ppe.QtdImpresso && !ppe.PecaReposta)
                     {
                         qtdPecasImpressas -= ProdutoImpressaoDAO.Instance.QuantidadeImpressa(null, (int)ppe.IdProdPed);
@@ -267,11 +267,11 @@ namespace Glass.UI.Web.Utils
                     string planoCorteEtiq = TratarStringScript(ppe?.PlanoCorte);
                     string etiquetas = TratarStringScript(ppe?.Etiquetas);
 
-                    // Foi incluido uma chamada de função para remover o botão de Excluir das peças otimizadas
+                    // Foi incluido uma chamada de funÃ§Ã£o para remover o botÃ£o de Excluir das peÃ§as otimizadas
                     script += "window.opener.setProdEtiqueta(" + ppe.IdProdPed + ", null, " + ppe.IdPedido + ", null, null, '" + descrProduto.Replace("'", "") + (ppe.PecaReposta ? " (Reposta)" : "") +
                         "', '" + codProcesso + "', '" + codAplicacao + "', " + (!ppe.PecaReposta ? ppe.Qtde : 1) + ", " + (!ppe.PecaReposta ? ppe.QtdImpresso : 1) +
                         ", " + ppe.QtdAImprimir + ", " + ppe.AlturaProducao + ", " + ppe.LarguraProducao + ", '" + obs + "', '" + totM2 + "', '" + planoCorteEtiq.Replace("'", "") +
-                        "', null, true, '" + etiquetas.TrimEnd('_') + "', null, '" + totM2Calc + "', null); ";
+                        "', null, true, '" + etiquetas.TrimEnd('_') + "', null, '" + totM2Calc + "', null, null, null); ";
                 }
 
                 script += "window.opener.escondeRemoverTodasAsLinhas();";
@@ -282,13 +282,13 @@ namespace Glass.UI.Web.Utils
 
                 if (pedidosAlteradosAposExportacao.Count > 0)
                 {
-                    mensagemPedidoAlteradoAposExportacao = $@"Os pedidos a seguir foram reabertos após a exportação das peças, a otimização deve ser feita novamente com um novo arquivo gerado pelo sistema:
+                    mensagemPedidoAlteradoAposExportacao = $@"Os pedidos a seguir foram reabertos apÃ³s a exportaÃ§Ã£o das peÃ§as, a otimizaÃ§Ã£o deve ser feita novamente com um novo arquivo gerado pelo sistema:
                     { string.Join(", ", pedidosAlteradosAposExportacao.Distinct()) }.";
                 }
 
                 if (qtdPecasImpressas == 0 && pedidosAlteradosAposExportacao.Count() == 0)
                 {
-                    MensagemAlerta.ShowMsg($"{ mensagemPedidoAlteradoAposExportacao } ou todas as peças deste arquivo já foram impressas.", Page);
+                    MensagemAlerta.ShowMsg($"{ mensagemPedidoAlteradoAposExportacao } ou todas as peÃ§as deste arquivo jÃ¡ foram impressas.", Page);
                 }
                 else if (pedidosAlteradosAposExportacao.Count() > 0)
                 {
@@ -297,7 +297,7 @@ namespace Glass.UI.Web.Utils
                 else
                 {
                     Page.ClientScript.RegisterClientScriptBlock(typeof(string), "setPecas",
-                        $"window.opener.limpar();{ script }alert('{ qtdPecasImpressas } peças importadas. { mensagemPedidoAlteradoAposExportacao }');closeWindow();", true);
+                        $"window.opener.limpar();{ script }alert('{ qtdPecasImpressas } peÃ§as importadas. { mensagemPedidoAlteradoAposExportacao }');closeWindow();", true);
                 }
             }
             catch (Exception ex)
@@ -309,7 +309,7 @@ namespace Glass.UI.Web.Utils
         }
 
         /// <summary>
-        /// Trata os dados que serão executados via javacscript na tela
+        /// Trata os dados que serÃ£o executados via javacscript na tela
         /// </summary>
         /// <param name="texto"></param>
         /// <returns></returns>

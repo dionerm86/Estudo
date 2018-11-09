@@ -9039,19 +9039,37 @@ namespace Glass.Data.DAL
         public bool DescontoPermitido(GDASession sessao, Pedido pedido)
         {
             string somaDesconto = "(select sum(coalesce(valorDescontoQtde,0)" + (PedidoConfig.RatearDescontoProdutos ? "+coalesce(valorDesconto,0)+coalesce(valorDescontoProd,0)" :
-                "") + ") from produtos_pedido where idPedido=p.idPedido)";
+                string.Empty) + ") from produtos_pedido where idPedido=p.idPedido)";
 
             uint idFunc = UserInfo.GetUserInfo.CodUser;
             if (Geral.ManterDescontoAdministrador)
+            {
                 idFunc = pedido.IdFuncDesc.GetValueOrDefault(idFunc);
+            }
+
+            var idFuncCli = UserInfo.GetUserInfo.IdCliente;
+
+            if (idFuncCli > 0 && idFunc == 0)
+            {
+                var descontoEcommerce = ClienteDAO.Instance.ObterPorcentagemDescontoEcommerce(sessao, (int)pedido.IdCli);
+
+                if (descontoEcommerce == pedido.Desconto)
+                {
+                    return true;
+                }
+            }
 
             if (idFunc == 0)
+            {
                 idFunc = pedido.IdFunc;
+            }
 
             float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela);
 
             if (descontoMaximoPermitido == 100)
+            {
                 return true;
+            }
 
             if (FinanceiroConfig.UsarDescontoEmParcela)
             {
@@ -9060,7 +9078,9 @@ namespace Glass.Data.DAL
                 {
                     var desconto = ParcelasDAO.Instance.ObtemDesconto(sessao, idParcela.Value);
                     if (desconto == ObtemDescontoCalculado(sessao, pedido.IdPedido))
+                    {
                         return true;
+                    }
                 }
             }
             else if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
@@ -9081,8 +9101,11 @@ namespace Glass.Data.DAL
 
                 var desconto = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDesconto(tipoVenda, idFormaPagto, idTipoCartao, idParcela, idGrupoProd, idSubgrupoProd);
                 if (desconto == ObtemDescontoCalculado(sessao, pedido.IdPedido))
+                {
                     return true;
+                }
             }
+
             var valorDescontoConsiderar = (Data.DAL.FuncionarioDAO.Instance.ObtemIdTipoFunc(sessao, UserInfo.GetUserInfo.CodUser) == (int)Glass.Seguranca.TipoFuncionario.Administrador ? "100"
                 : descontoMaximoPermitido.ToString().Replace(",", "."));
 
@@ -17288,6 +17311,23 @@ namespace Glass.Data.DAL
             var pedido = objPersistence.LoadOneData(sessao, sql);
 
             return pedido;
+        }
+
+
+        /// <summary>
+        /// Método que verifica se um pedido possui pedido de produção para corte gerado.
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="idPedido">Identificador do pedido a ser verificado</param>
+        /// <returns>Retorna o resultado de um teste lógico da verificação se o pedido informado possui um pedido de corte vinculado.</returns>
+        internal bool VerificarPedidoProducaoParaCorte(GDASession sessao, int idPedido)
+        {
+            if (idPedido == 0)
+            {
+                return false;
+            }
+
+            return ExecuteScalar<bool>(sessao, $"SELECT Count(*) > 0 FROM pedido WHERE IdPedidoRevenda = {idPedido}");
         }
     }
 }

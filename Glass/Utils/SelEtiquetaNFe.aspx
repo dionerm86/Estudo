@@ -15,7 +15,7 @@
             totM = new Number((parseFloat(totM.toString().replace(',', '.')) / parseFloat(qtd)) * parseFloat((qtd - qtdImpresso))).toFixed(2).toString().replace('.', ',');
 
             window.opener.setProdEtiqueta(null, null, null, idProdNf, numeroNFe, descrProd, "", "", qtd, qtdImpresso,
-                qtd - qtdImpresso, altura, largura, "", totM, null, window, false, "", null, null, lote);
+                qtd - qtdImpresso, altura, largura, "", totM, null, window, false, "", null, null, lote, null, null);
         }
 
     </script>
