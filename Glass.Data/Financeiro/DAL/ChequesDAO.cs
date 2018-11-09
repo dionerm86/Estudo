@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Globalization;
 using GDA;
@@ -114,7 +114,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// </summary>
         /// <param name="idCheque"></param>
         /// <returns></returns>
@@ -134,7 +134,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca cheques para consulta e relatÛrio
+        #region Busca cheques para consulta e relat√≥rio
 
         private string SqlFilter(uint idLoja, uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNfe,
             int tipo, int numCheque, string situacao, bool? reapresentado, int advogado, string titular, string agencia, string conta,
@@ -188,7 +188,7 @@ namespace Glass.Data.DAL
             if (idLiberarPedido > 0)
             {
                 filtroAdicional += " and c.idLiberarPedido=" + idLiberarPedido + "    ";
-                criterio += "LiberaÁ„o: " + idLiberarPedido + "    ";
+                criterio += "Libera√ß√£o: " + idLiberarPedido + "    ";
             }
 
             if (idAcerto > 0)
@@ -199,13 +199,13 @@ namespace Glass.Data.DAL
 
             if (numeroNfe > 0)
             {
-                // ObtÈm os cheques a partir da LiberaÁ„o associada ao cheque.
+                // Obt√©m os cheques a partir da Libera√ß√£o associada ao cheque.
                 filtroAdicional += @" And (((c.idLiberarPedido In (Select idLiberarPedido From pedidos_nota_fiscal Where idNf In
                     (Select idNf From nota_fiscal Where numeroNfe=" + numeroNfe + ")))";
-                // ObtÈm os cheques a partir do Pedido associado ao cheque.
+                // Obt√©m os cheques a partir do Pedido associado ao cheque.
                 filtroAdicional += @" Or (c.idPedido In (Select idPedido From pedidos_nota_fiscal Where idNf In
                     (Select idNf From nota_fiscal Where numeroNfe=" + numeroNfe + ")))";
-                // ObtÈm os cheques a partir do Acerto associado ao cheque.
+                // Obt√©m os cheques a partir do Acerto associado ao cheque.
                 filtroAdicional +=
                     @" Or (c.idAcerto In (Select idAcerto From contas_receber Where idLiberarPedido In
                     (Select idLiberarPedido From pedidos_nota_fiscal Where idNf In (Select idNf from nota_fiscal Where numeroNfe=" +
@@ -213,7 +213,7 @@ namespace Glass.Data.DAL
                     Or (c.idAcerto In (Select idAcerto From contas_receber Where idPedido In
                     (Select idPedido From pedidos_nota_fiscal Where idNf In (Select idNf from nota_fiscal Where numeroNfe=" +
                     numeroNfe + ")))))";
-                // ObtÈm os cheques a partir da conta a pagar associada ao cheque.
+                // Obt√©m os cheques a partir da conta a pagar associada ao cheque.
                 filtroAdicional += " Or cp.idNf In (Select idNf From nota_fiscal Where numeroNfe=" + numeroNfe + "))";
 
                 criterio += "Nota Fiscal: " + numeroNfe + "    ";
@@ -223,7 +223,7 @@ namespace Glass.Data.DAL
             {
                 filtroAdicional += " And c.Tipo=" + (tipo != 3 ? tipo : 2);
                 criterio += "Tipo: ";
-                criterio += tipo == 1 ? "PrÛprio    " : tipo == 2 || tipo == 3 ? "Terceiro    " : "Indefinido    ";
+                criterio += tipo == 1 ? "Pr√≥prio    " : tipo == 2 || tipo == 3 ? "Terceiro    " : "Indefinido    ";
             }
 
             if (numCheque > 0)
@@ -234,13 +234,13 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(situacao) && situacao != "0")
             {
-                // Busca os que est„o na situaÁ„o Devolvido e Em Aberto
+                // Busca os que est√£o na situa√ß√£o Devolvido e Em Aberto
                 if (situacao == "10")
                     filtroAdicional += " And (c.Situacao=" + (int) Cheques.SituacaoCheque.Devolvido +
                                        " Or c.Situacao=" + (int) Cheques.SituacaoCheque.EmAberto + ")";
                 else if (situacao == "11") // Usado na tela de marcar cheque devolvido
                     filtroAdicional += " And c.Situacao=" + (int) Cheques.SituacaoCheque.Devolvido;
-                // A situaÁ„o 12 È utilizada na tela de marcar cheque advogado, neste caso devem ser buscados os cheques nas situaÁıes
+                // A situa√ß√£o 12 √© utilizada na tela de marcar cheque advogado, neste caso devem ser buscados os cheques nas situa√ß√µes
                 // Devolvido, Protestado ou ambos.
                 else if (situacao.Contains("12"))
                     filtroAdicional += " And c.Situacao in (" + (String.IsNullOrEmpty(situacao.Replace("12", ""))
@@ -249,7 +249,7 @@ namespace Glass.Data.DAL
                 else
                     filtroAdicional += " And c.Situacao in (" + situacao + ")";
 
-                criterio += "SituaÁ„o: ";
+                criterio += "Situa√ß√£o: ";
 
                 foreach (string s in situacao.Split(','))
                 {
@@ -282,8 +282,8 @@ namespace Glass.Data.DAL
                         case 11:
                             criterio += "Reapresentado, ";
                             break;
-                        // O critÈrio "Devolvido/Protestado" ser· adicionado somente se na tela nenhuma situaÁ„o for filtrada,
-                        // pois pode ser que somente uma destas situaÁıes seja filtrada.
+                        // O crit√©rio "Devolvido/Protestado" ser√° adicionado somente se na tela nenhuma situa√ß√£o for filtrada,
+                        // pois pode ser que somente uma destas situa√ß√µes seja filtrada.
                         case 12:
                             criterio += situacao.Split(',').Length > 1 ? "" : "Devolvido/Protestado, ";
                             break;
@@ -306,7 +306,7 @@ namespace Glass.Data.DAL
                 else if (reapresentado == false)
                     filtroAdicional += " And (c.reapresentado=false Or c.reapresentado is null)";
             }
-            else if (situacao == "11") // SituaÁ„o usada na tela de seleÁ„o de cheques e marcar cheques devolvidos
+            else if (situacao == "11") // Situa√ß√£o usada na tela de sele√ß√£o de cheques e marcar cheques devolvidos
             {
                 if (reapresentado == true)
                 {
@@ -327,7 +327,7 @@ namespace Glass.Data.DAL
                         break;
                     case 2:
                         filtroAdicional += " And Coalesce(c.advogado, False)=False";
-                        criterio += "Cheques n„o advogados    ";
+                        criterio += "Cheques n√£o advogados    ";
                         break;
                     default:
                         break;
@@ -343,7 +343,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(agencia))
             {
                 filtroAdicional += " And c.Agencia Like ?agencia";
-                criterio += "AgÍncia: " + agencia + "    ";
+                criterio += "Ag√™ncia: " + agencia + "    ";
             }
 
             if (!String.IsNullOrEmpty(conta))
@@ -363,9 +363,9 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And c.DataVenc<=?dataFim";
 
                 if (!String.IsNullOrEmpty(dataIni))
-                    criterio += " atÈ " + dataFim + "    ";
+                    criterio += " at√© " + dataFim + "    ";
                 else
-                    criterio += "Vencimento: AtÈ " + dataFim + "    ";
+                    criterio += "Vencimento: At√© " + dataFim + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataCadIni))
@@ -379,9 +379,9 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And c.DataCad<=?dataCadFim";
 
                 if (!String.IsNullOrEmpty(dataCadIni))
-                    criterio += " atÈ " + dataCadFim + "    ";
+                    criterio += " at√© " + dataCadFim + "    ";
                 else
-                    criterio += "Cadastrado atÈ " + dataCadFim + "    ";
+                    criterio += "Cadastrado at√© " + dataCadFim + "    ";
             }
 
             if (!String.IsNullOrEmpty(cpfCnpj))
@@ -450,7 +450,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(obs))
             {
                 filtroAdicional += " And c.Obs Like ?obs";
-                criterio += "ObservaÁ„o: " + obs + "    ";
+                criterio += "Observa√ß√£o: " + obs + "    ";
             }
 
             if (selecionar)
@@ -688,7 +688,7 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            // A situaÁ„o 12 significa que est„o sendo buscados cheques na situaÁ„o Devolvido/Protestado.
+            // A situa√ß√£o 12 significa que est√£o sendo buscados cheques na situa√ß√£o Devolvido/Protestado.
             situacao = "12" + (String.IsNullOrEmpty(situacao) ? "" : "," + situacao);
 
             string sql = SqlFilter(0, idPedido, idLiberarPedido, idAcerto, numeroNfe, tipo, numCheque, situacao, null,
@@ -710,7 +710,7 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            // A situaÁ„o 12 significa que est„o sendo buscados cheques na situaÁ„o Devolvido/Protestado.
+            // A situa√ß√£o 12 significa que est√£o sendo buscados cheques na situa√ß√£o Devolvido/Protestado.
             situacao = "12" + (String.IsNullOrEmpty(situacao) ? "" : "," + situacao);
 
             string sql = SqlFilter(0, idPedido, idLiberarPedido, idAcerto, numeroNfe, tipo, numCheque, situacao, null,
@@ -735,7 +735,7 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            // AlteraÁ„o requisitada pela Riber Vidros, n„o alterar
+            // Altera√ß√£o requisitada pela Riber Vidros, n√£o alterar
             sortExpression = ordenacao == 0 && String.IsNullOrEmpty(sortExpression) ? "dataVenc asc" : sortExpression;
 
             string sql = SqlFilter(0, idPedido, idLiberarPedido, idAcerto, numeroNfe, tipo, numCheque,
@@ -975,7 +975,7 @@ namespace Glass.Data.DAL
             if (situacao > 0)
             {
                 filtroAdicional += " And Situacao=" + situacao;
-                criterio = "SituaÁ„o: " + Instance.GetSituacaoCheque(situacao) + "    ";
+                criterio = "Situa√ß√£o: " + Instance.GetSituacaoCheque(situacao) + "    ";
             }
 
             if (!String.IsNullOrEmpty(titular))
@@ -987,7 +987,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(agencia))
             {
                 filtroAdicional += " And c.Agencia Like ?agencia";
-                criterio += "AgÍncia: " + agencia + "    ";
+                criterio += "Ag√™ncia: " + agencia + "    ";
             }
 
             if (!String.IsNullOrEmpty(conta))
@@ -1007,9 +1007,9 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And c.DataVenc<=?dataFim";
 
                 if (!String.IsNullOrEmpty(dataIni))
-                    criterio += " atÈ " + dataFim + "    ";
+                    criterio += " at√© " + dataFim + "    ";
                 else
-                    criterio += "Vencimento: AtÈ " + dataFim;
+                    criterio += "Vencimento: At√© " + dataFim;
             }
 
             if (chequesCaixaDiario)
@@ -1073,7 +1073,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca cheques prÛprios utilizados em pagamentos
+        #region Busca cheques pr√≥prios utilizados em pagamentos
 
         private string SqlChequesPagto(uint idContaBanco, int situacao, uint idFornec, string nomeFornec, string dataIni,
             string dataFim, float valorInicial,
@@ -1187,10 +1187,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca cheques de um pagamento especÌfico
+        #region Busca cheques de um pagamento espec√≠fico
 
         /// <summary>
-        /// Busca cheques de um pagamento especÌfico
+        /// Busca cheques de um pagamento espec√≠fico
         /// </summary>
         public IList<Cheques> GetByPagto(uint idPagto)
         {
@@ -1198,7 +1198,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca cheques de um pagamento especÌfico
+        /// Busca cheques de um pagamento espec√≠fico
         /// </summary>
         public IList<Cheques> GetByPagto(GDASession session, uint idPagto)
         {
@@ -1222,10 +1222,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca cheques de uma liberaÁ„o de pedidos
+        #region Busca cheques de uma libera√ß√£o de pedidos
 
         /// <summary>
-        /// Busca cheques de uma liberaÁ„o de pedidos
+        /// Busca cheques de uma libera√ß√£o de pedidos
         /// </summary>
         public IList<Cheques> GetByLiberacaoPedido(GDASession sessao, uint idLiberarPedido)
         {
@@ -1236,10 +1236,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca cheques de um depÛsito
+        #region Busca cheques de um dep√≥sito
 
         /// <summary>
-        /// Busca cheques de um depÛsito
+        /// Busca cheques de um dep√≥sito
         /// </summary>
         /// <param name="idDeposito"></param>
         /// <returns></returns>
@@ -1249,7 +1249,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca cheques de um depÛsito
+        /// Busca cheques de um dep√≥sito
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idDeposito"></param>
@@ -1264,7 +1264,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna os cheques devolvidos relacionado ‡ esta depÛsito
+        /// Retorna os cheques devolvidos relacionado √† esta dep√≥sito
         /// </summary>
         public IList<Cheques> GetByDepositoDev(uint idDepositoCanc)
         {
@@ -1274,7 +1274,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna valor dos cheques devolvidos associados ao depÛsito.
+        /// Retorna valor dos cheques devolvidos associados ao dep√≥sito.
         /// </summary>
         public decimal ObterValorChequesDevolvidosDeposito(GDASession session, uint idDepositoCanc)
         {
@@ -1384,10 +1384,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca cheques de uma antecipaÁ„o de fornecedor
+        #region Busca cheques de uma antecipa√ß√£o de fornecedor
 
         /// <summary>
-        /// Busca cheques de uma antecipaÁ„o de fornecedor
+        /// Busca cheques de uma antecipa√ß√£o de fornecedor
         /// </summary>
         public IList<Cheques> GetByAntecipFornec(uint idAntecipFornec)
         {
@@ -1395,7 +1395,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca cheques de uma antecipaÁ„o de fornecedor
+        /// Busca cheques de uma antecipa√ß√£o de fornecedor
         /// </summary>
         public IList<Cheques> GetByAntecipFornec(GDASession session, uint idAntecipFornec)
         {
@@ -1462,10 +1462,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca cheques de uma devoluÁ„o de pagamento
+        #region Busca cheques de uma devolu√ß√£o de pagamento
 
         /// <summary>
-        /// Busca os IDs dos cheques de uma devoluÁ„o de pagamento.
+        /// Busca os IDs dos cheques de uma devolu√ß√£o de pagamento.
         /// </summary>
         public string GetIdsByDevolucaoPagto(GDASession session, uint idDevolucaoPagto)
         {
@@ -1474,7 +1474,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca os cheques de uma devoluÁ„o de pagamento.
+        /// Busca os cheques de uma devolu√ß√£o de pagamento.
         /// </summary>
         /// <param name="idDevolucaoPagto"></param>
         /// <returns></returns>
@@ -1504,10 +1504,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca cheques de um crÈdito de fornecedor
+        #region Busca cheques de um cr√©dito de fornecedor
 
         /// <summary>
-        /// Busca cheques de um crÈdito de fornecedor
+        /// Busca cheques de um cr√©dito de fornecedor
         /// </summary>
         /// <param name="idCreditoFornecedor"></param>
         /// <returns></returns>
@@ -1517,7 +1517,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca cheques de um crÈdito de fornecedor
+        /// Busca cheques de um cr√©dito de fornecedor
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idCreditoFornecedor"></param>
@@ -1534,7 +1534,7 @@ namespace Glass.Data.DAL
         #region Exclui cheques em aberto e cancela os demais
 
         /// <summary>
-        /// Deleta todos os cheques abertos do pedido e cancela os cheques que n„o forem excluÌdos.
+        /// Deleta todos os cheques abertos do pedido e cancela os cheques que n√£o forem exclu√≠dos.
         /// </summary>
         /// <param name="idPedido"></param>
         public void DeleteByPedido(uint idPedido)
@@ -1543,20 +1543,20 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Deleta todos os cheques abertos do pedido e cancela os cheques que n„o forem excluÌdos.
+        /// Deleta todos os cheques abertos do pedido e cancela os cheques que n√£o forem exclu√≠dos.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idPedido"></param>
         public void DeleteByPedido(GDASession session, uint idPedido)
         {
-            // N„o apaga os cheques
+            // N√£o apaga os cheques
             //objPersistence.ExecuteCommand("Delete from cheques Where IdPedido=" + idPedido + " And situacao=" + (int)Cheques.SituacaoCheque.EmAberto);
             objPersistence.ExecuteCommand(session,
                 "update cheques set situacao=" + (int) Cheques.SituacaoCheque.Cancelado + " where idPedido=" + idPedido);
         }
 
         /// <summary>
-        /// Exclui todos os cheques abertos do sinal do pedido e cancela os cheques que n„o forem excluÌdos.
+        /// Exclui todos os cheques abertos do sinal do pedido e cancela os cheques que n√£o forem exclu√≠dos.
         /// </summary>
         /// <param name="idSinal"></param>
         public void DeleteBySinalPedido(uint idSinal)
@@ -1565,7 +1565,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Exclui todos os cheques abertos do sinal do pedido e cancela os cheques que n„o forem excluÌdos.
+        /// Exclui todos os cheques abertos do sinal do pedido e cancela os cheques que n√£o forem exclu√≠dos.
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idSinal"></param>
@@ -1580,7 +1580,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void DeleteByAcerto(GDASession sessao, uint idAcerto)
         {
-            // N„o apaga os cheques
+            // N√£o apaga os cheques
             //objPersistence.ExecuteCommand("Delete From cheques Where idAcerto=" + idAcerto + " And situacao=" + (int)Cheques.SituacaoCheque.EmAberto);
             objPersistence.ExecuteCommand(sessao,
                 "update cheques set situacao=" + (int) Cheques.SituacaoCheque.Cancelado + " where idAcerto=" + idAcerto);
@@ -1598,11 +1598,11 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Exclui todos os cheques abertos da liberaÁ„o passada e cancela os cheques que n„o forem excluÌdos.
+        /// Exclui todos os cheques abertos da libera√ß√£o passada e cancela os cheques que n√£o forem exclu√≠dos.
         /// </summary>
         public void DeleteByLiberarPedido(GDASession sessao, uint idLiberarPedido)
         {
-            // N„o apaga os cheques
+            // N√£o apaga os cheques
             //objPersistence.ExecuteCommand("Delete From cheques Where idLiberarPedido=" + idLiberarPedido + " And situacao=" + (int)Cheques.SituacaoCheque.EmAberto);
             objPersistence.ExecuteCommand(sessao,
                 "update cheques set situacao=" + (int) Cheques.SituacaoCheque.Cancelado + " where idLiberarPedido=" +
@@ -1610,7 +1610,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Exclui todos os cheques abertos da obra passada e cancela os cheques que n„o forem excluÌdos.
+        /// Exclui todos os cheques abertos da obra passada e cancela os cheques que n√£o forem exclu√≠dos.
         /// </summary>
         /// <param name="idObra"></param>
         public void DeleteByObra(uint idObra)
@@ -1619,20 +1619,20 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Exclui todos os cheques abertos da obra passada e cancela os cheques que n„o forem excluÌdos.
+        /// Exclui todos os cheques abertos da obra passada e cancela os cheques que n√£o forem exclu√≠dos.
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idObra"></param>
         public void DeleteByObra(GDASession sessao, uint idObra)
         {
-            // N„o apaga os cheques
+            // N√£o apaga os cheques
             //objPersistence.ExecuteCommand("Delete From cheques Where idObra=" + idObra + " And situacao=" + (int)Cheques.SituacaoCheque.EmAberto);
             objPersistence.ExecuteCommand(sessao,
                 "update cheques set situacao=" + (int) Cheques.SituacaoCheque.Cancelado + " where idObra=" + idObra);
         }
 
         /// <summary>
-        /// Exclui todos os cheques abertos do acerto de cheque passado e cancela os cheques que n„o forem excluÌdos.
+        /// Exclui todos os cheques abertos do acerto de cheque passado e cancela os cheques que n√£o forem exclu√≠dos.
         /// </summary>
         /// <param name="idAcertoCheque"></param>
         public void DeleteByAcertoCheque(uint idAcertoCheque)
@@ -1641,13 +1641,13 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Exclui todos os cheques abertos do acerto de cheque passado e cancela os cheques que n„o forem excluÌdos.
+        /// Exclui todos os cheques abertos do acerto de cheque passado e cancela os cheques que n√£o forem exclu√≠dos.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idAcertoCheque"></param>
         public void DeleteByAcertoCheque(GDASession session, uint idAcertoCheque)
         {
-            // N„o apaga os cheques
+            // N√£o apaga os cheques
             //objPersistence.ExecuteCommand("Delete From cheques Where idAcertoCheque=" + idAcertoCheque + " And situacao=" + (int)Cheques.SituacaoCheque.EmAberto);
             objPersistence.ExecuteCommand(session,
                 "update cheques set situacao=" + (int) Cheques.SituacaoCheque.Cancelado + " where idAcertoCheque=" +
@@ -1655,7 +1655,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Exclui todos os cheques abertos da troca/devoluÁ„o passada e cancela os cheques que n„o forem excluÌdos.
+        /// Exclui todos os cheques abertos da troca/devolu√ß√£o passada e cancela os cheques que n√£o forem exclu√≠dos.
         /// </summary>
         /// <param name="idTrocaDevolucao"></param>
         public void DeleteByTrocaDevolucao(uint idTrocaDevolucao)
@@ -1664,13 +1664,13 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Exclui todos os cheques abertos da troca/devoluÁ„o passada e cancela os cheques que n„o forem excluÌdos.
+        /// Exclui todos os cheques abertos da troca/devolu√ß√£o passada e cancela os cheques que n√£o forem exclu√≠dos.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idTrocaDevolucao"></param>
         public void DeleteByTrocaDevolucao(GDASession session, uint idTrocaDevolucao)
         {
-            // N„o apaga os cheques
+            // N√£o apaga os cheques
             //objPersistence.ExecuteCommand("Delete From cheques Where idTrocaDevolucao=" + idTrocaDevolucao + " And situacao=" + (int)Cheques.SituacaoCheque.EmAberto);
             objPersistence.ExecuteCommand(session,
                 "update cheques set situacao=" + (int) Cheques.SituacaoCheque.Cancelado + " where idTrocaDevolucao=" +
@@ -1679,11 +1679,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region DevoluÁ„o de pagamento
+        #region Devolu√ß√£o de pagamento
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Cancela os cheques usados na devoluÁ„o de pagamento.
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Cancela os cheques usados na devolu√ß√£o de pagamento.
         /// </summary>
         /// <param name="idDevolucaoPagto"></param>
         /// <param name="idsCheques"></param>
@@ -1693,7 +1693,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cancela os cheques usados na devoluÁ„o de pagamento.
+        /// Cancela os cheques usados na devolu√ß√£o de pagamento.
         /// </summary>
         public void CancelaForDevolucaoPagto(GDASession sessao, uint idDevolucaoPagto, string idsCheques)
         {
@@ -1708,7 +1708,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Reabre todos os cheques usados na devoluÁ„o de pagamento.
+        /// Reabre todos os cheques usados na devolu√ß√£o de pagamento.
         /// </summary>
         /// <param name="idDevolucaoPagto"></param>
         public void ReabreByDevolucaoPagto(uint idDevolucaoPagto)
@@ -1717,7 +1717,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Reabre todos os cheques usados na devoluÁ„o de pagamento.
+        /// Reabre todos os cheques usados na devolu√ß√£o de pagamento.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idDevolucaoPagto"></param>
@@ -1737,7 +1737,7 @@ namespace Glass.Data.DAL
                 UpdateBase(session, cheque, false);
             }
 
-            // Cancela os cheques prÛprios pagos ao cliente
+            // Cancela os cheques pr√≥prios pagos ao cliente
             var idsChequeProprio =
                 ExecuteMultipleScalar<int>(session,
                     string.Format("SELECT IdCheque FROM CHEQUES WHERE Tipo=1 AND IdDevolucaoPagto={0}", idDevolucaoPagto));
@@ -1796,10 +1796,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna o total em cheques cadastrados para o depÛsito passado.
+        #region Retorna o total em cheques cadastrados para o dep√≥sito passado.
 
         /// <summary>
-        /// Retorna o total em cheques cadastrados para o depÛsito passado.
+        /// Retorna o total em cheques cadastrados para o dep√≥sito passado.
         /// </summary>
         public decimal GetTotalInDeposito(uint idDeposito)
         {
@@ -1807,7 +1807,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o total em cheques cadastrados para o depÛsito passado.
+        /// Retorna o total em cheques cadastrados para o dep√≥sito passado.
         /// </summary>
         public decimal GetTotalInDeposito(GDASession sessao, uint idDeposito)
         {
@@ -1853,10 +1853,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna o total em cheques cadastrados para a liberaÁ„o de pedidos passada
+        #region Retorna o total em cheques cadastrados para a libera√ß√£o de pedidos passada
 
         /// <summary>
-        /// Retorna o total em cheques cadastrados para a liberaÁ„o de pedidos passada.
+        /// Retorna o total em cheques cadastrados para a libera√ß√£o de pedidos passada.
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -1879,7 +1879,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public decimal GetTotalTercVenc(uint idLoja)
         {
-            // N„o deve considerar os cheques devolvidos
+            // N√£o deve considerar os cheques devolvidos
             string sql =
                 "Select Coalesce(Sum(Valor), 0) From cheques Where tipo=2 and datavenc<=now() and situacao in (" +
                 (int) Cheques.SituacaoCheque.EmAberto + ")";
@@ -1949,11 +1949,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna o total em cheques prÛprios em aberto
+        #region Retorna o total em cheques pr√≥prios em aberto
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Retorna o total em cheques prÛprios em aberto/devolvidos.
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Retorna o total em cheques pr√≥prios em aberto/devolvidos.
         /// </summary>
         /// <returns></returns>
         public decimal GetTotalProp(uint idContaBanco)
@@ -1962,7 +1962,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o total em cheques prÛprios em aberto/devolvidos.
+        /// Retorna o total em cheques pr√≥prios em aberto/devolvidos.
         /// </summary>
         /// <returns></returns>
         public decimal GetTotalProp(GDASession sessao, uint idContaBanco)
@@ -1971,8 +1971,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Retorna o total em cheques prÛprios em aberto ou devolvidos.
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Retorna o total em cheques pr√≥prios em aberto ou devolvidos.
         /// </summary>
         /// <returns></returns>
         public decimal GetTotalProp(uint idContaBanco, bool emAberto, bool devolvidos)
@@ -1981,7 +1981,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o total em cheques prÛprios em aberto ou devolvidos.
+        /// Retorna o total em cheques pr√≥prios em aberto ou devolvidos.
         /// </summary>
         /// <returns></returns>
         public decimal GetTotalProp(GDASession sessao, uint idContaBanco, bool emAberto, bool devolvidos)
@@ -2075,8 +2075,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Verifica se o cheque com o n˙mero e dÌgito j· existe para um cliente especÌfico
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Verifica se o cheque com o n√∫mero e d√≠gito j√° existe para um cliente espec√≠fico
         /// </summary>
         public bool ExisteChequeDigito(uint idCliente, uint idCheque, int numero, string digitoNum)
         {
@@ -2084,7 +2084,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o cheque com o n˙mero e dÌgito j· existe para um cliente especÌfico
+        /// Verifica se o cheque com o n√∫mero e d√≠gito j√° existe para um cliente espec√≠fico
         /// </summary>
         public bool ExisteChequeDigito(GDASession sessao, uint idCliente, uint idCheque, int numero, string digitoNum)
         {
@@ -2093,7 +2093,7 @@ namespace Glass.Data.DAL
                          " and situacao Not In (" + (int) Cheques.SituacaoCheque.Cancelado + "," +
                          (int) Cheques.SituacaoCheque.Trocado + ")";
 
-            // Usado nos mÈtodos de atualizaÁ„o, para n„o verificar o prÛprio cheque sendo atualizado
+            // Usado nos m√©todos de atualiza√ß√£o, para n√£o verificar o pr√≥prio cheque sendo atualizado
             if (idCheque > 0)
                 sql += " And idCheque<>" + idCheque;
 
@@ -2105,7 +2105,7 @@ namespace Glass.Data.DAL
         #region Busca cheques pelos ids passados
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// Retorna os cheques que possuir os ids passados, ordenados decrescentemente pelo valor.
         /// </summary>
         /// <param name="idsCheques">IDs dos cheques separados por ",". Ex.: 1,2,3.</param>
@@ -2140,7 +2140,7 @@ namespace Glass.Data.DAL
 
             string pks = lstCheques.Aggregate(String.Empty, (current, c) => current + (c.IdCheque + ","));
 
-            // N„o apaga os cheques
+            // N√£o apaga os cheques
             //objPersistence.ExecuteCommand("Delete from cheques where idCheque In (" + pks.TrimEnd(',') + ")"  + " And situacao=" + (int)Cheques.SituacaoCheque.EmAberto);
 
             objPersistence.ExecuteCommand("update cheques set situacao=" + (int) Cheques.SituacaoCheque.Cancelado +
@@ -2150,10 +2150,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Altera a situaÁ„o do cheque
+        #region Altera a situa√ß√£o do cheque
 
         /// <summary>
-        /// Atualiza a situaÁ„o do cheque
+        /// Atualiza a situa√ß√£o do cheque
         /// </summary>
         public void UpdateSituacao(GDASession sessao, uint idCheque, Cheques.SituacaoCheque situacao)
         {
@@ -2168,7 +2168,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza a situaÁ„o dos cheques passados
+        /// Atualiza a situa√ß√£o dos cheques passados
         /// </summary>
         public void UpdateSituacao(GDASession sessao, string idsCheque, Cheques.SituacaoCheque situacao)
         {
@@ -2183,7 +2183,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Cancela cheques utilizados em acertos de cheque prÛprio devolvido
+        #region Cancela cheques utilizados em acertos de cheque pr√≥prio devolvido
 
         /// <summary>
         /// Cancela cheques utilizados em pagto
@@ -2193,14 +2193,14 @@ namespace Glass.Data.DAL
             var chequesProprio = objPersistence.LoadData(session,
                 string.Format("SELECT * FROM cheques WHERE Tipo=1 AND IdAcertoCheque={0}", idAcertoCheque)).ToList();
 
-            // Usado para evitar bloqueio do Ìndice no caixa geral.
+            // Usado para evitar bloqueio do √≠ndice no caixa geral.
             var contadorDataUnica = 0;
 
-            // Estorna cheques prÛprios utilizados no pagamento
+            // Estorna cheques pr√≥prios utilizados no pagamento
             foreach (var c in chequesProprio)
             {
-                // Cancela cheque no caixa geral (Mesmo se tiver em aberto, gerar mov de saÌda no cx geral)
-                // a forma de pagto deve ser 0 (zero), para que n„o atrapalhe o c·lculo feito no caixa geral de cheque de terceiros
+                // Cancela cheque no caixa geral (Mesmo se tiver em aberto, gerar mov de sa√≠da no cx geral)
+                // a forma de pagto deve ser 0 (zero), para que n√£o atrapalhe o c√°lculo feito no caixa geral de cheque de terceiros
                 var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(session, 0, idAcertoCheque, null, (uint)c.IdFornecedor,
                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoPagtoChequeProprio), 1,
                     c.Valor, 0, null, null, 0, false, null);
@@ -2212,7 +2212,7 @@ namespace Glass.Data.DAL
 
                 if (c.Situacao == (int)Cheques.SituacaoCheque.Compensado)
                 {
-                    // Pega movimentaÁ„o referente ao cheque.
+                    // Pega movimenta√ß√£o referente ao cheque.
                     var obj =
                         objPersistence.ExecuteScalar(session,
                             string.Format("SELECT IdMovBanco FROM mov_banco WHERE IdCheque={0} ORDER BY IdMovBanco ASC LIMIT 1", c.IdCheque));
@@ -2221,7 +2221,7 @@ namespace Glass.Data.DAL
 
                     try
                     {
-                        // Verifica a conciliaÁ„o banc·ria
+                        // Verifica a concilia√ß√£o banc√°ria
                         ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(session, c.IdContaBanco.GetValueOrDefault(),
                             MovBancoDAO.Instance.ObtemDataMov(session, idMovBanco));
                     }
@@ -2230,14 +2230,14 @@ namespace Glass.Data.DAL
                         throw new Exception(string.Format("Falha ao marcar cheque como Cancelado. {0}", ex.Message));
                     }
 
-                    // Antes de apagar o registro da movimentaÁ„o o salvo deve ser corrigido.
+                    // Antes de apagar o registro da movimenta√ß√£o o salvo deve ser corrigido.
                     objPersistence.ExecuteCommand(session,
                         string.Format("UPDATE mov_banco SET ValorMov=0 WHERE IdCheque={0} AND TipoMov=2", c.IdCheque));
 
                     // Corrige saldo
                     MovBancoDAO.Instance.CorrigeSaldo(session, idMovBanco, idMovBanco);
 
-                    // Exclui movimentaÁıes que este cheque gerou
+                    // Exclui movimenta√ß√µes que este cheque gerou
                     objPersistence.ExecuteCommand(session,
                         string.Format("DELETE FROM mov_banco WHERE IdCheque={0} AND TipoMov=2", c.IdCheque));
                 }
@@ -2260,21 +2260,21 @@ namespace Glass.Data.DAL
         {
             List<uint> lstCaixa = new List<uint>(), lstMov = new List<uint>();
 
-            // Exclui cheques prÛprios utilizados neste pagamento
+            // Exclui cheques pr√≥prios utilizados neste pagamento
             if (tipo == 1)
             {
                 var lstChequeProprio = objPersistence.LoadData(session, "Select * From cheques Where tipo=1" +
                     " And idCheque In (Select idCheque from pagto_cheque Where idPagto=" +
                     idPagto + ")").ToList();
 
-                // Usado para evitar bloqueio do Ìndice no caixa geral.
+                // Usado para evitar bloqueio do √≠ndice no caixa geral.
                 var contadorDataUnica = 0;
 
-                // Estorna cheques prÛprios utilizados no pagamento
+                // Estorna cheques pr√≥prios utilizados no pagamento
                 foreach (Cheques c in lstChequeProprio)
                 {
-                    // Cancela cheque no caixa geral (Mesmo se tiver em aberto, gerar mov de saÌda no cx geral)
-                    // a forma de pagto deve ser 0 (zero), para que n„o atrapalhe o c·lculo feito no caixa geral de cheque de terceiros
+                    // Cancela cheque no caixa geral (Mesmo se tiver em aberto, gerar mov de sa√≠da no cx geral)
+                    // a forma de pagto deve ser 0 (zero), para que n√£o atrapalhe o c√°lculo feito no caixa geral de cheque de terceiros
                     var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(session, idPagto, null, (uint)c.IdFornecedor,
                         UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoPagtoChequeProprio), 1,
                         c.Valor - c.JurosPagto - c.MultaPagto, c.JurosPagto + c.MultaPagto, null, null, 0, false, null);
@@ -2286,7 +2286,7 @@ namespace Glass.Data.DAL
 
                     if (c.Situacao == (int)Cheques.SituacaoCheque.Compensado)
                     {
-                        // Pega movimentaÁ„o referente ao cheque.
+                        // Pega movimenta√ß√£o referente ao cheque.
                         var obj =
                             objPersistence.ExecuteScalar(session, "Select idMovBanco From mov_banco Where idCheque=" + c.IdCheque +
                                 " Order By idMovBanco Asc Limit 1");
@@ -2296,7 +2296,7 @@ namespace Glass.Data.DAL
 
                         try
                         {
-                            // Verifica a conciliaÁ„o banc·ria
+                            // Verifica a concilia√ß√£o banc√°ria
                             ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(session, c.IdContaBanco.GetValueOrDefault(),
                                 MovBancoDAO.Instance.ObtemDataMov(session, idMovBanco));
                         }
@@ -2305,14 +2305,14 @@ namespace Glass.Data.DAL
                             throw new Exception("Falha ao marcar cheque como Cancelado. " + ex.Message);
                         }
 
-                        // Antes de apagar o registro da movimentaÁ„o o salvo deve ser corrigido.
+                        // Antes de apagar o registro da movimenta√ß√£o o salvo deve ser corrigido.
                         objPersistence.ExecuteCommand(session, "Update mov_banco Set valorMov=0 Where idCheque=" + c.IdCheque +
                             " And tipoMov=2");
 
                         // Corrige saldo
                         MovBancoDAO.Instance.CorrigeSaldo(session, idMovBanco, idMovBanco);
 
-                        // Exclui movimentaÁıes que este cheque gerou
+                        // Exclui movimenta√ß√µes que este cheque gerou
                         objPersistence.ExecuteCommand(session, "Delete From mov_banco Where idCheque=" + c.IdCheque +
                             " And tipoMov=2");
                     }
@@ -2325,7 +2325,7 @@ namespace Glass.Data.DAL
                     " And idCheque In (Select idCheque from pagto_cheque Where idPagto=" +
                     idPagto + ")");
 
-                // N„o apaga os cheques
+                // N√£o apaga os cheques
                 //objPersistence.ExecuteCommand("Delete From cheques Where tipo=" + tipo + " and situacao=" + (int)Cheques.SituacaoCheque.EmAberto +
                 //    " And idCheque In (Select idCheque from pagto_cheque Where idPagto=" + idPagto + ")");
             }
@@ -2338,7 +2338,7 @@ namespace Glass.Data.DAL
                     idPagto + ") " +
                     "And Situacao=" + (int)Cheques.SituacaoCheque.Compensado);
 
-                // Desassocia os cheques de terceiro associados ‡ este pagto
+                // Desassocia os cheques de terceiro associados √† este pagto
                 objPersistence.ExecuteCommand(session, @"delete from pagto_cheque Where idPagto=" + idPagto +
                     " And idCheque in (select idCheque from cheques where tipo=" + tipo + ")");
             }
@@ -2348,25 +2348,25 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Cancela cheques utilizados em antecipaÁ„o de fornecedor
+        #region Cancela cheques utilizados em antecipa√ß√£o de fornecedor
 
         /// <summary>
-        /// Cancela cheques utilizados em antecipaÁ„o de fornecedor
+        /// Cancela cheques utilizados em antecipa√ß√£o de fornecedor
         /// </summary>
         public void CancelaChequesAntecipFornec(GDASession session, uint idAntecipFornec, int tipo, Cheques.SituacaoCheque situacao)
         {
-            // Exclui cheques prÛprios utilizados nesta antecipaÁ„o de fornecedor
+            // Exclui cheques pr√≥prios utilizados nesta antecipa√ß√£o de fornecedor
             if (tipo == 1)
             {
                 List<Cheques> lstChequeProprio = objPersistence.LoadData(session, "Select * From cheques Where tipo=1" +
                     " And idCheque In (Select idCheque from pagto_cheque Where idAntecipFornec=" +
                     idAntecipFornec + ")").ToList();
 
-                // Estorna cheques prÛprios utilizados na antecipaÁ„o de fornecedor
+                // Estorna cheques pr√≥prios utilizados na antecipa√ß√£o de fornecedor
                 foreach (Cheques c in lstChequeProprio)
                 {
-                    // Cancela cheque no caixa geral (Mesmo se tiver em aberto, gerar mov de saÌda no cx geral)
-                    // a forma de pagto deve ser 0 (zero), para que n„o atrapalhe o c·lculo feito no caixa geral de cheque de terceiros
+                    // Cancela cheque no caixa geral (Mesmo se tiver em aberto, gerar mov de sa√≠da no cx geral)
+                    // a forma de pagto deve ser 0 (zero), para que n√£o atrapalhe o c√°lculo feito no caixa geral de cheque de terceiros
                     CaixaGeralDAO.Instance.MovCxAntecipFornec(session, idAntecipFornec, (uint) c.IdFornecedor,
                         UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoPagtoAntecipFornecChequePropio),
                         1,
@@ -2374,7 +2374,7 @@ namespace Glass.Data.DAL
 
                     if (c.Situacao == (int) Cheques.SituacaoCheque.Compensado)
                     {
-                        // Pega a primeira movimentaÁ„o da conta banc·ria que esta antecipaÁ„o foi feita apenas para alterar o saldo
+                        // Pega a primeira movimenta√ß√£o da conta banc√°ria que esta antecipa√ß√£o foi feita apenas para alterar o saldo
                         object obj =
                             objPersistence.ExecuteScalar(session, "Select idMovBanco from mov_banco Where idContaBanco=" +
                                                          c.IdContaBanco + " order by idMovBanco asc limit 1");
@@ -2382,7 +2382,7 @@ namespace Glass.Data.DAL
                             ? Glass.Conversoes.StrParaUint(obj.ToString())
                             : 0;
 
-                        // Verifica a conciliaÁ„o banc·ria
+                        // Verifica a concilia√ß√£o banc√°ria
                         ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(session, idMovBanco);
 
                         MovBanco movAnterior = MovBancoDAO.Instance.ObtemMovAnterior(session, idMovBanco);
@@ -2392,7 +2392,7 @@ namespace Glass.Data.DAL
                                                       " And tipoMov=2");
                         if (movAnterior != null) MovBancoDAO.Instance.CorrigeSaldo(session, movAnterior.IdMovBanco, idMovBanco);
 
-                        // Exclui movimentaÁıes que este cheque gerou
+                        // Exclui movimenta√ß√µes que este cheque gerou
                         objPersistence.ExecuteCommand(session, "Delete From mov_banco Where idCheque=" + c.IdCheque +
                                                       " And tipoMov=2");
                     }
@@ -2405,7 +2405,7 @@ namespace Glass.Data.DAL
                                               " And idCheque In (Select idCheque from pagto_cheque Where idAntecipFornec=" +
                                               idAntecipFornec + ")");
 
-                // N„o apaga os cheques
+                // N√£o apaga os cheques
                 //objPersistence.ExecuteCommand("Delete From cheques Where tipo=" + tipo + " and situacao=" + (int)Cheques.SituacaoCheque.EmAberto +
                 //    " And idCheque In (Select idCheque from pagto_cheque Where idPagto=" + idPagto + ")");
             }
@@ -2418,7 +2418,7 @@ namespace Glass.Data.DAL
                                               idAntecipFornec + ") " +
                                               "And Situacao=" + (int) Cheques.SituacaoCheque.Compensado);
 
-                // Desassocia os cheques de terceiro associados ‡ este pagto
+                // Desassocia os cheques de terceiro associados √† este pagto
                 objPersistence.ExecuteCommand(session, @"delete from pagto_cheque Where idAntecipFornec=" + idAntecipFornec +
                                               " And idCheque in (select idCheque from cheques where tipo=" + tipo + ")");
             }
@@ -2433,25 +2433,25 @@ namespace Glass.Data.DAL
         /// </summary>
         public void CancelaChequesSinalCompra(GDASession session, uint idSinalCompra, int tipo, Cheques.SituacaoCheque situacao)
         {
-            // Exclui cheques prÛprios utilizados
+            // Exclui cheques pr√≥prios utilizados
             if (tipo == 1)
             {
                 List<Cheques> lstChequeProprio = objPersistence.LoadData(session, "Select * From cheques Where tipo=1" +
                                                                          " And idCheque In (Select idCheque from pagto_cheque Where idSinalCompra=" +
                                                                          idSinalCompra + ")").ToList();
 
-                // Estorna cheques prÛprios utilizados no pagamento
+                // Estorna cheques pr√≥prios utilizados no pagamento
                 foreach (Cheques c in lstChequeProprio)
                 {
-                    // Cancela cheque no caixa geral (Mesmo se tiver em aberto, gerar mov de saÌda no cx geral)
-                    // a forma de pagto deve ser 0 (zero), para que n„o atrapalhe o c·lculo feito no caixa geral de cheque de terceiros
+                    // Cancela cheque no caixa geral (Mesmo se tiver em aberto, gerar mov de sa√≠da no cx geral)
+                    // a forma de pagto deve ser 0 (zero), para que n√£o atrapalhe o c√°lculo feito no caixa geral de cheque de terceiros
                     CaixaGeralDAO.Instance.MovCxSinalCompra(session, idSinalCompra, null, (uint) c.IdFornecedor,
                         UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoPagtoChequeProprio), 1,
                         c.Valor, null, 0, false, null);
 
                     if (c.Situacao == (int) Cheques.SituacaoCheque.Compensado)
                     {
-                        // Pega a primeira movimentaÁ„o da conta banc·ria que esta antecipaÁ„o foi feita apenas para alterar o saldo
+                        // Pega a primeira movimenta√ß√£o da conta banc√°ria que esta antecipa√ß√£o foi feita apenas para alterar o saldo
                         object obj =
                             objPersistence.ExecuteScalar(session, "Select idMovBanco from mov_banco Where idContaBanco=" +
                                                          c.IdContaBanco + " order by idMovBanco asc limit 1");
@@ -2459,7 +2459,7 @@ namespace Glass.Data.DAL
                             ? Glass.Conversoes.StrParaUint(obj.ToString())
                             : 0;
 
-                        // Verifica a conciliaÁ„o banc·ria
+                        // Verifica a concilia√ß√£o banc√°ria
                         ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(session, idMovBanco);
 
                         MovBanco movAnterior = MovBancoDAO.Instance.ObtemMovAnterior(session, idMovBanco);
@@ -2469,7 +2469,7 @@ namespace Glass.Data.DAL
                                                       " And tipoMov=2");
                         if (movAnterior != null) MovBancoDAO.Instance.CorrigeSaldo(session, movAnterior.IdMovBanco, idMovBanco);
 
-                        // Exclui movimentaÁıes que este cheque gerou
+                        // Exclui movimenta√ß√µes que este cheque gerou
                         objPersistence.ExecuteCommand(session, "Delete From mov_banco Where idCheque=" + c.IdCheque +
                                                       " And tipoMov=2");
                     }
@@ -2482,7 +2482,7 @@ namespace Glass.Data.DAL
                                               " And idCheque In (Select idCheque from pagto_cheque Where idSinalCompra=" +
                                               idSinalCompra + ")");
 
-                // N„o apaga os cheques
+                // N√£o apaga os cheques
                 //objPersistence.ExecuteCommand("Delete From cheques Where tipo=" + tipo + " and situacao=" + (int)Cheques.SituacaoCheque.EmAberto +
                 //    " And idCheque In (Select idCheque from pagto_cheque Where idPagto=" + idPagto + ")");
             }
@@ -2495,7 +2495,7 @@ namespace Glass.Data.DAL
                                               idSinalCompra + ") " +
                                               "And Situacao=" + (int) Cheques.SituacaoCheque.Compensado);
 
-                // Desassocia os cheques de terceiro associados ‡ este pagto
+                // Desassocia os cheques de terceiro associados √† este pagto
                 objPersistence.ExecuteCommand(session, @"delete from pagto_cheque Where idSinalCompra=" + idSinalCompra +
                                               " And idCheque in (select idCheque from cheques where tipo=" + tipo + ")");
             }
@@ -2506,7 +2506,7 @@ namespace Glass.Data.DAL
         #region Quitar Cheque Devolvido
 
         /// <summary>
-        /// Efetua a quitaÁ„o do cheque devolvido.
+        /// Efetua a quita√ß√£o do cheque devolvido.
         /// </summary>
         public int QuitarChequeDevolvido(bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento, decimal desconto, bool gerarCredito,
             int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsCheque, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado,
@@ -2542,7 +2542,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Efetua a quitaÁ„o do cheque devolvido.
+        /// Efetua a quita√ß√£o do cheque devolvido.
         /// </summary>
         public int CriarPreQuitacaoChequeDevolvidoComTransacao(bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> chequesRecebimento, DateTime dataRecebimento, decimal desconto, bool gerarCredito,
             int idCliente, IEnumerable<int> idsCheque, IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco,
@@ -2582,7 +2582,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cria a prÈ quitaÁ„o do cheque devolvido.
+        /// Cria a pr√© quita√ß√£o do cheque devolvido.
         /// </summary>
         public int CriarPreQuitacaoChequeDevolvido(GDASession session, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento,
             decimal desconto, bool gerarCredito, int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsCheque, IEnumerable<int> idsContaBanco,
@@ -2590,7 +2590,7 @@ namespace Glass.Data.DAL
             IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard, string observacao, IEnumerable<int> quantidadesParcelaCartao, bool recebimentoParcial,
             IEnumerable<decimal> valoresRecebimento)
         {
-            #region DeclaraÁ„o de vari·veis
+            #region Declara√ß√£o de vari√°veis
 
             var usuarioLogado = UserInfo.GetUserInfo;
             var cheques = GetByPks(session, string.Join(",", idsCheque));
@@ -2602,20 +2602,20 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region C·lculo dos totais do recebimento
+            #region C√°lculo dos totais do recebimento
 
             totalPago = valoresRecebimento.Sum(f => f) + (creditoUtilizado > 0 ? creditoUtilizado : 0);
             valorAReceber = cheques.Sum(f => f.ValorRestante) + juros;
             totalRestante = valorAReceber - juros;
             // Desconsidera o desconto.
             valorAReceber -= desconto;
-            // Ignora os juros dos cartıes ao calcular o valor pago/a pagar.
+            // Ignora os juros dos cart√µes ao calcular o valor pago/a pagar.
             totalPago -= UtilsFinanceiro.GetJurosCartoes(session, usuarioLogado.IdLoja, valoresRecebimento.ToArray(), idsFormaPagamento.Select(f => (uint)f).ToArray(),
                 idsTipoCartao.Select(f => (uint)f).ToArray(), quantidadesParcelaCartao.Select(f => (uint)f).ToArray());
 
             #endregion
 
-            #region CriaÁ„o do acerto de cheque
+            #region Cria√ß√£o do acerto de cheque
 
             var acertoCheque = new AcertoCheque();
             acertoCheque.IdCliente = (uint)idCliente;
@@ -2637,28 +2637,77 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region ValidaÁıes da quitaÁ„o dos cheques
+            var descontoTotalRateado = 0M;
+            var jurosRateado = (decimal)Math.Round(acertoCheque.Juros / cheques.Length, 2);
+            decimal valorAcumulado = acertoCheque.TotalPago.GetValueOrDefault() - (decimal)acertoCheque.Juros;
+            var chequesValidar = new Dictionary<Cheques, bool>();
+            decimal valorRestanteConsiderar = 0;
+            // Rateia o desconto nos cheques, rateia o valor de juros e salva o valor recebido de cada cheque.
+            foreach (var cheque in cheques)
+            {
+                cheque.DescontoReceb += Math.Round(cheque.ValorRestante / totalRestante * acertoCheque.Desconto, 2);
+                descontoTotalRateado += cheque.DescontoReceb;
+                cheque.JurosReceb += jurosRateado;
 
-            ValidarQuitacaoChequeDevolvido(session, acertoCheque, idsCartaoNaoIdentificado, idsCheque, idsContaBanco, idsFormaPagamento, valoresRecebimento);
+                valorRestanteConsiderar = cheque.ValorRestante > jurosRateado
+                    ? cheque.ValorRestante - jurosRateado :
+                    cheque.ValorRestante;
+
+                var valorReceber = valorAcumulado > valorRestanteConsiderar
+                    ? valorRestanteConsiderar
+                    : valorAcumulado;
+
+                cheque.ValorReceb += valorReceber + jurosRateado;
+                valorAcumulado -= valorReceber;
+
+                if (cheque.ValorReceb < cheque.JurosReceb - cheque.DescontoReceb)
+                {
+                    chequesValidar.Add(cheque, false);
+                }
+                else
+                {
+                    chequesValidar.Add(cheque, true);
+                }
+            }
+
+            if (acertoCheque.Desconto - descontoTotalRateado != 0)
+            {
+                cheques[0].DescontoReceb += acertoCheque.Desconto - descontoTotalRateado;
+            }
+
+            #region Valida√ß√µes da quita√ß√£o dos cheques
+
+            ValidarQuitacaoChequeDevolvido(session, acertoCheque, idsCartaoNaoIdentificado, chequesValidar, idsContaBanco, idsFormaPagamento, valoresRecebimento);
 
             #endregion
 
-            #region InserÁ„o do acerto de cheque
+            #region Inser√ß√£o do acerto de cheque
 
             acertoCheque.Situacao = (int)AcertoCheque.SituacaoEnum.Processando;
             acertoCheque.IdAcertoCheque = AcertoChequeDAO.Instance.Insert(session, acertoCheque);
 
             #endregion
 
-            #region Cadastra os cheques na tabela do acerto
+            #region Cadastra os itens de acerto do cheque e atualiza os cheques
 
             foreach (var cheque in cheques)
             {
                 var itemAcertoCheque = new ItemAcertoCheque();
                 itemAcertoCheque.IdAcertoCheque = acertoCheque.IdAcertoCheque;
                 itemAcertoCheque.IdCheque = cheque.IdCheque;
-
                 ItemAcertoChequeDAO.Instance.Insert(session, itemAcertoCheque);
+
+                var parametros = new List<GDAParameter>
+                {
+                    new GDAParameter("?valorReceb", cheque.ValorReceb),
+                    new GDAParameter("?jurosReceb", cheque.JurosReceb),
+                    new GDAParameter("?descontoReceb", cheque.DescontoReceb),
+                };
+
+                objPersistence.ExecuteCommand(
+                    session,
+                    $"UPDATE cheques SET ValorReceb = ?valorReceb, JurosReceb = ?jurosReceb, DescontoReceb = ?descontoReceb WHERE IdCheque = {cheque.IdCheque};",
+                    parametros.ToArray());
             }
 
             #endregion
@@ -2732,56 +2781,65 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Valida a prÈ quitaÁ„o do cheque devolvido.
+        /// Valida a pr√© quita√ß√£o do cheque devolvido.
         /// </summary>
-        public void ValidarQuitacaoChequeDevolvido(GDASession session, AcertoCheque acertoCheque, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsCheque, IEnumerable<int> idsContaBanco,
-            IEnumerable<int> idsFormaPagamento, IEnumerable<decimal> valoresRecebimento)
+        public void ValidarQuitacaoChequeDevolvido(
+            GDASession session,
+            AcertoCheque acertoCheque,
+            IEnumerable<int> idsCartaoNaoIdentificado,
+            Dictionary<Cheques, bool> chequesValidar,
+            IEnumerable<int> idsContaBanco,
+            IEnumerable<int> idsFormaPagamento,
+            IEnumerable<decimal> valoresRecebimento)
         {
-            #region DeclaraÁ„o de vari·veis
+            #region Declara√ß√£o de vari√°veis
 
             var usuarioLogado = UserInfo.GetUserInfo;
-            var cheques = GetByPks(session, string.Join(",", idsCheque));
+            var cheques = chequesValidar.Select(c => c.Key);
+            var chequesInconsistentes = chequesValidar
+                .Where(c => !c.Value).Select(c => c.Key);
+
             var idsClienteVinculado = ClienteVinculoDAO.Instance.GetIdsVinculados(session, acertoCheque.IdCliente.GetValueOrDefault());
 
             #endregion
 
-            #region ValidaÁıes de permiss„o
+            #region Valida√ß√µes de permiss√£o
 
-            // Se n„o for financeiro, n„o pode quitar cheque.
+            // Se n√£o for financeiro, n√£o pode quitar cheque.
             if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) &&
                 !Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
             {
-                throw new Exception("VocÍ n„o tem permiss„o para quitar cheques.");
+                throw new Exception("Voc√™ n√£o tem permiss√£o para quitar cheques.");
             }
 
             #endregion
 
-            #region ValidaÁıes dos dados dos cheques
+            #region Valida√ß√µes dos dados dos cheques
 
             foreach (var cheque in cheques)
             {
                 if (cheque.Valor == cheque.ValorReceb && cheque.Situacao != 1 && cheque.Situacao != 3)
                 {
-                    throw new Exception(string.Format("O cheque N˙mero {0} Banco {1} Conta {2} j· foi quitado ou trocado.", cheque.Num, cheque.Banco, cheque.Conta));
+                    throw new Exception(string.Format("O cheque N√∫mero {0} Banco {1} Conta {2} j√° foi quitado ou trocado.", cheque.Num, cheque.Banco, cheque.Conta));
                 }
 
                 // Chamado 37009.
                 if (cheque.Situacao == 2 || cheque.Situacao == 4 || cheque.Situacao == 5)
                 {
-                    throw new Exception(string.Format("O cheque {0} n„o pode ser quitado porque est· compensado, foi cancelado ou j· foi quitado.", cheque.Num));
+                    throw new Exception(string.Format("O cheque {0} n√£o pode ser quitado porque est√° compensado, foi cancelado ou j√° foi quitado.", cheque.Num));
                 }
 
                 if (cheque.IdCliente != acertoCheque.IdCliente && cheque.IdCliente != null &&
-                    // Verifica se o cliente, selecionado na quitaÁ„o do cheque, possui vÌnculo com o cliente do cheque, para prosseguir com a quitaÁ„o.
+                    // Verifica se o cliente, selecionado na quita√ß√£o do cheque, possui v√≠nculo com o cliente do cheque, para prosseguir com a quita√ß√£o.
                     (!idsClienteVinculado?.Split(',').Any(f => f.StrParaIntNullable().GetValueOrDefault() == cheque.IdCliente) ?? false))
                 {
-                    throw new Exception("Cliente Selecionado para pagamento n„o est· vinculado com os clientes dos cheques.");
+                    throw new Exception("Cliente Selecionado para pagamento n√£o est√° vinculado com os clientes dos cheques.");
                 }
             }
 
             #endregion
 
-            #region ValidaÁıes do cliente
+            #region Valida√ß√µes do cliente
 
             // Chamado 18310.
             if (acertoCheque.IdCliente == 0 && acertoCheque.TipoRecebimento.GetValueOrDefault() == (int)UtilsFinanceiro.TipoReceb.ChequeDevolvido)
@@ -2791,15 +2849,15 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region ValidaÁıes dos totais do recebimento
+            #region Valida√ß√µes dos totais do recebimento
 
-            // Se o valor pago for menor ou igual que o valor do juros o recebimento n„o È validado.
+            // Se o valor pago for menor ou igual que o valor do juros o recebimento n√£o √© validado.
             if ((decimal)acertoCheque.Juros >= acertoCheque.TotalPago)
             {
-                throw new Exception("O valor total pago n„o pode ser igual ou menor do que o valor do juros.");
+                throw new Exception("O valor total pago n√£o pode ser igual ou menor do que o valor do juros.");
             }
 
-            // Mesmo se for recebimento parcial, n„o È permitido receber valor maior do que o valor do cheque
+            // Mesmo se for recebimento parcial, n√£o √© permitido receber valor maior do que o valor do cheque
             if (acertoCheque.RecebimentoParcial.GetValueOrDefault() && !acertoCheque.RecebimentoGerarCredito.GetValueOrDefault())
             {
                 if (Math.Round(acertoCheque.TotalPago.GetValueOrDefault(), 2) > Math.Round(acertoCheque.TotalPagar.GetValueOrDefault(), 2))
@@ -2810,18 +2868,36 @@ namespace Glass.Data.DAL
             // Se o total a ser pago for diferente do valor pago
             else if (acertoCheque.RecebimentoGerarCredito.GetValueOrDefault() && Math.Round(acertoCheque.TotalPago.GetValueOrDefault(), 2) < Math.Round(acertoCheque.TotalPagar.GetValueOrDefault(), 2))
             {
-                throw new Exception(string.Format("Valor a ser quitado n„o confere com valor informado. Valor a ser quitado: {0} Valor informado: {1}.",
+                throw new Exception(string.Format("Valor a ser quitado n√£o confere com valor informado. Valor a ser quitado: {0} Valor informado: {1}.",
                     Math.Round(acertoCheque.TotalPagar.GetValueOrDefault(), 2).ToString("C"), Math.Round(acertoCheque.TotalPago.GetValueOrDefault(), 2).ToString("C")));
             }
             else if (!acertoCheque.RecebimentoGerarCredito.GetValueOrDefault() && Math.Round(acertoCheque.TotalPagar.GetValueOrDefault(), 2) != Math.Round(acertoCheque.TotalPago.GetValueOrDefault(), 2))
             {
-                throw new Exception(string.Format("Valor a ser quitado n„o confere com valor informado. Valor a ser quitado: {0} Valor informado: {1}.",
+                throw new Exception(string.Format("Valor a ser quitado n√£o confere com valor informado. Valor a ser quitado: {0} Valor informado: {1}.",
                     Math.Round(acertoCheque.TotalPagar.GetValueOrDefault(), 2).ToString("C"), Math.Round(acertoCheque.TotalPago.GetValueOrDefault(), 2).ToString("C")));
+            }
+
+            if (chequesInconsistentes.Any(c => c.IdCheque > 0))
+            {
+                var s = chequesInconsistentes.Count() > 1
+                    ? "s"
+                    : string.Empty;
+
+                var em = chequesInconsistentes.Count() > 1
+                    ? "em"
+                    : "i";
+
+                var valorRestante = cheques.Sum(c => c.Valor) - acertoCheque.TotalPago - acertoCheque.Desconto + (decimal)acertoCheque.Juros;
+
+                var numCheques = string.Join(",", chequesInconsistentes.Select(c => c.Num));
+
+                throw new InvalidOperationException($"O{s} cheque{s} {numCheques} n√£o possu{em} valor recebido." +
+                    $"Considere diminuir o Valor Restante ({valorRestante}) removendo algum cheque do acerto.");
             }
 
             #endregion
 
-            #region ValidaÁıes do recebimento
+            #region Valida√ß√µes do recebimento
 
             UtilsFinanceiro.ValidarRecebimento(session, acertoCheque.RecebimentoCaixaDiario.GetValueOrDefault(), (int)acertoCheque.IdCliente, acertoCheque.IdLojaRecebimento.GetValueOrDefault(),
                 idsCartaoNaoIdentificado, idsContaBanco, idsFormaPagamento, acertoCheque.RecebimentoGerarCredito.GetValueOrDefault(), (decimal)acertoCheque.Juros,
@@ -2832,7 +2908,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Finaliza a prÈ quitaÁ„o do cheque devolvido.
+        /// Finaliza a pr√© quita√ß√£o do cheque devolvido.
         /// </summary>
         public void FinalizarPreQuitacaoChequeDevolvidoComTransacao(int idAcertoCheque)
         {
@@ -2859,11 +2935,11 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Finaliza a prÈ quitaÁ„o do cheque devolvido.
+        /// Finaliza a pr√© quita√ß√£o do cheque devolvido.
         /// </summary>
         public void FinalizarPreQuitacaoChequeDevolvido(GDASession session, int idAcertoCheque)
         {
-            #region DeclaraÁ„o de vari·veis
+            #region Declara√ß√£o de vari√°veis
 
             var usuarioLogado = UserInfo.GetUserInfo;
             UtilsFinanceiro.DadosRecebimento retorno = null;
@@ -2881,7 +2957,7 @@ namespace Glass.Data.DAL
             decimal descontoTotalRateado = 0;
             var tipoRecebimento = (UtilsFinanceiro.TipoReceb)acertoCheque.TipoRecebimento.GetValueOrDefault();
             var valorAcumulado = acertoCheque.TotalPago.GetValueOrDefault();
-            // Usado para evitar bloqueio do Ìndice no caixa geral.
+            // Usado para evitar bloqueio do √≠ndice no caixa geral.
             var contadorDataUnica = 0;
             var dadosChequesRecebimento = ChequesAcertoChequeDAO.Instance.ObterStringChequesPeloAcertoCheque(session, idAcertoCheque);
             var pagamentosAcertoCheque = PagtoAcertoChequeDAO.Instance.GetByAcertoCheque(session, (uint)idAcertoCheque);
@@ -2898,7 +2974,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region RecuperaÁ„o dos dados de recebimento do acerto de cheque
+            #region Recupera√ß√£o dos dados de recebimento do acerto de cheque
 
             if (pagamentosAcertoCheque.Any(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra))
             {
@@ -2939,7 +3015,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region C·lculo dos totais dos cheques quitados
+            #region C√°lculo dos totais dos cheques quitados
 
             // Rateia o desconto nos cheques, rateia o valor de juros e salva o valor recebido de cada cheque.
             foreach (var chequeItemAcerto in chequesItemAcerto)
@@ -2965,12 +3041,12 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region GeraÁ„o de movimentaÁ„o no caixa
+            #region Gera√ß√£o de movimenta√ß√£o no caixa
 
-            // Atualiza o cheque e gera movimentaÁ„o no caixa.
+            // Atualiza o cheque e gera movimenta√ß√£o no caixa.
             foreach (var cheque in chequesItemAcerto)
             {
-                #region DeclaraÁ„o de vari·veis
+                #region Declara√ß√£o de vari√°veis
 
                 var valorRecebido = ItemAcertoChequeDAO.Instance.ObtemValorCampo<decimal>(session, "SUM(ValorReceb)", string.Format("IdCheque={0}", cheque.IdCheque));
                 // Chamado 18003.
@@ -2980,7 +3056,7 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                #region AtualizaÁ„o dos dados do cheque
+                #region Atualiza√ß√£o dos dados do cheque
 
                 // Os cheques devolvidos ou protestados podem ser marcados como Advogado, neste caso ao quitar estes cheques o campo advogado deve ser atualizado para falso.
                 if (cheque.Situacao == (int)Cheques.SituacaoCheque.Devolvido || cheque.Situacao == (int)Cheques.SituacaoCheque.Protestado)
@@ -2988,7 +3064,7 @@ namespace Glass.Data.DAL
                     cheque.Advogado = false;
                 }
 
-                // Se o valor restante for igual a zero, ou se n„o for recebimento parcial, muda a situaÁ„o do cheque para quitado.
+                // Se o valor restante for igual a zero, ou se n√£o for recebimento parcial, muda a situa√ß√£o do cheque para quitado.
                 if ((cheque.ValorRestante == 0 || !acertoCheque.RecebimentoParcial.GetValueOrDefault()) &&
                     (cheque.Situacao == (int)Cheques.SituacaoCheque.Devolvido || cheque.Situacao == (int)Cheques.SituacaoCheque.Protestado))
                 {
@@ -3001,28 +3077,28 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                #region GeraÁ„o de movimentaÁ„o no caixa
+                #region Gera√ß√£o de movimenta√ß√£o no caixa
 
-                // Gera movimentaÁ„o de saÌda deste cheque no caixa pois ao marcar o mesmo como devolvido, o valor dele voltou para o caixa,
-                // e como ele est· sendo quitado agora, deve sair do caixa.
+                // Gera movimenta√ß√£o de sa√≠da deste cheque no caixa pois ao marcar o mesmo como devolvido, o valor dele voltou para o caixa,
+                // e como ele est√° sendo quitado agora, deve sair do caixa.
                 if (cheque.Tipo == 2 && (cheque.Situacao == (int)Cheques.SituacaoCheque.Trocado || cheque.Situacao == (int)Cheques.SituacaoCheque.Devolvido ||
                     cheque.Situacao == (int)Cheques.SituacaoCheque.Quitado) &&
                     /* Chamado 51808.
-                     * "c.Origem != (int)Cheques.OrigemCheque.FinanceiroPagto": a origem FinanceiroPagto È salva
-                     * quando o cheque È cadastrado avulso, ou seja, verifica se n„o foi cadastrado avulso.
-                     * "c.MovCaixaFinanceiro": verifica se a opÁ„o "Gerar movimentaÁ„o no caixa geral" foi marcada
+                     * "c.Origem != (int)Cheques.OrigemCheque.FinanceiroPagto": a origem FinanceiroPagto √© salva
+                     * quando o cheque √© cadastrado avulso, ou seja, verifica se n√£o foi cadastrado avulso.
+                     * "c.MovCaixaFinanceiro": verifica se a op√ß√£o "Gerar movimenta√ß√£o no caixa geral" foi marcada
                      * quando o cheque foi cadastrado de forma avulsa. */
                     (cheque.Origem != (int)Cheques.OrigemCheque.FinanceiroPagto || cheque.MovCaixaFinanceiro))
                 {
-                    #region DeclaraÁ„o de vari·veis
+                    #region Declara√ß√£o de vari√°veis
 
-                    // Chamado 13081. A movimentaÁ„o de recebimento È gerada no caixa geral, pois, existem as consideraÁıes abaixo que
-                    // definem se a movimentaÁ„o deve ser feita no caixa geral ou no caixa di·rio. As mesmas consideraÁıes devem ser levadas em
-                    // conta ao gerar a movimentaÁ„o do cheque, dessa forma as movimentaÁıes de saÌda e a entrada ser· lanÁada no mesmo lugar.
+                    // Chamado 13081. A movimenta√ß√£o de recebimento √© gerada no caixa geral, pois, existem as considera√ß√µes abaixo que
+                    // definem se a movimenta√ß√£o deve ser feita no caixa geral ou no caixa di√°rio. As mesmas considera√ß√µes devem ser levadas em
+                    // conta ao gerar a movimenta√ß√£o do cheque, dessa forma as movimenta√ß√µes de sa√≠da e a entrada ser√° lan√ßada no mesmo lugar.
                     var isCaixaDiario = (Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && acertoCheque.RecebimentoCaixaDiario.GetValueOrDefault());
                     var recebApenasCxGeral = tipoRecebimento == UtilsFinanceiro.TipoReceb.ChequeProprioDevolvido || tipoRecebimento == UtilsFinanceiro.TipoReceb.CreditoValeFuncionario ||
                         tipoRecebimento == UtilsFinanceiro.TipoReceb.DebitoValeFuncionario || tipoRecebimento == UtilsFinanceiro.TipoReceb.DevolucaoPagto;
-                    // Se o funcion·rio for Financeiro.
+                    // Se o funcion√°rio for Financeiro.
                     var isCaixaGeral = Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) || ((tipoRecebimento == UtilsFinanceiro.TipoReceb.ChequeDevolvido ||
                         tipoRecebimento == UtilsFinanceiro.TipoReceb.ChequeProprioDevolvido || tipoRecebimento == UtilsFinanceiro.TipoReceb.ChequeProprioReapresentado) &&
                         Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento));
@@ -3031,30 +3107,30 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region GeraÁ„o de movimentaÁ„o no caixa
+                    #region Gera√ß√£o de movimenta√ß√£o no caixa
 
-                    // Chamado 15313: Se estiver quitando um cheque, a saÌda dele dever· ser sempre no caixa geral.
+                    // Chamado 15313: Se estiver quitando um cheque, a sa√≠da dele dever√° ser sempre no caixa geral.
                     if (isCaixaDiario && !recebApenasCxGeral && tipoRecebimento != UtilsFinanceiro.TipoReceb.ChequeDevolvido)
                     {
                         idCaixaDiario = CaixaDiarioDAO.Instance.MovCxAcertoCheque(session, cheque.IdLoja, cheque.IdCheque, null, acertoCheque.IdAcertoCheque, cheque.IdCliente,
-                            (uint?)cheque.IdFornecedor, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2, valorReceb, 0, null, true, "Cheque n˙m. " + cheque.Num);
+                            (uint?)cheque.IdFornecedor, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2, valorReceb, 0, null, true, "Cheque n√∫m. " + cheque.Num);
                     }
                     else if (isCaixaGeral)
                     {
-                        // Gera a movimentaÁ„o no caixa geral.
+                        // Gera a movimenta√ß√£o no caixa geral.
                         idCaixaGeral = CaixaGeralDAO.Instance.MovCxCheque(session, cheque.IdCheque, null, acertoCheque.IdAcertoCheque, cheque.IdCliente, (uint?)cheque.IdFornecedor,
-                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2, valorReceb, 0, null, true, "Cheque n˙m. " + cheque.Num, null);
+                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2, valorReceb, 0, null, true, "Cheque n√∫m. " + cheque.Num, null);
                     }
                     // Chamado 17841.
-                    // Chamado 15313: Se estiver quitando um cheque, a saÌda dele dever· ser sempre no caixa geral.
+                    // Chamado 15313: Se estiver quitando um cheque, a sa√≠da dele dever√° ser sempre no caixa geral.
                     else if (isCaixaDiario && tipoRecebimento == UtilsFinanceiro.TipoReceb.ChequeDevolvido)
                     {
                         idCaixaGeral = CaixaGeralDAO.Instance.MovCxCheque(session, cheque.IdCheque, null, acertoCheque.IdAcertoCheque, cheque.IdCliente, (uint?)cheque.IdFornecedor,
-                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2, valorReceb, 0, null, true, "Cheque n˙m. " + cheque.Num, null);
+                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeTrocado), 2, valorReceb, 0, null, true, "Cheque n√∫m. " + cheque.Num, null);
                     }
                     else
                     {
-                        throw new Exception("VocÍ n„o tem permiss„o para receber contas.");
+                        throw new Exception("Voc√™ n√£o tem permiss√£o para receber contas.");
                     }
 
                     if (idCaixaGeral > 0)
@@ -3071,7 +3147,7 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                #region AtualizaÁ„o dos dados do cheque
+                #region Atualiza√ß√£o dos dados do cheque
 
                 UpdateBase(session, cheque, false);
 
@@ -3082,7 +3158,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region AtualizaÁ„o do acerto de cheque
+            #region Atualiza√ß√£o do acerto de cheque
 
             objPersistence.ExecuteCommand(session, "UPDATE acerto_cheque SET Situacao = ?sit WHERE IdAcertoCheque = ?id",
                 new GDAParameter("?sit", (int)AcertoCheque.SituacaoEnum.Aberto), new GDAParameter("?id", acertoCheque.IdAcertoCheque));
@@ -3095,7 +3171,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cancela a prÈ quitaÁ„o do cheque devolvido.
+        /// Cancela a pr√© quita√ß√£o do cheque devolvido.
         /// </summary>
         public void CancelarPreQuitacaoChequeDevolvidoComTransacao(DateTime dataEstornoBanco, int idAcertoCheque, string motivo)
         {
@@ -3122,13 +3198,13 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cancela a prÈ quitaÁ„o do cheque devolvido.
+        /// Cancela a pr√© quita√ß√£o do cheque devolvido.
         /// </summary>
         public void CancelarPreQuitacaoChequeDevolvido(GDASession session, DateTime dataEstornoBanco, int idAcertoCheque, string motivo)
         {
             var acertoCheque = AcertoChequeDAO.Instance.GetElement(session, (uint)idAcertoCheque);
 
-            // Altera a situaÁ„o do acerto.
+            // Altera a situa√ß√£o do acerto.
             objPersistence.ExecuteCommand(session, string.Format("UPDATE acerto_cheque SET Situacao={0} WHERE IdAcertoCheque={1}", (int)AcertoCheque.SituacaoEnum.Cancelado, idAcertoCheque));
 
             LogCancelamentoDAO.Instance.LogAcertoCheque(acertoCheque, motivo, true);
@@ -3161,7 +3237,7 @@ namespace Glass.Data.DAL
                         {
                             totalCheques += c.ValorRestante;
                             if (c.Valor == c.ValorReceb && c.Situacao != 1 && c.Situacao != 3)
-                                throw new Exception("O cheque N˙mero " + c.Num + " Banco " + c.Banco + " Conta " + c.Conta + " j· foi quitado ou trocado.");
+                                throw new Exception("O cheque N√∫mero " + c.Num + " Banco " + c.Banco + " Conta " + c.Conta + " j√° foi quitado ou trocado.");
                         }
 
                         var totalRestante = totalCheques;
@@ -3173,10 +3249,10 @@ namespace Glass.Data.DAL
                         if (idCliente == 0 && !isChequeProprio)
                             throw new Exception("Selecione o cliente para continuar.");
 
-                        // Se n„o for financeiro, n„o pode quitar cheque
+                        // Se n√£o for financeiro, n√£o pode quitar cheque
                         if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) &&
                             !Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
-                            throw new Exception("VocÍ n„o tem permiss„o para quitar cheques.");
+                            throw new Exception("Voc√™ n√£o tem permiss√£o para quitar cheques.");
 
                         uint idAcertoCheque = 0;
 
@@ -3232,13 +3308,13 @@ namespace Glass.Data.DAL
                         {
                             decimal valor = c.ValorRestante;
 
-                            // Soma valor recebido ao valor que j· possa ter resolvido
+                            // Soma valor recebido ao valor que j√° possa ter resolvido
                             c.ValorReceb += valor;
                             c.JurosReceb = c.JurosReceb + Math.Round(juros / cheques.Length, 2);
                             c.DataReceb = dataRecebido;
 
-                            // Se o valor a receber for igual ao valor recebido, ou se n„o for recebimento parcial,
-                            // muda a situaÁ„o do cheque para quitado
+                            // Se o valor a receber for igual ao valor recebido, ou se n√£o for recebimento parcial,
+                            // muda a situa√ß√£o do cheque para quitado
                             if ((c.ValorReceb == c.Valor) && c.Situacao == (int)Cheques.SituacaoCheque.Devolvido)
                                 c.Situacao = (int)Cheques.SituacaoCheque.Quitado;
                             else if (c.Situacao == (int)Cheques.SituacaoCheque.EmAberto)
@@ -3271,7 +3347,7 @@ namespace Glass.Data.DAL
         #region Quitar Cheque Pagto
 
         /// <summary>
-        /// Quita um cheque prÛprio que foi utilizado em um pagamento
+        /// Quita um cheque pr√≥prio que foi utilizado em um pagamento
         /// </summary>
         public void QuitarChequePagto(Cheques cheque)
         {
@@ -3285,32 +3361,32 @@ namespace Glass.Data.DAL
 
                     cheque = GetElement(transaction, cheque.IdCheque);
                     if (cheque.IdContaBanco == null || cheque.IdContaBanco == 0)
-                        throw new Exception("Esse cheque n„o possui referÍncia da conta banc·ria.");
+                        throw new Exception("Esse cheque n√£o possui refer√™ncia da conta banc√°ria.");
 
-                    // Verifica se cheque j· foi quitado
+                    // Verifica se cheque j√° foi quitado
                     if (ChequePagtoQuitado(transaction, cheque.IdCheque))
-                        throw new Exception("Este cheque j· foi quitado.");
+                        throw new Exception("Este cheque j√° foi quitado.");
 
-                    // Verifica se o cheque est· em aberto
+                    // Verifica se o cheque est√° em aberto
                     if (cheque.Situacao != (int)Cheques.SituacaoCheque.EmAberto)
                         throw new Exception("Apenas cheques em aberto podem ser quitados.");
 
                     DateTime dataQuitacao = !String.IsNullOrEmpty(dataQuitChequeProprio) ? DateTime.Parse(dataQuitChequeProprio) : DateTime.Now;
 
-                    // Para cada cheque utilizado neste pagamento, debita o valor da conta banc·ria associada ao mesmo
+                    // Para cada cheque utilizado neste pagamento, debita o valor da conta banc√°ria associada ao mesmo
                     if (ContaBancoDAO.Instance.MovContaCheque(transaction, cheque.IdContaBanco.Value, UtilsPlanoConta.GetPlanoContaPagto(2),
                         (int)UserInfo.GetUserInfo.IdLoja, null, cheque.IdPagto, cheque.IdCheque, cheque.IdCliente,
                         null, 2, cheque.Valor - cheque.JurosPagto - cheque.MultaPagto, dataQuitacao) < 1)
-                        throw new Exception("Falha ao quitar cheque. InserÁ„o retornou 0;");
+                        throw new Exception("Falha ao quitar cheque. Inser√ß√£o retornou 0;");
 
-                    // O juros e a multa devem ser debitados nesta funÁ„o, uma vez que n„o foram debitados ao inserir
+                    // O juros e a multa devem ser debitados nesta fun√ß√£o, uma vez que n√£o foram debitados ao inserir
                     // o pagamento pois os cheques estavam em aberto
-                    // Gera movimentaÁ„o de juros
+                    // Gera movimenta√ß√£o de juros
                     if (cheque.JurosPagto > 0)
                         ContaBancoDAO.Instance.MovContaCheque(transaction, cheque.IdContaBanco.Value, FinanceiroConfig.PlanoContaJurosPagto,
                             (int)UserInfo.GetUserInfo.IdLoja, null, cheque.IdPagto, cheque.IdCheque, cheque.IdCliente, null, 2, cheque.JurosPagto, dataQuitacao);
 
-                    // Gera movimentaÁ„o de multa
+                    // Gera movimenta√ß√£o de multa
                     if (cheque.MultaPagto > 0)
                         ContaBancoDAO.Instance.MovContaCheque(transaction, cheque.IdContaBanco.Value, FinanceiroConfig.PlanoContaMultaPagto,
                             (int)UserInfo.GetUserInfo.IdLoja, null, cheque.IdPagto, cheque.IdCheque, cheque.IdCliente, null, 2, cheque.MultaPagto, dataQuitacao);
@@ -3333,10 +3409,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se cheque j· foi quitado
+        #region Verifica se cheque j√° foi quitado
 
         /// <summary>
-        /// Verifica se cheque j· foi quitado
+        /// Verifica se cheque j√° foi quitado
         /// </summary>
         /// <param name="idCheque"></param>
         public bool ChequePagtoQuitado(uint idCheque)
@@ -3345,7 +3421,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se cheque j· foi quitado
+        /// Verifica se cheque j√° foi quitado
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idCheque"></param>
@@ -3354,7 +3430,7 @@ namespace Glass.Data.DAL
             uint? idContaBanco = ObtemValorCampo<uint?>(session, "idContaBanco", "idCheque=" + idCheque);
 
             if (idContaBanco == null || idContaBanco == 0)
-                throw new Exception("Cheque n„o possui referÍncia ‡ sua conta banc·ria.");
+                throw new Exception("Cheque n√£o possui refer√™ncia √† sua conta banc√°ria.");
 
             return ContaBancoDAO.Instance.ChequePagtoQuitado(session, idCheque, idContaBanco.Value);
         }
@@ -3368,7 +3444,7 @@ namespace Glass.Data.DAL
             switch (tipo.Trim().ToLower())
             {
                 case "proprio":
-                case "prÛprio":
+                case "pr√≥prio":
                 case "1":
                     return 1;
 
@@ -3378,7 +3454,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// Cria um Cheque a partir de uma string.
         /// </summary>
         /// <param name="stringCheque"></param>
@@ -3397,11 +3473,11 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// Cria um Cheque a partir de uma string.
         /// </summary>
-        /// <param name="stringCheque">Dados do cheque que ser· criado</param>
-        /// <param name="recuperarIdCheque">Parametro que define se o id do cheque deve ser retornado ou n„o</param>
+        /// <param name="stringCheque">Dados do cheque que ser√° criado</param>
+        /// <param name="recuperarIdCheque">Parametro que define se o id do cheque deve ser retornado ou n√£o</param>
         /// <returns></returns>
         public Cheques GetFromString(string stringCheque, bool recuperarIdCheque)
         {
@@ -3499,7 +3575,7 @@ namespace Glass.Data.DAL
                     ) as g on (g.idCheque=c.idCheque)
                     left join (
                         select m.idCheque, m.idConta, concat(gc.descricao, ' - ', pc.descricao) as descrPlanoConta,
-                            concat(c.nome, ' AgÍncia: ', c.agencia, ' Conta: ', c.Conta) as descrContaBanco
+                            concat(c.nome, ' Ag√™ncia: ', c.agencia, ' Conta: ', c.Conta) as descrContaBanco
                         from mov_banco m
                             left join plano_contas pc on (m.idConta=pc.idConta)
                             left join grupo_conta gc on (pc.idGrupo=gc.idGrupo)
@@ -3542,16 +3618,16 @@ namespace Glass.Data.DAL
                 else if (cheque.IdDeposito != null)
                 {
                     cancelar = false;
-                    throw new Exception("Cheque utilizado no depÛsito " + cheque.IdDeposito.Value + ".");
+                    throw new Exception("Cheque utilizado no dep√≥sito " + cheque.IdDeposito.Value + ".");
                 }
                 else if (cheque.IdLiberarPedido != null && LiberarPedidoDAO.Instance.ObtemValorCampo<LiberarPedido.SituacaoLiberarPedido>("situacao",
                     "idLiberarPedido=" + cheque.IdLiberarPedido.Value) != LiberarPedido.SituacaoLiberarPedido.Cancelado)
-                    throw new Exception("Cheque utilizado na liberaÁ„o " + cheque.IdLiberarPedido.Value + ". Cancele a liberaÁ„o para continuar.");
+                    throw new Exception("Cheque utilizado na libera√ß√£o " + cheque.IdLiberarPedido.Value + ". Cancele a libera√ß√£o para continuar.");
                 else if (cheque.IdPedido != null && PedidoDAO.Instance.ObtemSituacao(null, cheque.IdPedido.Value) != Pedido.SituacaoPedido.Cancelado)
                     throw new Exception("Cheque utilizado no pedido " + cheque.IdPedido.Value + ". Cancele o pedido para continuar.");
                 else
                 {
-                    // N„o apaga o cheque, apenas marca como cancelado
+                    // N√£o apaga o cheque, apenas marca como cancelado
                     //Delete(cheque);
 
                     throw new Exception();
@@ -3581,11 +3657,11 @@ namespace Glass.Data.DAL
             if (string.IsNullOrWhiteSpace(cheque.DataVenc.ToString()))
                 return "A data de vencimento do cheque deve ser informada.";
 
-            //Caso algum dos dados abaixo tenham sido alterados valida se o cheque j· existe
+            //Caso algum dos dados abaixo tenham sido alterados valida se o cheque j√° existe
             if (c1.Banco != cheque.Banco || c1.Num != cheque.Num || (c1.DigitoNum?.ToString() ?? string.Empty) != (cheque.DigitoNum?.ToString() ?? string.Empty))
                 if ((cheque.IdCliente != null && (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && cheque.IdCliente > 0 &&
                     ExisteChequeDigito(sessao, cheque.IdCliente.Value, cheque.IdCheque, cheque.Num, cheque.DigitoNum))))
-                    return "Este cheque j· foi cadastrado no sistema.";
+                    return "Este cheque j√° foi cadastrado no sistema.";
 
             ///Atualiza os dados do cheque
             string sql = "update cheques set dataVencOriginal=if(dataVencOriginal is not null, dataVencOriginal, dataVenc), " +
@@ -3603,7 +3679,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Altera a conta banc·ria do cheque.
+        /// Altera a conta banc√°ria do cheque.
         /// </summary>
         /// <param name="idCheque"></param>
         /// <param name="idContaBanco"></param>
@@ -3634,16 +3710,16 @@ namespace Glass.Data.DAL
 
                     Cheques c = GetElementByPrimaryKey(transaction, idCheque);
                     if (c.IdContaBanco == null || c.IdContaBanco == 0)
-                        throw new Exception("Esse cheque n„o possui a referÍncia da conta banc·ria.");
+                        throw new Exception("Esse cheque n√£o possui a refer√™ncia da conta banc√°ria.");
 
-                    // Se o cheque j· estiver reapresentado, apenas n„o faz nada.
+                    // Se o cheque j√° estiver reapresentado, apenas n√£o faz nada.
                     if (c.Reapresentado)
                         return;
 
                     DepositoChequeDAO.Instance.CompensaCheques(transaction, idCheque.ToString(), 0, c.Valor, c.Valor, 0, c.IdContaBanco.Value, dataReapresentar, c.Tipo);
 
                     // Os cheques devolvidos ou protestados podem ser marcados como Advogado, neste caso ao marcar o cheque como reapresentado significa
-                    // que o cheque n„o est· mais nas m„os do advogado e sendo assim o campo deve ser atualizado para falso.
+                    // que o cheque n√£o est√° mais nas m√£os do advogado e sendo assim o campo deve ser atualizado para falso.
                     objPersistence.ExecuteCommand(transaction, "update cheques set reapresentado=true, advogado=false where idCheque=" + idCheque);
 
                     LogAlteracaoDAO.Instance.LogCheque(transaction, c, LogAlteracaoDAO.SequenciaObjeto.Atual);
@@ -3661,7 +3737,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cancela a reapresentaÁ„o do cheque.
+        /// Cancela a reapresenta√ß√£o do cheque.
         /// </summary>
         /// <param name="idCheque">O identificador do cheque.</param>
         public void CancelarReapresentacaoDeCheque(GDASession sessao, uint idCheque)
@@ -3669,28 +3745,28 @@ namespace Glass.Data.DAL
             var cheque = GetElementByPrimaryKey(sessao, idCheque);
 
             if (cheque.IdContaBanco.GetValueOrDefault() == 0)
-                throw new Exception("Esse cheque n„o possui a referÍncia da conta banc·ria.");
+                throw new Exception("Esse cheque n√£o possui a refer√™ncia da conta banc√°ria.");
 
-            // Se o cheque j· estiver reapresentado, apenas n„o faz nada.
+            // Se o cheque j√° estiver reapresentado, apenas n√£o faz nada.
             if (!cheque.Reapresentado)
-                throw new Exception("Esse cheque n„o est· reapresentado.");
+                throw new Exception("Esse cheque n√£o est√° reapresentado.");
 
             //Pega a data em que o cheque foi reapresentado
             var sqldataReapresentado = "select max(dataalt) from log_alteracao where tabela =" + (int)LogAlteracao.TabelaAlteracao.Cheque + " and idregistroalt = " + idCheque + " and Campo = 'Reapresentado' and ValorAtual='Sim' ";
 
-            //Recupera a data em que ocorreu a ultima alteraÁ„o do cheque em quest„o
+            //Recupera a data em que ocorreu a ultima altera√ß√£o do cheque em quest√£o
             var dataReapresentado = LogAlteracaoDAO.Instance.ExecuteScalar<DateTime>(sessao, sqldataReapresentado);
 
             DepositoChequeDAO.Instance.CancelarCompensarChequesReapresentados(sessao, cheque, dataReapresentado);
 
-            //Busca todas as alteraÁıes feitas no cheque na ultima data de ocorrencia
+            //Busca todas as altera√ß√µes feitas no cheque na ultima data de ocorrencia
             var logAlteracoes = LogAlteracaoDAO.Instance.GetByItem(LogAlteracao.TabelaAlteracao.Cheque, idCheque, dataReapresentado, dataReapresentado, false);
 
             var estavaAdvogado = false;
             var advogado = false;
             var reapresentado = false;
 
-            //Verifica se na ultima alteraÁ„o o cheque mudou para "Reapresentado" e se estava "Advogado"
+            //Verifica se na ultima altera√ß√£o o cheque mudou para "Reapresentado" e se estava "Advogado"
             foreach (var alteracao in logAlteracoes)
             {
                 if (alteracao.Campo == "Advogado")
@@ -3703,7 +3779,7 @@ namespace Glass.Data.DAL
                     estavaAdvogado = advogado;
             }
 
-            // Retira o cheque da situaÁ„o reapresentado e caso ele estivesse advogado ao ser reapresentado, volta essa situaÁ„o para o mesmo
+            // Retira o cheque da situa√ß√£o reapresentado e caso ele estivesse advogado ao ser reapresentado, volta essa situa√ß√£o para o mesmo
             objPersistence.ExecuteCommand(sessao, "update cheques set reapresentado=false, advogado=" + estavaAdvogado + " where idCheque=" + idCheque);
 
             LogAlteracaoDAO.Instance.LogCheque(sessao, cheque, LogAlteracaoDAO.SequenciaObjeto.Atual);
@@ -3800,7 +3876,7 @@ namespace Glass.Data.DAL
         #region Retorna campos dos cheques
 
         /// <summary>
-        /// Retorna n˙mero do cheque
+        /// Retorna n√∫mero do cheque
         /// </summary>
         public int ObtemNumCheque(uint idCheque)
         {
@@ -3808,7 +3884,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna n˙mero do cheque
+        /// Retorna n√∫mero do cheque
         /// </summary>
         public int ObtemNumCheque(GDASession session, uint idCheque)
         {
@@ -3816,7 +3892,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o idCliente do cheque
+        /// Obt√©m o idCliente do cheque
         /// </summary>
         /// <param name="idCheque"></param>
         /// <returns></returns>
@@ -3847,7 +3923,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Obtem a situaÁ„o do cheque.
+        /// Obtem a situa√ß√£o do cheque.
         /// </summary>
         public decimal ObterSituacao(GDASession session, int idCheque)
         {
@@ -3886,19 +3962,19 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna as notas fiscais associadas ao pedido ou liberaÁ„o do cheque, separadas por vÌrgula.
+        /// Retorna as notas fiscais associadas ao pedido ou libera√ß√£o do cheque, separadas por v√≠rgula.
         /// </summary>
         public string ObtemIdsNfRecebimento(uint? idLiberarPedido, uint? idPedido, uint? idAcerto)
         {
             if (idPedido.GetValueOrDefault(0) == 0 && idLiberarPedido.GetValueOrDefault(0) == 0 && idAcerto.GetValueOrDefault(0) == 0)
                 return String.Empty;
 
-            // Busca os idLiberarPedido atravÈs do acerto
+            // Busca os idLiberarPedido atrav√©s do acerto
             string idsLiberarPedido = PedidoConfig.LiberarPedido && idAcerto > 0 && idLiberarPedido == null && idPedido == null ?
                 ExecuteScalar<string>("Select cast(group_concat(idLiberarPedido) as char) From contas_receber Where idAcerto=" + idAcerto) :
                 String.Empty;
 
-            // Busca os idPedido atravÈs do acerto
+            // Busca os idPedido atrav√©s do acerto
             string idsPedido = !PedidoConfig.LiberarPedido && idAcerto > 0 && idLiberarPedido == null && idPedido == null ?
                 ExecuteScalar<string>("Select cast(group_concat(idPedido) as char) From contas_receber Where idAcerto=" + idAcerto) :
                 String.Empty;
@@ -3934,7 +4010,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm a origem do cheque.
+        /// Obt√©m a origem do cheque.
         /// </summary>
         public int ObterOrigem(GDASession session, uint idCheque)
         {
@@ -3942,7 +4018,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm a propriedade que define se o cheque deve movimentar ou n„o o caixa geral.
+        /// Obt√©m a propriedade que define se o cheque deve movimentar ou n√£o o caixa geral.
         /// </summary>
         public bool ObterMovimentarCaixaGeral(GDASession session, uint idCheque)
         {
@@ -3963,7 +4039,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a situaÁ„o do cheque
+        /// Retorna a situa√ß√£o do cheque
         /// </summary>
         public string GetSituacaoCheque(int situacao)
         {
@@ -3990,10 +4066,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se um cheque est· reapresentado
+        #region Verifica se um cheque est√° reapresentado
 
         /// <summary>
-        /// Verifica se um cheque est· reapresentado.
+        /// Verifica se um cheque est√° reapresentado.
         /// </summary>
         /// <param name="idCheque"></param>
         /// <returns></returns>
@@ -4025,16 +4101,16 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region ValidaÁ„o do limite do cheque
+        #region Valida√ß√£o do limite do cheque
 
         /// <summary>
-        /// ValidaÁ„o do limite do cheque
+        /// Valida√ß√£o do limite do cheque
         /// </summary>
         /// <param name="session"></param>
         /// <param name="cheque"></param>
         public void ValidaValorLimiteCheque(GDASession session, List<Cheques> lstCheque)
         {
-            // SÛ valida se a configuraÁ„o est· ativa
+            // S√≥ valida se a configura√ß√£o est√° ativa
             if (!FinanceiroConfig.LimitarChequesPorCpfOuCnpj)
                 return;
 
@@ -4045,7 +4121,7 @@ namespace Glass.Data.DAL
                 (int)Cheques.SituacaoCheque.Trocado
             };
 
-            // Valida apenas cheques de terceiros, que possuam cpfCnpj e que esteja em uma das situaÁıes definidas acima
+            // Valida apenas cheques de terceiros, que possuam cpfCnpj e que esteja em uma das situa√ß√µes definidas acima
             lstCheque = lstCheque.Where(f => f.Tipo != 1 && !string.IsNullOrEmpty(f.CpfCnpj) && situacoesLimite.Contains(f.Situacao)).ToList();
 
             if (lstCheque.Count() == 0)
@@ -4073,7 +4149,7 @@ namespace Glass.Data.DAL
             // Filtra apenas os cheques que tenham cliente associado
             lstCheque = lstCheque.Where(f => f.IdCliente > 0).ToList();
 
-            // Verifica o limite do cliente, se o cheque tiver um cliente indicado, apÛs ter agrupado por cliente e cpf/cnpj
+            // Verifica o limite do cliente, se o cheque tiver um cliente indicado, ap√≥s ter agrupado por cliente e cpf/cnpj
             foreach (var c in lstCheque.GroupBy(f => new { f.CpfCnpjFormatado, f.IdCliente }))
             {
                 // Soma o total de cheques agrupado por cliente e cpf/cnpj
@@ -4092,10 +4168,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos sobrescritos
+        #region M√©todos sobrescritos
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// </summary>
         /// <param name="objInsert"></param>
         /// <returns></returns>
@@ -4106,7 +4182,7 @@ namespace Glass.Data.DAL
 
         public override uint Insert(GDASession sessao, Cheques objInsert)
         {
-            // Coloca a situaÁ„o do cheque em aberto
+            // Coloca a situa√ß√£o do cheque em aberto
             objInsert.Situacao = (int)Cheques.SituacaoCheque.EmAberto;
             objInsert.Tipo = 2; // Cheque de terceiro
 
@@ -4125,7 +4201,7 @@ namespace Glass.Data.DAL
 
                     if ((objInsert.IdCliente != null && (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && objInsert.IdCliente > 0 &&
                         ExisteChequeDigito(transaction, objInsert.IdCliente.Value, 0, objInsert.Num, objInsert.DigitoNum))) || ExisteCheque(transaction, 0, objInsert.Banco, objInsert.Agencia, objInsert.Conta, objInsert.Num))
-                        throw new Exception("Este cheque j· foi cadastrado no sistema.");
+                        throw new Exception("Este cheque j√° foi cadastrado no sistema.");
 
                     // Verifica se o cheque pode movimentar o Caixa Geral ou a Conta Bancaria
                     if (objInsert.Situacao != (int)Cheques.SituacaoCheque.Compensado &&
@@ -4195,7 +4271,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// </summary>
         /// <param name="objUpdate"></param>
         /// <returns></returns>
@@ -4208,7 +4284,7 @@ namespace Glass.Data.DAL
         {
             if (objUpdate.IdCliente != null && (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && objUpdate.IdCliente > 0 &&
                 ChequesDAO.Instance.ExisteChequeDigito(sessao, objUpdate.IdCliente.Value, objUpdate.IdCheque, objUpdate.Num, objUpdate.DigitoNum)))
-                throw new Exception("Este cheque j· foi cadastrado no sistema.");
+                throw new Exception("Este cheque j√° foi cadastrado no sistema.");
 
             return UpdateBase(sessao, objUpdate, true);
         }
@@ -4250,7 +4326,7 @@ namespace Glass.Data.DAL
 
         public override int DeleteByPrimaryKey(uint key)
         {
-            // N„o apaga o cheque, apenas marca como cancelado
+            // N√£o apaga o cheque, apenas marca como cancelado
             //LogAlteracaoDAO.ApagaLogCheque(Key);
             //return base.DeleteByPrimaryKey(Key);
 
