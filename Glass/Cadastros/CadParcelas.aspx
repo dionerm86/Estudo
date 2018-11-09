@@ -19,7 +19,7 @@
                     </label>
                 </span>
                 <span class="colspan3">
-                    <lista-selecao-id-valor :item-selecionado.sync="parcela.tipoPagto" :funcao-recuperar-itens="obterFormaPagto" required></lista-selecao-id-valor>
+                    <lista-selecao-id-valor :item-selecionado.sync="formaPagto" :funcao-recuperar-itens="obterFormaPagto" required></lista-selecao-id-valor>
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -27,7 +27,7 @@
                     </label>
                 </span>
                 <span class="colspan3">
-                    <input type="text"/>
+                    <input type="text" v-model="parcela.dias"/>
                 <button v-on:click.prevent="iniciarCadastro" title="Novo produto...">
                     <img v-bind:src="caminhoRelativo('/Images/Insert.gif')">
                 </button>
@@ -44,7 +44,7 @@
                     </label>
                 </span>
                 <span>
-                    <lista-selecao-id-valor :item-selecionado.sync="parcela.situacoes" :funcao-recuperar-itens="obterSituacoes" required></lista-selecao-id-valor>
+                    <lista-selecao-situacoes v-bind:situacao.sync="situacaoAtual" required></lista-selecao-situacoes>
                 </span>
                 <span class="botoes">
                     <span>

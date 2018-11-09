@@ -87,23 +87,13 @@ Servicos.Parcelas = (function(http) {
       },
 
       /**
-       * Recupera a lista de parcelas para uso no controle de seleção de parcelas.
-       * @param {?Object} [filtro=null] O filtro usado pelo controle de seleção de parcelas.
-       * @returns {Promise} Uma promise com o resultado da operação.
-       */
-      situacoes: function () {
-          return Promise.resolve({
-              "data": [
-                {
-                    "id": "1",
-                    "nome": "Ativa"
-                },
-                {
-                    "id": "2",
-                    "nome": "Inativa"
-                }
-              ]
-          });
+      * Insere uma parcela.
+      * @param {!number} parcela Os dados da parcela que será inserido.
+      * @returns {Promise} Uma promise com o resultado da operação.
+      */
+      atualizar: function (idParcela, parcela) {
+          debugger;
+          return http().patch(API + idParcela, parcela);
       },
 
       /**

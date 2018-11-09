@@ -81,7 +81,7 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
         [SwaggerResponse(200, "Parcela encontrada.", Type = typeof(Models.Parcelas.V1.CadastroAtualizacao.CadastroAtualizacaoDto))]
         [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterParcelas(int id)
+        public IHttpActionResult ObterParcela(int id)
         {
             using (var sessao = new GDATransaction())
             {
@@ -96,7 +96,7 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
 
                 try
                 {
-                    return this.Item(new Models.Parcelas.V1.CadastroAtualizacao.CadastroAtualizacaoDto(parcela));
+                    return this.Item(new Models.Parcelas.V1.Detalhe.DetalheDto(parcela));
                 }
                 catch (Exception e)
                 {

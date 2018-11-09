@@ -11,22 +11,9 @@ namespace Glass.API.Backend.Models.Parcelas.V1.CadastroAtualizacao
     /// <summary>
     /// Classe que encapsula os dados de cadastro ou atualização de um condutor.
     /// </summary>
-    [DataContract(Name = "CadastroAtualizacao")]
+    [DataContract(Name = "Cadastro")]
     public class CadastroAtualizacaoDto : BaseCadastroAtualizacaoDto<CadastroAtualizacaoDto>
     {
-        /// <summary>
-        /// Inicia uma nova instância da classe <see cref="CadastroAtualizacaoDto"/>.
-        /// </summary>
-        /// <param name="parcela">Objeto Parcela. </param>
-        internal CadastroAtualizacaoDto(Glass.Financeiro.Negocios.Entidades.Parcelas parcela)
-        {
-            this.Id = parcela.IdParcela;
-            this.Descricao = parcela.Descricao;
-            this.ParcelaPadrao = parcela.ParcelaPadrao;
-            this.Situacao = parcela.Situacao;
-            this.Dias = parcela.Dias;
-        }
-
         /// <summary>
         /// Obtém ou define o identificador da parcela.
         /// </summary>
@@ -113,6 +100,17 @@ namespace Glass.API.Backend.Models.Parcelas.V1.CadastroAtualizacao
         {
             get { return this.ObterValor(c => c.ParcelaPadrao); }
             set { this.AdicionarValor(c => c.ParcelaPadrao, value); }
+        }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se a parcela é padrão.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("formaPagto")]
+        public bool FormaPagto
+        {
+            get { return this.ObterValor(c => c.FormaPagto); }
+            set { this.AdicionarValor(c => c.FormaPagto, value); }
         }
     }
 }
