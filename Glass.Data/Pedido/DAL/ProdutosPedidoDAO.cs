@@ -1703,11 +1703,11 @@ namespace Glass.Data.DAL
             if (idProdPed == 0)
                 return;
 
-            var idPedido = (int)ObtemIdPedido(idProdPed);
+            var idPedido = (int)ObtemIdPedido(sessao, idProdPed);
 
             var saidaJaEfetuada = !saidaConfirmacao && PedidoDAO.Instance.VerificaSaidaEstoqueConfirmacao(sessao, idPedido);
 
-            if (saidaJaEfetuada || !ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
+            if (saidaJaEfetuada || PedidoDAO.Instance.VerificarPedidoProducaoParaCorte(sessao, idPedido) || !ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
             {
                 return;
             }
