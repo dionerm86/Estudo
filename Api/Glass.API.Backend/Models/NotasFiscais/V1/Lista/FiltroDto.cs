@@ -191,10 +191,10 @@ namespace Glass.API.Backend.Models.NotasFiscais.V1.Lista
         public decimal? ValorNotaFiscalFim { get; set; }
 
         /// <summary>
-        /// Obtém ou define
+        /// Obtém ou define um valor que indica se serão buscadas apenas notas fiscais que não tenham anexos.
         /// </summary>
         [JsonProperty("nfeSemAnexo")]
-        public bool NfeSemAnexo { get; set; }
+        public bool ApenasNotasFiscaisSemAnexo { get; set; }
 
         /// <summary>
         /// Obtém ou define a ordenação a ser usada na listagem.

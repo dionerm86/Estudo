@@ -6230,7 +6230,7 @@ namespace Glass.Data.DAL
                 criterio += "Lote: " + lote + "    ";
             }
 
-            if(nfeSemAnexo)
+            if (nfeSemAnexo)
             {
                 sql += " And ftnf.idnf is null";
                 criterio += " Nota Fiscal Sem Anexo";
@@ -6677,11 +6677,6 @@ namespace Glass.Data.DAL
             {
                 sql += " And ftnf.idnf is null";
                 criterio += " Nota Fiscal Sem Anexo";
-            }
-
-            else
-            {
-                criterio += " Nota Fiscal Com Anexo";
             }
 
             switch (ordenar)
