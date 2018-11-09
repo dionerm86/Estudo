@@ -44,7 +44,7 @@
           lote: null,
           valorNotaFiscalInicio: null,
           valorNotaFiscalFim: null,
-          nfeSemAnexo: false,
+          apenasNotasFiscaisSemAnexo: false,
           ordenacaoFiltro: null,
           agrupar: 0
         },

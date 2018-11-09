@@ -193,7 +193,7 @@ namespace Glass.API.Backend.Models.NotasFiscais.V1.Lista
         /// <summary>
         /// Obtém ou define um valor que indica se serão buscadas apenas notas fiscais que não tenham anexos.
         /// </summary>
-        [JsonProperty("nfeSemAnexo")]
+        [JsonProperty("apenasNotasFiscaisSemAnexo")]
         public bool ApenasNotasFiscaisSemAnexo { get; set; }
 
         /// <summary>
