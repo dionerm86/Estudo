@@ -547,7 +547,7 @@ namespace Glass.Data.DAL
                                 nf.ModalidadeFrete = ModalidadeFrete.ContaDoRemetente;
                                 nf.VeicPlaca = veiculo.Key;
                                 nf.VeicUf = veiculo.Value;
-                                nf.QtdVol = 1;
+                                nf.QtdVol = Convert.ToInt32(PedidoDAO.Instance.GetPedidosForOC(idsPedidos, 0, false).Sum(f => f.QtdePecasVidro + f.QtdeVolume));
                             }
                         }
 
