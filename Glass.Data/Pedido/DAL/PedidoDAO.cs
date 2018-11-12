@@ -12723,8 +12723,8 @@ namespace Glass.Data.DAL
             var sql = $@"
                 SELECT CAST(SUM(COALESCE(Qtde, 0)) AS SIGNED INTEGER)
                 FROM produtos_pedido pp
-                    LEFT JOIN produto p ON (pp.IdProd=p.IdProd)
-                WHERE IdPedido = ?id AND (Invisivel{invisivel} IS NULL OR Invisivel{invisivel} =0 )
+                    LEFT JOIN produto p ON (pp.IdProd = p.IdProd)
+                WHERE IdPedido = ?id AND (Invisivel{invisivel} IS NULL OR Invisivel{invisivel} = 0)
                     AND p.IdGrupoProd = {(int)NomeGrupoProd.Vidro} AND COALESCE(pp.IdProdPedParent, 0) = 0";
 
             return ExecuteScalar<int>(session, sql, new GDAParameter("?id", idPedido));
