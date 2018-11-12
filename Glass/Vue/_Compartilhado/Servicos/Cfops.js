@@ -100,7 +100,6 @@ Servicos.Cfops = (function(http) {
       /**
        * Remove uma natureza de operação.
        * @param {!number} id O identificador do item que será excluído.
-       * @param {string} motivo O motivo da exclusão.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       excluir: function (id) {
