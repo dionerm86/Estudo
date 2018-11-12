@@ -50,11 +50,7 @@ namespace Glass.Configuracoes
         /// </summary>
         public static TipoComissaoContaRec ComissaoPorContasRecebidas
         {
-            get
-            {
-                var config = Config.GetConfigItem<string>(Config.ConfigEnum.ComissaoPorContasRecebidas);
-                return (TipoComissaoContaRec)System.Enum.Parse(typeof(TipoComissaoContaRec), config);
-            }
+            get { return Config.GetConfigItem<TipoComissaoContaRec>(Config.ConfigEnum.ComissaoPorContasRecebidas); }
         }
 
         /// <summary>
