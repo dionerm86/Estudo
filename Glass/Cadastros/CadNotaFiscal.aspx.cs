@@ -1278,5 +1278,29 @@ namespace Glass.UI.Web.Cadastros
             return ((tipoDoc == (int)NotaFiscal.TipoDoc.Saída && isNotaFiscalConsumidor) || (tipo == "2" && mod == "65")) && isConsumidorFinal;
         }
 
+        /// <summary>
+        /// Obtem os dados do veiculo atravez da placa
+        /// </summary>
+        /// <param name="placa"></param>
+        /// <returns></returns>
+        [Ajax.AjaxMethod()]
+        public string ObterDadosVeiculo(string placa)
+        {
+            if (string.IsNullOrEmpty(placa))
+            {
+                return string.Empty;
+            }
+
+            ///Busca o veiculo
+            var veiculo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.Global.Negocios.IVeiculoFluxo>().ObtemVeiculo(placa);
+
+            if (veiculo != null)
+            {
+                return $"{veiculo.RNTC},{veiculo.UfLicenc}";
+            }
+
+            return string.Empty;
+        }
+
     }
 }

@@ -133,6 +133,22 @@
                             </ItemTemplate>
                             <HeaderStyle Wrap="False" />
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="RNTC" SortExpression="RNTC">
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtRNTC" runat="server" MaxLength="20" Text='<%# Bind("RNTC") %>'></asp:TextBox>
+                                &nbsp;<asp:RequiredFieldValidator ID="RequiredFieldValidator12" runat="server" ControlToValidate="txtRNTC"
+                                    ErrorMessage="Preencha o campo RNTC.">*</asp:RequiredFieldValidator>
+                            </EditItemTemplate>
+                            <InsertItemTemplate>
+                                <asp:TextBox ID="txtRNTC" runat="server" MaxLength="20" Text='<%# Bind("RNTC") %>'></asp:TextBox>
+                                &nbsp;<asp:RequiredFieldValidator ID="RequiredFieldValidator12" runat="server" ControlToValidate="txtRNTC"
+                                    ErrorMessage="Preencha o campo RNTC.">*</asp:RequiredFieldValidator>
+                            </InsertItemTemplate>
+                            <ItemTemplate>
+                                <asp:Label ID="Label7" runat="server" Text='<%# Bind("RNTC") %>'></asp:Label>
+                            </ItemTemplate>
+                            <HeaderStyle Wrap="False" />
+                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Tara" SortExpression="Tara">
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtTara" runat="server" MaxLength="6" onkeypress="return soNumeros(event, true, true);"
@@ -417,7 +433,7 @@
                             <EditItemTemplate>
                                 <asp:Button ID="btnUpdate" runat="server" CommandName="Update" Text="Atualizar" />
                                 <asp:Button ID="Button2" runat="server" OnClick="btnCancelar_Click" Text="Cancelar" />
-                                <uc2:ctrlLinkQueryString ID="ctrlLinkQueryString1" runat="server" NameQueryString="Placa"
+                                <uc2:ctrlLinkQueryString ID="ctrlLinkQueryString1" runat="server" NameQueryString="Placa" 
                                     Text='<%# Bind("Placa") %>' />
                             </EditItemTemplate>
                             <InsertItemTemplate>
