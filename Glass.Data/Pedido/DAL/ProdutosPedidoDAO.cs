@@ -1696,18 +1696,27 @@ namespace Glass.Data.DAL
         #region Marca saída de produtos
 
         /// <summary>
-        /// Marca saída de produto na tabela produtos_pedido
+        /// Método que efetua a saída dos Produtos do pedido.
         /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="idProdPed">Identificador do produto pedido.</param>
+        /// <param name="qtdSaida">Quantidade a dar saída.</param>
+        /// <param name="idSaidaEstoque">Identificador da saída do estoque.</param>
+        /// <param name="metodo">Nome do método que efetuou a chamada do marcar saída.</param>
+        /// <param name="numEtiqueta">Número da etiqueta utilizada para dar saída na produção.</param>
+        /// <param name="saidaConfirmacao">Variável booleana que indica se o método foi chamado através da saída em sistemas de Confirmação.</param>
         public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta, bool saidaConfirmacao = false)
         {
             if (idProdPed == 0)
+            {
                 return;
+            }
 
-            var idPedido = (int)ObtemIdPedido(sessao, idProdPed);
+            var idPedido = (int)this.ObtemIdPedido(sessao, idProdPed);
 
             var saidaJaEfetuada = !saidaConfirmacao && PedidoDAO.Instance.VerificaSaidaEstoqueConfirmacao(sessao, idPedido);
 
-            if (saidaJaEfetuada || PedidoDAO.Instance.VerificarPedidoProducaoParaCorte(sessao, idPedido) || !ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
+            if (saidaJaEfetuada || PedidoDAO.Instance.VerificarPedidoProducaoParaCorte(sessao, idPedido) || !this.ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
             {
                 return;
             }
@@ -1719,7 +1728,7 @@ namespace Glass.Data.DAL
             }
 
             string sql = $"Update produtos_pedido set qtdSaida=greatest(Coalesce(qtdSaida, 0)+?qtdSaida, 0) Where idProdPed={ idProdPed }";
-            objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?qtdSaida", qtdSaida));
+            this.objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?qtdSaida", qtdSaida));
 
             // Insere um registro na tabela indicando que o produto foi baixado
             if (idSaidaEstoque > 0)
@@ -1735,20 +1744,16 @@ namespace Glass.Data.DAL
 
         private void InserirLogMovimentacaoProdPed(GDASession sessao, uint idProdPed, float qtdMovimentar, string metodo, string numEtiqueta, int idPedido, bool estorno = false)
         {
-            var idProd = ObtemValorCampo<uint>(sessao, "idProd", $"idProdPed = {idProdPed}");
+            var idProd = this.ObtemValorCampo<uint>(sessao, "idProd", $"idProdPed = {idProdPed}");
             var codInterno = ProdutoDAO.Instance.ObtemValorCampo<string>(sessao, "CodInterno", $"idProd = {idProd}");
             var descricaoProd = ProdutoDAO.Instance.GetDescrProduto(sessao, codInterno);
 
-            var tipo = estorno 
-                ? "Estorno" 
-                : "Saída";
+            var tipo = estorno ? "Estorno" : "Saída";
 
-            var usuario = UserInfo.GetUserInfo != null 
-                ? $"{UserInfo.GetUserInfo.CodUser} - {UserInfo.GetUserInfo.Nome}" 
-                : string.Empty;
+            var usuario = UserInfo.GetUserInfo != null ? $"{UserInfo.GetUserInfo.CodUser} - {UserInfo.GetUserInfo.Nome}" : string.Empty;
 
-            var qtde = ObtemValorCampo<string>(sessao, "Qtde", $"IdProdPed = {idProdPed}");
-            var qtdSaida = ObtemValorCampo<string>(sessao, "QtdSaida", $"IdProdPed = {idProdPed}");
+            var qtde = this.ObtemValorCampo<string>(sessao, "Qtde", $"IdProdPed = {idProdPed}");
+            var qtdSaida = this.ObtemValorCampo<string>(sessao, "QtdSaida", $"IdProdPed = {idProdPed}");
             numEtiqueta = numEtiqueta ?? "Sem Etiqueta";
 
             var idFuncAlt = (uint)FuncionarioDAO.Instance.GetAdministradores(true)
