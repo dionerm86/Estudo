@@ -1701,16 +1701,21 @@
 
             var retorno = CadNotaFiscal.ObterDadosVeiculo(placa);
 
-            if (retorno != null && retorno.value != "") {
+            if (retorno.error != null) {
+
+                alert(retorno.error.description);
+            }
+            else if (retorno != null && retorno.value != "") {
 
                 var resultado = retorno.value.split(',');
 
                 FindControl("txtVeicRntc", "input").value = resultado[0];
                 FindControl("drpVeicUf", "select").value = resultado[1];
+
                 return;
             }
 
-            FindControl("txtVeicRntc", "input").value ="";
+            FindControl("txtVeicRntc", "input").value = "";
             FindControl("drpVeicUf", "select").value = "";
 
             return;
