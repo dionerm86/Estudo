@@ -508,15 +508,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.CheckBox chkAgruparFuncionarioAssociadoCliente;
         
         /// <summary>
-        /// chkAgruparDepto control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkAgruparDepto;
-        
-        /// <summary>
         /// lkbInserir control.
         /// </summary>
         /// <remarks>

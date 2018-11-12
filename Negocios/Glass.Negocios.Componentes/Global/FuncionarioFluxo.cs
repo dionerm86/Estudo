@@ -12,7 +12,6 @@ namespace Glass.Global.Negocios.Componentes
     /// </summary>
     public class FuncionarioFluxo : 
         Negocios.IFuncionarioFluxo,
-      //  Entidades.IValidadorDepartamento, 
         Entidades.IProvedorFuncionario
     {
         #region Funcionário
