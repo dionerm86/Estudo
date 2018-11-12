@@ -1291,7 +1291,6 @@ namespace Glass.UI.Web.Cadastros
                 return string.Empty;
             }
 
-            ///Busca o veiculo
             var veiculo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.Global.Negocios.IVeiculoFluxo>().ObtemVeiculo(placa);
 
             if (veiculo != null)
@@ -1301,6 +1300,5 @@ namespace Glass.UI.Web.Cadastros
 
             return string.Empty;
         }
-
     }
 }

@@ -1696,16 +1696,18 @@
             return true;
         }
 
-
         function preencherDadosVeiculo(placa){
-
             var retorno = CadNotaFiscal.ObterDadosVeiculo(placa);
 
             if (retorno.error != null) {
-
                 alert(retorno.error.description);
+
+                FindControl("txtVeicRntc", "input").value = "";
+                FindControl("drpVeicUf", "select").value = "";
+
+                return;
             }
-            else if (retorno != null && retorno.value != "") {
+            if (retorno != null && retorno.value != "") {
 
                 var resultado = retorno.value.split(',');
 
@@ -1714,11 +1716,6 @@
 
                 return;
             }
-
-            FindControl("txtVeicRntc", "input").value = "";
-            FindControl("drpVeicUf", "select").value = "";
-
-            return;
         }
 
     </script>
