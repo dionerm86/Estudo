@@ -1,0 +1,44 @@
+﻿<div class="opblock opblock-post">
+    <div class="opblock-summary" @click.prevent="alterarExibicaoParametros()">
+        <span class="opblock-summary-path">{{operacao.nome}}</span>
+        <div class="opblock-summary-description">{{operacao.descricao}}</div>
+    </div>
+    <div v-if="podeExibirParametros" style="height: auto; border: none; margin: 0px; padding: 0px;">
+         <div class="opblock-body">
+            <div class="opblock-section">
+                <div class="opblock-section-header">
+                    <div class="tab-header">
+                        <h4 class="opblock-title">Parâmetros</h4>
+                    </div>
+                    <div class="try-out">
+                        <button class="btn try-out__btn" type="button" v-if="!testando" @click.prevent="testar()">Testar</button>
+                        <button class="btn try-out__btn cancel" type="button" v-if="testando" @click.prevent="cancelarTeste()">Cancelar</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="parametros">
+                        <thead>
+                            <tr>
+                                <th class="col col_header parametros-col_nome">Nome</th>
+                                <th class="col col_header parametros-col_descricao">Descrição</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr is="integradores-parametrooperacaointegracao"
+                                v-for="parametro in parametros"
+                                :parametro="parametro"
+                                :somenteLeitura="!testando">
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="execute-wrapper">
+            <button class="btn execute opblock-control__btn" type="button" v-if="testando" :disabled="executando" @click.prevent="executar()">
+                <span v-if="!executando">Executar</span>
+                <span v-if="executando">Executando...</span>
+            </button>
+        </div>
+    </div>
+</div>

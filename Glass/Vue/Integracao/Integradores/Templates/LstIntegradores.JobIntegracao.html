@@ -1,0 +1,43 @@
+﻿<div class="opblock"
+     v-bind:class="{ 'opblock-post': !possuiFalha, 'opblock-error': possuiFalha }">
+    <div class="opblock-summary" @click.prevent="alterarExibicaoDetalhes()">
+        <span class="opblock-summary-path">{{job.nome}}</span>
+        <div class="opblock-summary-description">{{job.descricao}}</div>
+    </div>
+    <div v-if="podeExibirDetalhes" style="height: auto; border: none; margin: 0px; padding: 0px;">
+        <div class="opblock-body">
+            <div class="opblock-section">
+                <div class="opblock-section-header">
+                    <div class="try-out">
+                        <button class="btn try-out__btn" type="button" :disabled="executando" @click.prevent="executar()">
+                            <span v-if="!executando">Executar</span>
+                            <span v-if="executando">Executando...</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="job-descricao-campo">Situação</td>
+                                <td>{{situacao}}</td>
+                            </tr>
+                            <tr>
+                                <td class="job-descricao-campo">Última execução</td>
+                                <td>{{job.ultimaExecucao}}</td>
+                            </tr>
+                            <tr>
+                                <td class="job-descricao-campo">Última falha</td>
+                                <td>{{job.ultimaFalha}}</td>
+                            </tr>
+                            <tr>
+                                <td class="job-descricao-campo">Próxima execução</td>
+                                <td>{{job.proximaExecucao}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

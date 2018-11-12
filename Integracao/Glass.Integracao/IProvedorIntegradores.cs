@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="IProvedorIntegradores.cs" company="Sync Softwares">
+// Copyright (c) Sync Softwares. Todos os direitos reservados.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

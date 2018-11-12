@@ -20,6 +20,10 @@
     </div>
 
 </asp:Content>
+<asp:Content ID="ContentHeader" ContentPlaceHolderID="Header" runat="server">
+    <asp:ContentPlaceHolder ID="Header" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
 <asp:Content ID="Pagina" ContentPlaceHolderID="Pagina" runat="server">
     <asp:ContentPlaceHolder ID="Conteudo" runat="server">
     </asp:ContentPlaceHolder>

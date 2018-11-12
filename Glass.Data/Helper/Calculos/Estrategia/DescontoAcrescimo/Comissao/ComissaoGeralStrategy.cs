@@ -1,11 +1,24 @@
-﻿using System;
+﻿using Glass.Configuracoes;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using Glass.Data.Model;
+using System;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
 {
-    class ComissaoGeralStrategy : BaseComissaoStrategy<ComissaoGeralStrategy>
+    class ComissaoGeralStrategy : BaseStrategy<ComissaoGeralStrategy>
     {
         private ComissaoGeralStrategy() { }
+
+        protected override bool PermiteAplicar()
+        {
+            return PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor;
+        }
+
+        protected override decimal CalcularValorAplicar(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
+        {
+            var percentualCalculo = (100 - valorAplicar) / 100;
+            return Math.Round(totalAtual / percentualCalculo - totalAtual, 2);
+        }
 
         protected override bool PermitirRemocaoCalculoProduto(IProdutoCalculo produto)
         {

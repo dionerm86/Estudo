@@ -1698,14 +1698,16 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Marca saída de produto na tabela produtos_pedido
         /// </summary>
-        public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta)
+        public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta, bool saidaConfirmacao = false)
         {
             if (idProdPed == 0)
                 return;
 
-            var idPedido = (int)ObtemIdPedido(idProdPed);
+            var idPedido = (int)ObtemIdPedido(sessao, idProdPed);
 
-            if (!ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
+            var saidaJaEfetuada = !saidaConfirmacao && PedidoDAO.Instance.VerificaSaidaEstoqueConfirmacao(sessao, idPedido);
+
+            if (saidaJaEfetuada || PedidoDAO.Instance.VerificarPedidoProducaoParaCorte(sessao, idPedido) || !ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
             {
                 return;
             }

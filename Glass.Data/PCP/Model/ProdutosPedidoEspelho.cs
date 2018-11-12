@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Text;
 using GDA;
@@ -14,7 +14,7 @@ namespace Glass.Data.Model
 	public class ProdutosPedidoEspelho : IResumoCorte, IProdutoCalculo
     {
         /*
-            CriaÁ„o de campos novos nesta model devem ser incluÌdos nos mÈtodos SqlProdEtiq() e SqlImpIndiv(), na ProdutosPedidoEspelhoDAO
+            Cria√ß√£o de campos novos nesta model devem ser inclu√≠dos nos m√©todos SqlProdEtiq() e SqlImpIndiv(), na ProdutosPedidoEspelhoDAO
          */
 
         #region Propriedades
@@ -188,7 +188,7 @@ namespace Glass.Data.Model
         public decimal BcCofins { get; set; }
 
         /// <summary>
-        /// AlÌquota CONFINS
+        /// Al√≠quota CONFINS
         /// </summary>
         [PersistenceProperty("AliqCofins")]
         public float AliqCofins { get; set; }
@@ -212,7 +212,7 @@ namespace Glass.Data.Model
         public decimal ValorIcmsDesonerado { get; set; }
 
         /// <summary>
-        /// Percentual de crÈdito base calculo ICMS
+        /// Percentual de cr√©dito base calculo ICMS
         /// </summary>
         [PersistenceProperty("PercRedBcIcms")]
         public float PercRedBcIcms { get; set; }
@@ -224,7 +224,7 @@ namespace Glass.Data.Model
         public decimal BcIcmsSt { get; set; }
 
         /// <summary>
-        /// AlÌquota ICMSST
+        /// Al√≠quota ICMSST
         /// </summary>
         [PersistenceProperty("AliqIcmsSt")]
         public float AliqIcmsSt { get; set; }
@@ -236,7 +236,7 @@ namespace Glass.Data.Model
         public decimal ValorIcmsSt { get; set; }
 
         /// <summary>
-        /// Percentual de crÈdito base calculo ICMSST
+        /// Percentual de cr√©dito base calculo ICMSST
         /// </summary>
         [PersistenceProperty("PercRedBcIcmsSt")]
         public decimal PercRedBcIcmsSt { get; set; }
@@ -326,13 +326,13 @@ namespace Glass.Data.Model
         public decimal ValorFcp { get; set; }
 
         /// <summary>
-        /// CÛd de subistituiÁ„o tributaria do IPI
+        /// C√≥d de subistitui√ß√£o tributaria do IPI
         /// </summary>
         [PersistenceProperty("CSTIPI")]
         public Sync.Fiscal.Enumeracao.Cst.CstIpi? CstIpi { get; set; }
 
         /// <summary>
-        /// CÛdigo do valor fiscal de ICMS do produto do pedido
+        /// C√≥digo do valor fiscal de ICMS do produto do pedido
         /// </summary>
         [PersistenceProperty("CODVALORFISCAL")]
         public int? CodValorFiscal { get; set; }
@@ -357,7 +357,7 @@ namespace Glass.Data.Model
         #region Propriedades Estendidas
 
         /// <summary>
-        /// Propriedade usada para impress„o individual de etiqueta
+        /// Propriedade usada para impress√£o individual de etiqueta
         /// </summary>
         [PersistenceProperty("IDAMBIENTEPEDIDOIMPR", DirectionParameter.InputOptional)]
         public long IdAmbientePedidoImpr
@@ -534,6 +534,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("CODNATUREZAOPERACAO", DirectionParameter.InputOptional)]
         public string CodNaturezaOperacao { get; set; }
 
+        [PersistenceProperty("QUANTIDADEEXPORTADA", DirectionParameter.InputOptional)]
+        public int? QuantidadeExportada { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte
@@ -556,7 +559,7 @@ namespace Glass.Data.Model
         private string _etiquetas;
 
         /// <summary>
-        /// Utilizado apenas para auxiliar na exportaÁ„o do arquivo de otimizaÁ„o
+        /// Utilizado apenas para auxiliar na exporta√ß√£o do arquivo de otimiza√ß√£o
         /// </summary>
         public string Etiquetas
         {
@@ -659,7 +662,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.AlumÌnio)
+                if (IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Alum√≠nio)
                     return Altura.ToString();
                 else
                     return Altura != _alturaReal ? (_alturaReal > 0 ? _alturaReal.ToString() + " (" + Altura.ToString() + ")" : Altura.ToString()) : Altura.ToString();
@@ -726,7 +729,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Usado para indicar a imagem que ser· usada para a peÁa.
+        /// Usado para indicar a imagem que ser√° usada para a pe√ßa.
         /// </summary>
         public int Item { get; set; }
 
@@ -747,7 +750,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Indica a URL da imagem que ser· usada no sistema, nas telas de produÁ„o.
+        /// Indica a URL da imagem que ser√° usada no sistema, nas telas de produ√ß√£o.
         /// </summary>
         public string ImagemUrl
         {
@@ -777,7 +780,7 @@ namespace Glass.Data.Model
 
                     if ((IdItemProjeto == null || IdItemProjeto == 0) && (IdMaterItemProj == null || IdMaterItemProj == 0))
                     {
-                        // Chamado 16226: Ao invÈs de retornar String.Empty neste ponto, verifica se tem alguma imagem associada ao produto deste item
+                        // Chamado 16226: Ao inv√©s de retornar String.Empty neste ponto, verifica se tem alguma imagem associada ao produto deste item
                         var urlCadProd = Utils.GetProdutosVirtualPath + IdProd + ".jpg";
                         return System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath(urlCadProd)) ? urlCadProd : string.Empty;
                     }
@@ -884,7 +887,7 @@ namespace Glass.Data.Model
         public uint? IdProdPedParentOrig { get; set; }
 
         /// <summary>
-        /// Data fabrica considerando os dias a retirar da composiÁ„o
+        /// Data fabrica considerando os dias a retirar da composi√ß√£o
         /// </summary>
         public DateTime DataFabricaExibir
         {
