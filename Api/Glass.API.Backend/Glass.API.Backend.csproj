@@ -205,6 +205,9 @@
     <Compile Include="Controllers\Aplicacoes\V1\PostAplicacoesController.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\CarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\GetCarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
     <Compile Include="Controllers\Cfops\V1\DeleteCfopsController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\GetNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\NaturezasOperacaoController.cs" />
@@ -466,6 +469,7 @@
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Carregamentos\TraducaoOrdenacaoListaCarregamentos.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\ConverterCadastroAtualizacaoParaFabricanteFerragem.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\TraducaoOrdenacaoListaFabricantesFerragem.cs" />
     <Compile Include="Helper\Projetos\MedidasProjeto\ConverterCadastroAtualizacaoParaMedidaProjeto.cs" />
@@ -572,6 +576,12 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\OrdensCarga\Carregamento\QuantitativoDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\OrdensCarga\Carregamento\ListaDto.cs" />
     <Compile Include="Models\Cfops\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Cfops\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Cfops\V1\Filtro\CfopDto.cs" />
