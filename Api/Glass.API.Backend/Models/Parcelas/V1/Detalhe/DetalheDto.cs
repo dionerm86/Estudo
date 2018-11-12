@@ -3,6 +3,8 @@
 // </copyright>
 using Glass.API.Backend.Models.Genericas.V1;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Parcelas.V1.Detalhe
@@ -28,7 +30,9 @@ namespace Glass.API.Backend.Models.Parcelas.V1.Detalhe
                 Nome = Colosoft.Translator.Translate(parcela.Situacao).Format(),
             };
 
-            this.Dias = parcela.Dias;
+            this.Dias = !string.IsNullOrWhiteSpace(parcela.Dias) ? Array.ConvertAll(parcela.Dias.Split(','), i => Conversoes.StrParaInt(i)) : new int[0];
+            this.ParcelaAVista = parcela.ParcelaAVista;
+            this.NumeroParcelas = parcela.NumParcelas;
         }
 
         /// <summary>
@@ -37,7 +41,6 @@ namespace Glass.API.Backend.Models.Parcelas.V1.Detalhe
         [DataMember]
         [JsonProperty("id")]
         public int Id { get; set; }
-
 
         /// <summary>
         /// Obtém ou define a descrição da parcela.
@@ -65,7 +68,7 @@ namespace Glass.API.Backend.Models.Parcelas.V1.Detalhe
         /// </summary>
         [DataMember]
         [JsonProperty("dias")]
-        public string Dias { get; set; }
+        public IEnumerable<int> Dias { get; set; }
 
         /// <summary>
         /// Obtém ou define o desconto da parcela.
@@ -87,12 +90,5 @@ namespace Glass.API.Backend.Models.Parcelas.V1.Detalhe
         [DataMember]
         [JsonProperty("parcelaPadrao")]
         public bool ParcelaPadrao { get; set; }
-
-        /// <summary>
-        /// Obtém ou define um valor que indica se a parcela é padrão.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("formaPagto")]
-        public IdNomeDto FormaPagto { get; set; }
     }
 }

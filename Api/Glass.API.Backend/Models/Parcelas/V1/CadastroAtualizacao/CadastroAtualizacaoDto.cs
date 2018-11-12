@@ -4,12 +4,13 @@
 
 using Glass.API.Backend.Models.Genericas.V1.CadastroAtualizacao;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Parcelas.V1.CadastroAtualizacao
 {
     /// <summary>
-    /// Classe que encapsula os dados de cadastro ou atualização de um condutor.
+    /// Classe que encapsula os dados de cadastro ou atualização de uma parcela.
     /// </summary>
     [DataContract(Name = "Cadastro")]
     public class CadastroAtualizacaoDto : BaseCadastroAtualizacaoDto<CadastroAtualizacaoDto>
@@ -63,7 +64,7 @@ namespace Glass.API.Backend.Models.Parcelas.V1.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("dias")]
-        public string Dias
+        public IEnumerable<int> Dias
         {
             get { return this.ObterValor(c => c.Dias); }
             set { this.AdicionarValor(c => c.Dias, value); }
@@ -100,17 +101,6 @@ namespace Glass.API.Backend.Models.Parcelas.V1.CadastroAtualizacao
         {
             get { return this.ObterValor(c => c.ParcelaPadrao); }
             set { this.AdicionarValor(c => c.ParcelaPadrao, value); }
-        }
-
-        /// <summary>
-        /// Obtém ou define um valor que indica se a parcela é padrão.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("formaPagto")]
-        public bool FormaPagto
-        {
-            get { return this.ObterValor(c => c.FormaPagto); }
-            set { this.AdicionarValor(c => c.FormaPagto, value); }
         }
     }
 }

@@ -19,25 +19,47 @@
                     </label>
                 </span>
                 <span class="colspan3">
-                    <lista-selecao-id-valor :item-selecionado.sync="formaPagto" :funcao-recuperar-itens="obterFormaPagto" required></lista-selecao-id-valor>
+                    <lista-selecao-id-valor :item-selecionado.sync="formaPagamentoAtual" :funcao-recuperar-itens="obterFormaPagto" required></lista-selecao-id-valor>
                 </span>
-                <span class="cabecalho">
+                <template v-if="exibirDias">
+                    <span class="cabecalho">
+                        <label>
+                            Dias
+                        </label>
+                    </span>
+                    <span class="colspan3">
+                        <input type="number" v-model="diaAtual"/>
+                        <button v-on:click.prevent="inserirDia" title="Inserir dia">
+                            <img v-bind:src="caminhoRelativo('/Images/Insert.gif')">
+                        </button>
+                        <div v-for="dia in parcela.dias" style="padding: 4px 0">
+                            <a href="#" @click.prevent="excluirDia(dia)" title="Remover">
+                                <img border="0" src="../Images/ExcluirGrid.gif">
+                            </a>
+                            {{dia}}
+                        </div>
+                    </span>
+                </template>
+                <span class="cabecalho" v-if="configuracoes.usarDescontoEmParcela">
                     <label>
-                        Dias
+                        Desconto (%)
                     </label>
                 </span>
-                <span class="colspan3">
-                    <input type="text" v-model="parcela.dias"/>
-                <button v-on:click.prevent="iniciarCadastro" title="Novo produto...">
-                    <img v-bind:src="caminhoRelativo('/Images/Insert.gif')">
-                </button>
+                <span class="colspan3" v-if="configuracoes.usarDescontoEmParcela">
+                    <input type="text" v-model="parcela.desconto" />
                 </span>
-                <span class="colspan4" style="margin-left: 8px">
-                        <input id="parcelaPadrao" type="checkbox" v-model="parcela.parcelaPadrao" />
+                <span class="colspan4" style="padding: 4px 0">
+                        <input v-model="parcela.parcelaPadrao" type="checkbox" />
                         <label for="parcelaPadrao">
                             Exibir marcado como padrão?
                         </label>
-                    </span>
+                </span>
+                <span class="colspan4" style="padding: 4px 0" v-if="configuracoes.usarTabelaDescontoAcrescimoPedidoAVista">
+                        <input id="parcelaAvista" type="checkbox" v-model="parcela.parcelaAvista" />
+                        <label for="parcelaAvista">
+                            Parcela à vista?
+                        </label>
+                </span>
                 <span class="cabecalho">
                     <label>
                         Situação
@@ -62,7 +84,7 @@
             </section>
         </div>
     </div>
-     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+    <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
             <asp:ScriptReference Path="~/Vue/Parcelas/Componentes/CadParcelas.js" />
         </Scripts>

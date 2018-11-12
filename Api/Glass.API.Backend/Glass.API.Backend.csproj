@@ -620,6 +620,8 @@
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ParametroOperacaoIntegracaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Logger\ItemLoggerIntegracaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Logger\LoggerIntegracaoDto.cs" />
+    <Compile Include="Models\Parcelas\V1\Configurações\CadastroDto.cs" />
+    <Compile Include="Models\Parcelas\V1\Configurações\TipoPagamento.cs" />
     <Compile Include="Models\Parcelas\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Parcelas\V1\Detalhe\DetalheDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
@@ -636,7 +638,7 @@
     <Compile Include="Models\PlanosConta\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\ListaDto.cs" />
-    <Compile Include="Models\Parcelas\Configurações\ListaDto.cs" />
+    <Compile Include="Models\Parcelas\V1\Configurações\ListaDto.cs" />
     <Compile Include="Models\Parcelas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Parcelas\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\PermissoesDto.cs" />

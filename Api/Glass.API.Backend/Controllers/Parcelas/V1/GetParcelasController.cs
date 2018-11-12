@@ -2,6 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Colosoft;
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
@@ -27,13 +28,56 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
         [Route("configuracoes")]
-        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Parcelas.V1.Parcelas.Configuracoes.ListaDto))]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Parcelas.V1.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaParcelas()
         {
             using (var sessao = new GDATransaction())
             {
-                var configuracoes = new Models.Parcelas.V1.Parcelas.Configuracoes.ListaDto();
+                var configuracoes = new Models.Parcelas.V1.Configuracoes.ListaDto();
                 return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera as configurações usadas pela tela de listagem de parcelas.
+        /// </summary>
+        /// <param name="id">Identificador da parcela que está sendo alterada.</param>
+        /// <returns>Um objeto JSON com as configurações da tela de cadastro.</returns>
+        [HttpGet]
+        [Route("{id:int}/configuracoes")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Parcelas.V1.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesCadastroParcela(int id)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.Parcelas.V1.Configuracoes.CadastroDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera os Tipos pagamentos usadas pela tela de cadastro de parcelas.
+        /// </summary>
+        /// <returns>Um objeto JSON com as configurações da tela de cadastro.</returns>
+        [HttpGet]
+        [Route("tiposPagamento")]
+        [SwaggerResponse(200, "Tipos pagamentos recuperados.", typeof(IEnumerable<IdNomeDto>))]
+        public IHttpActionResult ObterTiposPagamento()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tiposPagamentos = new List<IdNomeDto>();
+
+                foreach (Models.Parcelas.V1.Configuracoes.TipoPagamento tipo in Enum.GetValues(typeof(Models.Parcelas.V1.Configuracoes.TipoPagamento)))
+                {
+                    tiposPagamentos.Add(new IdNomeDto()
+                    {
+                        Id = (int)tipo,
+                        Nome = tipo.Translate().ToString(),
+                    });
+                }
+
+                return this.Item(tiposPagamentos);
             }
         }
 

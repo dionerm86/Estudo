@@ -4,6 +4,7 @@
 
 using Glass.API.Backend.Models.Parcelas.V1.CadastroAtualizacao;
 using System;
+using System.Linq;
 
 namespace Glass.API.Backend.Helper.Parcelas
 {
@@ -45,13 +46,16 @@ namespace Glass.API.Backend.Helper.Parcelas
 
         private void ConverterDtoParaModelo(Financeiro.Negocios.Entidades.Parcelas destino)
         {
+            var dias = destino.Dias != null ? Array.ConvertAll(destino.Dias.Split(','), i => Conversoes.StrParaInt(i)) : null;
+            var destinoDias = this.cadastro.ObterValorNormalizado(c => c.Dias, dias);
+
             destino.Descricao = this.cadastro.ObterValorNormalizado(c => c.Descricao, destino.Descricao);
-            destino.Dias = this.cadastro.ObterValorNormalizado(c => c.Dias, destino.Dias);
             destino.ParcelaAVista = this.cadastro.ObterValorNormalizado(c => c.ParcelaAVista, destino.ParcelaAVista);
             destino.Situacao = this.cadastro.ObterValorNormalizado(c => c.Situacao, destino.Situacao);
             destino.Desconto = this.cadastro.ObterValorNormalizado(c => c.Desconto, destino.Desconto);
             destino.ParcelaPadrao = this.cadastro.ObterValorNormalizado(c => c.ParcelaPadrao, destino.ParcelaPadrao);
             destino.NumParcelas = this.cadastro.ObterValorNormalizado(c => c.NumeroParcelas, destino.NumParcelas);
+            destino.Dias = string.Join(",", destinoDias);
         }
     }
 }

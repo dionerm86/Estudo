@@ -1,26 +1,29 @@
-﻿// <copyright file="ListaDto.cs" company="Sync Softwares">
+﻿// <copyright file="CadastroDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using Glass.Configuracoes;
 using Newtonsoft.Json;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Parcelas.V1.Parcelas.Configuracoes
+namespace Glass.API.Backend.Models.Parcelas.V1.Configuracoes
 {
     /// <summary>
-    /// Classe que encapsula as configurações para a tela de listagem de parcelas.
+    /// Classe que encapsula as configurações para a tela de cadastro de parcelas.
     /// </summary>
-    [DataContract(Name = "Lista")]
-    public class ListaDto
+    [DataContract(Name = "Cadastro")]
+    public class CadastroDto
     {
         /// <summary>
-        /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
+        /// Inicia uma nova instância da classe <see cref="CadastroDto"/>.
         /// </summary>
-        internal ListaDto()
+        internal CadastroDto()
         {
             this.UsarDescontoEmParcela = FinanceiroConfig.UsarDescontoEmParcela;
             this.UsarTabelaDescontoAcrescimoPedidoAVista = PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista;
+            this.TipoPagamentoAPrazo = TipoPagamento.TipoPagamentoAPrazo;
+            this.TipoPagamentoAVista = TipoPagamento.TipoPagamentoAVista;
         }
 
         /// <summary>
@@ -36,5 +39,19 @@ namespace Glass.API.Backend.Models.Parcelas.V1.Parcelas.Configuracoes
         [DataMember]
         [JsonProperty("usarDescontoEmParcela")]
         public bool UsarDescontoEmParcela { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o tipo de pagamento a prazo.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("tipoPagamentoAPrazo")]
+        public TipoPagamento TipoPagamentoAPrazo { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o tipo de pagamento a vista.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("tipoPagamentoAVista")]
+        public TipoPagamento TipoPagamentoAVista { get; set; }
     }
 }
