@@ -2435,8 +2435,8 @@ namespace Glass.Data.DAL
 
             if (idAtendente > 0)
             {
-                sql += string.Format(" AND c.IdFuncAtendente={0}", idAtendente);
-                whereDadosVendidos += string.Format(" AND cli.IdFuncAtendente={0}", idAtendente);
+                sql += $" AND c.IdFuncAtendente={ idAtendente }";
+                whereDadosVendidos += $" AND cli.IdFuncAtendente={ idAtendente }";
 
                 criterio += string.Format(formatoCriterio, "Atendente:", FuncionarioDAO.Instance.GetNome((uint)idAtendente));
                 temFiltro = true;
