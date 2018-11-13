@@ -259,7 +259,7 @@ namespace Glass.Global.Relatorios.Clientes
 
             // Recupera o critério da pesquisa
             Parameters.Add("Criterio", clientes.GetSearchParameterDescriptions().Join(" ").Format() ?? "");
-            Parameters.Add("AgruparVend", AgruparVendedor);
+            this.Parameters.Add("AgruparVend", this.AgruparVendedor);
             Parameters.Add("ExibirHistorico", ExibirHistorico);
             Parameters.Add("ExibirCidade", true);
 

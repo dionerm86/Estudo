@@ -132,6 +132,8 @@ namespace Glass.Global.Negocios.Entidades
 
         public string NomeAtendente { get; set; }
 
+        public string DescricaoTabelaDesconto { get; set; }
+
         #endregion
     }
 }
