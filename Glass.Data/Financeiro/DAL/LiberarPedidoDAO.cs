@@ -403,7 +403,7 @@ namespace Glass.Data.DAL
             // Recupera a loja do primeiro pedido liberado.
             // Caso a empresa trabalhe com comissão de contas recebidas ou a loja do cliente tenha que ser considerada no fluxo do sistema, considera a loja do pedido,
             // senão, considera a loja do funcionário que está liberando os pedidos.
-            idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas || Geral.ConsiderarLojaClientePedidoFluxoSistema ?
+            idLoja = ComissaoDAO.Instance.VerificarComissaoContasRecebidas() || Geral.ConsiderarLojaClientePedidoFluxoSistema ?
                 ((int)PedidoDAO.Instance.ObtemIdLoja(session, idsPedido != null && idsPedido.Count() > 0 ? (uint)idsPedido.ElementAt(0) : 0)) : (int)usuarioLogado.IdLoja;
 
             #endregion
@@ -1336,7 +1336,7 @@ namespace Glass.Data.DAL
             }
 
             var idPedido = PedidoDAO.Instance.GetIdsByLiberacao(session, idLiberarPedido).First();
-            return (int)PedidoDAO.Instance.ObtemIdFunc(session, idPedido);
+            return (int)ComissaoDAO.Instance.ObtemIdFuncComissaoRec(session, (int)idPedido);
         }
 
         /// <summary>
@@ -1918,7 +1918,7 @@ namespace Glass.Data.DAL
             }
 
             /* Chamado 52405. */
-            idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas || Geral.ConsiderarLojaClientePedidoFluxoSistema ? idLoja : UserInfo.GetUserInfo.IdLoja;
+            idLoja = ComissaoDAO.Instance.VerificarComissaoContasRecebidas() || Geral.ConsiderarLojaClientePedidoFluxoSistema ? idLoja : UserInfo.GetUserInfo.IdLoja;
 
             if (idLoja == 0)
                 throw new Exception("Não foi possível recuperar a loja do(s) pedido(s) liberado(s).");
@@ -2451,12 +2451,12 @@ namespace Glass.Data.DAL
         /// <param name="idsPedidos">Lista de identificadores de Pedido.</param>
         private static void VerificarComissaoContasReceber(GDASession session, List<uint> idsPedidos)
         {
-            var vendedoresPedidos = new List<Tuple<uint, uint>>();
+            List<Tuple<uint, int>> vendedoresPedidos = null;
 
-            if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && !PedidoDAO.Instance.VerificarPedidosMesmoVendedor(session, idsPedidos,out vendedoresPedidos))
+            if (!PedidoDAO.Instance.VerificarPedidosMesmoVendedor(session, idsPedidos, out vendedoresPedidos))
             {
                 var mensagemVendedoresPedidos = string.Join($"{System.Environment.NewLine}", vendedoresPedidos.GroupBy(p => p.Item2)
-                    .Select(p => $"Funcionário: {FuncionarioDAO.Instance.GetNome(session, p.Key)}. Pedido(s): {string.Join(", ", p.Select(f => f.Item1))}"));
+                    .Select(p => $"Funcionário: {FuncionarioDAO.Instance.GetNome(session, (uint)p.Key)}. Pedido(s): {string.Join(", ", p.Select(f => f.Item1))}"));
 
                 throw new Exception($"Não é possivel liberar pedidos em que os funcionários a receber comissão sejam diferentes.{System.Environment.NewLine}{mensagemVendedoresPedidos}.");
             }

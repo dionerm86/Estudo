@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass.Configuracoes;
 using Glass.Data.EFD;
 using Glass.Data.Helper;
@@ -5155,7 +5155,7 @@ namespace Glass.Data.DAL
                     return;
 
                 /* Chamado 38752. */
-                if (!Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas ||
+                if (!ComissaoDAO.Instance.VerificarComissaoContasRecebidas() ||
                     !FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber ||
                     nf.TipoDocumento != (int)NotaFiscal.TipoDoc.Saída)
                     return;
@@ -5214,7 +5214,7 @@ namespace Glass.Data.DAL
         public void DesvinculaReferenciaPedidosAntecipados(GDASession session, int nf)
         {
             /* Chamado 38752. */
-            if (!Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas ||
+            if (!ComissaoDAO.Instance.VerificarComissaoContasRecebidas() ||
                 !FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber ||
                 ObtemValorCampo<int>("TipoDocumento", string.Format("IdNf={0}", nf)) != (int)NotaFiscal.TipoDoc.Saída)
                 return;
