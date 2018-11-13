@@ -72,7 +72,7 @@ namespace Glass.UI.Web.Relatorios
                         var situacao = Request["situacao"];
                         var formaEmissao = Glass.Conversoes.StrParaInt(Request["formaEmissao"]);
                         var loja = LojaDAO.Instance.GetElement(login.IdLoja);
-                        var apenasNotasFiscaisSemAnexo = Request["apenasNotasFiscaisSemAnexo"] != null ? true : false;
+                        var apenasNotasFiscaisSemAnexo = Request["apenasNotasFiscaisSemAnexo"]?.ToLower() == "true";
                         var dados = NotaFiscalDAO.Instance.GetListPorSituacao(numeroNfe, idPedido, Request["modelo"], idLoja, idCliente,
                             Request["nomeCliente"], Glass.Conversoes.StrParaInt(Request["tipoFiscal"]), idFornec, Request["nomeFornec"],
                             Request["codRota"], tipoDoc, situacao, Request["dataIni"], Request["dataFim"],
