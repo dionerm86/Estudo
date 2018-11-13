@@ -5,6 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
+using Glass.API.Backend.Models.Carregamentos.V1.Lista;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
@@ -47,11 +48,11 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1
         [SwaggerResponse(204, "Carregamentos não encontrados para o filtro informado.")]
         [SwaggerResponse(206, "Carregamentos paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Carregamentos.V1.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaCarregamentos([FromUri] Models.Carregamentos.V1.Lista.FiltroDto filtro)
+        public IHttpActionResult ObterListaCarregamentos([FromUri] FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.Carregamentos.V1.Lista.FiltroDto();
+                filtro = filtro ?? new FiltroDto();
 
                 var carregamentos = CarregamentoDAO.Instance.GetListWithExpression(
                     (uint)(filtro.Id ?? 0),
@@ -69,7 +70,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    carregamentos.Select(c => new Models.Carregamentos.V1.Lista.ListaDto(c)),
+                    carregamentos.Select(c => new ListaDto(c)),
                     filtro,
                     () => CarregamentoDAO.Instance.GetListWithExpressionCount(
                         (uint)(filtro.Id ?? 0),
@@ -107,19 +108,44 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1
         /// <summary>
         /// Recupera as pendências de faturamento.
         /// </summary>
+        /// <param name="id">O identificador </param>
         /// <returns>Uma lista JSON com as pendências de faturamento.</returns>
         [HttpGet]
         [Route("{id:int}/pendenciasFaturamento")]
         [SwaggerResponse(200, "Pendências de faturamento encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Pendências de faturamento não encontradas.")]
-        public IHttpActionResult ObterPendenciasFaturamento()
+        public IHttpActionResult ObterPendenciasFaturamento(int id)
         {
             using (var sessao = new GDATransaction())
             {
-                var situacoes = new ConversorEnum<Data.Model.Carregamento.SituacaoCarregamentoEnum>()
+                var pendencias = new ConversorEnum<Data.Model.Carregamento.SituacaoCarregamentoEnum>()
                     .ObterTraducao();
 
-                return this.Lista(situacoes);
+                return this.Lista(pendencias);
+            }
+        }
+
+        /// <summary>
+        /// Recupera dados do faturamento.
+        /// </summary>
+        /// <param name="id">O identificador do carregamento.</param>
+        /// <returns>Uma lista JSON com dados do faturamento.</returns>
+        [HttpGet]
+        [Route("{id:int}/dadosFaturamento")]
+        [SwaggerResponse(200, "Dados do faturamento encontradas.", Type = typeof(IEnumerable<DadosFaturamentoDto>))]
+        [SwaggerResponse(204, "Dados do faturamento não encontradas.")]
+        public IHttpActionResult ObterDadosFaturamento(int id)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var dadosFaturamento = WebGlass.Business.OrdemCarga.Fluxo.CarregamentoFluxo.Instance.BuscarFaturamento((uint)id)
+                    .Select(f => new DadosFaturamentoDto
+                    {
+                        IdLiberacao = f.Item1,
+                        IdNotaFiscal = f.Item2,
+                    });
+
+                return this.Lista(dadosFaturamento);
             }
         }
     }

@@ -1491,12 +1491,12 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// <summary>
         /// Busca as liberações e notas referentes ao faturamento do carregamento passado
         /// </summary>
-        public string BuscarFaturamento(uint idCarregamento)
+        public List<Tuple<int, int>> BuscarFaturamento(uint idCarregamento)
         {
             var carregamento = CarregamentoDAO.Instance.GetElementByPrimaryKey(idCarregamento);
             var idsPedido = PedidoDAO.Instance.GetIdsPedidosByCarregamento(null, idCarregamento);
             var clientesPedidosFormaPagto = new Dictionary<Tuple<uint, uint>, List<uint>>();
-            var retorno = new List<string>();
+            var retorno = new List<Tuple<int, int>>();
 
             foreach (var idPedido in idsPedido)
             {
@@ -1526,10 +1526,10 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 }
 
                 var idNf = NotaFiscalDAO.Instance.GetByNumeroNFe(numeroNf, 2).FirstOrDefault().IdNf;
-                retorno.Add(string.Format("{0},{1}", idLiberacao, idNf));
+                retorno.Add(new Tuple<int, int>((int)idLiberacao, (int)idNf));
             }
 
-            return string.Join(";", retorno);
+            return retorno;
         }
 
         #endregion

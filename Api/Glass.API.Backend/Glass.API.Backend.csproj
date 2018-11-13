@@ -206,8 +206,12 @@
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\CarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\PostCarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\DeleteCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\GetCarregamentosController.cs" />
-    <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\OrdensCargaController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\GetOrdensCargaController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\PatchOrdensCargaController.cs" />
     <Compile Include="Controllers\Cfops\V1\DeleteCfopsController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\GetNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\NaturezasOperacaoController.cs" />
@@ -578,6 +582,7 @@
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
     <Compile Include="Models\Carregamentos\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Carregamentos\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Lista\DadosFaturamentoDto.cs" />
     <Compile Include="Models\Carregamentos\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Carregamentos\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Carregamento\QuantitativoDto.cs" />
