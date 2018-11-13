@@ -1071,11 +1071,24 @@ namespace Glass.Data.Model
             }
         }
 
+        /// <summary>
+        /// Quantidadade de peças do pedido, considerando as peças filhas
+        /// </summary>
         [XmlIgnore]
         public long QtdePecas
         {
             get { return PedidoDAO.Instance.ObtemQuantidadePecas(null, IdPedido); }
         }
+
+        /// <summary>
+        /// Quantidadade de peças do pedido, sem considerar as peças filhas
+        /// </summary>
+        [XmlIgnore]
+        public long QtdePecasPai
+        {
+            get { return PedidoDAO.Instance.ObtemQuantidadePecasPai(null, IdPedido); }
+        }
+
 
         public string NfeAssociada { get { return PedidosNotaFiscalDAO.Instance.NotasFiscaisGeradas(null, IdPedido); } }
 

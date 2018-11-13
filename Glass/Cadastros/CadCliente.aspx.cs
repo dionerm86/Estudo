@@ -216,6 +216,12 @@ namespace Glass.UI.Web.Cadastros
         {
             if (!RotaDAO.Instance.ExisteRota())
                 ((DropDownList)sender).Style.Add("display", "none");
+
+            ///Se o funcionário não tiver permissão para alterar a rota, desabilita o campo.
+            if (!Config.PossuiPermissao(Config.FuncaoMenuCadastro.PermitirAlterarRotaCliente))
+            {
+                ((DropDownList)sender).Enabled = false;
+            }
         }
 
         protected void chkBloquearCheques_Load(object sender, EventArgs e)

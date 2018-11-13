@@ -4196,29 +4196,19 @@ namespace Glass.Data.DAL
 
                     bool encontrado = false;
 
-                    // Carrega os produtos
-                    var prodPed = ProdutosPedidoDAO.Instance.GetByPedido(sessao, idPedidoNovo.Value);
+                    var prodPed = ProdutosPedidoDAO.Instance.GetByPedido(sessao, idPedidoNovo.Value).ToList();
 
-                    var idsSubGrupoChapaVidro = SubgrupoProdDAO.Instance.ObterSubgruposChapaVidro(sessao);
+                    idProdutoNovo = this.BuscarProdutoRevendaCompativel(sessao, prodPed, prodPedEsp);
 
-                    // Soma a quantidade total do idProd passado nos produtos do pedido de revenda
-                    var qtdTotalProd = prodPed
-                        .Where(f => f.IdProd == prodPedEsp.IdProd)
-                        .Sum(f => f.Qtde);
+                    encontrado = idProdutoNovo > 0;
 
-                    // Procura o produto no pedido de revenda
-                    var produtoNovo = prodPed.Where(f =>
-                        f.IdProd == prodPedEsp.IdProd &&
-                        f.Altura == prodPedEsp.Altura &&
-                        f.Largura == prodPedEsp.Largura &&
-                        /* Chamado 63214. */
-                        (cancTrocaDev ? true : f.Qtde - f.QtdSaida > 0) &&
-                        qtdTotalProd - GetQtdeLiberadaByPedProd(sessao, f.IdPedido, null, f.IdProd) > 0);
-
-                    if (produtoNovo.Count() > 0)
+                    if (!encontrado) // Se n�o encontrar, procura no fluxo
                     {
-                        encontrado = true;
-                        idProdutoNovo = produtoNovo.FirstOrDefault().IdProdPed;
+                        prodPed = ProdutosPedidoDAO.Instance.GetByPedido(sessao, idPedidoNovo.Value, true).ToList();
+
+                        idProdutoNovo = this.BuscarProdutoRevendaCompativel(sessao, prodPed, prodPedEsp);
+
+                        encontrado = idProdutoNovo > 0;
                     }
 
                     if (!encontrado)
@@ -4656,6 +4646,35 @@ namespace Glass.Data.DAL
                         (idPedidoNovo.GetValueOrDefault(0) > 0 ? " Pedido Exp: " + idPedidoNovo.Value : ""), ex);
 
                 throw ex;
+            }
+        }
+
+        private uint BuscarProdutoRevendaCompativel(GDASession sessao, List<ProdutosPedido> prodPed, ProdutosPedidoEspelho prodPedEsp)
+        {
+            var produtosEncontrados = prodPed.Where(p =>
+                p.IdProd == prodPedEsp.IdProd
+                && p.Altura == prodPedEsp.Altura
+                && p.Largura == prodPedEsp.Largura)
+                .OrderByDescending(p => p.Qtde - p.QtdSaida)
+                .GroupBy(p => p.IdProd)
+                .Select(p => new
+                {
+                    p.FirstOrDefault().IdProdPed,
+                    IdProd = p.Key,
+                    p.FirstOrDefault().IdPedido,
+                    Qtde = p.Sum(q => q.Qtde),
+                });
+
+            var prodPedVerificar = produtosEncontrados
+                    .Where(p => (p.Qtde - this.GetQtdeLiberadaByPedProd(sessao, p.IdPedido, null, p.IdProd)) > 0);
+
+            if (prodPedVerificar.Any(p => p.IdProdPed > 0))
+            {
+                return prodPedVerificar.FirstOrDefault().IdProdPed;
+            }
+            else
+            {
+                return 0;
             }
         }
 
@@ -5848,20 +5867,28 @@ namespace Glass.Data.DAL
         /// </summary>
         public int GetQtdeLiberadaByPedProd(GDASession sessao, uint idPedido, uint? idProdPed, uint idProd)
         {
-            string sql = "select count(*) from produto_pedido_producao where idPedidoExpedicao=" + idPedido;
-
+            var filtro = string.Empty;
             if (idProdPed == null)
-                sql += " and idProdPed in (select idProdPed from produtos_pedido_espelho where idProd=" + idProd + ")";
+            {
+                filtro = $" AND ppe.IdProd = {idProd}";
+            }
             else
-                sql += " and idProdPed=" + idProdPed.Value;
+            {
+                filtro = $" AND ppe.IdProdPed={idProdPed.Value}";
+            }
+
+
+            string sql = $@"SELECT COUNT(*) FROM produto_pedido_producao ppp    
+                INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed) 
+                WHERE ppp.idPedidoExpedicao={idPedido} {filtro}";
 
             var retorno = objPersistence.ExecuteSqlQueryCount(sessao, sql);
 
-            sql = @"
+            sql = $@"
                 SELECT COUNT(*)
-                FROM produto_impressao
-                WHERE idPedidoExpedicao=" + idPedido + @"
-                    AND idProdNf in (SELECT idProdNf FROM produtos_nf WHERE idProd=" + idProd + ")";
+                FROM produto_impressao pi
+                    INNER JOIN produtos_nf pnf ON (pnf.IdProdNf = pi.IdProdNf)
+                WHERE pi.IdPedidoExpedicao={idPedido} AND pnf.IdProd = {idProd}";
 
             return retorno + objPersistence.ExecuteSqlQueryCount(sessao, sql);
         }
@@ -7372,10 +7399,10 @@ namespace Glass.Data.DAL
                 ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, cli.nome as nomeCliente, apl.CodInterno as CodAplicacao,
                 prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char), if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char),
                 'R)')), ''), if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir,
-                s.descricao as descrSetor, sr.descricao as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pp.ValorVendido as ValorUnit, ped.CodCliente, round(pp.TotM/(pp.qtde*if(ped.tipoPedido=" +
+                s.descricao as descrSetor, sr.descricao as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pp.ValorVendido as ValorUnit, ped.CodCliente, @TotM:=round(pp.TotM/(pp.qtde*if(ped.tipoPedido=" +
                 (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, (ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado,
                 (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido,
-                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, sp.TipoCalculo, '$$$' as Criterio" : "count(*)";
+                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, sp.TipoCalculo, IF (sp.TipoCalculo = 1, pp.ValorVendido, pp.ValorVendido * @TotM) AS ValorTotal,'$$$' as Criterio" : "count(*)";
 
             string campos2 = selecionar ? @"
                 ppp.idProdPedProducao, null as numeroNFe, ppp.idProdPed, ppp.idSetor, ppp.idFuncPerda, ppp.idPedidoExpedicao,
@@ -7390,10 +7417,10 @@ namespace Glass.Data.DAL
                 ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, cli.nome as nomeCliente, apl.CodInterno as CodAplicacao,
                 prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char), if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char),
                 'R)')), ''), if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir,
-                s.descricao as descrSetor, sr.descricao as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pp.ValorVendido as ValorUnit, ped.CodCliente, round(pp.TotM/(pp.qtde*if(ped.tipoPedido=" +
+                s.descricao as descrSetor, sr.descricao as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pp.ValorVendido as ValorUnit, ped.CodCliente, @TotM:=round(pp.TotM/(pp.qtde*if(ped.tipoPedido=" +
                 (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, (ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado,
                 (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido,
-                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, sp.TipoCalculo, '$$$' as Criterio" : "count(*)";
+                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, sp.TipoCalculo, IF (sp.TipoCalculo = 1, pp.ValorVendido, pp.ValorVendido * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
 
             string campos3 = selecionar ? @"
                 null, null, pt.idProdPed, null, td.idFunc, null,
@@ -7410,9 +7437,9 @@ namespace Glass.Data.DAL
                 if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char),
                 'R)')), '')) as IdPedidoExibir, if(td.tipo=" + (int)TrocaDevolucao.TipoTrocaDev.Troca + @", 'Troca', 'Devolução') as descrSetor,
                 if(td.tipo=" + (int)TrocaDevolucao.TipoTrocaDev.Troca + @", 'Troca', 'Devolução') as descrSetorRepos, pt.CustoProd AS ValorCustoUnitario, pt.ValorVendido as ValorUnit,
-                ped.CodCliente, pt.TotM as TotM2, (ped.situacao= " + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, ped.tipoPedido=" +
+                ped.CodCliente, @TotM:=pt.TotM as TotM2, (ped.situacao= " + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, ped.tipoPedido=" +
                 (int)Pedido.TipoPedidoEnum.MaoDeObra + @" as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido,
-                ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @" as PedidoProducao, cast(pt.qtde as decimal(12,2)) as qtde, sp.TipoCalculo, '$$$' as Criterio" : "count(*)";
+                ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @" as PedidoProducao, cast(pt.qtde as decimal(12,2)) as qtde, sp.TipoCalculo, IF (sp.TipoCalculo = 1, pt.ValorVendido, pt.ValorVendido * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
 
             string campos4 = selecionar ? @"
                 null, nf.numeroNFe, null, null, pcv.idFuncPerda, null,
@@ -7422,8 +7449,8 @@ namespace Glass.Data.DAL
                 pnf.altura, pnf.largura, cv.descricao as Cor, p.Espessura, p.Descricao as DescrProduto, p.CodInterno,
                 null, null, null as IdCliente, null as nomeCliente, null as CodAplicacao,
                 null as CodProcesso, null as IdPedidoExibir, 'Chapa de Vidro' as descrSetor, 'Chapa de Vidro' as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pnf.ValorUnitario as ValorUnit,
-                null, round(pnf.TotM / pnf.qtde, 4) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra,
-                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, '$$$' as Criterio" : "count(*)";
+                null, @TotM:=round(pnf.TotM / pnf.qtde, 4) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra,
+                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, IF (sp.TipoCalculo = 1, pnf.ValorUnitario, pnf.ValorUnitario * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
 
             string campos5 = selecionar ? @"
                 null, nf.numeroNFe, null, null, pcv.idFuncPerda, null,
@@ -7433,8 +7460,8 @@ namespace Glass.Data.DAL
                 p.altura, p.largura, cv.descricao as Cor, p.Espessura, p.Descricao as DescrProduto, p.CodInterno,
                 null, null, null as IdCliente, null as nomeCliente, null as CodAplicacao,
                 null as CodProcesso, null as IdPedidoExibir, 'Retalho de Produção' as descrSetor, 'Retalho de Producao' as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pnf.ValorUnitario as ValorUnit,
-                null, round((p.Altura * p.Largura) / 1000000, 2) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra,
-                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, '$$$' as Criterio" : "count(*)";
+                null, @TotM:=round((p.Altura * p.Largura) / 1000000, 2) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra,
+                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, IF (sp.TipoCalculo = 1, pnf.ValorUnitario, pnf.ValorUnitario * @TotM) AS ValorTotal, '$$$' as Criterio" : "count(*)";
 
             string sql =
                 "(select " + campos1 + @"

@@ -2108,6 +2108,19 @@ namespace Glass.Data.DAL
             return sql.Replace("$$$", criterio);
         }
 
+        /// <summary>
+        /// M�todo que verifica se o pedido informado j� deu sa�da de acordo com as configura��es
+        /// </summary>
+        /// <param name="sessao">Sess�o do GDA.</param>
+        /// <param name="idPedido">Identificador do pedido a ser verificado.</param>
+        /// <returns>Retorna o resultado de um teste l�gico que verifica se o pedido j� efetuou a sa�da de estoque.</returns>
+        internal bool VerificaSaidaEstoqueConfirmacao(GDASession sessao, int idPedido)
+        {
+            return !PedidoConfig.LiberarPedido 
+                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar 
+                && ObtemSituacao(sessao, (uint)idPedido) == Pedido.SituacaoPedido.Confirmado;
+        }
+
         #endregion
 
         #region Listagem/Relatório de vendas de pedidos
@@ -6253,7 +6266,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
+            if (ComissaoDAO.Instance.VerificarComissaoContasRecebidas() && pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
             {
                 var idObraPed = GetIdObra(session, idPedido);
 
@@ -7249,7 +7262,14 @@ namespace Glass.Data.DAL
 
                                 if (FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar && qtdSaida > 0)
                                 {
-                                    ProdutosPedidoDAO.Instance.MarcarSaida(trans, p.IdProdPed, p.Qtde - p.QtdSaida, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+                                    ProdutosPedidoDAO.Instance.MarcarSaida(
+                                        trans,
+                                        p.IdProdPed,
+                                        p.Qtde - p.QtdSaida,
+                                        idSaidaEstoque,
+                                        System.Reflection.MethodBase.GetCurrentMethod().Name,
+                                        string.Empty,
+                                        saidaConfirmacao: true);
 
                                     // Dá baixa no estoque da loja
                                     MovEstoqueDAO.Instance.BaixaEstoquePedido(trans, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed,
@@ -12261,13 +12281,27 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="sessao">Sessão do GDA.</param>
         /// <param name="idsPedidos">Lista com os Identificadores dos Pedidos.</param>
+        /// /// <param name="idsPedidos">Lista com os Identificadores dos Pedidos.</param>
         /// <returns>Retorna uma variável lógica que possui o valor do teste se os pedidos são do mesmo vendedor.</returns>
-        public bool VerificarPedidosMesmoVendedor(GDASession sessao, List<uint> idsPedidos, out List<Tuple<uint,uint>> vendedoresPedidos)
+        public bool VerificarPedidosMesmoVendedor(GDASession sessao, List<uint> idsPedidos, out List<Tuple<uint, int>> vendedoresPedidos)
         {
-            vendedoresPedidos = idsPedidos
-                .Select(p => new Tuple<uint, uint>(p, ObtemIdFunc(sessao, p))).ToList();
+            if (!ComissaoDAO.Instance.VerificarComissaoContasRecebidas())
+            {
+                vendedoresPedidos = new List<Tuple<uint, int>>
+                {
+                    new Tuple<uint, int>(1, 1)
+                };
+            }
+            else
+            {
+                vendedoresPedidos = idsPedidos
+                    .Select(p => new Tuple<uint, int>(
+                        p, (int)ComissaoDAO.Instance.ObtemIdFuncComissaoRec(sessao, (int)p)))
+                        .ToList();
+            }
 
-            return vendedoresPedidos.Select(p => p.Item2)
+            return vendedoresPedidos
+                .Select(p => p.Item2)
                 .Distinct()
                 .Count() == 1;
         }
@@ -12708,6 +12742,26 @@ namespace Glass.Data.DAL
 
             return ExecuteScalar<int>(session, sql, new GDAParameter("?id", idPedido));
 
+        }
+
+        /// <summary>
+        /// Retorna a quantidade de peças do pedido, desconsiderando as peças filhas.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public int ObtemQuantidadePecasPai(GDASession session, uint idPedido)
+        {
+            var invisivel = PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido";
+
+            var sql = $@"
+                SELECT CAST(SUM(COALESCE(Qtde, 0)) AS SIGNED INTEGER)
+                FROM produtos_pedido pp
+                    LEFT JOIN produto p ON (pp.IdProd = p.IdProd)
+                WHERE IdPedido = ?id AND (Invisivel{invisivel} IS NULL OR Invisivel{invisivel} = 0)
+                    AND p.IdGrupoProd = {(int)NomeGrupoProd.Vidro} AND COALESCE(pp.IdProdPedParent, 0) = 0";
+
+            return ExecuteScalar<int>(session, sql, new GDAParameter("?id", idPedido));
         }
 
         /// <summary>
@@ -13332,7 +13386,7 @@ namespace Glass.Data.DAL
                     throw new Exception("A obra informada não está confirmada.");
                 }
 
-                if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && ped.TipoVenda == (int)Pedido.TipoVendaPedido.Obra && ped.IdObra.GetValueOrDefault() > 0)
+                if (ComissaoDAO.Instance.VerificarComissaoContasRecebidas() && ped.TipoVenda == (int)Pedido.TipoVendaPedido.Obra && ped.IdObra.GetValueOrDefault() > 0)
                 {
                     var idFunc = ObraDAO.Instance.ObtemIdFunc(session, ped.IdObra.Value);
                     var idLojaFunc = FuncionarioDAO.Instance.ObtemIdLoja(session, idFunc);
@@ -17311,6 +17365,23 @@ namespace Glass.Data.DAL
             var pedido = objPersistence.LoadOneData(sessao, sql);
 
             return pedido;
+        }
+
+
+        /// <summary>
+        /// Método que verifica se um pedido possui pedido de produção para corte gerado.
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="idPedido">Identificador do pedido a ser verificado</param>
+        /// <returns>Retorna o resultado de um teste lógico da verificação se o pedido informado possui um pedido de corte vinculado.</returns>
+        internal bool VerificarPedidoProducaoParaCorte(GDASession sessao, int idPedido)
+        {
+            if (idPedido == 0)
+            {
+                return false;
+            }
+
+            return ExecuteScalar<bool>(sessao, $"SELECT Count(*) > 0 FROM pedido WHERE IdPedidoRevenda = {idPedido}");
         }
     }
 }

@@ -513,7 +513,7 @@ function alteraVisibilidade(nomeTabela, numPagto, formaPagto, atualizarOpcoesSel
     
     // Variáveis de controle da exibição
     var exibirCartao = formaPagto == "cartao";
-    var exibirCheque = formaPagto == "cheque";
+    var exibirCheque = formaPagto == "cheque proprio" || formaPagto == "cheque terceiros";
     var exibirCartaoNaoIdentificado = formaPagto == "cartao nao identificado";
     var exibirBoleto = !getVar(nomeControle).IsWebglassLite && formaPagto == "boleto";
     var exibirConta = !getVar(nomeControle).IsWebglassLite && (formaPagto == "deposito" || formaPagto == "cartao" || formaPagto == "boleto" || formaPagto == "construcard");
@@ -589,8 +589,8 @@ function alteraVisibilidade(nomeTabela, numPagto, formaPagto, atualizarOpcoesSel
         if (fp != "")
             formaPagtoSelecionada = true;
 
-        if (fp != "boleto" && fp != "deposito" && fp != "cartao" && fp != "cartao nao identificado" && fp != "")
-            habilitarDataRec = false;
+        if (fp != "boleto" && fp != "deposito" && fp != "cartao" && fp != "cartao nao identificado" && fp != "" && (getVar(nomeControle).IsRecebimento || fp != "cheque proprio"))
+          habilitarDataRec = false;
     }
 
     if (!formaPagtoSelecionada)
@@ -759,7 +759,7 @@ function atualizarOpcoes(nomeTabela, numPagto)
 function desabilitaOpcoes(nomeTabela)
 {
     // Impede que o usuário selecione cheque, dinheiro, construcard ou cartão não identificado em mais de uma DropDownList
-    var valores = new Array("cheque", "dinheiro", "construcard", "cartao nao identificado");
+  var valores = new Array("cheque proprio", "cheque terceiros", "dinheiro", "construcard", "cartao nao identificado");
     
     // Recupera o nome do controle
     var nomeControle = nomeTabela.substr(0, nomeTabela.indexOf("_tbl"));
@@ -1952,8 +1952,9 @@ function validaCheque(val, args)
     var nomeControle = getNomeControleFromValFP(val);
     var numPagto = getNumPagtoFromValFP(val);
     var prefixo = nomeControle + "_tblFormaPagto_Pagto" + numPagto + "_";
-    
-    if (getVar(nomeControle).DescricaoFormasPagamento[numPagto - 1] != "cheque")
+    var formaPagto = getVar(nomeControle).DescricaoFormasPagamento[numPagto - 1];
+
+    if (formaPagto != "chequeTerceiros" && formaPagto != "chequeProprio")
     {
         args.IsValid = true;
         return;
@@ -1988,7 +1989,9 @@ function validaDiasCheque(val, args)
     var numPagto = getNumPagtoFromValFP(val);
     var prefixo = nomeControle + "_tblFormaPagto_Pagto" + numPagto + "_";
     
-    if (getVar(nomeControle).DescricaoFormasPagamento[numPagto - 1] != "cheque")
+    var formaPagto = getVar(nomeControle).DescricaoFormasPagamento[numPagto - 1];
+
+    if (formaPagto != "cheque terceiros" && formaPagto != "cheque proprio")
     {
         args.IsValid = true;
         return;
