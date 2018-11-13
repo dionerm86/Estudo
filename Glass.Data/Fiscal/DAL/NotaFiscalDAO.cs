@@ -6377,7 +6377,6 @@ namespace Glass.Data.DAL
                     LEFT JOIN transportador transp ON (n.IdTransportador=transp.IdTransportador)
                     Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
-                    Left Join fotos_nota_fiscal ftnf On (n.IDNF=ftnf.IDNF)
                     Where 1";
             else
                 sql = @"Select Count(*) From (Select Distinct n.idNf From nota_fiscal n
@@ -6389,7 +6388,6 @@ namespace Glass.Data.DAL
                     Left Join fornecedor f On (n.idFornec=f.idFornec)
                     Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
-                    Left Join fotos_nota_fiscal ftnf On (n.IDNF=ftnf.IDNF)
                     Where 1";
 
             NotaFiscal temp = new NotaFiscal();
@@ -6690,7 +6688,7 @@ namespace Glass.Data.DAL
 
             if (apenasNotasFiscaisSemAnexo)
             {
-                sql += " And ftnf.idnf is null";
+                sql += " And (Select Count(*) < 0 From fotos_nota_fiscal Where fotos_nota_fiscal.IdNf = n.IdNf)";
                 criterio += " Nota Fiscal Sem Anexo";
             }
 
