@@ -116,7 +116,7 @@ namespace Glass.Data.DAL
 
             var numDocContaReceber = ContasReceberDAO.Instance.ObtemValorCampo<string>("numeroDocumentoCnab", "idContaR=" + idContaR);
 
-            if (!string.IsNullOrEmpty(numDocContaReceber) && Conversoes.StrParaIntNullable(numDocContaReceber) > 0)
+            if (!string.IsNullOrWhiteSpace(numDocContaReceber) && numDocContaReceber.StrParaInt() > 0)
             {
                 numDoc = numDocContaReceber;
                 return numDoc.ToString().FormataNumero("numDoc", 10, false);
@@ -440,7 +440,7 @@ namespace Glass.Data.DAL
 
         public uint GerarEnvio(GDASession sessao, Boletos boletos)
         {
-            if (string.IsNullOrEmpty(boletos.IdsContaRec.Trim().Trim(',')))
+            if (string.IsNullOrWhiteSpace(boletos.IdsContaRec.Trim().Trim(',')))
             {
                 throw new Exception("Nenhum boleto foi selecionado.");
             }
@@ -469,7 +469,7 @@ namespace Glass.Data.DAL
             var contaBanco = ContaBancoDAO.Instance.GetElement(boletos.IdContaBanco);
 
             // Se for informado o código de convênio deve ser informado apenas com números.
-            if (!string.IsNullOrEmpty(contaBanco.CodConvenio) && (contaBanco.CodConvenio.Contains('-') || contaBanco.CodConvenio.Contains('.')))
+            if (!string.IsNullOrWhiteSpace(contaBanco.CodConvenio) && (contaBanco.CodConvenio.Contains('-') || contaBanco.CodConvenio.Contains('.')))
             {
                 throw new Exception($"O código de convênio deve possuir apenas números. Código convênio atual: {contaBanco.CodConvenio}");
             }
@@ -511,7 +511,7 @@ namespace Glass.Data.DAL
                     sacado.NumeroInscricao = long.Parse(cli.CpfCnpj.LimpaString());
                     sacado.TipoInscricao = cli.TipoPessoa == "F" ? Sync.Utils.Boleto.TipoPessoa.Fisica : Sync.Utils.Boleto.TipoPessoa.Juridica;
 
-                    if (!string.IsNullOrEmpty(cli.EnderecoCobranca))
+                    if (!string.IsNullOrWhiteSpace(cli.EnderecoCobranca))
                     {
                         int numEndCli = 0;
                         int.TryParse(cli.NumeroCobranca, out numEndCli);
@@ -641,7 +641,7 @@ namespace Glass.Data.DAL
             {
                 sql += $@" UPDATE contas_receber
                     SET numeroDocumentoCnab=?numDoc_{idContaR}, numArquivoRemessaCnab=?numArquivo, IdArquivoRemessa=?idRemessa
-                    WHERE idContaR={idContaR};";
+                    WHERE idContaR = {idContaR};";
 
                 numDocumentos.Add(new GDAParameter("?numDoc_" + idContaR, numDoc[idContaR]));
             }
