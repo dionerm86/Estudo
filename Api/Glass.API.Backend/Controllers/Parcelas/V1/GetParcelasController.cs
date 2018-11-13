@@ -7,7 +7,6 @@ using GDA;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.API.Backend.Models.Parcelas.V1.Filtro;
-using Glass.API.Backend.Models.Parcelas.V1.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -58,10 +57,10 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
         /// <summary>
         /// Recupera os Tipos pagamentos usadas pela tela de cadastro de parcelas.
         /// </summary>
-        /// <returns>Um objeto JSON com as configurações da tela de cadastro.</returns>
+        /// <returns>Um objeto JSON com os tipos de pagamentos para cadastro de parcelas.</returns>
         [HttpGet]
         [Route("tiposPagamento")]
-        [SwaggerResponse(200, "Tipos pagamentos recuperados.", typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(200, "Tipos de pagamentos encontrados.", typeof(IEnumerable<IdNomeDto>))]
         public IHttpActionResult ObterTiposPagamento()
         {
             using (var sessao = new GDATransaction())
@@ -123,8 +122,8 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
         [HttpGet]
         [Route("{id:int}")]
         [SwaggerResponse(200, "Parcela encontrada.", Type = typeof(Models.Parcelas.V1.CadastroAtualizacao.CadastroAtualizacaoDto))]
-        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Identificador com valor ou formato inválido", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Parcela não encontrada para o id informado.", Type = typeof(MensagemDto))]
         public IHttpActionResult ObterParcela(int id)
         {
             using (var sessao = new GDATransaction())

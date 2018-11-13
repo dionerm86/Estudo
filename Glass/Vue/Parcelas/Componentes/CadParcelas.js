@@ -119,6 +119,7 @@
         if (dias == null) {
           dias = [];
         }
+
         dias.push(this.diaAtual);
         dias = dias
           .map(function (item) {
@@ -130,13 +131,20 @@
 
         this.parcela.dias = dias;
         this.diaAtual = '';
+        this.parcela.numeroParcelas = this.parcela.dias.length;
       }
     },
 
+    /**
+     * remove um dia inserido na tela de inserção da parcela.
+     * @param {Object} dia O dia que sera removido.
+     */
     excluirDia: function (dia) {
       var posicaoDia = this.parcela.dias.indexOf(dia);
       this.parcela.dias.splice(posicaoDia, 1);
+      this.parcela.numeroParcelas = this.parcela.dias.length;
     },
+
 
     excluirDiasTipoPagamento: function () {
       if (this.formaPagamentoAtual.id == this.configuracoes.tipoPagamentoAVista) {

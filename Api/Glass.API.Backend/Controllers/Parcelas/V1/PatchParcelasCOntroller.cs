@@ -26,7 +26,7 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
         [HttpPatch]
         [Route("{id}")]
         [SwaggerResponse(202, "Parcela alterada.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Erro de validação na alteração da parcela.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Parcela não encontrada para o id informado.", Type = typeof(MensagemDto))]
         public IHttpActionResult AlterarParcela(int id, [FromBody] CadastroAtualizacaoDto dadosParaAlteracao)
         {

@@ -36,7 +36,6 @@ Servicos.Parcelas = (function (http) {
       return http().get(API + id + '/configuracoes');
     },
 
-
     /**
      * Recupera a lista de parcelas para uso no controle de busca.
      * @returns {Promise} Uma promise com o resultado da operação.
@@ -84,7 +83,7 @@ Servicos.Parcelas = (function (http) {
 
     /**
      * Insere uma parcela.
-     * @param {!number} parcela Os dados da parcela que será inserido.
+     * @param {!number} parcela Os dados da parcela que será inserida.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     inserir: function (parcela) {
@@ -93,7 +92,7 @@ Servicos.Parcelas = (function (http) {
 
     /**
      * Atualiza uma parcela.
-     * @param {!number} parcela Os dados da parcela que será atualizado.
+     * @param {!number} parcela Os dados da parcela que será atualizada.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     atualizar: function (idParcela, parcela) {

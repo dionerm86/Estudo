@@ -13,18 +13,19 @@ using System.Web.Http;
 namespace Glass.API.Backend.Controllers.Parcelas.V1
 {
     /// <summary>
-    /// Controller de Condutores.
+    /// Controller de Parcelas.
     /// </summary>
     public partial class ParcelasController : BaseController
     {
         /// <summary>
-        /// Cadastra um condutor.
+        /// Cadastra uma parcela.
         /// </summary>
+        /// <param name="dadosParaCadastro">Dados que serão utilizados para cadastrar a parcela.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPost]
         [Route("")]
         [SwaggerResponse(201, "Parcela cadastrada.", Type = typeof(CriadoDto<int>))]
-        [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Erro de validação no cadastro da parcela.", Type = typeof(MensagemDto))]
         public IHttpActionResult CadastrarParcela([FromBody] CadastroAtualizacaoDto dadosParaCadastro)
         {
             using (var sessao = new GDATransaction())
@@ -42,7 +43,7 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
                         return this.ErroValidacao($"Falha ao cadastrar parcela. {resultado.Message.Format()}");
                     }
 
-                    return this.Criado("Parcela cadastrado com sucesso!", parcela.IdParcela);
+                    return this.Criado("Parcela cadastrada com sucesso!", parcela.IdParcela);
                 }
                 catch (Exception ex)
                 {

@@ -4,7 +4,6 @@
 
 using Glass.Configuracoes;
 using Newtonsoft.Json;
-using System.ComponentModel;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Parcelas.V1.Configuracoes

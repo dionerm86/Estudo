@@ -1,6 +1,7 @@
 ﻿// <copyright file="DetalheDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
+
 using Glass.API.Backend.Models.Genericas.V1;
 using Newtonsoft.Json;
 using System;

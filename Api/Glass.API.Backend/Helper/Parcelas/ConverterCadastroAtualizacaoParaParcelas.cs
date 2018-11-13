@@ -4,7 +4,6 @@
 
 using Glass.API.Backend.Models.Parcelas.V1.CadastroAtualizacao;
 using System;
-using System.Linq;
 
 namespace Glass.API.Backend.Helper.Parcelas
 {
