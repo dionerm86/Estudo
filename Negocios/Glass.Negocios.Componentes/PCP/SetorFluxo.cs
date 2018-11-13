@@ -96,9 +96,10 @@ namespace Glass.PCP.Negocios.Componentes
             var tratarResultado = new Func<string, Colosoft.Query.QueryCallBack>(mensagem =>
                (sender, query, result) =>
                {
-                   if (result.Select(f => f.GetInt32(0)).FirstOrDefault() > 0 &&
-                       !mensagens.Contains(mensagem))
+                   if (result.Select(f => f.GetInt32(0)).FirstOrDefault() > 0 && !mensagens.Contains(mensagem))
+                   {
                        mensagens.Add(mensagem);
+                   }
                });
 
             SourceContext.Instance.CreateMultiQuery()
