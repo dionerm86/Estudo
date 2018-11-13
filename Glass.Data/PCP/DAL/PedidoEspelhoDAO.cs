@@ -3073,17 +3073,29 @@ namespace Glass.Data.DAL
 
         #region Altera situação do pedido
 
+        /// <summary>
+        /// Método que altera a situação do Pedido Espelho.
+        /// </summary>
+        /// <param name="session">Sessão do GDA.</param>
+        /// <param name="idPedido">Identificador do Pedido Espelho.</param>
+        /// <param name="situacao">Situacao para qual o pedido será alterado.</param>
+        /// <returns>Retorna um inteiro ínformando o sucesso da execução dos comandos.</returns>
         public int AlteraSituacao(GDASession session, uint idPedido, PedidoEspelho.SituacaoPedido situacao)
         {
-            string sql = "Update pedido_espelho Set Situacao=" + (int)situacao;
+            var situacaoAtual = this.ObtemSituacao(session, idPedido);
+            string sql = $"UPDATE pedido_espelho SET Situacao={(int)situacao}";
 
-            if (situacao == PedidoEspelho.SituacaoPedido.Finalizado)
+            if (situacao == PedidoEspelho.SituacaoPedido.Finalizado && situacaoAtual != PedidoEspelho.SituacaoPedido.Impresso)
+            {
                 sql += ", dataConf=now()";
+            }
 
             if (situacao == PedidoEspelho.SituacaoPedido.Aberto)
+            {
                 sql += ", situacaoCnc=0, dataProjetoCnc=null, usuProjetoCnc=null";
+            }
 
-            return objPersistence.ExecuteCommand(session, sql + " Where idPedido=" + idPedido);
+            return this.objPersistence.ExecuteCommand(session, $"{sql} Where idPedido={idPedido}");
         }
 
         public int AlteraSituacao(GDASession session, List<uint> lstIdPedido, PedidoEspelho.SituacaoPedido situacao)
