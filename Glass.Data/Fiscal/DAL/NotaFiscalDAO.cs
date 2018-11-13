@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass.Configuracoes;
 using Glass.Data.EFD;
 using Glass.Data.Helper;
@@ -5299,6 +5299,7 @@ namespace Glass.Data.DAL
                     }
 
                     var cStat = xmlProt?["infProt"]?["cStat"]?.InnerXml;
+                    int cStatInteiro = cStat.StrParaInt();
 
                     if (xmlProt?["infProt"]?["xMotivo"] == null)
                     {
@@ -5311,13 +5312,13 @@ namespace Glass.Data.DAL
                     var path = $"{ nfePath }{ nf.ChaveAcesso }-nfe.xml";
 
                     // Atualiza número do protocolo de uso da NFe
-                    if (cStat == "100" || cStat == "150")
+                    if (cStatInteiro == 100 || cStatInteiro == 150)
                     {
                         IncluiProtocoloXML(path, xmlProt);
                         AutorizaNotaFiscal(nf, xmlProt);
                     }
                     // NFe denegada
-                    else if (cStat == "301" || cStat == "302" || cStat == "303" || cStat == "110" || cStat == "205")
+                    else if (cStatInteiro == 301 || cStatInteiro == 302 || cStatInteiro == 303 || cStatInteiro == 110 || cStatInteiro == 205)
                     {
                         // Salva protocolo de denegação de uso
                         if (xmlProt?["infProt"]?["nProt"] != null)
@@ -5399,32 +5400,33 @@ namespace Glass.Data.DAL
             }
 
             var cStat = xmlRetConsSit?["cStat"]?.InnerXml;
+            int cStatInteiro = cStat.StrParaInt(); //Chamado 85114 - Variavel utilizada nas validações para evitar conversões
 
             // Gera log do ocorrido
             LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", cStat.StrParaInt(), xmlRetConsSit?["xMotivo"]?.InnerXml);
 
             // Atualiza número do protocolo de uso da NFe
-            if (cStat == "100" || cStat == "150")
+            if (cStatInteiro == 100 || cStatInteiro == 150)
             {
                 var path = $"{ Utils.GetNfeXmlPath }{ nf.ChaveAcesso }-nfe.xml";
 
                 IncluiProtocoloXML(path, xmlRetConsSit?["protNFe"]);
                 AutorizaNotaFiscal(nf, xmlRetConsSit);
             }
-            else if (cStat == "206" || cStat == "256") // NF-e já está inutilizada
+            else if (cStatInteiro == 206 || cStatInteiro == 256) // NF-e já está inutilizada
             {
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Inutilizada);
             }
-            else if (cStat == "218" || cStat == "420" || cStat == "101" || cStat == "151") // NF-e já está cancelada
+            else if (cStatInteiro == 218 || cStatInteiro == 420 || cStatInteiro == 101 || cStatInteiro == 151) // NF-e já está cancelada
             {
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Cancelada);
             }
-            else if (cStat == "220") // NF-e já está autorizada há mais de 7 dias
+            else if (cStatInteiro == 220) // NF-e já está autorizada há mais de 7 dias
             {
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
             }
             // NFe denegada
-            else if (cStat == "301" || cStat == "302" || cStat == "303" || cStat == "110" || cStat == "205")
+            else if (cStatInteiro == 301 || cStatInteiro == 302 || cStatInteiro == 303 || cStatInteiro == 110 || cStatInteiro == 205)
             {
                 if (xmlRetConsSit?["protNFe"] != null)
                 {
