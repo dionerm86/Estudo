@@ -3083,19 +3083,19 @@ namespace Glass.Data.DAL
         public int AlteraSituacao(GDASession session, uint idPedido, PedidoEspelho.SituacaoPedido situacao)
         {
             var situacaoAtual = this.ObtemSituacao(session, idPedido);
-            string sql = $"UPDATE pedido_espelho SET Situacao={(int)situacao}";
+            string sql = $"UPDATE pedido_espelho SET Situacao = {(int)situacao}";
 
             if (situacao == PedidoEspelho.SituacaoPedido.Finalizado && situacaoAtual != PedidoEspelho.SituacaoPedido.Impresso)
             {
-                sql += ", dataConf=now()";
+                sql += ", DataConf = NOW()";
             }
 
             if (situacao == PedidoEspelho.SituacaoPedido.Aberto)
             {
-                sql += ", situacaoCnc=0, dataProjetoCnc=null, usuProjetoCnc=null";
+                sql += ", SituacaoCnc = 0, DataProjetoCnc = NULL, UsuProjetoCnc = NULL";
             }
 
-            return this.objPersistence.ExecuteCommand(session, $"{sql} Where idPedido={idPedido}");
+            return this.objPersistence.ExecuteCommand(session, $"{sql} WHERE IdPedido={idPedido}");
         }
 
         public int AlteraSituacao(GDASession session, List<uint> lstIdPedido, PedidoEspelho.SituacaoPedido situacao)
