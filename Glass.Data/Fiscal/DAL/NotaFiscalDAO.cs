@@ -3405,7 +3405,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms00, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms00, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms00, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
-                                if (aliqFcp > 0)
+                                if (aliqFcp > 0 && !operacaoInterNaoContribuinte)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms00, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
                                     ManipulacaoXml.SetNode(doc, icms00, "vFCP", Formatacoes.TrataValorDecimal(valorFcp, 2));
@@ -4487,9 +4487,9 @@ namespace Glass.Data.DAL
             }
 
             Cidade cidadeFornec;
-            var primeiroDigitoCfop = (int)nf.CodCfop[0];
+            var primeiroDigitoCfop = nf.CodCfop[0];
 
-            var operacaoInterEstadual = !(new int[]{2, 3, 6, 7}).Contains(primeiroDigitoCfop);
+            var operacaoInterEstadual = (new char[]{'2', '3', '6', '7'}).Contains(primeiroDigitoCfop);
 
             var naoContribuinte = ObterIndicadorIE(nf, null, cliente, null, out cidadeFornec) == IndicadorIEDestinatario.NaoContribuinte;
 
