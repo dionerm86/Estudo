@@ -99,9 +99,7 @@ namespace Glass.Data.DAL
             var sqlLeituraProducao = $@"SELECT IdLeituraProd FROM leitura_producao
                 WHERE DataLeitura >= ?dataIni AND DataLeitura <= ?dataFim { (idSetor > 0 ? $" AND IdSetor = { idSetor.ToString() }" : string.Empty ).ToString() }";
 
-            var idsLeituraProd = ExecuteMultipleScalar<int>(session, sqlLeituraProducao,
-                new GDAParameter("?dataIni", dataLeituraInicial.ToString("yyy-MM-dd hh:mm:ss")),
-                new GDAParameter("?dataFim", dataLeituraFinal.ToString("yyy-MM-dd hh:mm:ss")));
+            var idsLeituraProd = ExecuteMultipleScalar<int>(session, sqlLeituraProducao, GetParams(dataLeituraInicial, dataLeituraFinal));
 
             return $@"SELECT IdProdPedProducao, IdSetor FROM leitura_producao
                 WHERE IdLeituraProd IN ({ (idsLeituraProd.Any(f => f > 0) ? string.Join(",", idsLeituraProd) : "0") })";
