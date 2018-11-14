@@ -1,4 +1,4 @@
-<%@ Page Title="Gerar Nota Fiscal" Language="C#" MasterPageFile="~/Painel.master"
+Ôªø<%@ Page Title="Gerar Nota Fiscal" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="CadNotaFiscalGerar.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadNotaFiscalGerar" %>
 
 <%@ Register Src="../Controls/ctrlConsultaCadCliSintegra.ascx" TagName="ctrlConsultaCadCliSintegra" TagPrefix="uc2" %>
@@ -57,7 +57,7 @@
             }
 
             if (CadNotaFiscalGerar.PedidoExiste(idPedido).value == "false") {
-                alert("N„o existe pedido com esse n˙mero.");
+                alert("N√£o existe pedido com esse n√∫mero.");
                 FindControl("txtNumPedido", "input").value = "";
                 FindControl("txtNumPedido", "input").focus();
                 return;
@@ -65,7 +65,7 @@
 
             var conf = CadNotaFiscalGerar.IsPedidoConfirmadoLiberado(idPedido).value.split('|');
             if (conf[0] == "false") {
-                alert("Esse pedido n„o est· " + conf[1] + ".");
+                alert("Esse pedido n√£o est√° " + conf[1] + ".");
                 FindControl("txtNumPedido", "input").value = "";
                 FindControl("txtNumPedido", "input").focus();
                 return;
@@ -87,8 +87,8 @@
         function removePedido(idPedido, atualiza) {
 
             if (!separarValoresFiscaisEReaisContasReceber && usarNumNfBoletoSemSeparacao
-                && !confirm("Ao remover o pedido n„o ser· possÌvel gerar boletos, para as contas a receber da NF-e gerada," +
-                    " caso existam outras notas para o(s) pedido(s)/liberaÁ„o(ıes). Deseja excluir o pedido da listagem? "))
+                && !confirm("Ao remover o pedido n√£o ser√° poss√≠vel gerar boletos, para as contas a receber da NF-e gerada," +
+                    " caso existam outras notas para o(s) pedido(s)/libera√ß√£o(√µes). Deseja excluir o pedido da listagem? "))
                 return false;
             
             var idsPedidos = FindControl("hdfBuscarIdsPedidos", "input").value.split(',');
@@ -130,21 +130,21 @@
 
             var idLiberacao = FindControl("txtLiberacao", "input").value;
             if (Trim(idLiberacao) == "") {
-                alert("Selecione uma liberaÁ„o de pedido para continuar.");
+                alert("Selecione uma libera√ß√£o de pedido para continuar.");
                 FindControl("txtLiberacao", "input").value = "";
                 FindControl("txtLiberacao", "input").focus();
                 return;
             }
 
             if (CadNotaFiscalGerar.LiberacaoExiste(idLiberacao).value == "false") {
-                alert("N„o existe liberaÁ„o de pedido com esse n˙mero.");
+                alert("N√£o existe libera√ß√£o de pedido com esse n√∫mero.");
                 FindControl("txtLiberacao", "input").value = "";
                 FindControl("txtLiberacao", "input").focus();
                 return;
             }
 
             if (CadNotaFiscalGerar.IsLiberacaoAberta(idLiberacao).value == "false") {
-                alert("Essa liberaÁ„o de pedido est· cancelada.");
+                alert("Essa libera√ß√£o de pedido est√° cancelada.");
                 FindControl("txtLiberacao", "input").value = "";
                 FindControl("txtLiberacao", "input").focus();
                 return;
@@ -218,7 +218,7 @@
             if (!validate())
                 return false;
 
-            // Informa sobre os pedidos que j· contÈm notas fiscais
+            // Informa sobre os pedidos que j√° cont√©m notas fiscais
             var tabela = document.getElementById("<%= grdPedidos.ClientID %>");
             var pedidosNf = new Array();
 
@@ -242,7 +242,7 @@
                 for (i = 0; i < pedidosNf.length; i++)
                     pedidos += ", " + pedidosNf[i][0] + " (NF " + pedidosNf[i][1] + ")";
                     
-                    alert('N„o È possÌvel gerar a NF-e, pois os seguintes pedidos j· possuem NF-e gerada:\n' + pedidos.substr(2));
+                    alert('N√£o √© poss√≠vel gerar a NF-e, pois os seguintes pedidos j√° possuem NF-e gerada:\n' + pedidos.substr(2));
                     return false;
             }
 
@@ -251,8 +251,8 @@
                 for (i = 0; i < pedidosNf.length; i++)
                     pedidos += ", " + pedidosNf[i][0] + " (NF " + pedidosNf[i][1] + ")";
 
-                if (!confirm("Os seguintes pedidos j· possuem notas fiscais geradas para eles:\n" +
-                pedidos.substr(2) + ".\n\nDeseja continuar com a geraÁ„o das notas?"))
+                if (!confirm("Os seguintes pedidos j√° possuem notas fiscais geradas para eles:\n" +
+                pedidos.substr(2) + ".\n\nDeseja continuar com a gera√ß√£o das notas?"))
                     return false;
             }
 
@@ -266,13 +266,13 @@
             var transferirNf = FindControl("chkTransferirNf", "input") != null ? FindControl("chkTransferirNf", "input").checked : false;
             var manterAgrupamentoDeProdutos = FindControl("chkAguparProdutos", "input") != null ? FindControl("chkAguparProdutos", "input").checked : true;
 
-            // Se a empresa calcula icms no pedido, verifica se os pedidos possuem ST e se a natureza de operaÁ„o calcula ST
+            // Se a empresa calcula icms no pedido, verifica se os pedidos possuem ST e se a natureza de opera√ß√£o calcula ST
             if (!dadosNaturezasOperacao && CadNotaFiscalGerar.CalculaIcmsPedido(idsPedidos, idsLiberarPedidos).value == "true") {
                 var pedidosPossuemSt = CadNotaFiscalGerar.PedidosPossuemSt(idsPedidos).value == "true";
                 var calcSt = CadNotaFiscalGerar.CalcSt(idNaturezaOperacao).value == "true";
 
                 if (pedidosPossuemSt && !calcSt) {
-                    if (!confirm("Em alguns dos pedidos selecionados foram calculados o ICMS ST, porÈm vocÍ selecionou uma natureza de operaÁ„o que n„o calcula ICMS ST, haver· diferenÁa de valores, deseja continuar assim mesmo?"))
+                    if (!confirm("Em alguns dos pedidos selecionados foram calculados o ICMS ST, por√©m voc√™ selecionou uma natureza de opera√ß√£o que n√£o calcula ICMS ST, haver√° diferen√ßa de valores, deseja continuar assim mesmo?"))
                         return false;
                 }
             }
@@ -422,8 +422,8 @@
                         </td>
                         <td>
                             <asp:DropDownList ID="drpTipoNota" runat="server" onchange="atualizaTipoNf(true);" OnSelectedIndexChanged="drpTipoNota_SelectedIndexChanged">
-                                <asp:ListItem Selected="True" Value="1">SaÌda</asp:ListItem>
-                                <asp:ListItem Value="2">TranferÍncia</asp:ListItem>
+                                <asp:ListItem Selected="True" Value="1">Sa√≠da</asp:ListItem>
+                                <asp:ListItem Value="2">Tranfer√™ncia</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                     </tr>
@@ -465,7 +465,7 @@
                                         &nbsp;
                                     </td>
                                     <td align="center">
-                                        <asp:Label ID="Label2" runat="server" Text="LiberaÁ„o" ForeColor="#0066FF"></asp:Label>
+                                        <asp:Label ID="Label2" runat="server" Text="Libera√ß√£o" ForeColor="#0066FF"></asp:Label>
                                     </td>
                                     <td>
                                         <asp:TextBox ID="txtLiberacao" onkeypress="return soNumeros(event, true, true);"
@@ -521,7 +521,7 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:CheckBox ID="chkNaturezaOperacaoPorProduto" runat="server" Text="Selecionar natureza de operaÁ„o por produto" />
+                            <asp:CheckBox ID="chkNaturezaOperacaoPorProduto" runat="server" Text="Selecionar natureza de opera√ß√£o por produto" />
                         </td>
                     </tr>
                 </table>
@@ -531,7 +531,7 @@
                         <td align="center">
                             <asp:GridView GridLines="None" ID="grdOcs" runat="server" AutoGenerateColumns="False"
                                 DataSourceID="odsOcs" DataKeyNames="IdOrdemCarga" CssClass="gridStyle" PagerStyle-CssClass="pgr"
-                                AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" EmptyDataText="N„o foram encontradas OC's."
+                                AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" EmptyDataText="N√£o foram encontradas OC's."
                                 EnableViewState="False" ondatabound="grdOcs_DataBound">
                                 <Columns>
                                     <asp:TemplateField>
@@ -542,12 +542,12 @@
                                                 ToolTip="Remover OC" />
                                         </ItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="CÛd. OC">
+                                    <asp:TemplateField HeaderText="C√≥d. OC">
                                         <ItemTemplate>
                                             <asp:Label ID="Label9" runat="server" Text='<%# Bind("IdOrdemCarga") %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Funcion·rio">
+                                    <asp:TemplateField HeaderText="Funcion√°rio">
                                         <ItemTemplate>
                                             <asp:Label ID="Label1" runat="server" Text='<%# Bind("NomeFunc") %>'></asp:Label>
                                         </ItemTemplate>
@@ -578,7 +578,7 @@
                             </colo:VirtualObjectDataSource>
                             <asp:GridView GridLines="None" ID="grdPedidos" runat="server" AutoGenerateColumns="False"
                                 DataSourceID="odsPedidos" DataKeyNames="IdPedido" CssClass="gridStyle" PagerStyle-CssClass="pgr"
-                                AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" EmptyDataText="N„o foram encontrados pedidos confirmados para esse cliente ou com esse n˙mero."
+                                AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" EmptyDataText="N√£o foram encontrados pedidos confirmados para esse cliente ou com esse n√∫mero."
                                 EnableViewState="False" OnDataBound="grdPedidos_DataBound">
                                 <Columns>
                                     <asp:TemplateField>
@@ -592,12 +592,21 @@
                                     </asp:TemplateField>
                                     <asp:BoundField DataField="IdPedido" HeaderText="Pedido" SortExpression="IdPedido" />
                                     <asp:BoundField DataField="IdProjeto" HeaderText="Projeto" SortExpression="IdProjeto" />
-                                    <asp:BoundField DataField="NomeFunc" HeaderText="Funcion·rio" SortExpression="NomeFunc" />
+                                    <asp:BoundField DataField="NomeFunc" HeaderText="Funcion√°rio" SortExpression="NomeFunc" />
                                     <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
                                     <asp:BoundField DataField="CpfCnpjCliente" HeaderText="Cpf/Cnpj" SortExpression="CpfCnpjCliente" />
                                     <asp:BoundField DataField="NomeLoja" HeaderText="Loja" SortExpression="NomeLoja" />
                                     <asp:BoundField DataField="Obs" HeaderText="Obs. Pedido" SortExpression="Obs" />
-                                    <asp:BoundField DataField="ObsLiberacao" HeaderText="Obs. LiberaÁ„o" SortExpression="ObsLiberacao" />
+                                    <asp:BoundField DataField="Obs" HeaderText="Obs. Pedido" SortExpression="Obs" />
+                                    <asp:TemplateField HeaderText="Obs. Libera√ß√£o" SortExpression="ObsLiberacao">
+                                        <EditItemTemplate>
+                                            <asp:TextBox ID="ObsLib" runat="server" Text='<%# Eval("ObsLiberacao") %>'></asp:TextBox>
+                                        </EditItemTemplate>
+                                        <ItemTemplate>
+                                            <asp:Label ID="lblObsLib" runat="server" Visible='<%# Eval("ExibirObsLiberacaoCliente")%>' Text='<%# Eval("ObsLiberacaoCliente") %>'></asp:Label>
+                                           <asp:Label ID="lblObsCli" runat="server" Text='<%# Eval("ObsLiberacao") %>'></asp:Label>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Total" SortExpression="Total">
                                         <EditItemTemplate>
                                             <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Total") %>'></asp:TextBox>
@@ -621,7 +630,7 @@
                                 Total:
                                 <asp:Label ID="lblTotal" runat="server" Text=""></asp:Label>
                             </div>
-                            <asp:Label ID="lblInfoBloqueioPedidos" runat="server" Text="<br />Pedidos em Vermelho j· possuem notas fiscais geradas."
+                            <asp:Label ID="lblInfoBloqueioPedidos" runat="server" Text="<br />Pedidos em Vermelho j√° possuem notas fiscais geradas."
                                 ForeColor="Red"></asp:Label>
                             <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPedidos" runat="server" SelectMethod="GetForNFe"
                                 TypeName="Glass.Data.DAL.PedidoDAO" OnSelected="odsPedidos_Selected">
@@ -644,7 +653,7 @@
                             <table>
                                 <tr>
                                     <td>
-                                        Natureza de OperaÁ„o:
+                                        Natureza de Opera√ß√£o:
                                     </td>
                                     <td>
                                         <uc1:ctrlNaturezaOperacao ID="ctrlNaturezaOperacao" runat="server" 
@@ -729,8 +738,8 @@
                                 <tr>
                                     <td colspan="5" align="center">
                                         <div style="color: Blue">
-                                            Caso a natureza de operaÁ„o seja deixada vazia, ser· utilizada<br />
-                                            na NF-e a natureza de operaÁ„o do primeiro produto
+                                            Caso a natureza de opera√ß√£o seja deixada vazia, ser√° utilizada<br />
+                                            na NF-e a natureza de opera√ß√£o do primeiro produto
                                         </div>
                                         <br />
                                          <asp:CheckBox ID="chkTransferirNf" runat="server" Text="Transferir NF-e ?" Visible="false"/>
