@@ -397,6 +397,23 @@ namespace Glass.Global.Negocios.Entidades
         }
 
 
+        /// <summary>
+        /// RNTC.
+        /// </summary>
+        public string RNTC
+        {
+            get { return DataModel.RNTC; }
+            set
+            {
+                if (DataModel.RNTC != value &&
+                    RaisePropertyChanging("RNTC", value))
+                {
+                    DataModel.RNTC = value;
+                    RaisePropertyChanged("RNTC");
+                }
+            }
+        }
+
         #endregion
 
         #region Construtores

@@ -492,10 +492,10 @@
     <Content Include="Controls\ctrlProdComposicaoOrcamentoChild.ascx" />
     <Content Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx" />
     <Content Include="Controls\ctrlProdComposicaoOrcamento.ascx" />
-    <Content Include="Listas\LstIntegradores.aspx" />
     <Content Include="Listas\LstCfop.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
+    <Content Include="Vue\Cfops\NaturezasOperacao\Componentes\LstNaturezasOperacao.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.Filtro.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Templates\LstRegrasNaturezaOperacao.Filtro.html" />
@@ -1846,7 +1846,6 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
-    <Content Include="Vue\_Compartilhado\Servicos\Integracao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Projetos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comum.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Contabilistas.js" />
@@ -2232,7 +2231,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="WebGlassParceiros\PainelParceiros.master" />
-    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.ParametroOperacaoIntegracao.js" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -6038,13 +6036,6 @@
     </Compile>
     <Compile Include="Listas\LstInstalacao.aspx.designer.cs">
       <DependentUpon>LstInstalacao.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Listas\LstIntegradores.aspx.cs">
-      <DependentUpon>LstIntegradores.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Listas\LstIntegradores.aspx.designer.cs">
-      <DependentUpon>LstIntegradores.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstInventarioEstoque.aspx.cs">
       <DependentUpon>LstInventarioEstoque.aspx</DependentUpon>

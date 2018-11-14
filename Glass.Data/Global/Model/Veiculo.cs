@@ -82,6 +82,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDTRANSPORTADOR")]
         public int? IdTransportador { get; set; }
 
+        [PersistenceProperty("RNTC")]
+        public string RNTC { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte

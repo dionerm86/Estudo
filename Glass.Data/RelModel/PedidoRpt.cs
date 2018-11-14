@@ -55,6 +55,7 @@ namespace Glass.Data.RelModel
             DescrSituacaoPedido = ped.DescrSituacaoPedido;
             DescrSituacaoProducao = ped.DescrSituacaoProducao;
             QtdePecas = ped.QtdePecas;
+            QtdePecasPai = ped.QtdePecasPai;
             TotM = ped.TotM;
             Peso = ped.Peso;
             DadosVidrosVendidos = ped.DadosVidrosVendidos;
@@ -292,6 +293,8 @@ namespace Glass.Data.RelModel
         public decimal TotalRecebSinalPagtoAntecip { get; set; }
 
         public long QtdePecas { get; set; }
+
+        public long QtdePecasPai { get; set; }
 
         public float TotM { get; set; }
 

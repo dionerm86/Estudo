@@ -375,22 +375,29 @@ namespace Glass.Data.Model
                     var calcMult5 = ( PedidoMaoDeObra || IsVidro )
                         && ProdutoPedido.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto;
 
-                    ValorTotal.Instance.Calcular(null, 
-                        pedido, 
-                        ProdutoPedido, 
-                        Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo, 
-                        calcMult5, 
-                        ProdutoPedido.Beneficiamentos.CountAreaMinima);
+                    decimal? valorUnitario;
 
-                    TotalProd = ProdutoPedido.Total;
+                    if (ProdutoPedido != null)
+                    {
+                        ValorTotal.Instance.Calcular(null,
+                            pedido,
+                            ProdutoPedido,
+                            Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
+                            calcMult5,
+                            ProdutoPedido.Beneficiamentos.CountAreaMinima);
 
-                    decimal? valorUnitario = ProdutoPedido != null 
-                        ? ValorUnitario.Instance.CalcularValor(
-                            null, 
-                            pedido, 
-                            ProdutoPedido, 
-                            ValorProd - ValorBenefProd)
-                        : null;
+                        TotalProd = ProdutoPedido.Total;
+
+                        valorUnitario = ValorUnitario.Instance.CalcularValor(
+                            null,
+                            pedido,
+                            ProdutoPedido,
+                            ValorProd - ValorBenefProd);
+                    }
+                    else
+                    {
+                        valorUnitario = null;
+                    }
 
                     if (valorUnitario.HasValue)
                     {

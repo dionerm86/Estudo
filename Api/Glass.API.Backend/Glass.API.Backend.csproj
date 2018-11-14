@@ -206,8 +206,11 @@
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
     <Compile Include="Controllers\Cfops\V1\DeleteCfopsController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\DeleteNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\GetNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\NaturezasOperacaoController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\PatchNaturezasOperacaoController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\PostNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\GetRegrasNaturezaOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\PatchRegrasNaturezaOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\PostRegrasNaturezaOperacaoController.cs" />
@@ -466,8 +469,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\Cfops\ConverterCadastroAtualizacaoParaCfop.cs" />
+    <Compile Include="Helper\Cfops\NaturezasOperacao\ConverterCadastroAtualizacaoParaNaturezaOperacao.cs" />
     <Compile Include="Helper\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\ConverterCadastroAtualizacaoParaRegraNaturezaOperacao.cs" />
     <Compile Include="Helper\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\TraducaoOrdenacaoListaRegrasNaturezaOperacao.cs" />
+    <Compile Include="Helper\Cfops\NaturezasOperacao\TraducaoOrdenacaoListaNaturezasOperacao.cs" />
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
@@ -585,6 +590,16 @@
     <Compile Include="Models\Cfops\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\DadosPisCofinsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\DadosIpiDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\DadosIcmsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\DadosIcmsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\DadosIpiDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\DadosPisCofinsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\ListaDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Cfops\V1\NaturezasOperacao\RegrasNaturezaOperacao\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Cfops\V1\NaturezasOperacao\RegrasNaturezaOperacao\CadastroAtualizacao\CancelamentoDto.cs" />
     <Compile Include="Models\Cfops\V1\NaturezasOperacao\RegrasNaturezaOperacao\CadastroAtualizacao\NaturezasOperacaoDto.cs" />
@@ -600,6 +615,7 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Genericas\V1\CodigoNomeDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\ExecucaoOperacaoIntegracao\DadosExecucaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ConfiguracaoIntegradorDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\EsquemaHistoricoDto.cs" />
