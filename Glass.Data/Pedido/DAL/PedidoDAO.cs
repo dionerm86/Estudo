@@ -238,7 +238,7 @@ namespace Glass.Data.DAL
             {
                 campos.Append("p.*, ");
                 campos.Append(ClienteDAO.Instance.GetNomeCliente("c"));
-                campos.Append(@" as NomeCliente, c.obsLiberacaCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc, c.idFunc as idFuncCliente,
+                campos.Append(@" as NomeCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc, c.idFunc as idFuncCliente,
                     med.Nome as NomeMedidor, c.Tel_Cont as rptTelCont, c.Tel_Res as rptTelRes, lp.dataLiberacao as dataLiberacao,
                     c.Tel_Cel as rptTelCel, l.NomeFantasia as nomeLoja, fp.Descricao as FormaPagto, o.Descricao as DescrObra,
                     o.Saldo as SaldoObra, ent.Nome as NomeUsuEntrada, (select cast(group_concat(distinct idItemProjeto) as char)
@@ -253,7 +253,7 @@ namespace Glass.Data.DAL
                     (FinanceiroConfig.PermitirConfirmacaoPedidoPeloFinanceiro || FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro) + @",
                     (select count(*) from observacao_finalizacao_financeiro where idPedido=p.idPedido)>0, false) as exibirFinalizacoesFinanceiro,
                     CAST((SELECT GROUP_CONCAT(idOrdemCarga) FROM pedido_ordem_carga WHERE idPedido = p.idPedido) as CHAR) as IdsOCs,
-                    transp.Nome AS NomeTransportador");
+                    transp.Nome AS NomeTransportador,  c.ObsLiberacao AS ObsLiberacaoCliente");
             }
 
             if (selecionar && opcionais)
