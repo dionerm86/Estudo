@@ -4,6 +4,7 @@
 
 using Colosoft;
 using System;
+using System.Threading.Tasks;
 
 namespace Glass.Integracao.Khan.Jobs
 {
@@ -53,7 +54,7 @@ namespace Glass.Integracao.Khan.Jobs
         public DateTime ProximaExecucao => this.Schedule.NextRun;
 
         /// <inheritdoc />
-        public void Executar() => this.Schedule.Execute();
+        public Task Executar() => Task.Run(new Action(((FluentScheduler.IJob)this).Execute));
 
         /// <inheritdoc />
         void FluentScheduler.IJob.Execute()
@@ -66,9 +67,10 @@ namespace Glass.Integracao.Khan.Jobs
             }
             catch (Exception ex)
             {
+                this.Situacao = SituacaoJobIntegracao.Falha;
                 this.UltimaExecucaoComFalha = DateTime.Now;
                 this.UltimaFalha = ex;
-                this.logger.Error("Falha ao importer indicadores financeiros da khan.".GetFormatter(), ex);
+                this.logger.Error("Falha ao importar indicadores financeiros da khan.".GetFormatter(), ex);
             }
             finally
             {

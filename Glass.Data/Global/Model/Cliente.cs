@@ -1022,10 +1022,13 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (Limite == 0)
+                var limite = Data.CalculadoraLimiteCredito.Calculadora.ObterLimite(null, this);
+                if (limite == 0)
+                {
                     return "-";
+                }
 
-                return (Limite - Debitos).ToString("C");
+                return (limite - Debitos).ToString("C");
             }
         }
 

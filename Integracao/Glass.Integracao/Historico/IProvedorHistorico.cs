@@ -25,5 +25,20 @@ namespace Glass.Integracao.Historico
         /// <param name="identificadores">Identificadores que serão usados para filtrar os itens.</param>
         /// <returns>Itens de histórico.</returns>
         IEnumerable<Item> ObterItens(ItemEsquema itemEsquema, TipoItemHistorico? tipo, IEnumerable<object> identificadores);
+
+        /// <summary>
+        /// Obtém os itens que ainda não foram integrados.
+        /// </summary>
+        /// <param name="itemEsquema">Item do esquema do histórico.</param>
+        /// <returns>Itens não integrados.</returns>
+        IEnumerable<Item> ObterItensNaoIntegrados(ItemEsquema itemEsquema);
+
+        /// <summary>
+        /// Verifica se os itens informados foram integrados.
+        /// </summary>
+        /// <param name="itemEsquema">Esquema do histórico.</param>
+        /// <param name="itensIdentificadores">Relação dos itens com seus identificadores.</param>
+        /// <returns>~Valores que identificam se os itens já foram integrados.</returns>
+        IEnumerable<bool> VerificarItensIntegrados(ItemEsquema itemEsquema, IEnumerable<IEnumerable<object>> itensIdentificadores);
     }
 }

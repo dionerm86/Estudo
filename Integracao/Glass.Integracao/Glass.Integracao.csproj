@@ -21,6 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Debug\Glass.Integracao.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -91,6 +93,7 @@
     <Compile Include="IIntegrador.cs" />
     <Compile Include="GerenciadorIntegradores.cs" />
     <Compile Include="IJobIntegracao.cs" />
+    <Compile Include="IntegracaoException.cs" />
     <Compile Include="IProvedorIntegradores.cs" />
     <Compile Include="ItemLoggerIntegracao.cs" />
     <Compile Include="LoggerIntegracao.cs" />

@@ -941,7 +941,8 @@ namespace Glass.UI.Web.Relatorios
                         //>>nome do vendedor não está chegando correto, ver o que é
                         var clVendedor = clCons.IdFunc == null ? "" : FuncionarioDAO.Instance.GetNome((uint)clCons.IdFunc);
                         //dados financeiros
-                        var financLimDisp = clCons.Limite > 0 ? (clCons.Limite - ContasReceberDAO.Instance.GetDebitos((uint)clCons.IdCli, null)).ToString("C") : "";
+                        var limiteCliente = Data.CalculadoraLimiteCredito.Calculadora.ObterLimite(null, clCons);
+                        var financLimDisp = limiteCliente > 0 ? (limiteCliente - ContasReceberDAO.Instance.GetDebitos((uint)clCons.IdCli, null)).ToString("C") : "";
                         var financPagtoPadrao = FormaPagtoDAO.Instance.GetDescricao((uint)clCons.IdFormaPagto.GetValueOrDefault(0)) ?? "";
                         var parc = ParcelasDAO.Instance.GetPadraoCliente((uint)clCons.IdCli);
                         var financParcPadrao = parc != null ? parc.DescrCompleta : String.Empty;

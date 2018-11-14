@@ -13,8 +13,13 @@ namespace Glass.Integracao.Khan
     /// <summary>
     /// Representa o integrador da Khan.
     /// </summary>
-    public sealed class IntegradorKhan : IIntegrador
+    public sealed class IntegradorKhan : IIntegradorKhan
     {
+        /// <summary>
+        /// Identificador do esquema de histórico da Khan.
+        /// </summary>
+        internal const int IdEsquemaKhan = 1;
+
         /// <summary>
         /// Nome do serviço de produtos.
         /// </summary>
@@ -30,6 +35,16 @@ namespace Glass.Integracao.Khan
         /// </summary>
         internal const string NomePedidosService = "KhanPedidosService";
 
+        /// <summary>
+        /// Nome do serviço de consultas.
+        /// </summary>
+        internal const string NomeConsultasService = "KhanConsultasService";
+
+        /// <summary>
+        /// Nome do serviço de consulta dos parceiros.
+        /// </summary>
+        internal const string NomeParceirosService = "KhanParceirosService";
+
         private readonly Microsoft.Practices.ServiceLocation.IServiceLocator serviceLocator;
         private readonly Colosoft.Domain.IDomainEvents domainEvents;
         private readonly List<IDisposable> monitores = new List<IDisposable>();
@@ -42,10 +57,14 @@ namespace Glass.Integracao.Khan
         /// </summary>
         /// <param name="domainEvents">Relação dos eventos de domínio.</param>
         /// <param name="rentabilidadeFluxo">Fluxo de negócio da rentabilidade.</param>
+        /// <param name="provedorHistorico">Provedor do histórico.</param>
+        /// <param name="produtoFluxo">Fluxo de negócio dos produtos.</param>
         /// <param name="serviceLocator">Localizador de serviços.</param>
         public IntegradorKhan(
             Colosoft.Domain.IDomainEvents domainEvents,
             Glass.Rentabilidade.Negocios.IRentabilidadeFluxo rentabilidadeFluxo,
+            Historico.IProvedorHistorico provedorHistorico,
+            Glass.Global.Negocios.IProdutoFluxo produtoFluxo,
             Microsoft.Practices.ServiceLocation.IServiceLocator serviceLocator)
         {
             this.Logger = new LoggerIntegracao();
@@ -53,6 +72,9 @@ namespace Glass.Integracao.Khan
             this.domainEvents = domainEvents;
             this.serviceLocator = serviceLocator;
             this.MonitorIndicadoresFinanceiros = new MonitorIndicadoresFinanceiros(this.Configuracao, this.Logger, rentabilidadeFluxo);
+            this.MonitorNotaFiscal = new MonitorNotaFiscal(domainEvents, this.Logger, this.Configuracao, provedorHistorico);
+            this.MonitorProdutos = new MonitorProdutos(domainEvents, this.Logger, this.Configuracao, produtoFluxo, provedorHistorico);
+            this.MonitorCondicoesPagamento = new MonitorCondicoesPagamento(this.Configuracao, this.Logger);
             this.EsquemaHistorico = CriarEsquemaHistorico();
         }
 
@@ -103,6 +125,21 @@ namespace Glass.Integracao.Khan
         internal MonitorIndicadoresFinanceiros MonitorIndicadoresFinanceiros { get; }
 
         /// <summary>
+        /// Obtém o monitor das notas fiscais.
+        /// </summary>
+        internal MonitorNotaFiscal MonitorNotaFiscal { get; }
+
+        /// <summary>
+        /// Obtém o monitor dos produtos.
+        /// </summary>
+        internal MonitorProdutos MonitorProdutos { get; }
+
+        /// <summary>
+        /// Obtém o monitor das condições de pagamento.
+        /// </summary>
+        internal MonitorCondicoesPagamento MonitorCondicoesPagamento { get; }
+
+        /// <summary>
         /// Obtém as operações do integrador.
         /// </summary>
         public IEnumerable<OperacaoIntegracao> Operacoes => this.gerenciadorOperacoes.Operacoes;
@@ -127,41 +164,10 @@ namespace Glass.Integracao.Khan
                 };
 
             return new Historico.Esquema(
-                1,
+                IdEsquemaKhan,
                 "Khan",
                 "Histório dos itens de integração da Khan",
                 itens);
-        }
-
-        private T ConfigurarMonitor<T>()
-            where T : MonitorEventos
-        {
-            var constructor = typeof(T).GetConstructors().FirstOrDefault();
-            var parameters = constructor.GetParameters()
-                .Select(parameter =>
-                {
-                    if (parameter.ParameterType == typeof(Colosoft.Domain.IDomainEvents))
-                    {
-                        return this.domainEvents;
-                    }
-                    else if (parameter.ParameterType == typeof(ConfiguracaoKhan))
-                    {
-                        return this.Configuracao;
-                    }
-                    else if (parameter.ParameterType == typeof(Colosoft.Logging.ILogger))
-                    {
-                        return this.Logger;
-                    }
-                    else
-                    {
-                        return this.serviceLocator.GetInstance(parameter.ParameterType);
-                    }
-                }).ToArray();
-
-            var monitor = (T)Activator.CreateInstance(typeof(T), parameters);
-            this.monitores.Add(monitor);
-
-            return monitor;
         }
 
         private Colosoft.Net.ServiceAddress ObterEnderecoServico(string nome, string endereco)
@@ -254,6 +260,16 @@ namespace Glass.Integracao.Khan
                 this.ObterEnderecoServico(
                     NomePedidosService,
                     $"{this.Configuracao.EnderecoBase}PedidoService.svc"));
+
+            serviceConfiguration.Add(
+                this.ObterEnderecoServico(
+                    NomeConsultasService,
+                    $"{this.Configuracao.EnderecoBase}ConsultasService.svc"));
+
+            serviceConfiguration.Add(
+                this.ObterEnderecoServico(
+                    NomeParceirosService,
+                    $"{this.Configuracao.EnderecoBase}ParceirosService.svc"));
         }
 
         /// <summary>
@@ -281,12 +297,10 @@ namespace Glass.Integracao.Khan
             this.ConfigurarWebServices();
 
             this.Logger.Info("Configurando monitor de produtos...".GetFormatter());
-            this.ConfigurarMonitor<MonitorProdutos>()
-                .ConfigurarOperacoes(this.gerenciadorOperacoes);
+            this.MonitorProdutos.ConfigurarOperacoes(this.gerenciadorOperacoes);
 
             this.Logger.Info("Configurando monitor de notas fiscais...".GetFormatter());
-            this.ConfigurarMonitor<MonitorNotaFiscal>()
-                .ConfigurarOperacoes(this.gerenciadorOperacoes);
+            this.MonitorNotaFiscal.ConfigurarOperacoes(this.gerenciadorOperacoes);
 
             this.integradorSchedulerRegistry = new IntegradorScheculerRegistry(this);
 

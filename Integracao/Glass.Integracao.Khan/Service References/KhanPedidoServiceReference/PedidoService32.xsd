@@ -53,6 +53,7 @@
       <xs:element minOccurs="0" name="seqped" type="xs:int" />
       <xs:element minOccurs="0" name="seqped_int" type="xs:int" />
       <xs:element minOccurs="0" name="serie" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="status_integracao" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="statusw" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="tipes" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="tipoEnvio" nillable="true" type="xs:string" />
@@ -126,4 +127,17 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ParcelaPedido" nillable="true" type="tns:ParcelaPedido" />
+  <xs:complexType name="ArrayOfCondicaoPagtos">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CondicaoPagtos" nillable="true" type="tns:CondicaoPagtos" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCondicaoPagtos" nillable="true" type="tns:ArrayOfCondicaoPagtos" />
+  <xs:complexType name="CondicaoPagtos">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CODCPGTO" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NOMCPGTO" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CondicaoPagtos" nillable="true" type="tns:CondicaoPagtos" />
 </xs:schema>
