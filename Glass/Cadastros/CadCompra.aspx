@@ -128,11 +128,14 @@ function selProduto(nomeControle, idProd)
         FindControl("txtValorIns", "input").disabled = retorno[6] == "true"; // Desabilita o campo de valor unitário
         FindControl("txtEspessura", "input").value = retorno[3];
 
-        var tipoCalc = eval(nomeControle).DadosProduto().TipoCalculo;        
+        var tipoCalc = retorno[10];
+        FindControl("hdfTipoCalc", "input").value = tipoCalc;
+        
         var nomeControle = getNomeControleBenef();
                     
-        if (FindControl("lnkBenef", "a") != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1)
+        if (FindControl("lnkBenef", "a") != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1){
             FindControl("lnkBenef", "a").style.display = exibirControleBenef(nomeControle) ? "" : "none";
+        }            
 
         // Se o produto não for vidro, desabilita os textboxes largura e altura,
         // mas se o produto for tipoCalc=ML AL e a empresa trabalhar com venda de alumínio, deixa o campo altura habilitado
@@ -148,8 +151,12 @@ function selProduto(nomeControle, idProd)
         
         // O campo altura e largura devem sempre ser atribuídos pois caso seja selecionado um box e logo após seja selecionado um kit 
         // por exemplo, ao inserí-lo ele estava ficando com o campo altura, largura e m² preenchidos apesar de ser calculado por qtd
-        if (retorno[7] != "" || retorno[2] == "false") FindControl("txtAltura", "input").value = retorno[7];
-        if (retorno[8] != "" || retorno[2] == "false") FindControl("txtLargura", "input").value = retorno[8];
+        if (retorno[7] != "" || retorno[2] == "false") {
+            FindControl("txtAltura", "input").value = retorno[7];
+        }
+        if (retorno[8] != "" || retorno[2] == "false") {
+            FindControl("txtLargura", "input").value = retorno[8];
+        }
 
         // Chamado 14457: Sempre que carregar o produto, apaga o campo Qtd para não permitir inserir decimal onde não pode
         FindControl("txtQtdeIns", "input").value = "";
