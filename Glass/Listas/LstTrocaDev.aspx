@@ -95,7 +95,6 @@
             var situacao = FindControl("drpSituacao", "select").value;
             var agruparFunc = FindControl("chkAgruparFunc", "input").checked;
             var agruparFuncionarioAssociadoCliente = FindControl("chkAgruparFuncionarioAssociadoCliente", "input").checked;
-            var agruparDepto = FindControl("chkAgruparDepto", "input").checked;
             var idCli = FindControl("txtNumCli", "input").value;
             var nomeCli = FindControl("txtNome", "input").value;
             var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
@@ -116,7 +115,7 @@
 
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ControlePerdasExternas&idTrocaDevolucao=" + idTrocaDevolucao +
                 "&idPedido=" + idPedido + "&tipo=" + tipo + "&situacao=" + situacao + "&agruparFunc=" + agruparFunc +
-                "&agruparDepto=" + agruparDepto + "&idCli=" + idCli + "&nomeCli=" + nomeCli + "&dataIni=" + dataIni + "&dataFim=" + dataFim +
+                "&idCli=" + idCli + "&nomeCli=" + nomeCli + "&dataIni=" + dataIni + "&dataFim=" + dataFim +
                 "&idsFunc=" + idsFuncionario + "&idsFuncionarioAssociadoCliente=" + idsFuncionarioAssociadoCliente + "&idProduto=" + idProduto +
                 "&alturaMin=" + alturaMin + "&alturaMax=" + alturaMax + "&agruparFuncionarioAssociadoCliente=" + agruparFuncionarioAssociadoCliente +
                 "&larguraMin=" + larguraMin + "&larguraMax=" + larguraMax + "&idOrigemTrocaDevolucao=" + idOrigemTrocaDevolucao +
