@@ -5336,6 +5336,10 @@ namespace Glass.Data.DAL
                     {
                         AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
                     }
+                    else
+                    {
+                        LogNfDAO.Instance.NewLog(nf.IdNf, "Emissão", codigoStatusRetorno, "O código de retorno não se encaixa em nenhuma situação prevista");
+                    }
 
                     BaixaCreditaEstoqueFiscalReal(cStat, nf);
                 }
@@ -5441,6 +5445,10 @@ namespace Glass.Data.DAL
             else if (Convert.ToInt32(cStat) > 105)
             {
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
+            }
+            else
+            {
+                LogNfDAO.Instance.NewLog(nf.IdNf, "Emissão", codigoStatusRetorno, "O código de retorno não se encaixa em nenhuma situação prevista"); 
             }
 
             BaixaCreditaEstoqueFiscalReal(cStat, nf);
