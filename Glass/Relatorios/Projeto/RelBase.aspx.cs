@@ -282,9 +282,16 @@ namespace Glass.UI.Web.Relatorios.Projeto
             get
             {
                 var caminhoRelatorio = string.Format("Relatorios/Projeto/rptImagemProjeto{0}.rdlc", ControleSistema.GetSite().ToString());
+                var caminhoRelatorioAplicacaoProcesso = $"Relatorios/Projeto/rptImagemProjetoAplProc{ControleSistema.GetSite().ToString()}.rdlc";
 
                 if (System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath(string.Format("~/{0}", caminhoRelatorio))))
+                {
                     return caminhoRelatorio;
+                }
+                else if (PedidoConfig.LiberarPedido && System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath($"~/{caminhoRelatorioAplicacaoProcesso}")))
+                {
+                    return caminhoRelatorioAplicacaoProcesso;
+                }
 
                 return
                     PedidoConfig.LiberarPedido ? "Relatorios/Projeto/rptImagemProjetoAplProc.rdlc" : "Relatorios/Projeto/rptImagemProjeto.rdlc";
