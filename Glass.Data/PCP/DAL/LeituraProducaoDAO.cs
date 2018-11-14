@@ -66,7 +66,7 @@ namespace Glass.Data.DAL
             var sqlLeituraProducao = $@"SELECT IdLeituraProd FROM leitura_producao
                 WHERE IdSetor IN ({ string.Join(",", idsSetor) }) AND DataLeitura BETWEEN ?dataIni AND ?dataFim";
 
-            var idsLeituraProd = ExecuteMultipleScalar<int>(session, sqlLeituraProducao,GetParams(dataLeituraInicial,dataLeituraFinal));
+            var idsLeituraProd = ExecuteMultipleScalar<int>(session, sqlLeituraProducao, GetParams(dataLeituraInicial, dataLeituraFinal));
 
             return $@"SELECT IdProdPedProducao, IdSetor, DataLeitura FROM leitura_producao
                 WHERE IdLeituraProd IN ({ (idsLeituraProd.Any(f => f > 0) ? string.Join(",", idsLeituraProd) : "0") })";
