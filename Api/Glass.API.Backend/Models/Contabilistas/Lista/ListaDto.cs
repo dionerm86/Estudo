@@ -25,12 +25,9 @@ namespace Glass.API.Backend.Models.Contabilistas.V1.Lista
             this.Nome = contabilista.Nome;
             this.CpfCnpj = contabilista.CpfCnpj;
             this.Crc = contabilista.Crc;
-            this.TipoPessoa = new IdNomeDto
+            this.TipoPessoa = new CodigoNomeDto
             {
-                Id = contabilista.TipoPessoa == "F"
-                    ? (int)Data.Model.TipoPessoa.Fisica
-                    : (int)Data.Model.TipoPessoa.Juridica,
-
+                Codigo = contabilista.TipoPessoa,
                 Nome = contabilista.TipoPessoa == "F"
                     ? Colosoft.Translator.Translate(Data.Model.TipoPessoa.Fisica).Format()
                     : Colosoft.Translator.Translate(Data.Model.TipoPessoa.Juridica).Format(),
@@ -71,7 +68,7 @@ namespace Glass.API.Backend.Models.Contabilistas.V1.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("tipoPessoa")]
-        public IdNomeDto TipoPessoa { get; set; }
+        public CodigoNomeDto TipoPessoa { get; set; }
 
         /// <summary>
         /// Obtém ou define o CNPJ do contabilista.

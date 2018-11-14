@@ -30,7 +30,7 @@ namespace Glass.API.Backend.Models.Contabilistas.V1.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("tipoPessoa")]
-        public Data.Model.TipoPessoa TipoPessoa
+        public string TipoPessoa
         {
             get { return this.ObterValor(c => c.TipoPessoa); }
             set { this.AdicionarValor(c => c.TipoPessoa, value); }

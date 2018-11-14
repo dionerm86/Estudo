@@ -131,7 +131,7 @@
       this.contabilista = {
         id: contabilista ? contabilista.id : null,
         nome: contabilista ? contabilista.nome : null,
-        tipoPessoa: contabilista && contabilista.tipoPessoa ? contabilista.tipoPessoa.id : null,
+        tipoPessoa: contabilista && contabilista.tipoPessoa ? contabilista.tipoPessoa.codigo : null,
         cpfCnpj: contabilista ? contabilista.cpfCnpj : null,
         crc: contabilista ? contabilista.crc : null,
         dadosContato: {
@@ -186,7 +186,7 @@
     tipoPessoaAtual: {
       handler: function (atual) {
         if (this.contabilista) {
-          this.contabilista.tipoPessoa = atual ? atual.id : null;
+          this.contabilista.tipoPessoa = atual ? atual.codigo : null;
         }
       },
       deep: true

@@ -2,11 +2,14 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Colosoft;
 using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Models.Genericas.V1;
 using Swashbuckle.Swagger.Annotations;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Comum.V1
@@ -28,10 +31,10 @@ namespace Glass.API.Backend.Controllers.Comum.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var tipos = new ConversorEnum<Situacao>()
+                var situacoes = new ConversorEnum<Situacao>()
                     .ObterTraducao();
 
-                return this.Lista(tipos);
+                return this.Lista(situacoes);
             }
         }
 
@@ -41,14 +44,14 @@ namespace Glass.API.Backend.Controllers.Comum.V1
         /// <returns>Uma lista JSON com os dados básicos dos tipos de pessoa.</returns>
         [HttpGet]
         [Route("tiposPessoa")]
-        [SwaggerResponse(200, "Tipos de pessoa encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(200, "Tipos de pessoa encontrados.", Type = typeof(IEnumerable<CodigoNomeDto>))]
         [SwaggerResponse(204, "Tipos de pessoa não encontrados.")]
         public IHttpActionResult ObterTiposPessoa()
         {
             using (var sessao = new GDATransaction())
             {
-                var tipos = new ConversorEnum<Data.Model.TipoPessoa>()
-                    .ObterTraducao();
+                var tipos = new ConversorEnum<Data.Model.TipoPessoaMigrado>()
+                    .ObterTraducaoCodigoNome();
 
                 return this.Lista(tipos);
             }
