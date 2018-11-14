@@ -44,11 +44,13 @@ namespace WebGlass.Business.Produto.Ajax
                 var prod = ProdutoDAO.Instance.GetByIdProd(Glass.Conversoes.StrParaUint(idProd));
 
                 if (prod == null || prod.IdProd == 0)
+                {
                     return "Erro|Não existe produto com o código informado.";
-
+                }
                 else if (prod.Situacao == Glass.Situacao.Inativo)
-                    return "Erro|Produto inativo." + (!String.IsNullOrEmpty(prod.Obs) ? " Obs: " + prod.Obs : "");
-
+                {
+                    return "Erro|Produto inativo." + (!string.IsNullOrWhiteSpace(prod.Obs) ? " Obs: " + prod.Obs : string.Empty);
+                }
                 else
                 {
                     string infoEstoque = !Glass.Configuracoes.Geral.NaoVendeVidro() ? String.Empty :
@@ -57,6 +59,8 @@ namespace WebGlass.Business.Produto.Ajax
 
                     decimal precoForn = ProdutoFornecedorDAO.Instance.GetCustoCompra(Glass.Conversoes.StrParaInt(idFornec), prod.IdProd);
                     decimal custoCompra = precoForn > 0 ? precoForn : prod.Custofabbase > 0 ? prod.Custofabbase : prod.CustoCompra;
+
+                    var tipoCalculoSubGrupo = SubgrupoProdDAO.Instance.ObtemTipoCalculo(null, prod.IdSubgrupoProd.GetValueOrDefault(), false).GetValueOrDefault();
 
                     return "Prod|" +
                            infoEstoque + "|" +
@@ -67,7 +71,8 @@ namespace WebGlass.Business.Produto.Ajax
                            "false|" +
                            prod.Altura + "|" +
                            prod.Largura + "|" +
-                           prod.CodInterno;
+                           prod.CodInterno + "|" +
+                           tipoCalculoSubGrupo;
                 }
             }
             catch (Exception ex)
