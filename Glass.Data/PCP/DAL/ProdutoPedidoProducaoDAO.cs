@@ -7193,7 +7193,7 @@ namespace Glass.Data.DAL
 
         #region Relatório de perdas
 
-        private string SqlPerda(uint idFuncPerda, uint idPedido, uint idCliente, string nomeCliente, string dataIni,   //idFuncPerda, idPedido, idCliente, nomeCliente, dataIni, dataFim, true, idsSetor, null
+        private string SqlPerda(uint idFuncPerda, uint idPedido, uint idCliente, string nomeCliente, string dataIni,
             string dataFim, bool selecionar, string idsSetor)
         {
             return SqlPerda(null, idFuncPerda, idPedido, idCliente, nomeCliente, dataIni, dataFim, selecionar, idsSetor);
