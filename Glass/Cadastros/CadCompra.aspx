@@ -133,7 +133,7 @@ function selProduto(nomeControle, idProd)
         
         var nomeControle = getNomeControleBenef();
                     
-        if (FindControl("lnkBenef", "a") != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1){
+        if (FindControl("lnkBenef", "a") != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1) {
             FindControl("lnkBenef", "a").style.display = exibirControleBenef(nomeControle) ? "" : "none";
         }            
 
