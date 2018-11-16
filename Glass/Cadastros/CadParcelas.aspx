@@ -19,7 +19,7 @@
                     </label>
                 </span>
                 <span class="colspan3">
-                    <lista-selecao-id-valor :item-selecionado.sync="formaPagamentoAtual" :funcao-recuperar-itens="obterFormaPagto" required></lista-selecao-id-valor>
+                    <lista-selecao-id-valor :item-selecionado.sync="tipoPagamentoAtual" :funcao-recuperar-itens="obterFormaPagto" required></lista-selecao-id-valor>
                 </span>
                 <template v-if="exibirDias">
                     <span class="cabecalho">
@@ -55,8 +55,8 @@
                         </label>
                 </span>
                 <span class="colspan4" style="padding: 4px 0" v-if="configuracoes.usarTabelaDescontoAcrescimoPedidoAVista">
-                        <input id="parcelaAvista" type="checkbox" v-model="parcela.parcelaAvista" />
-                        <label for="parcelaAvista">
+                        <input id="parcelaAVista" type="checkbox" v-model="parcela.parcelaAVista" />
+                        <label for="parcelaAVista">
                             Parcela à vista?
                         </label>
                 </span>

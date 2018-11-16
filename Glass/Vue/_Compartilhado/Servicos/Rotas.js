@@ -18,7 +18,7 @@ Servicos.Rotas = (function(http) {
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
       return http().get(API.substr(0, API.length - 1), {
         params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
-      }); obterConfiguracoesLista
+      });
     },
 
     /**

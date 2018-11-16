@@ -15,7 +15,6 @@
   },
 
   methods: {
-
     /**
      * Retorna os itens para a lista de situação.
      * @returns {Promise} Uma Promise com o resultado da busca.
@@ -42,7 +41,7 @@
         descricao: item ? item.descricao : null,
         parcelaPadrao: item ? item.parcelaPadrao : null,
         situacao: item ? item.situacao : null,
-        parcelaAvista: item ? item.parcelaAvista : null,
+        parcelaAVista: item ? item.parcelaAVista : null,
         dias: item ? item.dias : null,
         numeroParcelas: item ? item.dias.length : null
       }
@@ -52,7 +51,7 @@
      * Insere a parcela, se possível.
      * @param {Object} event O objeto do evento JavaScript.
      */
-    inserirParcela: function () {
+    inserirParcela: function (event) {
       if (!this.validarFormulario_(event.target)) {
         return;
       }
@@ -78,7 +77,7 @@
      * Atualiza a parcela, se possível.
      * @param {Object} event O objeto do evento JavaScript.
      */
-    atualizarParcela: function () {
+    atualizarParcela: function (event) {
       if (!this.validarFormulario_(event.target)) {
         return;
       }
@@ -136,7 +135,7 @@
     },
 
     /**
-     * remove um dia inserido na tela de inserção da parcela.
+     * Remove um dia inserido na tela de inserção da parcela.
      * @param {Object} dia O dia que sera removido.
      */
     excluirDia: function (dia) {
@@ -144,7 +143,6 @@
       this.parcela.dias.splice(posicaoDia, 1);
       this.parcela.numeroParcelas = this.parcela.dias.length;
     },
-
 
     excluirDiasTipoPagamento: function () {
       if (this.formaPagamentoAtual.id == this.configuracoes.tipoPagamentoAVista) {
@@ -205,11 +203,11 @@
      * Observador para a variável 'formaPagamentoAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */
-    formaPagamentoAtual: {
+    tipoPagamentoAtual: {
       handler: function (atual) {
         this.exibirDias = atual && atual.id == 0;
         if (this.parcela) {
-          this.parcela.parcelaAvista = atual ? atual.id : null;
+          this.parcela.parcelaAVista = atual ? atual.id : null;
         }
         deep: true
       },
@@ -229,8 +227,7 @@
       vm.inserindo = true;
       vm.iniciarCadastroOuAtualizacao_();
     }
-
-    if (idParcela) {
+    else {
       vm.editando = true;
       this.buscarParcela(idParcela)
         .then(function (resposta) {

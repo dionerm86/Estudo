@@ -28,7 +28,7 @@
                         <a href="#" @click.prevent="ordenar('parcelaPadrao')">Exibir marcado como padrão?</a>
                     </th>
                     <th v-if="configuracoes.usarDescontoEmParcela" >
-                        <a href="#" @click.prevent="ordenar('parcelaAvista')">Parcela á vista</a>
+                        <a href="#" @click.prevent="ordenar('parcelaAVista')">Parcela á vista</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
@@ -42,14 +42,14 @@
                         </a>
                         <button @click.prevent="excluir(item)" title="Excluir">
                             <img src="../Images/ExcluirGrid.gif">
-                        </button>                       
+                        </button>
                     </td>
                     <td>{{ item.nome }}</td>
                     <td>{{ item.numParcelas }}</td>
                     <td v-if="configuracoes.usarTabelaDescontoAcrescimoPedidoAVista">{{ item.desconto }}</td>
                     <td>{{ item.dias }}</td>
                     <td>{{ item.parcelaPadrao | indicaMarcado }}</td>
-                    <td v-if="configuracoes.usarDescontoEmParcela">{{ item.parcelaAvista }}</td>
+                    <td v-if="configuracoes.usarDescontoEmParcela">{{ item.parcelaAVista }}</td>
                     <td>{{ item.situacao }}</td>
                     <td>
                         <log-alteracao tabela="Parcelas" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>

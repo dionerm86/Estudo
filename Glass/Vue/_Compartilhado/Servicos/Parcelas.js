@@ -101,7 +101,6 @@ Servicos.Parcelas = (function (http) {
 
     /**
      * Recupera os Tipos pagamentos de parcelas para uso no controle de seleção Tipo Pagto.
-     * @param {?Object} [filtro=null] O filtro usado pelo controle de seleção de Tipo Pagto.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     tiposPagamento: function () {
