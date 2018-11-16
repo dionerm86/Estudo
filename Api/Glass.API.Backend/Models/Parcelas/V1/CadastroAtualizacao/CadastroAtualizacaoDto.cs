@@ -52,7 +52,7 @@ namespace Glass.API.Backend.Models.Parcelas.V1.CadastroAtualizacao
         /// Obtém ou define um valor que indica se a parcela é a vista.
         /// </summary>
         [DataMember]
-        [JsonProperty("parcelaAvista")]
+        [JsonProperty("parcelaAVista")]
         public bool ParcelaAVista
         {
             get { return this.ObterValor(c => c.ParcelaAVista); }

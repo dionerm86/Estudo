@@ -6,7 +6,7 @@
     inserindo: false,
     editando: false,
     situacaoAtual: {},
-    formaPagamentoAtual: {},
+    tipoPagamentoAtual: {},
     diaAtual: {},
     parcela: {},
     parcelaOriginal: {},
@@ -34,7 +34,6 @@
     iniciarCadastroOuAtualizacao_: function (item) {
       this.parcelaOriginal = item ? this.clonar(item) : {};
       this.situacaoAtual = item ? this.clonar(item.situacao) : null;
-      this.diaAtual = item ? item.diaAtual : null;
 
       this.parcela = {
         id: item && item.id ? item.id : null,
@@ -42,7 +41,7 @@
         parcelaPadrao: item ? item.parcelaPadrao : null,
         situacao: item ? item.situacao : null,
         parcelaAVista: item ? item.parcelaAVista : null,
-        dias: item ? item.dias : null,
+        dias: item ? this.clonar(item.dias) : null,
         numeroParcelas: item ? item.dias.length : null
       }
     },
@@ -104,13 +103,15 @@
 
     /**
      * cancela a edição ou inserção da parcela.
-     * @param {Object} event O objeto do evento JavaScript.
      */
     cancelar: function () {
       var url = '../Listas/LstParcelas.aspx';
       window.location.assign(url);
     },
 
+    /**
+     * Insere um dia na parcela.
+     */
     inserirDia: function () {
       if (this.diaAtual) {
         var dias = this.parcela.dias;
@@ -144,8 +145,12 @@
       this.parcela.numeroParcelas = this.parcela.dias.length;
     },
 
+    /**
+     * Remove os dias e o numero de parcelas quando necessario.
+     * @param {Object} dia O dia que sera removido.
+     */
     excluirDiasTipoPagamento: function () {
-      if (this.formaPagamentoAtual.id == this.configuracoes.tipoPagamentoAVista) {
+      if (this.tipoPagamentoAtual.id == this.configuracoes.tipoPagamentoAVista) {
         this.parcela.numeroParcelas = 0;
         this.parcela.dias = [];
       }
@@ -236,7 +241,7 @@
             window.location.assign(url);
           }
 
-          vm.formaPagamentoAtual = {
+          vm.tipoPagamentoAtual = {
             id: vm.parcela.dias && vm.parcela.dias.length ? vm.configuracoes.tipoPagamentoAPrazo : vm.configuracoes.tipoPagamentoAVista
           };
         });

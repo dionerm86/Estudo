@@ -1,5 +1,5 @@
 <%@ Page Title="Parcelas" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
-    CodeBehind="CadParcelas.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadParcelas" EnableEventValidation="false" %>
+    CodeBehind="CadParcelas.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadParcelas" EnableEventValidation="false" EnableViewState="False" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <div id="app">
@@ -49,16 +49,16 @@
                     <input type="text" v-model="parcela.desconto" />
                 </span>
                 <span class="colspan4" style="padding: 4px 0">
-                        <input v-model="parcela.parcelaPadrao" type="checkbox" />
-                        <label for="parcelaPadrao">
-                            Exibir marcado como padrão?
-                        </label>
+                    <input v-model="parcela.parcelaPadrao" type="checkbox" />
+                    <label for="parcelaPadrao">
+                        Exibir marcado como padrão?
+                    </label>
                 </span>
                 <span class="colspan4" style="padding: 4px 0" v-if="configuracoes.usarTabelaDescontoAcrescimoPedidoAVista">
-                        <input id="parcelaAVista" type="checkbox" v-model="parcela.parcelaAVista" />
-                        <label for="parcelaAVista">
-                            Parcela à vista?
-                        </label>
+                    <input id="parcelaAVista" type="checkbox" v-model="parcela.parcelaAVista" />
+                    <label for="parcelaAVista">
+                        Parcela à vista?
+                    </label>
                 </span>
                 <span class="cabecalho">
                     <label>

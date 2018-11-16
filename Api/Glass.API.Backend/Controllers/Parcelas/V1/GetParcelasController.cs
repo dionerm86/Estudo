@@ -65,18 +65,10 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var tiposPagamentos = new List<IdNomeDto>();
+                var tiposPagamentos = new Helper.ConversorEnum<Models.Parcelas.V1.Configuracoes.TipoPagamento>()
+                    .ObterTraducao();
 
-                foreach (Models.Parcelas.V1.Configuracoes.TipoPagamento tipo in Enum.GetValues(typeof(Models.Parcelas.V1.Configuracoes.TipoPagamento)))
-                {
-                    tiposPagamentos.Add(new IdNomeDto()
-                    {
-                        Id = (int)tipo,
-                        Nome = tipo.Translate().ToString(),
-                    });
-                }
-
-                return this.Item(tiposPagamentos);
+                return this.Lista(tiposPagamentos);
             }
         }
 

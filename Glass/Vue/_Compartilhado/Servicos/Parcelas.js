@@ -92,6 +92,7 @@ Servicos.Parcelas = (function (http) {
 
     /**
      * Atualiza uma parcela.
+     * @param {!number} idParcela Id da parcela que será atualizada.
      * @param {!number} parcela Os dados da parcela que será atualizada.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
