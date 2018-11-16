@@ -916,21 +916,21 @@ namespace Glass.UI.Web.Relatorios
                     {
                         report.ReportPath = Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaClientes{0}.rdlc");
                         var tiposFiscais = string.IsNullOrEmpty(Request["tipoFiscal"]) ? new TipoFiscalCliente[] { } :
-                        Request["tiposFiscais"].Split(',')
-                       .Select(x => (Data.Model.TipoFiscalCliente)x.StrParaInt())
-                       .ToArray();
+                            Request["tiposFiscais"].Split(',')
+                                .Select(x => (Data.Model.TipoFiscalCliente)x.StrParaInt())
+                                .ToArray();
 
-                        var formasPagto = string.IsNullOrEmpty(Request["formasPagto"]) ? new int[] { } :
+                        var formasPagto = string.IsNullOrWhiteSpace(Request["formasPagto"]) ? new int[] { } :
                             Request["formasPagto"].Split(',')
                                 .Select(x => x.StrParaInt())
                                 .ToArray();
 
-                        var situacao = string.IsNullOrEmpty(Request["situacao"]) ? new int[] { } :
+                        var situacao = string.IsNullOrWhiteSpace(Request["situacao"]) ? new int[] { } :
                             Request["situacao"].Split(',')
                                 .Select(x => x.StrParaInt())
                                 .ToArray();
 
-                        var tiposCliente = string.IsNullOrEmpty(Request["idTipoCliente"]) ? new int[] { } :
+                        var tiposCliente = string.IsNullOrWhiteSpace(Request["idTipoCliente"]) ? new int[] { } :
                             Request["idTipoCliente"].Split(',')
                                 .Select(x => x.StrParaInt())
                                 .ToArray();
