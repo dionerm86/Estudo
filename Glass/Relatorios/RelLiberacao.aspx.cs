@@ -261,6 +261,7 @@ namespace Glass.UI.Web.Relatorios
                 report.DataSources.Add(new ReportDataSource("Cheques", cheques));
                 report.DataSources.Add(new ReportDataSource("ProdutosLiberarPedidoRpt", lstProdLib));
                 report.DataSources.Add(new ReportDataSource("ResumoCorte", resumoCorte));
+                report.DataSources.Add(new ReportDataSource("ResumoCorteComRevenda", resumoCorte));
                 report.DataSources.Add(new ReportDataSource("ProdutoPedidoProducaoRpt", pecasCanceladas));
                 report.DataSources.Add(new ReportDataSource("ProdutosCortados", produtosCortadosRpt));
             }
