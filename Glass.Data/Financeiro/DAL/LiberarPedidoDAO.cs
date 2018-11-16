@@ -1330,13 +1330,19 @@ namespace Glass.Data.DAL
 
         private int ObterIdFuncComissaoRec(GDASession session, uint idLiberarPedido)
         {
-            if(idLiberarPedido == 0)
+            if (idLiberarPedido == 0)
             {
                 return 0;
             }
 
-            var idPedido = PedidoDAO.Instance.GetIdsByLiberacao(session, idLiberarPedido).First();
-            return (int)ComissaoDAO.Instance.ObtemIdFuncComissaoRec(session, (int)idPedido);
+            var idPedido = PedidoDAO.Instance.GetIdsByLiberacao(session, idLiberarPedido);
+
+            if (idPedido.Count > 0)
+            {
+                return (int)PedidoDAO.Instance.ObtemIdFunc(session, idPedido.First());
+            }
+
+            return 0;
         }
 
         /// <summary>
