@@ -21,7 +21,8 @@ namespace Glass.Data.Model
             Cancelada,
             Continuada,
             Agendar,
-            Colagem
+            Colagem,
+            DeptoTecnico
         }
 
         public enum TipoInst
@@ -272,7 +273,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                string sitObs = 
+                string sitObs =
                     Situacao == 1 ? "Aberta" :
                     Situacao == 2 ? "Em Andamento" :
                     Situacao == 3 ? "Finalizada" :
@@ -280,6 +281,7 @@ namespace Glass.Data.Model
                     Situacao == 5 ? "Continuada " :
                     Situacao == 6 ? "A agendar" :
                     Situacao == 7 ? "Colagem" :
+                    Situacao == 8 ? "Depto. Técnico" :
                     String.Empty;
 
                 return !String.IsNullOrEmpty(Obs) ? sitObs + " (" + Obs + ")" : sitObs;
@@ -291,7 +293,7 @@ namespace Glass.Data.Model
             get
             {
                 return Situacao != (int)SituacaoInst.Aberta && Situacao != (int)SituacaoInst.Agendar &&
-                    Situacao != (int)SituacaoInst.Colagem && IdOrdemInstalacao > 0;
+                    Situacao != (int)SituacaoInst.Colagem && Situacao != (int)SituacaoInst.DeptoTecnico && IdOrdemInstalacao > 0;
             }
         }
 
