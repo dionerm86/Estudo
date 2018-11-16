@@ -1335,11 +1335,11 @@ namespace Glass.Data.DAL
                 return 0;
             }
 
-            var idPedido = PedidoDAO.Instance.GetIdsByLiberacao(session, idLiberarPedido);
+            var idsPedido = PedidoDAO.Instance.GetIdsByLiberacao(session, idLiberarPedido);
 
-            if (idPedido.Count > 0)
+            if (idsPedido.Count > 0)
             {
-                return (int)PedidoDAO.Instance.ObtemIdFunc(session, idPedido.First());
+                return (int)PedidoDAO.Instance.ObtemIdFunc(session, idsPedido.First());
             }
 
             return 0;
