@@ -363,7 +363,7 @@ namespace Glass.Global.Negocios.Componentes
                 .LeftJoin<Data.Model.Cidade>("c.IdCidade=cid.IdCidade", "cid")
                 .LeftJoin<Data.Model.FormaPagto>("c.IdFormaPagto=fp.IdFormaPagto", "fp")
                 .LeftJoin<Data.Model.Parcelas>("c.TipoPagto=p.IdParcela", "p")
-                .LeftJoin<Data.Model.TabelaDescontoAcrescimoCliente>("c.IdTabelaDesconto=tdac.IdTabelaDesconto", "tdac")
+                .LeftJoin<Data.Model.TabelaDescontoAcrescimoCliente>("c.IdTabelaDesconto = tdac.IdTabelaDesconto", "tdac")
                 .OrderBy("c.IdCli")
                 .Select(
                     @"c.IdCli, c.Nome, c.NomeFantasia, c.CpfCnpj, c.Endereco, c.Numero, c.Compl, c.Bairro, cid.NomeCidade as Cidade,
