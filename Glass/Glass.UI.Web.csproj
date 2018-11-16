@@ -495,6 +495,7 @@
     <Content Include="Listas\LstCfop.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
+    <Content Include="Utils\AlertaAdministrador.aspx" />
     <Content Include="Vue\Cfops\NaturezasOperacao\Componentes\LstNaturezasOperacao.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.Filtro.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.js" />
@@ -7463,6 +7464,13 @@
     </Compile>
     <Compile Include="Relatorios\ResumoDiario.aspx.designer.cs">
       <DependentUpon>ResumoDiario.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\AlertaAdministrador.aspx.cs">
+      <DependentUpon>AlertaAdministrador.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\AlertaAdministrador.aspx.designer.cs">
+      <DependentUpon>AlertaAdministrador.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\AlterarProcessoAplicacao.aspx.cs">
       <DependentUpon>AlterarProcessoAplicacao.aspx</DependentUpon>
