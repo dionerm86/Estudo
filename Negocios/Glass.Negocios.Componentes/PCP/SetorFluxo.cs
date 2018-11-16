@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Colosoft;
+using System;
 
 namespace Glass.PCP.Negocios.Componentes
 {
@@ -87,6 +88,114 @@ namespace Glass.PCP.Negocios.Componentes
             }
         }
 
+        private IMessageFormattable[] ValidarExclusaoSetor(int idSetor)
+        {
+            var mensagens = new List<string>();
+
+            // Handler para tratar o resultado da consulta de validação
+            var tratarResultado = new Func<string, Colosoft.Query.QueryCallBack>(mensagem =>
+               (sender, query, result) =>
+               {
+                   if (result.Select(f => f.GetInt32(0)).FirstOrDefault() > 0 && !mensagens.Contains(mensagem))
+                   {
+                       mensagens.Add(mensagem);
+                   }
+               });
+
+            SourceContext.Instance.CreateMultiQuery()
+                // Verifica se existem peças que foram inseridas neste setor.
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.LeituraProducao>()
+                    .Where("IdSetor=?id")
+                    .Add("?id", idSetor)
+                    .Count(),
+                    tratarResultado("Este Setor não pode ser excluído por haverem peças relacionadas ao mesmo."))
+
+                // Verifica se existem reposições relacionadas ao setor.
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.DadosReposicao>()
+                    .Where("IdSetorRepos=?id")
+                    .Add("?id", idSetor)
+                    .Count(),
+                    tratarResultado("Este setor não pode ser excluído por haverem reposições relacionadas ao mesmo."))
+
+                // Verifica se existem funcionários relacionados ao setor.
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.FuncionarioSetor>()
+                    .Where("IdSetor=?id")
+                    .Add("?id", idSetor)
+                    .Count(),
+                    tratarResultado("Este setor não pode ser excluído por haverem funcionários relacionados ao mesmo."))
+
+                // Verifica se existem notificações relacionadas ao setor.
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.Notificacao>()
+                    .Where("IdSetor=?id")
+                    .Add("?id", idSetor)
+                    .Count(),
+                    tratarResultado("Este setor não pode ser excluído por haverem notificações relacionadas ao mesmo."))
+
+                // Verifica se existem peças excluídas do sistema relacionadas ao setor.
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.PecasExcluidasSistema>()
+                    .Where("IdSetor=?id")
+                    .Add("?id", idSetor)
+                    .Count(),
+                    tratarResultado("Este setor não pode ser excluído por haverem peças excluídas do sistema associadas ao mesmo."))
+
+                // Verifica se existem peças de pedidos em produção associadas ao setor.
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.ProdutoPedidoProducao>()
+                    .Where("IdSetor=?id OR IdSetorRepos=?id")
+                    .Add("?id", idSetor)
+                    .Count(),
+                    tratarResultado("Este setor não pode ser excluído por haverem peças em produção associadas ao mesmo."))
+
+                // Verifica se existem etiquetas de roteiro de produção associadas ao setor.
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.RoteiroProducaoEtiqueta>()
+                    .Where("IdSetor=?id")
+                    .Add("?id", idSetor)
+                    .Count(),
+                    tratarResultado("Este setor não pode ser excluído por haverem etiquetas de roterios de produção associadas ao mesmo."))
+
+                // Verifica se existem roteiros de produção associados ao setor.
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.RoteiroProducaoSetor>()
+                    .Where("IdSetor=?id")
+                    .Add("?id", idSetor)
+                    .Count(),
+                    tratarResultado("Este setor não pode ser excluído por haverem roteiros de produção associados ao mesmo."))
+
+                // Verifica se existem beneficiamentos associados ao setor.
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.SetorBenef>()
+                    .Where("IdSetor=?id")
+                    .Add("?id", idSetor)
+                    .Count(),
+                    tratarResultado("Este setor não pode ser excluído por haverem beneficiamentos associados ao mesmo."))
+
+                // Verifica se existem tipos de perda associados ao setor.
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.TipoPerda>()
+                    .Where("IdSetor=?id")
+                    .Add("?id", idSetor)
+                    .Count(),
+                    tratarResultado("Este setor não pode ser excluído por haverem tipos de perda associadas ao mesmo."))
+
+                // Verifica se existe trocas/devoluções asssociadas ao setor.
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Glass.Data.Model.TrocaDevolucao>()
+                    .Where("IdSetor=?id")
+                    .Add("?id", idSetor)
+                    .Count(),
+                    tratarResultado("Este setor não pode ser excluído por haverem trocas/devoluções associadas ao mesmo."))
+
+                .Execute();
+
+            return mensagens.Select(f => f.GetFormatter()).ToArray();
+        }
+
         /// <summary>
         /// Apaga os dados do setor.
         /// </summary>
@@ -96,15 +205,12 @@ namespace Glass.PCP.Negocios.Componentes
         {
             setor.Require("setor").NotNull();
 
-            // Verifica se este alguma peça foi inserida neste setor
-            if (SourceContext.Instance.CreateQuery()
-                .From<Glass.Data.Model.LeituraProducao>()
-                .Where("IdSetor=?id")
-                .Add("?id", setor.IdSetor)
-                .ExistsResult())
-                return new Colosoft.Business.DeleteResult(false,
-                    "Este Setor não pode ser excluído por haver peças relacionadas ao mesmo.".GetFormatter());
+            var mensagensValidacao = ValidarExclusaoSetor(setor.IdSetor);
 
+            if (mensagensValidacao.Any())
+            {
+                return new Colosoft.Business.DeleteResult(false, mensagensValidacao.Join("\n"));
+            }
 
             using (var session = SourceContext.Instance.CreateSession())
             {
@@ -138,7 +244,7 @@ namespace Glass.PCP.Negocios.Componentes
                 .Select(f => f.GetInt32(0)).FirstOrDefault();
 
 
-            // Só troca de posição se houver algum setor abaixo/acima deste para ser trocado, 
+            // Só troca de posição se houver algum setor abaixo/acima deste para ser trocado,
             // lembrando que a posição Impr. Etiqueta não pode ser trocada
             if (setor.NumeroSequencia == 1 || (acima && setor.NumeroSequencia == 2) ||
                 (!acima && maiorSequencia == setor.NumeroSequencia))
@@ -254,7 +360,7 @@ namespace Glass.PCP.Negocios.Componentes
                 }
                 else if (setor.Situacao == Situacao.Ativo)
                 {
-                    if (setor.ChangedProperties.Contains("Situacao") && 
+                    if (setor.ChangedProperties.Contains("Situacao") &&
                         setor.Tipo == Glass.Data.Model.TipoSetor.Entregue && SourceContext.Instance.CreateQuery()
                         .From<Glass.Data.Model.Setor>("s")
                         .Where("Situacao=?ativo AND Tipo=?entregue")
@@ -267,7 +373,7 @@ namespace Glass.PCP.Negocios.Componentes
                         };
                     }
 
-                    if (setor.ChangedProperties.Contains("Situacao") && 
+                    if (setor.ChangedProperties.Contains("Situacao") &&
                         setor.Tipo == Glass.Data.Model.TipoSetor.ExpCarregamento && SourceContext.Instance.CreateQuery()
                         .From<Glass.Data.Model.Setor>("s")
                         .Where("Situacao=?ativo AND Tipo=?expCarregamento")

@@ -167,7 +167,7 @@ namespace Glass.UI.Web.Utils
                         #endregion
                 }
 
-                var idArquivoRemessa = ArquivoRemessaDAO.Instance.GerarEnvio(boletos);
+                var idArquivoRemessa = ArquivoRemessaDAO.Instance.GerarEnvioComTransacao(boletos);
 
                 dados.IdArquivoRemessa = (int)idArquivoRemessa;
 
@@ -234,13 +234,13 @@ namespace Glass.UI.Web.Utils
             var contas = ContasReceberDAO.Instance.GetForCnab(tipoPeriodo.StrParaInt(), dataIni, dataFim, tiposConta, tipoContaSemSeparacao.StrParaInt(),
                 formasPagto, idCli.StrParaUint(), nomeCli, idLoja.StrParaUint(), idContaBancoCliente.StrParaInt(), idsContas,
                 incluirContasAcertoParcial.ToLower() == "true", incluirContasAntecipacaoBoleto.ToLower() == "true");
-            
+
             foreach (var c in contas)
             {
-                var formaPagto = 
+                var formaPagto =
                     ContasReceberDAO.Instance.ObterPlanosContaConsiderarPrazoParaCnab()
                     .Contains(c.IdConta.Value)
-                        ? FormaPagtoDAO.Instance.GetElementByPrimaryKey((uint)Data.Model.Pagto.FormaPagto.Prazo) 
+                        ? FormaPagtoDAO.Instance.GetElementByPrimaryKey((uint)Data.Model.Pagto.FormaPagto.Prazo)
                         : UtilsPlanoConta.GetFormaPagtoByIdConta(c.IdConta.Value);
 
                 sb.Append(c.IdContaR + "\t");

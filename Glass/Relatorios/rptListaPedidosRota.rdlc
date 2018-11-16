@@ -1140,7 +1140,7 @@
                             <TextRun>
                               <Value>=Count(Fields!IdPedido.Value).ToString() + " pedido(s)   " + 
 Format(Sum(Fields!TotM.Value), "N").ToString() + "m²   " + 
-Format(Sum(Fields!QtdePecas.Value)).ToString() + " peças (total de peças referente ao m² exibido)  " +
+Format(Sum(Fields!QtdePecasPai.Value)).ToString() + " peças (total de peças referente ao m² exibido)  " +
 Format(Sum(Fields!Peso.Value), "N").ToString() + "kg"</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
@@ -1166,6 +1166,7 @@ Format(Sum(Fields!Peso.Value), "N").ToString() + "kg"</Value>
                       </Style>
                     </Textbox>
                     <ColSpan>8</ColSpan>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell />
@@ -1285,8 +1286,8 @@ Format(Sum(Fields!Peso.Value), "N").ToString() + "kg"</Value>
         </TablixRowHierarchy>
         <DataSetName>PedidoRpt</DataSetName>
         <Top>3.57936cm</Top>
-        <Height>2.91005cm</Height>
-        <Width>18.96825cm</Width>
+        <Height>3.14821cm</Height>
+        <Width>18.96827cm</Width>
         <ZIndex>1</ZIndex>
         <Style />
       </Tablix>
@@ -1391,7 +1392,7 @@ Format(Sum(Fields!Peso.Value), "N").ToString() + "kg"</Value>
     <Height>6.48941cm</Height>
     <Style />
   </Body>
-  <Width>18.96825cm</Width>
+  <Width>18.96827cm</Width>
   <Page>
     <PageFooter>
       <Height>1.0291cm</Height>
@@ -1586,6 +1587,10 @@ Format(Sum(Fields!Peso.Value), "N").ToString() + "kg"</Value>
         </Field>
         <Field Name="QtdePecas">
           <DataField>QtdePecas</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="QtdePecasPai">
+          <DataField>QtdePecasPai</DataField>
           <rd:TypeName>System.Int64</rd:TypeName>
         </Field>
         <Field Name="TotM">

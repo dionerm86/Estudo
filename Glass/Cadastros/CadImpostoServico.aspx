@@ -22,7 +22,7 @@
 
 // Pega o id do forma de pagto boleto
 var codBoleto = MetodosAjax.GetIdFormaPagto("boleto").value;
-var codCheque = MetodosAjax.GetIdFormaPagto("cheque").value;
+var codCheque = MetodosAjax.GetIdFormaPagto("cheque proprio").value;
 var idFornec = <%= GetIdFornec() %>;
 var numeroParcelasMax = <%= Glass.Configuracoes.FinanceiroConfig.Compra.NumeroParcelasCompra %>;
 var loading = true;

@@ -214,8 +214,11 @@
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
     <Compile Include="Controllers\Cfops\V1\DeleteCfopsController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\DeleteNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\GetNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\NaturezasOperacaoController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\PatchNaturezasOperacaoController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\PostNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\GetRegrasNaturezaOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\PatchRegrasNaturezaOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\PostRegrasNaturezaOperacaoController.cs" />
@@ -258,6 +261,11 @@
     <Compile Include="Controllers\Projetos\V1\ProjetosController.cs" />
     <Compile Include="Controllers\Projetos\V1\DeleteProjetosController.cs" />
     <Compile Include="Controllers\Projetos\V1\GetProjetosController.cs" />
+    <Compile Include="Controllers\Contabilistas\DeleteContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\GetContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\PatchContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\ContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\PostContabilistasController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\FornecedoresController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\DeleteFornecedoresController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\GetFornecedoresController.cs" />
@@ -472,8 +480,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\Cfops\ConverterCadastroAtualizacaoParaCfop.cs" />
+    <Compile Include="Helper\Cfops\NaturezasOperacao\ConverterCadastroAtualizacaoParaNaturezaOperacao.cs" />
     <Compile Include="Helper\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\ConverterCadastroAtualizacaoParaRegraNaturezaOperacao.cs" />
     <Compile Include="Helper\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\TraducaoOrdenacaoListaRegrasNaturezaOperacao.cs" />
+    <Compile Include="Helper\Cfops\NaturezasOperacao\TraducaoOrdenacaoListaNaturezasOperacao.cs" />
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
@@ -485,6 +495,8 @@
     <Compile Include="Helper\Projetos\Ferragens\TraducaoOrdenacaoListaFerragens.cs" />
     <Compile Include="Helper\Projetos\ModelosProjeto\TraducaoOrdenacaoListaModelosProjeto.cs" />
     <Compile Include="Helper\Projetos\TraducaoOrdenacaoListaProjetos.cs" />
+    <Compile Include="Helper\Contabilistas\ConverterCadastroAtualizacaoParaContabilista.cs" />
+    <Compile Include="Helper\Contabilistas\TraducaoOrdenacaoListaContabilistas.cs" />
     <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
     <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
@@ -591,6 +603,16 @@
     <Compile Include="Models\Cfops\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\DadosPisCofinsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\DadosIpiDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\DadosIcmsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\DadosIcmsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\DadosIpiDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\DadosPisCofinsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\ListaDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Cfops\V1\NaturezasOperacao\RegrasNaturezaOperacao\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Cfops\V1\NaturezasOperacao\RegrasNaturezaOperacao\CadastroAtualizacao\CancelamentoDto.cs" />
     <Compile Include="Models\Cfops\V1\NaturezasOperacao\RegrasNaturezaOperacao\CadastroAtualizacao\NaturezasOperacaoDto.cs" />
@@ -606,6 +628,7 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Genericas\V1\CodigoNomeDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\ExecucaoOperacaoIntegracao\DadosExecucaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ConfiguracaoIntegradorDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\EsquemaHistoricoDto.cs" />
@@ -620,6 +643,13 @@
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ParametroOperacaoIntegracaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Logger\ItemLoggerIntegracaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Logger\LoggerIntegracaoDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\CidadeDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\EnderecoDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\DadosContatoDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Contabilistas\Lista\DadosContatoDto.cs" />
+    <Compile Include="Models\Contabilistas\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Contabilistas\Lista\ListaDto.cs" />
     <Compile Include="Models\Parcelas\V1\Configurações\CadastroDto.cs" />
     <Compile Include="Models\Parcelas\V1\Configurações\TipoPagamento.cs" />
     <Compile Include="Models\Parcelas\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
