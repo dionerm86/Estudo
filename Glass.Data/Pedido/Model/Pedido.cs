@@ -982,13 +982,12 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        [PersistenceProperty("EXIBIROBSLIBERACAOCLIENTE", DirectionParameter.InputOptional)]
-        public bool ExibirObsLiberacaoCliente
+        [PersistenceProperty("EXIBIROBSERVACAOLIBERACAOCLIENTE", DirectionParameter.InputOptional)]
+        public bool ExibirObservacaoLiberacaoCliente
         {
             get
             {
-                return !ObsLiberacao.Contains(ObsLiberacaoCliente)
-                    ;
+                return !ObsLiberacao.Contains(ObservacaoLiberacaoCliente);
             }
         }
 
@@ -1000,8 +999,8 @@ namespace Glass.Data.Model
         [PersistenceProperty("MOTIVOERROCONFIRMARFINANC", DirectionParameter.InputOptional)]
         public string MotivoErroConfirmarFinanc { get; set; }
 
-        [PersistenceProperty("ObsLiberacaoCliente", DirectionParameter.InputOptional)]
-        public string ObsLiberacaoCliente { get; set; }
+        [PersistenceProperty("OBSERVACAOLIBERACAOCLIENTE", DirectionParameter.InputOptional)]
+        public string ObservacaoLiberacaoCliente { get; set; }
 
         #endregion
 

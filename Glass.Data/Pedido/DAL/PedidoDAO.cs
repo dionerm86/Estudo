@@ -253,7 +253,7 @@ namespace Glass.Data.DAL
                     (FinanceiroConfig.PermitirConfirmacaoPedidoPeloFinanceiro || FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro) + @",
                     (select count(*) from observacao_finalizacao_financeiro where idPedido=p.idPedido)>0, false) as exibirFinalizacoesFinanceiro,
                     CAST((SELECT GROUP_CONCAT(idOrdemCarga) FROM pedido_ordem_carga WHERE idPedido = p.idPedido) as CHAR) as IdsOCs,
-                    transp.Nome AS NomeTransportador,  c.ObsLiberacao AS ObsLiberacaoCliente");
+                    transp.Nome AS NomeTransportador,  c.ObsLiberacao AS ObservacaoLiberacaoCliente");
             }
 
             if (selecionar && opcionais)

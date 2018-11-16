@@ -603,8 +603,8 @@
                                             <asp:TextBox ID="ObsLib" runat="server" Text='<%# Eval("ObsLiberacao") %>'></asp:TextBox>
                                         </EditItemTemplate>
                                         <ItemTemplate>
-                                            <asp:Label ID="lblObsLib" runat="server" Visible='<%# Eval("ExibirObsLiberacaoCliente")%>' Text='<%# Eval("ObsLiberacaoCliente") %>'></asp:Label>
-                                           <asp:Label ID="lblObsCli" runat="server" Text='<%# Eval("ObsLiberacao") %>'></asp:Label>
+                                            <asp:Label ID="lblObservacaoCLiente" runat="server" Visible='<%# Eval("ExibirObservacaoLiberacaoCliente")%>' Text='<%# Eval("ObservacaoLiberacaoCliente") %>'></asp:Label>
+                                           <asp:Label ID="lblObservacaoLiberacao" runat="server" Text='<%# Eval("ObsLiberacao") %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Total" SortExpression="Total">
