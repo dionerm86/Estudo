@@ -987,7 +987,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                return !ObsLiberacao.Contains(ObservacaoLiberacaoCliente);
+                return !ObsLiberacao.Contains(ObservacaoLiberacaoCliente) || !ObservacaoLiberacaoCliente.Contains(ObsLiberacao);
             }
         }
 
