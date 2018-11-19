@@ -1,4 +1,4 @@
-<%@ Page Title="Perdas" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+ï»¿<%@ Page Title="Perdas" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="Perdas.aspx.cs" Inherits="Glass.UI.Web.Relatorios.Producao.Perdas" %>
 
 <%@ Register Src="../../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
@@ -47,7 +47,7 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:Label ID="Label2" runat="server" Text="Funcionário Perda" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label2" runat="server" Text="FuncionÃ¡rio Perda" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpFuncPerda" runat="server" AppendDataBoundItems="True" AutoPostBack="True"
@@ -56,7 +56,7 @@
                             </asp:DropDownList>
                         </td>
                         <td>
-                            <asp:Label ID="Label10" runat="server" Text="Período Perda" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label10" runat="server" Text="PerÃ­odo Perda" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <uc1:ctrlData ID="ctrlDataIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
@@ -85,20 +85,6 @@
                         </td>
                         <td>
                             <asp:ImageButton ID="imgPerda" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click" />
-                        </td>
-                        <td>
-                            <asp:Label ID="Label13" runat="server" Text="Departamento" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <sync:CheckBoxListDropDown ID="cbxdrpDepartamento" runat="server" CheckAll="False"
-                                DataSourceID="odsDepartamento" DataTextField="Descricao" DataValueField="IdDepartamento"
-                                ImageURL="~/Images/DropDown.png" JQueryURL="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"
-                                OpenOnStart="False" Title="">
-                            </sync:CheckBoxListDropDown>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageDepart" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" />
                         </td>
                     </tr>
                 </table>
@@ -151,7 +137,7 @@
             <td align="center">
                 <asp:GridView ID="grdPerda" runat="server" AllowPaging="True" AllowSorting="True"
                     AutoGenerateColumns="False" CssClass="gridStyle" DataSourceID="odsPerdas" GridLines="None"
-                    PageSize="15" EmptyDataText="Não há perdas para esse filtro.">
+                    PageSize="15" EmptyDataText="NÃ£o hÃ¡ perdas para esse filtro.">
                     <Columns>
                         <asp:BoundField DataField="IdPedidoExibir" HeaderText="Pedido" SortExpression="IdPedidoExibir" />
                         <asp:BoundField DataField="SiglaTipoPedido" HeaderText="Tipo Ped." ReadOnly="True"
@@ -161,7 +147,7 @@
                         <asp:BoundField DataField="DescrProdLargAlt" HeaderText="Produto" ReadOnly="True"
                             SortExpression="DescrProdLargAlt" />
                         <asp:BoundField DataField="DataPerda" HeaderText="Data Perda" SortExpression="DataPerda" />
-                        <asp:BoundField DataField="NomeFuncPerda" HeaderText="Funcionário Perda" SortExpression="NomeFuncPerda" />
+                        <asp:BoundField DataField="NomeFuncPerda" HeaderText="FuncionÃ¡rio Perda" SortExpression="NomeFuncPerda" />
                         <asp:BoundField DataField="DescrTipoPerdaSemObs" HeaderText="Tipo Perda" ReadOnly="True"
                             SortExpression="DescrTipoPerdaSemObs" />
                         <asp:BoundField DataField="Obs" HeaderText="Motivo" SortExpression="Obs" />
@@ -169,7 +155,6 @@
                             SortExpression="TotM2" />
                         <asp:BoundField DataField="NumEtiqueta" HeaderText="Etiqueta" SortExpression="NumEtiqueta" />
                         <asp:BoundField DataField="DescrSetor" HeaderText="Setor" SortExpression="DescrSetor" />
-                        <asp:BoundField DataField="DescrDepart" HeaderText="Departamento" SortExpression="DescrDepart" />
                     </Columns>
                     <PagerStyle CssClass="pgr" />
                     <AlternatingRowStyle CssClass="alt" />
@@ -196,8 +181,6 @@
                         <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString"
                             Type="String" />
                         <asp:ControlParameter ControlID="cbxdrpSetorPerda" Name="idsSetor" PropertyName="SelectedValue" />
-                        <asp:ControlParameter ControlID="cbxdrpDepartamento" Name="idsDepartamento" PropertyName="SelectedValue" />
-                    </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFuncPerda" runat="server" SelectMethod="GetProducao"
                     TypeName="Glass.Data.DAL.FuncionarioDAO">
@@ -206,8 +189,6 @@
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsSetor" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.SetorDAO">
-                </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsDepartamento" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.DepartamentoDAO">
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>
