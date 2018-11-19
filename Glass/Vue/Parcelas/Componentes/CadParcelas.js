@@ -31,6 +31,10 @@
       return Servicos.Parcelas.tiposPagamento();
     },
 
+    /**
+     * Função executada para criação dos objetos necessários para edição ou cadastro da parcela.
+     * @param {?Object} [item=null] A parcela que servirá como base para criação do objeto (para edição).
+     */
     iniciarCadastroOuAtualizacao_: function (item) {
       this.parcelaOriginal = item ? this.clonar(item) : {};
       this.situacaoAtual = item ? this.clonar(item.situacao) : null;
@@ -90,9 +94,7 @@
 
       Servicos.Parcelas.atualizar(vm.parcela.id, vm.parcela)
         .then(function (resposta) {
-          var url = '../Listas/LstParcelas.aspx';
-
-          window.location.assign(url);
+          vm.cancelar();
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
