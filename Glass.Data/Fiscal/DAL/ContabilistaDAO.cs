@@ -10,7 +10,7 @@ namespace Glass.Data.DAL
         public string Sql(uint idContabilista, bool selecionar)
         {
             string sql = @"
-                Select " + (selecionar ? "c.*, cid.nomeCidade, cid.codIbgeCidade, cid.codIbgeUf" : "Count(*)") + @"
+                Select " + (selecionar ? "c.*, cid.nomeCidade, cid.codIbgeCidade, cid.codIbgeUf, cid.NomeUf" : "Count(*)") + @"
                 From contabilista c
                     Inner Join cidade cid On (c.idCidade=cid.idCidade)
                 Where 1";

@@ -13,6 +13,14 @@ Servicos.Comum = (function(http) {
      */
     obterSituacoes: function () {
       return http().get(API + 'situacoes');
+    },
+
+    /**
+     * Recupera a lista de tipos de pessoa.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterTiposPessoa: function () {
+      return http().get(API + 'tiposPessoa');
     }
   };
 })(function() {

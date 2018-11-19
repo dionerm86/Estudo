@@ -1,11 +1,16 @@
-﻿using System;
+﻿using Glass.Configuracoes;
 using Glass.Data.Model;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
 {
-    class DescontoGeralStrategy : BaseDescontoStrategy<DescontoGeralStrategy>
+    class DescontoGeralStrategy : BaseStrategy<DescontoGeralStrategy>
     {
         private DescontoGeralStrategy() { }
+
+        protected override bool PermiteAplicar()
+        {
+            return PedidoConfig.RatearDescontoProdutos;
+        }
 
         protected override bool PermitirRemocaoCalculoProduto(IProdutoCalculo produto)
         {

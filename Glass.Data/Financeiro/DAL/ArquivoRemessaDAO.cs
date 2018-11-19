@@ -95,7 +95,7 @@ namespace Glass.Data.DAL
 
             string sql = @"
                 SELECT COALESCE(MAX(numRemessa), 0) + 1
-                FROM arquivo_remessa 
+                FROM arquivo_remessa
                 WHERE 1";
 
             if (idContaBanco > 0)
@@ -116,14 +116,17 @@ namespace Glass.Data.DAL
 
             var numDocContaReceber = ContasReceberDAO.Instance.ObtemValorCampo<string>("numeroDocumentoCnab", "idContaR=" + idContaR);
 
-            if (!string.IsNullOrEmpty(numDocContaReceber) && numDocContaReceber != "0")
+            if (!string.IsNullOrWhiteSpace(numDocContaReceber) && numDocContaReceber.StrParaInt() > 0)
             {
                 numDoc = numDocContaReceber;
                 return numDoc.ToString().FormataNumero("numDoc", 10, false);
             }
 
             var numParc = ContasReceberDAO.Instance.ObtemValorCampo<int>("numParc", "idContaR=" + idContaR);
-            if (numParc < 1) numParc = 1;
+            if (numParc < 1)
+            {
+                numParc = 1;
+            }
 
             var idNf = ContasReceberDAO.Instance.ObtemValorCampo<uint>("idNf", "idContaR=" + idContaR);
 
@@ -142,19 +145,24 @@ namespace Glass.Data.DAL
 
                         idNf = menorId;
                     }
-
                     else if (idsNf.Count > 1)
+                    {
                         throw new Exception("Falha ao obter número do documento. A liberação da conta a receber possui mais de uma nota fiscal.");
+                    }
 
                     idNf = idNf == 0 ? idsNf[0] : idNf;
                 }
             }
 
             if (buscarComNf && idNf != 0)
+            {
                 return NotaFiscalDAO.Instance.ObtemNumeroNf(null, idNf).ToString().FormataNumero("numDoc", 8, false) + "-" + ALFABETO[numParc - 1];
+            }
 
             if (buscarComCte && idCte != 0)
+            {
                 return CTe.ConhecimentoTransporteDAO.Instance.ObtemNumeroCte(idCte).ToString().FormataNumero("numDoc", 8, false) + "-" + ALFABETO[numParc - 1];
+            }
 
             return numDoc.ToString().FormataNumero("numDoc", 10, false);
         }
@@ -406,19 +414,49 @@ namespace Glass.Data.DAL
 
         #region Gerar arquivo de remessa (envio)
 
-        public uint GerarEnvio(Boletos boletos)
+        public uint GerarEnvioComTransacao(Boletos boletos)
         {
-            if (String.IsNullOrEmpty(boletos.IdsContaRec.Trim().Trim(',')))
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var gerarEnvio = GerarEnvio(transaction, boletos);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return gerarEnvio;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
+        }
+
+        public uint GerarEnvio(GDASession sessao, Boletos boletos)
+        {
+            if (string.IsNullOrWhiteSpace(boletos.IdsContaRec.Trim().Trim(',')))
+            {
                 throw new Exception("Nenhum boleto foi selecionado.");
+            }
 
             // Não permite informar o número do arquivo de remessa zerado
             if (boletos.NumRemessa == 0)
+            {
                 throw new Exception("Informe um número de remessa válido");
+            }
 
             // Verifica se já foi gerada uma remessa com o número de remessa informado para o banco selecionado
             if (ExecuteScalar<bool>("Select Count(*) > 0 From arquivo_remessa Where idContaBanco=?idContaBanco And numRemessa=?numeroRemessa",
                 new GDAParameter("?idContaBanco", boletos.IdContaBanco), new GDAParameter("?numeroRemessa", boletos.NumRemessa)))
+            {
                 throw new Exception("Número de arquivo de remessa já existente, informe um número que ainda não tenha sido utilizado.");
+            }
 
             uint idArquivoRemessa = 0;
 
@@ -431,8 +469,10 @@ namespace Glass.Data.DAL
             var contaBanco = ContaBancoDAO.Instance.GetElement(boletos.IdContaBanco);
 
             // Se for informado o código de convênio deve ser informado apenas com números.
-            if (!string.IsNullOrEmpty(contaBanco.CodConvenio) && (contaBanco.CodConvenio.Contains('-') || contaBanco.CodConvenio.Contains('.')))
-                throw new Exception(string.Format("O código de convênio deve possuir apenas números. Código convênio atual: {0}", contaBanco.CodConvenio));
+            if (!string.IsNullOrWhiteSpace(contaBanco.CodConvenio) && (contaBanco.CodConvenio.Contains('-') || contaBanco.CodConvenio.Contains('.')))
+            {
+                throw new Exception($"O código de convênio deve possuir apenas números. Código convênio atual: {contaBanco.CodConvenio}");
+            }
 
             ///Recupera Contas a receber
             var lstContaRec = ContasReceberDAO.Instance.GetByPks(null, boletos.IdsContaRec);
@@ -444,7 +484,9 @@ namespace Glass.Data.DAL
             var cedente = new Cedente(contaBanco.CodConvenio, contaBancaria, Sync.Utils.Boleto.TipoPessoa.Juridica, loja.Cnpj, loja.RazaoSocial?.ToUpper());
 
             if (contaBancaria.Conta.Contains('.') || contaBancaria.Conta.Contains('-'))
-                throw new Exception(string.Format("O número da conta da conta bancária deve possuir apenas números. Conta atual: {0}", contaBancaria.Conta));
+            {
+                throw new Exception($"O número da conta da conta bancária deve possuir apenas números. Conta atual: {contaBancaria.Conta}.");
+            }
 
             #region Cria a lista de boletos
 
@@ -461,7 +503,7 @@ namespace Glass.Data.DAL
                     idCliente = idCliente > 0 ? idCliente : c.IdCliente;
 
                     //Recupera cliente
-                    Cliente cli = ClienteDAO.Instance.GetElement(idCliente);
+                    Cliente cli = ClienteDAO.Instance.GetElement(sessao, idCliente);
 
                     //Preenche Sacado
                     Sacado sacado = new Sacado();
@@ -469,7 +511,7 @@ namespace Glass.Data.DAL
                     sacado.NumeroInscricao = long.Parse(cli.CpfCnpj.LimpaString());
                     sacado.TipoInscricao = cli.TipoPessoa == "F" ? Sync.Utils.Boleto.TipoPessoa.Fisica : Sync.Utils.Boleto.TipoPessoa.Juridica;
 
-                    if (!string.IsNullOrEmpty(cli.EnderecoCobranca))
+                    if (!string.IsNullOrWhiteSpace(cli.EnderecoCobranca))
                     {
                         int numEndCli = 0;
                         int.TryParse(cli.NumeroCobranca, out numEndCli);
@@ -528,7 +570,9 @@ namespace Glass.Data.DAL
                     var numeroDocumento = ObtemNumeroDocumento(c.IdContaR, false, boletos.Banco.Codigo, false);
 
                     if (boletos.Banco.Codigo == (int)CodigoBanco.Sicredi)
+                    {
                         numeroDocumento = nossoNumero.Key + nossoNumero.Value;
+                    }
 
                     numDoc.Add(c.IdContaR, numeroDocumento);
                 }
@@ -577,7 +621,9 @@ namespace Glass.Data.DAL
             catch (Exception ex)
             {
                 if (idArquivoRemessa > 0)
-                    DeleteByPrimaryKey(idArquivoRemessa);
+                {
+                    DeleteByPrimaryKey(sessao, idArquivoRemessa);
+                }
 
                 throw ex;
             }
@@ -586,20 +632,21 @@ namespace Glass.Data.DAL
 
             #region Marca contas a receber como geradas
 
-            string sql = String.Empty;
+            string sql = string.Empty;
             List<GDAParameter> numDocumentos = new List<GDAParameter>();
             numDocumentos.Add(new GDAParameter("?numArquivo", boletos.NumRemessa));
             numDocumentos.Add(new GDAParameter("?idRemessa", idArquivoRemessa));
 
             foreach (uint idContaR in numDoc.Keys)
             {
-                sql += "update contas_receber set numeroDocumentoCnab=?numDoc_" + idContaR + @", 
-                    numArquivoRemessaCnab=?numArquivo, IdArquivoRemessa=?idRemessa where idContaR=" + idContaR + "; ";
+                sql += $@" UPDATE contas_receber
+                    SET numeroDocumentoCnab=?numDoc_{idContaR}, numArquivoRemessaCnab=?numArquivo, IdArquivoRemessa=?idRemessa
+                    WHERE idContaR = {idContaR};";
 
                 numDocumentos.Add(new GDAParameter("?numDoc_" + idContaR, numDoc[idContaR]));
             }
 
-            objPersistence.ExecuteCommand(sql, numDocumentos.ToArray());
+            objPersistence.ExecuteCommand(sessao, sql, numDocumentos.ToArray());
 
             #endregion
 
@@ -750,12 +797,12 @@ namespace Glass.Data.DAL
             ar.Tipo = Glass.Data.Model.ArquivoRemessa.TipoEnum.Retorno;
             ar.IdContaBanco = idContaBanco;
             ar.Situacao = ArquivoRemessa.SituacaoEnum.Ativo;
-            
+
             var conta = ContaBancoDAO.Instance.GetElement(idContaBanco);
             var banco = new Banco(conta.CodBanco.Value);
             int contadorDataUnica = 0;
             var retornoRecebimento = "";
-            
+
             var contador = 1;
 
             #region 240
@@ -797,7 +844,7 @@ namespace Glass.Data.DAL
 
                 foreach (DetalheRetorno d in retorno.ListaDetalhe)
                 {
-                    var quitada = ProcessamentoItemCNAB400(d, banco, retorno, ar, new List<Tuple<uint, int, decimal, DateTime>>(), 
+                    var quitada = ProcessamentoItemCNAB400(d, banco, retorno, ar, new List<Tuple<uint, int, decimal, DateTime>>(),
                         idContaBanco, caixaDiario, ref retornoRecebimento, ref contadorDataUnica, true);
 
                     var novaLinha = new LinhaRemessaRetorno();
@@ -814,7 +861,7 @@ namespace Glass.Data.DAL
 
                     contasRec.Add(novaLinha);
                     contador++;
-                }                
+                }
             }
 
             #endregion
@@ -828,7 +875,7 @@ namespace Glass.Data.DAL
         /// <param name="somenteValidacao">(IMPORTANTE) ESTE PARAMETRO MARCADO COMO TRUE NÃO SALVA ALTERAÇÕES</param>
         /// <returns></returns>
         private bool ProcessamentoItemCNAB240(DetalheRetornoCNAB240 detalhe, Banco banco, ArquivoRemessa arquivoRemessa,
-            List<Tuple<uint, int, decimal, DateTime>> tarifas, uint idContaBanco, bool caixaDiario, ref string retornoRecebimento, 
+            List<Tuple<uint, int, decimal, DateTime>> tarifas, uint idContaBanco, bool caixaDiario, ref string retornoRecebimento,
             ref int contadorDataUnica, bool somenteValidacao = false)
         {
             string numDocCnab;
@@ -897,16 +944,16 @@ namespace Glass.Data.DAL
                         else
                             ContasReceberDAO.Instance.PagaByCnab(transaction, numDocCnab, idContaR, detalhe.SegmentoU.DataCredito, detalhe.SegmentoU.ValorPagoPeloSacado,
                                 detalhe.SegmentoU.JurosMultaEncargos, idContaBanco, caixaDiario, ref contadorDataUnica);
-                   
+
                         RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, arquivoRemessa.IdArquivoRemessa, idContaR, idContaBanco,
                             detalhe.SegmentoU.DataCredito, detalhe.SegmentoT.IdCodigoMovimento, detalhe.SegmentoT.NossoNumero, detalhe.SegmentoT.IdentificacaoTituloEmpresa,
                             detalhe.SegmentoU.ValorPagoPeloSacado, detalhe.SegmentoU.JurosMultaEncargos, 0, detalhe.SegmentoT.NumeroDocumento, banco.Codigo);
 
-                        transaction.Commit();                        
+                        transaction.Commit();
                     }
                     else
                     {
-                        ValidarRecebimentoItemCNAB(transaction, numDocCnab, idContaR, detalhe.SegmentoU.DataCredito, detalhe.SegmentoU.ValorPagoPeloSacado, 
+                        ValidarRecebimentoItemCNAB(transaction, numDocCnab, idContaR, detalhe.SegmentoU.DataCredito, detalhe.SegmentoU.ValorPagoPeloSacado,
                             detalhe.SegmentoU.JurosMultaEncargos, idContaBanco, caixaDiario);
 
                         transaction.Rollback();
@@ -945,8 +992,8 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="somenteValidacao">(IMPORTANTE) ESTE PARAMETRO MARCADO COMO TRUE NÃO SALVA ALTERAÇÕES</param>
         /// <returns></returns>
-        private bool ProcessamentoItemCNAB400(DetalheRetorno detalhe, Banco banco, ArquivoRetornoCNAB400 retorno, ArquivoRemessa arquivoRemessa, 
-            List<Tuple<uint, int, decimal, DateTime>> tarifas, uint idContaBanco,  bool caixaDiario, ref string retornoRecebimento, 
+        private bool ProcessamentoItemCNAB400(DetalheRetorno detalhe, Banco banco, ArquivoRetornoCNAB400 retorno, ArquivoRemessa arquivoRemessa,
+            List<Tuple<uint, int, decimal, DateTime>> tarifas, uint idContaBanco,  bool caixaDiario, ref string retornoRecebimento,
             ref int contadorDataUnica, bool somenteValidacao = false)
         {
             using (var transaction = new GDATransaction())
@@ -1005,7 +1052,7 @@ namespace Glass.Data.DAL
                             transaction.Close();
                         }
 
-                        return false;                        
+                        return false;
                     }
 
                     #endregion
@@ -1164,6 +1211,11 @@ namespace Glass.Data.DAL
                 false, false, (int)idContaR, new List<int> { (int)Pagto.FormaPagto.Boleto }, vazio, juros,
                 null, vazio, valorRec - jurosMulta < valorReceber, new List<decimal> { valorRec });
 
+            if (jurosMulta > 0 && valorRec > valorReceber)
+            {
+                valorRec = Math.Round(valorRec - jurosMulta, 2);
+            }
+
             ContasReceberDAO.Instance.ValidarRecebimentoConta(session, contaReceber, 0,
                  new List<string>(), vazio, new List<int> { (int)idContaBanco }, vazio, new List<int> { (int)Pagto.FormaPagto.Boleto }, vazio,
                 new List<string> { string.Empty }, null, vazio, new List<decimal> { 0 }, vazio, new List<decimal> { valorRec });
@@ -1203,7 +1255,7 @@ namespace Glass.Data.DAL
 
             //Cancela o arquivo
             objPersistence.ExecuteCommand(@"
-                    UPDATE arquivo_remessa 
+                    UPDATE arquivo_remessa
                         SET situacao=" + (int)ArquivoRemessa.SituacaoEnum.Cancelado + @"
                         WHERE idArquivoRemessa=" + objDelete.IdArquivoRemessa);
 

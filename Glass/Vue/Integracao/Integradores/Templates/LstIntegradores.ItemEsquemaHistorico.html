@@ -1,0 +1,55 @@
+﻿<div class="opblock opblock-get">
+    <div class="opblock-summary" @click.prevent="alterarExibicaoDetalhes()">
+        <span class="opblock-summary-path">{{itemEsquema.nome}}</span>
+        <div class="opblock-summary-description">{{itemEsquema.descricao}}</div>
+    </div>
+    <div v-if="podeExibirDetalhes" style="height: auto; border: none; margin: 0px; padding: 0px;">
+        <div class="opblock-body">
+            <div class="opblock-section">
+                <div class="opblock-section-header">
+                    <div style="margin-right: 10px;">
+                        <input v-for="filtro in itensFiltro"
+                               type="text"
+                               v-bind:placeholder="filtro.identificador.nome"
+                               v-model="filtro.valor"
+                               style="margin-right: 10px;" />
+                        <lista-selecao-id-valor :item-selecionado.sync="tipoItem" :incluir-item-vazio="true" texto-selecionar="Todos" :funcao-recuperar-itens="obterTiposItemHistorico"></lista-selecao-id-valor>
+                    </div>
+                    <div class="try-out">
+                        <button class="btn try-out__btn" type="button" :disabled="atualizando" @click.prevent="atualizar()">
+                            <span v-if="!atualizando">Pesquisar</span>
+                            <span v-if="atualizando">Pesquisando...</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th v-for="identificador in itemEsquema.identificadores" class="col col_header">
+                                    {{identificador.nome}}
+                                </th>
+                                <th class="col col_header">
+                                    Tipo
+                                </th>
+                                <th class="col col_header">
+                                    Mensagem
+                                </th>
+                                <th class="col col_header">
+                                    Data
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr is="integradores-itemhistorico"
+                                v-for="item in itens"
+                                :itemEsquema="itemEsquema"
+                                :item="item">
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

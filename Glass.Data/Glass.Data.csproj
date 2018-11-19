@@ -409,6 +409,7 @@
     <Compile Include="EFD\DataSourcesEFD.cs" />
     <Compile Include="EFD\EFD.cs" />
     <Compile Include="EFD\RecuperaDados.cs" />
+    <Compile Include="Enumeradores\TipoComissaoContaRec.cs" />
     <Compile Include="Estoque\DAL\ChapaTrocadaDevolvidaDAO.cs" />
     <Compile Include="Estoque\DAL\MovEstoqueCentroCustoDAO.cs" />
     <Compile Include="Estoque\DAL\MovInternaEstoqueFiscalDAO.cs" />
@@ -597,8 +598,6 @@
     <Compile Include="Helper\CalculoIcmsStMT.cs" />
     <Compile Include="Helper\Calculos\Cache\CacheCalculo.cs" />
     <Compile Include="Helper\Calculos\CalculoM2.cs" />
-    <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Comissao\BaseComissaoStrategy.cs" />
-    <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Desconto\BaseDescontoStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\ValorTotal\BaseStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\ValorTotal\Enum\ArredondarAluminio.cs" />
     <Compile Include="Helper\Calculos\Estrategia\ValorTotal\GenericoStrategy.cs" />
@@ -752,6 +751,11 @@
     <Compile Include="Financeiro\DAL\FotosImpostoServDAO.cs" />
     <Compile Include="Financeiro\DAL\FotosLiberacaoDAO.cs" />
     <Compile Include="Handlers\HandlerDownloadArquivo.cs" />
+    <Compile Include="Integracao\Model\EventoItemIntegracao.cs" />
+    <Compile Include="Integracao\Model\FalhaIntegracao.cs" />
+    <Compile Include="Integracao\Model\ItemIntegracao.cs" />
+    <Compile Include="Integracao\Model\SituacaoItemIntegracao.cs" />
+    <Compile Include="Integracao\Model\TipoEventoItemIntegracao.cs" />
     <Compile Include="MDFeUtils\ConfigMDFe.cs" />
     <Compile Include="MDFeUtils\ConsultaSituacao.cs" />
     <Compile Include="MDFeUtils\EnviaXML.cs" />

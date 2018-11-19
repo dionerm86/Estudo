@@ -142,7 +142,7 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, idsPedido?.Split(',')?.Select(f => f.StrParaInt())?.ToList(), mensagem);
+                PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(idsPedido?.Split(',')?.Select(f => f.StrParaInt())?.ToList(), mensagem);
                 return "Ok";
             }
             catch (Exception ex)

@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Data.DAL;
@@ -50,16 +50,16 @@ namespace Glass.UI.Web.Cadastros
                 var idsLojas = PedidoDAO.Instance.ObtemIdsLojas(hdfBuscarIdsPedidos.Value);
                 var lojas = LojaDAO.Instance.GetByString(idsLojas);
 
-                // Esconde os dados sobre o ICMS se a empresa n„o calcular
+                // Esconde os dados sobre o ICMS se a empresa n√£o calcular
                 grdPedido.Columns[6].Visible = lojas.Any(f => f.CalcularIcmsPedido);
             }            
             
             grdPedido.Columns[10].Visible = PedidoConfig.Pedido_FastDelivery.FastDelivery;
 
             //Chamado 17870
-            //Se utilizar o controle de comiss„o so pode receber sinal de um pedido por vez
+            //Se utilizar o controle de comiss√£o so pode receber sinal de um pedido por vez
             //Para que ao separar valores consiga referencia a NF-e na conta recebida gerada pelo sinal
-            if (!IsPostBack && Glass.Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas &&
+            if (!IsPostBack && ComissaoDAO.Instance.VerificarComissaoContasRecebidas() &&
                 /* Chamado 39027. */
                 FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
             {
@@ -74,13 +74,13 @@ namespace Glass.UI.Web.Cadastros
             }
 
             if (!IsPostBack && !string.IsNullOrEmpty(Request["cxDiario"]))
-                Page.Title = Page.Title + " (Caixa " + (Request["cxDiario"] == "1" ? "Di·rio" : "Geral") + ")";
+                Page.Title = Page.Title + " (Caixa " + (Request["cxDiario"] == "1" ? "Di√°rio" : "Geral") + ")";
 
             if (string.IsNullOrEmpty(Request["cxDiario"]) || Request["cxDiario"] != "1")
             {
                 var login = UserInfo.GetUserInfo;
 
-                // Recupera o funcion·rio
+                // Recupera o funcion√°rio
                 var funcionario = Microsoft.Practices.ServiceLocation.ServiceLocator
                     .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>().ObtemFuncionario((int)login.CodUser);
 
@@ -88,8 +88,8 @@ namespace Glass.UI.Web.Cadastros
                 var fluxoMenu = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.Global.Negocios.IMenuFluxo>();
                 var menusFunc = fluxoMenu.ObterMenusPorFuncionario(funcionario);
 
-                // Verifica se a pessoa tem acesso ao menu, se n„o tiver, redireciona para a tela padr„o
-                // Pega todos os menus da empresa e verifica se a p·gina atual est· listada nele, se tiver, verifica se o usu·rio tem acesso ‡ ela
+                // Verifica se a pessoa tem acesso ao menu, se n√£o tiver, redireciona para a tela padr√£o
+                // Pega todos os menus da empresa e verifica se a p√°gina atual est√° listada nele, se tiver, verifica se o usu√°rio tem acesso √† ela
                 var paginaAtual = Request.Url.ToString().ToLower();
                 var idsMenu = fluxoMenu
                     .ObterMenusPorConfig((int)login.IdLoja)
@@ -106,7 +106,7 @@ namespace Glass.UI.Web.Cadastros
             }
         }
     
-        #region MÈtodos AJAX
+        #region M√©todos AJAX
     
         [Ajax.AjaxMethod]
         public string GetPedidosByCliente(string idCliente, string nomeCliente, string idsPedidosRem, string dataIni, string dataFim, string isSinalStr)
@@ -130,10 +130,10 @@ namespace Glass.UI.Web.Cadastros
     
                 // Verifica se o pedido existe
                 if (!PedidoDAO.Instance.PedidoExists(idPedido))
-                    return "false|N„o existe pedido com esse n˙mero.";
+                    return "false|N√£o existe pedido com esse n√∫mero.";
     
                 if (!String.IsNullOrEmpty(idClienteStr) && Glass.Conversoes.StrParaUint(idClienteStr) != PedidoDAO.Instance.ObtemIdCliente(null, idPedido))
-                    return "false|O cliente desse pedido È diferente do cliente do(s) pedido(s) j· selecionado(s).";
+                    return "false|O cliente desse pedido √© diferente do cliente do(s) pedido(s) j√° selecionado(s).";
                 
                 SinalDAO.Instance.ValidaSinalPedidos(idPedidoStr, isSinalStr.ToLower() == "true");
     
@@ -238,7 +238,7 @@ namespace Glass.UI.Web.Cadastros
     
         #endregion
     
-        #region MÈtodos usados na p·gina
+        #region M√©todos usados na p√°gina
     
         private bool corAlternada = true;
     
@@ -262,7 +262,7 @@ namespace Glass.UI.Web.Cadastros
             if (!IsPostBack)
                 ctrlFormaPagto1.DataRecebimento = DateTime.Now;
     
-            // Esconde a mensagem de data retroativa se n„o utilizar a data de recebimento
+            // Esconde a mensagem de data retroativa se n√£o utilizar a data de recebimento
             lblMensagemRetroativa.Visible = ctrlFormaPagto1.ExibirDataRecebimento;
         }
     
@@ -309,7 +309,7 @@ namespace Glass.UI.Web.Cadastros
                         totalPagar += totalPedidoPagar;
                 }
     
-                // Recupera o crÈdito do cliente
+                // Recupera o cr√©dito do cliente
                 valorCredito = ClienteDAO.Instance.GetCredito(Glass.Conversoes.StrParaUint(hdfIdCliente.Value));
             }
     

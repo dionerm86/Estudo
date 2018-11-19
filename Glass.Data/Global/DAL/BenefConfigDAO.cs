@@ -807,16 +807,16 @@ namespace Glass.Data.DAL
             if (objPersistence.ExecuteSqlQueryCount(@"Select Count(*) From benef_config Where (nome=?nome Or descricao=?descricao)
                 and situacao=" + (int)Situacao.Ativo + " And idParent is null",
                 new GDAParameter("?nome", objInsert.Nome), new GDAParameter("?descricao", objInsert.Descricao)) > 0)
+            {
                 throw new Exception("Já foi inserido um beneficiamento com este nome/descrição.");
-
-            // Não permite inserir beneficiamento que seja "Seleção simples" e que o cálculo seja "Qtd"
-            if (objInsert.TipoControle == TipoControleBenef.SelecaoSimples && objInsert.TipoCalculo == TipoCalculoBenef.Quantidade)
-                throw new Exception("Não é possível cadastrar beneficiamento que seja do tipo seleção simples e calculado por quantidade.");
+            }
 
             // Insere o beneficiamento
-            objInsert.TipoEspessura = objInsert.CobrarPorEspessura ? ((objInsert.TipoControle != TipoControleBenef.SelecaoSimples && objInsert.TipoControle != TipoControleBenef.Quantidade) ? TipoEspessuraBenef.ItemNaoPossui : TipoEspessuraBenef.ItemPossui) : TipoEspessuraBenef.ItemNaoPossui;
+            objInsert.TipoEspessura = objInsert.CobrarPorEspessura ? ((objInsert.TipoControle != TipoControleBenef.SelecaoSimples && objInsert.TipoControle != TipoControleBenef.Quantidade)
+                ? TipoEspessuraBenef.ItemNaoPossui : TipoEspessuraBenef.ItemPossui) : TipoEspessuraBenef.ItemNaoPossui;
             objInsert.Situacao = Glass.Situacao.Ativo;
             objInsert.NumSeq = GetNumSeq();
+
             var idBenefConfig = base.Insert(objInsert);
 
             var lstOpcoes = GetOpcoes(idBenefConfig, objInsert, false);
@@ -829,10 +829,14 @@ namespace Glass.Data.DAL
             catch (Exception ex)
             {
                 if (idBenefConfig > 0)
+                {
                     DeleteByPrimaryKey(idBenefConfig);
+                }
 
                 foreach (var bc in lstOpcoes)
+                {
                     DeleteByPrimaryKey(bc.IdBenefConfig);
+                }
 
                 BenefConfigPrecoDAO.Instance.DeleteByIdBenefConfig(idBenefConfig);
 
@@ -849,24 +853,24 @@ namespace Glass.Data.DAL
                 @"Select Count(*) From benef_config Where (nome=?nome Or descricao=?descricao) And idParent is null
                 and situacao=" + (int)Situacao.Ativo + " And idBenefConfig<>" + objUpdate.IdBenefConfig,
                 new GDAParameter("?nome", objUpdate.Nome), new GDAParameter("?descricao", objUpdate.Descricao)) > 0)
+            {
                 throw new Exception("Já foi inserido um beneficiamento com este nome/descrição.");
-
-            // Não permite inserir beneficiamento que seja "Seleção simples" e que o cálculo seja "Qtd"
-            if (objUpdate.TipoControle == TipoControleBenef.SelecaoSimples && objUpdate.TipoCalculo == TipoCalculoBenef.Quantidade)
-                throw new Exception("Não é possível cadastrar beneficiamento que seja do tipo seleção simples e calculado por quantidade.");
+            }
 
             // Pega o id de cada benef que estiver referenciado ao que está sendo atualizado
             var lstIds = objPersistence.LoadResult("Select idBenefConfig From benef_config Where idParent=" + objUpdate.IdBenefConfig, null).Select(f => f.GetUInt32(0)).ToList();
 
             if (lstIds.Count > 0)
             {
-                var ids = String.Empty;
+                var ids = string.Empty;
                 foreach (var id in lstIds)
+                {
                     ids += id + ",";
+                }
 
                 // Atualiza o tipo de cálculo de todos os beneficiamentos relacionados à este
                 objPersistence.ExecuteCommand("Update benef_config set tipoCalculo=" + objUpdate.TipoCalculo +
-                    " Where idParent=" + objUpdate.IdBenefConfig + (!String.IsNullOrEmpty(ids.TrimEnd(',')) ? " Or idParent In (" + ids.TrimEnd(',') + ")" : String.Empty));
+                    " Where idParent=" + objUpdate.IdBenefConfig + (!string.IsNullOrEmpty(ids.TrimEnd(',')) ? " Or idParent In (" + ids.TrimEnd(',') + ")" : string.Empty));
             }
 
             LogAlteracaoDAO.Instance.LogBenefConfig(objUpdate);
@@ -880,11 +884,13 @@ namespace Glass.Data.DAL
                 var remover = true;
 
                 foreach (var n in novos)
+                {
                     if (n.IdBenefConfig == o.IdBenefConfig)
                     {
                         remover = false;
                         break;
                     }
+                }
 
                 if (remover)
                 {
@@ -916,7 +922,9 @@ namespace Glass.Data.DAL
 
             // Verifica se houve mudança no tipo de cobrança do beneficiamento
             if (objUpdate.CobrarPorCor || objUpdate.CobrarPorEspessura || objUpdate.IdSubgrupoProd != null || opcoesAlteradas)
+            {
                 InserirPrecos((uint)objUpdate.IdBenefConfig, objUpdate.CobrarPorCor, objUpdate.CobrarPorEspessura, objUpdate.IdSubgrupoProd, novos);
+            }
 
             return retorno;
         }

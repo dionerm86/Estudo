@@ -87,6 +87,24 @@ namespace Glass.Data.Model
         Juridica = (byte)'J'
     }
 
+    /// <summary>
+    /// Possíveis tipos de pessoa no sistema.
+    /// </summary>
+    public enum TipoPessoaMigrado
+    {
+        /// <summary>
+        /// Física.
+        /// </summary>
+        [Description("Física")]
+        Fisica = 'F',
+
+        /// <summary>
+        /// Jurídica.
+        /// </summary>
+        [Description("Jurídica")]
+        Juridica = 'J',
+    }
+
     [PersistenceBaseDAO(typeof(ClienteDAO))]
 	[PersistenceClass("cliente")]
 	public class Cliente : ModelBaseCadastro, Sync.Fiscal.EFD.Entidade.ICliente
@@ -702,6 +720,13 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDGRUPOCLIENTE")]
         [PersistenceForeignKey(typeof(GrupoCliente), "IdGrupoCliente")]
         public int? IdGrupoCliente { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o Percentual da bonificação do cliente.
+        /// </summary>
+        [Log("Percentual de Bonificação")]
+        [PersistenceProperty("PERCENTUALBONIFICACAO")]
+        public decimal? PercentualBonificacao { get; set; }
 
         #endregion
 

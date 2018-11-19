@@ -386,7 +386,9 @@ namespace Glass.Configuracoes
                     return 3;
                 }
 
-                if ((ControleSistema.GetSite() == ControleSistema.ClienteSistema.TemperadosEstrela || ControleSistema.GetSite() == ControleSistema.ClienteSistema.VidrosDresch) && notaDeAjuste.GetValueOrDefault())
+                if ((ControleSistema.GetSite() == ControleSistema.ClienteSistema.TemperadosEstrela ||
+                    ControleSistema.GetSite() == ControleSistema.ClienteSistema.VidrosDresch ||
+                    ControleSistema.GetSite() == ControleSistema.ClienteSistema.WickertVidros) && notaDeAjuste.GetValueOrDefault())
                 {
                     return 2;
                 }

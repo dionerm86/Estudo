@@ -568,7 +568,7 @@ namespace Glass.Data.DAL
             var pedidos = PedidoDAO.Instance.GetByString(session, string.Join(",", idsPedido));
             var sinal = new Sinal(pedidos[0].IdCli);
             var contadorPagamento = 1;
-            var idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas ? (int?)pedidos.ElementAtOrDefault(0)?.IdLoja ?? 0 : (int)usuarioLogado.IdLoja;
+            var idLoja = ComissaoDAO.Instance.VerificarComissaoContasRecebidas() ? (int?)pedidos.ElementAtOrDefault(0)?.IdLoja ?? 0 : (int)usuarioLogado.IdLoja;
             decimal totalPagar = 0;
             decimal totalPago = 0;
 
@@ -725,7 +725,7 @@ namespace Glass.Data.DAL
             }
 
             // Chamados 17870, 38407 e Chamado 39027.
-            if (pedidos.Count() > 1 && Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
+            if (ComissaoDAO.Instance.VerificarComissaoContasRecebidas() && FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber && pedidos.Count() > 1)
             {
                 throw new Exception(string.Format("Não é possível receber o {0} de mais de um pedido por vez, pois, o controle de comissão de contas recebidas está habilitado.",
                     tipoRecebimento.ToLower()));
@@ -734,10 +734,14 @@ namespace Glass.Data.DAL
             #endregion
 
             #region Validações dos dados dos pedidos
+            if (ComissaoDAO.Instance.VerificarComissaoContasRecebidas() && pedidos.Select(f => f.IdFunc).Distinct().Count()>1)
+            {
+                throw new Exception(string.Format("Não é possivel receber o {0} de pedidos de Vendedores diferentes", tipoRecebimento));
+            }
 
             foreach (var pedido in pedidos)
             {
-                if (Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas && pedido.IdLoja != pedidos.ElementAtOrDefault(0)?.IdLoja)
+                if (ComissaoDAO.Instance.VerificarComissaoContasRecebidas() && pedido.IdLoja != pedidos.ElementAtOrDefault(0)?.IdLoja)
                 {
                     throw new Exception(string.Format("Não é possivel receber o {0} de pedidos de lojas diferentes", tipoRecebimento));
                 }
@@ -975,7 +979,9 @@ namespace Glass.Data.DAL
             #endregion
 
             #region Geração da conta recebida referente ao recebimento do sinal
-            
+
+            var idFuncComissaoRec = ComissaoDAO.Instance.ObtemIdFuncComissaoRec(session, (int)pedidos[0].IdPedido);
+
             for (var i = 0; i < valoresRecebimento.Count(); i++)
             {
                 if (idsFormaPagamento.ElementAtOrDefault(i) == 0 || valoresRecebimento.ElementAtOrDefault(i) == 0)
@@ -997,7 +1003,7 @@ namespace Glass.Data.DAL
                 contaRecebidaSinal.NumParc = 1;
                 contaRecebidaSinal.NumParcMax = 1;
                 contaRecebidaSinal.Usucad = usuarioLogado.CodUser;
-                contaRecebidaSinal.IdFuncComissaoRec = contaRecebidaSinal.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(session, contaRecebidaSinal.IdCliente) : null;
+                contaRecebidaSinal.IdFuncComissaoRec = idFuncComissaoRec;
 
                 var idContaR = ContasReceberDAO.Instance.InsertBase(session, contaRecebidaSinal);
 
@@ -1140,6 +1146,17 @@ namespace Glass.Data.DAL
             #endregion
 
             return mensagemRetorno;
+        }
+
+        private int ObterIdFuncComissaoRec(GDASession session, uint idLiberarPedido)
+        {
+            if (idLiberarPedido == 0)
+            {
+                return 0;
+            }
+
+            var idPedido = PedidoDAO.Instance.GetIdsByLiberacao(session, idLiberarPedido).First();
+            return (int)PedidoDAO.Instance.ObtemIdFunc(session, idPedido);
         }
 
         /// <summary>
