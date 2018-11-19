@@ -9,7 +9,6 @@ Data.offset = new Date().getTimezoneOffset() * 60000;
 
 Vue.component('campo-data-hora', {
   inheritAttrs: false,
-  mixins: [Mixins.ExecutarTimeout],
   props: {
     /**
      * A data/hora selecionada no controle.
@@ -77,6 +76,13 @@ Vue.component('campo-data-hora', {
     }
   },
 
+  data: function() {
+    return {
+      dataAtual: this.dataHora ? this.formataData(this.dataHora - Data.offset) : '',
+      horaAtual: this.dataHora ? this.formataHora(this.dataHora - Data.offset) : ''
+    };
+  },
+
   methods: {
     /**
      * Realiza a atualização da propriedade de data/hora com base nos
@@ -85,16 +91,14 @@ Vue.component('campo-data-hora', {
      * @param {string} hora A hora selecionada no controle.
      */
     atualizarDataHora: function (data, hora) {
-      this.executarTimeout('atualizarDataHora', function () {
-        var dataHoraAtual = new Date(data + ' ' + hora);
-        if (isNaN(dataHoraAtual.getTime())) {
-          dataHoraAtual = null;
-        }
+      var dataHoraAtual = new Date(data + ' ' + hora);
+      if (isNaN(dataHoraAtual.getTime())) {
+        dataHoraAtual = null;
+      }
 
-        if (dataHoraAtual !== this.dataHora) {
-          this.$emit('update:dataHora', dataHoraAtual);
-        }
-      }, 300);
+      if (dataHoraAtual !== this.dataHora) {
+        this.$emit('update:dataHora', dataHoraAtual);
+      }
     },
 
     /**
@@ -136,46 +140,32 @@ Vue.component('campo-data-hora', {
 
           return Promise.reject();
         });
+    },
+
+    /**
+     * Altera a data selecionada no controle, após mudança no campo.
+     */
+    alteraData: function () {
+      var vm = this;
+
+      this.validarDataSelecionada(this.dataAtual)
+        .then(function () {
+          vm.atualizarDataHora(vm.dataAtual, vm.horaAtual);
+        })
+        .catch(function () {
+          vm.atualizarDataHora(null, vm.horaAtual);
+        });
+    },
+
+    /**
+     * Altera a hora selecionada no controle, após mudança no campo.
+     */
+    alteraHora: function () {
+      this.atualizarDataHora(this.dataAtual, this.horaAtual);
     }
   },
 
   computed: {
-    /**
-     * Propriedade computada que retorna o valor da data atual para o controle e
-     * que atualiza a propriedade em caso de alteração.
-     * @type {string}
-     */
-    dataAtual: {
-      get: function() {
-        return this.dataHora ? this.formataData(this.dataHora - Data.offset) : '';
-      },
-      set: function (valor) {
-        var vm = this;
-
-        this.validarDataSelecionada(valor)
-          .then(function () {
-            vm.atualizarDataHora(valor, vm.horaAtual);
-          })
-          .catch(function () {
-            vm.atualizarDataHora(null, vm.horaAtual);
-          });
-      }
-    },
-
-    /**
-     * Propriedade computada que retorna o valor da hora atual para o controle
-     * e que atualiza a propriedade em caso de alteração.
-     * @type {string}
-     */
-    horaAtual: {
-      get: function() {
-        return this.dataHora ? this.formataHora(this.dataHora - Data.offset) : '';
-      },
-      set: function(valor) {
-        this.atualizarDataHora(this.dataAtual, valor);
-      }
-    },
-
     /**
      * Propridade computada com o valor da data mínima selecionável para o controle.
      * @type {string}
