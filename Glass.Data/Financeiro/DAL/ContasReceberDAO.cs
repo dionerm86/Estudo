@@ -6072,9 +6072,10 @@ namespace Glass.Data.DAL
                 if (!String.IsNullOrEmpty(sql))
                     sql += " union ";
 
-                string situacaoPedido = ((itensBuscar.Contains("3") && FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite ? (int)Pedido.SituacaoPedido.Conferido + "," : "") +
+                string situacaoPedido = ((itensBuscar.Contains("3") && FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite
+                    ? (int)Pedido.SituacaoPedido.Conferido + "," + (int)Pedido.SituacaoPedido.LiberadoParcialmente + "," : string.Empty) +
                     (itensBuscar.Contains("2") && FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoAtivoLimite ? (int)Pedido.SituacaoPedido.Ativo + "," +
-                    (int)Pedido.SituacaoPedido.AtivoConferencia : "")).Trim(',');
+                    (int)Pedido.SituacaoPedido.AtivoConferencia : string.Empty)).Trim(',');
 
                 if (String.IsNullOrEmpty(situacaoPedido))
                     situacaoPedido = "0";
