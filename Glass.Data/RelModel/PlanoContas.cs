@@ -69,7 +69,7 @@ namespace Glass.Data.RelModel
         [PersistenceProperty("IDLIBERARPEDIDO", DirectionParameter.InputOptional)]
         public uint? IdLiberarPedido { get; set; }
 
-        [PersistenceProperty("NOMEFORNEC", DirectionParameter.InputOptional)]
+        [PersistenceProperty("NOMEFORNECEDOR", DirectionParameter.InputOptional)]
         public string NomeFornec { get; set; }
 
         [PersistenceProperty("NOMECLIENTE", DirectionParameter.InputOptional)]
