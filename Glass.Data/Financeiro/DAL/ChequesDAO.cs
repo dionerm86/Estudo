@@ -2794,7 +2794,7 @@ namespace Glass.Data.DAL
             GDASession session,
             AcertoCheque acertoCheque,
             IEnumerable<int> idsCartaoNaoIdentificado,
-            Dictionary<int,bool> chequesValidar,
+            Dictionary<int, bool> chequesValidar,
             IEnumerable<int> idsContaBanco,
             IEnumerable<int> idsFormaPagamento,
             IEnumerable<decimal> valoresRecebimento)
@@ -2802,7 +2802,7 @@ namespace Glass.Data.DAL
             #region Declaração de variáveis
 
             var usuarioLogado = UserInfo.GetUserInfo;
-            var cheques = this.GetByPks(session, string.Join(", ",chequesValidar.Select(c => c.Key)));
+            var cheques = this.GetByPks(session, string.Join(", ", chequesValidar.Select(c => c.Key)));
             var chequesInconsistentes = cheques.Where(p => chequesValidar.Contains(new KeyValuePair<int, bool>((int)p.IdCheque, false)));
 
             var idsClienteVinculado = ClienteVinculoDAO.Instance.GetIdsVinculados(session, acertoCheque.IdCliente.GetValueOrDefault());
