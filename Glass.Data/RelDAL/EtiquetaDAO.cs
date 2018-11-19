@@ -49,7 +49,7 @@ namespace Glass.Data.RelDAL
         #region Impressão de etiqueta de pedido
 
         /// <summary>
-        /// Busca lista de etiquetas a serem impressas, se não for re-impressao, salva impressão realizada, 
+        /// Busca lista de etiquetas a serem impressas, se não for re-impressao, salva impressão realizada,
         /// altera situação do pedido_espelho para impresso e marca a quantidade dos itens que foram impressos
         /// </summary>
         public Etiqueta[] GetListPedidoComTransacao(uint idFunc, string idImpressao, uint idProdPed, uint idAmbientePedido, string idsProdPed, bool arqOtimizacao, bool reImpressao,
@@ -81,7 +81,7 @@ namespace Glass.Data.RelDAL
         }
 
         /// <summary>
-        /// Busca lista de etiquetas a serem impressas, se não for re-impressao, salva impressão realizada, 
+        /// Busca lista de etiquetas a serem impressas, se não for re-impressao, salva impressão realizada,
         /// altera situação do pedido_espelho para impresso e marca a quantidade dos itens que foram impressos
         /// </summary>
         public Etiqueta[] GetListPedido(GDASession session, uint idFunc, string idImpressao, uint idProdPed, uint idAmbientePedido, string idsProdPed, bool arqOtimizacao, bool reImpressao,
@@ -178,7 +178,7 @@ namespace Glass.Data.RelDAL
                     else if (idProdPed > 0)
                     {
                         var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idProdPed);
-                        
+
                         #region Recupera a descrição para gerar o Log
 
                         if (PedidoConfig.SalvarLogPecasImpressasNoPedido)
@@ -448,7 +448,7 @@ namespace Glass.Data.RelDAL
                 // Imprime a etiqueta diretamente, uma vez que as impressões estão corretas
                 // com todas as etiquetas relacionadas à impressão correta, e não há mais
                 // necessidade de controle de impressão de etiquetas
-                var etiq = MontaEtiqueta(session, idFunc, prodImp, descrBenef, 
+                var etiq = MontaEtiqueta(session, idFunc, prodImp, descrBenef,
                     prodImp.IdPedido.HasValue ? PedidoEspelhoDAO.Instance.ObtemDataFabrica(session, prodImp.IdPedido.Value) : null,
                     IsPecaReposta(session, prodImp.NumEtiqueta, ref dicEtiquetaReposta), ref planosCorte, ref dicPedidos, ref dicProd, false);
 
@@ -575,14 +575,14 @@ namespace Glass.Data.RelDAL
 
             acao = "Atualiza idProdPed na tabela de produção";
 
-            // Em alguns casos não identificados (possivelmente por gerar registro na tabela produto_pedido_producao antes de efetivamente 
+            // Em alguns casos não identificados (possivelmente por gerar registro na tabela produto_pedido_producao antes de efetivamente
             // imprimir as etiquetas) o idProdPed da tabela produto_pedido_producao estava ficando diferente da tabela produto_impressao
-            // (fato verificado fazendo join ppp.numEtiqueta com dados da tabela produto_impressao), por isso, o comando abaixo foi criado para 
+            // (fato verificado fazendo join ppp.numEtiqueta com dados da tabela produto_impressao), por isso, o comando abaixo foi criado para
             // garantir que o idprodped da tabela produto_pedido_producao fique igual ao da tabela produto_impressao
             if (!reImpressao && idImpressao.StrParaUint() > 0)
             {
                 objPersistence.ExecuteCommand(session, @"
-                update produto_pedido_producao ppp 
+                update produto_pedido_producao ppp
                     inner join produto_impressao pi on (ppp.idImpressao=pi.idImpressao and
                         ppp.numEtiqueta=pi.numEtiqueta and !coalesce(pi.cancelado, false))
                     left join produtos_pedido_espelho ppe On (ppp.idProdPed=ppe.idProdPed)
@@ -590,9 +590,9 @@ namespace Glass.Data.RelDAL
                 set ppp.idprodped=Coalesce(ppe.idProdPed, (Select idProdPed From produtos_pedido_espelho Where idambientepedido=ape.idAmbientePedido limit 1), ppp.idprodped)
                 where pi.idImpressao=" + idImpressao + " And pi.idprodped<>ppp.idprodped And ppp.numEtiqueta is not null");
             }
-            
+
             #region Recupera as peças impressas do pedido após o cancelamento e insere o log
- 
+
             if (!reImpressao && PedidoConfig.SalvarLogPecasImpressasNoPedido)
                 foreach (var pedidoDescricaoPecasImpresasAntigas in pedidosDescricaoPecasImpressasAntigas)
                 {
@@ -600,7 +600,7 @@ namespace Glass.Data.RelDAL
                     var descricaoAntiga = pedidoDescricaoPecasImpresasAntigas.Value;
                     var descricaoNova =
                         ProdutoImpressaoDAO.Instance.ObterEtiquetasImpressasPeloPedido(session, idPedidoLog);
-                    
+
                     LogAlteracaoDAO.Instance.LogPedidoPecaImpressa(session, idFunc, idPedidoLog, descricaoAntiga, descricaoNova);
                 }
 
@@ -608,7 +608,7 @@ namespace Glass.Data.RelDAL
 
             return lstEtiq.ToArray();
         }
-        
+
         /// <summary>
         /// Associa retalho à peça
         /// </summary>
@@ -698,9 +698,9 @@ namespace Glass.Data.RelDAL
 
             if (PCPConfig.ConcatenarEspAltLargAoNumEtiqueta &&
                 //Chamado 76946 (Deve ser inserido no codigo de barras da etiqueta a altura/largura/espessura da peça apenas se possuir FML/DXF/SGLASS/Intermac)
-                (possuiFml || possuiDxf || possuiSGlass || possuiIntermac) && 
+                (possuiFml || possuiDxf || possuiSGlass || possuiIntermac) &&
                 etiq.BarCodeData != null &&
-                etiq.BarCodeData[0].ToString().ToUpper() != "C" && 
+                etiq.BarCodeData[0].ToString().ToUpper() != "C" &&
                 etiq.BarCodeData[0].ToString().ToUpper() != "R" &&
                 etiq.BarCodeData[0].ToString().ToUpper() != "N")
             {
@@ -719,7 +719,7 @@ namespace Glass.Data.RelDAL
         #region Impressão de etiqueta de nota fiscal
 
         /// <summary>
-        /// Busca lista de etiquetas a serem impressas, se não for re-impressao, salva impressão realizada, 
+        /// Busca lista de etiquetas a serem impressas, se não for re-impressao, salva impressão realizada,
         /// altera situação do pedido_espelho para impresso e marca a quantidade dos itens que foram impressos
         /// </summary>
         /// <param name="idImpressao"></param>
@@ -745,7 +745,7 @@ namespace Glass.Data.RelDAL
 
             // Controla a impressão
             bool imprimir = false;
-            
+
             using (var transaction = new GDATransaction())
             {
                 try
@@ -926,7 +926,7 @@ namespace Glass.Data.RelDAL
                         // Altera a situação da impressão de processando para ativa
                         ImpressaoEtiquetaDAO.Instance.AtualizaSituacao(sessao, Glass.Conversoes.StrParaUint(idImpressao), ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Ativa);
                     }
-                    
+
                     sessao.Commit();
                     sessao.Close();
 
@@ -994,7 +994,7 @@ namespace Glass.Data.RelDAL
 
                 pedido = dicPedidos[prodImp.IdPedido.Value];
             }
-            
+
             uint idProd = prodImp.IdProdNf > 0 ? ProdutosNfDAO.Instance.ObtemValorCampo<uint>(session, "idProd", "idProdNf=" + prodImp.IdProdNf) :
                 prodImp.IdRetalhoProducao > 0 ? RetalhoProducaoDAO.Instance.ObtemValorCampo<uint>(session, "IdProd", "IdRetalhoProducao=" + prodImp.IdRetalhoProducao) :
                 prodImp.IdAmbientePedido > 0 ? AmbientePedidoEspelhoDAO.Instance.ObtemValorCampo<uint>(session, "idProd", "idAmbientePedido=" + prodImp.IdAmbientePedido) :
@@ -1013,7 +1013,7 @@ namespace Glass.Data.RelDAL
 
             uint? idPedidoAnterior = prodImp.IdPedido > 0 ? pedido.IdPedidoAnterior : null;
             string codCliente = prodImp.IdPedido > 0 ? pedido.CodCliente : null;
-            
+
             bool isPedidoImportado = prodImp.IdPedido > 0 ? pedido.Importado : false;
 
             bool redondo = prodImp.IdProdNf > 0 ? false : prodImp.IdAmbientePedido > 0 ?
@@ -1122,7 +1122,7 @@ namespace Glass.Data.RelDAL
 
                 nomeClienteFornec = etiqueta.RazaoSocialCliente;
             }
-            
+
             if (prodImp.IdCliente > 0)
             {
                 etiqueta.ComplementoCliente = ClienteDAO.Instance.ObterComplementoEndereco(session, (int)prodImp.IdCliente);
@@ -1130,10 +1130,10 @@ namespace Glass.Data.RelDAL
                 etiqueta.Contato2 = ClienteDAO.Instance.ObtemValorCampo<string>(session, "contato2", "id_cli = " + prodImp.IdCliente);
             }
 
-            DateTime? dataEntrFabr = 
-                prodImp.IdProdNf > 0 ? NotaFiscalDAO.Instance.ObtemDataEntradaSaida(prodImp.IdNf.Value) : 
-                prodImp.IdRetalhoProducao > 0 ? null : 
-                EtiquetaConfig.TipoDataEtiqueta == DataSources.TipoDataEtiquetaEnum.Fábrica && dataFabrica != null && dataFabrica.Value.Ticks > 0 ? dataFabrica : 
+            DateTime? dataEntrFabr =
+                prodImp.IdProdNf > 0 ? NotaFiscalDAO.Instance.ObtemDataEntradaSaida(prodImp.IdNf.Value) :
+                prodImp.IdRetalhoProducao > 0 ? null :
+                EtiquetaConfig.TipoDataEtiqueta == DataSources.TipoDataEtiquetaEnum.Fábrica && dataFabrica != null && dataFabrica.Value.Ticks > 0 ? dataFabrica :
                 pedido.DataEntrega;
 
             var pedCli = prodImp.IdProdPed != null ? ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<string>(session, "pedCli", "idProdPed=" + prodImp.IdProdPed) : "";
@@ -1211,6 +1211,7 @@ namespace Glass.Data.RelDAL
             etiqueta.QtdeProd = prodImp.QtdeProd;
 
             etiqueta.IdSubgrupoProd = (uint?)produto.IdSubgrupoProd;
+            etiqueta.ProdutoParaEstoque = SubgrupoProdDAO.Instance.IsProdutoEstoque(produto.IdSubgrupoProd.Value);
 
             var descrProd = produto.Descricao;
             etiqueta.DataImpressao = DateTime.Now;
@@ -1231,7 +1232,7 @@ namespace Glass.Data.RelDAL
             etiqueta.Obs = descrBenef.ToUpper() + " " + (!PCPConfig.Etiqueta.NaoExibirObsPecaAoImprimirEtiqueta ? obs  + " " + obsGrid: obsGrid);
             etiqueta.DescrBenef = descrBenef.ToUpper();
             etiqueta.IdImpressao = prodImp.IdImpressao.GetValueOrDefault();
-            etiqueta.IdCliente = idClienteFornec;            
+            etiqueta.IdCliente = idClienteFornec;
             etiqueta.PecaReposta = isPecaReposta;
             etiqueta.PedidoRepos = usarPedidoRepos ? "(" + idPedidoAnterior + "R)" : "";
             etiqueta.IdProdPedEsp = prodImp.IdProdPed > 0 ? prodImp.IdProdPed.Value :
@@ -1379,17 +1380,17 @@ namespace Glass.Data.RelDAL
             etiqueta.AlturaLargura = etiqueta.Altura + " X " + etiqueta.Largura;
             if (!PedidoConfig.EmpresaTrabalhaAlturaLargura)
                 etiqueta.AlturaLargura = etiqueta.Largura + " X " + etiqueta.Altura;
-            
+
             if (prodImp.IdPedido > 0)
                 etiqueta.DescrTipoEntrega = Utils.GetDescrTipoEntrega(pedido.TipoEntrega);
 
             if (produto.IdSubgrupoProd > 0)
                 etiqueta.DescricaoSubgrupo = SubgrupoProdDAO.Instance.ObtemValorCampo<string>(session, "descricao", "idSubgrupoProd=" + produto.IdSubgrupoProd);
-            
+
             if (EtiquetaConfig.RelatorioEtiqueta.CarregarDescricaoGrupoProjeto && idItemProjeto.GetValueOrDefault() > 0)
             {
                 etiqueta.ObsItemProjeto = etiqueta.ObsItemProjeto != null ? etiqueta.ObsItemProjeto.Replace("\n", "") : "";
-                        
+
                 var idProjetoModelo = ItemProjetoDAO.Instance.ObtemValorCampo<uint?>
                     (session, "idProjetoModelo", "idItemProjeto=" + idItemProjeto.Value);
 
