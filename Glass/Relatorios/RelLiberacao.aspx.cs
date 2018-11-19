@@ -88,7 +88,7 @@ namespace Glass.UI.Web.Relatorios
 
                 // Customiza texto a ser exibido junto com o nome fantasia do cliente
                 liberacao.NomeClienteFantasia += MontarInfoAdicionalRelLiberacao(liberacao.IdCliente);
-                
+
                 // Texto que irá aparecer na via de expedição/almoxarife
                 var textoResumo = Liberacao.RelatorioLiberacaoPedido.TextoResumosCorteRelatorio4Vias(liberacao.IdLiberarPedido);
                 if (Liberacao.RelatorioLiberacaoPedido.ExibirObsLiberacaoClienteViaExpedicao)
@@ -163,15 +163,14 @@ namespace Glass.UI.Web.Relatorios
                 var produtosLib = ProdutosLiberarPedidoDAO.Instance.GetForRpt(liberacao.IdLiberarPedido);
                 var produtosCortados = ProdutosPedidoDAO.Instance.ObterProdutosCortados(liberacao.IdLiberarPedido);
 
-                // Carrega Datasets para o relatório                
+                // Carrega Datasets para o relatório
                 var parcelasLiberacao = ParcelaLiberacaoDAO.Instance.ObtemParcelasLiberacao(liberacao.IdLiberarPedido);
                 var produtosCortadosRpt = ProdutosCortadosRptDAO.Instance.CopiaLista(produtosCortados.ToArray());
                 var lstPedidoRpt = PedidoRptDAL.Instance.CopiaLista(lstPedidosLib.ToArray(), PedidoRpt.TipoConstrutor.RelatorioLiberacao, false, login);
                 var lstProdLib = ProdutosLiberarPedidoRptDAL.Instance.CopiaLista(produtosLib);
                 var pecasCanceladas = ProdutoPedidoProducaoRptDAL.Instance.CopiaLista(ProdutoPedidoProducaoDAO.Instance.PesquisarProdutosProducaoRelatorioLiberacao((int)liberacao.IdLiberarPedido, true).ToArray());
                 var cheques = ChequesDAO.Instance.GetByLiberacaoPedido(null, liberacao.IdLiberarPedido);
-                var resumoCorte = ResumoCorteDAO.Instance.ObterResumoCorte(lstProdLib, false);
-                var resumoCorteComRevenda = ResumoCorteDAO.Instance.ObterResumoCorte(lstProdLib, true);
+                var resumoCorte = ResumoCorteDAO.Instance.ObterResumoCorte(lstProdLib);
 
                 // Se for mão de obra, apaga a quantidade de ambientes de todos os produtos contidos no mesmo, exceto de um deles,
                 // para que ao somar a quantidade de ambientes (peças) no relatório a soma fique correta
@@ -262,7 +261,7 @@ namespace Glass.UI.Web.Relatorios
                 report.DataSources.Add(new ReportDataSource("Cheques", cheques));
                 report.DataSources.Add(new ReportDataSource("ProdutosLiberarPedidoRpt", lstProdLib));
                 report.DataSources.Add(new ReportDataSource("ResumoCorte", resumoCorte));
-                report.DataSources.Add(new ReportDataSource("ResumoCorteComRevenda", resumoCorteComRevenda));
+                report.DataSources.Add(new ReportDataSource("ResumoCorteComRevenda", resumoCorte));
                 report.DataSources.Add(new ReportDataSource("ProdutoPedidoProducaoRpt", pecasCanceladas));
                 report.DataSources.Add(new ReportDataSource("ProdutosCortados", produtosCortadosRpt));
             }
@@ -706,7 +705,7 @@ namespace Glass.UI.Web.Relatorios
             exibirViaCliente = apenasViaCliente ||
                 (!apenasViaExpAlm && !apenasViaExpAlmPedidosBalcao);
 
-            // Define se a via da expedição será exibida 
+            // Define se a via da expedição será exibida
             // (se não exibir apenas a via do cliente, se a config AgruparResumoLiberacaoProduto não estiver marcada e se houver ao menos um produto que seja vidro)
             exibirViaExpedicao = !apenasViaCliente &&
                 !Liberacao.DadosLiberacao.AgruparResumoLiberacaoProduto &&
