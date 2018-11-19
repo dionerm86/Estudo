@@ -2116,8 +2116,8 @@ namespace Glass.Data.DAL
         /// <returns>Retorna o resultado de um teste l�gico que verifica se o pedido j� efetuou a sa�da de estoque.</returns>
         internal bool VerificaSaidaEstoqueConfirmacao(GDASession sessao, int idPedido)
         {
-            return !PedidoConfig.LiberarPedido 
-                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar 
+            return !PedidoConfig.LiberarPedido
+                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar
                 && ObtemSituacao(sessao, (uint)idPedido) == Pedido.SituacaoPedido.Confirmado;
         }
 
@@ -7656,11 +7656,6 @@ namespace Glass.Data.DAL
                     LancarExceptionValidacaoPedidoFinanceiro(idsPedido, mensagem, false, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
 
                     // Permite que os pedidos sejam liberados pelo funcionário do Financeiro
-                    idsPedidoOk.AddRange(idsPedidoErro);
-                    idsPedidoErro.Clear();
-                }
-                else
-                {
                     idsPedidoOk.AddRange(idsPedidoErro);
                     idsPedidoErro.Clear();
                 }
