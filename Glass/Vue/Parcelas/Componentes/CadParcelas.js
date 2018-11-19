@@ -149,7 +149,6 @@
 
     /**
      * Remove os dias e o numero de parcelas quando necessario.
-     * @param {Object} dia O dia que sera removido.
      */
     excluirDiasTipoPagamento: function () {
       if (this.tipoPagamentoAtual.id == this.configuracoes.tipoPagamentoAVista) {
@@ -233,8 +232,7 @@
     if (!idParcela) {
       vm.inserindo = true;
       vm.iniciarCadastroOuAtualizacao_();
-    }
-    else {
+    } else {
       vm.editando = true;
       this.buscarParcela(idParcela)
         .then(function (resposta) {
