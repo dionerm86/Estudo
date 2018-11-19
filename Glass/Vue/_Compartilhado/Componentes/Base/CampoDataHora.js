@@ -9,6 +9,7 @@ Data.offset = new Date().getTimezoneOffset() * 60000;
 
 Vue.component('campo-data-hora', {
   inheritAttrs: false,
+  mixins: [Mixins.ExecutarTimeout],
   props: {
     /**
      * A data/hora selecionada no controle.
@@ -83,15 +84,17 @@ Vue.component('campo-data-hora', {
      * @param {string} data A data selecionada no controle.
      * @param {string} hora A hora selecionada no controle.
      */
-    atualizarDataHora: function(data, hora) {
-      var dataHoraAtual = new Date(data + ' ' + hora);
-      if (isNaN(dataHoraAtual.getTime())) {
-        dataHoraAtual = null;
-      }
+    atualizarDataHora: function (data, hora) {
+      this.executarTimeout('atualizarDataHora', function () {
+        var dataHoraAtual = new Date(data + ' ' + hora);
+        if (isNaN(dataHoraAtual.getTime())) {
+          dataHoraAtual = null;
+        }
 
-      if (dataHoraAtual !== this.dataHora) {
-        this.$emit('update:dataHora', dataHoraAtual);
-      }
+        if (dataHoraAtual !== this.dataHora) {
+          this.$emit('update:dataHora', dataHoraAtual);
+        }
+      }, 300);
     },
 
     /**
