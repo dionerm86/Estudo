@@ -141,7 +141,6 @@
     <Compile Include="Global\IComissionadoFluxo.cs" />
     <Compile Include="Global\ICoresFluxo.cs" />
     <Compile Include="Global\IDataFluxo.cs" />
-    <Compile Include="Global\IDepartamentoFluxo.cs" />
     <Compile Include="Financeiro\IPlanoContasFluxo.cs" />
     <Compile Include="Global\IClienteFluxo.cs" />
     <Compile Include="Global\IDeviceAppFluxo.cs" />
