@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Web;
 using Microsoft.Reporting.WebForms;
@@ -36,13 +36,13 @@ namespace Glass.UI.Web.Relatorios.Projeto
         protected override Colosoft.Reports.IReportDocument LoadReport(ref LocalReport report, ref List<ReportParameter> lstParam,
             HttpRequest PageRequest, System.Collections.Specialized.NameValueCollection Request, object[] outrosParametros, LoginUsuario login, string diretorioLogotipos)
         {
-            // Verifica qual relatÛrio ser· chamado
+            // Verifica qual relat√≥rio ser√° chamado
             switch (Request["rel"])
             {
                 case "imagemProjeto":
                     report.ReportPath = NomeArquivoRelatorioImagemProjeto;
     
-                    // Identifica se foi selecionado para imprimir alumÌnios e ferragens.
+                    // Identifica se foi selecionado para imprimir alum√≠nios e ferragens.
                     bool imprAlumFerr = Request["imprAlumFerr"] == "true";
     
                     uint idProjeto = !String.IsNullOrEmpty(Request["idProjeto"]) ? Glass.Conversoes.StrParaUint(Request["idProjeto"]) : 0;
@@ -53,7 +53,7 @@ namespace Glass.UI.Web.Relatorios.Projeto
                     List<Imagem> lstImagens = new List<Imagem>();
                     List<MedidaItemProjeto> lstMedidas = new List<MedidaItemProjeto>();
     
-                    // Busca o pedido, se houver, relacionado ‡ este projeto
+                    // Busca o pedido, se houver, relacionado √† este projeto
                     projeto.IdPedido = ProjetoDAO.Instance.GetIdPedidoByProjeto(idProjeto);
 
                     if (projeto.IdPedido == 0)
@@ -89,7 +89,7 @@ namespace Glass.UI.Web.Relatorios.Projeto
                         ProjetoModelo modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(itemProjeto[i].IdProjetoModelo);
                         lstPeca.AddRange(PecaItemProjetoDAO.Instance.GetByItemProjetoRpt(itemProjeto[i].IdItemProjeto, itemProjeto[i].IdProjetoModelo, pcp));
 
-                        // Caso a imagem da peÁa tenha sido editada ent„o a impress„o n„o deve exibir se a peÁa possui arquivo de otimizaÁ„o.
+                        // Caso a imagem da pe√ßa tenha sido editada ent√£o a impress√£o n√£o deve exibir se a pe√ßa possui arquivo de otimiza√ß√£o.
                         for (var x = 0; x < lstPeca.Count; x++)
                         {
                             var pecaPossuiFiguraAssociada = PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(null, lstPeca[x].IdPecaItemProj);
@@ -109,16 +109,16 @@ namespace Glass.UI.Web.Relatorios.Projeto
                         lstMaterial.AddRange(MaterialItemProjetoDAO.Instance.GetForRptItemProjeto(itemProjeto[i].IdItemProjeto, false));
                         int numeroMateriais = lstMaterial.Count - atual;
     
-                        // Verifica se os materiais do itemProjeto dever„o ser impressos tambÈm
+                        // Verifica se os materiais do itemProjeto dever√£o ser impressos tamb√©m
                         itemProjeto[i].MostrarMateriais = imprAlumFerr && numeroMateriais > 0;
     
-                        // Pega a imagem do projeto com as medidas j· desenhadas e o modelo da imagem
+                        // Pega a imagem do projeto com as medidas j√° desenhadas e o modelo da imagem
                         if (modelo.IdGrupoModelo != (uint)UtilsProjeto.GrupoModelo.Outros)
                         {
                             itemProjeto[i].ImagemProjeto = Data.Helper.Utils.GetImageFromRequest(UtilsProjeto.GetFiguraAssociadaUrl(itemProjeto[i].IdItemProjeto, modelo));
 
-                            // Salva a imagem na memÛria, recupera os bytes e os salva na propriedade ImagemProjetoModelo.
-                            // Chamado 50315 - o nome da imagem deve ser recuperado dentro do try para n„o retornar erro quando o mesmo for null.
+                            // Salva a imagem na mem√≥ria, recupera os bytes e os salva na propriedade ImagemProjetoModelo.
+                            // Chamado 50315 - o nome da imagem deve ser recuperado dentro do try para n√£o retornar erro quando o mesmo for null.
                             try
                             {
                                 var arquivo = System.IO.Path.Combine(Glass.Data.Helper.Utils.ModelosProjetoPath(Context), modelo.NomeFigura);
@@ -181,7 +181,7 @@ namespace Glass.UI.Web.Relatorios.Projeto
                     if (idProjeto_Totais > 0)
                     {
                         var projeto_Totais = ProjetoDAO.Instance.GetElementByPrimaryKey(idProjeto_Totais);
-                        titulo = "Impress„o Projeto N.∫ " + idProjeto_Totais;
+                        titulo = "Impress√£o Projeto N.¬∫ " + idProjeto_Totais;
                         nomeCliente = projeto_Totais.IdCliente > 0 ? ClienteDAO.Instance.GetNome(projeto_Totais.IdCliente.Value) : projeto_Totais.NomeCliente;
                         tipoEntrega = projeto_Totais.DescrTipoEntrega;
                         taxaPrazo = projeto_Totais.TaxaPrazo;
@@ -189,7 +189,7 @@ namespace Glass.UI.Web.Relatorios.Projeto
                     else if (idOrcamento_Totais > 0)
                     {
                         var orcamento_Totais = OrcamentoDAO.Instance.GetElementByPrimaryKey(idOrcamento_Totais);
-                        titulo = "Impress„o dos Projetos do OrÁamento N.∫ " + idOrcamento_Totais;
+                        titulo = "Impress√£o dos Projetos do Or√ßamento N.¬∫ " + idOrcamento_Totais;
                         nomeCliente = orcamento_Totais.IdCliente > 0 ? orcamento_Totais.IdCliente + " - " + ClienteDAO.Instance.GetNome(orcamento_Totais.IdCliente.Value) : orcamento_Totais.NomeCliente;
                         tipoEntrega = orcamento_Totais.DescrTipoEntrega;
                         taxaPrazo = orcamento_Totais.TaxaPrazo;
@@ -197,8 +197,8 @@ namespace Glass.UI.Web.Relatorios.Projeto
                     else if (idPedido_Totais > 0 || idPedidoEspelho_Totais > 0)
                     {
                         Glass.Data.Model.Pedido pedido_Totais = PedidoDAO.Instance.GetElementByPrimaryKey(idPedido_Totais > 0 ? idPedido_Totais : idPedidoEspelho_Totais);
-                        titulo = idPedido_Totais > 0 ? "Impress„o dos Projetos do Pedido N.∫ " + idPedido_Totais :
-                            "Impress„o dos Projetos da ConferÍncia do Pedido N.∫ " + idPedidoEspelho_Totais;
+                        titulo = idPedido_Totais > 0 ? "Impress√£o dos Projetos do Pedido N.¬∫ " + idPedido_Totais :
+                            "Impress√£o dos Projetos da Confer√™ncia do Pedido N.¬∫ " + idPedidoEspelho_Totais;
                         nomeCliente = pedido_Totais.IdCli + " - " + ClienteDAO.Instance.GetNome(pedido_Totais.IdCli);
                         tipoEntrega = pedido_Totais.DescrTipoEntrega;
                         taxaPrazo = pedido_Totais.TaxaPrazo;
@@ -225,8 +225,8 @@ namespace Glass.UI.Web.Relatorios.Projeto
     
                     if (projModelo.IdGrupoModelo != (uint)UtilsProjeto.GrupoModelo.Outros)
                     {
-                        // Salva a imagem na memÛria, recupera os bytes e os salva na propriedade ImagemProjetoModelo.
-                        // Chamado 50315 - o nome da imagem deve ser recuperado dentro do try para n„o retornar erro quando o mesmo for null.
+                        // Salva a imagem na mem√≥ria, recupera os bytes e os salva na propriedade ImagemProjetoModelo.
+                        // Chamado 50315 - o nome da imagem deve ser recuperado dentro do try para n√£o retornar erro quando o mesmo for null.
                         try
                         {
                             var arquivo = System.IO.Path.Combine(Glass.Data.Helper.Utils.ModelosProjetoPath(Context), projModelo.NomeFigura);
@@ -266,25 +266,32 @@ namespace Glass.UI.Web.Relatorios.Projeto
                     break;
             }
     
-            // Atribui par‚metros ao relatÛrio
+            // Atribui par√¢metros ao relat√≥rio
             lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(PageRequest)));
             lstParam.Add(new ReportParameter("TextoRodape", Geral.TextoRodapeRelatorio(login.Nome)));
             lstParam.Add(new ReportParameter("CorRodape", "DimGray"));
-
+            
             return null;
         }
 
         /// <summary>
-        /// Nome do arquivo do relatÛrio de imagem de projeto.
+        /// Nome do arquivo do relat√≥rio de imagem de projeto.
         /// </summary>
         public static string NomeArquivoRelatorioImagemProjeto
         {
             get
             {
                 var caminhoRelatorio = string.Format("Relatorios/Projeto/rptImagemProjeto{0}.rdlc", ControleSistema.GetSite().ToString());
+                var caminhoRelatorioAplicacaoProcesso = $"Relatorios/Projeto/rptImagemProjetoAplProc{ControleSistema.GetSite().ToString()}.rdlc";
 
-                if (System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath(string.Format("~/{0}", caminhoRelatorio))))
+                if (System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath($"~/{caminhoRelatorio}")))
+                {
                     return caminhoRelatorio;
+                }
+                else if (PedidoConfig.LiberarPedido && System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath($"~/{caminhoRelatorioAplicacaoProcesso}")))
+                {
+                    return caminhoRelatorioAplicacaoProcesso;
+                }
 
                 return
                     PedidoConfig.LiberarPedido ? "Relatorios/Projeto/rptImagemProjetoAplProc.rdlc" : "Relatorios/Projeto/rptImagemProjeto.rdlc";

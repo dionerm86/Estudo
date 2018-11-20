@@ -117,8 +117,8 @@
                 var percDesconto = controleDescQtde.PercDesconto();
                 var percDescontoAtual = controleDescQtde.PercDescontoAtual();
 
-                var retorno = CalcProd_CalcTotalProd(valorIns, totM2, totM2Calc, m2Minimo, total, qtde, altura, campoAltura, largura, true, tipoCalc, 2, 2, percDescontoAtual, percDesconto);
-        
+                var retorno = CalcProd_CalcTotalProd(valorIns, tipoCalc != 1 ? totM2 : 0, totM2Calc, m2Minimo, total, qtde, altura, campoAltura, largura, true, tipoCalc, 2, 2, percDescontoAtual, percDesconto);
+
                 if (retorno != "") {
                     FindControl("lblTotalIns", "span").innerHTML = retorno;
                 }
@@ -135,7 +135,7 @@
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
             var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
-            controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));        
+            controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
             var percDescontoQtde = controleDescQtde.PercDesconto();
 
             FindControl("hdfValMin", "input").value = CadOrcamento.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, idProdOrcamento, percDescontoQtde, altura).value;
@@ -149,10 +149,10 @@
             }
             catch (err) { }
         }
-    
+
         function obrigarProcApl() {
             var isVidroBenef = getNomeControleBenef() != null ? exibirControleBenef(getNomeControleBenef()) && dadosProduto.Grupo == 1 : false;
-            var isVidroRoteiro = (utilizarRoteiroProducao && dadosProduto.Grupo == 1);    
+            var isVidroRoteiro = (utilizarRoteiroProducao && dadosProduto.Grupo == 1);
 
             if (dadosProduto.IsChapaVidro) {
                 return true;
@@ -188,7 +188,7 @@
                 setApl("", "");
                 return false;
             }
-    
+
             try {
                 var response = MetodosAjax.GetEtiqAplicacao(codInterno).value;
 
@@ -284,13 +284,13 @@
                 if (FindControl("hdfIdProcesso", "input") != null) {
                     FindControl("hdfIdProcesso", "input").value = idProcesso;
                 }
-            
+
                 if (FindControl("txtCodProdIns", "input") != null) {
                     codInternoProd = FindControl("txtCodProdIns", "input").value;
                 } else {
                     codInternoProd = FindControl("lblCodProdIns", "span").innerHTML;
                 }
-                
+
                 if (FindControl("txtAplIns", "input") != null) {
                     codAplicacaoAtual = FindControl("txtAplIns", "input").value;
                 }
@@ -303,7 +303,7 @@
                     FindControl("hdfIdProcessoFilhos", "input").value = idProcesso;
                 }
             }
-        
+
 
             if (((codAplicacao && codAplicacao != "") ||
                 (codInternoProd != "" && CadPedido.ProdutoPossuiAplPadrao(codInternoProd).value == "false")) &&
@@ -346,7 +346,7 @@
 
         function buscarProcessos(desconsiderarSubgrupo) {
             var idSubgrupo = "";
-            
+
             if (desconsiderarSubgrupo) {
                 openWindow(450, 700, "../Utils/SelEtiquetaProcesso.aspx?idSubgrupo=");
             } else {
@@ -360,7 +360,7 @@
             if (codInterno == undefined || codInterno == null || codInterno == "") {
                 return false;
             }
-    
+
             var txtValor = FindControl("txtValorIns", "input");
 
             try {
@@ -369,11 +369,11 @@
                 var cliRevenda = FindControl("hdfCliRevenda", "input").value;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
                 var percComissao = getPercComissao();
-                percComissao = percComissao == null ? 0 : percComissao.toString().replace('.', ',');            
+                percComissao = percComissao == null ? 0 : percComissao.toString().replace('.', ',');
                 var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
-                controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));            
+                controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
                 var percDescontoQtde = controleDescQtde.PercDesconto();
-        
+
                 if (FindControl("_divDescontoQtde", "div") != null) {
                     controleDescQtde = FindControl("_divDescontoQtde", "div").id;
                     controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
@@ -382,9 +382,9 @@
                         percDescontoQtde = controleDescQtde.PercDesconto();
                     }
                 }
-        
+
                 var retorno = CadOrcamento.GetProduto(codInterno, tipoEntrega, cliRevenda, idCliente, percComissao, percDescontoQtde, idLoja);
-        
+
                 if (retorno.error != null) {
                     if (FindControl("txtCodProdIns", "input") != null) {
                         FindControl("txtCodProdIns", "input").value = "";
@@ -393,12 +393,12 @@
                     alert(retorno.error.description);
                     return false;
                 }
-        
+
                 retorno = retorno.value.split(';');
 
                 if (retorno[0] == "Erro") {
                     alert(retorno[1]);
-                    FindControl("txtCodProdIns", "input").value = "";                
+                    FindControl("txtCodProdIns", "input").value = "";
                     return false;
                 }
 
@@ -416,7 +416,7 @@
                     alert(idLojaSubgrupo.error.description);
                     return false;
                 }
-       
+
                 if (idLojaSubgrupo.value != "0" && idLojaSubgrupo.value != idLoja) {
                     if (FindControl("txtCodProdIns", "input") != null) {
                         FindControl("txtCodProdIns", "input").value = "";
@@ -439,7 +439,7 @@
 
                 FindControl("lblDescrProd", "span").innerHTML = retorno[2];
 
-                if (retorno[0] == "Prod") {            
+                if (retorno[0] == "Prod") {
                     FindControl("hdfIdProduto", "input").value = retorno[1];
                     FindControl("txtValorIns", "input").value = retorno[3]; // Exibe no cadastro o valor mínimo do produto
                     FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto é vidro
@@ -464,17 +464,17 @@
                     var cAltura = FindControl("txtAlturaIns", "input");
                     var cLargura = FindControl("txtLarguraIns", "input");
                     cAltura.disabled = CalcProd_DesabilitarAltura(tipoCalc);
-                    cLargura.disabled = CalcProd_DesabilitarLargura(tipoCalc);                    
+                    cLargura.disabled = CalcProd_DesabilitarLargura(tipoCalc);
                     var nomeControle = getNomeControleBenef();
                     var tbConfigVidro = obterTbConfigVidro();
 
                     // Zera o campo qtd para evitar que produtos calculados por mҠfiquem com quantidade decimal por exemplo (chamado 11010)
                     var txtQtdProd = FindControl("txtQtdeIns", "input");
-            
+
                     if (txtQtdProd != null && !loading) {
                         txtQtdProd.value = "";
                     }
-                    
+
                     if (nomeControle != null && nomeControle != undefined) {
                         // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
                         if (retorno[4] == "true" && exibirControleBenef(nomeControle) && FindControl("lnkBenef", "a") != null) {
@@ -486,17 +486,17 @@
                                 FindControl("txtEspessura", "input").disabled = retorno[7] != "" && retorno[7] != "0";
                             }
                         }
-                    
+
                         if (FindControl("lnkBenef", "a") != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1) {
                             FindControl("lnkBenef", "a").style.display = exibirControleBenef(nomeControle) ? "" : "none";
                         }
                     }
-                    
+
                     if (FindControl("hdfAliquotaIcmsProd", "input") != null) {
                         FindControl("hdfAliquotaIcmsProd", "input").value = retorno[8].replace('.', ',');
                     }
-                    
-                    // O campo altura e largura devem sempre ser atribuídos pois caso seja selecionado um box e logo após seja selecionado um kit 
+
+                    // O campo altura e largura devem sempre ser atribuídos pois caso seja selecionado um box e logo após seja selecionado um kit
                     // por exemplo, ao inserí-lo ele estava ficando com o campo altura, largura e m² preenchidos apesar de ser calculado por qtd
                     if (retorno[9] != "" || retorno[4] == "false") {
                         if (FindControl("txtAlturaIns", "input") != null) {
@@ -513,7 +513,7 @@
                             FindControl("txtLarguraIns", "input").value = retorno[10];
                         }
                     }
-                        
+
                     if (cAltura.disabled) {
                         if (FindControl("hdfAlturaCalcIns", "input") != null != null) {
                             FindControl("hdfAlturaCalcIns", "input").value = cAltura.value;
@@ -523,20 +523,20 @@
                     if (!manterProcessoAplicacao && retorno[14] != "") {
                         setApl(retorno[14], retorno[15]);
                     }
-                    
+
                     if (!manterProcessoAplicacao && retorno[16] != "") {
                         setProc(retorno[16], retorno[17]);
                     }
-                    
+
                     if (FindControl("hdfCustoProd", "input") != null) {
                         FindControl("hdfCustoProd", "input").value = retorno[18];
                     }
 
                     if (FindControl("chkAplicarBenefFilhos", "input") != null) {
-                        FindControl("chkAplicarBenefFilhos", "input").style.display = retorno[19] == "true" ? "" : "none"; 
+                        FindControl("chkAplicarBenefFilhos", "input").style.display = retorno[19] == "true" ? "" : "none";
                     }
-                }                
-                
+                }
+
                 if (retorno[19].value == "true") {
                     if (document.getElementById("tblProcessoFilhas") != null) {
                         document.getElementById("tblProcessoFilhas").style.display = "";
@@ -558,7 +558,7 @@
             catch (err) { alert(err); }
         }
 
-        function recalcular(idOrcamento, perguntar, tipoEntregaNovo, idClienteNovo) {        
+        function recalcular(idOrcamento, perguntar, tipoEntregaNovo, idClienteNovo) {
             if (recalcularOrcamento(idOrcamento, perguntar, "loading", tipoEntregaNovo, idClienteNovo)) {
                 if (lnkGerarPedido == null) {
                     alert("Orçamento recalculado com sucesso!");
@@ -578,22 +578,22 @@
             if (perguntar && !confirm("Tem certeza que deseja gerar um pedido para este orçamento?")) {
                 return false;
             }
-        
+
             lnkGerarPedido = link;
             hdfIdCliente = document.getElementById(hiddenIdCliente);
-        
+
             if (hdfIdCliente.value == "") {
                 alert("Você deve selecionar o cliente antes de continuar.");
                 openWindow(500, 750, "../Utils/SelCliente.aspx");
                 return false;
-            }   
-        
+            }
+
             return true;
         }
 
         function setCliente(idCli, nome) {
             hdfIdCliente.value = idCli;
-            recalcular(idOrcamento, false, "", idCli);        
+            recalcular(idOrcamento, false, "", idCli);
             eval(lnkGerarPedido.href.replace(/%20/g, " "));
         }
 
@@ -608,25 +608,25 @@
 
             var txtPercentual = FindControl("txtPercentual", "input");
             var hdfIdComissionado = FindControl("hdfIdComissionado", "input");
-        
+
             // Se o percentual de comissão a ser cobrado for > 0, verifica se o comissionado foi informado
             if (txtPercentual != null && hdfIdComissionado != null && txtPercentual.value != "" && parseFloat(txtPercentual.value.replace(',', '.')) > 0 && hdfIdComissionado.value == "") {
                 alert("Informe o comissionado.");
                 botaoAtualizarClicado = false;
                 return false;
             }
-        
+
             var tipoEntregaAtual = FindControl("ddlTipoEntrega", "select");
             var idClienteAtual = FindControl("txtIdCliente", "input");
-        
+
             if (!permitirInserirSemTipoOrcamento && FindControl("drpTipoOrcamento", "select") != null && FindControl("drpTipoOrcamento", "select").value == "") {
                 alert("Selecione o tipo do orçamento.");
                 botaoAtualizarClicado = false;
                 return false;
             }
-        
+
             FindControl("drpFuncionario", "select").disabled = false;
-        
+
             return true;
         }
 
@@ -634,74 +634,74 @@
             if (inserting) {
                 return false;
             }
-            
+
             if (FindControl("txtNomeCliente", "input").value == "") {
                 alert("Digite o nome do cliente ou escolha-o na lista para continuar.");
                 return false;
             }
-        
+
             if (FindControl("ddlTipoEntrega", "select").value == "") {
                 alert("Selecione o tipo de entrega.");
                 return false;
             }
-        
+
             if (!onSaveOrca()) {
                 return false;
             }
-        
-            document.getElementById("load").style.display = "";        
-            FindControl("drpFuncionario", "select").disabled = false;        
+
+            document.getElementById("load").style.display = "";
+            FindControl("drpFuncionario", "select").disabled = false;
             inserting = true;
-       
+
             if (FindControl("drpLoja", "select")) {
                 FindControl("drpLoja", "select").disabled = false;
             }
 
             return true;
         }
-        
+
         // Função chamada para mostrar/esconder controles para inserção de novo ambiente
         function addAmbiente(value) {
-            var ambiente = FindControl("txtAmbienteIns", "input");        
+            var ambiente = FindControl("txtAmbienteIns", "input");
             var descricao = FindControl("txtDescricaoAmbienteIns", "textarea");
             var qtde = FindControl("txtQtdeAmbiente", "input");
 
             if (ambiente == null && descricao == null) {
                 return;
             }
-    
+
             if (descricao != null) {
                 descricao.style.display = value ? "" : "none";
             }
-        
+
             if (ambiente != null) {
                 ambiente.style.display = value ? "" : "none";
             }
-                    
+
             if (qtde != null) {
                 qtde.style.display = value ? "" : "none";
             }
-        
+
             FindControl("lnkInsAmbiente", "a").style.display = value ? "" : "none";
         }
 
         function calcularDesconto(tipoCalculo) {
             var controle = FindControl("txtDesconto", "input");
-    
+
             if (controle.value == "0") {
                 return;
             }
-            
+
             var tipo = FindControl("drpTipoDesconto", "select").value;
             var desconto = parseFloat(controle.value.replace(',', '.'));
-    
+
             if (isNaN(desconto)) {
                 desconto = 0;
             }
-        
+
             var tipoAtual = FindControl("hdfTipoDesconto", "input").value;
             var descontoAtual = parseFloat(FindControl("hdfDesconto", "input").value.replace(',', '.'));
-    
+
             if (isNaN(descontoAtual)) {
                 descontoAtual = 0;
             }
@@ -739,7 +739,7 @@
                 if (parseFloat(controle.value.replace(',', '.')) < 0) {
                     controle.value = "0";
                 }
-                
+
                 return false;
             }
 
@@ -783,7 +783,7 @@
                 if (usarComissionado) {
                     limparComissionado();
                 }
-                
+
                 if (dados.split('|')[0] == "Erro") {
                     alert(dados.split('|')[1]);
                 }
@@ -1063,7 +1063,7 @@
             if (!validate("produto")) {
                 return false;
             }
-            
+
             atualizaValMin(idProdOrcamento);
 
             var valor = FindControl("txtValorIns", "input").value;
@@ -1104,7 +1104,7 @@
                     return false;
                 }
             }
-        
+
             if (!obrigarProcApl()) {
                 return false;
             }
@@ -1114,7 +1114,7 @@
             var icms = FindControl("hdfValorIcmsProd", "input");
             icms.value = parseFloat(valor) * (parseFloat(aliquota.value) / 100);
             icms.value = icms.value.toString().replace('.', ',');
-            
+
             if (tbConfigVidro != null && FindControl("txtEspessura", "input", tbConfigVidro) != null) {
                 FindControl("txtEspessura", "input", tbConfigVidro).disabled = false;
             } else if (FindControl("txtEspessura", "input") != null) {
@@ -1124,7 +1124,7 @@
             FindControl("txtAlturaIns", "input").disabled = false;
             FindControl("txtLarguraIns", "input").disabled = false;
             FindControl("txtValorIns", "input").disabled = false;
-            
+
             var nomeControle = getNomeControleBenef();
 
             if (exibirControleBenef(nomeControle)) {
@@ -2637,7 +2637,7 @@
                                                     <tr>
                                                         <td>
                                                             <asp:TextBox ID="txtProcInsFilhos" runat="server" onblur="procFilha=true; loadProc(this.value);"
-                                                                onkeydown="if (isEnter(event)) { procFilha=true; loadProc(this.value); }" 
+                                                                onkeydown="if (isEnter(event)) { procFilha=true; loadProc(this.value); }"
                                                                 onkeypress="return !(isEnter(event));" Width="30px">
                                                             </asp:TextBox>
                                                         </td>
@@ -2662,7 +2662,7 @@
                                                 <table class="pos" id="tblAplicacaoFilhos" style="display: none ">
                                                     <tr>
                                                         <td>
-                                                            <asp:TextBox ID="txtAplInsFilhos" runat="server" Width="30px" onblur="aplFilha=true; loadApl(this.value);"  
+                                                            <asp:TextBox ID="txtAplInsFilhos" runat="server" Width="30px" onblur="aplFilha=true; loadApl(this.value);"
                                                                 onkeydown="if (isEnter(event)) { aplFilha=true; loadApl(this.value); }" onkeypress="return !(isEnter(event));">
                                                             </asp:TextBox>
                                                         </td>
@@ -3011,7 +3011,7 @@
     </table>
 
     <script type="text/javascript">
-        
+
         // Esconde controles de inserção de ambiente
         if (FindControl("lnkAddProdutoAmbiente", "input") != null) {
             addAmbiente(false);
@@ -3020,19 +3020,19 @@
         // Esconde tabela de comissionado
         var hdfComissaoVisible = FindControl("hdfComissaoVisible", "input");
         var tbComissionado = FindControl("tbComissionado", "table");
-        
+
         if (hdfComissaoVisible != null && tbComissionado != null && hdfComissaoVisible.value == "false") {
             tbComissionado.style.display = "none";
         }
 
         tipoEntrega = FindControl("ddlTipoEntrega", "select");
         tipoEntrega = tipoEntrega != null ? tipoEntrega.value : "";
-        
+
         idCliente = FindControl("txtIdCliente", "input");
         idCliente = idCliente != null ? idCliente.value : "";
 
         var idCli = FindControl("txtIdCliente", "input");
-        
+
         if (idCli != null && idCli.value != "") {
             var dados = CadOrcamento.GetCli(idCli.value).value;
 
@@ -3063,7 +3063,7 @@
         if (codigoProduto != null && codigoProduto.value != "") {
             codigoProduto.onblur();
         }
-    
+
         loading = false;
 
     </script>

@@ -1347,6 +1347,14 @@ Format(Sum(Fields!QtdeTotal.Value), "0.##"))</Value>
                   <Group Name="table3_Details_Group">
                     <DataElementName>Detail</DataElementName>
                   </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!DescrGrupoProd.Value</Value>
+                    </SortExpression>
+                    <SortExpression>
+                      <Value>=Fields!CodInternoProd.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
                   <TablixMembers>
                     <TablixMember>
                       <Visibility>

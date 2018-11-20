@@ -3116,6 +3116,9 @@
                   </Group>
                   <SortExpressions>
                     <SortExpression>
+                      <Value>=Fields!DescrGrupoProd.Value</Value>
+                    </SortExpression>
+                    <SortExpression>
                       <Value>=Fields!CodInternoProd.Value</Value>
                     </SortExpression>
                   </SortExpressions>

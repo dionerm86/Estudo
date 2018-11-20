@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="ListaPedidos.aspx.cs"
+﻿<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="ListaPedidos.aspx.cs"
     Inherits="Glass.UI.Web.Relatorios.ListaPedidos" Title="Pedidos" %>
 
 <%@ Register Src="../Controls/ctrlBenefSetor.ascx" TagName="ctrlBenefSetor" TagPrefix="uc1" %>
@@ -36,6 +36,7 @@
             var dtFimEnt = FindControl("ctrlDataFimEnt_txtData", "input").value;
             var idFunc = FindControl("drpFuncionario", "select").value;
             var idVendAssoc = FindControl("drpVendAssoc", "select").value;
+            var idAtendente = FindControl("drpAtendente", "select").value;
             var ordenacao = FindControl("drpOrdenacao", "select").value;
             var situacaoProd = FindControl("cbdSituacaoProd", "select").itens();
             var tipoEntrega = FindControl("drpTipoEntrega", "select").value;
@@ -92,7 +93,7 @@
             var queryString = "&idPedido=" + idPedido + "&idOrcamento=" + idOrcamento + "&codCliente=" + codCliente + "&idsRota=" + idsRota + "&IdCli=" + idCli +
                 "&nomeCli=" + nomeCli + "&tipoFiscal=" + tipoFiscal + "&loja=" + loja + "&situacao=" + situacao + "&dtIniSit=" + dtIniSit +
                 "&dtFimSit=" + dtFimSit + "&dtIni=" + dtIni + "&dtFim=" + dtFim + "&dtIniEnt=" + dtIniEnt + "&dtFimEnt=" + dtFimEnt +
-                "&idFunc=" + idFunc + "&idVendAssoc=" + idVendAssoc + "&tipo=" + tipo + "&tipoEntrega=" + tipoEntrega +
+                "&idFunc=" + idFunc + "&idVendAssoc=" + idVendAssoc + "&idAtendente=" + idAtendente + "&tipo=" + tipo + "&tipoEntrega=" + tipoEntrega +
                 "&fastDelivery=" + fastDelivery + "&ordenacao=" + ordenacao + "&situacaoProd=" + situacaoProd + "&tipoVenda=" + tipoVenda +
                 "&idsGrupos=" + idsGrupos + "&idsSubgrupoProd=" + idsSubgrupoProd + "&idsBenef=" + idsBenef + "&exibirProdutos=" + exibirProdutos +
                 "&pedidosSemAnexos=" + pedidosSemAnexos + "&exibirPronto=" + exibirPronto + "&dataIniPronto=" + dataIniPronto +
@@ -381,6 +382,15 @@
                         </td>
                         <td>
                             <asp:DropDownList ID="drpVendAssoc" runat="server" DataSourceID="odsFuncionario"
+                                DataTextField="Nome" DataValueField="IdFunc" AppendDataBoundItems="True">
+                                <asp:ListItem Value="0">Todos</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td>
+                            <asp:Label ID="lblAtendente" runat="server" ForeColor="#0066FF" Text="Atendente"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpAtendente" runat="server" DataSourceID="odsFuncionario"
                                 DataTextField="Nome" DataValueField="IdFunc" AppendDataBoundItems="True">
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
                             </asp:DropDownList>
@@ -871,6 +881,7 @@
                         <asp:ControlParameter ControlID="ctrlDataFimEnt" Name="dataFimEntrega" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="drpFuncionario" Name="idFunc" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="drpVendAssoc" Name="idVendAssoc" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="drpAtendente" Name="idAtendente" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="cblTipoPedido" Name="tiposPedido" PropertyName="SelectedValue" Type="String" />
                         <asp:ControlParameter ControlID="drpTipoEntrega" Name="tipoEntrega" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="drpFastDelivery" Name="fastDelivery" PropertyName="SelectedValue" Type="Int32" />
@@ -960,6 +971,7 @@
                         <asp:ControlParameter ControlID="ctrlDataFimEnt" Name="dataFimEntrega" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="drpFuncionario" Name="idFunc" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="drpVendAssoc" Name="idVendAssoc" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="drpAtendente" Name="idAtendente" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="cblTipoPedido" Name="tiposPedido" PropertyName="SelectedValue" Type="String" />
                         <asp:ControlParameter ControlID="drpTipoEntrega" Name="tipoEntrega" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="drpFastDelivery" Name="fastDelivery" PropertyName="SelectedValue" Type="Int32" />

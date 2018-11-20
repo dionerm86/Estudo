@@ -161,9 +161,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("NOMEFUNCTROCADEV", DirectionParameter.InputOptional)]
         public string NomeFuncTrocaDev { get; set; }
 
-        [PersistenceProperty("DEPTOSFUNCTROCADEV", DirectionParameter.InputOptional)]
-        public string DeptosFuncTrocaDev { get; set; }
-
         [PersistenceProperty("NOMECONFERENTE", DirectionParameter.InputOptional)]
         public string NomeConferente { get; set; }
 

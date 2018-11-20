@@ -50,6 +50,22 @@ namespace Glass.API.Backend.Helper
         }
 
         /// <summary>
+        /// Obtém uma lista com o código e nome dos possíveis valores de um enum.
+        /// </summary>
+        /// <returns>Uma lista de CodigoNomeDto com os dados do enum.</returns>
+        public IEnumerable<CodigoNomeDto> ObterTraducaoCodigoNome()
+        {
+            var lista = new List<CodigoNomeDto>();
+
+            foreach (var item in this.ObterItens())
+            {
+                lista.Add(this.ConverterItemCodigoNome(item));
+            }
+
+            return lista;
+        }
+
+        /// <summary>
         /// Obtém um dicionário (que é convertido para um objeto ao serializar o JSON) onde
         /// os nomes dos campos são os nomes dos enums, e os valores são os dados "traduzidos" (ID e descrição).
         /// </summary>
@@ -109,6 +125,15 @@ namespace Glass.API.Backend.Helper
             return new IdNomeDto
             {
                 Id = (int)Convert.ChangeType(item, typeof(int)),
+                Nome = this.ObterDescricao(item as Enum) ?? item.ToString(),
+            };
+        }
+
+        private CodigoNomeDto ConverterItemCodigoNome(object item)
+        {
+            return new CodigoNomeDto
+            {
+                Codigo = Convert.ChangeType(item, typeof(char))?.ToString(),
                 Nome = this.ObterDescricao(item as Enum) ?? item.ToString(),
             };
         }

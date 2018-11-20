@@ -29,15 +29,25 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal.M2
                 return;
             }
 
+            if (compra && produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo() == TipoCalculoGrupoProd.Qtd)
+            {
+                produto.Total = custoCompra * (decimal)produto.Qtde;
+                return;
+            }
+
             float totM2Preco = RecuperarTotalM2Preco(produto, nf, compra, totM2Temp);
             CalcularTotalM2CalculoAreaMinima(produto, qtdeAmbiente, nf, numeroBeneficiamentos, compra, totM2Preco);
 
             produto.CustoProd = (decimal)produto.TotM * custoCompra;
-            
+
             if (!valorBruto)
+            {
                 produto.Total = produto.ValorUnit * (decimal)produto.TotM2Calc;
+            }
             else
+            {
                 produto.TotalBruto = produto.ValorUnitarioBruto * (decimal)produto.TotM2Calc;
+            }
         }
 
         private void CalcularTotalM2(GDASession sessao, IProdutoCalculo produto, bool calcMult5, bool compra)
