@@ -151,6 +151,14 @@
         // Abre a tela de associar NFe
         function abrirBuscaNf(botao) {
             popUp = openWindow(600, 800, '../Utils/SelNotaFiscalAutorizada.aspx?IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
+
+            //Verifica se a tela foi fechada de tempos em tempos e caso tenha sido fechada atualiza a tela principal
+            var timer = setInterval(function () {
+                if (popUp.closed) {
+                    clearInterval(timer);
+                    window.location.reload();
+                }
+            }, 200);
         }
 
         // Bloqueia a seleção de notas caso sejam informações externas.
@@ -187,7 +195,22 @@
             FindControl(idControle + '_txtFsdaNFe', 'input').value = resultado[1];
             FindControl(idControle + '_txtFsdaNFe', 'input').disabled = true;
 
-            return false;
+            var botaoAdicionar = FindControl("imgAdicionarNFe", "input");
+            botaoAdicionar.style.display = 'none';
+            var idControleGrdNFeCidadeDescarga = botaoAdicionar.id.substring(0, botaoAdicionar.id.lastIndexOf("_"));
+            var idControleGrdCidadeDescarga = idControleGrdNFeCidadeDescarga.substring(0, idControleGrdNFeCidadeDescarga.lastIndexOf("_grdNFeCidadeDescarga"));
+            var idCidadeDescarga = FindControl(idControleGrdCidadeDescarga + "_hdfIdCidadeDescargaNFe", "input").value;
+            var retorno = CadManifestoEletronico.InserirNfeCidadeDescarga(idCidadeDescarga, idNf, resultado[0], resultado[1]);
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            var resultado = retorno.value.split('|');
+            if (resultado[0] == "Erro") {
+                alert(resultado[1]);
+                return false;
+            }
+            return true;
         }
 
         // Salva as informações da nota referênciada.
@@ -221,6 +244,14 @@
         // Abre a tela de associar CTe
         function abrirBuscaCTe(botao) {
             popUp = openWindow(600, 800, '../Utils/SelConhecimentoTransporteAutorizado.aspx?IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
+
+            //Verifica se a tela foi fechada de tempos em tempos e caso tenha sido fechada atualiza a tela principal
+            var timer = setInterval(function () {
+                if (popUp.closed) {
+                    clearInterval(timer);
+                    window.location.reload();
+                }
+            }, 200);
         }
 
         //Bloqueia a seleção de notas caso sejam informações externas.
@@ -259,7 +290,23 @@
             //FindControl(idControle + '_txtFsdaCTe', 'input').value = retorno;
             FindControl(idControle + '_txtFsdaCTe', 'input').disabled = true;
 
-            return false;
+
+            var botaoAdicionar = FindControl("imgAdicionarCTe", "input");
+            var idControleGrdCTeCidadeDescarga = botaoAdicionar.id.substring(0, botaoAdicionar.id.lastIndexOf("_"));
+            var idControleGrdCidadeDescarga = idControleGrdCTeCidadeDescarga.substring(0, idControleGrdCTeCidadeDescarga.lastIndexOf("_grdCTeCidadeDescarga"));
+            var idCidadeDescarga = FindControl(idControleGrdCidadeDescarga + '_hdfIdCidadeDescargaCTe', 'input').value;
+            var retorno = CadManifestoEletronico.InserirCteCidadeDescarga(idCidadeDescarga, idCTe, resultado, '');
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            var resultado = retorno.value.split('|');
+            if (resultado[0] == "Erro") {
+                alert(resultado[1]);
+                return false;
+            }
+            alert(resultado[1])
+            return true;
         }
 
         // Salva as informações de CTe associadas.
@@ -1238,7 +1285,7 @@
                                                 </asp:TemplateField>
                                                 <asp:TemplateField>
                                                     <FooterTemplate>
-                                                        <asp:ImageButton CssClass="img-linha" ID="imgAdicionar" runat="server" ImageUrl="~/Images/Insert.gif" OnClientClick="SalvarNfReferenciada(this);" />
+                                                        <asp:ImageButton CssClass="img-linha" ID="imgAdicionarNFe" runat="server" ImageUrl="~/Images/Insert.gif" OnClientClick="SalvarNfReferenciada(this);" />
                                                     </FooterTemplate>
                                                 </asp:TemplateField>
                                             </Columns>
@@ -1315,7 +1362,7 @@
                                                 </asp:TemplateField>
                                                 <asp:TemplateField>
                                                     <FooterTemplate>
-                                                        <asp:ImageButton CssClass="img-linha" ID="imgAdicionar" runat="server" ImageUrl="~/Images/Insert.gif" OnClientClick="SalvarCTeReferenciada(this);" />
+                                                        <asp:ImageButton CssClass="img-linha" ID="imgAdicionarCTe" runat="server" ImageUrl="~/Images/Insert.gif" OnClientClick="SalvarCTeReferenciada(this);" />
                                                     </FooterTemplate>
                                                 </asp:TemplateField>
                                             </Columns>
