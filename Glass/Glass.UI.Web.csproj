@@ -1828,6 +1828,9 @@
     <Content Include="Vue\_Compartilhado\Filtros\Percentual.js" />
     <Content Include="Vue\_Compartilhado\Filtros\IndicaMarcado.js" />
     <Content Include="Vue\_Compartilhado\Filtros\SimNao.js" />
+    <Content Include="Vue\ImpressoesEtiquetas\Componentes\LstImpressoesEtiquetas.Filtro.js" />
+    <Content Include="Vue\ImpressoesEtiquetas\Componentes\LstImpressoesEtiquetas.js" />
+    <Content Include="Vue\ImpressoesEtiquetas\Templates\LstImpressoesEtiquetas.Filtro.html" />
     <Content Include="Vue\_Compartilhado\Mixins\Beneficiamentos.js" />
     <Content Include="Vue\_Compartilhado\Mixins\CaminhoRelativo.js" />
     <Content Include="Vue\_Compartilhado\Mixins\CampoBeneficiamento.js" />
@@ -1845,6 +1848,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\ImpressoesEtiquetas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Projetos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comum.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Contabilistas.js" />
@@ -9148,9 +9152,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Relatorios\rptContasRecebidasLocal.rdlc" />
-    <Content Include="Relatorios\rptControlePerdasExt.rdlc">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Relatorios\rptCorEspessura.rdlc" />
     <Content Include="Relatorios\rptCotacaoCompraCalculadaFornec.rdlc">
       <SubType>Designer</SubType>

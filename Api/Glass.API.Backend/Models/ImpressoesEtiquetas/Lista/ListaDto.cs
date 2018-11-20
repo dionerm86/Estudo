@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Genericas.V1;
+using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Newtonsoft.Json;
@@ -28,7 +29,12 @@ namespace Glass.API.Backend.Models.ImpressoesEtiquetas.V1.Lista
             this.Funcionario = impressaoEtiqueta.NomeFunc;
             this.DataImpressao = impressaoEtiqueta.Data;
             this.Situacao = impressaoEtiqueta.DescrSituacao;
-            this.TipoImpressao = impressaoEtiqueta.DescrTipoImpressao;
+            this.TipoImpressao = new IdNomeDto
+            {
+                Id = (int)impressaoEtiqueta.TipoImpressao,
+                Nome = impressaoEtiqueta.DescrTipoImpressao,
+            };
+
             this.CorLinha = impressaoEtiqueta.Situacao == (int)Data.Model.ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada
                 ? "Red"
                 : "Black";
@@ -37,9 +43,9 @@ namespace Glass.API.Backend.Models.ImpressoesEtiquetas.V1.Lista
             {
                 Imprimir = impressaoEtiqueta.Situacao != (int)Data.Model.ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando,
                 BaixarArquivoOtimizacao = impressaoEtiqueta.Situacao == (int)Data.Model.ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Ativa
-                    && !Configuracoes.PCPConfig.Etiqueta.UsarPlanoCorte,
+                    && !PCPConfig.Etiqueta.UsarPlanoCorte,
 
-                AbrirECutter = Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter
+                AbrirECutter = EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.eCutter
                     && impressaoEtiqueta.IdArquivoOtimizacao > 0,
 
                 Cancelar = impressaoEtiqueta.Situacao != (int)Data.Model.ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada
@@ -78,7 +84,7 @@ namespace Glass.API.Backend.Models.ImpressoesEtiquetas.V1.Lista
         /// Obtém ou define o tipo da impressão de etiqueta.
         /// </summary>
         [JsonProperty("tipoImpressao")]
-        public string TipoImpressao { get; set; }
+        public IdNomeDto TipoImpressao { get; set; }
 
         /// <summary>
         /// Obtém ou define a cor da linha da tabela.

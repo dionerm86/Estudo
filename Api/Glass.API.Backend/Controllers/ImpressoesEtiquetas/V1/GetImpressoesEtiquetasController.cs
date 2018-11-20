@@ -21,6 +21,22 @@ namespace Glass.API.Backend.Controllers.ImpressoesEtiquetas.V1
     public partial class ImpressoesEtiquetasController : BaseController
     {
         /// <summary>
+        /// Recupera as configurações usadas pela tela de listagem de impressões de etiqueta.
+        /// </summary>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("configuracoes")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.ImpressoesEtiquetas.V1.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesListaImpressoesEtiquetas()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.ImpressoesEtiquetas.V1.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
         /// Recupera a lista de impressões de etiquetas.
         /// </summary>
         /// <param name="filtro">Os filtros para a busca dos itens.</param>
