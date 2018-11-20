@@ -8,6 +8,7 @@ using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga
@@ -23,23 +24,23 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga
         /// <param name="idCarregamento">O carregamento usado para carregar as ordens de carga.</param>
         /// <returns>Uma lista JSON com os dados das ordens de carga.</returns>
         [HttpGet]
-        [Route("")]
+        [Route("listaCarregamento/{idCarregamento:int}")]
         [SwaggerResponse(200, "Ordens de carga sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Carregamentos.V1.OrdensCarga.Carregamento.ListaDto>))]
         [SwaggerResponse(204, "Ordens de carga não encontradas para o filtro informado.")]
         [SwaggerResponse(206, "Ordens de carga paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Carregamentos.V1.OrdensCarga.Carregamento.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterListaCarregamentos([FromUri] IdDto idCarregamento)
+        public IHttpActionResult ObterListaOrdensCarga(int idCarregamento)
         {
             using (var sessao = new GDATransaction())
             {
-                if (idCarregamento == null || idCarregamento.Id == null)
+                if (idCarregamento == 0)
                 {
                     return this.ErroValidacao("Carregamento não informado.");
                 }
 
-                var carregamentos = OrdemCargaDAO.Instance.ObterOrdensCargaPeloCarregamento(null, idCarregamento.Id.Value);
+                var ordensCarga = OrdemCargaDAO.Instance.ObterOrdensCargaPeloCarregamento(null, idCarregamento);
 
-                return this.Lista(carregamentos);
+                return this.Lista(ordensCarga.Select(o => new Models.Carregamentos.V1.OrdensCarga.Carregamento.ListaDto(o)));
             }
         }
     }

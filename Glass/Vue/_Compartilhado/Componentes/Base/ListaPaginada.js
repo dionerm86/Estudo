@@ -82,6 +82,17 @@ Vue.component('lista-paginada', {
       default: false,
       validator: Mixins.Validacao.validarBooleanOuVazio
     },
+
+    /**
+     * Indica se deve ser exibida a linha com totalizadores dos registros.
+     * @type {?boolean}
+     */
+    exibirTotalizador: {
+      required: false,
+      twoWay: false,
+      default: false,
+      validator: Mixins.Validacao.validarBooleanOuVazio
+    }
   },
 
   data: function () {

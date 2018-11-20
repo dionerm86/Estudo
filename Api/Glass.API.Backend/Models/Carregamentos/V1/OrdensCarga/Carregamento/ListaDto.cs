@@ -21,7 +21,8 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Carregamento
         /// <param name="ordemCarga">A ordem de carga que será retornada.</param>
         public ListaDto(OrdemCarga ordemCarga)
         {
-            this.Id = (int)ordemCarga.IdCarregamento;
+            this.Id = (int)ordemCarga.IdOrdemCarga;
+            this.IdCarregamento = (int)ordemCarga.IdCarregamento;
             this.Loja = ordemCarga.NomeLoja;
             this.TipoOrdemCarga = ordemCarga.TipoOrdemCargaStr;
             this.Peso = new QuantitativoDto
@@ -45,6 +46,13 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Carregamento
             this.QuantidadeVolumes = (decimal)ordemCarga.QtdeVolumes;
             this.Situacao = ordemCarga.SituacaoStr;
         }
+
+        /// <summary>
+        /// Obtém ou define o identificador do carregamento.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idCarregamento")]
+        public int IdCarregamento { get; set; }
 
         /// <summary>
         /// Obtém ou define a loja da ordem de carga.

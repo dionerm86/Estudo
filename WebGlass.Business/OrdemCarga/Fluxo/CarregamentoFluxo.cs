@@ -1322,16 +1322,18 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
         #region Atualiza dados do carregamento
 
-        public void Update(Carregamento carregamento)
+        public void Update(GDASession sessao, Carregamento carregamento)
         {
-            if(Glass.Configuracoes.Geral.BloquearGerarCarregamentoAcimaCapacidadeVeiculo)
+            if (Geral.BloquearGerarCarregamentoAcimaCapacidadeVeiculo)
             {
-                var capacidadeKG = VeiculoDAO.Instance.ObtemCapacidadeKgVeiculo(carregamento.Placa);
+                var capacidadeKG = VeiculoDAO.Instance.ObtemCapacidadeKgVeiculo(sessao, carregamento.Placa);
                 if (carregamento.Peso > capacidadeKG)
-                    throw new Exception("O veiculo do carregamento não pode ser alterado, pois sua capacidade (KG) é menor que o peso do carregamento.");
+                {
+                    throw new InvalidOperationException("O veiculo do carregamento não pode ser alterado, pois sua capacidade (KG) é menor que o peso do carregamento.");
+                }
             }
 
-            CarregamentoDAO.Instance.Update(carregamento);
+            CarregamentoDAO.Instance.Update(sessao, carregamento);
         }
 
         #endregion

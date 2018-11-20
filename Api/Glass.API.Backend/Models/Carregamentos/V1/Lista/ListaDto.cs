@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Genericas.V1;
+using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Model;
 using Newtonsoft.Json;
@@ -25,8 +26,18 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.Lista
         public ListaDto(Carregamento carregamento)
         {
             this.Id = (int)carregamento.IdCarregamento;
-            this.Motorista = carregamento.NomeMotorista;
-            this.Veiculo = carregamento.Veiculo;
+            this.Motorista = new IdNomeDto
+            {
+                Id = (int)carregamento.IdMotorista,
+                Nome = carregamento.NomeMotorista,
+            };
+
+            this.Veiculo = new CodigoNomeDto
+            {
+                Codigo = carregamento.Placa,
+                Nome = carregamento.Veiculo,
+            };
+
             this.DataPrevisaoSaida = carregamento.DataPrevistaSaida;
             this.Loja = carregamento.NomeLoja;
             this.Situacao = carregamento.SituacaoStr;
@@ -37,9 +48,9 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.Lista
 
             this.Permissoes = new PermissoesDto
             {
-                FaturarCarregamento = Configuracoes.PCPConfig.HabilitarFaturamentoCarregamento && carregamento.SituacaoFaturamento != SituacaoFaturamentoEnum.Faturado,
-                ImprimirFaturamento = Configuracoes.PCPConfig.HabilitarFaturamentoCarregamento && carregamento.SituacaoFaturamento == SituacaoFaturamentoEnum.Faturado,
-                VisualizarPendenciasCarregamento = Configuracoes.PCPConfig.HabilitarFaturamentoCarregamento && carregamento.SituacaoFaturamento == SituacaoFaturamentoEnum.FaturadoParcialmente,
+                FaturarCarregamento = PCPConfig.HabilitarFaturamentoCarregamento && carregamento.SituacaoFaturamento != SituacaoFaturamentoEnum.Faturado,
+                ImprimirFaturamento = PCPConfig.HabilitarFaturamentoCarregamento && carregamento.SituacaoFaturamento == SituacaoFaturamentoEnum.Faturado,
+                VisualizarPendenciasCarregamento = PCPConfig.HabilitarFaturamentoCarregamento && carregamento.SituacaoFaturamento == SituacaoFaturamentoEnum.FaturadoParcialmente,
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.Carregamento, carregamento.IdCarregamento, null),
                 LogCancelamento = LogCancelamentoDAO.Instance.TemRegistro(LogCancelamento.TabelaCancelamento.OrdemCarga, carregamento.IdCarregamento),
             };
@@ -50,14 +61,14 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("motorista")]
-        public string Motorista { get; set; }
+        public IdNomeDto Motorista { get; set; }
 
         /// <summary>
         /// Obtém ou define o veículo do carregamento.
         /// </summary>
         [DataMember]
         [JsonProperty("veiculo")]
-        public string Veiculo { get; set; }
+        public CodigoNomeDto Veiculo { get; set; }
 
         /// <summary>
         /// Obtém ou define a data de previsão de saída do carregamento.

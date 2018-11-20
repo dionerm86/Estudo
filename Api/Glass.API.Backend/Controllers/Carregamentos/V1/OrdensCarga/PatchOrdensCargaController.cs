@@ -34,6 +34,8 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga
             {
                 try
                 {
+                    sessao.BeginTransaction();
+
                     var validacao = this.ValidarExistenciaIdOrdemCarga(sessao, id);
 
                     if (validacao != null)
@@ -46,9 +48,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga
                         return this.ErroValidacao("O carregamento é obrigatório.");
                     }
 
-                    sessao.BeginTransaction();
-
-                    WebGlass.Business.OrdemCarga.Fluxo.OrdemCargaFluxo.Instance.RetiraOcCarregamento((uint)idCarregamento.Id.Value, (uint)id);
+                    WebGlass.Business.OrdemCarga.Fluxo.OrdemCargaFluxo.Instance.RetiraOcCarregamento(sessao, (uint)idCarregamento.Id.Value, (uint)id);
 
                     sessao.Commit();
 
