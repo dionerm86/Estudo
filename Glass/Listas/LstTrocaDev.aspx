@@ -1,4 +1,4 @@
-<%@ Page Title="Troca/DevoluÁ„o" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+Ôªø<%@ Page Title="Troca/Devolu√ß√£o" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="LstTrocaDev.aspx.cs" Inherits="Glass.UI.Web.Listas.LstTrocaDev" %>
 
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
@@ -23,7 +23,7 @@
             FindControl("txtNome", "input").value = retorno[1];
         }
 
-        // Carrega dados do produto com base no cÛdigo do produto passado
+        // Carrega dados do produto com base no c√≥digo do produto passado
         function setProduto() {
             var codInterno = FindControl("txtCodProd", "input").value;
 
@@ -95,7 +95,6 @@
             var situacao = FindControl("drpSituacao", "select").value;
             var agruparFunc = FindControl("chkAgruparFunc", "input").checked;
             var agruparFuncionarioAssociadoCliente = FindControl("chkAgruparFuncionarioAssociadoCliente", "input").checked;
-            var agruparDepto = FindControl("chkAgruparDepto", "input").checked;
             var idCli = FindControl("txtNumCli", "input").value;
             var nomeCli = FindControl("txtNome", "input").value;
             var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
@@ -116,7 +115,7 @@
 
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ControlePerdasExternas&idTrocaDevolucao=" + idTrocaDevolucao +
                 "&idPedido=" + idPedido + "&tipo=" + tipo + "&situacao=" + situacao + "&agruparFunc=" + agruparFunc +
-                "&agruparDepto=" + agruparDepto + "&idCli=" + idCli + "&nomeCli=" + nomeCli + "&dataIni=" + dataIni + "&dataFim=" + dataFim +
+                "&idCli=" + idCli + "&nomeCli=" + nomeCli + "&dataIni=" + dataIni + "&dataFim=" + dataFim +
                 "&idsFunc=" + idsFuncionario + "&idsFuncionarioAssociadoCliente=" + idsFuncionarioAssociadoCliente + "&idProduto=" + idProduto +
                 "&alturaMin=" + alturaMin + "&alturaMax=" + alturaMax + "&agruparFuncionarioAssociadoCliente=" + agruparFuncionarioAssociadoCliente +
                 "&larguraMin=" + larguraMin + "&larguraMax=" + larguraMax + "&idOrigemTrocaDevolucao=" + idOrigemTrocaDevolucao +
@@ -136,7 +135,7 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:Label ID="Label1" runat="server" ForeColor="#0066FF" Text="CÛdigo"></asp:Label>
+                            <asp:Label ID="Label1" runat="server" ForeColor="#0066FF" Text="C√≥digo"></asp:Label>
                         </td>
                         <td>
                             <asp:TextBox ID="txtCodigo" runat="server" Width="60px" onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
@@ -161,7 +160,7 @@
                             <asp:DropDownList ID="drpTipo" runat="server">
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
                                 <asp:ListItem Value="1">Troca</asp:ListItem>
-                                <asp:ListItem Value="2">DevoluÁ„o</asp:ListItem>
+                                <asp:ListItem Value="2">Devolu√ß√£o</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
@@ -169,7 +168,7 @@
                                 OnClick="imgPesq_Click" />
                         </td>
                         <td>
-                            <asp:Label ID="Label4" runat="server" ForeColor="#0066FF" Text="SituaÁ„o"></asp:Label>
+                            <asp:Label ID="Label4" runat="server" ForeColor="#0066FF" Text="Situa√ß√£o"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpSituacao" runat="server">
@@ -212,7 +211,7 @@
                                 OnClientClick="getCli(FindControl('txtNumCli', 'input'));" OnClick="imgPesq_Click" />
                         </td>
                         <td>
-                            <asp:Label ID="Label6" runat="server" Text="PerÌodo" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label6" runat="server" Text="Per√≠odo" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <uc1:ctrlData ID="ctrlDataIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
@@ -241,7 +240,7 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:Label ID="Label8" runat="server" Text="CÛd. Produto" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label8" runat="server" Text="C√≥d. Produto" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:TextBox ID="txtCodProd" runat="server" Width="60px" onblur="setProduto();" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
@@ -251,7 +250,7 @@
                                 OnClick="imgPesq_Click" />
                         </td>
                         <td>
-                            <asp:Label ID="Label7" runat="server" Text="Funcion·rio" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label7" runat="server" Text="Funcion√°rio" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <sync:CheckBoxListDropDown ID="cblVendedor" runat="server" DataSourceID="odsVendedor" DataTextField="Nome"
@@ -264,7 +263,7 @@
                                 OnClick="imgPesq_Click" />
                         </td>
                         <td>
-                            <asp:Label ID="Label10" runat="server" Text="Funcion·rio Assoc. Cli." ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label10" runat="server" Text="Funcion√°rio Assoc. Cli." ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <sync:CheckBoxListDropDown ID="cblVendedorAssociadoCliente" runat="server"
@@ -278,7 +277,7 @@
                                 OnClick="imgPesq_Click" />
                         </td>
                         <td>
-                            <asp:Label ID="Label9" runat="server" Text="Origem Troca/DevoluÁ„o" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label9" runat="server" Text="Origem Troca/Devolu√ß√£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="ddlOrigem" runat="server" DataSourceID="odsOrigem" DataTextField="Descricao"
@@ -301,13 +300,13 @@
                             Altura
                         </td>
                         <td>
-                            mÌn.:
+                            m√≠n.:
                         </td>
                         <td>
                             <asp:TextBox ID="txtAlturaMin" runat="server" Width="50px" onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
                         </td>
                         <td>
-                            m·x.:
+                            m√°x.:
                         </td>
                         <td>
                             <asp:TextBox ID="txtAlturaMax" runat="server" Width="50px" onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
@@ -316,13 +315,13 @@
                             Largura
                         </td>
                         <td>
-                            mÌn.:
+                            m√≠n.:
                         </td>
                         <td>
                             <asp:TextBox ID="txtLarguraMin" runat="server" Width="50px" onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
                         </td>
                         <td>
-                            m·x.:
+                            m√°x.:
                         </td>
                         <td>
                             <asp:TextBox ID="txtLarguraMax" runat="server" Width="50px" onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
@@ -385,14 +384,11 @@
                     <tr>
                         <td nowrap="nowrap">
                             <asp:CheckBox ID="chkAgruparFunc" runat="server" AutoPostBack="true"
-                                Text="Agrupar relatÛrio por funcion·rio" />
+                                Text="Agrupar relat√≥rio por funcion√°rio" />
                         </td>
                         <td nowrap="nowrap">
                             <asp:CheckBox ID="chkAgruparFuncionarioAssociadoCliente" runat="server" AutoPostBack="true"
-                                Text="Agrupar relatÛrio por funcion·rio associado ao cliente" />
-                        </td>
-                        <td nowrap="nowrap">
-                            <asp:CheckBox ID="chkAgruparDepto" runat="server" Text="Agrupar relatÛrio de perdas por departamento" />
+                                Text="Agrupar relat√≥rio por funcion√°rio associado ao cliente" />
                         </td>
                     </tr>
                 </table>
@@ -405,14 +401,14 @@
         </tr>
         <tr>
             <td align="center">
-                <asp:LinkButton ID="lkbInserir" runat="server" OnClick="lkbInserir_Click">Inserir troca/devoluÁ„o</asp:LinkButton>
+                <asp:LinkButton ID="lkbInserir" runat="server" OnClick="lkbInserir_Click">Inserir troca/devolu√ß√£o</asp:LinkButton>
             </td>
         </tr>
         <tr>
             <td align="center">
                 <asp:GridView GridLines="None" ID="grdTroca" runat="server" AllowPaging="True" AllowSorting="True"
                     AutoGenerateColumns="False" DataKeyNames="IdTrocaDevolucao" DataSourceID="odsTroca"
-                    EmptyDataText="N„o h· trocas cadastradas." CssClass="gridStyle" PagerStyle-CssClass="pgr"
+                    EmptyDataText="N√£o h√° trocas cadastradas." CssClass="gridStyle" PagerStyle-CssClass="pgr"
                     AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit">
                     <Columns>
                         <asp:TemplateField>
@@ -430,7 +426,7 @@
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
-                        <asp:BoundField DataField="IdTrocaDevolucao" HeaderText="CÛd." SortExpression="IdTrocaDevolucao" />
+                        <asp:BoundField DataField="IdTrocaDevolucao" HeaderText="C√≥d." SortExpression="IdTrocaDevolucao" />
                         <asp:BoundField DataField="IdPedido" HeaderText="Pedido" SortExpression="IdPedido" />
                         <asp:BoundField DataField="NomeFunc" HeaderText="Func. Solic." SortExpression="NomeFunc" />
                         <asp:BoundField DataField="IdNomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
@@ -440,7 +436,7 @@
                         <asp:BoundField DataField="DataErro" DataFormatString="{0:d}" HeaderText="Data Erro"
                             SortExpression="DataErro" />
                         <asp:BoundField DataField="Loja" HeaderText="Loja" SortExpression="Loja" />
-                        <asp:TemplateField HeaderText="CrÈdito Gerado" SortExpression="CreditoGerado">
+                        <asp:TemplateField HeaderText="Cr√©dito Gerado" SortExpression="CreditoGerado">
                             <ItemTemplate>
                                 <asp:Label ID="Label1" runat="server" ForeColor="Green" Text='<%# Bind("CreditoGerado", "{0:c}") %>'
                                     Visible='<%# float.Parse(Eval("CreditoGerado").ToString()) > 0 %>'></asp:Label>
@@ -458,7 +454,7 @@
                                 <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("ValorExcedente") %>'></asp:TextBox>
                             </EditItemTemplate>
                         </asp:TemplateField>
-                        <asp:BoundField DataField="DescrSituacao" HeaderText="SituaÁ„o" SortExpression="DescrSituacao" />
+                        <asp:BoundField DataField="DescrSituacao" HeaderText="Situa√ß√£o" SortExpression="DescrSituacao" />
                         <asp:BoundField DataField="DescrOrigemTrocaDevolucao" HeaderText="Origem" SortExpression="DescrOrigemTrocaDevolucao" />
                         <asp:BoundField DataField="Setor" HeaderText="Setor" SortExpression="Setor" />
                         <asp:TemplateField HeaderText="Obs" SortExpression="Descricao">

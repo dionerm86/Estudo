@@ -5826,22 +5826,28 @@ namespace Glass.Data.DAL
             var modelo = NotaFiscalDAO.Instance.ObterModelo(null, idNf);
 
             // Tenta encontrar primeiro usando o idNf, caso não encontre (não tenha feito separação), tenta pelo número da nota fiscal
-            var ids = ExecuteMultipleScalar<uint>(String.Format(@"
-                select cr.idContaR
-                from contas_receber cr
-                where idNf={0} and cr.dataCad<>Coalesce(cr.dataRec, now())", idNf));
+            var ids = ExecuteMultipleScalar<uint>($@"
+                SELECT cr.idContaR
+                FROM contas_receber cr
+                WHERE idNf = {idNf} AND cr.dataCad <> COALESCE(cr.dataRec, now())");
 
             if (ids.Count > 0)
+            {
                 return ids;
+            }
+
+            var campo = string.Empty;
+            var sqlNf = SqlBuscarNF("cr", true, numeroNfe, true, true, true, (int)idLoja, modelo, out campo);
 
             // A condição "cr.dataCad<>cr.dataRec" foi criada para que contas de crédito não apareçam para gerar boleto
-            string campo, sql = @"
-                select cr.idContaR
-                from contas_receber cr
-                    inner join (
-                        " + SqlBuscarNF("cr", true, numeroNfe, true, true, true, (int)idLoja, modelo, out campo) + @"
-                    ) as nf on (cr." + campo + "=nf." + campo + @")
-                where CONCAT(', ', numeroNFe, ',') like '%, " + numeroNfe + ",%' and cr.dataCad<>Coalesce(cr.dataRec, now())";
+            var sql = $@"
+                SELECT cr.idContaR
+                FROM contas_receber cr
+                    INNER JOIN (
+                        {sqlNf}
+                    ) AS nf ON (cr.{campo} = nf.{campo})
+                WHERE CONCAT(', ', numeroNFe, ',') LIKE '%, {numeroNfe},%' AND cr.dataCad <> COALESCE(cr.dataRec, now())
+                    AND (cr.recebimentoParcial IS NULL OR cr.recebimentoParcial = FALSE);";
 
             return ExecuteMultipleScalar<uint>(sql);
         }
@@ -6066,9 +6072,10 @@ namespace Glass.Data.DAL
                 if (!String.IsNullOrEmpty(sql))
                     sql += " union ";
 
-                string situacaoPedido = ((itensBuscar.Contains("3") && FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite ? (int)Pedido.SituacaoPedido.Conferido + "," : "") +
+                string situacaoPedido = ((itensBuscar.Contains("3") && FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite
+                    ? (int)Pedido.SituacaoPedido.Conferido + "," + (int)Pedido.SituacaoPedido.LiberadoParcialmente + "," : string.Empty) +
                     (itensBuscar.Contains("2") && FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoAtivoLimite ? (int)Pedido.SituacaoPedido.Ativo + "," +
-                    (int)Pedido.SituacaoPedido.AtivoConferencia : "")).Trim(',');
+                    (int)Pedido.SituacaoPedido.AtivoConferencia : string.Empty)).Trim(',');
 
                 if (String.IsNullOrEmpty(situacaoPedido))
                     situacaoPedido = "0";

@@ -191,7 +191,6 @@
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.CorAluminio.datasource" />
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.CorFerragem.datasource" />
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.CorVidro.datasource" />
-    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Departamento.datasource" />
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.DescontoAcrescimoCliente.datasource" />
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.EtiquetaAplicacao.datasource" />
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.EtiquetaProcesso.datasource" />
@@ -202,7 +201,9 @@
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Fornecedor.datasource" />
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FornecedorDetalhes.datasource" />
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FornecedorPesquisa.datasource" />
-    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FuncDepartamento.datasource" />
+    <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FuncDepartamento.datasource">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.Funcionario.datasource" />
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FuncionarioPesquisa.datasource" />
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.GeneroProduto.datasource" />

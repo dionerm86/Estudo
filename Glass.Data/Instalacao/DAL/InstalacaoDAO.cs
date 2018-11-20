@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Linq;
 using GDA;
@@ -14,17 +14,17 @@ namespace Glass.Data.DAL
 
         private const string SEPARADOR_EQUIPES = " - ";
 
-        #region Vari·veis locais
+        #region Vari√°veis locais
 
         private static readonly object _instalacaoLock = new object();
 
         #endregion
 
-        #region Busca InstalaÁıes
+        #region Busca Instala√ß√µes
 
         private void PreencheValorInstalado(ref Instalacao[] lstInst)
         {
-            // Calcula o valor instalado somente se for exibir o relatÛrio
+            // Calcula o valor instalado somente se for exibir o relat√≥rio
             string sqlValorProd = @"select sum(((pp.total+coalesce(pp.valorBenef,0){0})/pp.qtde*if(?emAndamento, 
                     pp.qtde - coalesce(pi.qtdeInstalada, 0), pi.qtdeInstalada)))
                 from produtos_instalacao pi 
@@ -110,7 +110,7 @@ namespace Glass.Data.DAL
             if(idOrcamento > 0)
             {
                 sql += " AND p1.idOrcamento=" + idOrcamento;
-                criterio += "OrÁamento: " + idOrcamento + "    ";
+                criterio += "Or√ßamento: " + idOrcamento + "    ";
             }
 
             if (idEquipe > 0)
@@ -129,7 +129,7 @@ namespace Glass.Data.DAL
             }
 
                 sql += string.Format(" AND i.TipoInstalacao IN ({0})", tiposInstalacao);
-                criterio += string.Format("Tipo(s) ColocaÁ„o: {0}    ", string.Join(", ", descricaoTiposInstalacao.ToArray()));
+                criterio += string.Format("Tipo(s) Coloca√ß√£o: {0}    ", string.Join(", ", descricaoTiposInstalacao.ToArray()));
             }
 
             if (!string.IsNullOrEmpty(situacoes) && situacoes != "0")
@@ -142,7 +142,7 @@ namespace Glass.Data.DAL
             }
 
                 sql += string.Format(" AND i.Situacao IN ({0})", situacoes);
-                criterio += string.Format("SituaÁ„o(ıes): {0}    ", string.Join(", ", descricaoSituacoes.ToArray()));
+                criterio += string.Format("Situa√ß√£o(√µes): {0}    ", string.Join(", ", descricaoSituacoes.ToArray()));
             }
 
             if (!String.IsNullOrEmpty(idsCliente))
@@ -157,18 +157,18 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(dataIni))
             {
-                // Se tiver filtro por situaÁ„o finalizada, busca o periodo que foi finalizada
+                // Se tiver filtro por situa√ß√£o finalizada, busca o periodo que foi finalizada
                 if (!(string.IsNullOrEmpty(situacoes)) && situacoes.Contains("3"))
                     sql += " And i.DataFinal>=?dataIni";
                 else
                     sql += " And i.DataInstalacao>=?dataIni";
 
-                criterio += "Data InÌcio: " + dataIni + "    ";
+                criterio += "Data In√≠cio: " + dataIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataFim)) 
             {
-                // Se tiver filtro por situaÁ„o finalizada, busca o periodo que foi finalizada
+                // Se tiver filtro por situa√ß√£o finalizada, busca o periodo que foi finalizada
                 if (!(string.IsNullOrEmpty(situacoes)) && situacoes.Contains("3"))
                     sql += " And i.DataFinal<=?dataFim";
                 else
@@ -180,7 +180,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataIniEnt))
             {
                 sql += " And i.DataEntrega>=?dataIniEnt";
-                criterio += "Data InÌcio Entrega: " + dataIniEnt + "    ";
+                criterio += "Data In√≠cio Entrega: " + dataIniEnt + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataFimEnt))
@@ -192,13 +192,13 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataIniOrdemInst))
             {
                 sql += " And i.DataOrdemInstalacao>=?dataIniOrdemInst";
-                criterio += "Data InÌcio Ordem InstalaÁ„o: " + dataIniOrdemInst + "    ";
+                criterio += "Data In√≠cio Ordem Instala√ß√£o: " + dataIniOrdemInst + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataFimOrdemInst))
             {
                 sql += " And i.DataOrdemInstalacao<=?dataFimOrdemInst";
-                criterio += "Data Fim Ordem InstalaÁ„o: " + dataFimOrdemInst + "    ";
+                criterio += "Data Fim Ordem Instala√ß√£o: " + dataFimOrdemInst + "    ";
             }
 
             if (idLoja > 0)
@@ -216,7 +216,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(observacao))
             {
                 sql += " And i.obs like '%" + observacao + "%'";
-                criterio += "ObservaÁ„o: " + observacao + "    ";
+                criterio += "Observa√ß√£o: " + observacao + "    ";
             }
 
             var  login = UserInfo.GetUserInfo;
@@ -246,7 +246,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca instalaÁıes que pertencem ‡ uma Ordem de InstalaÁ„o
+        /// Busca instala√ß√µes que pertencem √† uma Ordem de Instala√ß√£o
         /// </summary>
         /// <param name="idOrdemInst"></param>
         /// <returns></returns>
@@ -337,7 +337,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca InstalaÁıes abertas e canceladas para serem adicionadas
+        #region Busca Instala√ß√µes abertas e canceladas para serem adicionadas
 
         private string SqlAbertas(uint idCli, uint idPedido, string nomeCli, string dataIniConf, string dataFimConf, uint idLoja, bool selecionar)
         {
@@ -350,8 +350,7 @@ namespace Glass.Data.DAL
                 "Left Join pedido p On (i.idPedido=p.idPedido) " +
                 "Left Join loja l On (p.idLoja=l.idLoja) " +
                 "Left Join cliente c On (p.idCli=c.id_Cli) Where (i.Situacao=" + (int)Instalacao.SituacaoInst.Aberta + " Or i.Situacao=" + 
-                    (int)Instalacao.SituacaoInst.Cancelada + " Or i.Situacao=" + (int)Instalacao.SituacaoInst.Agendar + " Or i.Situacao=" +
-                    (int)Instalacao.SituacaoInst.Colagem + " Or i.Situacao=" + (int)Instalacao.SituacaoInst.DeptoTecnico + ")";
+                    (int)Instalacao.SituacaoInst.Cancelada + " Or i.Situacao=" + (int)Instalacao.SituacaoInst.Agendar + " Or i.Situacao=" + ")";
 
             if (idCli > 0)
                 sql += " And p.idCli=" + idCli;
@@ -383,8 +382,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MÈtodo utilizado ao buscar InstalaÁ„o diretamente pelo idPedido, nas telas Nova Ordem de InstalaÁ„o
-        /// e Retificar Ordem de InstalaÁ„o
+        /// M√©todo utilizado ao buscar Instala√ß√£o diretamente pelo idPedido, nas telas Nova Ordem de Instala√ß√£o
+        /// e Retificar Ordem de Instala√ß√£o
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -409,7 +408,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca InstalaÁıes em andamento para serem finalizadas
+        #region Busca Instala√ß√µes em andamento para serem finalizadas
 
         private string SqlEmAndamento(uint idPedido, uint idOrdemInstalacao, uint idEquipe, string dataIni, string dataFim,
             bool confirmadasPda, uint idCliente, string nomeCliente, bool selecionar)
@@ -488,10 +487,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca instalaÁ„o comum para ser liberada e utilizada por equipes temperado
+        #region Busca instala√ß√£o comum para ser liberada e utilizada por equipes temperado
 
         /// <summary>
-        /// Busca instalaÁ„o comum que possa ser liberada para ser instalada por equipes temperado
+        /// Busca instala√ß√£o comum que possa ser liberada para ser instalada por equipes temperado
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -513,28 +512,28 @@ namespace Glass.Data.DAL
             List<Instalacao> lstInst = objPersistence.LoadData(sql);
 
             if (lstInst.Count == 0)
-                throw new Exception("Nenhuma InstalaÁ„o Comum encontrada para o pedido passado.");
+                throw new Exception("Nenhuma Instala√ß√£o Comum encontrada para o pedido passado.");
 
             if (lstInst[0].Situacao != 1 && lstInst[0].Situacao != 4)
-                throw new Exception("Apenas instalaÁıes comum abertas e canceladas podem ser liberadas para equipes de instalaÁ„o temperado.");
+                throw new Exception("Apenas instala√ß√µes comum abertas e canceladas podem ser liberadas para equipes de instala√ß√£o temperado.");
 
             return lstInst[0];
         }
 
         #endregion
 
-        #region Libera instalaÁ„o para ser executada por equipes de temperado
+        #region Libera instala√ß√£o para ser executada por equipes de temperado
 
         /// <summary>
-        /// Libera a instalaÁ„o para ser executada por equipes de temperado
+        /// Libera a instala√ß√£o para ser executada por equipes de temperado
         /// </summary>
         /// <param name="idInstalacao"></param>
         public void LiberaInstalacao(uint idInstalacao)
         {
-            // Verifica se instalaÁ„o j· foi liberada
+            // Verifica se instala√ß√£o j√° foi liberada
             string sqlVerify = "Select Count(*) From instalacao Where LiberarTemperado=1 And idInstalacao=" + idInstalacao;
             if (objPersistence.ExecuteSqlQueryCount(sqlVerify) == 1)
-                throw new Exception("Esta instalaÁ„o j· foi liberada.");
+                throw new Exception("Esta instala√ß√£o j√° foi liberada.");
 
             string sql = "Update instalacao Set LiberarTemperado=1 Where idInstalacao=" + idInstalacao;
 
@@ -543,10 +542,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca instalaÁıes que o pedido passado possa ter gerado
+        #region Busca instala√ß√µes que o pedido passado possa ter gerado
 
         /// <summary>
-        /// Busca instalaÁıes que o pedido passado possa ter gerado
+        /// Busca instala√ß√µes que o pedido passado possa ter gerado
         /// </summary>
         public IList<Instalacao> GetByPedido(uint idPedido)
         {
@@ -554,7 +553,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca instalaÁıes que o pedido passado possa ter gerado
+        /// Busca instala√ß√µes que o pedido passado possa ter gerado
         /// </summary>
         public IList<Instalacao> GetByPedido(GDASession session, uint idPedido)
         {
@@ -574,10 +573,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se a Ordem de InstalaÁ„o existe
+        #region Verifica se a Ordem de Instala√ß√£o existe
 
         /// <summary>
-        /// Verifica se a Ordem de InstalaÁ„o existe
+        /// Verifica se a Ordem de Instala√ß√£o existe
         /// </summary>
         /// <param name="idOrdemInst"></param>
         public bool OrdemInstExists(uint idOrdemInst)
@@ -589,26 +588,26 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Insere uma nova instalaÁ„o
+        #region Insere uma nova instala√ß√£o
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Insere uma nova instalaÁ„o
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Insere uma nova instala√ß√£o
         /// </summary>
         /// <param name="idPedido"></param>
         /// <param name="tipoInstalacao">Verificar propriedade TipoInstalacao na model</param>
-        /// <param name="ignorarConfig">A instalaÁ„o deve ser gerada, mesmo automaticamente (ignorando o PedidoConfig.Instalacao.GerarInstalacaoAutomaticamente)?</param>
+        /// <param name="ignorarConfig">A instala√ß√£o deve ser gerada, mesmo automaticamente (ignorando o PedidoConfig.Instalacao.GerarInstalacaoAutomaticamente)?</param>
         public uint NovaInstalacao(uint idPedido, DateTime dataEntrega, int tipoInstalacao, bool ignorarConfig)
         {
             return NovaInstalacao(null, idPedido, dataEntrega, tipoInstalacao, ignorarConfig);
         }
 
         /// <summary>
-        /// Insere uma nova instalaÁ„o
+        /// Insere uma nova instala√ß√£o
         /// </summary>
         /// <param name="idPedido"></param>
         /// <param name="tipoInstalacao">Verificar propriedade TipoInstalacao na model</param>
-        /// <param name="ignorarConfig">A instalaÁ„o deve ser gerada, mesmo automaticamente (ignorando o PedidoConfig.Instalacao.GerarInstalacaoAutomaticamente)?</param>
+        /// <param name="ignorarConfig">A instala√ß√£o deve ser gerada, mesmo automaticamente (ignorando o PedidoConfig.Instalacao.GerarInstalacaoAutomaticamente)?</param>
         public uint NovaInstalacao(GDASession sessao, uint idPedido, DateTime dataEntrega, int tipoInstalacao, bool ignorarConfig)
         {
             if (!PedidoConfig.Instalacao.GerarInstalacaoAutomaticamente && !ignorarConfig)
@@ -626,10 +625,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Nova Ordem de InstalaÁ„o
+        #region Nova Ordem de Instala√ß√£o
 
         /// <summary>
-        /// Cria uma nova Ordem de InstalaÁ„o
+        /// Cria uma nova Ordem de Instala√ß√£o
         /// </summary>
         /// <param name="idsInstalacao"></param>
         /// <param name="dataInstalacao"></param>
@@ -645,23 +644,23 @@ namespace Glass.Data.DAL
                     LoginUsuario login = UserInfo.GetUserInfo;
 
                     if (!Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoComum) && !Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoTemperado))
-                        throw new Exception("VocÍ n„o tem permiss„o para criar ordens de instalaÁ„o.");
+                        throw new Exception("Voc√™ n√£o tem permiss√£o para criar ordens de instala√ß√£o.");
 
                     if (PedidoConfig.Instalacao.UsarAmbienteInstalacao && String.IsNullOrEmpty(idsProdutos))
-                        throw new Exception("Selecione os produtos antes de gerar a ordem de instalaÁ„o.");
+                        throw new Exception("Selecione os produtos antes de gerar a ordem de instala√ß√£o.");
 
-                    // Altera o tipo das instalaÁıes para o tipo selecionado
+                    // Altera o tipo das instala√ß√µes para o tipo selecionado
                     if (tipoInstalacao > 0)
                         objPersistence.ExecuteCommand(transaction, "Update instalacao Set tipoInstalacao=" + tipoInstalacao + " Where idInstalacao In (" + idsInstalacao.TrimEnd(',') + ")");
 
-                    // Verifica se h· alguma instalaÁ„o temperada
+                    // Verifica se h√° alguma instala√ß√£o temperada
                     string sqlInstalacaoTemperada = "select count(*) from instalacao where tipoInstalacao=2 and idInstalacao in (" + idsInstalacao.TrimEnd(',') + ")";
                     if (objPersistence.ExecuteSqlQueryCount(transaction, sqlInstalacaoTemperada) > 0)
                         foreach (string e in idsEquipes.Split(','))
                             if (EquipeDAO.Instance.ObtemValorCampo<int>(transaction, "tipo", "idEquipe=" + e) == 1)
-                                throw new Exception("Apenas equipes do tipo 'ColocaÁ„o Temperado' podem fazer instalaÁıes de colocaÁ„o temperada.");
+                                throw new Exception("Apenas equipes do tipo 'Coloca√ß√£o Temperado' podem fazer instala√ß√µes de coloca√ß√£o temperada.");
 
-                    // ObtÈm um novo idOrdemInstalacao
+                    // Obt√©m um novo idOrdemInstalacao
                     string sqlNovoIdOrdemInst = "Select Coalesce(Max(idOrdemInstalacao)+1, 1) From instalacao";
                     uint novoIdOrdemInstalacao = Glass.Conversoes.StrParaUint(objPersistence.ExecuteScalar(transaction, sqlNovoIdOrdemInst, null).ToString());
 
@@ -684,10 +683,10 @@ namespace Glass.Data.DAL
                             EquipeInstalacaoDAO.Instance.Insert(transaction, ei);
                         }
 
-                    // Apaga os produtos de uma instalaÁ„o
+                    // Apaga os produtos de uma instala√ß√£o
                     ProdutosInstalacaoDAO.Instance.DeleteByInstalacoes(transaction, idsInstalacao.TrimEnd(','));
 
-                    // Recupera todos os ambientes, se a empresa n„o trabalhar com ambiente na instalaÁ„o
+                    // Recupera todos os ambientes, se a empresa n√£o trabalhar com ambiente na instala√ß√£o
                     if (!PedidoConfig.Instalacao.UsarAmbienteInstalacao)
                     {
                         idsProdutos = "";
@@ -701,7 +700,7 @@ namespace Glass.Data.DAL
                         }
                     }
 
-                    // Cadastra os produtos para a instalaÁ„o
+                    // Cadastra os produtos para a instala√ß√£o
                     string[] dados = idsProdutos.TrimEnd('|').Split('|');
                     foreach (string s in dados)
                     {
@@ -747,17 +746,17 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retificar Ordem de InstalaÁ„o
+        #region Retificar Ordem de Instala√ß√£o
 
         public void RetificarOrdemInst(uint idOrdemInst, string idsInstalacao, string idsEquipes, DateTime dataInstalacao, string obs)
         {
-            // Retira as InstalaÁıes da Ordem de InstalaÁ„o que est· sendo retificada
+            // Retira as Instala√ß√µes da Ordem de Instala√ß√£o que est√° sendo retificada
             objPersistence.ExecuteCommand("Update instalacao set situacao=" + (int)Instalacao.SituacaoInst.Aberta + ", idOrdemInstalacao=null," +
                 " DataInstalacao=null, UsuFinal=null, DataFinal=null, dataOrdemInstalacao=null Where situacao<>" + (int)Instalacao.SituacaoInst.Finalizada + 
                 " And idOrdemInstalacao=" + idOrdemInst + "; delete from equipe_instalacao where idOrdemInstalacao=" + idOrdemInst, null);
 
-            // Coloca InstalaÁıes na Ordem de InstalaÁ„o que est· sendo retificada
-            // Retira as InstalaÁıes da Ordem de InstalaÁ„o que est· sendo retificada
+            // Coloca Instala√ß√µes na Ordem de Instala√ß√£o que est√° sendo retificada
+            // Retira as Instala√ß√µes da Ordem de Instala√ß√£o que est√° sendo retificada
             objPersistence.ExecuteCommand("Update instalacao set situacao=" + (int)Instalacao.SituacaoInst.EmAndamento + ", idOrdemInstalacao=" + idOrdemInst +
                 ", DataInstalacao=?dataInst, dataOrdemInstalacao=now(), obs=?obs Where idInstalacao In (" + idsInstalacao.TrimEnd(',') + ")",
                 new GDAParameter("?dataInst", dataInstalacao), new GDAParameter("?obs", obs));
@@ -779,10 +778,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Cancelar InstalaÁ„o
+        #region Cancelar Instala√ß√£o
 
         /// <summary>
-        /// Cancela a instalaÁ„o
+        /// Cancela a instala√ß√£o
         /// </summary>
         public void Cancelar(uint idInstalacao)
         {
@@ -790,7 +789,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cancela a instalaÁ„o
+        /// Cancela a instala√ß√£o
         /// </summary>
         public void Cancelar(GDASession session, uint idInstalacao)
         {
@@ -802,18 +801,18 @@ namespace Glass.Data.DAL
 
                 objPersistence.ExecuteCommand(session, sql);
 
-            	// Atualiza a situaÁ„o da produÁ„o do pedido
+            	// Atualiza a situa√ß√£o da produ√ß√£o do pedido
             	PedidoDAO.Instance.AtualizaSituacaoProducao(session, ObtemIdPedido(session, idInstalacao), null, DateTime.Now);
 
-            	LogCancelamentoDAO.Instance.LogInstalacao(session, GetElementByPrimaryKey(session, idInstalacao), "Cancelamento de instalaÁ„o", true);
+            	LogCancelamentoDAO.Instance.LogInstalacao(session, GetElementByPrimaryKey(session, idInstalacao), "Cancelamento de instala√ß√£o", true);
 
-            	// Atualiza a situaÁ„o da produÁ„o do pedido
+            	// Atualiza a situa√ß√£o da produ√ß√£o do pedido
             	PedidoDAO.Instance.AtualizaSituacaoProducao(session, ObtemIdPedido(session, idInstalacao), null, DateTime.Now);
 			}
         }
 
         /// <summary>
-        /// Cancela instalaÁ„o informando observaÁ„o
+        /// Cancela instala√ß√£o informando observa√ß√£o
         /// </summary>
         /// <param name="idInstalacao"></param>
         /// <param name="obs"></param>
@@ -825,11 +824,11 @@ namespace Glass.Data.DAL
 
                 if (!Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoComum) &&
                     !Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoTemperado))
-                    throw new Exception("VocÍ n„o tem permiss„o para cancelar instalaÁıes.");
+                    throw new Exception("Voc√™ n√£o tem permiss√£o para cancelar instala√ß√µes.");
 
                 try
                 {
-                    // Altera situaÁ„o da instalaÁ„o para continuada
+                    // Altera situa√ß√£o da instala√ß√£o para continuada
                     objPersistence.ExecuteCommand("Update instalacao Set situacao=" + (int)Instalacao.SituacaoInst.Cancelada +
                         ", obs=?obs Where idInstalacao=" + idInstalacao, new GDAParameter[] { new GDAParameter("?obs", obs) });
                 }
@@ -840,7 +839,7 @@ namespace Glass.Data.DAL
 
                 PedidoDAO.Instance.AtualizaSituacaoProducao(null, ObtemIdPedido(idInstalacao), null, DateTime.Now);
 
-                LogCancelamentoDAO.Instance.LogInstalacao(GetElementByPrimaryKey(idInstalacao), "Cancelamento de instalaÁ„o", true);
+                LogCancelamentoDAO.Instance.LogInstalacao(GetElementByPrimaryKey(idInstalacao), "Cancelamento de instala√ß√£o", true);
             }
         }
 
@@ -857,7 +856,7 @@ namespace Glass.Data.DAL
 
 
         /// <summary>
-        /// Cancela instalaÁ„o que j· foi finalizada informando observaÁ„o
+        /// Cancela instala√ß√£o que j√° foi finalizada informando observa√ß√£o
         /// </summary>
         /// <param name="idInstalacao"></param>
         /// <param name="obs"></param>
@@ -869,14 +868,14 @@ namespace Glass.Data.DAL
 
                 if (!Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoComum) &&
                     !Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoTemperado))
-                    throw new Exception("VocÍ n„o tem permiss„o para cancelar instalaÁıes.");
+                    throw new Exception("Voc√™ n√£o tem permiss√£o para cancelar instala√ß√µes.");
 
                 try
                 {
                     //Registra log de cancelamento
                     LogCancelamentoDAO.Instance.LogFinalizacaoInstalacao(InstalacaoDAO.Instance.GetElement(idInstalacao), obs, true);
 
-                    // Altera situaÁ„o da instalaÁ„o para cencelada
+                    // Altera situa√ß√£o da instala√ß√£o para cencelada
                     objPersistence.ExecuteCommand("Update instalacao Set situacao=" + (int)Instalacao.SituacaoInst.Cancelada +
                         ", obs=?obs, usuFinal=Null, dataFinal=Null Where idInstalacao=" + idInstalacao, new GDAParameter[] { new GDAParameter("?obs", obs) });
                     objPersistence.ExecuteCommand("Delete From produtos_instalacao Where idInstalacao=" + idInstalacao);
@@ -893,10 +892,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Continuar/Finalizar InstalaÁ„o
+        #region Continuar/Finalizar Instala√ß√£o
 
         /// <summary>
-        /// Continua/Finaliza a instalaÁ„o passada.
+        /// Continua/Finaliza a instala√ß√£o passada.
         /// </summary>
         public void ContinuarFinalizar(int idInstalacao, List<ProdutosInstalacao> lstProdInst, string obs)
         {
@@ -924,7 +923,7 @@ namespace Glass.Data.DAL
                     {
                         transaction.Rollback();
                         transaction.Close();
-                        ErroDAO.Instance.InserirFromException(string.Format("Finalizar/Continuar - InstalaÁ„o: {0}", idInstalacao), ex);
+                        ErroDAO.Instance.InserirFromException(string.Format("Finalizar/Continuar - Instala√ß√£o: {0}", idInstalacao), ex);
                         throw;
                     }
                 }
@@ -934,7 +933,7 @@ namespace Glass.Data.DAL
         #region Finalizar
 
         /// <summary>
-        /// Continua a instalaÁ„o passada.
+        /// Continua a instala√ß√£o passada.
         /// </summary>
         public void FinalizarComTransacao(int idInstalacao)
         {
@@ -945,13 +944,13 @@ namespace Glass.Data.DAL
                     try
                     {
                         transaction.BeginTransaction();
-                        // Busca os produtos com as quantidades j· instaladas
+                        // Busca os produtos com as quantidades j√° instaladas
                         var lstProdPed = ProdutosPedidoDAO.Instance.GetListInst(transaction, (uint)idInstalacao);
 
                         var lstProdInst = new List<ProdutosInstalacao>();
                         ProdutosInstalacao prodInst;
 
-                        // Adiciona produto ‡ uma lista tempor·ria para ser inserido depois
+                        // Adiciona produto √† uma lista tempor√°ria para ser inserido depois
                         foreach (var pp in lstProdPed)
                         {
                             prodInst = new ProdutosInstalacao();
@@ -963,7 +962,7 @@ namespace Glass.Data.DAL
                         }
 
                         // Insere produtos instalacao, com a quantidade que foram instaladas
-                        // (neste caso todos os produtos que ainda n„o foram instalados)
+                        // (neste caso todos os produtos que ainda n√£o foram instalados)
                         ProdutosInstalacaoDAO.Instance.InsereProdutoInstalado(transaction, idInstalacao, lstProdInst);
 
                         Finalizar(transaction, idInstalacao);
@@ -975,7 +974,7 @@ namespace Glass.Data.DAL
                     {
                         transaction.Rollback();
                         transaction.Close();
-                        ErroDAO.Instance.InserirFromException(string.Format("Finalizar - InstalaÁ„o: {0}", idInstalacao), ex);
+                        ErroDAO.Instance.InserirFromException(string.Format("Finalizar - Instala√ß√£o: {0}", idInstalacao), ex);
                         throw;
                     }
                 }
@@ -983,7 +982,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Finaliza a instalaÁ„o passada.
+        /// Finaliza a instala√ß√£o passada.
         /// </summary>
         public void Finalizar(GDASession session, int idInstalacao)
         {
@@ -991,7 +990,7 @@ namespace Glass.Data.DAL
 
             if (!Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoComum) &&
                 !Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoTemperado))
-                throw new Exception("VocÍ n„o tem permiss„o para finalizar instalaÁıes.");
+                throw new Exception("Voc√™ n√£o tem permiss√£o para finalizar instala√ß√µes.");
 
             DateTime dataFinal = DateTime.Now;
             objPersistence.ExecuteCommand(session, @"update instalacao set usuFinal=?usu, dataFinal=?data, situacao=?s
@@ -1001,14 +1000,14 @@ namespace Glass.Data.DAL
             // Apaga, se houver, historico de funcionario para esta instalacao, para evitar duplicacao
             objPersistence.ExecuteCommand(session, "Delete From func_instalacao Where idInstalacao=" + idInstalacao);
 
-            // Monta SQL para salvar os funcion·rios da equipe desta instalaÁ„o na tabela de histÛrico
+            // Monta SQL para salvar os funcion√°rios da equipe desta instala√ß√£o na tabela de hist√≥rico
             var sqlFuncHist = @"Insert Into func_instalacao (IDFUNC, IDINSTALACAO) 
                 (Select distinct fe.IdFunc, " + idInstalacao + @" From func_equipe fe Where fe.idEquipe In 
                 (Select IdEquipe From equipe_instalacao Where idInstalacao=" + idInstalacao + "))";            
 
             objPersistence.ExecuteCommand(session, sqlFuncHist);
 
-            // Atualiza a situaÁ„o da produÁ„o do pedido
+            // Atualiza a situa√ß√£o da produ√ß√£o do pedido
             PedidoDAO.Instance.AtualizaSituacaoProducao(session, ObtemIdPedido(session, (uint)idInstalacao), null, dataFinal, true);
         }
 
@@ -1017,7 +1016,7 @@ namespace Glass.Data.DAL
         #region Continuar
 
         /// <summary>
-        /// Continua a instalaÁ„o passada.
+        /// Continua a instala√ß√£o passada.
         /// </summary>
         public void ContinuarComTransacao(int idInstalacao, string obs)
         {
@@ -1036,7 +1035,7 @@ namespace Glass.Data.DAL
                     {
                         transaction.Rollback();
                         transaction.Close();
-                        ErroDAO.Instance.InserirFromException(string.Format("Continuar - InstalaÁ„o: {0}", idInstalacao), ex);
+                        ErroDAO.Instance.InserirFromException(string.Format("Continuar - Instala√ß√£o: {0}", idInstalacao), ex);
                         throw;
                     }
                 }
@@ -1044,7 +1043,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Continua a instalaÁ„o passada.
+        /// Continua a instala√ß√£o passada.
         /// </summary>
         public void Continuar(GDASession session, int idInstalacao, string obs)
         {
@@ -1052,24 +1051,24 @@ namespace Glass.Data.DAL
 
             if (!Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoComum) &&
                 !Config.PossuiPermissao(Config.FuncaoMenuInstalacao.ControleInstalacaoTemperado))
-                throw new Exception("VocÍ n„o tem permiss„o para dar continuidade ‡ instalaÁıes.");
+                throw new Exception("Voc√™ n√£o tem permiss√£o para dar continuidade √† instala√ß√µes.");
 
-            // Busca instalaÁ„o que est· sendo continuada
+            // Busca instala√ß√£o que est√° sendo continuada
             uint idPedido = ObtemIdPedido(session, (uint)idInstalacao);
             DateTime dataEntrega = ObtemValorCampo<DateTime>(session, "dataEntrega", "idInstalacao=" + idInstalacao);
             int tipoInstalacao = ObtemValorCampo<int>(session, "tipoInstalacao", "idInstalacao=" + idInstalacao);
 
-                // Cria uma nova instalaÁ„o a partir da instalaÁ„o que est· sendo continuada
+                // Cria uma nova instala√ß√£o a partir da instala√ß√£o que est√° sendo continuada
             uint idNovaInst = NovaInstalacao(session, idPedido, dataEntrega, tipoInstalacao, true);
 
-            // Se a nova instalaÁ„o n„o tiver sido criada, tenta mais uma vez
+            // Se a nova instala√ß√£o n√£o tiver sido criada, tenta mais uma vez
             if (idNovaInst == 0)
             idNovaInst = NovaInstalacao(session, idPedido, dataEntrega, tipoInstalacao, true);
 
             if (idNovaInst == 0)
-                throw new Exception("Falha ao cadastrar nova instalaÁ„o. Banco de dados ocupado, tente novamente.");
+                throw new Exception("Falha ao cadastrar nova instala√ß√£o. Banco de dados ocupado, tente novamente.");
 
-            // Altera situaÁ„o da instalaÁ„o para continuada
+            // Altera situa√ß√£o da instala√ß√£o para continuada
             int retorno = objPersistence.ExecuteCommand(session, "Update instalacao Set situacao=" + (int)Instalacao.SituacaoInst.Continuada +
                 ", obs=?obs Where idInstalacao=" + idInstalacao, new GDAParameter[] { new GDAParameter("?obs", obs) });
         }
@@ -1078,7 +1077,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca instalaÁıes finalizadas por pedido
+        #region Busca instala√ß√µes finalizadas por pedido
 
         private string SqlFinalizadas(uint idCli, string idPedido, string idsPedidos, string nomeCli, string dataIniConf, string dataFimConf,
             uint idLoja, bool incluirJoin, bool incluirContinuadas, bool selecionar)
@@ -1198,10 +1197,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se a instalaÁ„o j· est· cadastrada
+        #region Verifica se a instala√ß√£o j√° est√° cadastrada
 
         /// <summary>
-        /// Verifica se h· alguma instalaÁ„o cadastrada para um pedido/tipo.
+        /// Verifica se h√° alguma instala√ß√£o cadastrada para um pedido/tipo.
         /// </summary>
         /// <param name="idPedido"></param>
         /// <param name="tipoInstalacao"></param>

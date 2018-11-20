@@ -2639,9 +2639,9 @@ namespace Glass.Data.DAL
 
             var descontoTotalRateado = 0M;
             var jurosRateado = (decimal)Math.Round(acertoCheque.Juros / cheques.Length, 2);
-            decimal valorAcumulado = acertoCheque.TotalPago.GetValueOrDefault()-(decimal)acertoCheque.Juros;
+            decimal valorAcumulado = acertoCheque.TotalPago.GetValueOrDefault() - (decimal)acertoCheque.Juros;
             var chequesValidar = new Dictionary<int, bool>();
-            decimal valorRestanteConsiderar = 0;
+
             // Rateia o desconto nos cheques, rateia o valor de juros e salva o valor recebido de cada cheque.
             foreach (var cheque in cheques)
             {
@@ -2649,24 +2649,21 @@ namespace Glass.Data.DAL
                 descontoTotalRateado += cheque.DescontoReceb;
                 cheque.JurosReceb += jurosRateado;
 
-                valorRestanteConsiderar = cheque.ValorRestante > jurosRateado
-                    ? cheque.ValorRestante - jurosRateado :
-                    cheque.ValorRestante;
+                var valorReceber = valorAcumulado > cheque.ValorRestante ? cheque.ValorRestante : valorAcumulado;
 
-                var valorReceber = valorAcumulado > valorRestanteConsiderar
-                    ? valorRestanteConsiderar
-                    : valorAcumulado;
+                cheque.ValorReceb += valorReceber;
+                valorAcumulado -= cheque.ValorReceb;
 
-                cheque.ValorReceb += valorReceber + jurosRateado;
-                valorAcumulado -= valorReceber;
-
-                if (cheque.ValorReceb < cheque.JurosReceb - cheque.DescontoReceb)
+                if (cheque.JurosReceb == 0)
                 {
-                    chequesValidar.Add((int)cheque.IdCheque, false);
-                }
-                else
-                {
-                    chequesValidar.Add((int)cheque.IdCheque, true);
+                    if (cheque.ValorReceb + cheque.DescontoReceb == 0)
+                    {
+                        chequesValidar.Add((int)cheque.IdCheque, false);
+                    }
+                    else
+                    {
+                        chequesValidar.Add((int)cheque.IdCheque, true);
+                    }
                 }
             }
 
@@ -2801,7 +2798,6 @@ namespace Glass.Data.DAL
         {
             #region Declaração de variáveis
 
-            var usuarioLogado = UserInfo.GetUserInfo;
             var cheques = this.GetByPks(session, string.Join(", ", chequesValidar.Select(c => c.Key)));
             var chequesInconsistentes = cheques.Where(p => chequesValidar.Contains(new KeyValuePair<int, bool>((int)p.IdCheque, false)));
 
@@ -2893,7 +2889,7 @@ namespace Glass.Data.DAL
                     ? "em"
                     : "i";
 
-                var valorRestante = cheques.Sum(c => c.Valor) - acertoCheque.TotalPago - acertoCheque.Desconto + (decimal)acertoCheque.Juros;
+                var valorRestante = cheques.Sum(c => c.Valor) - acertoCheque.TotalPago - acertoCheque.Desconto;
 
                 var numCheques = string.Join(",", chequesInconsistentes.Select(c => c.Num));
 

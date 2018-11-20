@@ -312,6 +312,11 @@ namespace Glass.Data.RelModel
 
         public int QtdeProd { get; set; }
 
+        /// <summary>
+        /// Obtém ou define se a etiqueta é ou não produto para estoque.
+        /// </summary>
+        public bool ProdutoParaEstoque { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

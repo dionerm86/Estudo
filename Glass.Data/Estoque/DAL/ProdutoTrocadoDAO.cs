@@ -209,16 +209,7 @@ namespace Glass.Data.DAL
                 idsFuncionario, idsFuncionarioAssociadoCliente, produto, dataIni, dataFim, true, true, idOrigemTrocaDevolucao, idTipoPerda, idSetor),
                 GetParams(nomeCliente, dataIni, dataFim)).ToList();
 
-            var deptos = new Dictionary<uint, string>();
-            foreach (ProdutoTrocado p in retorno)
-            {
-                if (!deptos.ContainsKey(p.IdFuncTrocaDev))
-                    deptos.Add(p.IdFuncTrocaDev, FuncDepartamentoDAO.Instance.GetNomesDepartamentosByFunc(p.IdFuncTrocaDev));
-
-                p.DeptosFuncTrocaDev = deptos[p.IdFuncTrocaDev];
-            }
-
-            return retorno;
+         return retorno;
         }
 
         #region Obtem dados do produto trocado

@@ -1,4 +1,5 @@
 ﻿<span>
-    <input type="date" v-model="dataAtual" v-bind:min="dataMinimaAtual" v-bind:max="dataMaximaAtual" v-bind="$attrs">
-    <input type="time" v-model="horaAtual" v-if="exibirHoras">
+    <input type="date" v-model="dataAtual" v-bind:min="dataMinimaAtual" v-bind:max="dataMaximaAtual"
+        v-on:change="alteraData" v-bind="$attrs">
+    <input type="time" v-model="horaAtual" v-on:change="alteraHora" v-if="exibirHoras">
 </span>

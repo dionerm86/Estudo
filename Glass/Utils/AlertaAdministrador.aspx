@@ -1,8 +1,6 @@
-﻿<%@ Page Title="Avisos do sistema" Language="C#" MasterPageFile="~/Layout.master"
-    AutoEventWireup="true" CodeFile="AlertaAdministrador.aspx.cs" Inherits="Utils_AlertaAdministrador" %>
+﻿<%@ Page Title="Avisos do sistema" Language="C#" MasterPageFile="~/Layout.master" AutoEventWireup="true"
+    CodeBehind="AlertaAdministrador.aspx.cs" Inherits="Glass.UI.Web.Utils.AlertaAdministrador" %>
 
-<asp:Content ID="menu" runat="server" ContentPlaceHolderID="Menu">
-</asp:Content>
 <asp:Content ID="pagina" runat="server" ContentPlaceHolderID="Pagina">
     <asp:Label ID="lblPedido" runat="server" Text="Existe(m) pedido(s) pronto(s) e não entregue(s) a mais de 30 dias." Visible="false"></asp:Label>
     <br />
