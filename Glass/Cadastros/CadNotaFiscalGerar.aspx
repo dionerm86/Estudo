@@ -90,7 +90,7 @@
                 && !confirm("Ao remover o pedido não será possível gerar boletos, para as contas a receber da NF-e gerada," +
                     " caso existam outras notas para o(s) pedido(s)/liberação(ões). Deseja excluir o pedido da listagem? "))
                 return false;
-            
+
             var idsPedidos = FindControl("hdfBuscarIdsPedidos", "input").value.split(',');
             var novosIds = new Array();
 
@@ -115,7 +115,7 @@
         }
 
         function removeOC(idsPedidos) {
-            
+
             var ids = idsPedidos.toString().split(',');
 
             for (var i = 0; i < ids.length; i++) {
@@ -173,7 +173,7 @@
         function buscarPedidos() {
             var idCliente = "";
             var nomeCliente = "";
-            
+
             if (FindControl("txtIdCli", "input") != null && FindControl("txtIdCli", "input") != undefined &&
                 FindControl("txtNomeCli", "input") != null && FindControl("txtNomeCli", "input") != undefined) {
                 if (FindControl("txtIdCli", "input").value != "" && FindControl("txtNomeCli", "input").value != "") {
@@ -236,12 +236,12 @@
                 if (notasGeradas.length > 0)
                     pedidosNf.push(new Array(idPedido, notasGeradas));
             }
-            
+
             if(<%= NaoPermitirMaisDeUmaNfeParaUmPedido() %> && pedidosNf.length > 0){
                 var pedidos = "";
                 for (i = 0; i < pedidosNf.length; i++)
                     pedidos += ", " + pedidosNf[i][0] + " (NF " + pedidosNf[i][1] + ")";
-                    
+
                     alert('Não é possível gerar a NF-e, pois os seguintes pedidos já possuem NF-e gerada:\n' + pedidos.substr(2));
                     return false;
             }
@@ -293,12 +293,12 @@
             var idCli = FindControl("ddlClienteVinculado", "select") != null ? FindControl("ddlClienteVinculado", "select").value : "";
 
             if (tipoNota == "2") {
-             
+
                  if (idLojaDestino == "" || idLojaDestino == "0") {
                      alert("Informe a loja de destino.");
                      return false;
                  }
-                 
+
                  idCli = idLojaDestino;
             }
 
@@ -339,17 +339,17 @@
             }
             catch (err)
             {}
-            
+
             var exibirMensagem = CadNotaFiscalGerar.ExibirMensagem(idNf).value;
 
             alert("Nota fiscal gerada com sucesso!");
             botao.disabled = true;
-            redirectUrl((popup ? "../Cadastros/" : "") + "CadNotaFiscal.aspx?tipo=2&idNf=" + idNf+"&exibirMensagem="+ exibirMensagem);            
+            redirectUrl((popup ? "../Cadastros/" : "") + "CadNotaFiscal.aspx?tipo=2&idNf=" + idNf+"&exibirMensagem="+ exibirMensagem);
         }
 
         function FalhaGerarNf(erro, fechouJanela) {
             desbloquearPagina(true);
-            
+
             if (!fechouJanela)
                 alert(erro);
 
@@ -364,10 +364,10 @@
             }
             catch (err)
             {}
-            
+
             alert("Nota fiscal exportada com sucesso!");
             botao.disabled = true;
-            window.location.href = window.location.href; 
+            window.location.href = window.location.href;
         }
 
         function PodeConsSitCadContr() {
@@ -399,11 +399,11 @@
             FindControl("nfSaida", "tr").style.display = tipoNf == 1 ? "inline" : "none";
 
             var grdPedidos = FindControl("grdPedidos", "table");
-            if(grdPedidos != null) 
+            if(grdPedidos != null)
                 grdPedidos.style.display = tipoNf == 1 ? "inline" : "none";
-                
-            var grdOcs = FindControl("grdOcs", "table");  
-            if(grdOcs != null)  
+
+            var grdOcs = FindControl("grdOcs", "table");
+            if(grdOcs != null)
                 grdOcs.style.display = tipoNf == 2 ? "inline" : "none";
 
             if (limparIds)
@@ -599,12 +599,8 @@
                                     <asp:BoundField DataField="Obs" HeaderText="Obs. Pedido" SortExpression="Obs" />
                                     <asp:BoundField DataField="Obs" HeaderText="Obs. Pedido" SortExpression="Obs" />
                                     <asp:TemplateField HeaderText="Obs. Liberação" SortExpression="ObsLiberacao">
-                                        <EditItemTemplate>
-                                            <asp:TextBox ID="ObsLib" runat="server" Text='<%# Eval("ObsLiberacao") %>'></asp:TextBox>
-                                        </EditItemTemplate>
                                         <ItemTemplate>
-                                            <asp:Label ID="lblObservacaoCLiente" runat="server" Visible='<%# Eval("ExibirObservacaoLiberacaoCliente")%>' Text='<%# Eval("ObservacaoLiberacaoCliente") %>'></asp:Label>
-                                           <asp:Label ID="lblObservacaoLiberacao" runat="server" Text='<%# Eval("ObsLiberacao") %>'></asp:Label>
+                                            <asp:Label ID="Label4" runat="server" Text='<%# Bind("ObservacaoLiberacaoClientePedido") %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Total" SortExpression="Total">
@@ -656,7 +652,7 @@
                                         Natureza de Operação:
                                     </td>
                                     <td>
-                                        <uc1:ctrlNaturezaOperacao ID="ctrlNaturezaOperacao" runat="server" 
+                                        <uc1:ctrlNaturezaOperacao ID="ctrlNaturezaOperacao" runat="server"
                                             PermitirVazio="True" />
                                     </td>
                                     <td>
@@ -687,7 +683,7 @@
                                     </td>
                                     <td colspan="4">
                                         <asp:DropDownList ID="drpLojaDestino" runat="server" DataSourceID="odsLojaCliente"
-                                            AppendDataBoundItems="true" DataTextField="NomeFantasia" 
+                                            AppendDataBoundItems="true" DataTextField="NomeFantasia"
                                             DataValueField="idCli" >
                                             <asp:ListItem Selected="True"></asp:ListItem>
                                         </asp:DropDownList>
@@ -781,7 +777,7 @@
     </table>
 
     <script type="text/javascript">
-    
+
         if (FindControl("txtNumPedido", "input") != null && FindControl("txtNumPedido", "input") != undefined) {
             if (!FindControl("txtNumPedido", "input").disabled)
                 FindControl("txtNumPedido", "input").focus();
@@ -792,7 +788,7 @@
         }
 
         atualizaTipoNf(false);
-        
+
     </script>
 
 </asp:Content>

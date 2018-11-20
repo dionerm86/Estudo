@@ -253,7 +253,7 @@ namespace Glass.Data.DAL
                     (FinanceiroConfig.PermitirConfirmacaoPedidoPeloFinanceiro || FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro) + @",
                     (select count(*) from observacao_finalizacao_financeiro where idPedido=p.idPedido)>0, false) as exibirFinalizacoesFinanceiro,
                     CAST((SELECT GROUP_CONCAT(idOrdemCarga) FROM pedido_ordem_carga WHERE idPedido = p.idPedido) as CHAR) as IdsOCs,
-                    transp.Nome AS NomeTransportador,  c.ObsLiberacao AS ObservacaoLiberacaoCliente");
+                    transp.Nome AS NomeTransportador");
             }
 
             if (selecionar && opcionais)
@@ -2116,8 +2116,8 @@ namespace Glass.Data.DAL
         /// <returns>Retorna o resultado de um teste l�gico que verifica se o pedido j� efetuou a sa�da de estoque.</returns>
         internal bool VerificaSaidaEstoqueConfirmacao(GDASession sessao, int idPedido)
         {
-            return !PedidoConfig.LiberarPedido 
-                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar 
+            return !PedidoConfig.LiberarPedido
+                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar
                 && ObtemSituacao(sessao, (uint)idPedido) == Pedido.SituacaoPedido.Confirmado;
         }
 

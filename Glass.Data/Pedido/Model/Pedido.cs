@@ -981,16 +981,6 @@ namespace Glass.Data.Model
             { return CodCliente + " - " + PedCliExterno; }
         }
 
-        [XmlIgnore]
-        [PersistenceProperty("EXIBIROBSERVACAOLIBERACAOCLIENTE", DirectionParameter.InputOptional)]
-        public bool ExibirObservacaoLiberacaoCliente
-        {
-            get
-            {
-                return !ObsLiberacao.Contains(ObservacaoLiberacaoCliente) || !ObservacaoLiberacaoCliente.Contains(ObsLiberacao);
-            }
-        }
-
         #region Finalização / Confirmação do Financeiro
 
         [PersistenceProperty("MOTIVOERROFINALIZARFINANC", DirectionParameter.InputOptional)]
@@ -998,9 +988,6 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("MOTIVOERROCONFIRMARFINANC", DirectionParameter.InputOptional)]
         public string MotivoErroConfirmarFinanc { get; set; }
-
-        [PersistenceProperty("OBSERVACAOLIBERACAOCLIENTE", DirectionParameter.InputOptional)]
-        public string ObservacaoLiberacaoCliente { get; set; }
 
         #endregion
 
@@ -1030,6 +1017,27 @@ namespace Glass.Data.Model
         }
 
         #endregion
+
+        /// <summary>
+        /// Observação do cliente e do pedido concatenados.
+        /// </summary>
+        public string ObservacaoLiberacaoClientePedido
+        {
+            get
+            {
+                if (ObsLiberacao.Trim().Contains(ObservacaoLiberacaoCliente.Trim()))
+                {
+                    return ObsLiberacao;
+                }
+
+                if (ObservacaoLiberacaoCliente.Trim().Contains(ObsLiberacao.Trim()))
+                {
+                    return ObservacaoLiberacaoCliente;
+                }
+
+                return ObservacaoLiberacaoCliente + " " + ObsLiberacao;
+            }
+        }
 
         public byte[] BarCodeImage
         {
@@ -3001,6 +3009,17 @@ namespace Glass.Data.Model
                     return obs.Split(';')[1];
 
                 return obs;
+            }
+        }
+
+        /// <summary>
+        /// Observação da liberação do cliente.
+        /// </summary>
+        public string ObservacaoLiberacaoCliente
+        {
+            get
+            {
+                return ClienteDAO.Instance.ObtemObsLiberacao(IdCli);
             }
         }
 
