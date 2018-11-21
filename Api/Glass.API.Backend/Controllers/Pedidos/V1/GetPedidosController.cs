@@ -3,6 +3,7 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.API.Backend.Models.Pedidos.V1.CadastroAtualizacao;
@@ -57,6 +58,22 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
             using (var sessao = new GDATransaction())
             {
                 var configuracoes = new Models.Pedidos.V1.Configuracoes.ListaDto(exibirFinanceiro);
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera as configurações usadas pela tela de listagem de pedidos para geração de volumes.
+        /// </summary>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("volumes/configuracoes")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Pedidos.V1.Configuracoes.ListaVolumesDto))]
+        public IHttpActionResult ObterConfiguracoesListaPedidosVolumes()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.Pedidos.V1.Configuracoes.ListaVolumesDto();
                 return this.Item(configuracoes);
             }
         }
@@ -152,6 +169,63 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                         filtro.Observacao,
                         filtro.ObservacaoLiberacao,
                         false));
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de pedidos.
+        /// </summary>
+        /// <param name="filtro">Os filtros para a busca dos pedidos.</param>
+        /// <returns>Uma lista JSON com os dados dos pedidos.</returns>
+        [HttpGet]
+        [Route("volumes")]
+        [SwaggerResponse(200, "Pedidos para geração de volume encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Pedidos.V1.ListaVolumes.ListaDto>))]
+        [SwaggerResponse(204, "Pedidos para geração de volume não encontrados para o filtro informado.")]
+        [SwaggerResponse(206, "Pedidos para geração de volume paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Pedidos.V1.ListaVolumes.ListaDto>))]
+        [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterListaPedidosVolumes([FromUri] Models.Pedidos.V1.ListaVolumes.FiltroDto filtro)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                filtro = filtro ?? new Models.Pedidos.V1.ListaVolumes.FiltroDto();
+
+                var pedidos = PedidoDAO.Instance.GetForGeracaoVolume(
+                    (uint)(filtro.Id ?? 0),
+                    (uint)(filtro.IdCliente ?? 0),
+                    filtro.NomeCliente,
+                    (uint)(filtro.IdLoja ?? 0),
+                    filtro.IdRota?.ToString(),
+                    filtro.PeriodoEntregaPedidoInicio.Value.ToShortDateString(),
+                    filtro.PeriodoEntregaPedidoFim.Value.ToShortDateString(),
+                    filtro.PeriodoLiberacaoPedidoInicio.Value.ToShortDateString(),
+                    filtro.PeriodoLiberacaoPedidoFim.Value.ToShortDateString(),
+                    filtro.SituacoesPedidoVolume != null && filtro.SituacoesPedidoVolume.Any() ? string.Join(",", filtro.SituacoesPedidoVolume.Select(t => (int)t)) : null,
+                    (int)(filtro.TipoEntrega ?? 0),
+                    (uint)(filtro.IdClienteExterno ?? 0),
+                    filtro.NomeClienteExterno,
+                    filtro.IdsRotaExterna != null && filtro.IdsRotaExterna.Any() ? string.Join(",", filtro.IdsRotaExterna) : null,
+                    filtro.ObterTraducaoOrdenacao(),
+                    filtro.ObterPrimeiroRegistroRetornar(),
+                    filtro.NumeroRegistros);
+
+                return this.ListaPaginada(
+                    pedidos.Select(p => new Models.Pedidos.V1.ListaVolumes.ListaDto(p)),
+                    filtro,
+                    () => PedidoDAO.Instance.GetForGeracaoVolumeCount(
+                        (uint)(filtro.Id ?? 0),
+                        (uint)(filtro.IdCliente ?? 0),
+                        filtro.NomeCliente,
+                        (uint)(filtro.IdLoja ?? 0),
+                        filtro.IdRota?.ToString(),
+                        filtro.PeriodoEntregaPedidoInicio.Value.ToShortDateString(),
+                        filtro.PeriodoEntregaPedidoFim.Value.ToShortDateString(),
+                        filtro.PeriodoLiberacaoPedidoInicio.Value.ToShortDateString(),
+                        filtro.PeriodoLiberacaoPedidoFim.Value.ToShortDateString(),
+                        filtro.SituacoesPedidoVolume != null && filtro.SituacoesPedidoVolume.Any() ? string.Join(",", filtro.SituacoesPedidoVolume.Select(t => (int)t)) : null,
+                        (int)(filtro.TipoEntrega ?? 0),
+                        (uint)(filtro.IdClienteExterno ?? 0),
+                        filtro.NomeClienteExterno,
+                        filtro.IdsRotaExterna != null && filtro.IdsRotaExterna.Any() ? string.Join(",", filtro.IdsRotaExterna) : null));
             }
         }
 
@@ -545,6 +619,25 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                         Id = (int)(s.Id ?? 0),
                         Nome = s.Descr,
                     });
+
+                return this.Lista(situacoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de situações de volume possíveis para o pedido.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos das situações de volume.</returns>
+        [HttpGet]
+        [Route("volumes/situacoes")]
+        [SwaggerResponse(200, "Situações do pedido referente ao volume encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Situações do pedido referente ao volume não encontradas.")]
+        public IHttpActionResult ObterSituacoesPedidoVolumes()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var situacoes = new ConversorEnum<Data.Model.Pedido.SituacaoVolumeEnum>()
+                    .ObterTraducao();
 
                 return this.Lista(situacoes);
             }

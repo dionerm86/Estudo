@@ -366,61 +366,41 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
         static volatile object _apagarVolumeLock = new object();
 
-        public int Delete(Glass.Data.Model.Volume objDelete)
+        public int Delete(GDASession sessao, Glass.Data.Model.Volume objDelete)
         {
-            lock(_apagarVolumeLock)
+            lock (_apagarVolumeLock)
             {
-                using (var transaction = new GDATransaction())
+                if (objDelete.IdVolume == 0)
+                    throw new Exception("Nenhum volume informado.");
+
+                var idPedido = VolumeDAO.Instance.GetIdPedido(sessao, objDelete.IdVolume);
+
+                if (PedidoOrdemCargaDAO.Instance.PedidoTemOC(sessao, idPedido))
+                    throw new Exception("O pedido do volume informado esta vinculado a uma OC.");
+
+                if (VolumeDAO.Instance.TemExpedicao(sessao, objDelete.IdVolume))
                 {
-                    try
+                    var produtos = VolumeProdutosPedidoDAO.Instance.GetList(sessao, objDelete.IdVolume.ToString());
+                    var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
+                    var dados = new List<DetalhesBaixaEstoque>();
+
+                    foreach (var prod in produtos)
                     {
-                        transaction.BeginTransaction();
-
-                        if (objDelete.IdVolume == 0)
-                            throw new Exception("Nenhum volume informado.");
-
-                        var idPedido = VolumeDAO.Instance.GetIdPedido(transaction, objDelete.IdVolume);
-
-                        //Valida se o pedido deste volume ja tem OC se tiver não pode deletar
-                        if (PedidoOrdemCargaDAO.Instance.PedidoTemOC(transaction, idPedido))
-                            throw new Exception("O pedido do volume informado esta vinculado a uma OC.");
-
-                        if (VolumeDAO.Instance.TemExpedicao(transaction, objDelete.IdVolume))
+                        dados.Add(new DetalhesBaixaEstoque()
                         {
-                            var produtos = VolumeProdutosPedidoDAO.Instance.GetList(transaction, objDelete.IdVolume.ToString());
-                            var idLoja = PedidoDAO.Instance.ObtemIdLoja(transaction, idPedido);
-                            var dados = new List<DetalhesBaixaEstoque>();
-
-                            foreach (var prod in produtos)
-                                dados.Add(new DetalhesBaixaEstoque()
-                                {
-                                    IdProdPed = (int)prod.IdProdPed,
-                                    Qtde = prod.Qtde,
-                                    DescricaoBaixa = prod.DescProd
-                                });
-
-                            Pedido.Fluxo.AlterarEstoque.Instance.EstornaBaixaEstoque(transaction, idLoja, dados, objDelete.IdVolume, null);
-                            VolumeDAO.Instance.EstornaExpedicaoVolume(transaction, objDelete.IdVolume);
-                        }
-
-
-                        //Deleta os itens do volume.
-                        VolumeProdutosPedidoDAO.Instance.DeleteByVolume(transaction, objDelete.IdVolume);
-
-                        var retorno = VolumeDAO.Instance.Delete(transaction, objDelete);
-
-                        transaction.Commit();
-                        transaction.Close();
-
-                        return retorno;
+                            IdProdPed = (int)prod.IdProdPed,
+                            Qtde = prod.Qtde,
+                            DescricaoBaixa = prod.DescProd,
+                        });
                     }
-                    catch
-                    {
-                        transaction.Rollback();
-                        transaction.Close();
-                        throw;
-                    }
+
+                    Pedido.Fluxo.AlterarEstoque.Instance.EstornaBaixaEstoque(sessao, idLoja, dados, objDelete.IdVolume, null);
+                    VolumeDAO.Instance.EstornaExpedicaoVolume(sessao, objDelete.IdVolume);
                 }
+
+                VolumeProdutosPedidoDAO.Instance.DeleteByVolume(sessao, objDelete.IdVolume);
+
+                return VolumeDAO.Instance.Delete(sessao, objDelete);
             }
         }
 

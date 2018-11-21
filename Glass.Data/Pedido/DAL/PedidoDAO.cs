@@ -4688,8 +4688,7 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(codRota))
             {
-                sql += @" And c.id_Cli IN (Select idCliente From rota_cliente Where idRota In
-                    (Select idRota From rota where codInterno like ?codRota))";
+                sql += @" And c.id_Cli IN (Select idCliente From rota_cliente Where idRota=?codRota)";
             }
 
             if (!string.IsNullOrEmpty(codRotaExterna))
@@ -4767,7 +4766,7 @@ namespace Glass.Data.DAL
             if (string.IsNullOrEmpty(sortExpression))
                 sql += " ORDER BY idPedido DESC";
 
-            var pedidos = LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize,
+            var pedidos = objPersistence.LoadDataWithSortExpression(sql, new InfoSortExpression(sortExpression), new InfoPaging(startRow, pageSize),
                 GetParametersVolume(dataEntIni, dataEntFim, dataLibIni, dataLibFim, codRota, idsRotasExternas)).ToArray();
 
             return pedidos;
