@@ -12,18 +12,11 @@ namespace Glass.Data.RelDAL
 {
     public sealed class ChartVendasDAO : BaseDAO<ChartVendas, ChartVendasDAO>
     {
-        //private ChartVendasDAO() { }
-
         public Dictionary<uint, List<ChartVendas>> GetForRpt(uint idLoja, uint idVendedor, int tipoFunc, uint idCliente, string nomeCliente, string tipoPedido, uint idRota, string dataIni,
-            string dataFim, int agrupar, LoginUsuario login, out string criterio)
+            string dataFim, int agrupar, out string criterio)
         {
             var ids = new List<int>();
             var tipoAgrupar = "nenhum";
-            var administrador = login.IsAdministrador;
-            var cliente = login.IsCliente;
-            var emitirGarantia = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
-            var emitirReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao);
-            var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
             criterio = string.Empty;
 
             switch (agrupar)
@@ -97,21 +90,21 @@ namespace Glass.Data.RelDAL
                     break;
             }
 
-            return GetVendasForChart(idLoja, tipoFunc, idVendedor, idCliente, nomeCliente, idRota, dataIni, dataFim, tipoPedido, agrupar, tipoAgrupar, ids.Select(x => (uint)x).ToList(),
-                cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario, out criterio);
+            return GetVendasForChart(idLoja, tipoFunc, idVendedor, idCliente, nomeCliente, idRota, dataIni, dataFim, tipoPedido, agrupar, tipoAgrupar, ids.Select(x => (uint)x).ToList(), out criterio);
         }
         
         public Dictionary<uint, List<ChartVendas>> GetVendasForChart(uint idLoja, int tipoFunc, uint idVendedor, uint idCliente, string nomeCliente, 
-            uint idRota, string dataIni, string dataFim, string tipoPedido, int agrupar, string tipoAgrupar, List<uint> ids,
-            bool cliente, bool administrador, bool emitirGarantia, bool emitirReposicao, bool emitirPedidoFuncionario, out string criterio)
+            uint idRota, string dataIni, string dataFim, string tipoPedido, int agrupar, string tipoAgrupar, List<uint> ids, out string criterio)
         {
             DateTime periodoIni = DateTime.Parse(dataIni);
             DateTime periodoFim = DateTime.Parse(dataFim).AddDays(1);
             Dictionary<uint,List<ChartVendas>> dictVendas = new Dictionary<uint,List<ChartVendas>>();
             criterio = string.Empty;
 
-            foreach(uint u in ids)
+            foreach (uint u in ids)
+            {
                 dictVendas.Add(u, new List<ChartVendas>());
+            }
 
             int count = 1;
             while (periodoIni < periodoFim)
@@ -137,9 +130,7 @@ namespace Glass.Data.RelDAL
                             break;
                     }
 
-                    ChartVendas[] serie = GetVendas((int?)idLoja, tipoFunc, (int?)idVendedor, (int?)idCliente, (int?)idRota, nomeCliente, periodoIni.ToString("dd/MM/yyyy"),
-                        periodoIni.AddMonths(1).AddDays(-1).ToString("dd/MM/yyyy"), tipoPedido, agrupar,
-                        cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario);
+                    ChartVendas[] serie = GetVendas((int?)idLoja, tipoFunc, (int?)idVendedor, (int?)idCliente, (int?)idRota, nomeCliente, periodoIni.ToString("dd/MM/yyyy"), periodoIni.AddMonths(1).AddDays(-1).ToString("dd/MM/yyyy"), tipoPedido, agrupar);
 
                     if (string.IsNullOrEmpty(criterio) && serie.Any(f => !string.IsNullOrEmpty(f.Criterio)))
                         criterio = serie.FirstOrDefault(f => !string.IsNullOrEmpty(f.Criterio)).Criterio;
@@ -223,7 +214,7 @@ namespace Glass.Data.RelDAL
         }
         
         public ChartVendas[] GetVendas(int? idLoja, int tipoFunc, int? idVendedor, int? idCliente, int? idRota, string nomeCliente,
-            string dataIni, string dataFim, string tipoPedido, int agrupar, bool cliente, bool administrador, bool emitirGarantia, bool emitirReposicao, bool emitirPedidoFuncionario)
+            string dataIni, string dataFim, string tipoPedido, int agrupar)
         {
             string data = PedidoConfig.LiberarPedido ? "DataLiberacao" : "DataConf";
 
@@ -233,8 +224,8 @@ namespace Glass.Data.RelDAL
             // Mesmos filtros utilizados no relatório de pedidos
             tipoPedido = !string.IsNullOrEmpty(tipoPedido) ? tipoPedido : "1,2,3";
 
-            var sql = PedidoDAO.Instance.SqlGraficoVendas(administrador, dataFim, dataIni, emitirGarantia, emitirReposicao, emitirPedidoFuncionario, out filtroAdicional, idCliente,
-                tipoFunc == 0 ? idVendedor : 0, idLoja, tipoFunc == 0 ? 0 : idVendedor, idRota, cliente, nomeCliente, out temFiltro, tipoPedido).Replace("?filtroAdicional?", filtroAdicional);
+            var sql = PedidoDAO.Instance.SqlGraficoVendas(dataFim, dataIni, out filtroAdicional, idCliente,
+                tipoFunc == 0 ? idVendedor : 0, idLoja, tipoFunc == 0 ? 0 : idVendedor, idRota, nomeCliente, out temFiltro, tipoPedido).Replace("?filtroAdicional?", filtroAdicional);
 
             sql = @"
                 Select p.idLoja, p.idFunc" + (tipoFunc == 0 ? "" : "Cliente") + @" as idFunc, cast(Sum(TotalReal) as decimal(12,2)) as TotalVenda, 
@@ -242,10 +233,6 @@ namespace Glass.Data.RelDAL
                     DATE_FORMAT(p." + data + @", '%d/%m/%Y') as Periodo, p.tipoPedido, p.IdRota, p.DescricaoRota, Criterio
                 From (" + sql + @") as p
                 Where 1";
-
-            // O vendedor associado ao pedido ou o vendedor associado ao cliente devem ser informados no método SqlRptSit para que o sql fique mais rápido.
-            //if (idVendedor > 0)
-                //sql += " And p.idFunc" + (tipoFunc == 0 ? "" : "Cliente") + "=" + idVendedor;
 
             // Agrupar por loja 
             if (agrupar == 1)
@@ -279,14 +266,15 @@ namespace Glass.Data.RelDAL
                 sql += " GROUP BY p.IdRota";
                 sql += " ORDER BY p.IdRota";
             }
-            //else // Nenhum
-            //    sql += " Group By (Right(Concat('0', Cast(Month(p." + data + ") as char), '/', Cast(Year(p." + data + ") as char)), 7))";
 
             sql += " limit 0,15";
 
             List<ChartVendas> retorno = objPersistence.LoadData(sql, GetParams(dataIni, dataFim));
+
             foreach (ChartVendas c in retorno)
+            {
                 c.Agrupar = agrupar;
+            }
 
             return retorno.ToArray();
         }
