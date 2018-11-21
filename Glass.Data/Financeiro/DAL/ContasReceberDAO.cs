@@ -2842,6 +2842,20 @@ namespace Glass.Data.DAL
                             PagtoAcertoDAO.Instance.Insert(session, dadosPagamento);
                         }
                     }
+                    else if (idsFormaPagamento.Count() > i && idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0)
+                    {
+                        var idContabancoDepositoNaoIdentificado = DepositoNaoIdentificadoDAO.Instance.ObtemIdContaBanco(session, idsDepositoNaoIdentificado.ElementAtOrDefault(i));
+
+                        PagtoAcerto dadosPagamento = new PagtoAcerto();
+                        dadosPagamento.IdAcerto = acerto.IdAcerto;
+                        dadosPagamento.NumFormaPagto = ++contadorPagamento;
+                        dadosPagamento.IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i);
+                        dadosPagamento.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null;
+                        dadosPagamento.ValorPagto = valoresRecebimento.ElementAt(i);
+                        dadosPagamento.IdContaBanco = (uint)idContabancoDepositoNaoIdentificado;
+
+                        PagtoAcertoDAO.Instance.Insert(session, dadosPagamento);
+                    }
                     else
                     {
                         var pagamentoAcerto = new PagtoAcerto();
