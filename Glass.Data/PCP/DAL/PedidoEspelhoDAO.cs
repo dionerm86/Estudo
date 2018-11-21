@@ -1386,6 +1386,8 @@ namespace Glass.Data.DAL
 
                     uint idProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.InsertBase(transaction, pe, pedEsp);
 
+                    LogAlteracaoDAO.Instance.CopiarLogImagemProdPed(transaction, (int)p.IdProdPed, (int)idProdPedEsp);
+
                     // Salva os registro da rentabilidade
                     foreach (var registro in ProdutoPedidoRentabilidadeDAO.Instance.ObterPorProdutoPedido(transaction, p.IdProdPed))
                         ProdutoPedidoEspelhoRentabilidadeDAO.Instance.Insert(transaction, new ProdutoPedidoEspelhoRentabilidade
@@ -3861,11 +3863,14 @@ namespace Glass.Data.DAL
             {
                 // Clona as peças
                 uint idPecaItemProjOld = pip.IdPecaItemProj;
+                uint idLogOld = pip.IdLog;
 
-                pip.Beneficiamentos = pip.Beneficiamentos;
                 pip.IdPecaItemProj = 0;
                 pip.IdItemProjeto = idItemProjetoPedEsp;
                 uint idPecaItemProj = PecaItemProjetoDAO.Instance.Insert(sessao, pip);
+                var novaPecaItemProj = PecaItemProjetoDAO.Instance.GetElement(sessao, idPecaItemProj);
+
+                LogAlteracaoDAO.Instance.CopiarLogAlteracaoImagemProducao(sessao, (int)idLogOld, (int)novaPecaItemProj.IdLog);
 
                 foreach (FiguraPecaItemProjeto fig in FiguraPecaItemProjetoDAO.Instance.GetForClone(sessao, idPecaItemProjOld))
                 {
