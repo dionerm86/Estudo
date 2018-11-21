@@ -1,0 +1,62 @@
+﻿<section>
+    <lista-paginada ref="lista" v-bind:funcao-recuperar-itens="buscarVolumes" v-bind:filtro="filtro" v-bind:exibir-totalizador="true"
+		ordenacao="ordenacao" mensagem-lista-vazia="Nenhum volume encontrado." v-on:atualizou-itens="atualizouItens">
+        <template slot="cabecalho">
+            <th></th>
+            <th>
+                Volume
+            </th>
+            <th>
+                Qtde. itens
+            </th>
+            <th>
+                Peso total
+            </th>
+            <th>
+                Total m²
+            </th>
+            <th>
+                Situação
+            </th>
+            <th>
+                Func. Finalização
+            </th>
+            <th>
+                Data Finalização
+            </th>
+            <th></th>
+        </template>
+        <template slot="item" slot-scope="{ item, index }">
+            <td>
+                <button @click.prevent="abrirTelaEdicaoVolume(item)" title="Editar volume" v-if="item.permissoes.editar">
+                    <img src="../Images/Edit.gif">
+                </button>
+                <button @click.prevent="excluir(item)" title="Excluir volume">
+                    <img src="../Images/ExcluirGrid.gif">
+                </button>
+            </td>
+            <td>{{ item.id }}</td>
+            <td>{{ item.quantidadePecas }}</td>
+            <td>{{ item.peso | decimal }}</td>
+            <td>{{ item.metroQuadrado | decimal }}</td>
+            <td>{{ item.situacao }}</td>
+            <td>{{ item.funcionarioFinalizacao }}</td>
+            <td>{{ item.dataFinalizacao }}</td>
+            <td>
+                <button @click.prevent="abrirImpressaoEtiquetaVolume(item)" title="Imprimir etiqueta">
+                    <img src="../Images/printer.png">
+                </button>
+            </td>
+        </template>
+		<template slot="itemTotalizador" slot-scope="{ item, index }">
+			<td></td>
+            <td>Totais</td>
+            <td v-if="totalizadores">{{ totalizadores.quantidadePecasTotal | decimal }}</td>
+            <td v-if="totalizadores">{{ totalizadores.pesoTotal | decimal }}</td>
+            <td v-if="totalizadores">{{ totalizadores.metroQuadradoTotal | decimal }}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+		</template>
+    </lista-paginada>
+</section>

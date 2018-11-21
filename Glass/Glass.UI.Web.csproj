@@ -1767,6 +1767,11 @@
     <Content Include="Vue\Pedidos\Templates\CadPedido.Produtos.html" />
     <Content Include="Vue\Pedidos\Templates\LstPedidos.Filtro.html" />
     <Content Include="Vue\Processos\Componentes\LstProcessos.js" />
+    <Content Include="Vue\Volumes\Componentes\LstVolumes.Filtro.js" />
+    <Content Include="Vue\Volumes\Componentes\LstVolumes.js" />
+    <Content Include="Vue\Volumes\Componentes\LstVolumes.Itens.js" />
+    <Content Include="Vue\Volumes\Templates\LstVolumes.Filtro.html" />
+    <Content Include="Vue\Volumes\Templates\LstVolumes.Itens.html" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoBisote.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoLapidacao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoListaSelecao.js" />
@@ -1892,6 +1897,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Produtos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Publicos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Fornecedores.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Volumes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Veiculos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Transportadores.js" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoBisote.html" />
@@ -9148,9 +9154,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Relatorios\rptContasRecebidasLocal.rdlc" />
-    <Content Include="Relatorios\rptControlePerdasExt.rdlc">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Relatorios\rptCorEspessura.rdlc" />
     <Content Include="Relatorios\rptCotacaoCompraCalculadaFornec.rdlc">
       <SubType>Designer</SubType>

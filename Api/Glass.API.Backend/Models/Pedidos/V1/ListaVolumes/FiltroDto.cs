@@ -48,16 +48,6 @@ namespace Glass.API.Backend.Models.Pedidos.V1.ListaVolumes
         public DateTime? PeriodoEntregaPedidoFim { get; set; }
 
         /// <summary>
-        /// Obtém ou define a data inicial de liberação do pedido.
-        /// </summary>
-        public DateTime? PeriodoLiberacaoPedidoInicio { get; set; }
-
-        /// <summary>
-        /// Obtém ou define a data final de liberação do pedido.
-        /// </summary>
-        public DateTime? PeriodoLiberacaoPedidoFim { get; set; }
-
-        /// <summary>
         /// Obtém ou define o identificador da loja.
         /// </summary>
         public int? IdLoja { get; set; }
