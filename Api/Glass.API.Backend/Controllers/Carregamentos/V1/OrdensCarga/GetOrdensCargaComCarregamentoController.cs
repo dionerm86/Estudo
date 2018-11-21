@@ -28,11 +28,12 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga
         [SwaggerResponse(204, "Ordens de carga não encontradas para o filtro informado.")]
         [SwaggerResponse(206, "Ordens de carga paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Carregamentos.V1.OrdensCarga.Carregamento.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Carregamento não encontrado para o id informado.", Type = typeof(MensagemDto))]
         public IHttpActionResult ObterListaOrdensCarga(int idCarregamento)
         {
             using (var sessao = new GDATransaction())
             {
-                var validacao = this.ValidarIdCarregamento(idCarregamento);
+                var validacao = this.ValidarExistenciaIdCarregamento(sessao, idCarregamento);
 
                 if (validacao != null)
                 {

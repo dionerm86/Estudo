@@ -25,7 +25,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga
         [Route("{id}")]
         [SwaggerResponse(202, "Ordem de carga desassociada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(404, "Ordem de carga não encontrada para o id informado.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Carrgamento ou Ordem de carga não encontrados para o id informado.", Type = typeof(MensagemDto))]
         public IHttpActionResult DesassociarDoCarregamento(int idCarregamento, int id)
         {
             using (var sessao = new GDATransaction())
@@ -34,7 +34,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga
                 {
                     sessao.BeginTransaction();
 
-                    var validacao = this.ValidarIdCarregamento(id)
+                    var validacao = this.ValidarExistenciaIdCarregamento(sessao, id)
                         ?? this.ValidarExistenciaIdOrdemCarga(sessao, id);
 
                     if (validacao != null)

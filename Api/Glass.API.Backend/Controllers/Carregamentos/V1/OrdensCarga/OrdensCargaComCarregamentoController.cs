@@ -14,11 +14,23 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga
     [RoutePrefix("api/v1/carregamentos/{idCarregamento:int}/ordensCarga")]
     public partial class OrdensCargaComCarregamentoController : BaseController
     {
-        private IHttpActionResult ValidarIdCarregamento(int idCarregamento)
+        private IHttpActionResult ValidarIdCarregamento(int id)
         {
-            if (idCarregamento <= 0)
+            if (id <= 0)
             {
                 return this.ErroValidacao("Identificador do carregamento deve ser um número maior que zero.");
+            }
+
+            return null;
+        }
+
+        private IHttpActionResult ValidarExistenciaIdCarregamento(GDASession sessao, int id)
+        {
+            var validacao = this.ValidarIdCarregamento(id);
+
+            if (validacao == null && !CarregamentoDAO.Instance.Exists(sessao, id))
+            {
+                return this.NaoEncontrado("Carregamento não encontrado.");
             }
 
             return null;
