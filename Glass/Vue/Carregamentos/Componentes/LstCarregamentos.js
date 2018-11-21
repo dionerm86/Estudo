@@ -322,6 +322,13 @@
       } else {
         link.click();
       }
+    },
+
+    /**
+     * Limpa a lista de ordens de carga em exibição ao realizar paginação da lista principal.
+     */
+    atualizouItens: function () {
+      this.ordensCargaEmExibicao.splice(0, this.ordensCargaEmExibicao.length);
     }
   },
 

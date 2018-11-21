@@ -1,10 +1,9 @@
-﻿// <copyright file="GetOrdensCargaController.cs" company="Sync Softwares">
+﻿// <copyright file="GetOrdensCargaComCarregamentoController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga
     /// <summary>
     /// Controller de ordens de carga.
     /// </summary>
-    public partial class OrdensCargaController : BaseController
+    public partial class OrdensCargaComCarregamentoController : BaseController
     {
         /// <summary>
         /// Recupera a lista de ordens de carga.
@@ -24,7 +23,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga
         /// <param name="idCarregamento">O carregamento usado para carregar as ordens de carga.</param>
         /// <returns>Uma lista JSON com os dados das ordens de carga.</returns>
         [HttpGet]
-        [Route("listaCarregamento/{idCarregamento:int}")]
+        [Route("")]
         [SwaggerResponse(200, "Ordens de carga sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Carregamentos.V1.OrdensCarga.Carregamento.ListaDto>))]
         [SwaggerResponse(204, "Ordens de carga não encontradas para o filtro informado.")]
         [SwaggerResponse(206, "Ordens de carga paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Carregamentos.V1.OrdensCarga.Carregamento.ListaDto>))]
@@ -33,12 +32,14 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga
         {
             using (var sessao = new GDATransaction())
             {
-                if (idCarregamento == 0)
+                var validacao = this.ValidarIdCarregamento(idCarregamento);
+
+                if (validacao != null)
                 {
-                    return this.ErroValidacao("Carregamento não informado.");
+                    return validacao;
                 }
 
-                var ordensCarga = OrdemCargaDAO.Instance.ObterOrdensCargaPeloCarregamento(null, idCarregamento);
+                var ordensCarga = OrdemCargaDAO.Instance.ObterOrdensCargaPeloCarregamento(sessao, idCarregamento);
 
                 return this.Lista(ordensCarga.Select(o => new Models.Carregamentos.V1.OrdensCarga.Carregamento.ListaDto(o)));
             }

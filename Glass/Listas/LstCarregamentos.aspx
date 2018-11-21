@@ -1,4 +1,4 @@
-<%@ Page Title="Carregamentos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+ï»¿<%@ Page Title="Carregamentos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="LstCarregamentos.aspx.cs" Inherits="Glass.UI.Web.Listas.LstCarregamentos" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
@@ -17,7 +17,7 @@
         </section>
         <section>
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum carregamento encontrado."
-                :linha-editando="numeroLinhaEdicao">
+                :linha-editando="numeroLinhaEdicao" v-on:atualizou-itens="atualizouItens">
                 <template slot="cabecalho">
                     <th></th>
                     <th>
@@ -27,16 +27,16 @@
                         Motorista
                     </th>
                     <th>
-                        Veículo
+                        VeÃ­culo
                     </th>
                     <th>
-                        Data prev. saída
+                        Data prev. saÃ­da
                     </th>
                     <th>
                         Loja
                     </th>
                     <th>
-                        Situação
+                        SituaÃ§Ã£o
                     </th>
                     <th>
                         Rotas
@@ -48,7 +48,7 @@
                         Total
                     </th>
                     <th>
-                        Situação faturamento
+                        SituaÃ§Ã£o faturamento
                     </th>
                     <th></th>
                 </template>
@@ -60,8 +60,11 @@
                         <button @click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1">
                             <img src="../Images/ExcluirGrid.gif">
                         </button>
-                        <button v-on:click.prevent="alternarExibicaoOrdensCarga(index)" v-if="!inserindo && numeroLinhaEdicao === -1">
-                            <img src="../../Images/mais.gif" v-bind:title="(exibindoOrdensCarga(index) ? 'Esconder' : 'Exibir') + ' ordens de carga'" />
+                        <button v-on:click.prevent="alternarExibicaoOrdensCarga(index)" v-if="!inserindo && numeroLinhaEdicao === -1 && !exibindoOrdensCarga(index)">
+                            <img src="../../Images/mais.gif" title="Exibir ordens de carga" />
+                        </button>
+                        <button v-on:click.prevent="alternarExibicaoOrdensCarga(index)" v-if="!inserindo && numeroLinhaEdicao === -1 && exibindoOrdensCarga(index)">
+                            <img src="../../Images/menos.gif" title="Esconder ordens de carga" />
                         </button>
                     </td>
                     <td>{{ item.id }}</td>

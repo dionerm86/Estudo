@@ -210,9 +210,9 @@
     <Compile Include="Controllers\Carregamentos\V1\PostCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\DeleteCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\GetCarregamentosController.cs" />
-    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\OrdensCargaController.cs" />
-    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\GetOrdensCargaController.cs" />
-    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\PatchOrdensCargaController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\OrdensCargaComCarregamentoController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\GetOrdensCargaComCarregamentoController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\DeleteOrdensCargaComCarregamentoController.cs" />
     <Compile Include="Controllers\Cfops\V1\DeleteCfopsController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\DeleteNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\GetNaturezasOperacaoController.cs" />

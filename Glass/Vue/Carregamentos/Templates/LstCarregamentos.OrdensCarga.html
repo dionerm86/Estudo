@@ -62,19 +62,19 @@
             </td>
         </template>
 		<template slot="itemTotalizador" slot-scope="{ item, index }">
-			<td></td>
-            <td></td>
-            <td>Totais</td>
-            <td v-if="totalizadores">{{ totalizadores.pesoTotal | decimal }}</td>
-            <td v-if="totalizadores">{{ totalizadores.pesoPendente | decimal }}</td>
-            <td v-if="totalizadores">{{ totalizadores.metroQuadradoTotal | decimal }}</td>
-            <td v-if="totalizadores">{{ totalizadores.metroQuadradoPendente | decimal }}</td>
-            <td v-if="totalizadores">{{ totalizadores.quantidadePecasTotal | decimal }}</td>
-            <td v-if="totalizadores">{{ totalizadores.quantidadePecasPendente | decimal }}</td>
-            <td v-if="totalizadores">{{ totalizadores.quantidadeVolumes | decimal }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
+			<th></th>
+            <th></th>
+            <th>Totais</th>
+            <th v-if="totalizadores">{{ totalizadores.pesoTotal | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.pesoPendente | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.metroQuadradoTotal | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.metroQuadradoPendente | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.quantidadePecasTotal | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.quantidadePecasPendente | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.quantidadeVolumes | decimal }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
 		</template>
     </lista-paginada>
 </section>

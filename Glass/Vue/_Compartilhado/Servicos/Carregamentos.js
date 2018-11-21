@@ -21,29 +21,25 @@ Servicos.Carregamentos = (function(http) {
           throw new Error('Carregamento é obrigatório.');
         }
 
-        return http().get(API + 'ordensCarga/listaCarregamento/' + idCarregamento);
+        return http().get(API + idCarregamento + '/ordensCarga');
       },
 
       /**
        * Desassocia uma ordem de carga de um carregamento.
-       * @param {!number} idOrdemCarga O identificador da ordem de carga que será desassociada.
        * @param {!number} idCarregamento O identificador do carregamento.
+       * @param {!number} idOrdemCarga O identificador da ordem de carga que será desassociada.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
-      desassociarDoCarregamento: function (idOrdemCarga, idCarregamento) {
-        if (!idOrdemCarga) {
-          throw new Error('Ordem de carga é obrigatória.');
-        }
-
+      desassociarDoCarregamento: function (idCarregamento, idOrdemCarga) {
         if (!idCarregamento) {
           throw new Error('Carregamento é obrigatório.');
         }
 
-        var carregamento = {
-          id: idCarregamento
-        };
+        if (!idOrdemCarga) {
+          throw new Error('Ordem de carga é obrigatória.');
+        }
 
-        return http().patch(API + 'ordensCarga/' + idOrdemCarga + '/desassociar', carregamento);
+        return http().delete(API + idCarregamento + '/ordensCarga/' + idOrdemCarga);
       }
     },
 
