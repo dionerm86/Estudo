@@ -2629,7 +2629,6 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("AgruparFuncionarioAssociadoCliente",
                             (!String.IsNullOrEmpty(Request["agruparFuncionarioAssociadoCliente"]) ?
                             Request["agruparFuncionarioAssociadoCliente"].ToLower() == "true" : false).ToString()));
-                        lstParam.Add(new ReportParameter("AgruparDepto", (Request["agruparDepto"].ToLower() == "true").ToString()));
 
                         report.DataSources.Add(new ReportDataSource("ProdutoTrocado", pt.ToArray()));
 

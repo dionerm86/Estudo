@@ -172,28 +172,13 @@ namespace Glass.Data.RelDAL
         }
 
         /// <summary>
-        /// Retorna os produtos do resumo de corte para impressão da liberação de pedido otimizada
+        /// Método de construção da listagem para exibição no resumo da liberação.
         /// </summary>
-        public List<ResumoCorte> ObterResumoCorte(IEnumerable<ProdutosLiberarPedidoRpt> produtosLiberacao, bool exibirRevenda)
+        /// <param name="produtosLiberacao">Produtos da liberação.</param>
+        /// <returns>Retorna os produtos do resumo de corte para impressão da liberação de pedido otimizada.</returns>
+        public List<ResumoCorte> ObterResumoCorte(IEnumerable<ProdutosLiberarPedidoRpt> produtosLiberacao)
         {
-            // Configuração para buscar qualquer produto do grupo vidro
-            var buscarTodosGrupoVidro = Liberacao.RelatorioLiberacaoPedido.ConsiderarVidroQualquerProdutoDoGrupoVidro;
-
-            // Dicionário contendo quais grupos/subgrupos são ou não são de revenda
-            var dicSubgrupoRevenda = new Dictionary<Tuple<uint, uint?>, bool>();
-            foreach (var tupla in produtosLiberacao.Select(f => new Tuple<uint, uint?>(f.IdGrupoProd, f.IdSubgrupoProd)).Distinct())
-                dicSubgrupoRevenda.Add(tupla, SubgrupoProdDAO.Instance.IsSubgrupoProducao((int)tupla.Item1, (int?)tupla.Item2));
-
             var pecasResumoCorte = produtosLiberacao
-                .Where(f =>
-
-                    // Define se irá buscar qualquer produto do grupo vidro ou apenas produtos de produção
-                    buscarTodosGrupoVidro ?
-                        f.IdGrupoProd == (int)NomeGrupoProd.Vidro :
-                        exibirRevenda ?
-                         f.IdProdLiberarPedido > 0
-                         : !dicSubgrupoRevenda[new Tuple<uint, uint?>(f.IdGrupoProd, f.IdSubgrupoProd)]
-                )
                 .GroupBy(f => f.IdProd)
                 .Select(f => new ResumoCorte()
                 {
@@ -216,9 +201,8 @@ namespace Glass.Data.RelDAL
                     Largura = f.Sum(x => x.Largura),
                     TotM2 = Math.Round(f.Sum(x => x.TotM), Geral.NumeroCasasDecimaisTotM),
                     TotM2Calc = Math.Round(f.Sum(x => x.TotM2Calc), Geral.NumeroCasasDecimaisTotM),
-                    Peso = f.Sum(x => x.Peso)
-                }
-                ).ToList();
+                    Peso = f.Sum(x => x.Peso),
+                }).ToList();
 
             return pecasResumoCorte;
         }

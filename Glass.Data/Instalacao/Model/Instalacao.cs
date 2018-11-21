@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using GDA;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
@@ -39,7 +39,7 @@ namespace Glass.Data.Model
 
         #region Propriedades
 
-        [Log("Id. da Instalação.")]
+        [Log("Id. da InstalaÃ§Ã£o.")]
         [PersistenceProperty("IDINSTALACAO", PersistenceParameterType.IdentityKey)]
         public uint IdInstalacao { get; set; }
 
@@ -54,7 +54,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("DATAENTREGA")]
         public DateTime DataEntrega { get; set; }
 
-        [Log("Data de Instalação")]
+        [Log("Data de InstalaÃ§Ã£o")]
         [PersistenceProperty("DATAINSTALACAO")]
         public DateTime? DataInstalacao { get; set; }
 
@@ -66,14 +66,14 @@ namespace Glass.Data.Model
         /// 5-Sistema Reiki (Vidros)
         /// 6-Euro Glass
         /// 7-Serralheiria
-        /// 8-Mão de Obra
+        /// 8-MÃ£o de Obra
         /// 9-Espelho
-        /// 10-Box de acrílico
+        /// 10-Box de acrÃ­lico
         /// 11-Vidro comum (Tampo de mesa)
         /// 12-Produtos de terceiros
         /// 13-Vidro comum reforma
         /// </summary>
-        [Log("Tipo da Instalação")]
+        [Log("Tipo da InstalaÃ§Ã£o")]
         [PersistenceProperty("TIPOINSTALACAO")]
         public int TipoInstalacao { get; set; }
 
@@ -88,7 +88,7 @@ namespace Glass.Data.Model
         /// 5-Continuada
         /// 6-A agendar
         /// </summary>
-        [Log("Situação")]
+        [Log("SituaÃ§Ã£o")]
         [PersistenceProperty("SITUACAO")]
         public int Situacao { get; set; }
 
@@ -116,7 +116,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("OBS")]
         public string Obs { get; set; }
 
-        [Log("Data ordem de instalação")]
+        [Log("Data ordem de instalaÃ§Ã£o")]
         [PersistenceProperty("DATAORDEMINSTALACAO")]
         public DateTime? DataOrdemInstalacao { get; set; }
 
@@ -273,7 +273,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                string sitObs = 
+                string sitObs =
                     Situacao == 1 ? "Aberta" :
                     Situacao == 2 ? "Em Andamento" :
                     Situacao == 3 ? "Finalizada" :
@@ -281,7 +281,7 @@ namespace Glass.Data.Model
                     Situacao == 5 ? "Continuada " :
                     Situacao == 6 ? "A agendar" :
                     Situacao == 7 ? "Colagem" :
-                    Situacao == 8 ? "Depto. Técnico" :
+                    Situacao == 8 ? "Depto. TÃ©cnico" :
                     String.Empty;
 
                 return !String.IsNullOrEmpty(Obs) ? sitObs + " (" + Obs + ")" : sitObs;
