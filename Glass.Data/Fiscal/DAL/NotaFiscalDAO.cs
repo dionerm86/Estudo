@@ -5385,6 +5385,14 @@ namespace Glass.Data.DAL
             // Altera situação da NFe para autorizada
             AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
 
+            // Altera a data emissão da NFe para a data de autorização do retorno do xml.
+            if (xmlProt?["protNFe"]?["infProt"]?["dhRecbto"] != null)
+            {
+                var dataAutorizacaoNotaFiscal = DateTime.Parse(xmlProt?["protNFe"]?["infProt"]?["dhRecbto"]?.InnerXml);
+
+                objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET dataEmissao=?dataEmissaoNf WHERE IdNf={ nf.IdNf }", new GDAParameter[] { new GDAParameter("?dataEmissaoNf", dataAutorizacaoNotaFiscal) });
+            }
+
             // Envia email para o cliente com o XML
             EnviarEmailXml(nf);
         }
