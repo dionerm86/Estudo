@@ -66,19 +66,6 @@ Servicos.Carregamentos = (function(http) {
     },
 
     /**
-     * Retorna as pendências de faturamento do carregamento.
-     * @param {!number} id O identificador do carregamento.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-    obterPendenciasFaturamento: function (id) {
-      if (!id) {
-        throw new Error('Carregamento é obrigatório.');
-      }
-
-      return http().get(API + id + '/pendenciasFaturamento');
-    },
-
-    /**
      * Retorna dados do faturamento do carregamento.
      * @param {!number} id O identificador do carregamento.
      * @returns {Promise} Uma promise com o resultado da busca.

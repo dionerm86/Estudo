@@ -106,26 +106,6 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1
         }
 
         /// <summary>
-        /// Recupera as pendências de faturamento.
-        /// </summary>
-        /// <param name="id">O identificador </param>
-        /// <returns>Uma lista JSON com as pendências de faturamento.</returns>
-        [HttpGet]
-        [Route("{id:int}/pendenciasFaturamento")]
-        [SwaggerResponse(200, "Pendências de faturamento encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Pendências de faturamento não encontradas.")]
-        public IHttpActionResult ObterPendenciasFaturamento(int id)
-        {
-            using (var sessao = new GDATransaction())
-            {
-                var pendencias = new ConversorEnum<Data.Model.Carregamento.SituacaoCarregamentoEnum>()
-                    .ObterTraducao();
-
-                return this.Lista(pendencias);
-            }
-        }
-
-        /// <summary>
         /// Recupera dados do faturamento.
         /// </summary>
         /// <param name="id">O identificador do carregamento.</param>
