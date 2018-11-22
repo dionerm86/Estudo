@@ -1,4 +1,5 @@
-Vue.component('lista-paginada', {
+﻿Vue.component('lista-paginada', {
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Função utilizada para a recuperação dos itens para o controle.
@@ -82,6 +83,17 @@ Vue.component('lista-paginada', {
       default: false,
       validator: Mixins.Validacao.validarBooleanOuVazio
     },
+
+    /**
+     * Indica se deve ser exibida a linha com totalizadores dos registros.
+     * @type {?boolean}
+     */
+    exibirTotalizador: {
+      required: false,
+      twoWay: false,
+      default: false,
+      validator: Mixins.Validacao.validarBooleanOuVazio
+    }
   },
 
   data: function () {
@@ -100,7 +112,8 @@ Vue.component('lista-paginada', {
       ultimaPagina: 0,
       itens: [],
       bloqueio: false,
-      processamento
+      processamento,
+      ultimaPesquisa: {}
     };
   },
 
@@ -129,14 +142,25 @@ Vue.component('lista-paginada', {
      * e ordenação atual.
      */
     atualizar: function() {
+      const pesquisa = {
+        filtro: this.filtro,
+        paginaAtual: this.paginaAtual,
+        numeroRegistros: this.numeroRegistros,
+        ordenacao: this.ordenacao
+      };
+
+      if (this.equivalentes(pesquisa, this.ultimaPesquisa)) {
+        return;
+      }
+
       this.bloqueio = true;
+      this.ultimaPesquisa = pesquisa;
       var vm = this;
 
       this.funcaoRecuperarItens(this.filtro, this.paginaAtual, this.numeroRegistros, this.ordenacao)
         .then(function(resposta) {
-          var links = resposta.headers.link;
-
-          links = !links
+          const links = resposta.headers.link;
+          const linkUltimaPagina = !links
             ? null
             : links
                 .split(',')
@@ -147,8 +171,11 @@ Vue.component('lista-paginada', {
                   return l.trim().substring(1, l.indexOf('>;') - 1);
                 })[0];
 
-          vm.ultimaPagina = !links ? vm.paginaAtual : parseInt(GetQueryString('pagina', links), 10) || vm.paginaAtual;
+          vm.ultimaPagina = linkUltimaPagina
+            ? parseInt(GetQueryString('pagina', linkUltimaPagina), 10)
+            : null;
 
+          vm.ultimaPagina = vm.ultimaPagina || vm.paginaAtual;
           vm.itens = resposta.data || [];
           vm.$emit('atualizou-itens', vm.itens.length);
         })

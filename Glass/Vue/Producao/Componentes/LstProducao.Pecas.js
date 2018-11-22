@@ -188,8 +188,10 @@
 
     /**
      * Indica externamente que os itens em exibição foram atualizados.
+     * Também realiza a limpeza da variável que controla a exibição de filhos.
      */
     atualizouItens: function (numeroItens) {
+      this.filhosEmExibicao.splice(0, this.filhosEmExibicao.length);
       this.$emit('atualizou-itens', numeroItens);
     },
 
