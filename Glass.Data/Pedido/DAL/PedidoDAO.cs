@@ -3897,30 +3897,68 @@ namespace Glass.Data.DAL
         private string SqlReceberSinal(string idsPedidos, uint idCliente, string nomeCliente, string idsPedidosRem,
             string dataIniEntrega, string dataFimEntrega, bool isSinal, bool forList, out bool temFiltro, out string filtroAdicional)
         {
-            var sql = SqlSinaisRecebidos(idCliente, 0, 0, null, null, false, !isSinal, true, out temFiltro, out filtroAdicional);
-            if (sql.Contains(" order by"))
-                sql = sql.Remove(sql.IndexOf(" order by", StringComparison.Ordinal));
+            var sql = this.SqlSinaisRecebidos(
+                idCliente, 
+                0, 
+                0, 
+                null, 
+                null, 
+                false, 
+                !isSinal, 
+                true, 
+                out temFiltro, 
+                out filtroAdicional);
+
+            if (sql.Contains(" ORDER BY"))
+            {
+                sql = sql.Remove(sql.IndexOf(" ORDER BY", StringComparison.Ordinal));
+            }
 
             if (forList && string.IsNullOrEmpty(idsPedidos))
+            {
                 idsPedidos = "0";
+            }
 
             if (forList || !string.IsNullOrEmpty(idsPedidos))
-                filtroAdicional += " and p.idPedido in (" + idsPedidos + ")";
+            {
+                filtroAdicional += $" AND p.IdPedido IN ({idsPedidos})";
+            }
 
             if (idCliente == 0 && !string.IsNullOrEmpty(nomeCliente))
             {
-                var ids = ClienteDAO.Instance.GetIds(null, nomeCliente, null, 0, null, null, null, null, 0);
-                filtroAdicional += " And p.idCli in (" + ids + ")";
+                var ids = ClienteDAO.Instance.GetIds(
+                    null, 
+                    nomeCliente, 
+                    null, 
+                    0, 
+                    null, 
+                    null, 
+                    null, 
+                    null, 
+                    0);
+
+                filtroAdicional += $" AND p.IdCli IN ({ids})";
             }
 
             if (!string.IsNullOrEmpty(dataIniEntrega))
-                filtroAdicional += " and p.dataEntrega>=?dataIniEntrega";
+            {
+                filtroAdicional += " AND p.DataEntrega >= ?dataIniEntrega";
+            }
 
             if (!string.IsNullOrEmpty(dataFimEntrega))
-                filtroAdicional += " and p.dataEntrega<=?dataFimEntrega";
+            {
+                filtroAdicional += " AND p.DataEntrega <= ?dataFimEntrega";
+            }
 
             if (!string.IsNullOrEmpty(idsPedidosRem))
-                filtroAdicional += " and p.idPedido not in (" + idsPedidosRem.TrimEnd(',') + ")";
+            {
+                filtroAdicional += $" AND p.IdPedido NOT IN ({idsPedidosRem.TrimEnd(',')})";
+            }
+                
+            if (!isSinal)
+            {
+                filtroAdicional += " AND p.Total > p.ValorEntrada";
+            }
 
             return sql;
         }
