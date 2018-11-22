@@ -20,7 +20,7 @@ namespace Glass.Data.DAL
                 sum(vpp.qtde) as QtdeItens, SUM(pp.peso / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde) as PesoTotal, SUM(pp.TotM / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde) as TotM,
                 (Select CONCAT(r.codInterno,' - ',r.descricao) From rota r Where r.idRota In (Select rc.idRota From rota_cliente rc Where rc.idCliente=c.id_Cli)) As codRota,
                 l.NomeFantasia as Loja, l.site as SiteLoja, l.telefone as TelLoja, f.nome as NomeFuncFinalizacao, '$$$' as Criterio,
-                p.RotaExterna, p.IdClienteExterno, p.ClienteExterno, p.IdPedidoExterno, p.Importado as PedidoImportado" : "COUNT(DISTINCT v.idVolume)";
+                p.RotaExterna, p.IdClienteExterno, p.ClienteExterno, p.IdPedidoExterno, p.Importado as PedidoImportado, sgp.descricao AS NomeSubGrupoProd" : "COUNT(DISTINCT v.idVolume)";
 
             string sql = @"
                 SELECT " + campos + @"
@@ -31,6 +31,8 @@ namespace Glass.Data.DAL
                     LEFT JOIN volume_produtos_pedido vpp ON (v.idVolume = vpp.idVolume)
                     LEFT JOIN produtos_pedido pp ON (vpp.idProdPed = pp.idProdPed)
                     LEFT JOIN funcionario f ON (v.IdFuncFechamento = f.IdFunc)
+                    LEFT JOIN produto prod ON (pp.IdProd = prod.IdProd)
+                    LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
                 WHERE 1";
 
             string criterio = "";
