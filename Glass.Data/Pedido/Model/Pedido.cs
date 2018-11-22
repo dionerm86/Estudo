@@ -1025,17 +1025,17 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (ObsLiberacao.Trim().Contains(ObservacaoLiberacaoCliente.Trim()))
+                if (!string.IsNullOrEmpty(ObsLiberacao) && ObsLiberacao.Trim().Contains(ObservacaoLiberacaoCliente.Trim()))
                 {
                     return ObsLiberacao;
                 }
 
-                if (ObservacaoLiberacaoCliente.Trim().Contains(ObsLiberacao.Trim()))
+                if (!string.IsNullOrEmpty(ObservacaoLiberacaoCliente) && ObservacaoLiberacaoCliente.Trim().Contains(ObsLiberacao.Trim()))
                 {
                     return ObservacaoLiberacaoCliente;
                 }
 
-                return ObservacaoLiberacaoCliente + " " + ObsLiberacao;
+                return (ObservacaoLiberacaoCliente + " " ?? string.Empty) + (ObsLiberacao ?? string.Empty);
             }
         }
 
