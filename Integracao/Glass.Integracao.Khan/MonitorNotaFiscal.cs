@@ -24,6 +24,9 @@ namespace Glass.Integracao.Khan
 
         private const string NotaFiscalEmitida = "4";
 
+        private const string SituacaoIntegracaoPendenteImportacao = "Pendente de Importação";
+        private const string SituacaoIntegracaoPendenteImportacao2 = "Pedente de Importação";
+
         private readonly Colosoft.Logging.ILogger logger;
         private readonly ConfiguracaoKhan configuracao;
         private readonly Historico.IProvedorHistorico provedorHistorico;
@@ -402,14 +405,23 @@ namespace Glass.Integracao.Khan
                         var idNf = int.Parse(idsNfEnumerator.Current);
                         var pedidoStatus = pedidosStatusEnumerator.Current;
 
-                        if (pedidoStatus.status_integracao.StartsWith("Integrado", StringComparison.InvariantCultureIgnoreCase))
+                        var statusIntegracao = pedidoStatus.status_integracao?.Trim() ?? string.Empty;
+
+                        if (statusIntegracao.StartsWith("Integrado", StringComparison.InvariantCultureIgnoreCase))
                         {
                             this.provedorHistorico.NotificarIntegrado(HistoricoKhan.NotasFiscais, new object[] { idNf });
                         }
-                        else if (!StringComparer.InvariantCultureIgnoreCase.Equals(pedidoStatus.status_integracao, "Pendente Integração"))
+                        else if (statusIntegracao.StartsWith(SituacaoIntegracaoPendenteImportacao2, StringComparison.InvariantCultureIgnoreCase) &&
+                                 statusIntegracao.Length > SituacaoIntegracaoPendenteImportacao.Length)
                         {
-                            this.provedorHistorico.RegistrarFalha(HistoricoKhan.NotasFiscais, new object[] { idNf }, pedidoStatus.status_integracao, null);
-                            this.logger.Error($"Não foi possível integrar a nota fiscal (idNf={idNf}). {pedidoStatus.status_integracao}".GetFormatter());
+                            var mensagem = statusIntegracao.Substring(SituacaoIntegracaoPendenteImportacao2.Length).Trim();
+                            if (mensagem.StartsWith(","))
+                            {
+                                mensagem = mensagem.Substring(1).Trim();
+                            }
+
+                            this.provedorHistorico.RegistrarFalha(HistoricoKhan.NotasFiscais, new object[] { idNf }, mensagem, null);
+                            this.logger.Error($"Não foi possível integrar a nota fiscal (idNf={idNf}). {mensagem}".GetFormatter());
                         }
                     }
                 }

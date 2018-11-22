@@ -302,10 +302,12 @@ namespace Glass.Integracao.Khan
             this.Logger.Info("Configurando monitor de notas fiscais...".GetFormatter());
             this.MonitorNotaFiscal.ConfigurarOperacoes(this.gerenciadorOperacoes);
 
-            this.integradorSchedulerRegistry = new IntegradorScheculerRegistry(this);
-
-            this.Logger.Info("Iniciando os jobs...".GetFormatter());
-            FluentScheduler.JobManager.Initialize(this.integradorSchedulerRegistry);
+            if (this.Configuracao.ExecutarJobs)
+            {
+                this.integradorSchedulerRegistry = new IntegradorScheculerRegistry(this);
+                this.Logger.Info("Iniciando os jobs...".GetFormatter());
+                FluentScheduler.JobManager.Initialize(this.integradorSchedulerRegistry);
+            }
 
             return Task.FromResult(true);
         }
@@ -321,7 +323,6 @@ namespace Glass.Integracao.Khan
             }
 
             this.monitores.Clear();
-
             this.MonitorIndicadoresFinanceiros.Dispose();
             GC.SuppressFinalize(this);
         }
