@@ -27,11 +27,11 @@ Servicos.Volumes = (function(http) {
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     excluir: function (id) {
-      if (!placa) {
+      if (!id) {
         throw new Error('Volume é obrigatório.');
       }
 
-      return http().delete(API + placa);
+      return http().delete(API + id);
     },
 
     /**

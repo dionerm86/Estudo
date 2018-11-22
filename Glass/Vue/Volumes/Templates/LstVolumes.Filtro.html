@@ -17,13 +17,13 @@
         </span>
         <span class="form-group">
             <label>Situação pedido</label>
-            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.situacaoPedidoVolume" texto-selecionar="Selecione a situação"
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.situacoesPedidoVolume" texto-selecionar="Selecione a situação"
                 v-bind:funcao-recuperar-itens="obterItensFiltroSituacoesPedidoVolume" v-bind:ordenar="false"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Situação volume</label>
-            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.situacaoVolume" texto-selecionar="Selecione a situação"
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.situacoesVolume" texto-selecionar="Selecione a situação"
                 v-bind:funcao-recuperar-itens="obterItensFiltroSituacoesVolume" v-bind:ordenar="false"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>

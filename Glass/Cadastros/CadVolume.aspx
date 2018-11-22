@@ -56,15 +56,15 @@
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
                     <td style="white-space: nowrap">
-                        <button v-on:click.prevent="alternarExibicaoVolumes(index)" v-if="!inserindo && numeroLinhaEdicao === -1 && !exibindoVolumes(index)">
+                        <button v-on:click.prevent="alternarExibicaoVolumes(index)" v-if="!exibindoVolumes(index)">
                             <img src="../../Images/mais.gif" title="Exibir volumes" />
                         </button>
-                        <button v-on:click.prevent="alternarExibicaoVolumes(index)" v-if="!inserindo && numeroLinhaEdicao === -1 && exibindoVolumes(index)">
+                        <button v-on:click.prevent="alternarExibicaoVolumes(index)" v-if="exibindoVolumes(index)">
                             <img src="../../Images/menos.gif" title="Esconder volumes" />
                         </button>
                     </td>
                     <td :style="{ color: item.corLinha }">
-                        {{ item.idPedido }} 
+                        {{ item.id }} 
                         <template v-if="configuracoes.controlarPedidosImportados && item.importado && item.pedidoExterno">
                             ({{ item.pedidoExterno.id }})
                         </template>

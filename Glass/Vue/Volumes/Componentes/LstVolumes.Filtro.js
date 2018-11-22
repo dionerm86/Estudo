@@ -56,9 +56,7 @@
      */
     filtrar: function () {
       var novoFiltro = this.clonar(this.filtroAtual);
-      if (!this.equivalentes(this.filtro, novoFiltro)) {
-        this.$emit('update:filtro', novoFiltro);
-      }
+      this.$emit('update:filtro', novoFiltro);
     },
 
     /**
@@ -96,12 +94,10 @@
     /**
      * Atualiza a lista de tempos em tempos
      */
-    atualizarLista: function () {
-      this.intervaloAtualizacaoLista = setInterval(function () {
-        if (this.carregarItensAutomaticamente) {
-          this.filtrar();
-        }
-      }, 1000 * 60);
+    atualizarLista: function (vm) {
+      if (vm.carregarItensAutomaticamente) {
+        vm.filtrar();
+      }
     }
   },
 
@@ -112,11 +108,14 @@
      */
     configuracoes: {
       handler: function () {
-        this.filtroAtual.situacoesPedidoVolume = [this.configuracoes.situacaoSemVolume, this.configuracoes.situacaoPendente];
-
-        this.atualizarLista();
-
+        this.filtroAtual.situacoesPedidoVolume = this.configuracoes
+          ? this.configuracoes.situacoesPedidoVolume
+          : [];
+        
         var vm = this;
+
+        setInterval(function () { vm.atualizarLista(vm) }, 1000 * 60);
+
         this.$nextTick(function () {
           vm.filtrar();
         });

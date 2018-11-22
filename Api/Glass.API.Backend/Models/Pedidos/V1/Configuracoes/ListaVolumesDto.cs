@@ -4,6 +4,8 @@
 
 using Glass.Configuracoes;
 using Newtonsoft.Json;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Pedidos.V1.Configuracoes
@@ -20,8 +22,11 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Configuracoes
         internal ListaVolumesDto()
         {
             this.ControlarPedidosImportados = OrdemCargaConfig.ControlarPedidosImportados;
-            this.SituacaoSemVolume = Data.Model.Pedido.SituacaoVolumeEnum.SemVolume;
-            this.SituacaoPendente = Data.Model.Pedido.SituacaoVolumeEnum.Pendente;
+            this.SituacoesPedidoVolume = new List<Data.Model.Pedido.SituacaoVolumeEnum>
+            {
+                Data.Model.Pedido.SituacaoVolumeEnum.SemVolume,
+                Data.Model.Pedido.SituacaoVolumeEnum.Pendente,
+            };
         }
 
         /// <summary>
@@ -32,17 +37,10 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Configuracoes
         public bool ControlarPedidosImportados { get; set; }
 
         /// <summary>
-        /// Obtém ou define o valor da situação de volume "Sem volume".
+        /// Obtém ou define as situações de volume a serem filtradas por padrão na tela.
         /// </summary>
         [DataMember]
-        [JsonProperty("situacaoSemVolume")]
-        public Data.Model.Pedido.SituacaoVolumeEnum SituacaoSemVolume { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o valor da situação de volume "Pendente".
-        /// </summary>
-        [DataMember]
-        [JsonProperty("situacaoPendente")]
-        public Data.Model.Pedido.SituacaoVolumeEnum SituacaoPendente { get; set; }
+        [JsonProperty("situacoesPedidoVolume")]
+        public IEnumerable<Data.Model.Pedido.SituacaoVolumeEnum> SituacoesPedidoVolume { get; set; }
     }
 }

@@ -41,7 +41,7 @@
             <td>{{ item.metroQuadrado | decimal }}</td>
             <td>{{ item.situacao }}</td>
             <td>{{ item.funcionarioFinalizacao }}</td>
-            <td>{{ item.dataFinalizacao }}</td>
+            <td>{{ item.dataFinalizacao | dataHora }}</td>
             <td>
                 <button @click.prevent="abrirImpressaoEtiquetaVolume(item)" title="Imprimir etiqueta">
                     <img src="../Images/printer.png">
