@@ -28,8 +28,8 @@ namespace Glass.API.Backend.Models.Volumes.V1.Lista
         /// <summary>
         /// Obtém ou define o identificador do volume.
         /// </summary>
-        [JsonProperty("id")]
-        public int? Id { get; set; }
+        [JsonProperty("idVolume")]
+        public int? IdVolume { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador do pedido.

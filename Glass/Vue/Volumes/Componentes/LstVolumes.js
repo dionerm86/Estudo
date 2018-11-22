@@ -18,6 +18,10 @@
      * @returns {Promise} Uma promise com o resultado da busca dos itens.
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+      if (!this.configuracoes || !Object.keys(this.configuracoes).length) {
+        return Promise.reject();
+      }
+
       var filtroUsar = this.clonar(filtro || {});
       return Servicos.Pedidos.obterListaVolumes(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
@@ -27,7 +31,7 @@
      * @param {Object} item O pedido que irá gerar o volume.
      */
     abrirTelaGerarVolume: function (item) {
-      this.abrirJanela(600, 800, '../Cadastros/CadItensVolume.aspx?popup=true&idPedido=' + item.idPedido + '&idVolume=' + item.id);
+      this.abrirJanela(600, 800, '../Cadastros/CadItensVolume.aspx?popup=true&idPedido=' + item.id + '&idVolume=0');
     },
 
     /**
@@ -107,6 +111,12 @@
 
   mounted: function() {
     var vm = this;
+
+    setInterval(function () {
+      if (vm.filtro.carregarItensAutomaticamente) {
+        vm.atualizarLista();
+      }
+    }, 1000 * 60);
 
     Servicos.Pedidos.obterConfiguracoesListaVolumes()
       .then(function (resposta) {

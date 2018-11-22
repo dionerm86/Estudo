@@ -190,7 +190,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                 filtro = filtro ?? new Models.Pedidos.V1.ListaVolumes.FiltroDto();
 
                 var pedidos = PedidoDAO.Instance.GetForGeracaoVolume(
-                    (uint)(filtro.Id ?? 0),
+                    (uint)(filtro.IdPedido ?? 0),
                     (uint)(filtro.IdCliente ?? 0),
                     filtro.NomeCliente,
                     (uint)(filtro.IdLoja ?? 0),
@@ -212,7 +212,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                     pedidos.Select(p => new Models.Pedidos.V1.ListaVolumes.ListaDto(p)),
                     filtro,
                     () => PedidoDAO.Instance.GetForGeracaoVolumeCount(
-                        (uint)(filtro.Id ?? 0),
+                        (uint)(filtro.IdPedido ?? 0),
                         (uint)(filtro.IdCliente ?? 0),
                         filtro.NomeCliente,
                         (uint)(filtro.IdLoja ?? 0),

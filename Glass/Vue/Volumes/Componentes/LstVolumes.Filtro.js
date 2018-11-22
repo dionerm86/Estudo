@@ -26,7 +26,8 @@
     return {
       filtroAtual: this.merge(
         {
-          id: null,
+          idPedido: null,
+          idVolume: null,
           idCliente: null,
           nomeCliente: null,
           periodoEntregaPedidoInicio: null,
@@ -38,14 +39,14 @@
           tipoEntrega: null,
           idClienteExterno: null,
           nomeClienteExterno: null,
-          idsRotaExterna: null
+          idsRotaExterna: null,
+          carregarItensAutomaticamente: false
         },
         this.filtro
       ),
       lojaAtual: null,
       rotaAtual: null,
       tipoEntregaAtual: null,
-      carregarItensAutomaticamente: false,
       intervaloAtualizacaoLista: null
     };
   },
@@ -56,7 +57,9 @@
      */
     filtrar: function () {
       var novoFiltro = this.clonar(this.filtroAtual);
-      this.$emit('update:filtro', novoFiltro);
+      if (!this.equivalentes(this.filtro, novoFiltro)) {
+        this.$emit('update:filtro', novoFiltro);
+      }
     },
 
     /**
@@ -89,15 +92,6 @@
      */
     obterItensFiltroTiposEntrega: function () {
       return Servicos.Pedidos.obterTiposEntrega();
-    },
-
-    /**
-     * Atualiza a lista de tempos em tempos
-     */
-    atualizarLista: function (vm) {
-      if (vm.carregarItensAutomaticamente) {
-        vm.filtrar();
-      }
     }
   },
 
@@ -111,11 +105,13 @@
         this.filtroAtual.situacoesPedidoVolume = this.configuracoes
           ? this.configuracoes.situacoesPedidoVolume
           : [];
+
+        var dataAtual = new Date();
+        this.filtroAtual.periodoEntregaPedidoInicio = new Date(dataAtual.setMonth(dataAtual.getMonth() - 1));
+        this.filtroAtual.periodoEntregaPedidoFim = new Date();
+        this.filtroAtual.carregarItensAutomaticamente = true;
         
         var vm = this;
-
-        setInterval(function () { vm.atualizarLista(vm) }, 1000 * 60);
-
         this.$nextTick(function () {
           vm.filtrar();
         });

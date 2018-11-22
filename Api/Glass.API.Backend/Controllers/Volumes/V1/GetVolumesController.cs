@@ -37,7 +37,7 @@ namespace Glass.API.Backend.Controllers.Volumes.V1
                 filtro = filtro ?? new Models.Volumes.V1.Lista.FiltroDto();
 
                 var volumes = VolumeDAO.Instance.GetList(
-                    (uint)(filtro.Id ?? 0),
+                    (uint)(filtro.IdVolume ?? 0),
                     (uint)(filtro.IdPedido ?? 0),
                     filtro.SituacoesVolume != null && filtro.SituacoesVolume.Any() ? string.Join(",", filtro.SituacoesVolume.Select(t => (int)t)) : null,
                     filtro.ObterTraducaoOrdenacao(),
@@ -48,7 +48,7 @@ namespace Glass.API.Backend.Controllers.Volumes.V1
                     volumes.Select(o => new Models.Volumes.V1.Lista.ListaDto(o)),
                     filtro,
                     () => VolumeDAO.Instance.GetListCount(
-                        (uint)(filtro.Id ?? 0),
+                        (uint)(filtro.IdVolume ?? 0),
                         (uint)(filtro.IdPedido ?? 0),
                         filtro.SituacoesVolume != null && filtro.SituacoesVolume.Any() ? string.Join(",", filtro.SituacoesVolume.Select(t => (int)t)) : null));
             }

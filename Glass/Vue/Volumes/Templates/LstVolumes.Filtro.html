@@ -7,7 +7,7 @@
         </span>
         <span class="form-group">
             <label>Volume</label>
-            <input type="number" v-model.number="filtroAtual.id" style="width: 60px" />
+            <input type="number" v-model.number="filtroAtual.idVolume" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -69,9 +69,8 @@
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
-            <input id="carregarItensAutomaticamente" type="checkbox" v-model="carregarItensAutomaticamente" />
+            <input id="carregarItensAutomaticamente" type="checkbox" v-model="filtro.carregarItensAutomaticamente" />
             <label for="carregarItensAutomaticamente">Carregar itens automaticamente</label>
-            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
 </section>

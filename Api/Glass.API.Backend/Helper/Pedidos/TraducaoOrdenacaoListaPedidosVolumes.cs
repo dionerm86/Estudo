@@ -29,8 +29,11 @@ namespace Glass.API.Backend.Helper.Pedidos
         {
             switch (campo.ToLowerInvariant())
             {
-                case "id":
+                case "pedido":
                     return "IdPedido";
+
+                case "cliente":
+                    return "IdCli";
 
                 case "loja":
                     return "NomeLoja";
@@ -42,7 +45,7 @@ namespace Glass.API.Backend.Helper.Pedidos
                     return "CodRota";
 
                 case "dataentrega":
-                    return campo;
+                    return "DataEntrega";
 
                 default:
                     return this.OrdenacaoPadrao;

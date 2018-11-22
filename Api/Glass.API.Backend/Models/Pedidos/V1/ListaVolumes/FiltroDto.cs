@@ -25,7 +25,12 @@ namespace Glass.API.Backend.Models.Pedidos.V1.ListaVolumes
         /// <summary>
         /// Obtém ou define o identificador do pedido.
         /// </summary>
-        public int? Id { get; set; }
+        public int? IdPedido { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o identificador do volume.
+        /// </summary>
+        public int? IdVolume { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador do cliente.
