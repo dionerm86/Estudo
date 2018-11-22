@@ -2116,8 +2116,8 @@ namespace Glass.Data.DAL
         /// <returns>Retorna o resultado de um teste l�gico que verifica se o pedido j� efetuou a sa�da de estoque.</returns>
         internal bool VerificaSaidaEstoqueConfirmacao(GDASession sessao, int idPedido)
         {
-            return !PedidoConfig.LiberarPedido 
-                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar 
+            return !PedidoConfig.LiberarPedido
+                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar
                 && ObtemSituacao(sessao, (uint)idPedido) == Pedido.SituacaoPedido.Confirmado;
         }
 
@@ -3158,9 +3158,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Método que retorna o SQL utilizado para a busca dos dados do gráfico de vendas.
         /// </summary>
-        internal string SqlGraficoVendas(bool administrador, string dataFimSituacao, string dataInicioSituacao,
-            bool emitirGarantia, bool emitirReposicao, bool emitirPedidoFuncionario, out string filtroAdicional,
-            int? idCliente, int? idFunc, int? idLoja, int? idVendAssoc, int? idRota, bool loginCliente, string nomeCliente, out bool temFiltro, string tipoPedido)
+        internal string SqlGraficoVendas(string dataFimSituacao, string dataInicioSituacao, out string filtroAdicional,
+            int? idCliente, int? idFunc, int? idLoja, int? idVendAssoc, int? idRota, string nomeCliente, out bool temFiltro, string tipoPedido)
         {
             temFiltro = false;
             filtroAdicional = string.Empty;
@@ -3170,51 +3169,12 @@ namespace Glass.Data.DAL
             var situacoes = string.Format("{0},{1}", (int)Pedido.SituacaoPedido.Confirmado, (int)Pedido.SituacaoPedido.LiberadoParcialmente);
 
             /* Chamado 49970. */
-            var camposFluxo = string.Format(@"CAST(COALESCE({0}.Total, {1}.Total) AS DECIMAL (12,2)) AS TotalReal,
-                CAST(COALESCE({0}.Total, {1}.Total) AS DECIMAL (12,2)) AS Total,
-                CAST(COALESCE({0}.Desconto, {1}.Desconto) AS DECIMAL (12,2)) AS Desconto,
-                CAST(COALESCE({0}.TipoDesconto, {1}.TipoDesconto) AS DECIMAL (12,2)) AS TipoDesconto,
-                CAST(COALESCE({0}.Acrescimo, {1}.Acrescimo) AS DECIMAL (12,2)) AS Acrescimo,
-                CAST(COALESCE({0}.TipoAcrescimo, {1}.TipoAcrescimo) AS DECIMAL (12,2)) AS TipoAcrescimo,
-                CAST(COALESCE({0}.Peso, {1}.Peso) AS DECIMAL (12,2)) AS Peso,
-                CAST(COALESCE({0}.TotM, {1}.TotM) AS DECIMAL (12,2)) AS TotM,
-                CAST(COALESCE({0}.AliquotaIpi, {1}.AliquotaIpi) AS DECIMAL (12,2)) AS AliquotaIpi,
-                CAST(COALESCE({0}.ValorIpi, {1}.ValorIpi) AS DECIMAL (12,2)) AS ValorIpi,
-                CAST(COALESCE({0}.AliquotaIcms, {1}.AliquotaIcms) AS DECIMAL (12,2)) AS AliquotaIcms,
-                CAST(COALESCE({0}.ValorIcms, {1}.ValorIcms) AS DECIMAL (12,2)) AS ValorIcms", PCPConfig.UsarConferenciaFluxo ? "pe" : "p", PCPConfig.UsarConferenciaFluxo ? "p" : "pe");
+            var camposFluxo = string.Format(@"CAST(COALESCE({0}.Total, {1}.Total) AS DECIMAL (12,2)) AS TotalReal, CAST(COALESCE({0}.Total, {1}.Total) AS DECIMAL (12,2)) AS Total",
+                PCPConfig.UsarConferenciaFluxo ? "pe" : "p", PCPConfig.UsarConferenciaFluxo ? "p" : "pe");
 
             var campos = string.Format(@"{0}, p.IdLoja, p.IdFunc, p.IdCli, f.Nome AS NomeFunc, c.IdFunc AS IdFuncCliente, fc.Nome AS NomeFuncCliente, l.NomeFantasia AS NomeLoja, p.TipoPedido,
-                p.Situacao, p.DataConf, com.IdComissionado, com.Nome AS NomeComissionado, lp.DataLiberacao, {1} AS NomeCliente, p.Importado, rc.IdRota, r.Descricao as DescricaoRota, '$$$' AS Criterio",
+                p.Situacao, p.DataConf, lp.DataLiberacao, {1} AS NomeCliente, p.Importado, rc.IdRota, r.Descricao as DescricaoRota, '$$$' AS Criterio",
                 camposFluxo, ClienteDAO.Instance.GetNomeCliente("c"));
-
-            var usarDadosVendidos = !loginCliente;
-
-            var whereDadosVendidos = string.Format(" AND ped.Situacao IN ({0}) AND ped.TipoVenda IN ({1},{2},{3})", situacoes, (int)Pedido.TipoVendaPedido.AVista, (int)Pedido.TipoVendaPedido.APrazo,
-                    (int)Pedido.TipoVendaPedido.Obra);
-
-            var campoDadosVendidos = !usarDadosVendidos ? string.Empty : ", TRIM(dv.DadosVidrosVendidos) AS DadosVidrosVendidos";
-
-            var dadosVendidos = usarDadosVendidos ?
-                string.Format(@"LEFT JOIN (
-                    SELECT IdCli, IdPedido, CONCAT(CAST(GROUP_CONCAT(CONCAT('\n* ', CodInterno, ' - ', Descricao, ': Qtde ', Qtde, '  Tot. m² ',
-                        TotM2)) AS CHAR), RPAD('', 100, ' ')) AS DadosVidrosVendidos
-                    FROM (
-                        SELECT ped.IdCli, ped.IdPedido, pp.IdProd, p.CodInterno, p.Descricao,
-                            REPLACE(CAST(SUM(pp.TotM) AS CHAR), '.', ',') AS TotM2, CAST(SUM(pp.Qtde) AS SIGNED) AS Qtde
-                        FROM produtos_pedido pp
-                            INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
-                            INNER JOIN cliente cli ON (ped.IdCli=cli.Id_Cli)
-                            INNER JOIN produto p ON (pp.IdProd=p.IdProd)
-                            LEFT JOIN rota_cliente rtc ON (cli.Id_Cli=rtc.IdCliente)
-                            LEFT JOIN rota rt ON (rtc.IdRota=rt.IdRota)
-                            LEFT JOIN produtos_liberar_pedido plp1 ON (pp.IdProdPed=plp1.IdProdPed)
-                            LEFT JOIN liberarpedido lp1 ON (plp1.IdLiberarPedido=lp1.IdLiberarPedido)
-                        WHERE p.IdGrupoProd=1 AND {0}
-                            {1}
-                        GROUP BY ped.IdCli, pp.IdProd
-                    ) AS Temp
-                    GROUP BY IdCli
-                ) AS dv ON (dv.IdCli=p.IdCli)", string.Format("(Invisivel{0} IS NULL OR Invisivel{0}=0)", PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido"), "{0}") : string.Empty;
 
             var sql = string.Format(@"
                 SELECT {0}
@@ -3225,16 +3185,13 @@ namespace Glass.Data.DAL
                     LEFT JOIN pedido_espelho pe ON (p.IdPedido=pe.IdPedido)
                     LEFT JOIN produtos_pedido pp ON (p.IdPedido=pp.IdPedido)
                     LEFT JOIN produtos_liberar_pedido plp ON (pp.IdProdPed=plp.IdProdPed)
-                    LEFT JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido AND lp.Situacao IS NOT NULL AND lp.Situacao=1)
-                    LEFT JOIN ambiente_pedido ap ON (pp.IdAmbientePedido=ap.IdAmbientePedido)
+                    LEFT JOIN liberarpedido lp ON (plp.IdLiberarPedido = lp.IdLiberarPedido AND lp.Situacao = 1)
                     LEFT JOIN funcionario fc ON (c.IdFunc=fc.IdFunc)
                     LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc)
                     LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
-                    LEFT JOIN comissionado com ON (p.IdComissionado=com.IdComissionado)
                     {1}
                 WHERE p.Situacao IN ({2}) AND p.TipoVenda IN ({3},{4},{5}) ?filtroAdicional?",
-                    string.Format("{0}{1}", campos, campoDadosVendidos), dadosVendidos, situacoes, (int)Pedido.TipoVendaPedido.AVista, (int)Pedido.TipoVendaPedido.APrazo,
-                    (int)Pedido.TipoVendaPedido.Obra);
+                    campos, situacoes, (int)Pedido.TipoVendaPedido.AVista, (int)Pedido.TipoVendaPedido.APrazo, (int)Pedido.TipoVendaPedido.Obra);
 
             if (dataInicioSituacao != "")
             {
@@ -3249,7 +3206,6 @@ namespace Glass.Data.DAL
             if (idCliente > 0)
             {
                 filtroAdicional += string.Format(" AND p.IdCli={0}", idCliente);
-                whereDadosVendidos += string.Format(" AND ped.IdCli={0}", idCliente);
                 criterio += string.Format(formatoCriterio, "Cliente :", ClienteDAO.Instance.GetNome((uint)idCliente));
             }
             else if (!string.IsNullOrEmpty(nomeCliente))
@@ -3257,13 +3213,11 @@ namespace Glass.Data.DAL
                 var ids = ClienteDAO.Instance.GetIds(null, nomeCliente, null, 0, null, null, null, null, 0);
 
                 filtroAdicional += string.Format(" AND p.IdCli IN ({0})", ids);
-                whereDadosVendidos += string.Format(" AND ped.IdCli IN ({0})", ids);
             }
 
             if (idLoja > 0)
             {
                 filtroAdicional += string.Format(" AND p.IdLoja={0}", idLoja);
-                whereDadosVendidos += string.Format(" AND ped.IdLoja={0}", idLoja);
             }
 
             #region Filtro por data de situação
@@ -3271,7 +3225,6 @@ namespace Glass.Data.DAL
             var filtro = FiltroDataSituacao(dataInicioSituacao, dataFimSituacao, situacoes, "?dtIniSit", "?dtFimSit", "p", "lp", " Sit.", calcularLiberados);
             sql += filtro.Sql;
 
-            whereDadosVendidos += FiltroDataSituacao(dataInicioSituacao, dataFimSituacao, situacoes, "?dtIniSit", "?dtFimSit", "ped", "lp1", " Sit.", true).Sql;
             temFiltro = temFiltro || filtro.Sql != "";
 
             #endregion
@@ -3279,14 +3232,12 @@ namespace Glass.Data.DAL
             if (idFunc > 0)
             {
                 filtroAdicional += string.Format(" AND p.IdFunc={0}", idFunc);
-                whereDadosVendidos += string.Format(" AND ped.IdFunc={0}", idFunc);
                 criterio += string.Format(formatoCriterio, "Funcionário:", FuncionarioDAO.Instance.GetNome((uint)idFunc));
             }
 
             if (idVendAssoc > 0)
             {
                 sql += string.Format(" AND c.IdFunc={0}", idVendAssoc);
-                whereDadosVendidos += string.Format(" AND cli.IdFunc={0}", idVendAssoc);
                 criterio += string.Format(formatoCriterio, "Vendedor associado:", FuncionarioDAO.Instance.GetNome((uint)idVendAssoc));
                 temFiltro = true;
             }
@@ -3294,21 +3245,17 @@ namespace Glass.Data.DAL
             if (!string.IsNullOrEmpty(tipoPedido))
             {
                 filtroAdicional += string.Format(" AND p.TipoPedido IN ({0})", tipoPedido);
-                whereDadosVendidos += string.Format(" AND ped.TipoPedido IN ({0})", tipoPedido);
             }
 
             if (idRota > 0)
             {
                 filtroAdicional += string.Format(" AND rc.IdRota={0}", idRota);
-                whereDadosVendidos += string.Format(" AND rtc.IdRota={0}", idRota);
                 criterio += string.Format(formatoCriterio, "Rota:", RotaDAO.Instance.ObterDescricaoRota(null, (uint)idRota));
             }
 
             sql += " GROUP BY p.IdPedido";
 
-            sql = string.Format(sql, whereDadosVendidos);
-
-            return sql.Replace("$$$", criterio); ;
+            return sql.Replace("$$$", criterio);
         }
 
         #endregion
@@ -7656,11 +7603,6 @@ namespace Glass.Data.DAL
                     LancarExceptionValidacaoPedidoFinanceiro(idsPedido, mensagem, false, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
 
                     // Permite que os pedidos sejam liberados pelo funcionário do Financeiro
-                    idsPedidoOk.AddRange(idsPedidoErro);
-                    idsPedidoErro.Clear();
-                }
-                else
-                {
                     idsPedidoOk.AddRange(idsPedidoErro);
                     idsPedidoErro.Clear();
                 }
