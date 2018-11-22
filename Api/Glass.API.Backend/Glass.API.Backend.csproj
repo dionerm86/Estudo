@@ -215,7 +215,9 @@
     <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\DeleteOrdensCargaComCarregamentoController.cs" />
     <Compile Include="Controllers\Cfops\V1\DeleteCfopsController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\DeleteNaturezasOperacaoController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\GetNaturezasOperacaoComCfopController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\GetNaturezasOperacaoController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\NaturezasOperacaoComCfopController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\NaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\PatchNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\PostNaturezasOperacaoController.cs" />
