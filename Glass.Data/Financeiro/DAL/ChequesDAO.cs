@@ -2652,7 +2652,7 @@ namespace Glass.Data.DAL
                 var valorReceber = valorAcumulado > cheque.ValorRestante ? cheque.ValorRestante : valorAcumulado;
 
                 cheque.ValorReceb += valorReceber;
-                valorAcumulado -= cheque.ValorReceb;
+                valorAcumulado -= valorReceber;
 
                 if (cheque.JurosReceb == 0)
                 {
