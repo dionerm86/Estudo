@@ -4,7 +4,6 @@
 
 using Glass.API.Backend.Helper.Cfops.NaturezasOperacao;
 using Glass.API.Backend.Models.Genericas.V1;
-using Newtonsoft.Json;
 
 namespace Glass.API.Backend.Models.Cfops.V1.NaturezasOperacao.Lista
 {
@@ -20,11 +19,5 @@ namespace Glass.API.Backend.Models.Cfops.V1.NaturezasOperacao.Lista
             : base(item => new TraducaoOrdenacaoListaNaturezasOperacao(item.Ordenacao))
         {
         }
-
-        /// <summary>
-        /// Obtém ou define o identificador do CFOP.
-        /// </summary>
-        [JsonProperty("idCfop")]
-        public int? IdCfop { get; set; }
     }
 }

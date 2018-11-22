@@ -3,6 +3,7 @@
   mixins: [Mixins.Objetos, Mixins.OrdenacaoLista()],
 
   data: {
+    idCfop: GetQueryString('idCfop'),
     configuracoes: {},
     numeroLinhaEdicao: -1,
     inserindo: false,
@@ -25,10 +26,8 @@
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
       var filtroUsar = this.clonar(filtro || {});
-
-      filtroUsar.idCfop = GetQueryString('idCfop');
-
-      return Servicos.Cfops.NaturezasOperacao.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
+      
+      return Servicos.Cfops.NaturezasOperacao.obterLista(this.idCfop, filtroUsar, pagina, numeroRegistros, ordenacao);
     },
 
     /**

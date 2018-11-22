@@ -1,7 +1,6 @@
 <%@ Page Title="Pedidos em Conferência" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" 
     CodeBehind="LstPedidosEspelho.aspx.cs" Inherits="Glass.UI.Web.Listas.LstPedidosEspelho" EnableViewState="false" EnableViewStateMac="false" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
             "~/Vue/PedidosConferencia/Templates/LstPedidosConferencia.Filtro.html")

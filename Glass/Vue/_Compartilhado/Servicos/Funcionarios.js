@@ -51,6 +51,14 @@ Servicos.Funcionarios = (function(http) {
     },
 
     /**
+     * Recupera a lista de funcionários motoristas.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterMotoristas: function () {
+      return http().get(API + 'motoristas');
+    },
+
+    /**
      * Recupera a lista de funcionários conferentes.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
