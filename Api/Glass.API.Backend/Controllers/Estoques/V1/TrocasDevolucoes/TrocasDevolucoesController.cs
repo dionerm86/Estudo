@@ -15,7 +15,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
     /// <summary>
     /// Controller de Troca/Devolucao.
     /// </summary>
-    [RoutePrefix("api/v1/estoques/")]
+    [RoutePrefix("api/v1/estoques/trocasDevolucoes")]
     public partial class TrocasDevolucoesController : BaseController
     {
         private IHttpActionResult ValidarIdTrocaDevolucao(int idTrocaDevolucao)

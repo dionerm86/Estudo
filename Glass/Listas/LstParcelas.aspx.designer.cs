@@ -10,6 +10,6 @@
 namespace Glass.UI.Web.Listas {
     
     
-    public partial class LstParcelas {
+    public partial class LstTrocaDev {
     }
 }

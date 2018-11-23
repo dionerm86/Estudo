@@ -1,0 +1,75 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Código</label>
+            <input type="number" v-model.number="filtroAtual.id" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Pedido</label>
+            <input type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Tipo</label>
+            <select id="tipo" v-model="filtroAtual.ordenacaoFiltro">
+                <option Value="1">Troca</option>
+                <option Value="2">Devolução</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>situação</label>
+            <select id="situacao" v-model="filtroAtual.ordenacaoFiltro">
+                <option Value="0">Todas</option>
+                <option Value="1">Aberta</option>
+                <option Value="2">Finalizada</option>
+                <option Value="3">Cancelada</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Cliente</label>
+            <input id="idCliente" type="number" v-model.number="filtroAtual.idCliente" style="width: 50px" />
+            <input id="nomeCliente" type="text" v-model="filtroAtual.nomeCliente" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Período</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoVencimentoInicio" v-bind:data-hora-final.sync="filtroAtual.periodoVencimentoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Altura mín.:</label>
+            <input type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>máx.:</label>
+            <input type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Largura	mín.:	</label>
+            <input type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>máx.:</label>
+            <input type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label for="tipoPedido">Tipo Pedido</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.tipoPedido" texto-selecionar="Selecione o tipo" v-bind:funcao-recuperar-itens="obterItensFiltroTiposPedido"
+                                    v-bind:ordenar="false" campo-id="id" campo-descricao="nome"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

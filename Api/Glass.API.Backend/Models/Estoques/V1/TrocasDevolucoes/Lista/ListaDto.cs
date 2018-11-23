@@ -20,33 +20,20 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         internal ListaDto(Data.Model.TrocaDevolucao trocaDevolucao)
         {
             this.Id = (int)trocaDevolucao.IdPedido;
-            this.Cliente = new IdNomeDto
-            {
-                Id = (int)trocaDevolucao.IdCliente,
-                Nome = trocaDevolucao.NomeCliente,
-            };
-
-            this.Loja = new IdNomeDto
-            {
-                Id = (int)trocaDevolucao.IdLoja,
-                Nome = LojaDAO.Instance.GetNome(null, (uint)trocaDevolucao.IdLoja),
-            };
-
-            this.Situacao = new IdNomeDto
-            {
-                Id = trocaDevolucao.Situacao,
-                Nome = trocaDevolucao.Situacao.ToString(),
-            };
-
+            this.Cliente = trocaDevolucao.IdNomeCliente;
+            this.Loja = trocaDevolucao.Loja;
             this.Setor = trocaDevolucao.Setor;
             this.Origem = trocaDevolucao.DescrOrigemTrocaDevolucao;
             this.CreditoGerado = trocaDevolucao.CreditoGerado;
             this.DataErro = trocaDevolucao.DataErro;
             this.DataTroca = trocaDevolucao.DataTroca;
-            this.Tipo = trocaDevolucao.Tipo;
-
+            this.Tipo = trocaDevolucao.DescrTipo;
             this.IdPedido = (int?)trocaDevolucao.IdPedido;
             this.ValorExcedente = trocaDevolucao.ValorExcedente;
+            this.Observacao = trocaDevolucao.Obs;
+            this.FuncionarioCadastro = trocaDevolucao.NomeUsuCad;
+            this.NomeFuncionario = trocaDevolucao.NomeFunc;
+            this.Situacao = trocaDevolucao.DescrSituacao;
             this.Permissoes = new PermissoesDto
             {
                 Editar = trocaDevolucao.EditEnabled,
@@ -73,21 +60,21 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("cliente")]
-        public IdNomeDto Cliente { get; set; }
+        public string Cliente { get; set; }
 
         /// <summary>
         /// Obtém ou define o tipo de mercadoria do CFOP.
         /// </summary>
         [DataMember]
         [JsonProperty("loja")]
-        public IdNomeDto Loja { get; set; }
+        public string Loja { get; set; }
 
         /// <summary>
         /// Obtém ou define o tipo de mercadoria do CFOP.
         /// </summary>
         [DataMember]
         [JsonProperty("situacao")]
-        public IdNomeDto Situacao { get; set; }
+        public string Situacao { get; set; }
 
         /// <summary>
         /// Obtém ou define o tipo de mercadoria do CFOP.
@@ -129,7 +116,28 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("tipo")]
-        public int Tipo { get; set; }
+        public string Tipo { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o tipo de mercadoria do CFOP.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("observaocao")]
+        public string Observacao { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o tipo de mercadoria do CFOP.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("funcionarioCadastro")]
+        public string FuncionarioCadastro { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o tipo de mercadoria do CFOP.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("nomeFuncionario")]
+        public string NomeFuncionario { get; set; }
 
         /// <summary>
         /// Obtém ou define a lista de permissões do item.

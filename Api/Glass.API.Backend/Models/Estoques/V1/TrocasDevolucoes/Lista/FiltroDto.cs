@@ -23,31 +23,31 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         /// Obtém ou define o identificador do cliente.
         /// </summary>
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Obtém ou define o nome do cliente.
         /// </summary>
         [JsonProperty("idCliente")]
-        public int Idcliente { get; set; }
+        public int? Idcliente { get; set; }
 
         /// <summary>
         /// Obtém ou define o nome do cliente.
         /// </summary>
         [JsonProperty("idPedido")]
-        public int IdPedido { get; set; }
+        public int? IdPedido { get; set; }
 
         /// <summary>
         /// Obtém ou define o nome do cliente.
         /// </summary>
         [JsonProperty("idsFuncionario")]
-        public int[] IdsFuncionario { get; set; }
+        public int?[] IdsFuncionario { get; set; }
 
         /// <summary>
         /// Obtém ou define o nome do cliente.
         /// </summary>
         [JsonProperty("idsFuncionarioAssociadoCliente")]
-        public int[] IdsFuncionarioAssociadoCliente { get; set; }
+        public int?[] IdsFuncionarioAssociadoCliente { get; set; }
 
         /// <summary>
         /// Obtém ou define o nome do cliente.
@@ -65,13 +65,13 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         /// Obtém ou define o identificador da loja do cliente.
         /// </summary>
         [JsonProperty("idProduto")]
-        public int IdProduto { get; set; }
+        public int? IdProduto { get; set; }
 
         /// <summary>
         /// Obtém ou define o tipo do cliente.
         /// </summary>
         [JsonProperty("tipo")]
-        public int Tipo { get; set; }
+        public int? Tipo { get; set; }
 
         /// <summary>
         /// Obtém ou define a situação do cliente.
@@ -107,31 +107,31 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
         /// </summary>
         [JsonProperty("alturaMinima")]
-        public int AlturaMinima { get; set; }
+        public int? AlturaMinima { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
         /// </summary>
         [JsonProperty("alturaMaxima")]
-        public int AlturaMaxima { get; set; }
+        public int? AlturaMaxima { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
         /// </summary>
         [JsonProperty("larguraMinima")]
-        public int LarguraMinima { get; set; }
+        public int? LarguraMinima { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
         /// </summary>
         [JsonProperty("larguraMaxima")]
-        public int LarguraMaxima { get; set; }
+        public int? LarguraMaxima { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
         /// </summary>
         [JsonProperty("idOrigemTrocaDevolucao")]
-        public int IdOrigemTrocaDevolucao { get; set; }
+        public int? IdOrigemTrocaDevolucao { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
@@ -149,13 +149,13 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
         /// </summary>
         [JsonProperty("tipoPedido")]
-        public int? TipoPedido { get; set; }
+        public string TipoPedido { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
         /// </summary>
         [JsonProperty("idGrupoProduto")]
-        public int? IdGrupoProduto { get; set; }
+        public int IdGrupoProduto { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.

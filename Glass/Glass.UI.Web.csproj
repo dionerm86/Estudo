@@ -504,6 +504,9 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.Filtro.js" />
+    <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.js" />
+    <Content Include="Vue\Estoques\TrocasDevolucoes\Templates\LstTrocaDevolucao.Filtro.html" />
     <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
@@ -576,6 +579,7 @@
     <Content Include="Vue\Seguradoras\Componentes\LstSeguradoras.js" />
     <Content Include="Vue\PlanosConta\Componentes\LstPlanosConta.js" />
     <Content Include="Vue\ContasBancarias\Componentes\LstContasBancarias.js" />
+    <Content Include="Vue\TrocasDevolucoes.js" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />
@@ -1894,6 +1898,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Produtos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Publicos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Fornecedores.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\TrocasDevolucoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Veiculos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Transportadores.js" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoBisote.html" />

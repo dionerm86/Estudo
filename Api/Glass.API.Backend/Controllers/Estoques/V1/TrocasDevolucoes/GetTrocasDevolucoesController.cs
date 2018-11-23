@@ -22,9 +22,9 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
         /// <returns>Uma lista JSON com os dados dos estoques.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Trocas/devoluções encontradas sem paginação (apenas uma página de retorno) ou última página retornada", Type = typeof(IEnumerable<Models.Estoques.V1.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Trocas/devoluções encontradas sem paginação (apenas uma página de retorno) ou última página retornada", Type = typeof(IEnumerable<Models.Estoques.V1.TrocasDevolucoes.Lista.ListaDto>))]
         [SwaggerResponse(204, "Trocas/devoluções não encontradas.")]
-        [SwaggerResponse(206, "Trocas/devoluções paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Estoques.V1.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Trocas/devoluções paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Estoques.V1.TrocasDevolucoes.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
         public IHttpActionResult ObterListaTrocasDevolucoes([FromUri] Models.Estoques.V1.TrocasDevolucoes.Lista.FiltroDto filtro)
         {
@@ -32,31 +32,31 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
             {
                 filtro = filtro ?? new Models.Estoques.V1.TrocasDevolucoes.Lista.FiltroDto();
 
-                var idsFuncionario = filtro.IdsFuncionario.Any() ? string.Join(",", filtro.IdsFuncionario) : string.Empty;
-                var idsFuncionarioAssociadoCliente = filtro.IdsFuncionarioAssociadoCliente.Any() ? string.Join(",", filtro.IdsFuncionarioAssociadoCliente) : string.Empty;
+                var idsFuncionario = filtro.IdsFuncionario != null ? string.Join(",", filtro.IdsFuncionario) : string.Empty;
+                var idsFuncionarioAssociadoCliente = filtro.IdsFuncionario != null ? string.Join(",", filtro.IdsFuncionarioAssociadoCliente) : string.Empty;
 
                 var trocasDevolucoes = TrocaDevolucaoDAO.Instance.GetList(
-                    (uint)filtro.Id,
-                    (uint)filtro.IdPedido,
-                    filtro.Tipo,
+                    (uint)filtro.Id.GetValueOrDefault(),
+                    (uint)filtro.IdPedido.GetValueOrDefault(),
+                    filtro.Tipo.GetValueOrDefault(),
                     /*filtro.Situacao*/ 0,
-                    (uint)filtro.Idcliente,
-                    filtro.NomeCliente,
+                    (uint)filtro.Idcliente.GetValueOrDefault(),
+                    filtro.NomeCliente ?? string.Empty,
                     idsFuncionario,
                     idsFuncionarioAssociadoCliente,
-                    filtro.DataInicio.ToString(),
-                    filtro.DataFim.ToString(),
-                    (uint)filtro.IdProduto,
-                    filtro.AlturaMinima,
-                    filtro.AlturaMaxima,
-                    filtro.LarguraMinima,
-                    filtro.LarguraMaxima,
-                    (uint)filtro.IdOrigemTrocaDevolucao,
-                    (uint)filtro.IdTipoPerda,
-                    (int)filtro.IdSetor,
-                    filtro.TipoPedido.ToString(),
-                    (int)filtro.IdGrupoProduto,
-                    (int)filtro.IdSubgrupoProduto,
+                    filtro.DataInicio != null ? filtro.DataInicio.ToString() : string.Empty,
+                    filtro.DataFim != null ? filtro.DataInicio.ToString() : string.Empty,
+                    (uint)filtro.IdProduto.GetValueOrDefault(),
+                    filtro.AlturaMinima.GetValueOrDefault(),
+                    filtro.AlturaMaxima.GetValueOrDefault(),
+                    filtro.LarguraMinima.GetValueOrDefault(),
+                    filtro.LarguraMaxima.GetValueOrDefault(),
+                    (uint)filtro.IdOrigemTrocaDevolucao.GetValueOrDefault(),
+                    (uint)filtro.IdTipoPerda.GetValueOrDefault(),
+                    filtro.IdSetor.GetValueOrDefault(),
+                    filtro.TipoPedido ?? string.Empty,
+                    filtro.IdGrupoProduto,
+                    filtro.IdSubgrupoProduto.GetValueOrDefault(),
                     filtro.ObterTraducaoOrdenacao(),
                     filtro.ObterPrimeiroRegistroRetornar(),
                     filtro.NumeroRegistros);
@@ -65,27 +65,27 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
                     trocasDevolucoes.Select(o => new Models.Estoques.V1.TrocasDevolucoes.Lista.ListaDto(o)),
                     filtro,
                     () => TrocaDevolucaoDAO.Instance.GetCount(
-                        (uint)filtro.Id,
-                        (uint)filtro.IdPedido,
-                        filtro.Tipo,
+                        (uint)filtro.Id.GetValueOrDefault(),
+                        (uint)filtro.IdPedido.GetValueOrDefault(),
+                        filtro.Tipo.GetValueOrDefault(),
                         /*filtro.Situacao*/ 0,
-                        (uint)filtro.Idcliente,
-                        filtro.NomeCliente,
+                        (uint)filtro.Idcliente.GetValueOrDefault(),
+                        filtro.NomeCliente ?? string.Empty,
                         idsFuncionario,
                         idsFuncionarioAssociadoCliente,
-                        filtro.DataInicio.ToString(),
-                        filtro.DataFim.ToString(),
-                        (uint)filtro.IdProduto,
-                        filtro.AlturaMinima,
-                        filtro.AlturaMaxima,
-                        filtro.LarguraMinima,
-                        filtro.LarguraMaxima,
-                        (uint)filtro.IdOrigemTrocaDevolucao,
-                        (uint)filtro.IdTipoPerda,
-                        (int)filtro.IdSetor,
-                        filtro.TipoPedido.ToString(),
-                        (int)filtro.IdGrupoProduto,
-                        (int)filtro.IdSubgrupoProduto));
+                        filtro.DataInicio != null ? filtro.DataInicio.ToString() : string.Empty,
+                        filtro.DataFim != null ? filtro.DataInicio.ToString() : string.Empty,
+                        (uint)filtro.IdProduto.GetValueOrDefault(),
+                        filtro.AlturaMinima.GetValueOrDefault(),
+                        filtro.AlturaMaxima.GetValueOrDefault(),
+                        filtro.LarguraMinima.GetValueOrDefault(),
+                        filtro.LarguraMaxima.GetValueOrDefault(),
+                        (uint)filtro.IdOrigemTrocaDevolucao.GetValueOrDefault(),
+                        (uint)filtro.IdTipoPerda.GetValueOrDefault(),
+                        filtro.IdSetor.GetValueOrDefault(),
+                        filtro.TipoPedido ?? string.Empty,
+                        filtro.IdGrupoProduto,
+                        filtro.IdSubgrupoProduto.GetValueOrDefault()));
             }
         }
     }

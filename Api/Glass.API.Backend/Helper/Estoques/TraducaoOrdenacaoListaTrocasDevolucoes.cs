@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.Estoques
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "IdCli ASC"; }
+            get { return "idTrocaDevolucao DESC"; }
         }
 
         /// <inheritdoc/>
@@ -30,15 +30,8 @@ namespace Glass.API.Backend.Helper.Estoques
             switch (campo.ToLowerInvariant())
             {
                 case "id":
-                    return "IdCli";
+                    return "idTrocaDevolucao";
 
-                case "ultcompra":
-                    return "DtUltCompra";
-
-                case "cpfcnpj":
-                case "endereco":
-                case "telcont":
-                case "telcel":
                 case "situacao":
                 case "email":
                 case "totalcomprado":
