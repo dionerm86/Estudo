@@ -4515,8 +4515,7 @@ namespace Glass.Data.DAL
             string dataEntFim, string dataLibIni, string dataLibFim, string situacao, int tipoEntrega, uint idCliExterno,
             string nomeCliExterno, string codRotaExterna, bool selecionar)
         {
-            var campos = @"p.*, c.nomeFantasia as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja,
-                (SELECT r.codInterno FROM rota r WHERE r.idRota IN (Select rc.idRota From rota_cliente rc Where rc.idCliente=p.idCli)) As codRota,
+            var campos = @"p.*, c.nomeFantasia as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja, r.codInterno As codRota,
                 CAST(SUM(pp.qtde) as SIGNED) as QuantidadePecasPedido, COALESCE(vpp.qtde, 0) as QtdePecasVolume, SUM(pp.TotM) as TotMVolume,
                 SUM(pp.peso) as PesoVolume";
 
@@ -4536,6 +4535,8 @@ namespace Glass.Data.DAL
                     LEFT JOIN funcionario f On (p.idFunc=f.idFunc)
                     LEFT JOIN loja l On (p.IdLoja = l.IdLoja)
                     LEFT JOIN grupo_prod gp ON (prod.idGrupoProd = gp.idGrupoProd)
+                    LEFT JOIN rota_cliente rc ON (rc.idCliente = c.id_Cli)
+                    LEFT JOIN rota r ON (r.idRota = rc.idRota)
                     LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd
                         AND (sgp.PermitirItemRevendaNaVenda IS NULL OR sgp.PermitirItemRevendaNaVenda = 0))
                     LEFT JOIN (
@@ -4549,14 +4550,13 @@ namespace Glass.Data.DAL
 
             if (OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega)
             {
-                sql += $" AND p.TipoEntrega<>{(int)Pedido.TipoEntregaPedido.Balcao}";
+                sql += $" AND p.TipoEntrega <> {(int)Pedido.TipoEntregaPedido.Balcao}";
             }
             else
             {
                 sql += $@" AND IF(p.TipoEntrega = {(int)Pedido.TipoEntregaPedido.Balcao},
                      (p.SituacaoProducao NOT IN ({(int)Pedido.SituacaoProducaoEnum.Entregue},{(int)Pedido.SituacaoProducaoEnum.Instalado}) OR IFNULL(vpp.IdPedido, 0) > 0), TRUE)";
             }
-
 
             if (idPedido > 0)
             {
@@ -4567,7 +4567,7 @@ namespace Glass.Data.DAL
             {
                 sql += $" AND p.IdCli = {idCli}";
             }
-            else if (!string.IsNullOrEmpty(nomeCli))
+            else if (!string.IsNullOrWhiteSpace(nomeCli))
             {
                 string ids = ClienteDAO.Instance.GetIds(
                     null,
@@ -4587,11 +4587,11 @@ namespace Glass.Data.DAL
             {
                 sql += $" AND p.IdClienteExterno = {idCliExterno}";
             }
-            else if (!string.IsNullOrEmpty(nomeCliExterno))
+            else if (!string.IsNullOrWhiteSpace(nomeCliExterno))
             {
                 var ids = ClienteDAO.Instance.ObtemIdsClientesExternos(nomeCliExterno);
 
-                if (!string.IsNullOrEmpty(ids))
+                if (!string.IsNullOrWhiteSpace(ids))
                 {
                     sql += $" AND p.IdClienteExterno IN ({ids})";
                 }
@@ -4600,20 +4600,20 @@ namespace Glass.Data.DAL
 
             if (idLoja > 0)
             {
-                sql += $" AND p.idLoja={idLoja}";
+                sql += $" AND p.idLoja = {idLoja}";
             }
 
-            if (!string.IsNullOrEmpty(dataEntIni))
+            if (!string.IsNullOrWhiteSpace(dataEntIni))
             {
-                sql += " AND p.DataEntrega>=?dtEntIni";
+                sql += " AND p.DataEntrega >= ?dtEntIni";
             }
 
-            if (!string.IsNullOrEmpty(dataEntFim))
+            if (!string.IsNullOrWhiteSpace(dataEntFim))
             {
-                sql += " AND p.DataEntrega<=?dtEntFim";
+                sql += " AND p.DataEntrega <= ?dtEntFim";
             }
 
-            if (!string.IsNullOrEmpty(dataLibIni))
+            if (!string.IsNullOrWhiteSpace(dataLibIni))
             {
                 sql += @" AND p.IdPedido IN (
                     SELECT IdPedido
@@ -4623,7 +4623,7 @@ namespace Glass.Data.DAL
                         FROM liberarpedido WHERE DataLiberacao>=?dataLibIni))";
             }
 
-            if (!string.IsNullOrEmpty(dataLibFim))
+            if (!string.IsNullOrWhiteSpace(dataLibFim))
             {
                 sql += @" AND p.IdPedido IN (
                     SELECT IdPedido
@@ -4633,13 +4633,12 @@ namespace Glass.Data.DAL
                         FROM liberarpedido WHERE DataLiberacao<=?dataLibFim))";
             }
 
-            if (!string.IsNullOrEmpty(codRota))
+            if (!string.IsNullOrWhiteSpace(codRota))
             {
-                sql += @" And c.id_Cli IN (Select idCliente From rota_cliente Where idRota In
-                    (Select idRota From rota where codInterno like ?codRota))";
+                sql += " AND r.codInterno = ?codRota";
             }
 
-            if (!string.IsNullOrEmpty(codRotaExterna))
+            if (!string.IsNullOrWhiteSpace(codRotaExterna))
             {
                 var rotas = string.Join(
                     ",",
