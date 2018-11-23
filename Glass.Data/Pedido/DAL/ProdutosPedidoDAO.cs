@@ -5788,22 +5788,34 @@ namespace Glass.Data.DAL
             return lista;
         }
 
-        public List<ProdutosPedido> ObterProdutosComExportados(string idsPedido)
+        /// <summary>
+        /// Método que retorna uma lista de produtos pedido exportados.
+        /// </summary>
+        /// <param name="idsPedido">Identificadores do pedido.</param>
+        /// <param name="idExportacao">Identificador da exportação do pedido.</param>
+        /// <returns>Lista contendo os produtos de pedido que foram exportados.</returns>
+        public List<ProdutosPedido> ObterProdutosComExportados(string idsPedido, int idExportacao)
         {
-            string sql = @"select p.CodInterno, p.Descricao as DescrProduto, pp.*, cli.Nome as NomeCliente,
-                           case when (select count(*) from produtos_pedido_exportacao ppe
-                                where ppe.idProd = pp.idprodped) > 0 then true else false end as Exportado
-                           from produtos_pedido pp
-                           inner join pedido ped on(ped.IdPedido=pp.IdPedido)
-                           inner join produto p on(p.IdProd=pp.IdProd)
-                           inner join cliente cli on(ped.IdCli=cli.id_cli)
-                           left join pedido_exportacao pedEx on(pedEx.IdPedido=ped.idPedido)
-						   left join pedido_espelho pedEs on(pedEs.IdPedido=ped.idPedido)
-                           where ped.IdPedido in(" + idsPedido + @")
-                                and IF(pedEx.DATASITUACAO < pedEs.DATACONF, pp.invisivelFluxo,
-                                pp.invisivelPedido) order by p.Descricao asc, exportado desc";
+            string exportacao = string.Empty;
+            if (idExportacao > 0)
+            {
+                exportacao = $" AND pedEx.IdExportacao = {idExportacao}";
+            }
 
-            return objPersistence.LoadData(sql);
+            string sql = $@"SELECT p.CodInterno, p.Descricao as DescrProduto, pp.*, cli.Nome as NomeCliente,
+                           CASE WHEN (SELECT COUNT(*) FROM produtos_pedido_exportacao ppe 
+                                WHERE ppe.IdProd = pp.Idprodped) > 0 THEN TRUE ELSE FALSE END as Exportado
+                           FROM produtos_pedido pp
+                           INNER JOIN pedido ped ON (ped.IdPedido=pp.IdPedido)                                                               
+                           INNER JOIN produto p ON (p.IdProd=pp.IdProd)
+                           INNER JOIN cliente cli ON (ped.IdCli=cli.Id_cli)
+                           LEFT JOIN pedido_exportacao pedEx ON (pedEx.IdPedido=ped.IdPedido)
+						   LEFT JOIN pedido_espelho pedEs ON (pedEs.IdPedido=ped.IdPedido)
+                           WHERE ped.IdPedido in({idsPedido}) {exportacao}
+                                AND IF(pedEx.DataSituacao < pedEs.DataConf, pp.InvisivelFluxo, 
+                                pp.InvisivelPedido) ORDER BY p.Descricao ASC, exportado DESC";
+
+            return this.objPersistence.LoadData(sql);
         }
 
         /// <summary>
