@@ -1171,7 +1171,7 @@ namespace Glass.Data.DAL
                 sql = @"
                     Select pp.*, p.Descricao as DescrProduto, p.CodInterno, p.idGrupoProd, p.idSubgrupoProd, p.LocalArmazenagem as LocalArmazenagem, um.codigo as unidade,
                         apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, ap.Ambiente, ap.Descricao as DescrAmbiente, ap.tipoDesconto As tipoDescontoAmbiente,
-                        ap.desconto As descontoAmbiente, ip.obs as obsProjeto
+                        ap.desconto As descontoAmbiente, ip.obs as obsProjeto, sgp.descricao AS NomeSubGrupoProd
                     From produtos_pedido pp
                         Left Join pedido ped on (pp.idPedido=ped.idPedido)
                         Left Join produto p On (pp.idProd=p.idProd)
@@ -1180,13 +1180,15 @@ namespace Glass.Data.DAL
                         Left Join item_projeto ip On (ap.idItemProjeto=ip.idItemProjeto)
                         Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
                         Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
+                        LEFT JOIN subgrupo_prod sgp ON (p.IdSubGrupoProd = sgp.IdSubGrupoProd)
                     Where pp.idPedido=" + idPedido;
             }
             else
             {
                 sql = @"
                     Select pp.*, p.Descricao as DescrProduto, p.CodInterno, p.idGrupoProd, p.LocalArmazenagem as LocalArmazenagem, um.codigo as unidade,
-                        p.idSubgrupoProd, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, COALESCE(ip.Ambiente, ap.Ambiente) AS Ambiente, ip.obs as obsProjeto
+                        p.idSubgrupoProd, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, COALESCE(ip.Ambiente, ap.Ambiente) AS Ambiente, ip.obs as obsProjeto,
+                        sgp.descricao AS NomeSubGrupoProd
                     From produtos_pedido pp
                         Left Join produto p On (pp.idProd=p.idProd)
                         Left Join unidade_medida um On (p.idUnidadeMedida=um.idUnidadeMedida)
@@ -1194,6 +1196,7 @@ namespace Glass.Data.DAL
                         Left Join item_projeto ip on (pp.idItemProjeto=ip.idItemProjeto)
                         Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
                         Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
+                        LEFT JOIN subgrupo_prod sgp ON (p.IdSubGrupoProd = sgp.IdSubGrupoProd)
                     Where pp.idPedido=" + idPedido;
             }
 
