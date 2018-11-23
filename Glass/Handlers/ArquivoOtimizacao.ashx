@@ -63,7 +63,18 @@ public class ArquivoOtimizacao : IHttpHandler
             // etiq.Forma = prodPed.Forma;
             lstEtiqueta.Add(etiq);
 
-            ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, Glass.Conversoes.StrParaUint(context.Request["idSetor"]), true, false);
+            ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(
+                null,
+                lstEtiqueta,
+                lstArqMesa,
+                lstCodArq,
+                lstErrosArq,
+                Glass.Conversoes.StrParaUint(context.Request["idSetor"]),
+                true,
+                (int)TipoArquivoMesaCorte.SAG,
+                false,
+                false,
+                false);
         }
         // Recupera as etiquetas e os arquivos de mesa
         else if (Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||

@@ -59,11 +59,21 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna o Arquivo que será usado na mesa de corte para a peça passada
         /// </summary>
-        public bool GetArquivoMesaCorte(GDASession session, uint idPedido, uint idProdPedEsp, uint? idSetor, ref uint? idArquivoMesaCorte,
-            bool arquivoOtimizacao, Stream arquivo, ref int tipoArquivo, bool forSGlass, bool forIntermac)
+        public bool GetArquivoMesaCorte(
+            GDASession session,
+            uint idPedido,
+            uint idProdPedEsp,
+            uint? idSetor,
+            ref uint? idArquivoMesaCorte,
+            bool arquivoOtimizacao,
+            Stream arquivo,
+            ref int tipoArquivo,
+            bool forSGlass,
+            bool forIntermac,
+            bool pedidoImportado)
         {
             // Retorna o arquivo enviado em caso de pedido importado
-            if (PedidoDAO.Instance.IsPedidoImportado(session, idPedido))
+            if (pedidoImportado)
             {
                 var nomeArquivo = Utils.GetArquivoMesaCorteImpPath + idProdPedEsp + ".sag";
                 if (File.Exists(nomeArquivo))
@@ -75,7 +85,9 @@ namespace Glass.Data.DAL
                         var buffer = new byte[1024];
                         var read = 0;
                         while ((read = f.Read(buffer, 0, buffer.Length)) > 0)
+                        {
                             arquivo.Write(buffer, 0, read);
+                        }
 
                         return true;
                     }
@@ -138,7 +150,7 @@ namespace Glass.Data.DAL
             var pecaPossuiFiguraAssociada = PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(session, pecaItemProjeto.IdPecaItemProj);
             // Chamado 74968.
             // A propriedade ImagemEditada é marcada como true somente ao salvar a edição do projeto, ou seja, caso o usuário somente abra a tela o sistema não deve considerar que a peça foi editada.
-            var pecaPossuiEdicaoCadProject = ProdutosPedidoEspelhoDAO.Instance.PossuiEdicaoCadProject(idProdPedEsp, true) && pecaItemProjeto.ImagemEditada;
+            var pecaPossuiEdicaoCadProject = ProdutosPedidoEspelhoDAO.Instance.PossuiEdicaoCadProject(idProdPedEsp, true) && (pedidoImportado || pecaItemProjeto.ImagemEditada);
 
             // Se possuir imagem associada, não deve gerar arquivo de mesa, a menos que seja .fml básico ou tenha sido editado no CadProject
             if ((produtoPossuiImagemEditada || pecaItemProjeto.ImagemEditada || pecaPossuiFiguraAssociada) &&
@@ -186,8 +198,14 @@ namespace Glass.Data.DAL
                             .FirstOrDefault();
                     }
                 }
+                else if (pecaPossuiEdicaoCadProject && pedidoImportado)
+                {
+                    idArquivoMesaCorte = 0;
+                }
                 else
+                {
                     return false;
+                }
             }
             
             tipoArquivo = tipoArquivo == 0 && idArquivoMesaCorte.GetValueOrDefault() > 0 ? ObtemTipoArquivo(session, idArquivoMesaCorte.Value) : tipoArquivo;
@@ -205,7 +223,7 @@ namespace Glass.Data.DAL
             var codigoArquivo = ArquivoCalcEngineDAO.Instance.ObtemValorCampo<string>(session, "nome", "idArquivoCalcEngine=" + idArquivoCalcEngine);
             var conteudoArquivo = ObtemValorCampo<string>(session, "arquivo", "idArquivoMesaCorte=" + idArquivoMesaCorte);
 
-            if (codigoArquivo == null)
+            if (idArquivoMesaCorte != 0 && codigoArquivo == null)
                 throw new Exception("Um dos arquivos de mesa está associado à um calc engine inválido.");
             
             var idsBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetByProdutoPedido(session, idProdPedEsp).Select(f => (int)f.IdBenefConfig).ToList();
@@ -226,10 +244,12 @@ namespace Glass.Data.DAL
                 // Remove todas as flags e adiciona apenas a de SAG e define o tipo arqiivo como SAG
                 if (arquivoOtimizacao)
                 {
-                    var flag = FlagArqMesaDAO.Instance.GetAll().Where(f => f.Descricao.ToLower() == TipoArquivoMesaCorte.SAG.ToString().ToLower()).FirstOrDefault();
+                    var flag = FlagArqMesaDAO.Instance.GetAll().FirstOrDefault(f => f.Descricao.ToLower() == TipoArquivoMesaCorte.SAG.ToString().ToLower());
 
-                    if ( flag != null && !flags.Contains(flag))
+                    if (flag != null && !flags.Contains(flag))
+                    {
                         flags.Add(flag);
+                    }
 
                     tipoArquivo = (int)TipoArquivoMesaCorte.SAG;
                 }
@@ -245,26 +265,49 @@ namespace Glass.Data.DAL
 
             var config = new ConfiguracoesArqMesa(pecaItemProjeto.Largura, espessura, descontoLap, codigoArquivo);
             
-            if (idArquivoCalcEngine > 0 &&
-                ((tipoArquivo == (int)TipoArquivoMesaCorte.SAG && arquivoOtimizacao) ||
-                (tipoArquivo != (int)TipoArquivoMesaCorte.SAG && tipoArquivo != (int)TipoArquivoMesaCorte.FMLBasico && !arquivoOtimizacao) ||
+            if ((pecaPossuiEdicaoCadProject && pedidoImportado) ||
+                (idArquivoCalcEngine > 0 &&
+                 ((tipoArquivo == (int)TipoArquivoMesaCorte.SAG && arquivoOtimizacao) ||
+                 (tipoArquivo != (int)TipoArquivoMesaCorte.SAG && tipoArquivo != (int)TipoArquivoMesaCorte.FMLBasico && !arquivoOtimizacao) ||
 
-                /* Chamado 45059.
-                 * Caso o tipo do arquivo seja FML básico e a peça tenha sido editada,
-                 * o arquivo salvo na pasta Upload deve ser recuperado e o arquivo de marcação deve ser gerado a partir dele. */
-                /* Chamado 52613.
-                 * O arquivo não deve ser gerado caso a geração tenha sido solicitada através da tela de impressão de etiquetas. */
-                (!arquivoOtimizacao && tipoArquivo == (int)TipoArquivoMesaCorte.FMLBasico && File.Exists(PCPConfig.CaminhoSalvarCadProject(true) + idProdPedEsp + ".dxf"))))
+                 /* Chamado 45059.
+                  * Caso o tipo do arquivo seja FML básico e a peça tenha sido editada,
+                  * o arquivo salvo na pasta Upload deve ser recuperado e o arquivo de marcação deve ser gerado a partir dele. */
+                 /* Chamado 52613.
+                  * O arquivo não deve ser gerado caso a geração tenha sido solicitada através da tela de impressão de etiquetas. */
+                 (!arquivoOtimizacao && tipoArquivo == (int)TipoArquivoMesaCorte.FMLBasico && File.Exists(PCPConfig.CaminhoSalvarCadProject(true) + idProdPedEsp + ".dxf")))))
             {
+                // Para pedidos importados será forçada a geração para sglass e intermac através das flags
+                if (pecaPossuiEdicaoCadProject && pedidoImportado)
+                {
+                    if (forSGlass && !flags.Any(f => StringComparer.InvariantCultureIgnoreCase.Equals(f.Descricao, "sglass")))
+                    {
+                        flags.Add(new FlagArqMesa()
+                        {
+                            Descricao = "SGLASS"
+                        });
+                    }
+                    else if (forIntermac && !flags.Any(f => StringComparer.InvariantCultureIgnoreCase.Equals(f.Descricao, "intermac")))
+                    {
+                        flags.Add(new FlagArqMesa()
+                        {
+                            Descricao = "INTERMAC"
+                        });
+                    }
+                }
+
                 #region Arquivos CalcEngine
 
                 bool? retorno = null;
 
-                GerarArquivoCalcEngine(session, idArquivoCalcEngine, descontoLap, tipoArquivo, true, idProdPedEsp, pecaItemProjeto, altura, largura, ref mensagemErro, codigoArquivo, config,
+                GerarArquivoCalcEngine(
+                    session, idArquivoCalcEngine, descontoLap, tipoArquivo, true, idProdPedEsp, pecaItemProjeto, altura, largura, ref mensagemErro, codigoArquivo, config,
                     espessura, arquivo, flags, ref retorno, false, forSGlass, forIntermac);
 
                 if (retorno.HasValue)
+                {
                     return retorno.Value;
+                }
 
                 #endregion
             }
@@ -11697,12 +11740,24 @@ namespace Glass.Data.DAL
 
             // Salva o arquivo no caminho DXF configurado internamente.
             if (tipoArquivo == TipoArquivoMesaCorte.DXF)
+            {
                 retorno = PCPConfig.CaminhoSalvarDxf + retorno;
+            }
             // Salva o arquivo no caminho FML configurado internamente.
             else if (tipoArquivo == TipoArquivoMesaCorte.FML || tipoArquivo == TipoArquivoMesaCorte.FMLBasico)
+            {
                 retorno = PCPConfig.CaminhoSalvarFml + retorno;
+            }
+            else if (tipoArquivo == TipoArquivoMesaCorte.Todos)
+            {
+                retorno = System.IO.Path.Combine(
+                    PCPConfig.CaminhoSalvarCadProject(true),
+                    string.Format("{0}{1}", idProdPedEsp, System.IO.Path.GetExtension(retorno)));
+            }
             else
+            {
                 retorno = string.Empty;
+            }
 
             return retorno;
         }
@@ -11714,20 +11769,76 @@ namespace Glass.Data.DAL
         {
             // Verifica se o arquivo é válido e se o produto existe.
             if (arquivo == null || arquivo.Arquivo == null || arquivo.Arquivo.Length == 0 || !ProdutosPedidoEspelhoDAO.Instance.Exists(session, idProdPedEsp))
+            {
                 return;
+            }
 
             // Recupera todos os números de etiqueta associados ao id do produto do pedido espelho.
-            var numerosEtiqueta = ProdutoPedidoProducaoDAO.Instance.ExecuteMultipleScalar<string>(session,
+            var numerosEtiqueta = ProdutoPedidoProducaoDAO.Instance.ExecuteMultipleScalar<string>(
+                session,
                 string.Format("SELECT NumEtiqueta FROM produto_pedido_producao WHERE IdProdPed={0};", idProdPedEsp)).ToArray();
 
-            /* Caso alguma etiqueta tenha sido recuperada, caso a empresa utilize DXF ou FML e o tipo de arquivo seja 
+            if (numerosEtiqueta?.Length > 0 &&
+                !string.IsNullOrWhiteSpace(numerosEtiqueta[0]) &&
+                !string.IsNullOrEmpty(numerosEtiqueta[0]) &&
+                arquivo.TipoArquivo == TipoArquivoMesaCorte.Todos)
+            {
+                foreach (var numeroEtiqueta in numerosEtiqueta)
+                {
+                    var caminhoArquivo = this.CaminhoSalvarArquivoPedidoImportado(
+                        numeroEtiqueta
+                            .Replace("  ", string.Empty)
+                            .Replace(" ", string.Empty),
+                        (int)idProdPedEsp,
+                        TipoArquivoMesaCorte.Todos);
+
+                    var diretorio = System.IO.Path.GetDirectoryName(caminhoArquivo);
+                    if (!System.IO.Directory.Exists(diretorio))
+                    {
+                        System.IO.Directory.CreateDirectory(diretorio);
+                    }
+
+                    using (var f = File.Create(caminhoArquivo))
+                    {
+                        f.Write(arquivo.Arquivo, 0, arquivo.Arquivo.Length);
+                        f.Flush();
+                    }
+
+                    var produtoPedidoEspelho = new Lazy<ProdutosPedidoEspelho>(() =>
+                        ProdutosPedidoEspelhoDAO.Instance.GetElement(session, idProdPedEsp, true));
+
+                    if (PCPConfig.EmpresaGeraArquivoFml)
+                    {
+                        PedidoEspelhoDAO.Instance.GerarArquivoFmlPeloPedido(session, new[] { produtoPedidoEspelho.Value }, true);
+                    }
+
+                    if (PCPConfig.EmpresaGeraArquivoDxf)
+                    {
+                        PedidoEspelhoDAO.Instance.GerarArquivoDxfPeloPedido(session, new[] { produtoPedidoEspelho.Value });
+                    }
+
+                    if (PCPConfig.EmpresaGeraArquivoSGlass)
+                    {
+                        PedidoEspelhoDAO.Instance.GerarArquivoSglassPeloPedido(session, new[] { produtoPedidoEspelho.Value });
+                    }
+
+                    if (PCPConfig.EmpresaGeraArquivoIntermac)
+                    {
+                        PedidoEspelhoDAO.Instance.GerarArquivoIntermacPeloPedido(session, new[] { produtoPedidoEspelho.Value });
+                    }
+                }
+            }
+
+            /* Caso alguma etiqueta tenha sido recuperada, caso a empresa utilize DXF ou FML e o tipo de arquivo seja
              * DXF, FML OU FML Básico, então, salva um arquivo de marcação para cada etiqueta. */
-            if (numerosEtiqueta != null && numerosEtiqueta.Length > 0 &&
-                !string.IsNullOrWhiteSpace(numerosEtiqueta[0]) && !string.IsNullOrEmpty(numerosEtiqueta[0]) &&
+            else if (numerosEtiqueta != null &&
+                numerosEtiqueta.Length > 0 &&
+                !string.IsNullOrWhiteSpace(numerosEtiqueta[0]) &&
+                !string.IsNullOrEmpty(numerosEtiqueta[0]) &&
                 (PCPConfig.EmpresaGeraArquivoDxf || PCPConfig.EmpresaGeraArquivoFml || PCPConfig.EmpresaGeraArquivoSGlass) &&
                 (arquivo.TipoArquivo == TipoArquivoMesaCorte.DXF ||
-                arquivo.TipoArquivo == TipoArquivoMesaCorte.FML ||
-                arquivo.TipoArquivo == TipoArquivoMesaCorte.FMLBasico))
+                 arquivo.TipoArquivo == TipoArquivoMesaCorte.FML ||
+                 arquivo.TipoArquivo == TipoArquivoMesaCorte.FMLBasico))
             {
                 foreach (var numeroEtiqueta in numerosEtiqueta)
                 {
@@ -11744,14 +11855,29 @@ namespace Glass.Data.DAL
                         PedidoEspelhoDAO.Instance.SalvarArquivoSglass(nomeArquivo, arquivo.Arquivo, tempPath, programsDirectory, hardwaresDirectory);
                     }
                     else
-                        using (FileStream f = File.Create(CaminhoSalvarArquivoPedidoImportado(numeroEtiqueta.Replace("  ", "").Replace(" ", ""), (int)idProdPedEsp, arquivo.TipoArquivo)))
+                    {
+                        using (FileStream f = File.Create(
+                            this.CaminhoSalvarArquivoPedidoImportado(
+                                numeroEtiqueta
+                                    .Replace("  ", string.Empty)
+                                    .Replace(" ", string.Empty),
+                                (int)idProdPedEsp,
+                                arquivo.TipoArquivo)))
+                        {
                             f.Write(arquivo.Arquivo, 0, arquivo.Arquivo.Length);
+                        }
+                    }
                 }
             }
+
             // Se a condição acima não for atendida, salva a marcação na pasta padrão do sistema e com a nomenclatura padrão.
             else
+            {
                 using (FileStream f = File.Create(Utils.GetArquivoMesaCorteImpPath + idProdPedEsp + ".sag"))
+                {
                     f.Write(arquivo.Arquivo, 0, arquivo.Arquivo.Length);
+                }
+            }
         }
 
         /// <summary>
@@ -11862,9 +11988,13 @@ namespace Glass.Data.DAL
             projeto.Flags.Clear();
 
             if (forSGlass)
+            {
                 flags = flags.Where(f => f.Descricao.ToLower() != "waterjet").ToList();
+            }
             else
+            {
                 flags = flags.Where(f => f.Descricao.ToLower() != "sglass").ToList();
+            }
 
             projeto.Flags.Add(new CalcEngine.Flag() { Name = tipoArquivoEnum.ToString() });
             projeto.Flags.Add(new CalcEngine.Flag() { Name = string.Format("[{0}]", System.Configuration.ConfigurationManager.AppSettings["sistema"]) });
@@ -11895,7 +12025,7 @@ namespace Glass.Data.DAL
             #endregion
 
             bool res = false;
-            var task = Task.Run(async () => res = await SalvarArquivoCalcEngine(espessura, projeto, arquivo, tipoArquivo, descontoLap, flags, forCadProject, forSGlass, forIntermac));
+            var task = Task.Run(async () => res = await SalvarArquivoCalcEngine(espessura, projeto, arquivo, tipoArquivo, descontoLap, forCadProject, forSGlass, forIntermac));
 
             try
             {
@@ -11920,7 +12050,6 @@ namespace Glass.Data.DAL
             Stream arquivo,
             int tipoArquivo,
             float descontoLap,
-            List<FlagArqMesa> flags,
             bool forCadProject,
             bool forSGlass,
             bool forIntermac)
@@ -11957,7 +12086,7 @@ namespace Glass.Data.DAL
                         // Chamado 50979 - Geração de arquivo SGLASS
                         if (forSGlass)
                         {
-                            if (PCPConfig.EmpresaGeraArquivoSGlass && flags.Any(f => f.Descricao.ToLower() == "sglass"))
+                            if (PCPConfig.EmpresaGeraArquivoSGlass && projeto.Flags.Any(f => f.Name.ToLower() == "sglass"))
                             {
                                 var driver = await outputDriverProvider.GetDriver("SGLASS Drawing");
 
@@ -11981,7 +12110,7 @@ namespace Glass.Data.DAL
 
                         if (forIntermac)
                         {
-                            if (PCPConfig.EmpresaGeraArquivoIntermac && flags.Any(f => f.Descricao.ToLower() == "intermac"))
+                            if (PCPConfig.EmpresaGeraArquivoIntermac && projeto.Flags.Any(f => f.Name.ToLower() == "intermac"))
                             {
 
                                 var driversInfo = await outputDriverProvider.GetDrivers();
@@ -12404,9 +12533,26 @@ namespace Glass.Data.DAL
 
         #region Gerar arquivo CalcEngine
 
-        public void GerarArquivoCalcEngine(GDASession session, uint idArquivoCalcEngine, float descontoLap, int tipoArquivo, bool pcp, uint idProdPed, PecaItemProjeto pecaItemProjeto,
-            float altura, int largura, ref string mensagemErro, string codigoArquivo, ConfiguracoesArqMesa config, float espessura,
-            Stream arquivo, List<FlagArqMesa> flags, ref bool? retorno, bool forCadProject, bool forSGlass, bool forIntermac)
+        public void GerarArquivoCalcEngine(
+            GDASession session,
+            uint idArquivoCalcEngine,
+            float descontoLap,
+            int tipoArquivo,
+            bool pcp,
+            uint idProdPed,
+            PecaItemProjeto pecaItemProjeto,
+            float altura,
+            int largura,
+            ref string mensagemErro,
+            string codigoArquivo,
+            ConfiguracoesArqMesa config,
+            float espessura,
+            Stream arquivo,
+            List<FlagArqMesa> flags,
+            ref bool? retorno,
+            bool forCadProject,
+            bool forSGlass,
+            bool forIntermac)
         {
             // Variável criada para carregar o arquivo de extensão .package, que contém o DXF e suas configurações.
             CalcEngine.ProjectFilesPackage pacote = null;

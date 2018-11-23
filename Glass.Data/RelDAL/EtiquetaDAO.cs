@@ -1465,16 +1465,29 @@ namespace Glass.Data.RelDAL
                     if (tipoProcesso != (int)EtiquetaTipoProcesso.Caixilho && tipoProcesso != (int)EtiquetaTipoProcesso.Instalacao)
                         continue;
 
-                    //Se o produto avulso for de instalação verifica se o mesmo tem arquivo DXF.
-                    var idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(session, prodPedEsp.IdProd);
+                    var caminhoArquivoImportado = ArquivoMesaCorteDAO.Instance
+                        .CaminhoSalvarArquivoPedidoImportado(string.Empty, (int)prodPedEsp.IdProdPed, TipoArquivoMesaCorte.Todos);
 
-                    if (idArquivoMesaCorte.GetValueOrDefault() == 0)
-                        continue;
-
-                    var tipoArquivo = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(session, (int)prodPedEsp.IdProd);
-
-                    if (tipoArquivo == TipoArquivoMesaCorte.DXF)
+                    // Caso tenha uma arquivo importado
+                    if (System.IO.File.Exists(caminhoArquivoImportado))
+                    {
                         gerar = true;
+                    }
+                    else
+                    {
+                        //Se o produto avulso for de instalação verifica se o mesmo tem arquivo DXF.
+                        var idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(session, prodPedEsp.IdProd);
+
+                        if (idArquivoMesaCorte.GetValueOrDefault() == 0)
+                            continue;
+
+                        var tipoArquivo = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(session, (int)prodPedEsp.IdProd);
+
+                        if (tipoArquivo == TipoArquivoMesaCorte.DXF)
+                        {
+                            gerar = true;
+                        }
+                    }
                 }
                 else // Se o item for de projeto
                 {
@@ -1522,8 +1535,6 @@ namespace Glass.Data.RelDAL
                         });
                     }
                 }
-
-                gerar = false;
             }
 
             return lstEtiqueta;

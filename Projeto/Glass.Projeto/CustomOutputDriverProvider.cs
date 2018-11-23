@@ -15,39 +15,53 @@ namespace Glass.Projeto
     public class CustomOutputDriverProvider : IOutputDriverProvider
     {
         private CalcEngine.Services.RemoteOutputDriverProvider remoteOutputDriverProvider;
+        private IOutputDriverProvider localOutputDriverProvider;
         private string servidor;
         private int porta;
 
         private void VerificarConfiguracao()
         {
-            if (this.servidor != Glass.Configuracoes.PCPConfig.ServidorCalcEngine ||
-                this.porta != Glass.Configuracoes.PCPConfig.PortaCalcEngine)
+            if (this.servidor != Configuracoes.PCPConfig.ServidorCalcEngine ||
+                this.porta != Configuracoes.PCPConfig.PortaCalcEngine)
             {
                 this.remoteOutputDriverProvider = null;
             }
 
-            if (remoteOutputDriverProvider == null)
+            if (remoteOutputDriverProvider == null && !string.IsNullOrEmpty(Configuracoes.PCPConfig.ServidorCalcEngine))
             {
-                this.servidor = Glass.Configuracoes.PCPConfig.ServidorCalcEngine;
-                this.porta = Glass.Configuracoes.PCPConfig.PortaCalcEngine;
+                this.servidor = Configuracoes.PCPConfig.ServidorCalcEngine;
+                this.porta = Configuracoes.PCPConfig.PortaCalcEngine;
 
                 this.remoteOutputDriverProvider = new CalcEngine.Services.RemoteOutputDriverProvider(
                     new Uri($"http://{this.servidor}:{this.porta}/api/outputdriverprovider/"), null);
             }
+            else if (localOutputDriverProvider == null)
+            {
+                localOutputDriverProvider = new OutputDriverProvider(
+                    new[]
+                    {
+                        new CalcEngine.Dxf.DxfOutputDriver()
+                    });
+            }
+        }
+
+        private IOutputDriverProvider GetProvider()
+        {
+            this.VerificarConfiguracao();
+            return this.remoteOutputDriverProvider ?? this.localOutputDriverProvider;
         }
 
         /// <inheritdoc />
         public async Task<IOutputDriver> GetDriver(string name)
         {
-            this.VerificarConfiguracao();
-            return await this.remoteOutputDriverProvider.GetDriver(name);
+            return await this.GetProvider().GetDriver(name);
         }
 
         /// <inheritdoc />
         public async Task<IEnumerable<OutputDriverInfo>> GetDrivers()
         {
             this.VerificarConfiguracao();
-            return await this.remoteOutputDriverProvider.GetDrivers();
+            return await this.GetProvider().GetDrivers();
         }
     }
 }
