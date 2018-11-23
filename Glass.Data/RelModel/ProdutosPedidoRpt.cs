@@ -54,7 +54,6 @@ namespace Glass.Data.RelModel
             IsVidro = GrupoProdDAO.Instance.IsVidro((int)prodPed.IdGrupoProd);
             IsVidroEstoqueQtde = prodPed.TipoCalc == (int)TipoCalculoGrupoProd.Qtd && prodPed.IsVidroEstoque;
             NomeGrupoProd = GrupoProdDAO.Instance.GetDescricao((int)prodPed.IdGrupoProd);
-            NomeSubGrupoProd = prodPed.NomeSubGrupoProd;
 
             var corVidro = ProdutoDAO.Instance.ObtemIdCorVidro((int)prodPed.IdProd);
 
@@ -148,8 +147,6 @@ namespace Glass.Data.RelModel
         public bool IsVidroEstoqueQtde { get; set; }
 
         public string NomeGrupoProd { get; set; }
-
-        public string NomeSubGrupoProd { get; set; }
 
         #endregion
     }

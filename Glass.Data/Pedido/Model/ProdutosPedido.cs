@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Helper;
@@ -83,7 +83,7 @@ namespace Glass.Data.Model
         public float Espessura { get; set; }
 
         /// <summary>
-        /// Identifica se o vidro √© redondo
+        /// Identifica se o vidro È redondo
         /// </summary>
         [PersistenceProperty("REDONDO")]
         public bool Redondo { get; set; }
@@ -212,7 +212,7 @@ namespace Glass.Data.Model
         public decimal BcCofins { get; set; }
 
         /// <summary>
-        /// Al√≠quota CONFINS
+        /// AlÌquota CONFINS
         /// </summary>
         [PersistenceProperty("AliqCofins")]
         public float AliqCofins { get; set; }
@@ -236,7 +236,7 @@ namespace Glass.Data.Model
         public decimal ValorIcmsDesonerado { get; set; }
 
         /// <summary>
-        /// Percentual de cr√©dito base calculo ICMS
+        /// Percentual de crÈdito base calculo ICMS
         /// </summary>
         [PersistenceProperty("PercRedBcIcms")]
         public float PercRedBcIcms { get; set; }
@@ -248,7 +248,7 @@ namespace Glass.Data.Model
         public decimal BcIcmsSt { get; set; }
 
         /// <summary>
-        /// Al√≠quota ICMSST
+        /// AlÌquota ICMSST
         /// </summary>
         [PersistenceProperty("AliqIcmsSt")]
         public float AliqIcmsSt { get; set; }
@@ -260,7 +260,7 @@ namespace Glass.Data.Model
         public decimal ValorIcmsSt { get; set; }
 
         /// <summary>
-        /// Percentual de cr√©dito base calculo ICMSST
+        /// Percentual de crÈdito base calculo ICMSST
         /// </summary>
         [PersistenceProperty("PercRedBcIcmsSt")]
         public decimal PercRedBcIcmsSt { get; set; }
@@ -314,13 +314,13 @@ namespace Glass.Data.Model
         public float Mva { get; set; }
 
         /// <summary>
-        /// C√≥digo do valor fiscal de ICMS do produto do pedido
+        /// CÛdigo do valor fiscal de ICMS do produto do pedido
         /// </summary>
         [PersistenceProperty("CODVALORFISCAL")]
         public int? CodValorFiscal { get; set; }
 
         /// <summary>
-        /// C√≥d de subistitui√ß√£o tributaria do IPI
+        /// CÛd de subistituiÁ„o tributaria do IPI
         /// </summary>
         [PersistenceProperty("CSTIPI")]
         public Sync.Fiscal.Enumeracao.Cst.CstIpi? CstIpi { get; set; }
@@ -376,7 +376,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("RENTABILIDADEFINANCEIRA", Direction = DirectionParameter.Input)]
         public decimal RentabilidadeFinanceira { get; set; }
 
-        #region Dados para exporta√ß√£o
+        #region Dados para exportaÁ„o
 
         [PersistenceProperty("OBSPROJETOEXTERNO")]
         public string ObsProjetoExterno { get; set; }
@@ -461,7 +461,7 @@ namespace Glass.Data.Model
         private string _obsProjeto;
 
         /// <summary>
-        /// Campo usado para exportar dados projeto, n√£o colocar a tag [XmlIgnore] de forma alguma
+        /// Campo usado para exportar dados projeto, n„o colocar a tag [XmlIgnore] de forma alguma
         /// </summary>
         [PersistenceProperty("OBSPROJETO", DirectionParameter.InputOptional)]
         public string ObsProjeto
@@ -630,10 +630,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("CODNATUREZAOPERACAO", DirectionParameter.InputOptional)]
         public string CodNaturezaOperacao { get; set; }
 
-        [XmlIgnore]
-        [PersistenceProperty("NOMESUBGRUPOPROD", DirectionParameter.InputOptional)]
-        public string NomeSubGrupoProd { get; set; }
-
         #endregion
 
         #region Propriedades de Suporte
@@ -711,7 +707,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Campo utilizado ao marcar sa√≠da nos produtos do pedido
+        /// Campo utilizado ao marcar saÌda nos produtos do pedido
         /// </summary>
         [XmlIgnore]
         public float QtdMarcadaSaida { get; set; }
@@ -825,7 +821,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                // Se o produto for composi√ß√£o e tipo subgrupo Vidro Laminado ou a forma de pagamento for Obra.
+                // Se o produto for composiÁ„o e tipo subgrupo Vidro Laminado ou a forma de pagamento for Obra.
                 if ((IdProdPedParent.GetValueOrDefault(0) > 0 && ProdutosPedidoDAO.Instance.IsProdLaminado(IdProdPedParent.Value)) ||
                         PedidoDAO.Instance.GetIdObra(null, IdPedido) > 0)
                     return false;
@@ -921,7 +917,7 @@ namespace Glass.Data.Model
                 // Criado para que ao buscar os produtos na tela de liberar pedido a altura e a largura sejam mostradas conforme o ambiente do pedido caso o mesmo seja MO.
                 if (IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra && IdAmbientePedido.GetValueOrDefault() > 0 && Altura == 0)
                     return AmbientePedidoDAO.Instance.ObtemAltura(IdAmbientePedido.GetValueOrDefault()).ToString();
-                else if (IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Alum√≠nio)
+                else if (IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.AlumÌnio)
                     return Altura.ToString();
                 else
                     return Altura != AlturaReal ? (AlturaReal > 0 ? AlturaReal.ToString() + " (" + Altura.ToString() + ")" : Altura.ToString()) : Altura.ToString();
@@ -1003,29 +999,29 @@ namespace Glass.Data.Model
 
                 #endregion
 
-                // Calcula a quantidade de itens para achar o valor unit√°rio do produto
-                // Se for m√£o de obra, considera o n√∫mero de ambientes (libera√ß√£o de m√£o de obra e n√£o de ambiente)
+                // Calcula a quantidade de itens para achar o valor unit·rio do produto
+                // Se for m„o de obra, considera o n˙mero de ambientes (liberaÁ„o de m„o de obra e n„o de ambiente)
                 int qtdeAmbiente = _pedidoMaoDeObra && _qtdeAmbiente > 0 ? _qtdeAmbiente : 1;
 
-                // Se for m√£o de obra e a quantidade de ambientes for > 0 e se a empresa libera produtos prontos,
-                // a quantidade a usar deve ser a quantidade de ambientes vezes a quantidade de beneficiamentos do mesmo, caso contr√°rio
-                // o valor de libera√ß√£o do beneficiamento ficaria maior do que deveria.
+                // Se for m„o de obra e a quantidade de ambientes for > 0 e se a empresa libera produtos prontos,
+                // a quantidade a usar deve ser a quantidade de ambientes vezes a quantidade de beneficiamentos do mesmo, caso contr·rio
+                // o valor de liberaÁ„o do beneficiamento ficaria maior do que deveria.
                 decimal qtdeUsar = _pedidoMaoDeObra && _qtdeAmbiente > 0 ? qtdeAmbiente : (decimal)Qtde;
 
                 float qtdeDisponivelLiberacao = QtdeDisponivelLiberacao;
 
-                // Andr√© 20/02/13: No caso de empresas que n√£o liberam pedidos somente quando est√£o prontos
-                // (Atualizanddo 12/09/13: Empresas que liberam somente prontos tamb√©m), os produtos de pedidos m√£o de obra com
-                // beneficiamentos com quantidade maior que 1 estavam sendo liberados incorretamente, a "QtdeDisponivelLiberacao" est√° retornando a
+                // AndrÈ 20/02/13: No caso de empresas que n„o liberam pedidos somente quando est„o prontos
+                // (Atualizanddo 12/09/13: Empresas que liberam somente prontos tambÈm), os produtos de pedidos m„o de obra com
+                // beneficiamentos com quantidade maior que 1 estavam sendo liberados incorretamente, a "QtdeDisponivelLiberacao" est· retornando a
                 // quantidade do beneficiamento e utilizando este valor para calcular o total (multiplicando-o) incorretamente, para corrigir esta
-                // situa√ß√£o foi necess√°rio recalcular a "QtdeDisponivelLiberacao" considerando a quantidade de ambiente menos a _qtdeLiberados.
+                // situaÁ„o foi necess·rio recalcular a "QtdeDisponivelLiberacao" considerando a quantidade de ambiente menos a _qtdeLiberados.
                 if (/*!Liberacao.DadosLiberacao.LiberarProdutosProntos &&*/ _pedidoMaoDeObra && _qtdeAmbiente > 0 && Qtde > 1 && qtdeDisponivelLiberacao > 1)
                     qtdeDisponivelLiberacao = qtdeAmbiente - (_qtdeLiberados > 0 ? (int)_qtdeLiberados : 0);
 
                 uint idCliente = IdCliente > 0 ? IdCliente : PedidoDAO.Instance.ObtemIdCliente(null, IdPedido);
 
-                // Calcula o total do produto, considerando beneficiamentos, ICMS e IPI. Soma tamb√©m o desconto por quantidade,
-                // para que ao aplicar o desconto do pedido na tela de libera√ß√£o aplique somente uma vez o desconto
+                // Calcula o total do produto, considerando beneficiamentos, ICMS e IPI. Soma tambÈm o desconto por quantidade,
+                // para que ao aplicar o desconto do pedido na tela de liberaÁ„o aplique somente uma vez o desconto
                 decimal total = Total + ValorBenef + (!PedidoConfig.RatearDescontoProdutos ? ValorDescontoQtde : 0);
 
                 // Calcula a taxa de fast delivery, caso exista
@@ -1047,8 +1043,8 @@ namespace Glass.Data.Model
                 decimal retorno = total;
 
                 // Calcula o total a liberar, considerando a quantidade de itens que podem ser liberados
-                // Calcula o valor por pe√ßa que ser√° liberada (retorno / qtdeUsar)
-                // Depois multiplica pela quantidade que pode ser liberada da pe√ßa, considerando a quantidade de ambientes
+                // Calcula o valor por peÁa que ser· liberada (retorno / qtdeUsar)
+                // Depois multiplica pela quantidade que pode ser liberada da peÁa, considerando a quantidade de ambientes
                 if (qtdeDisponivelLiberacao > 0 && qtdeUsar > 0)
                     retorno = retorno / qtdeUsar * (decimal)qtdeDisponivelLiberacao;
 
@@ -1121,7 +1117,7 @@ namespace Glass.Data.Model
 
                     case Glass.Data.Model.TipoCalculoGrupoProd.M2:
                     case Glass.Data.Model.TipoCalculoGrupoProd.M2Direto:
-                        return TotM.ToString("0.##") + "m¬≤" + (TotM != _totM2Calc ? " (" + _totM2Calc.ToString("0.##") + "m¬≤)" : String.Empty);
+                        return TotM.ToString("0.##") + "m≤" + (TotM != _totM2Calc ? " (" + _totM2Calc.ToString("0.##") + "m≤)" : String.Empty);
 
                     default:
                         return String.Empty;
@@ -1134,7 +1130,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                string dividir = TotM2Rpt.Replace("ml", "").Replace("m¬≤", "").Replace("ml", "");
+                string dividir = TotM2Rpt.Replace("ml", "").Replace("m≤", "").Replace("ml", "");
                 dividir = dividir.IndexOf("(") == -1 ? dividir : dividir.Substring(0, dividir.IndexOf("(") - 1);
 
                 float d = !String.IsNullOrEmpty(dividir.Trim()) ? float.Parse(dividir.Trim()) : Qtde;
@@ -1169,7 +1165,7 @@ namespace Glass.Data.Model
 
         /// <summary>
         /// Indica se o produto pode ser editado no pedido
-        /// (se o pedido n√£o tem desconto, ou se a empresa n√£o rateia o desconto).
+        /// (se o pedido n„o tem desconto, ou se a empresa n„o rateia o desconto).
         /// </summary>
         [XmlIgnore]
         public bool PodeEditar
@@ -1314,13 +1310,13 @@ namespace Glass.Data.Model
         public bool AplicarBenefComposicao { get; set; }
 
         /// <summary>
-        /// Identificador do processo das pe√ßas filhas
-        /// que √© informado na insers√£o do produto no pedido
+        /// Identificador do processo das peÁas filhas
+        /// que È informado na insers„o do produto no pedido
         /// </summary>
         public int? IdProcessoFilhas { get; set; }
         /// <summary>
-        /// Identificador do processo das pe√ßas filhas
-        /// que √© informado na insers√£o do produto no pedido
+        /// Identificador do processo das peÁas filhas
+        /// que È informado na insers„o do produto no pedido
         /// </summary>
         public int? IdAplicacaoFilhas { get; set; }
 
@@ -1332,8 +1328,8 @@ namespace Glass.Data.Model
         public bool UsarBenefPcp { get; set; }
 
         /// <summary>
-        /// Define se os beneficiamentos ser√£o buscados do banco.
-        /// Usado apenas durante a importa√ß√£o de pedido.
+        /// Define se os beneficiamentos ser„o buscados do banco.
+        /// Usado apenas durante a importaÁ„o de pedido.
         /// </summary>
         [XmlIgnore]
         internal bool BuscarBenefImportacao { get; set; }
@@ -1350,13 +1346,13 @@ namespace Glass.Data.Model
                     if (!ProdutoDAO.Instance.CalculaBeneficiamento((int)IdProd))
                         _beneficiamentos = new List<ProdutoPedidoBenef>();
 
-                    // Salva a quantidade de beneficiamentos que est√£o associados ao produto de pedido.
+                    // Salva a quantidade de beneficiamentos que est„o associados ao produto de pedido.
                     int qtdBenef = _beneficiamentos == null ? 0 : _beneficiamentos.Count;
 
-                    // Verifica se o produto de pedido buscou a refer√™ncia do beneficiamento.
+                    // Verifica se o produto de pedido buscou a referÍncia do beneficiamento.
                     if ((qtdBenef == 0 || _beneficiamentos == null) && BuscarBenefImportacao)
                     {
-                        // Recupera a refer√™ncia do beneficiamento direto do banco de dados e incrementa a vari√°vel qtdBenef caso algum valor seja buscado.
+                        // Recupera a referÍncia do beneficiamento direto do banco de dados e incrementa a vari·vel qtdBenef caso algum valor seja buscado.
                         if (!InvisivelPedido && !UsarBenefPcp)
                         {
                             _beneficiamentos = new List<ProdutoPedidoBenef>(ProdutoPedidoBenefDAO.Instance.GetByProdutoPedido(IdProdPed));
@@ -1397,7 +1393,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Usado para exporta√ß√£o de pedido.
+        /// Usado para exportaÁ„o de pedido.
         /// </summary>
         public string ServicosInfoBenef
         {
@@ -1530,25 +1526,25 @@ namespace Glass.Data.Model
                 if (!PedidoMaoDeObra)
                     return 1;
 
-                /* A vari√°vel IdAmbientePedido √© setada com o valor do IdAmbientePedidoEspelho no m√©todo
-                * ProdutosPedido.Instance.GetForRpt caso o IdAmbientePedido seja nulo e a solicita√ß√£o esteja vindo
-                * de um relat√≥rio de PCP, por isso, √© necess√°rio sempre, que o pedido for m√£o de obra, buscar
-                * o id do ambiente pela vari√°vel IdProdPedEsp */
+                /* A vari·vel IdAmbientePedido È setada com o valor do IdAmbientePedidoEspelho no mÈtodo
+                * ProdutosPedido.Instance.GetForRpt caso o IdAmbientePedido seja nulo e a solicitaÁ„o esteja vindo
+                * de um relatÛrio de PCP, por isso, È necess·rio sempre, que o pedido for m„o de obra, buscar
+                * o id do ambiente pela vari·vel IdProdPedEsp */
 
-                //else if (!_forLiberacao) // Se n√£o for para libera√ß√£o, retorna a qtd de ambientes do pedido original
+                //else if (!_forLiberacao) // Se n„o for para liberaÁ„o, retorna a qtd de ambientes do pedido original
                 //  return AmbientePedidoDAO.Instance.GetQtde(IdAmbientePedido);
                 else
                 {
-                    /* Chamado 10235, ao inv√©s de buscar o ambiente pelo IdAmbienteOrig √© necess√°rio buscar o ambiente pelo
-                     * IdProdPedEsp, pois, caso haja alguma altera√ß√£o do pedido no PCP o ambiente espelho perde a refer√™ncia do
+                    /* Chamado 10235, ao invÈs de buscar o ambiente pelo IdAmbienteOrig È necess·rio buscar o ambiente pelo
+                     * IdProdPedEsp, pois, caso haja alguma alteraÁ„o do pedido no PCP o ambiente espelho perde a referÍncia do
                      * ambiente original */
 
-                    // Se for para libera√ß√£o retorna a quantidade de ambientes do pedido espelho, a menos que n√£o tenha refer√™ncia deste
-                    // ambiente no PCP ou a quantidade do PCP seja 0, neste caso ser√° usada a quantidade no pedido original
+                    // Se for para liberaÁ„o retorna a quantidade de ambientes do pedido espelho, a menos que n„o tenha referÍncia deste
+                    // ambiente no PCP ou a quantidade do PCP seja 0, neste caso ser· usada a quantidade no pedido original
                     // uint? idAmbienteEsp = AmbientePedidoEspelhoDAO.Instance.ObtemIdAmbienteByOrig(IdAmbientePedido);
                     // int qtde = AmbientePedidoEspelhoDAO.Instance.GetQtde(idAmbienteEsp);
 
-                    // Caso a vari√°vel IdProdPedEsp esteja zerada significa que o pedido n√£o tem espelho, dessa forma a vari√°vel
+                    // Caso a vari·vel IdProdPedEsp esteja zerada significa que o pedido n„o tem espelho, dessa forma a vari·vel
                     // IdAmbientePedido referencia a tabela ambiente_pedido e a quantidade do registro nesta tabela deve ser retornada.
                     if (IdProdPedEsp.GetValueOrDefault() == 0)
                         return AmbientePedidoDAO.Instance.GetQtde(IdAmbientePedido);

@@ -61,7 +61,7 @@ namespace Glass.Data.DAL
                 sqlProdutoTabela = $"IF(o.TipoEntrega IN ({(int)Orcamento.TipoEntregaOrcamento.Balcao}, {(int)Orcamento.TipoEntregaOrcamento.Entrega}), p.ValorBalcao, p.ValorObra)";
                 sqlNumChild = "SELECT COUNT(*) FROM produtos_orcamento WHERE IdProdParent = po.IdProd";
                 campos = $@"po.*, ({sqlNumChild}) AS NumChild, p.CodInterno AS CodInterno, p.Descricao AS DescrProduto, {sqlProdutoTabela} AS ValorProdutoTabela,
-                    um.Codigo AS Unidade, ip.Obs AS ObsProj, o.IdCliente, c.Nome AS NomeCliente, ep.CodInterno AS CodProcesso, ea.CodInterno AS CodAplicacao, sgp.descricao AS NomeSubGrupoProd";
+                    um.Codigo AS Unidade, ip.Obs AS ObsProj, o.IdCliente, c.Nome AS NomeCliente, ep.CodInterno AS CodProcesso, ea.CodInterno AS CodAplicacao";
             }
             else
             {
@@ -76,7 +76,6 @@ namespace Glass.Data.DAL
                     LEFT JOIN cliente c ON (c.Id_Cli = o.IdCliente)
                     LEFT JOIN etiqueta_processo ep ON (po.IdProcesso = ep.IdProcesso)
                     LEFT JOIN etiqueta_aplicacao ea ON (po.IdAplicacao = ea.IdAplicacao)
-                    LEFT JOIN subgrupo_prod sgp ON (p.IdSubGrupoProd = sgp.IdSubGrupoProd)
                 WHERE 1";
 
             if (idOrca > 0)
