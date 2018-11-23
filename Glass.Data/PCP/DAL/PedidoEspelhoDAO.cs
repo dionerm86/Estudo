@@ -3169,6 +3169,14 @@ namespace Glass.Data.DAL
             if (PedidoDAO.Instance.TemVolume(session, idPedido))
                 throw new Exception("O pedido PCP não pode ser excluído, pois, possui volume gerado. Cancele o volume para excluir o pedido PCP.");
 
+            // Se o pedido estiver exportado o mesmo não pode ser reaberto sem que se cancele a exportação.
+            if (!ExecuteScalar<bool>($@"
+                SELECT COALESCE((SELECT situacaoExportacao FROM pedido_exportacao WHERE idPedido = {idPedido} ORDER BY dataSituacao DESC LIMIT 1), 4) = 4
+                    OR COALESCE((SELECT situacaoExportacao FROM pedido_exportacao WHERE idPedido = {idPedido} ORDER BY dataSituacao DESC LIMIT 1), 3) = 3;"))
+            {
+                throw new InvalidOperationException("O pedido PCP não pode ser reaberto, o pedido em questão foi exportado. Cancele a exportação para reabrir o pedido PCP.");
+            }
+
             // Se possuir peças de composição nao pode reabrir sendo assim antes de deletar tem que ser reaberto
             // para os procedimentos de reabertura sejam realizados.
             if (possuiProdutosComposicao)
