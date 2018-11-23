@@ -1051,6 +1051,7 @@
     <Content Include="AppSettings.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="biesse.config" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -1121,6 +1122,10 @@
     <ProjectReference Include="..\..\Negocios\Glass.Negocios\Glass.Negocios.csproj">
       <Project>{a607c634-74af-4c32-b0b1-3d72b642b859}</Project>
       <Name>Glass.Negocios</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Projeto\Glass.Projeto\Glass.Projeto.csproj">
+      <Project>{80e41ddf-89b0-4c31-8893-9139cfd8fe0b}</Project>
+      <Name>Glass.Projeto</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Relatorios\Glass.Relatorios\Glass.Relatorios.csproj">
       <Project>{fe3e730f-5b2d-42dc-b491-d16c7f04b96c}</Project>

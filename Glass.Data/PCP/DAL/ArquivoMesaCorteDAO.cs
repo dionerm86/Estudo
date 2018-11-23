@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
-using Glass.Data.Helper;
-using System.IO;
-using GDA;
-using Glass.Configuracoes;
-using System.Linq;
-using Ionic.Utils.Zip;
-using CalcEngine;
+﻿using CalcEngine;
 using CalcEngine.Text.Diff.DiffBuilder;
+using GDA;
+using Glass.Data.Helper;
+using Glass.Data.Model;
+using Glass.Configuracoes;
+using Ionic.Utils.Zip;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+using System.Threading.Tasks;
 
 namespace Glass.Data.DAL
 {
@@ -11833,6 +11835,7 @@ namespace Glass.Data.DAL
             List<FlagArqMesa> flags, bool forCadProject, bool forSGlass, bool forIntermac)
         {
             foreach (var variavelCalcEngine in variaveisCalcEngine)
+            {
                 // Só por garantia verifica se a variável realmente existe na configuração
                 if (projeto.Variables.Any(f => f.Name == variavelCalcEngine.Key))
                 {
@@ -11840,7 +11843,9 @@ namespace Glass.Data.DAL
 
                     // Não permite setar valores em Functions
                     if (variavel != null && variavel is CalcEngine.Function)
-                        throw new Exception($"Está sendo feita uma tentativa inválida de atribuir valor para uma função. Função: { variavel.Name } Valor: { variavel.Value }");
+                    {
+                        throw new InvalidOperationException($"Está sendo feita uma tentativa inválida de atribuir valor para uma função. Função: { variavel.Name } Valor: { variavel.Value }");
+                    }
 
                     /* Chamado 66568. */
                     if (variavel == null)
@@ -11848,6 +11853,7 @@ namespace Glass.Data.DAL
                     else
                         variavel.Value = variavelCalcEngine.Value;
                 }
+            }
 
             var tipoArquivoEnum = (TipoArquivoMesaCorte)tipoArquivo;
 
@@ -11864,7 +11870,7 @@ namespace Glass.Data.DAL
             projeto.Flags.Add(new CalcEngine.Flag() { Name = string.Format("[{0}]", System.Configuration.ConfigurationManager.AppSettings["sistema"]) });
 
             /* Chamado 54681. */
-            //Chamado 50979
+            // Chamado 50979
             if (tipoArquivoEnum == TipoArquivoMesaCorte.DXF && !forCadProject && flags.Any(f => f.Descricao.ToLower() == "waterjet"))
                 projeto.Flags.Add(new CalcEngine.Flag() { Name = "RemoveBounds" });
 
@@ -11877,8 +11883,10 @@ namespace Glass.Data.DAL
                 if (f.TipoArquivo.HasValue && !f.TipoArquivo.Value.HasFlag(tipoArquivoEnum))
                     continue;
 
-                if (projeto.Flags.Where(x => x.Name == f.Descricao).Count() == 0)
+                if (!projeto.Flags.Any(x => x.Name == f.Descricao))
+                {
                     projeto.Flags.Add(new CalcEngine.Flag() { Name = f.Descricao });
+                }
             }
 
             // Aplica as vinculações das variáveis com o projeto.
@@ -11886,19 +11894,60 @@ namespace Glass.Data.DAL
 
             #endregion
 
+            bool res = false;
+            var task = Task.Run(async () => res = await SalvarArquivoCalcEngine(espessura, projeto, arquivo, tipoArquivo, descontoLap, flags, forCadProject, forSGlass, forIntermac));
+
+            try
+            {
+                task.Wait();
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerExceptions.Any())
+                {
+                    throw ex.InnerExceptions.FirstOrDefault();
+                }
+
+                throw;
+            }
+
+            return res;
+        }
+
+        private async Task<bool> SalvarArquivoCalcEngine(
+            float espessura,
+            CalcEngine.Dxf.DxfProject projeto,
+            Stream arquivo,
+            int tipoArquivo,
+            float descontoLap,
+            List<FlagArqMesa> flags,
+            bool forCadProject,
+            bool forSGlass,
+            bool forIntermac)
+        {
+            var outputDriverProvider = Microsoft.Practices.ServiceLocation.ServiceLocator
+                .Current.GetInstance<IOutputDriverProvider>();
+
             if (forCadProject)
             {
-                var options = new CalcEngine.Dxf.CreateDxfDocumentOptions()
-                {
-                    IncludeProjectVariables = true,
-                    CanCreateQuotas = true,
-                    CanDrawAnnotations = true,
-                    CanCreateLimitQuotas = true
-                };
+                var driver = await outputDriverProvider.GetDriver("DXF");
 
-                var dxfDocument = projeto.SaveDxf(options);
-                dxfDocument.Save(arquivo);
-                return true;
+                var profile = CompilationProfileFactory.CreateValidationProfile(
+                           "WebGlass",
+                           "WebGlass Output",
+                           driver.Name,
+                           String.Empty,
+                           projeto.Flags.ToArray(),
+                           new CompilationProfileVariable[0],
+                           new[]
+                           {
+                               new CompilationProfileParameter("IncludeProjectVariables", true),
+                               new CompilationProfileParameter("CreateQuotas", true),
+                               new CompilationProfileParameter("DrawAnnotations", true),
+                               new CompilationProfileParameter("CreateLimitQuotas", true),
+                           });
+
+                return await driver.CreateOutput(profile, projeto, arquivo);
             }
 
             switch (tipoArquivo)
@@ -11908,10 +11957,23 @@ namespace Glass.Data.DAL
                         // Chamado 50979 - Geração de arquivo SGLASS
                         if (forSGlass)
                         {
-                            if (PCPConfig.EmpresaGeraArquivoSGlass && !forCadProject && flags.Any(f => f.Descricao.ToLower() == "sglass"))
+                            if (PCPConfig.EmpresaGeraArquivoSGlass && flags.Any(f => f.Descricao.ToLower() == "sglass"))
                             {
-                                var result = CalcEngine.SGlass.ProgramManager.LoadFrom(projeto, Guid.NewGuid().ToString(), espessura);
-                                result.Save(arquivo);
+                                var driver = await outputDriverProvider.GetDriver("SGLASS Drawing");
+
+                                var profile = CompilationProfileFactory.CreateValidationProfile(
+                                   "WebGlass",
+                                   "WebGlass Output",
+                                   driver.Name,
+                                   Guid.NewGuid().ToString(),
+                                   projeto.Flags.ToArray(),
+                                   new CompilationProfileVariable[0],
+                                   new[]
+                                   {
+                                       new CompilationProfileParameter("Thickness", espessura),
+                                   });
+
+                                return await driver.CreateOutput(profile, projeto, arquivo);
                             }
 
                             break;
@@ -11919,58 +11981,64 @@ namespace Glass.Data.DAL
 
                         if (forIntermac)
                         {
-                            if (PCPConfig.EmpresaGeraArquivoIntermac && !forCadProject && flags.Any(f => f.Descricao.ToLower() == "intermac"))
+                            if (PCPConfig.EmpresaGeraArquivoIntermac && flags.Any(f => f.Descricao.ToLower() == "intermac"))
                             {
-                                var contextos = ConfiguracaoBiesse.Instancia.Contextos;
 
-                                if (contextos.Count() == 1)
+                                var driversInfo = await outputDriverProvider.GetDrivers();
+                                var biesseDriversInfo = driversInfo.Where(f => f.Type == "Biesse");
+
+                                // Adiciona os arquivos
+                                var zip = new ZipFile(arquivo);
+
+                                foreach (var driverInfo in biesseDriversInfo)
                                 {
-                                    var contexto = contextos.First();
-                                    var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions()
-                                    {
-                                        IncludeBounds = true,
-                                        IncludeProjectVariables = true,
-                                        ConfigureGroupsLeads = true
-                                    });
-                                    var importer = new CalcEngine.Biesse.DxfImporter(contexto.ImporterContext, dxfDocument, contexto.NomeMaquina);
-                                    using (var resultado = importer.Execute(espessura))
-                                        resultado.Save(arquivo);
-                                }
-                                else
-                                {
-                                    // Adiciona os arquivos
-                                    var zip = new ZipFile(arquivo);
+                                    var driver = await outputDriverProvider.GetDriver(driverInfo.Name);
 
-                                    var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions()
-                                    {
-                                        IncludeBounds = true,
-                                        IncludeProjectVariables = true,
-                                        ConfigureGroupsLeads = true
-                                    });
-
-                                    foreach (var contexto in contextos)
-                                    {
-                                        var importer = new CalcEngine.Biesse.DxfImporter(contexto.ImporterContext, dxfDocument, contexto.NomeMaquina);
-
-                                        using (var resultado = importer.Execute(espessura))
+                                    var profile = CompilationProfileFactory.CreateValidationProfile(
+                                        "WebGlass",
+                                        "WebGlass Output",
+                                        driver.Name,
+                                        null,
+                                        projeto.Flags.ToArray(),
+                                        new CompilationProfileVariable[0],
+                                        new[]
                                         {
-                                            var arquivoIso = new System.IO.MemoryStream();
-                                            resultado.Save(arquivoIso, CalcEngine.Biesse.DxfImporterResultOptions.ISO);
-                                            arquivoIso.Position = 0;
-                                            var fileName = System.IO.Path.Combine(contexto.Nome, resultado.GetFileName(CalcEngine.Biesse.DxfImporterResultOptions.ISO));
-                                            zip.AddFileStream(fileName, null, arquivoIso);
+                                            new CompilationProfileParameter("Thickness", espessura),
+                                        });
 
-                                            var arquivoWorks = new System.IO.MemoryStream();
-                                            resultado.Save(arquivoWorks, CalcEngine.Biesse.DxfImporterResultOptions.Works);
-                                            arquivoWorks.Position = 0;
-                                            fileName = System.IO.Path.Combine(contexto.Nome, resultado.GetFileName(CalcEngine.Biesse.DxfImporterResultOptions.Works));
-                                            zip.AddFileStream(fileName, null, arquivoWorks);
+                                    using (var stream = new System.IO.MemoryStream())
+                                    {
+                                        bool gerado = false;
+
+                                        try
+                                        {
+                                            gerado = await driver.CreateOutput(profile, projeto, stream);
                                         }
-                                        
-                                    }
+                                        catch (Exception ex)
+                                        {
+                                            zip.AddStringAsFile(ex.Message, "error.err", driver.Name);
+                                            continue;
+                                        }
 
-                                    zip.Save();
+                                        if (gerado)
+                                        {
+                                            stream.Position = 0;
+                                            var zip2 = ZipFile.Read(stream);
+
+                                            foreach (var file in zip2.EntryFilenames.Select(f => zip2[f]).Where(f => !f.IsDirectory))
+                                            {
+                                                var fileName = System.IO.Path.Combine(driver.Name, file.FileName);
+
+                                                var fs = new MemoryStream();
+                                                file.Extract(fs);
+                                                fs.Position = 0;
+                                                zip.AddFileStream(System.IO.Path.GetFileName(fileName), System.IO.Path.GetDirectoryName(fileName), fs);
+                                            }
+                                        }
+                                    }
                                 }
+
+                                zip.Save();
                             }
 
                             break;
@@ -11990,18 +12058,43 @@ namespace Glass.Data.DAL
                 case (int)TipoArquivoMesaCorte.FMLBasico:
                 case (int)TipoArquivoMesaCorte.FML:
                     // Carrega o projeto com base no projeto DXF.
-                    var projetoFml = CalcEngine.Forvet.FmlProject.LoadFrom(projeto, espessura, true);
-                    projetoFml.GlassTicks = espessura;
 
-                    // Salva o projeto FML no stream de saída.
-                    projetoFml.Save(arquivo);
-                    break;
+                    var forvetDriver = await outputDriverProvider.GetDriver("Forvet FML");
+
+                    var forvetProfile = CompilationProfileFactory.CreateValidationProfile(
+                       "WebGlass",
+                       "WebGlass Output",
+                       forvetDriver.Name,
+                       Guid.NewGuid().ToString(),
+                       projeto.Flags.ToArray(),
+                       new CompilationProfileVariable[0],
+                       new[]
+                       {
+                            new CompilationProfileParameter("Thickness", espessura),
+                       });
+
+                    return await forvetDriver.CreateOutput(forvetProfile, projeto, arquivo);
 
                 case (int)TipoArquivoMesaCorte.SAG:
-                    var projetoSag = CalcEngine.Optima.Sag.Import(projeto, 
-                        new CalcEngine.Optima.SagParameters(descontoLap, descontoLap, descontoLap, descontoLap, 0, 0));
-                    projetoSag.Save(arquivo);
-                    break;
+
+                    var sagDriver = await outputDriverProvider.GetDriver("SAG");
+
+                    var sagProfile = CompilationProfileFactory.CreateValidationProfile(
+                       "WebGlass",
+                       "WebGlass Output",
+                       sagDriver.Name,
+                       Guid.NewGuid().ToString(),
+                       projeto.Flags.ToArray(),
+                       new CompilationProfileVariable[0],
+                       new[]
+                       {
+                            new CompilationProfileParameter("RX1", descontoLap),
+                            new CompilationProfileParameter("RY1", descontoLap),
+                            new CompilationProfileParameter("RX2", descontoLap),
+                            new CompilationProfileParameter("RY2", descontoLap),
+                       });
+
+                    return await sagDriver.CreateOutput(sagProfile, projeto, arquivo);
 
                 default: return false;
             }
@@ -12416,6 +12509,7 @@ namespace Glass.Data.DAL
         public object ValidarArquivoCalcEngine(string nomeArquivoCalcEngine)
         {
             var caminhoPackage = Utils.GetArquivoCalcEnginePath + nomeArquivoCalcEngine + ".calcpackage";
+
             // Variável criada para carregar o arquivo de extensão .package, que contém o DXF e suas configurações.
             CalcEngine.ProjectFilesPackage pacote = null;
             if (File.Exists(caminhoPackage))
@@ -12434,29 +12528,46 @@ namespace Glass.Data.DAL
                 projeto.ReferenceValueProvider = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<CalcEngine.IReferenceValueProvider>();
 
                 var validator = new ProjectValidator(projeto, pacote, ValidadorCalc.Provider);
+                ProjectValidatorResult result = null;
 
                 // Executa a validação do projeto
-                var result = validator.Execute();
+                var resultTask = Task.Run(async () => result = await validator.Execute());
+
+                try
+                {
+                    resultTask.Wait();
+                }
+                catch (AggregateException ex)
+                {
+                    if (ex.InnerExceptions.Any())
+                    {
+                        throw ex.InnerExceptions.FirstOrDefault();
+                    }
+
+                    throw;
+                }
 
                 if (result.Success)
-                    return 
+                {
+                    return
                         new
                         {
                             Arquivo = nomeArquivoCalcEngine,
                             Sucesso = true
                         };
+                }
 
                 var textoErros = new List<object>();
 
                 foreach (var ProfileResult in result.ProfileResults)
                 {
-                    if (ProfileResult.Status == ValidationProfileResult.ResultStatus.Success)
+                    if (ProfileResult.Status == ValidationProfileResultStatus.Success)
                         continue;
 
                     var item = ProfileResult.Items.First();
                     var diffPaneModel = (DiffPaneModel)item
                         .Attachments
-                        .Where(f => f.Type == ValidationProfileResult.ItemAttachmentType.DiffResult && 
+                        .Where(f => f.Type == ValidationProfileResultItemAttachmentType.DiffResult &&
                             f.Content is DiffPaneModel)
                         .FirstOrDefault()?.Content;
 
@@ -12484,10 +12595,12 @@ namespace Glass.Data.DAL
                         }
 
                         if (line.Type != ChangeType.Unchanged)
+                        {
                             Erros += erro + line.Text + "|";
+                        }
                     }
 
-                    textoErros.Add(new { Erros });                    
+                    textoErros.Add(new { Erros });
                 }
 
                 return
@@ -12508,7 +12621,7 @@ namespace Glass.Data.DAL
                     Sucesso = false,
                     ErroProfile = new[] { "Arquivo não encontrado" },
                     LinhasErro = ""
-                }; 
+                };
         }
 
         public bool ValidarCadastroCalcEngine(Stream stream)
@@ -12530,7 +12643,14 @@ namespace Glass.Data.DAL
             // Executa a validação do projeto
             var result = validator.Execute();
 
-            return result.Success;
+            Task.WaitAny(result);
+
+            if (result.IsFaulted)
+            {
+                throw result.Exception;
+            }
+
+            return result.Result.Success;
         }
     }
 
@@ -12540,10 +12660,6 @@ namespace Glass.Data.DAL
            {
                new CalcEngine.Dxf.DxfOutputDriver(),
                new CalcEngine.Dxf.RawDxfOutputDriver(),
-               new CalcEngine.Optima.SagOutputDriver(),
-               new CalcEngine.Forvet.FmlOutputDriver(),
-               new CalcEngine.Forvet.GloOutputDriver(),
-               new CalcEngine.SGlass.SGlassOutputDriver(),
                //new CalcEngine.Biesse.BiesseOutputDriver(GetBSolidConfigurationDirectory())
            });
     }

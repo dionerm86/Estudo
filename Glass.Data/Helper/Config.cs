@@ -339,6 +339,10 @@ namespace Glass.Data.Helper
             MaximoDiasEnviarEmailCobrancaAposVencimento = 377,
             DesmembrarOrcamentoPorSubgrupoGerarPedido = 378,
             ConsiderarApenasDebitoComoPagtoAvista = 379,
+            ServidorCalcEngine = 380,
+            PortaCalcEngine = 381,
+            UsuarioCalcEngine = 382,
+            SenhaCalcEngine = 383,
             UsarPercentualBonificacaoCliente = 384,
             EstadosConsiderarRicmsPr = 385,
 
