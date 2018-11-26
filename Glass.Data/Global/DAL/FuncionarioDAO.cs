@@ -492,6 +492,26 @@ namespace Glass.Data.DAL
             return retorno.ToArray();
         }
 
+        /// <summary>
+        /// Busca funcionarios associados aos clientes.
+        /// </summary>
+        /// <returns>
+        /// Retorna um array de funcionários associados aos clientes.
+        /// </returns>
+        public Funcionario[] ObterVendedoresAssociadosCliente()
+        {
+            var todos = new Funcionario();
+            todos.IdFunc = 0;
+            todos.Nome = "Todos";
+
+            var sql = string.Format($@"SELECT * FROM funcionario WHERE Situacao={(int)Situacao.Ativo} AND (IdFunc IN (SELECT distinct IdFunc FROM Cliente)) ORDER BY Nome");
+
+            var retorno = objPersistence.LoadData(sql).ToList();
+            retorno.Insert(0, todos);
+
+            return retorno.ToArray();
+        }
+
         #endregion
 
         #region Busca funcionários que tiram pedidos por loja (para filtro, com opção "TODOS")

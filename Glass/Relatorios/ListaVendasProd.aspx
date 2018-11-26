@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="ListaVendasProd.aspx.cs"
+ï»¿<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="ListaVendasProd.aspx.cs"
     Inherits="Glass.UI.Web.Relatorios.ListaVendasProd" Title="Vendas de Produtos" %>
 
 <%@ Register Src="../Controls/ctrlImagemPopup.ascx" TagName="ctrlImagemPopup" TagPrefix="uc1" %>
@@ -79,7 +79,7 @@
             return false;
         }
 
-        // Carrega dados do produto com base no código do produto passado
+        // Carrega dados do produto com base no cÃ³digo do produto passado
         function setProduto() {
             var codInterno = FindControl("txtCodProd", "input").value;
 
@@ -169,7 +169,7 @@
                             <asp:TextBox ID="txtDescr" runat="server" Width="150px" OnClientClick="if (isEnter(event)) cOnClick('imgPesq1', null); return false;"></asp:TextBox>
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkMateriaPrima" runat="server" Text="Buscar matéria-prima" />
+                            <asp:CheckBox ID="chkMateriaPrima" runat="server" Text="Buscar matÃ©ria-prima" />
                         </td>
                         <td>
                             <asp:ImageButton ID="imgBtn" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
@@ -204,7 +204,7 @@
                             <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
                         </td>
                         <td>
-                            <asp:Label ID="Label16" runat="server" Text="Liberação" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label16" runat="server" Text="LiberaÃ§Ã£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:TextBox ID="txtIdLiberacao" runat="server" onkeypress="return soNumeros(event, true, true);"
@@ -249,7 +249,7 @@
                             <uc3:ctrlLoja runat="server" ID="drpLoja" SomenteAtivas="true" AutoPostBack="True" />
                         </td>
                         <td>
-                            <asp:Label ID="Label11" runat="server" Text="Período (Pedido)" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label11" runat="server" Text="PerÃ­odo (Pedido)" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <uc2:ctrlData ID="ctrlDataIniPed" runat="server" ReadOnly="ReadWrite" />
@@ -277,11 +277,11 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:Label ID="lblSituacao" runat="server" Text="Situação" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="lblSituacao" runat="server" Text="SituaÃ§Ã£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <sync:CheckBoxListDropDown ID="cbdSituacao" runat="server" DataSourceID="odsSituacao"
-                                DataTextField="Descr" DataValueField="Id" Title="Selecione a situação" CheckAll="False"
+                                DataTextField="Descr" DataValueField="Id" Title="Selecione a situaÃ§Ã£o" CheckAll="False"
                                 OnDataBound="cbdSituacao_DataBound">
                             </sync:CheckBoxListDropDown>
                         </td>
@@ -290,7 +290,7 @@
                                 OnClick="imgPesq_Click" />
                         </td>
                         <td align="left">
-                            <asp:Label ID="lblPeriodoSituacao" runat="server" Text="Período (Situação)" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="lblPeriodoSituacao" runat="server" Text="PerÃ­odo (SituaÃ§Ã£o)" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td align="left">
                             <table cellpadding="0" cellspacing="0">
@@ -315,7 +315,7 @@
                             <asp:DropDownList ID="drpFastDelivery" runat="server" AutoPostBack="True">
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
                                 <asp:ListItem Value="1">Sim</asp:ListItem>
-                                <asp:ListItem Value="2">Não</asp:ListItem>
+                                <asp:ListItem Value="2">NÃ£o</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
@@ -342,10 +342,10 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:Label ID="lblSituacaoProd" runat="server" ForeColor="#0066FF" Text="Situação Prod."></asp:Label>
+                            <asp:Label ID="lblSituacaoProd" runat="server" ForeColor="#0066FF" Text="SituaÃ§Ã£o Prod."></asp:Label>
                         </td>
                         <td>
-                            <sync:CheckBoxListDropDown ID="cbdSituacaoProd" runat="server" Title="Selecione a situação"
+                            <sync:CheckBoxListDropDown ID="cbdSituacaoProd" runat="server" Title="Selecione a situaÃ§Ã£o"
                                 OpenOnStart="False" AltRowColor="" DataSourceID="odsSituacaoProd" DataTextField="Descr"
                                 DataValueField="Id" JQueryURL="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js">
                             </sync:CheckBoxListDropDown>
@@ -369,8 +369,8 @@
                         <td align="right">
                             <asp:DropDownList ID="cbLiberarcaoNfe" runat="server" AutoPostBack="True">
                                 <asp:ListItem Value="0" Selected="True">Todas</asp:ListItem>
-                                <asp:ListItem Value="1">Apenas produtos de liberações com nota fiscal</asp:ListItem>
-                                <asp:ListItem Value="2">Apenas produtos de liberações sem nota fiscal</asp:ListItem>
+                                <asp:ListItem Value="1">Apenas produtos de liberaÃ§Ãµes com nota fiscal</asp:ListItem>
+                                <asp:ListItem Value="2">Apenas produtos de liberaÃ§Ãµes sem nota fiscal</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td nowrap="nowrap">
@@ -379,7 +379,7 @@
                                 OnClick="imgPesq_Click" />
                         </td>
                         <td>
-                            <asp:Label ID="Label13" runat="server" Text="Período (Entrega)" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label13" runat="server" Text="PerÃ­odo (Entrega)" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <uc2:ctrlData ID="ctrlDataIniEnt" runat="server" ReadOnly="ReadWrite" />
@@ -404,7 +404,7 @@
                             </asp:DropDownList>
                         </td>
                         <td>
-                            <asp:Label ID="Label4" runat="server" Text="Usuário Cad." ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label4" runat="server" Text="UsuÃ¡rio Cad." ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpFuncionario" runat="server" DataSourceID="odsVendedor" DataTextField="Nome"
@@ -415,7 +415,7 @@
                             <asp:Label ID="Label19" runat="server" Text="Vendedor (Assoc. Cliente)" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpVendedorCliente" runat="server" DataSourceID="odsVendedor" DataTextField="Nome"
+                            <asp:DropDownList ID="drpVendedorCliente" runat="server" DataSourceID="odsVendedorCliente" DataTextField="Nome"
                                 DataValueField="IdFunc" AutoPostBack="True">
                             </asp:DropDownList>
                         </td>
@@ -426,7 +426,7 @@
                             <asp:DropDownList ID="drpOrdenacao" runat="server" AutoPostBack="True">
                                 <asp:ListItem Value="0">Total Vendido</asp:ListItem>
                                 <asp:ListItem Value="1">Valor Vendido</asp:ListItem>
-                                <asp:ListItem Value="2">Cód. Produto</asp:ListItem>
+                                <asp:ListItem Value="2">CÃ³d. Produto</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
@@ -447,7 +447,7 @@
                             <asp:CheckBox ID="chkAmbiente" runat="server" AutoPostBack="True" Text="Ambiente" />
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkAgruparLiberacao" runat="server" Text="Liberação de Pedido"
+                            <asp:CheckBox ID="chkAgruparLiberacao" runat="server" Text="LiberaÃ§Ã£o de Pedido"
                                 AutoPostBack="true" />
                         </td>
                         <td>
@@ -463,7 +463,7 @@
                             <asp:CheckBox ID="chkAgruparCorEsp" runat="server" Text="Cor/espessura" />
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkSemValores" runat="server" Text="Não exibir valores no relatório" />
+                            <asp:CheckBox ID="chkSemValores" runat="server" Text="NÃ£o exibir valores no relatÃ³rio" />
                         </td>
                     </tr>
                 </table>
@@ -502,10 +502,10 @@
                     <Columns>
                         <asp:BoundField DataField="IdPedido" HeaderText="Pedido" SortExpression="IdPedido" />
                          <asp:BoundField DataField="Ambiente" HeaderText="Ambiente"  Visible="False" />
-                        <asp:BoundField DataField="IdLiberarPedido" HeaderText="Liberação"
+                        <asp:BoundField DataField="IdLiberarPedido" HeaderText="LiberaÃ§Ã£o"
                             SortExpression="IdLiberarPedido" Visible="False" />
                         <asp:BoundField DataField="CodInterno" HeaderText="Cod." SortExpression="CodInterno" />
-                        <asp:BoundField DataField="Descricao" HeaderText="Descrição" SortExpression="Descricao" />
+                        <asp:BoundField DataField="Descricao" HeaderText="DescriÃ§Ã£o" SortExpression="Descricao" />
                         <asp:TemplateField HeaderText="Cliente" SortExpression="IdClienteVend">
                             <EditItemTemplate>
                                 <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("IdClienteVend") %>'></asp:TextBox>
@@ -515,7 +515,7 @@
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="TotalQtde" HeaderText="Qtde" SortExpression="TotalQtde" />
-                        <asp:BoundField DataField="TotalM2Rel" HeaderText="Total M²" SortExpression="TotalM2Rel" />
+                        <asp:BoundField DataField="TotalM2Rel" HeaderText="Total MÂ²" SortExpression="TotalM2Rel" />
                         <asp:BoundField DataField="TotalMLRel" HeaderText="Total ML" SortExpression="TotalMLRel" />
                         <asp:BoundField DataField="TotalCusto" DataFormatString="{0:C}" HeaderText="Custo Total"
                             SortExpression="TotalCusto" />
@@ -623,6 +623,9 @@
                     TypeName="Glass.Data.DAL.LojaDAO">
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsVendedor" runat="server" SelectMethod="GetVendedoresComissao"
+                    TypeName="Glass.Data.DAL.FuncionarioDAO">
+                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsVendedorCliente" runat="server" SelectMethod="ObterVendedoresAssociadosCliente"
                     TypeName="Glass.Data.DAL.FuncionarioDAO">
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoVenda" runat="server" SelectMethod="GetTipoVenda"
