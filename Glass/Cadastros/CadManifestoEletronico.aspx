@@ -150,7 +150,7 @@
 
         // Abre a tela de associar NFe
         function abrirBuscaNf(botao) {
-            popUp = openWindow(600, 800, '../Utils/SelNotaFiscalAutorizada.aspx?IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
+            popUp = openWindow(600, 800, '../Utils/SelNotaFiscalAutorizada.aspx?origem=mdfe&IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
 
             //Verifica se a tela foi fechada de tempos em tempos e caso tenha sido fechada atualiza a tela principal
             var timer = setInterval(function () {
@@ -194,22 +194,24 @@
 
             FindControl(idControle + '_txtFsdaNFe', 'input').value = resultado[1];
             FindControl(idControle + '_txtFsdaNFe', 'input').disabled = true;
+            FindControl(idControle + '_imgAdicionarNFe', 'input').style.display = 'none';
 
-            var botaoAdicionar = FindControl("imgAdicionarNFe", "input");
-            botaoAdicionar.style.display = 'none';
-            var idControleGrdNFeCidadeDescarga = botaoAdicionar.id.substring(0, botaoAdicionar.id.lastIndexOf("_"));
-            var idControleGrdCidadeDescarga = idControleGrdNFeCidadeDescarga.substring(0, idControleGrdNFeCidadeDescarga.lastIndexOf("_grdNFeCidadeDescarga"));
+            var idControleGrdCidadeDescarga = idControle.substring(0, idControle.lastIndexOf("_grdNFeCidadeDescarga"));
             var idCidadeDescarga = FindControl(idControleGrdCidadeDescarga + "_hdfIdCidadeDescargaNFe", "input").value;
             var retorno = CadManifestoEletronico.InserirNfeCidadeDescarga(idCidadeDescarga, idNf, resultado[0], resultado[1]);
+
             if (retorno.error != null) {
                 alert(retorno.error.description);
                 return;
             }
+
             var resultado = retorno.value.split('|');
+
             if (resultado[0] == "Erro") {
                 alert(resultado[1]);
                 return false;
             }
+
             return true;
         }
 
@@ -243,7 +245,7 @@
 
         // Abre a tela de associar CTe
         function abrirBuscaCTe(botao) {
-            popUp = openWindow(600, 800, '../Utils/SelConhecimentoTransporteAutorizado.aspx?IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
+            popUp = openWindow(600, 800, '../Utils/SelConhecimentoTransporteAutorizado.aspx?origem=mdfe&IdControle=' + botao.id.substring(0, botao.id.lastIndexOf("_")));
 
             //Verifica se a tela foi fechada de tempos em tempos e caso tenha sido fechada atualiza a tela principal
             var timer = setInterval(function () {
@@ -285,27 +287,31 @@
 
             FindControl(idControle + '_txtChaveAcessoCte', 'input').value = resultado;
             FindControl(idControle + '_txtChaveAcessoCte', 'input').disabled = true;
-
-            //Utilizar quando implementar FDSA no CTe
-            //FindControl(idControle + '_txtFsdaCTe', 'input').value = retorno;
             FindControl(idControle + '_txtFsdaCTe', 'input').disabled = true;
+            FindControl(idControle + '_imgAdicionarCTe', 'input').style.display = 'none';
 
+            // Utilizar quando implementar FDSA no CTe
+            // FindControl(idControle + '_txtFsdaCTe', 'input').value = retorno;
 
-            var botaoAdicionar = FindControl("imgAdicionarCTe", "input");
-            var idControleGrdCTeCidadeDescarga = botaoAdicionar.id.substring(0, botaoAdicionar.id.lastIndexOf("_"));
-            var idControleGrdCidadeDescarga = idControleGrdCTeCidadeDescarga.substring(0, idControleGrdCTeCidadeDescarga.lastIndexOf("_grdCTeCidadeDescarga"));
+            var idControleGrdCidadeDescarga = idControle.substring(0, idControle.lastIndexOf("_grdCTeCidadeDescarga"));
             var idCidadeDescarga = FindControl(idControleGrdCidadeDescarga + '_hdfIdCidadeDescargaCTe', 'input').value;
+
             var retorno = CadManifestoEletronico.InserirCteCidadeDescarga(idCidadeDescarga, idCTe, resultado, '');
+
             if (retorno.error != null) {
                 alert(retorno.error.description);
                 return;
             }
+
             var resultado = retorno.value.split('|');
+
             if (resultado[0] == "Erro") {
                 alert(resultado[1]);
                 return false;
             }
+
             alert(resultado[1])
+
             return true;
         }
 
