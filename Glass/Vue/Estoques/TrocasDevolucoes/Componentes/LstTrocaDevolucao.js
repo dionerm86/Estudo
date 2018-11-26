@@ -32,7 +32,25 @@
      * @param {Object} item A troca/devolucao que será editada.
      */
     obterLinkEditarTrocaDevoluca: function (item) {
-      return '../Cadastros/CadTrocaDev.aspx?idTrocaDev' + item.id;
+      return '../Cadastros/CadTrocaDev.aspx?idTrocaDev=' + item.id;
+    },
+
+    /**
+     * Exibe a tela de anexos da liberação de um pedido.
+     * @param {Object} item O pedido que será usado para abertura da tela.
+     */
+    abrirAnexosTrocaDevolucao: function (item) {
+      if (item && item.id) {
+        this.abrirJanela(600, 700, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=trocaDevolucao');
+      }
+    },
+
+    /**
+     * Exibe o relatório da liberação da conta recebida.
+     * @param {Object} item A conta recebida que terá a liberação impressa.
+     */
+    abrirRelatorioTrocaDevolucao: function (item) {
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=TrocaDevolucao&idTrocaDevolucao=' + item.id);
     },
 
     /**
@@ -125,10 +143,15 @@
 
     abrirListaControlePerdasExternas: function (exportarExcel) {
       this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=Parcelas&exportarExcel=' + exportarExcel);
-    }
+    },
   },
 
   mounted: function () {
     var vm = this;
+
+    Servicos.Estoques.obterConfiguracoesListaTrocaDevolucoes()
+      .then(function (resposta) {
+        vm.configuracoes = resposta.data;
+      });
   }
 });

@@ -4,6 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Swashbuckle.Swagger.Annotations;
@@ -39,7 +40,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
                     (uint)filtro.Id.GetValueOrDefault(),
                     (uint)filtro.IdPedido.GetValueOrDefault(),
                     filtro.Tipo.GetValueOrDefault(),
-                    /*filtro.Situacao*/ 0,
+                    filtro.Situacao != null ? (int)filtro.Situacao.Value : 0,
                     (uint)filtro.Idcliente.GetValueOrDefault(),
                     filtro.NomeCliente ?? string.Empty,
                     idsFuncionario,
@@ -68,7 +69,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
                         (uint)filtro.Id.GetValueOrDefault(),
                         (uint)filtro.IdPedido.GetValueOrDefault(),
                         filtro.Tipo.GetValueOrDefault(),
-                        /*filtro.Situacao*/ 0,
+                        filtro.Situacao != null ? (int)filtro.Situacao.Value : 0,
                         (uint)filtro.Idcliente.GetValueOrDefault(),
                         filtro.NomeCliente ?? string.Empty,
                         idsFuncionario,
@@ -86,6 +87,29 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
                         filtro.TipoPedido ?? string.Empty,
                         filtro.IdGrupoProduto,
                         filtro.IdSubgrupoProduto.GetValueOrDefault()));
+            }
+        }
+
+        /// <summary>
+        /// Recupera as Origem usadas pela tela de listagem de Troca/Devolução .
+        /// </summary>
+        /// <returns>Um objeto JSON com as orgiens da tela.</returns>
+        [HttpGet]
+        [Route("origem")]
+        [SwaggerResponse(200, "Origens encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Origens não encontrados.")]
+        public IHttpActionResult ObterOrigemListaTrocaDevolucao()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var origens = OrigemTrocaDescontoDAO.Instance.GetList()
+                    .Select(f => new IdNomeDto
+                {
+                    Id = f.IdOrigemTrocaDesconto,
+                    Nome = f.Descricao,
+                });
+
+                return this.Item(origens);
             }
         }
     }

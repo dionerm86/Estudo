@@ -15,7 +15,7 @@
             </a>
         </section>
         <section>
-            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhua troca/devolução encontrada." :numero-registros="15">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhua troca/devolução encontrada." :numero-registros="15">
                 <template slot="cabecalho">
                     <th></th>
                     <th>
@@ -67,16 +67,16 @@
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
                     <td style="white-space: nowrap">
-                        <a :href="obterLinkEditarTrocaDevoluca(item)">
+                        <a :href="obterLinkEditarTrocaDevoluca(item)" title="Editar" v-if="item.permissoes.editar">
                             <img src="../Images/EditarGrid.gif">
                         </a>
-                        <button @click.prevent="cancelar(item)" title="Cancelar">
+                        <button @click.prevent="cancelar(item)" title="Cancelar" v-if="item.permissoes.editar">
                             <img src="../Images/ExcluirGrid.gif">
                         </button>
-                        <a href="#" @click.prevent="abrirAnexos(item)" title="Anexos">
+                        <a href="#" @click.prevent="abrirRelatorioTrocaDevolucao(item)" title="Troca/Devolução">
                             <img border="0" src="../Images/Relatorio.gif">
                         </a>
-                        <a href="#" @click.prevent="abrirAnexos(item)" title="Anexos">
+                        <a href="#" @click.prevent="abrirAnexosTrocaDevolucao(item)" title="Anexos">
                             <img border="0" src="../Images/Clipe.gif">
                         </a>
                     </td>
@@ -95,7 +95,10 @@
                     <td>{{ item.setor }}</td>
                     <td>{{ item.observacao }}</td>
                     <td>{{ item.funcionarioCadastro }}</td>
-                    <td></td>
+                    <td>
+                        <log-alteracao tabela="TrocaDev" :id-item="item.id" :atualizar-ao-alterar="false"
+                            v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
+                    </td>
                 </template>
             </lista-paginada>
         </section>

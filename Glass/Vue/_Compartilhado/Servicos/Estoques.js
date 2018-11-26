@@ -29,6 +29,23 @@ Servicos.Estoques = (function(http) {
       return http().get(API + 'configuracoes');
     },
 
+
+    /**
+ * Recupera o objeto com as configurações utilizadas na tela de listagem de estoques de produto.
+ * @returns {Promise} Uma promise com o resultado da busca.
+ */
+    obterOrigemTrocaDevolucaoLista: function () {
+      return http().get(API + 'trocasdevolucoes/' + 'origem');
+    },
+
+    /**
+ * Recupera o objeto com as configurações utilizadas na tela de listagem de estoques de produto.
+ * @returns {Promise} Uma promise com o resultado da busca.
+ */
+    obterConfiguracoesListaTrocaDevolucoes: function () {
+      return http().get(API + 'configuracoes');
+    },
+
     /**
      * Altera os dados do estoque real de um produto.
      * @param {!number} idProduto O identificador do produto que terá o estoque alterado.

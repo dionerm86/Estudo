@@ -21,6 +21,13 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         public bool Editar { get; set; }
 
         /// <summary>
+        /// Obtém ou define um valor que indica se a troca/devolução poderá ser editada.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("cancelar")]
+        public bool Cancelar { get; set; }
+
+        /// <summary>
         /// Obtém ou define um valor que indica se a troca/devolução possui log de alterações.
         /// </summary>
         [DataMember]

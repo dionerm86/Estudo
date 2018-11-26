@@ -19,7 +19,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         /// <param name="trocaDevolucao"></param>
         internal ListaDto(Data.Model.TrocaDevolucao trocaDevolucao)
         {
-            this.Id = (int)trocaDevolucao.IdPedido;
+            this.Id = (int)trocaDevolucao.IdTrocaDevolucao;
             this.Cliente = trocaDevolucao.IdNomeCliente;
             this.Loja = trocaDevolucao.Loja;
             this.Setor = trocaDevolucao.Setor;
@@ -38,6 +38,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
             {
                 Editar = trocaDevolucao.EditEnabled,
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.TrocaDev, trocaDevolucao.IdTrocaDevolucao, null),
+                Cancelar = trocaDevolucao.CancelEnabled,
             };
         }
 

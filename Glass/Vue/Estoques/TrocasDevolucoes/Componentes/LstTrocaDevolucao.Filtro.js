@@ -28,30 +28,24 @@
         {
           codigo: null,
           idPedido: null,
-          idLiberarPedido: null,
-          idAcerto: null,
-          idAcertoParcial: null,
+          situacao: null,
+          tipo: null,
           idTrocaDevolucao: null,
-          numeroNfe: null,
-          idSinal: null,
-          numeroCte: null,
-          periodoVencimentoInicio: null,
-          periodoVencimentoFim: null,
-          periodoRecebimentoInicio: null,
-          periodoRecebimentoFim: null,
           periodoCadastroInicio: null,
           periodoCadastroFim: null,
-          recebidaPor: null,
-          idLoja: null,
-          idVendedor: null,
+          idsFuncionario: [],
           idCliente: null,
           nomeCliente: null,
-          idVendedorAssociadoCliente: null,
+          idsFuncionarioAssociadoCliente: [],
+          idGrupoProduto: null,
+          idSubgrupoProduto: null,
+          tipoPedido: null,
         },
         this.filtro
       ),
-      vendedorAtual: null,
-      lojaAtual: null,
+      grupoAtual: null,
+      subgrupoAtual: null
+
     };
   },
 
@@ -61,6 +55,7 @@
      */
     filtrar: function () {
       var novoFiltro = this.clonar(this.filtroAtual);
+
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
       }
@@ -81,31 +76,84 @@
     obterItensFiltroVendedoresAssociadosAClientes: function () {
       return Servicos.Funcionarios.obterAtivosAssociadosAClientes();
     },
+
+    /**
+ * Retorna os itens para o controle de grupos de produto.
+ * @returns {Promise} Uma Promise com o resultado da busca.
+ */
+    obterItensFiltroGrupos: function () {
+      return Servicos.Produtos.Grupos.obterParaControle();
+    },
+
+    /**
+     * Retorna os itens para o controle de subgrupos de produto.
+     * @param {?Object} filtro O filtro para a busca de subgrupos de produto.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterItensFiltroSubgrupos: function (filtro) {
+      return Servicos.Produtos.Subgrupos.obterParaControle((filtro || {}).idGrupoProduto);
+    },
+
+    /**
+ * Retorna os itens para o controle de tipos de pedido.
+ * @returns {Promise} Uma Promise com o resultado da busca.
+ */
+    obterItensFiltroTiposPedido: function () {
+      return Servicos.Pedidos.obterTiposPedido();
+    },
+
+    /**
+* Retorna os itens para o controle de tipos de pedido.
+* @returns {Promise} Uma Promise com o resultado da busca.
+*/
+    obterItensFiltroOrigemTrocaDevolucao: function () {
+      return Servicos.Estoques.obterOrigemTrocaDevolucaoLista();
+    },
+
+  },
+
+  computed: {
+    /**
+     * Propriedade computada que retorna o filtro de subgrupos de produto.
+     * @type {filtroSubgrupos}
+     *
+     * @typedef filtroSubgrupos
+     * @property {?number} idGrupoProduto O ID do grupo de produto.
+     */
+    filtroSubgrupos: function () {
+      return {
+        idGrupoProduto: (this.filtroAtual || {}).idGrupoProduto || 0
+      };
+    }
+  },
+
+  mounted: function () {
+    this.filtroAtual.situacao = 0;
+    this.filtroAtual.tipo = 0;
   },
 
   watch: {
-
     /**
-     * Observador para a variável 'lojaAtual'.
+     * Observador para a variável 'grupoAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */
-    lojaAtual: {
+    grupoAtual: {
       handler: function (atual) {
-        this.filtroAtual.idLoja = atual ? atual.id : null;
+        this.filtroAtual.idGrupoProduto = atual ? atual.id : null;
       },
       deep: true
     },
 
     /**
-     * Observador para a variável 'vendedorAssociadoAtual'.
+     * Observador para a variável 'subgrupoAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */
-    vendedorAssociadoAtual: {
+    subgrupoAtual: {
       handler: function (atual) {
-        this.filtroAtual.idVendedorAssociadoCliente = atual ? atual.id : null;
+        this.filtroAtual.idSubgrupoProduto = atual ? atual.id : null;
       },
       deep: true
-    },
+    }
   },
 
   template: '#LstTrocaDevolucao-Filtro-template'

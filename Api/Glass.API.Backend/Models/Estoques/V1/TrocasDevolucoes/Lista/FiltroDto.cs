@@ -77,7 +77,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         /// Obtém ou define a situação do cliente.
         /// </summary>
         [JsonProperty("situacao")]
-        public IEnumerable<Data.Model.TrocaDevolucao.SituacaoTrocaDev> Situacao { get; set; }
+        public Data.Model.TrocaDevolucao.SituacaoTrocaDev? Situacao { get; set; }
 
         /// <summary>
         /// Obtém ou define a data inicial de cadastro do cliente.
