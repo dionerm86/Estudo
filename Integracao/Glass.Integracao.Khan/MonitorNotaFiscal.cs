@@ -321,6 +321,23 @@ namespace Glass.Integracao.Khan
             }
         }
 
+        private void ApagarIntegracao(int idNf)
+        {
+            var pedido = new KhanPedidoServiceReference.Pedido
+            {
+                Token = this.configuracao.Token,
+                codempresa = this.configuracao.Empresa,
+                numped_int = idNf,
+            };
+
+            var situacao = this.PedidoClient.ExcluirPedido(pedido);
+
+            if (!StringComparer.InvariantCultureIgnoreCase.Equals(situacao?.status_integracao, "Pedido Excluido com sucesso"))
+            {
+                throw new IntegracaoException(situacao?.status_integracao);
+            }
+        }
+
         private void CarregarItensNaoIntegrados()
         {
             if (this.itensIntegrando.Count == 0 &&
@@ -418,6 +435,16 @@ namespace Glass.Integracao.Khan
                             if (mensagem.StartsWith(","))
                             {
                                 mensagem = mensagem.Substring(1).Trim();
+                            }
+
+                            try
+                            {
+                                this.ApagarIntegracao(idNf);
+                            }
+                            catch (Exception ex)
+                            {
+                                this.logger.Error($"Falha ao apagar os dados da integração da nota fiscal (idNf={idNf}).".GetFormatter(), ex);
+                                continue;
                             }
 
                             this.provedorHistorico.RegistrarFalha(HistoricoKhan.NotasFiscais, new object[] { idNf }, mensagem, null);

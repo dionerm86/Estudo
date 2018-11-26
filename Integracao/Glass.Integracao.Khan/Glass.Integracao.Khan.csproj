@@ -198,6 +198,9 @@
     <None Include="Service References\KhanPedidoServiceReference\Glass.Integracao.Khan.KhanPedidoServiceReference.Pedido.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\KhanPedidoServiceReference\Glass.Integracao.Khan.KhanPedidoServiceReference.PedidoStatus.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\KhanPedidoServiceReference\PedidoService1.wsdl" />
     <None Include="Service References\KhanPedidoServiceReference\PedidoService3.xsd">
       <SubType>Designer</SubType>

@@ -29,6 +29,20 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="ExcluirPedido">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/KnIntegracao.Services" minOccurs="0" name="pedido" nillable="true" type="q5:Pedido" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ExcluirPedidoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/KnIntegracao.Services" minOccurs="0" name="ExcluirPedidoResult" nillable="true" type="q6:PedidoStatus" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="ListarCondicoesPagto">
     <xs:complexType>
       <xs:sequence />
@@ -37,7 +51,7 @@
   <xs:element name="ListarCondicoesPagtoResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/KnIntegracao.Services" minOccurs="0" name="ListarCondicoesPagtoResult" nillable="true" type="q5:ArrayOfCondicaoPagtos" />
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/KnIntegracao.Services" minOccurs="0" name="ListarCondicoesPagtoResult" nillable="true" type="q7:ArrayOfCondicaoPagtos" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

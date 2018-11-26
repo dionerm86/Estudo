@@ -127,6 +127,17 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ParcelaPedido" nillable="true" type="tns:ParcelaPedido" />
+  <xs:complexType name="PedidoStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="datped" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="numped" type="xs:int" />
+      <xs:element minOccurs="0" name="numped_int" type="xs:long" />
+      <xs:element minOccurs="0" name="seqped" type="xs:int" />
+      <xs:element minOccurs="0" name="seqped_int" type="xs:int" />
+      <xs:element minOccurs="0" name="status_integracao" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PedidoStatus" nillable="true" type="tns:PedidoStatus" />
   <xs:complexType name="ArrayOfCondicaoPagtos">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="CondicaoPagtos" nillable="true" type="tns:CondicaoPagtos" />
