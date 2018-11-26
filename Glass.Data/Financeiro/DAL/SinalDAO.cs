@@ -411,6 +411,11 @@ namespace Glass.Data.DAL
                     throw new Exception("Este pedido já possui pagamento antecipado recebido.");
                 }
 
+                if (!isSinal && pedido.IdSinal > 0 && pedido.ValorEntrada == pedido.Total)
+                {
+                    throw new Exception($"O pedido {pedido.IdPedido} teve o valor integral recebido através de sinal. Para receber o pagamento antecipado cancele o Sinal.");
+                }
+
                 // Não permite receber sinal de pedidos garantia e reposição.
                 if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia)
                 {
