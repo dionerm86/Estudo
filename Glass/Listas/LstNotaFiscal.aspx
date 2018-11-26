@@ -2,7 +2,6 @@
     CodeBehind="LstNotaFiscal.aspx.cs" Inherits="Glass.UI.Web.Listas.LstNotaFiscal" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
             "~/Vue/NotasFiscais/Templates/LstNotasFiscais.Filtro.html")

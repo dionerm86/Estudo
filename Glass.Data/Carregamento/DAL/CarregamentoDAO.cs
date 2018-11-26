@@ -128,7 +128,11 @@ namespace Glass.Data.DAL
             string dtSaidaIni, string dtSaidaFim, uint idLoja, string sortExpression, int startRow, int pageSize)
         {
             string sql = Sql(idCarregamento, idOC, idPedido, idRota, idMotorista, placa, situacao, dtSaidaIni, dtSaidaFim, idLoja, true);
-            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, GetParam(placa, situacao, dtSaidaIni, dtSaidaFim));
+            return objPersistence.LoadDataWithSortExpression(
+                sql,
+                new InfoSortExpression(null),
+                new InfoPaging(startRow, pageSize),
+                GetParam(placa, situacao, dtSaidaIni, dtSaidaFim)).ToList();
         }
 
         public int GetListWithExpressionCount(uint idCarregamento, uint idOC, uint idPedido, int idRota, uint idMotorista, string placa, string situacao,
@@ -325,12 +329,7 @@ namespace Glass.Data.DAL
 
         #region Métodos Sobrescritos
 
-        /// <summary>
-        /// Atualiza um carregamento
-        /// </summary>
-        /// <param name="objUpdate"></param>
-        /// <returns></returns>
-        public override int Update(Carregamento objUpdate)
+        public override int Update(GDASession session, Carregamento objUpdate)
         {
             var carregamento = GetElementByPrimaryKey(objUpdate.IdCarregamento);
 
@@ -339,7 +338,17 @@ namespace Glass.Data.DAL
 
             LogAlteracaoDAO.Instance.LogCarregamento(null, carregamento, objUpdate);
 
-            return base.Update(objUpdate);
+            return base.Update(session, objUpdate);
+        }
+
+        /// <summary>
+        /// Atualiza um carregamento
+        /// </summary>
+        /// <param name="objUpdate"></param>
+        /// <returns></returns>
+        public override int Update(Carregamento objUpdate)
+        {
+            return this.Update(null, objUpdate);
         }
 
         #endregion

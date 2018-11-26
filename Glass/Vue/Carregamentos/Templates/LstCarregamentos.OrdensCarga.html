@@ -1,0 +1,80 @@
+﻿<section>
+    <lista-paginada ref="lista" v-bind:funcao-recuperar-itens="buscarOrdensCarga" v-bind:filtro="filtro" v-bind:exibir-totalizador="true"
+		ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma ordem de carga associada." v-on:atualizou-itens="atualizouItens">
+        <template slot="cabecalho">
+            <th></th>
+            <th>
+                Código OC
+            </th>
+            <th>
+                Loja
+            </th>
+            <th>
+                Peso
+            </th>
+            <th>
+                Peso pendente
+            </th>
+            <th>
+                Total m²
+            </th>
+            <th>
+                Total m² Pendente
+            </th>
+            <th>
+                Itens
+            </th>
+            <th>
+                Itens pendentes
+            </th>
+            <th>
+                Volumes
+            </th>
+            <th>
+                Tipo OC
+            </th>
+            <th>
+                Situação
+            </th>
+            <th></th>
+        </template>
+        <template slot="item" slot-scope="{ item, index }">
+            <td>
+                <button @click.prevent="desassociarOrdemCarga(item)" title="Remover OC">
+                    <img src="../Images/ExcluirGrid.gif">
+                </button>
+            </td>
+            <td>{{ item.id }}</td>
+            <td>{{ item.loja }}</td>
+            <td v-if="item.peso">{{ item.peso.total | decimal }}</td>
+            <td v-if="item.peso">{{ item.peso.pendente | decimal }}</td>
+            <td v-if="item.metroQuadrado">{{ item.metroQuadrado.total | decimal }}</td>
+            <td v-if="item.metroQuadrado">{{ item.metroQuadrado.pendente | decimal }}</td>
+            <td v-if="item.quantidadePecas">{{ item.quantidadePecas.total | decimal }}</td>
+            <td v-if="item.quantidadePecas">{{ item.quantidadePecas.pendente | decimal }}</td>
+            <td>{{ item.quantidadeVolumes | decimal }}</td>
+            <td>{{ item.tipoOrdemCarga }}</td>
+            <td>{{ item.situacao }}</td>
+            <td>
+                <button @click.prevent="abrirRelatorioOrdemCarga(item)" title="Visualizar ordem de carga">
+                    <img src="../Images/Relatorio.gif">
+                </button>
+            </td>
+        </template>
+		<template slot="itemTotalizador" slot-scope="{ item, index }">
+			<th></th>
+            <th></th>
+            <th>Totais</th>
+            <th v-if="totalizadores">{{ totalizadores.pesoTotal | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.pesoPendente | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.metroQuadradoTotal | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.metroQuadradoPendente | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.quantidadePecasTotal | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.quantidadePecasPendente | decimal }}</th>
+            <th v-if="totalizadores">{{ totalizadores.quantidadeVolumes | decimal }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+		</template>
+    </lista-paginada>
+</section>

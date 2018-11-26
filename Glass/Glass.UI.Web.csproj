@@ -496,6 +496,10 @@
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Utils\AlertaAdministrador.aspx" />
+    <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.OrdensCarga.js" />
+    <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.Filtro.js" />
+    <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.js" />
+    <Content Include="Vue\Carregamentos\Templates\LstCarregamentos.Filtro.html" />
     <Content Include="Vue\Cfops\NaturezasOperacao\Componentes\LstNaturezasOperacao.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.Filtro.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.js" />
@@ -1851,6 +1855,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Carregamentos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Projetos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comum.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Contabilistas.js" />
@@ -2237,6 +2242,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="WebGlassParceiros\PainelParceiros.master" />
+    <Content Include="Vue\Carregamentos\Templates\LstCarregamentos.OrdensCarga.html" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -9451,6 +9457,7 @@
     <Folder Include="Relatorios\CFe\" />
     <Folder Include="Relatorios\Clientes\" />
     <Folder Include="Relatorios\Fornecedores\" />
+    <Folder Include="Vue\Carregamentos\OrdensCarga\" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

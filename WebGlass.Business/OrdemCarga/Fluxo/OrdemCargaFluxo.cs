@@ -497,85 +497,61 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// <summary>
         /// Retira uma OC do carregamento
         /// </summary>
-        public void RetiraOcCarregamento(uint idCarregamento, uint idOC)
+        public void RetiraOcCarregamento(GDASession sessao, uint idCarregamento, uint idOC)
         {
-            using (var trans = new GDATransaction())
+            if (idOC == 0)
+                throw new Exception("Nenhuma ordem de carga informada.");
+
+            OrdemCargaDAO.Instance.ForcarTransacaoOC(sessao, idOC, true);
+
+            if (OrdemCargaDAO.Instance.PossuiPecaCarregada(sessao, idOC))
+                throw new Exception("Não é possível remover essa OC do Carregamento, pois a mesma possui itens que já foram carregados.");
+
+            if (CarregamentoDAO.Instance.ObtemQtdeOCsCarregamento(sessao, OrdemCargaDAO.Instance.GetIdCarregamento(sessao, idOC).GetValueOrDefault(0)) == 1)
+                throw new Exception("O Carregamento só possiu esta OC, não é possível removê-la.");
+
+            var oc = OrdemCargaDAO.Instance.GetElementByPrimaryKey(sessao, idOC);
+
+            // Se for OC de transferência é ja tiver gerado uma OC de venda, tem que deletar
+            // a de venda primeiro.
+            if (oc.TipoOrdemCarga == Glass.Data.Model.OrdemCarga.TipoOCEnum.Transferencia)
             {
-                try
+                if (OrdemCargaDAO.Instance.GetIdsPedidosOC(sessao, idOC, Glass.Data.Model.OrdemCarga.TipoOCEnum.Venda).Any())
+                    throw new Exception("Não é possível remover esta OC do carregamento, pois a mesma possui Pedidos vinculados a uma OC de venda.");
+
+                foreach (var idPedido in PedidoDAO.Instance.GetIdsPedidosByOCs(sessao, idOC.ToString()))
                 {
-                    trans.BeginTransaction();
-
-                    if (idOC == 0)
-                        throw new Exception("Nenhuma ordem de carga informada.");
-
-                    OrdemCargaDAO.Instance.ForcarTransacaoOC(trans, idOC, true);
-
-                    if (OrdemCargaDAO.Instance.PossuiPecaCarregada(trans, idOC))
-                        throw new Exception("Não é possível remover essa OC do Carregamento, pois a mesma possui itens que já foram carregados.");
-
-                    if (CarregamentoDAO.Instance.ObtemQtdeOCsCarregamento(trans, OrdemCargaDAO.Instance.GetIdCarregamento(trans, idOC).GetValueOrDefault(0)) == 1)
-                        throw new Exception("O Carregamento só possiu esta OC, não é possível removê-la.");
-
-                    var oc = OrdemCargaDAO.Instance.GetElementByPrimaryKey(trans, idOC);
-
-                    // Se for OC de transferência é ja tiver gerado uma OC de venda, tem que deletar
-                    // a de venda primeiro.
-                    if (oc.TipoOrdemCarga == Glass.Data.Model.OrdemCarga.TipoOCEnum.Transferencia)
+                    var pedidosNfs = PedidosNotaFiscalDAO.Instance.GetByPedido(sessao, idPedido);
+                    foreach (var pedidoNf in pedidosNfs)
                     {
-                        if (OrdemCargaDAO.Instance.GetIdsPedidosOC(trans, idOC, Glass.Data.Model.OrdemCarga.TipoOCEnum.Venda).Any())
-                            throw new Exception("Não é possível remover esta OC do carregamento, pois a mesma possui Pedidos vinculados a uma OC de venda.");
+                        var situacao = NotaFiscalDAO.Instance.ObtemSituacao(sessao, pedidoNf.IdNf);
 
-                        foreach (var idPedido in PedidoDAO.Instance.GetIdsPedidosByOCs(trans, idOC.ToString()))
-                        {
-                            var pedidosNfs = PedidosNotaFiscalDAO.Instance.GetByPedido(trans, idPedido);
-                            foreach (var pedidoNf in pedidosNfs)
-                            {
-                                var situacao = NotaFiscalDAO.Instance.ObtemSituacao(trans, pedidoNf.IdNf);
-
-                                if (situacao != (int)Glass.Data.Model.NotaFiscal.SituacaoEnum.Cancelada &&
-                                    situacao != (int)Glass.Data.Model.NotaFiscal.SituacaoEnum.Denegada &&
-                                    situacao != (int)Glass.Data.Model.NotaFiscal.SituacaoEnum.Inutilizada)
-                                    throw new Exception("Não é possível remover esta OC do Carregamento, pois ela possui Pedidos vinculados a uma nota fiscal.");
-                            }
-                        }
+                        if (situacao != (int)Glass.Data.Model.NotaFiscal.SituacaoEnum.Cancelada &&
+                            situacao != (int)Glass.Data.Model.NotaFiscal.SituacaoEnum.Denegada &&
+                            situacao != (int)Glass.Data.Model.NotaFiscal.SituacaoEnum.Inutilizada)
+                            throw new Exception("Não é possível remover esta OC do Carregamento, pois ela possui Pedidos vinculados a uma nota fiscal.");
                     }
-
-                    //Remove o vinculo com o carregamento
-                    OrdemCargaDAO.Instance.DesvinculaOCsCarregamento(trans, idOC.ToString());
-
-                    //Apaga os itens do carregamento
-                    ItemCarregamentoDAO.Instance.DeleteByOC(trans, (int)idOC);
-
-                    CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento, null);
-
-                    var situacaoOc = OrdemCargaDAO.Instance.GetSituacao(trans, idOC);
-
-                    /* Chamado 39159. */
-                    if (situacaoOc != Glass.Data.Model.OrdemCarga.SituacaoOCEnum.Finalizado)
-                        throw new Exception("Falha ao remover OC do carregamento. Não foi possível atualizar a situação da Ordem de Carga.");
-
-                    // Insere o carregamento da ordem de carga no log de alterações.
-                    LogAlteracaoDAO.Instance.LogOrdemCarga(trans, (int)idOC, string.Format("Removida do carregamento: {0}", idCarregamento));
-
-                    //Registra o log de remoção
-                    LogCancelamentoDAO.Instance.LogOrdemCarga(trans, oc, string.Format("Remoção da OC: {0}", idOC), true);
-
-                    OrdemCargaDAO.Instance.ForcarTransacaoOC(trans, idOC, false);
-
-                    trans.Commit();
-                    trans.Close();
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    trans.Close();
-
-                    ErroDAO.Instance.InserirFromException(string.Format("Retira OC Carregamento - Id Carregamento: {0} Id OC: {1}",
-                        idCarregamento, idOC), ex);
-
-                    throw ex;
                 }
             }
+
+            OrdemCargaDAO.Instance.DesvinculaOCsCarregamento(sessao, idOC.ToString());
+
+            ItemCarregamentoDAO.Instance.DeleteByOC(sessao, (int)idOC);
+
+            CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(sessao, idCarregamento, null);
+
+            var situacaoOc = OrdemCargaDAO.Instance.GetSituacao(sessao, idOC);
+
+            /* Chamado 39159. */
+            if (situacaoOc != Glass.Data.Model.OrdemCarga.SituacaoOCEnum.Finalizado)
+                throw new Exception("Falha ao remover OC do carregamento. Não foi possível atualizar a situação da Ordem de Carga.");
+
+            // Insere o carregamento da ordem de carga no log de alterações.
+            LogAlteracaoDAO.Instance.LogOrdemCarga(sessao, (int)idOC, string.Format("Removida do carregamento: {0}", idCarregamento));
+
+            LogCancelamentoDAO.Instance.LogOrdemCarga(sessao, oc, string.Format("Remoção da OC: {0}", idOC), true);
+
+            OrdemCargaDAO.Instance.ForcarTransacaoOC(sessao, idOC, false);
         }
 
         #endregion

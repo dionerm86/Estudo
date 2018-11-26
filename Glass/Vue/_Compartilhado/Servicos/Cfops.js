@@ -85,14 +85,15 @@ Servicos.Cfops = (function(http) {
 
       /**
        * Recupera a lista de naturezas de operação.
+       * @param {number} idCfop O identificador do CFOP que está sendo usado.
        * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
        * @param {number} pagina O número da página de resultados a ser exibida.
        * @param {number} numeroRegistros O número de registros que serão exibidos na página.
        * @param {string} ordenacao A ordenação para o resultado.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
-      obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-        return http().get(API + 'naturezasOperacao', {
+      obterLista: function (idCfop, filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + idCfop + '/naturezasOperacao', {
           params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
