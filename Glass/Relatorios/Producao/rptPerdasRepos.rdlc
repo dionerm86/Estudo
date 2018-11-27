@@ -1,5 +1,417 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DummyDataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
+      </ConnectionProperties>
+      <rd:DataSourceID>9c17c495-63b2-4c54-bca7-c8dc25f0676b</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="ProdutoPedidoProducao">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="IdProdPedProducao">
+          <DataField>IdProdPedProducao</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdProdPed">
+          <DataField>IdProdPed</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdSetor">
+          <DataField>IdSetor</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdFuncPerda">
+          <DataField>IdFuncPerda</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdPedidoExpedicao">
+          <DataField>IdPedidoExpedicao</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdFuncRepos">
+          <DataField>IdFuncRepos</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdSetorRepos">
+          <DataField>IdSetorRepos</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="Situacao">
+          <DataField>Situacao</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="DataPerda">
+          <DataField>DataPerda</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="NumEtiqueta">
+          <DataField>NumEtiqueta</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PlanoCorte">
+          <DataField>PlanoCorte</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TipoPerda">
+          <DataField>TipoPerda</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdSubtipoPerda">
+          <DataField>IdSubtipoPerda</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="Obs">
+          <DataField>Obs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EntrouEstoque">
+          <DataField>EntrouEstoque</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="PecaReposta">
+          <DataField>PecaReposta</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="TipoPerdaRepos">
+          <DataField>TipoPerdaRepos</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="IdSubtipoPerdaRepos">
+          <DataField>IdSubtipoPerdaRepos</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="DataRepos">
+          <DataField>DataRepos</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="IdProdPedCanc">
+          <DataField>IdProdPedCanc</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="NumEtiquetaCanc">
+          <DataField>NumEtiquetaCanc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdImpressao">
+          <DataField>IdImpressao</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="CanceladoAdmin">
+          <DataField>CanceladoAdmin</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DadosReposicaoPeca">
+          <DataField>DadosReposicaoPeca</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NomeFuncPerda">
+          <DataField>NomeFuncPerda</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="NumeroNFe">
+          <DataField>NumeroNFe</DataField>
+          <rd:TypeName>System.Nullable`1[System.Int32]</rd:TypeName>
+        </Field>
+        <Field Name="IdPedidoRep">
+          <DataField>IdPedidoRep</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="CodCliente">
+          <DataField>CodCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataEntrega">
+          <DataField>DataEntrega</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="DataEntregaFabrica">
+          <DataField>DataEntregaFabrica</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="DataEntregaOriginal">
+          <DataField>DataEntregaOriginal</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="IdCliente">
+          <DataField>IdCliente</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="NomeCliente">
+          <DataField>NomeCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrProduto">
+          <DataField>DescrProduto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodInterno">
+          <DataField>CodInterno</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSetor">
+          <DataField>DescrSetor</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrDepart">
+          <DataField>DescrDepart</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSetorRepos">
+          <DataField>DescrSetorRepos</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Altura">
+          <DataField>Altura</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="Largura">
+          <DataField>Largura</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="CodAplicacao">
+          <DataField>CodAplicacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodProcesso">
+          <DataField>CodProcesso</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdPedidoExibir">
+          <DataField>IdPedidoExibir</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Criterio">
+          <DataField>Criterio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotM2">
+          <DataField>TotM2</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="Total">
+          <DataField>Total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Qtde">
+          <DataField>Qtde</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ValorUnit">
+          <DataField>ValorUnit</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="TipoCalculo">
+          <DataField>TipoCalculo</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="ValorTotal">
+          <DataField>ValorTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="PedidoCancelado">
+          <DataField>PedidoCancelado</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="PedidoMaoObra">
+          <DataField>PedidoMaoObra</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="PedidoProducao">
+          <DataField>PedidoProducao</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DataLiberacaoPedido">
+          <DataField>DataLiberacaoPedido</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="TipoSetor">
+          <DataField>TipoSetor</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Cor">
+          <DataField>Cor</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Espessura">
+          <DataField>Espessura</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="IdGrupoProd">
+          <DataField>IdGrupoProd</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdSubgrupoProd">
+          <DataField>IdSubgrupoProd</DataField>
+          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+        </Field>
+        <Field Name="DescrSubgrupoProd">
+          <DataField>DescrSubgrupoProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ValorCustoUnitario">
+          <DataField>ValorCustoUnitario</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="DataAgrupar">
+          <DataField>DataAgrupar</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="NumEtiquetaChapa">
+          <DataField>NumEtiquetaChapa</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NumeroNFeChapa">
+          <DataField>NumeroNFeChapa</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="PecaCancelada">
+          <DataField>PecaCancelada</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="IdProdPedExibir">
+          <DataField>IdProdPedExibir</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="NumEtiquetaExibir">
+          <DataField>NumEtiquetaExibir</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdNomeCliente">
+          <DataField>IdNomeCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrProdLargAlt">
+          <DataField>DescrProdLargAlt</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CodDescrProd">
+          <DataField>CodDescrProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LarguraAltura">
+          <DataField>LarguraAltura</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataEntregaSemHora">
+          <DataField>DataEntregaSemHora</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataEntregaExibicao">
+          <DataField>DataEntregaExibicao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Data">
+          <DataField>Data</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="CorLinha">
+          <DataField>CorLinha</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrSituacao">
+          <DataField>DescrSituacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SiglaTipoPedido">
+          <DataField>SiglaTipoPedido</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrBeneficiamentos">
+          <DataField>DescrBeneficiamentos</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RemoverSituacaoVisible">
+          <DataField>RemoverSituacaoVisible</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoPerdaSemObs">
+          <DataField>DescrTipoPerdaSemObs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoPerda">
+          <DataField>DescrTipoPerda</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrTipoPerdaLista">
+          <DataField>DescrTipoPerdaLista</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ImagemPecaUrl">
+          <DataField>ImagemPecaUrl</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ExibirRelatorioPedido">
+          <DataField>ExibirRelatorioPedido</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="ValorCustoPeca">
+          <DataField>ValorCustoPeca</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="VetDataLeitura">
+          <DataField>VetDataLeitura</DataField>
+          <rd:TypeName>System.String[]</rd:TypeName>
+        </Field>
+        <Field Name="VetNomeFuncLeitura">
+          <DataField>VetNomeFuncLeitura</DataField>
+          <rd:TypeName>System.String[]</rd:TypeName>
+        </Field>
+        <Field Name="VetSetorCorte">
+          <DataField>VetSetorCorte</DataField>
+          <rd:TypeName>System.Boolean[]</rd:TypeName>
+        </Field>
+        <Field Name="TemLeitura">
+          <DataField>TemLeitura</DataField>
+          <rd:TypeName>System.Boolean[]</rd:TypeName>
+        </Field>
+        <Field Name="DataSetorAtual">
+          <DataField>DataSetorAtual</DataField>
+          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+        </Field>
+        <Field Name="GroupIdSetor">
+          <DataField>GroupIdSetor</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="GroupDataLeitura">
+          <DataField>GroupDataLeitura</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="GroupNomeFuncLeitura">
+          <DataField>GroupNomeFuncLeitura</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="GroupSetorCorte">
+          <DataField>GroupSetorCorte</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:ObjectDataSourceSelectMethod>GetList</rd:ObjectDataSourceSelectMethod>
+        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.Model.ProdutoPedidoProducao[] GetList(UInt32, System.String, System.String, UInt32, Int32, System.String, Int32, Int32)</rd:ObjectDataSourceSelectMethodSignature>
+        <rd:ObjectDataSourceType>Glass.Data.DAL.ProdutoPedidoProducaoDAO, Glass.Data, Version=4.5.3.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
       <Body>
         <ReportItems>
           <Textbox Name="textbox1">
@@ -5522,7 +5934,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Sum(Fields!ValorTotal.Value)</Value>
+                                      <Value>=Sum(Fields!TotM2.Value)</Value>
                                       <Style>
                                         <FontSize>9pt</FontSize>
                                         <Format>0.##</Format>
@@ -5562,9 +5974,11 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                                 <Paragraph>
                                   <TextRuns>
                                     <TextRun>
-                                      <Value>=Sum(Fields!ValorTotal.Value)</Value>
+                                      <Value>=Sum(Fields!TotM2.Value)</Value>
                                       <Style>
+                                        <FontStyle>Italic</FontStyle>
                                         <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
                                         <Format>0.##</Format>
                                       </Style>
                                     </TextRun>
@@ -5873,416 +6287,8 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
         <ColumnSpacing>1cm</ColumnSpacing>
         <Style />
       </Page>
-  <AutoRefresh>0</AutoRefresh>
-  <DataSources>
-    <DataSource Name="DummyDataSource">
-      <ConnectionProperties>
-        <DataProvider>SQL</DataProvider>
-        <ConnectString />
-      </ConnectionProperties>
-      <rd:DataSourceID>9c17c495-63b2-4c54-bca7-c8dc25f0676b</rd:DataSourceID>
-    </DataSource>
-  </DataSources>
-  <DataSets>
-    <DataSet Name="ProdutoPedidoProducao">
-      <Query>
-        <DataSourceName>DummyDataSource</DataSourceName>
-        <CommandText />
-        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
-      </Query>
-      <Fields>
-        <Field Name="IdProdPedProducao">
-          <DataField>IdProdPedProducao</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="IdProdPed">
-          <DataField>IdProdPed</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="IdSetor">
-          <DataField>IdSetor</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="IdFuncPerda">
-          <DataField>IdFuncPerda</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="IdPedidoExpedicao">
-          <DataField>IdPedidoExpedicao</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="IdFuncRepos">
-          <DataField>IdFuncRepos</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="IdSetorRepos">
-          <DataField>IdSetorRepos</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="Situacao">
-          <DataField>Situacao</DataField>
-          <rd:TypeName>System.Int64</rd:TypeName>
-        </Field>
-        <Field Name="DataPerda">
-          <DataField>DataPerda</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
-        <Field Name="NumEtiqueta">
-          <DataField>NumEtiqueta</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="PlanoCorte">
-          <DataField>PlanoCorte</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TipoPerda">
-          <DataField>TipoPerda</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="IdSubtipoPerda">
-          <DataField>IdSubtipoPerda</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="Obs">
-          <DataField>Obs</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="EntrouEstoque">
-          <DataField>EntrouEstoque</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="PecaReposta">
-          <DataField>PecaReposta</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="TipoPerdaRepos">
-          <DataField>TipoPerdaRepos</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="IdSubtipoPerdaRepos">
-          <DataField>IdSubtipoPerdaRepos</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="DataRepos">
-          <DataField>DataRepos</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
-        <Field Name="IdProdPedCanc">
-          <DataField>IdProdPedCanc</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="NumEtiquetaCanc">
-          <DataField>NumEtiquetaCanc</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="IdImpressao">
-          <DataField>IdImpressao</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="CanceladoAdmin">
-          <DataField>CanceladoAdmin</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="DadosReposicaoPeca">
-          <DataField>DadosReposicaoPeca</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NomeFuncPerda">
-          <DataField>NomeFuncPerda</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="IdPedido">
-          <DataField>IdPedido</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="NumeroNFe">
-          <DataField>NumeroNFe</DataField>
-          <rd:TypeName>System.Nullable`1[System.Int32]</rd:TypeName>
-        </Field>
-        <Field Name="IdPedidoRep">
-          <DataField>IdPedidoRep</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="CodCliente">
-          <DataField>CodCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DataEntrega">
-          <DataField>DataEntrega</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
-        <Field Name="DataEntregaFabrica">
-          <DataField>DataEntregaFabrica</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
-        <Field Name="DataEntregaOriginal">
-          <DataField>DataEntregaOriginal</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
-        <Field Name="IdCliente">
-          <DataField>IdCliente</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="NomeCliente">
-          <DataField>NomeCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrProduto">
-          <DataField>DescrProduto</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CodInterno">
-          <DataField>CodInterno</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrSetor">
-          <DataField>DescrSetor</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrDepart">
-          <DataField>DescrDepart</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrSetorRepos">
-          <DataField>DescrSetorRepos</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Altura">
-          <DataField>Altura</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="Largura">
-          <DataField>Largura</DataField>
-          <rd:TypeName>System.Int64</rd:TypeName>
-        </Field>
-        <Field Name="CodAplicacao">
-          <DataField>CodAplicacao</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CodProcesso">
-          <DataField>CodProcesso</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="IdPedidoExibir">
-          <DataField>IdPedidoExibir</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Criterio">
-          <DataField>Criterio</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TotM2">
-          <DataField>TotM2</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="Total">
-          <DataField>Total</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="Qtde">
-          <DataField>Qtde</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="ValorUnit">
-          <DataField>ValorUnit</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="TipoCalculo">
-          <DataField>TipoCalculo</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="ValorTotal">
-          <DataField>ValorTotal</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="PedidoCancelado">
-          <DataField>PedidoCancelado</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="PedidoMaoObra">
-          <DataField>PedidoMaoObra</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="PedidoProducao">
-          <DataField>PedidoProducao</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="DataLiberacaoPedido">
-          <DataField>DataLiberacaoPedido</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
-        <Field Name="TipoSetor">
-          <DataField>TipoSetor</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Cor">
-          <DataField>Cor</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Espessura">
-          <DataField>Espessura</DataField>
-          <rd:TypeName>System.Single</rd:TypeName>
-        </Field>
-        <Field Name="IdGrupoProd">
-          <DataField>IdGrupoProd</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="IdSubgrupoProd">
-          <DataField>IdSubgrupoProd</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="DescrSubgrupoProd">
-          <DataField>DescrSubgrupoProd</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ValorCustoUnitario">
-          <DataField>ValorCustoUnitario</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="DataAgrupar">
-          <DataField>DataAgrupar</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
-        <Field Name="NumEtiquetaChapa">
-          <DataField>NumEtiquetaChapa</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="NumeroNFeChapa">
-          <DataField>NumeroNFeChapa</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Peso">
-          <DataField>Peso</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="PecaCancelada">
-          <DataField>PecaCancelada</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="IdProdPedExibir">
-          <DataField>IdProdPedExibir</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="NumEtiquetaExibir">
-          <DataField>NumEtiquetaExibir</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="IdNomeCliente">
-          <DataField>IdNomeCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrProdLargAlt">
-          <DataField>DescrProdLargAlt</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CodDescrProd">
-          <DataField>CodDescrProd</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="LarguraAltura">
-          <DataField>LarguraAltura</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DataEntregaSemHora">
-          <DataField>DataEntregaSemHora</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DataEntregaExibicao">
-          <DataField>DataEntregaExibicao</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Data">
-          <DataField>Data</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
-        <Field Name="CorLinha">
-          <DataField>CorLinha</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrSituacao">
-          <DataField>DescrSituacao</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="SiglaTipoPedido">
-          <DataField>SiglaTipoPedido</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrBeneficiamentos">
-          <DataField>DescrBeneficiamentos</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="RemoverSituacaoVisible">
-          <DataField>RemoverSituacaoVisible</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="DescrTipoPerdaSemObs">
-          <DataField>DescrTipoPerdaSemObs</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrTipoPerda">
-          <DataField>DescrTipoPerda</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescrTipoPerdaLista">
-          <DataField>DescrTipoPerdaLista</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ImagemPecaUrl">
-          <DataField>ImagemPecaUrl</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ExibirRelatorioPedido">
-          <DataField>ExibirRelatorioPedido</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="ValorCustoPeca">
-          <DataField>ValorCustoPeca</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="VetDataLeitura">
-          <DataField>VetDataLeitura</DataField>
-          <rd:TypeName>System.String[]</rd:TypeName>
-        </Field>
-        <Field Name="VetNomeFuncLeitura">
-          <DataField>VetNomeFuncLeitura</DataField>
-          <rd:TypeName>System.String[]</rd:TypeName>
-        </Field>
-        <Field Name="VetSetorCorte">
-          <DataField>VetSetorCorte</DataField>
-          <rd:TypeName>System.Boolean[]</rd:TypeName>
-        </Field>
-        <Field Name="TemLeitura">
-          <DataField>TemLeitura</DataField>
-          <rd:TypeName>System.Boolean[]</rd:TypeName>
-        </Field>
-        <Field Name="DataSetorAtual">
-          <DataField>DataSetorAtual</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
-        <Field Name="GroupIdSetor">
-          <DataField>GroupIdSetor</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="GroupDataLeitura">
-          <DataField>GroupDataLeitura</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="GroupNomeFuncLeitura">
-          <DataField>GroupNomeFuncLeitura</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="GroupSetorCorte">
-          <DataField>GroupSetorCorte</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:ObjectDataSourceSelectMethod>GetList</rd:ObjectDataSourceSelectMethod>
-        <rd:ObjectDataSourceSelectMethodSignature>Glass.Data.Model.ProdutoPedidoProducao[] GetList(UInt32, System.String, System.String, UInt32, Int32, System.String, Int32, Int32)</rd:ObjectDataSourceSelectMethodSignature>
-        <rd:ObjectDataSourceType>Glass.Data.DAL.ProdutoPedidoProducaoDAO, Glass.Data, Version=4.5.3.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
-      </rd:DataSetInfo>
-    </DataSet>
-  </DataSets>
+    </ReportSection>
+  </ReportSections>
   <ReportParameters>
     <ReportParameter Name="Logotipo">
       <DataType>String</DataType>
