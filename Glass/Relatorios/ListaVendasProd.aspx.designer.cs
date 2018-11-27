@@ -769,6 +769,15 @@ namespace Glass.UI.Web.Relatorios {
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsVendedor;
         
         /// <summary>
+        /// odsVendedorCliente control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsVendedorCliente;
+        
+        /// <summary>
         /// odsTipoVenda control.
         /// </summary>
         /// <remarks>
