@@ -1,0 +1,18 @@
+﻿<div class="opblock logger">
+    <div class="opblock-section">
+        <div class="opblock-section-header">
+            <div class="try-out">
+                <button class="btn" type="button" :disabled="atualizando" @click.prevent="atualizar()">
+                    <span v-if="!atualizando">Atualizar</span>
+                    <span v-if="atualizando">Atualizando...</span>
+                </button>
+            </div>
+        </div>
+        <div class="visualizar-linhas">
+            <div is="integradores-itemlogger"
+                 v-for="item in logger.itens"
+                 :item="item">
+            </div>
+        </div>
+    </div>
+</div>

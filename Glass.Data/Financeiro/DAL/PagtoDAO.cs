@@ -863,7 +863,7 @@ namespace Glass.Data.DAL
             {
                 case "dinheiro":
                     return (uint)Model.Pagto.FormaPagto.Dinheiro;
-                case "cheque":
+                case "cheque proprio":
                     return (uint)Model.Pagto.FormaPagto.ChequeProprio;
                 case "construcard":
                     return (uint)Model.Pagto.FormaPagto.Construcard;
@@ -894,8 +894,9 @@ namespace Glass.Data.DAL
                 case (uint)Pagto.FormaPagto.Dinheiro:
                     return "dinheiro";
                 case (uint)Pagto.FormaPagto.ChequeProprio:
+                    return "cheque proprio";
                 case (uint)Pagto.FormaPagto.ChequeTerceiro:
-                    return "cheque";
+                    return "cheque terceiros";
                 case (uint)Pagto.FormaPagto.Construcard:
                     return "construcard";
                 case (uint)Pagto.FormaPagto.Boleto:

@@ -1171,7 +1171,7 @@ namespace Glass.Data.DAL
                 sql = @"
                     Select pp.*, p.Descricao as DescrProduto, p.CodInterno, p.idGrupoProd, p.idSubgrupoProd, p.LocalArmazenagem as LocalArmazenagem, um.codigo as unidade,
                         apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, ap.Ambiente, ap.Descricao as DescrAmbiente, ap.tipoDesconto As tipoDescontoAmbiente,
-                        ap.desconto As descontoAmbiente, ip.obs as obsProjeto
+                        ap.desconto As descontoAmbiente, ip.obs as obsProjeto, sgp.descricao AS NomeSubGrupoProd
                     From produtos_pedido pp
                         Left Join pedido ped on (pp.idPedido=ped.idPedido)
                         Left Join produto p On (pp.idProd=p.idProd)
@@ -1180,13 +1180,15 @@ namespace Glass.Data.DAL
                         Left Join item_projeto ip On (ap.idItemProjeto=ip.idItemProjeto)
                         Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
                         Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
+                        LEFT JOIN subgrupo_prod sgp ON (p.IdSubGrupoProd = sgp.IdSubGrupoProd)
                     Where pp.idPedido=" + idPedido;
             }
             else
             {
                 sql = @"
                     Select pp.*, p.Descricao as DescrProduto, p.CodInterno, p.idGrupoProd, p.LocalArmazenagem as LocalArmazenagem, um.codigo as unidade,
-                        p.idSubgrupoProd, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, COALESCE(ip.Ambiente, ap.Ambiente) AS Ambiente, ip.obs as obsProjeto
+                        p.idSubgrupoProd, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, COALESCE(ip.Ambiente, ap.Ambiente) AS Ambiente, ip.obs as obsProjeto,
+                        sgp.descricao AS NomeSubGrupoProd
                     From produtos_pedido pp
                         Left Join produto p On (pp.idProd=p.idProd)
                         Left Join unidade_medida um On (p.idUnidadeMedida=um.idUnidadeMedida)
@@ -1194,6 +1196,7 @@ namespace Glass.Data.DAL
                         Left Join item_projeto ip on (pp.idItemProjeto=ip.idItemProjeto)
                         Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
                         Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
+                        LEFT JOIN subgrupo_prod sgp ON (p.IdSubGrupoProd = sgp.IdSubGrupoProd)
                     Where pp.idPedido=" + idPedido;
             }
 
@@ -1696,16 +1699,27 @@ namespace Glass.Data.DAL
         #region Marca saída de produtos
 
         /// <summary>
-        /// Marca saída de produto na tabela produtos_pedido
+        /// Método que efetua a saída dos Produtos do pedido.
         /// </summary>
-        public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta)
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="idProdPed">Identificador do produto pedido.</param>
+        /// <param name="qtdSaida">Quantidade a dar saída.</param>
+        /// <param name="idSaidaEstoque">Identificador da saída do estoque.</param>
+        /// <param name="metodo">Nome do método que efetuou a chamada do marcar saída.</param>
+        /// <param name="numEtiqueta">Número da etiqueta utilizada para dar saída na produção.</param>
+        /// <param name="saidaConfirmacao">Variável booleana que indica se o método foi chamado através da saída em sistemas de Confirmação.</param>
+        public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta, bool saidaConfirmacao = false)
         {
             if (idProdPed == 0)
+            {
                 return;
+            }
 
-            var idPedido = (int)ObtemIdPedido(idProdPed);
+            var idPedido = (int)this.ObtemIdPedido(sessao, idProdPed);
 
-            if (!ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
+            var saidaJaEfetuada = !saidaConfirmacao && PedidoDAO.Instance.VerificaSaidaEstoqueConfirmacao(sessao, idPedido);
+
+            if (saidaJaEfetuada || PedidoDAO.Instance.VerificarPedidoProducaoParaCorte(sessao, idPedido) || !this.ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
             {
                 return;
             }
@@ -1713,26 +1727,11 @@ namespace Glass.Data.DAL
             if (!string.IsNullOrWhiteSpace(metodo)
                 && PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido) == Pedido.TipoPedidoEnum.Revenda)
             {
-                var idProd = ObtemValorCampo<uint>(sessao, "idProd", $"idProdPed = { idProdPed }");
-                var codInterno = ProdutoDAO.Instance.ObtemValorCampo<string>(sessao, "CodInterno", $"idProd = { idProd }");
-                var descricaoProd = ProdutoDAO.Instance.GetDescrProduto(sessao, codInterno);
-
-                var logData = new LogAlteracao();
-                logData.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
-                logData.IdRegistroAlt = idPedido;
-                logData.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(sessao, LogAlteracao.TabelaAlteracao.Pedido, idPedido);
-                logData.Campo = $"MarcarSaida - { metodo }";
-                logData.DataAlt = DateTime.Now;
-                logData.IdFuncAlt = (uint)FuncionarioDAO.Instance.GetAdministradores(true).Where(f => f.AdminSync == true).Select(f => f.IdFunc).FirstOrDefault();
-                logData.ValorAnterior = $"{ codInterno } - { descricaoProd } ({ ObtemValorCampo<string>(sessao, "Qtde", $"IdProdPed = { idProdPed }") }/{ ObtemValorCampo<string>(sessao, "QtdSaida", $"IdProdPed = { idProdPed }") })";
-                logData.ValorAtual = $"{ numEtiqueta ?? "Sem Etiqueta" } \nQtd. Estorno ({ qtdSaida.ToString() }) \nFuncionário ({ (UserInfo.GetUserInfo != null ? $"{ UserInfo.GetUserInfo.CodUser } - { UserInfo.GetUserInfo.Nome })" : string.Empty)}";
-                logData.Referencia = LogAlteracao.GetReferencia(sessao, (int)LogAlteracao.TabelaAlteracao.Pedido, (uint)idPedido);
-
-                LogAlteracaoDAO.Instance.Insert(sessao, logData);
+                this.InserirLogMovimentacaoProdPed(sessao, idProdPed, qtdSaida, metodo, numEtiqueta, idPedido);
             }
 
             string sql = $"Update produtos_pedido set qtdSaida=greatest(Coalesce(qtdSaida, 0)+?qtdSaida, 0) Where idProdPed={ idProdPed }";
-            objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?qtdSaida", qtdSaida));
+            this.objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?qtdSaida", qtdSaida));
 
             // Insere um registro na tabela indicando que o produto foi baixado
             if (idSaidaEstoque > 0)
@@ -1744,6 +1743,38 @@ namespace Glass.Data.DAL
 
                 ProdutoSaidaEstoqueDAO.Instance.Insert(sessao, novo);
             }
+        }
+
+        private void InserirLogMovimentacaoProdPed(GDASession sessao, uint idProdPed, float qtdMovimentar, string metodo, string numEtiqueta, int idPedido, bool estorno = false)
+        {
+            var idProd = this.ObtemValorCampo<uint>(sessao, "idProd", $"idProdPed = {idProdPed}");
+            var codInterno = ProdutoDAO.Instance.ObtemValorCampo<string>(sessao, "CodInterno", $"idProd = {idProd}");
+            var descricaoProd = ProdutoDAO.Instance.GetDescrProduto(sessao, codInterno);
+
+            var tipo = estorno ? "Estorno" : "Saída";
+
+            var usuario = UserInfo.GetUserInfo != null ? $"{UserInfo.GetUserInfo.CodUser} - {UserInfo.GetUserInfo.Nome}" : string.Empty;
+
+            var qtde = this.ObtemValorCampo<string>(sessao, "Qtde", $"IdProdPed = {idProdPed}");
+            var qtdSaida = this.ObtemValorCampo<string>(sessao, "QtdSaida", $"IdProdPed = {idProdPed}");
+            numEtiqueta = numEtiqueta ?? "Sem Etiqueta";
+
+            var idFuncAlt = (uint)FuncionarioDAO.Instance.GetAdministradores(true)
+                .Where(f => f.AdminSync == true)
+                .Select(f => f.IdFunc).FirstOrDefault();
+
+            var logData = new LogAlteracao();
+            logData.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
+            logData.IdRegistroAlt = idPedido;
+            logData.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(sessao, LogAlteracao.TabelaAlteracao.Pedido, idPedido);
+            logData.Campo = $"{tipo} - {metodo}";
+            logData.DataAlt = DateTime.Now;
+            logData.IdFuncAlt = idFuncAlt;
+            logData.ValorAnterior = $"{codInterno} - {descricaoProd} ({qtde}/{qtdSaida})";
+            logData.ValorAtual = $"{numEtiqueta} \nQtd. {tipo} ({qtdMovimentar.ToString()}) \nFuncionário ({usuario})";
+            logData.Referencia = LogAlteracao.GetReferencia(sessao, (int)LogAlteracao.TabelaAlteracao.Pedido, (uint)idPedido);
+
+            LogAlteracaoDAO.Instance.Insert(sessao, logData);
         }
 
         private bool ValidarSaidaProduto(GDASession sessao, uint idProdPed, float qtdSaida, uint idPedido)
@@ -1786,22 +1817,7 @@ namespace Glass.Data.DAL
             if (!string.IsNullOrWhiteSpace(metodo)
                 && PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido) == Pedido.TipoPedidoEnum.Revenda)
             {
-                var idProd = ObtemValorCampo<uint>(sessao, "idProd", $"idProdPed = { idProdPed }");
-                var codInterno = ProdutoDAO.Instance.ObtemValorCampo<string>(sessao, "CodInterno", $"idProd = { idProd }");
-                var descricaoProd = ProdutoDAO.Instance.GetDescrProduto(sessao, codInterno);
-
-                var logData = new LogAlteracao();
-                logData.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
-                logData.IdRegistroAlt = idPedido;
-                logData.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(sessao, LogAlteracao.TabelaAlteracao.Pedido, idPedido);
-                logData.Campo = $"EstornoSaida - { metodo }";
-                logData.DataAlt = DateTime.Now;
-                logData.IdFuncAlt = UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0;
-                logData.ValorAnterior = $"{ codInterno } - { descricaoProd } ({ ObtemValorCampo<string>(sessao, "Qtde", $"IdProdPed = { idProdPed }")}/{ ObtemValorCampo<string>(sessao, "QtdSaida", $"IdProdPed = { idProdPed }") })";
-                logData.ValorAtual = $"{ numEtiqueta ?? "Sem Etiqueta" } \nQtd. Estorno ({ qtdEstorno.ToString() }) \nFuncionário ({ (UserInfo.GetUserInfo != null ? $"{ UserInfo.GetUserInfo.CodUser } - { UserInfo.GetUserInfo.Nome })" : string.Empty)}";
-                logData.Referencia = LogAlteracao.GetReferencia(sessao, (int)LogAlteracao.TabelaAlteracao.Pedido, (uint)idPedido);
-
-                LogAlteracaoDAO.Instance.Insert(sessao, logData);
+                this.InserirLogMovimentacaoProdPed(sessao, idProdPed, qtdEstorno, metodo, numEtiqueta, idPedido, estorno:true);
             }
 
             string sql = $"Update produtos_pedido set qtdSaida=(Coalesce(qtdSaida, 0)-{ qtdEstorno }) Where idProdPed={ idProdPed }";
@@ -2069,15 +2085,11 @@ namespace Glass.Data.DAL
             else if (idProdPedEsp > 0)
                 sql += " and pp.idProdPedEsp=" + idProdPedEsp;
 
-            if (!PCPConfig.UsarConferenciaFluxo)
-                sql += " and (pp.InvisivelPedido=false or pp.InvisivelPedido is null)";
-            else
+            sql += ObterFluxoSqlLiberacao("pp.");
+
+            if (PCPConfig.UsarConferenciaFluxo)
             {
-                // Chamado 15160: Ocorreu um problema ao excluir alguns produtos deste pedido, no entanto, alterando a condição abaixo,
-                // garante que caso o pedido possua espelho, só busque produtos que estejam na conferência
-                sql += @" and (pp.InvisivelFluxo=false or pp.InvisivelFluxo is null)
-                    and (pedEsp.idPedido is null or ppe.idProdPed is not null)
-                    /*and (pp.idProdPedEsp is null or ppe.idProdPed is not null)*/";
+                sql += "AND(pedEsp.IdPedido IS NULL OR ppe.IdProdPed IS NOT NULL)";
             }
 
             if (liberarProdutosProntos)
@@ -5779,22 +5791,34 @@ namespace Glass.Data.DAL
             return lista;
         }
 
-        public List<ProdutosPedido> ObterProdutosComExportados(string idsPedido)
+        /// <summary>
+        /// Método que retorna uma lista de produtos pedido exportados.
+        /// </summary>
+        /// <param name="idsPedido">Identificadores do pedido.</param>
+        /// <param name="idExportacao">Identificador da exportação do pedido.</param>
+        /// <returns>Lista contendo os produtos de pedido que foram exportados.</returns>
+        public List<ProdutosPedido> ObterProdutosComExportados(string idsPedido, int idExportacao)
         {
-            string sql = @"select p.CodInterno, p.Descricao as DescrProduto, pp.*, cli.Nome as NomeCliente,
-                           case when (select count(*) from produtos_pedido_exportacao ppe
-                                where ppe.idProd = pp.idprodped) > 0 then true else false end as Exportado
-                           from produtos_pedido pp
-                           inner join pedido ped on(ped.IdPedido=pp.IdPedido)
-                           inner join produto p on(p.IdProd=pp.IdProd)
-                           inner join cliente cli on(ped.IdCli=cli.id_cli)
-                           left join pedido_exportacao pedEx on(pedEx.IdPedido=ped.idPedido)
-						   left join pedido_espelho pedEs on(pedEs.IdPedido=ped.idPedido)
-                           where ped.IdPedido in(" + idsPedido + @")
-                                and IF(pedEx.DATASITUACAO < pedEs.DATACONF, pp.invisivelFluxo,
-                                pp.invisivelPedido) order by p.Descricao asc, exportado desc";
+            string exportacao = string.Empty;
+            if (idExportacao > 0)
+            {
+                exportacao = $" AND pedEx.IdExportacao = {idExportacao}";
+            }
 
-            return objPersistence.LoadData(sql);
+            string sql = $@"SELECT p.CodInterno, p.Descricao as DescrProduto, pp.*, cli.Nome as NomeCliente,
+                           CASE WHEN (SELECT COUNT(*) FROM produtos_pedido_exportacao ppe 
+                                WHERE ppe.IdProd = pp.Idprodped) > 0 THEN TRUE ELSE FALSE END as Exportado
+                           FROM produtos_pedido pp
+                           INNER JOIN pedido ped ON (ped.IdPedido=pp.IdPedido)                                                               
+                           INNER JOIN produto p ON (p.IdProd=pp.IdProd)
+                           INNER JOIN cliente cli ON (ped.IdCli=cli.Id_cli)
+                           LEFT JOIN pedido_exportacao pedEx ON (pedEx.IdPedido=ped.IdPedido)
+						   LEFT JOIN pedido_espelho pedEs ON (pedEs.IdPedido=ped.IdPedido)
+                           WHERE ped.IdPedido in({idsPedido}) {exportacao}
+                                AND IF(pedEx.DataSituacao < pedEs.DataConf, pp.InvisivelFluxo, 
+                                pp.InvisivelPedido) ORDER BY p.Descricao ASC, exportado DESC";
+
+            return this.objPersistence.LoadData(sql);
         }
 
         /// <summary>
@@ -5882,14 +5906,19 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public List<ProdutosPedido> ObterProdutosCortados(GDASession session, uint idLiberarPedido)
         {
-            var sql = @"SELECT pp.*, prod.CodInterno, prod.Descricao AS DescrProduto FROM produtos_pedido pp
-                        INNER JOIN produto prod ON pp.IdProd=prod.IdProd
-                        INNER JOIN pedido p on pp.IdPedido=p.IdPedido
-                        WHERE IdPedidoRevenda IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido=?idLiberarPedido)";
+ 
+            var sql = $@"SELECT pp.*, prod.CodInterno, prod.Descricao AS DescrProduto FROM produtos_pedido pp
+                INNER JOIN produto prod ON pp.IdProd=prod.IdProd
+                INNER JOIN pedido p on pp.IdPedido=p.IdPedido
+                WHERE IdPedidoRevenda IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido=?idLiberarPedido)
+                {ObterFluxoSqlLiberacao("pp.")}";
 
             var parameter = new GDAParameter("?idLiberarPedido", idLiberarPedido);
 
-            var retorno = objPersistence.LoadData(session, sql, parameter);
+            var retorno = objPersistence.LoadData(
+                session, 
+                sql, 
+                parameter);
 
             return retorno;
         }
@@ -5932,25 +5961,36 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se os produtos do pedido de Revenda j� deram sa�da total. 
+        /// Verifica se os produtos do pedido de Revenda j� deram sa�da total.
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
+        /// <param name="sessao">Sessao do GDA.</param>
+        /// <param name="idPedido">Identificador do Pedido.</param>
+        /// <returns>Retorna o valor de um teste lógico que indica se todos os produtos do pedido já deram saída (Caso o pedido seja de saída).</returns>
         internal bool VerificarSaidaProduto(GDASession sessao, uint idPedido)
         {
-            if(idPedido == 0 || !PedidoDAO.Instance.IsRevenda(sessao, idPedido))
+            if (idPedido == 0 || !PedidoDAO.Instance.IsRevenda(sessao, idPedido))
             {
                 return false;
             }
 
-            var sql = $@"SELECT (SUM(QtdSaida) + 1) >= SUM(Qtde) = COUNT(*)
+            var sql = $@"SELECT COUNT(*) = 0
                 FROM produtos_pedido
-                WHERE IdPedido = {idPedido} 
-                    AND InvisivelPedido = 0";
+                WHERE IdPedido = {idPedido} AND !InvisivelPedido AND ISNULL(IdProdPedParent) AND Qtde > QtdSaida";
 
-            return ExecuteScalar<bool>(sessao, sql);
+            return this.ExecuteScalar<bool>(sessao, sql);
+        }
 
+        /// <summary>
+        /// Método que retorna uma string contendo o fluxo utilizado no SqlLiberacao.
+        /// </summary>
+        /// <returns>String com os filtros de fluxo da tabela produtos_pedido.</returns>
+        private string ObterFluxoSqlLiberacao(string aliasProdutosPedido)
+        {
+            var fluxo = PCPConfig.UsarConferenciaFluxo
+                ? "Fluxo"
+                : "Pedido";
+
+            return $" AND ({aliasProdutosPedido}Invisivel{fluxo} IS NULL OR !{aliasProdutosPedido}Invisivel{fluxo})";
         }
     }
 }

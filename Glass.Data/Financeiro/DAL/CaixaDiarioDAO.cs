@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Linq;
 using System.Collections.Generic;
 using GDA;
@@ -17,7 +17,7 @@ namespace Glass.Data.DAL
         #region Movimenta caixa
 
         /// <summary>
-        /// MovimentaÁ„o geral
+        /// Movimenta√ß√£o geral
         /// </summary>
         public uint MovCaixa(uint idLoja, uint? idCliente, int tipoMov, decimal valorMov, decimal juros, uint idConta, string numAutConstrucard, int formaSaida, string obs, bool mudarSaldo)
         {
@@ -25,7 +25,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MovimentaÁ„o geral
+        /// Movimenta√ß√£o geral
         /// </summary>
         public uint MovCaixa(GDASession session, uint idLoja, uint? idCliente, int tipoMov, decimal valorMov, decimal juros,
             uint idConta, string numAutConstrucard, int formaSaida, string obs, bool mudarSaldo, int? idCaixaDiarioEstorno)
@@ -40,7 +40,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MovimentaÁ„o proveniente de pedido
+        /// Movimenta√ß√£o proveniente de pedido
         /// </summary>
         public uint MovCxPedido(GDASession sessao, uint idLoja, uint? idCliente, uint idPedido, int tipoMov, decimal valorMov, decimal juros, uint idConta, string numAutConstrucard, bool mudarSaldo)
         {
@@ -49,7 +49,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MovimentaÁ„o proveniente de pedido
+        /// Movimenta√ß√£o proveniente de pedido
         /// </summary>
         public uint MovCxPedido(GDASession sessao, uint idLoja, uint? idCliente, uint idPedido, int tipoMov, decimal valorMov, decimal juros,
             uint idConta, string numAutConstrucard, string obs, bool mudarSaldo)
@@ -59,8 +59,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// MovimentaÁ„o proveniente de conta a receber
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Movimenta√ß√£o proveniente de conta a receber
         /// </summary>
         public uint MovCxContaRec(uint idLoja, uint? idCliente, uint? idPedido, uint? idLiberarPedido, uint idContaR,
             int tipoMov, decimal valorMov, decimal juros, uint idConta, string numAutConstrucard, int formaSaida, string obs, bool mudarSaldo)
@@ -70,7 +70,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MovimentaÁ„o proveniente de conta a receber
+        /// Movimenta√ß√£o proveniente de conta a receber
         /// </summary>
         public uint MovCxContaRec(GDASession sessao, uint idLoja, uint? idCliente, uint? idPedido, uint? idLiberarPedido, uint idContaR,
             int tipoMov, decimal valorMov, decimal juros, uint idConta, string numAutConstrucard, int formaSaida, string obs, bool mudarSaldo)
@@ -80,7 +80,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MovimentaÁ„o proveniente de acerto
+        /// Movimenta√ß√£o proveniente de acerto
         /// </summary>
         public uint MovCxAcerto(GDASession sessao, uint idLoja, uint? idCliente, uint idAcerto, int tipoMov, decimal valorMov,
             decimal juros, uint idConta, string numAutConstrucard, int formaSaida, string obs, bool mudarSaldo)
@@ -90,7 +90,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MovimentaÁ„o proveniente de liberaÁ„o de pedidos
+        /// Movimenta√ß√£o proveniente de libera√ß√£o de pedidos
         /// </summary>
         public uint MovCxLiberarPedido(GDASession sessao, uint idLoja, uint? idCliente, uint idLiberarPedido, int tipoMov, decimal valorMov,
             decimal juros, uint idConta, string numAutConstrucard, string obs, bool mudarSaldo)
@@ -121,7 +121,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimenta o caixa di·rio da loja passada
+        /// Movimenta o caixa di√°rio da loja passada
         /// </summary>
         private uint MovimentaCaixa(uint idLoja, uint? idCliente, uint? idFornec, uint? idPedido, uint? idSinal, uint? idContaR, uint? idAcerto,
             uint? idLiberarPedido, uint? idObra, uint? idTrocaDevolucao, int tipoMov, decimal valorMov, decimal juros, uint idConta,
@@ -132,7 +132,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MovimentaÁ„o proveniente de cheque
+        /// Movimenta√ß√£o proveniente de cheque
         /// </summary>
         public uint MovCxAcertoCheque(GDASession sessao, uint idLoja, uint? idCheque, uint? idDeposito, uint? idAcertoCheque, uint? idCliente, uint? idFornec, uint idConta, int tipoMov,
             decimal valorMov, decimal juros, string numAutConstrucard, bool mudarSaldo, string obs)
@@ -142,7 +142,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MovimentaÁ„o proveniente de cheque
+        /// Movimenta√ß√£o proveniente de cheque
         /// </summary>
         public uint MovCxAcertoCheque(GDASession sessao, uint idLoja, uint? idCheque, uint? idDeposito, uint? idAcertoCheque, uint? idCliente, uint? idFornec, uint idConta, int tipoMov,
             decimal valorMov, decimal juros, string numAutConstrucard, bool mudarSaldo, string obs, int? contadorDataUnica)
@@ -170,13 +170,13 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Chamado 18364: Vari·vel criada para impedir que a movimentaÁ„o seja inserida no mesmo segundo que outra
-        /// sÛ ser· resolvido em definitivo criando trigger na vers„o MigraÁ„o
+        /// Chamado 18364: Vari√°vel criada para impedir que a movimenta√ß√£o seja inserida no mesmo segundo que outra
+        /// s√≥ ser√° resolvido em definitivo criando trigger na vers√£o Migra√ß√£o
         /// </summary>
         private static DateTime ultimaMovimentacao = DateTime.Now;
 
         /// <summary>
-        /// Movimenta o caixa di·rio da loja passada
+        /// Movimenta o caixa di√°rio da loja passada
         /// </summary>
         private uint MovimentaCaixa(GDASession sessao, uint idLoja, uint? idCliente, uint? idFornec, uint? idPedido, uint? idSinal, uint? idContaR, uint? idAcerto,
             uint? idLiberarPedido, uint? idObra, uint? idTrocaDevolucao, int tipoMov, decimal valorMov, decimal juros, uint idConta,
@@ -188,7 +188,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimenta o caixa di·rio da loja passada
+        /// Movimenta o caixa di√°rio da loja passada
         /// </summary>
         private uint MovimentaCaixa(GDASession sessao, uint idLoja, uint? idCliente, uint? idFornec, uint? idPedido, uint? idSinal, uint? idContaR, uint? idAcerto,
             uint? idLiberarPedido, uint? idObra, uint? idTrocaDevolucao, int tipoMov, decimal valorMov, decimal juros, uint idConta, string numAutConstrucard,
@@ -199,7 +199,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimenta o caixa di·rio da loja passada
+        /// Movimenta o caixa di√°rio da loja passada
         /// </summary>
         private uint MovimentaCaixa(GDASession sessao, uint idLoja, uint? idCliente, uint? idFornec, uint? idPedido, uint? idSinal, uint? idContaR, uint? idAcerto,
             uint? idLiberarPedido, uint? idObra, uint? idTrocaDevolucao, int tipoMov, decimal valorMov, decimal juros, uint idConta, string numAutConstrucard,
@@ -211,7 +211,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimenta o caixa di·rio da loja passada
+        /// Movimenta o caixa di√°rio da loja passada
         /// </summary>
         private uint MovimentaCaixa(GDASession sessao, uint idLoja, uint? idCliente, uint? idFornec, uint? idPedido, uint? idSinal, uint? idContaR, uint? idAcerto,
             uint? idLiberarPedido, uint? idObra, uint? idTrocaDevolucao, int tipoMov, decimal valorMov, decimal juros, uint idConta, string numAutConstrucard,
@@ -220,8 +220,8 @@ namespace Glass.Data.DAL
         {
             lock (_movimentarCaixaLock)
             {
-                // Chamado 18364: Impede que a movimentaÁ„o seja inserida no mesmo segundo que outra.
-                // SÛ ser· resolvido em definitivo criando trigger na vers„o MigraÁ„o
+                // Chamado 18364: Impede que a movimenta√ß√£o seja inserida no mesmo segundo que outra.
+                // S√≥ ser√° resolvido em definitivo criando trigger na vers√£o Migra√ß√£o
                 if (Math.Abs(FuncoesData.DateDiff(DateInterval.Second, ultimaMovimentacao, DateTime.Now)) <= 1)
                 {
                     Thread.Sleep(2500);
@@ -229,7 +229,7 @@ namespace Glass.Data.DAL
 
                 ultimaMovimentacao = DateTime.Now;
 
-                // Se for utilizaÁ„o de crÈdito, n„o gera movimentaÁ„o no caixa
+                // Se for utiliza√ß√£o de cr√©dito, n√£o gera movimenta√ß√£o no caixa
                 if (new List<uint>(UtilsPlanoConta.GetLstCredito(3)).Contains(idConta))
                 {
                     mudarSaldo = false;
@@ -278,19 +278,19 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna movimentaÁ„o
+        #region Retorna movimenta√ß√£o
 
         /// <summary>
-        /// Retorna uma ˙nica movimentaÁ„o
+        /// Retorna uma √∫nica movimenta√ß√£o
         /// </summary>
         public CaixaDiario GetMovimentacao(GDASession session, int idCxDiario)
         {
             var sql = @"
-                Select c.*, f.Nome as DescrUsuCad, p.Descricao as DescrPlanoConta, l.NomeFantasia as NomeLoja 
-                From caixa_diario c 
+                Select c.*, f.Nome as DescrUsuCad, p.Descricao as DescrPlanoConta, l.NomeFantasia as NomeLoja
+                From caixa_diario c
                     Left Join funcionario f On c.UsuCad=f.IdFunc
-                    Left Join loja l On c.IdLoja=l.IdLoja 
-                    Left Join plano_contas p On c.IdConta=p.IdConta 
+                    Left Join loja l On c.IdLoja=l.IdLoja
+                    Left Join plano_contas p On c.IdConta=p.IdConta
                 Where c.idCaixaDiario=" + idCxDiario;
 
             var lstMov = objPersistence.LoadData(session, sql).ToList();
@@ -300,11 +300,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera o saldo do caixa di·rio
+        #region Recupera o saldo do caixa di√°rio
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Recupera o saldo do caixa di·rio
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Recupera o saldo do caixa di√°rio
         /// </summary>
         /// <param name="idLoja"></param>
         /// <returns></returns>
@@ -314,7 +314,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o saldo do caixa di·rio
+        /// Recupera o saldo do caixa di√°rio
         /// </summary>
         /// <param name="idLoja"></param>
         /// <returns></returns>
@@ -324,11 +324,11 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Recupera o saldo do caixa di·rio
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Recupera o saldo do caixa di√°rio
         /// </summary>
         /// <param name="idLoja"></param>
-        /// <param name="data">O dia que ser· usado para busca.</param>
+        /// <param name="data">O dia que ser√° usado para busca.</param>
         /// <returns></returns>
         public decimal GetSaldoByLoja(uint idLoja, DateTime data)
         {
@@ -336,44 +336,76 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o saldo de lanÁamentos avulsos do caixa diario pelo perÌodo informado
+        /// Recupera o saldo de lan√ßamentos avulsos do caixa diario pelo per√≠odo informado.
         /// </summary>
-        /// <param name="dataSaldo"></param>
-        /// <returns></returns>
-        public decimal GetSaldoLancAvulsos(DateTime? dataIni, DateTime? dataFim)
+        /// <param name="dataIni">Data de inicio da busca de lan√ßamentos.</param>
+        /// <param name="dataFim">Data fim da busca de lan√ßamentos.</param>
+        /// <param name="idFornec">Identificador do fornecedor a ser filtrado.</param>
+        /// <param name="idLoja">Identificador da loja a ser filtrada.</param>
+        /// <param name="planoConta">Descri√ß√£o do plano de conta a ser filtrado.</param>
+        /// <returns>Saldo de lan√ßamentos avulsos do caixa di√°rio.</returns>
+        public decimal GetSaldoLancAvulsos(DateTime? dataIni, DateTime? dataFim, uint? idFornec, int? idLoja, string planoConta)
         {
-            if (dataIni == null && dataFim == null)
+            if ((dataIni == null) &&
+                (dataFim == null) &&
+                (idFornec.GetValueOrDefault() == 0) &&
+                (idLoja.GetValueOrDefault() == 0) &&
+                string.IsNullOrWhiteSpace(planoConta))
+            {
                 return 0;
-            
-            string sql = @"
-                Select Sum(valor) from caixa_diario 
+            }
+
+            var joinsPlanoConta = !string.IsNullOrEmpty(planoConta) ?
+                @"Left Join plano_contas pl On (cd.IdConta=pl.IdConta)
+                Left Join grupo_conta g On (pl.IdGrupo = g.IdGrupo)
+                Left Join categoria_conta cc On(g.idCategoriaConta = cc.idCategoriaConta)" :
+                string.Empty;
+
+            string sql = $@"
+                Select Sum(valor) from caixa_diario cd
+                {joinsPlanoConta}
                 Where tipoMov = 2
-                    And idacerto is null and idcheque is null and idpedido is null and idLiberarPedido is null and idcontar is null 
-                    And idObra is null and idCheque is null and idFornec is null and idTrocaDevolucao is null and idSinal is null 
-                    And idConta not in (" + (int)UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral) + "," +
+                    And cd.idacerto is null and cd.idcheque is null and cd.idpedido is null and cd.idLiberarPedido is null and cd.idcontar is null
+                    And cd.idObra is null and cd.idCheque is null and cd.idFornec is null and cd.idTrocaDevolucao is null and cd.idSinal is null
+                    And cd.idConta not in (" + (int)UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral) + "," +
                     (int)UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeralParaDiario) + ")";
 
             List<GDAParameter> lstParam = new List<GDAParameter>();
 
             if (dataIni != null)
             {
-                sql += "and datacad >= ?dataIni ";
+                sql += "and cd.datacad >= ?dataIni ";
                 lstParam.Add(new GDAParameter("?dataIni", DateTime.Parse(dataIni.Value.ToString("dd/MM/yyyy 00:00:00"))));
             }
             if (dataFim != null)
             {
-                sql += "and datacad <= ?dataFim ";
+                sql += "and cd.datacad <= ?dataFim ";
                 lstParam.Add(new GDAParameter("?dataFim", DateTime.Parse(dataFim.Value.ToString("dd/MM/yyyy 23:59:59"))));
+            }
+            if (idFornec > 0)
+            {
+                sql += " AND cd.idfornec = ?idFornec";
+                lstParam.Add(new GDAParameter("?idFornec", idFornec));
+            }
+            if (idLoja > 0)
+            {
+                sql += " AND cd.IdLoja = ?idLoja";
+                lstParam.Add(new GDAParameter("?idLoja", idLoja));
+            }
+            if (!string.IsNullOrEmpty(planoConta))
+            {
+                sql += " and (pl.descricao like ?planoConta or g.descricao like ?planoConta or cc.descricao like ?planoConta)";
+                lstParam.Add(new GDAParameter("?planoConta", planoConta));
             }
 
             return ExecuteScalar<uint>(sql, lstParam.ToArray());
         }
 
         /// <summary>
-        /// Recupera o saldo do caixa di·rio
+        /// Recupera o saldo do caixa di√°rio
         /// </summary>
         /// <param name="idLoja"></param>
-        /// <param name="data">O dia que ser· usado para busca.</param>
+        /// <param name="data">O dia que ser√° usado para busca.</param>
         /// <returns></returns>
         public decimal GetSaldoByLoja(GDASession sessao, uint idLoja, DateTime data)
         {
@@ -393,12 +425,12 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o saldo/entrada/saÌda por forma de pagamento e perÌodo
+        /// Retorna o saldo/entrada/sa√≠da por forma de pagamento e per√≠odo
         /// </summary>
         /// <param name="formaPagto"></param>
         /// <param name="idFunc"></param>
         /// <param name="data"></param>
-        /// <param name="tipo">1-Saldo, 2-Entrada, 3-SaÌda, 4-SaÌda (Apenas estorno), 5-Retiradas (Apenas retiradas, sem estorno e sem transf. Cx Geral), 6-Entrada (Sem saldo remanescente)</param>
+        /// <param name="tipo">1-Saldo, 2-Entrada, 3-Sa√≠da, 4-Sa√≠da (Apenas estorno), 5-Retiradas (Apenas retiradas, sem estorno e sem transf. Cx Geral), 6-Entrada (Sem saldo remanescente)</param>
         /// <returns></returns>
         public decimal GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto formaPagto, uint tipoCartao, uint idLoja, uint idFunc, DateTime data, int tipo)
         {
@@ -406,7 +438,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o saldo/entrada/saÌda por forma de pagamento e perÌodo
+        /// Retorna o saldo/entrada/sa√≠da por forma de pagamento e per√≠odo
         /// </summary>
         /// <param name="session"></param>
         /// <param name="formaPagto"></param>
@@ -414,12 +446,12 @@ namespace Glass.Data.DAL
         /// <param name="idLoja"></param>
         /// <param name="idFunc"></param>
         /// <param name="data"></param>
-        /// <param name="tipo">1-Saldo, 2-Entrada, 3-SaÌda, 4-SaÌda (Apenas estorno), 5-Retiradas (Apenas retiradas, sem estorno e sem transf. Cx Geral), 6-Entrada (Sem saldo remanescente)</param>
+        /// <param name="tipo">1-Saldo, 2-Entrada, 3-Sa√≠da, 4-Sa√≠da (Apenas estorno), 5-Retiradas (Apenas retiradas, sem estorno e sem transf. Cx Geral), 6-Entrada (Sem saldo remanescente)</param>
         /// <returns></returns>
         public decimal GetSaldoByFormaPagto(GDASession session, Glass.Data.Model.Pagto.FormaPagto formaPagto, uint tipoCartao, uint idLoja, uint idFunc, DateTime data, int tipo)
         {
-            // FOI RETIRADO A SOMA DO JUROS COM O VALOR DA MOVIMENTA«√O PARA N√O SOMAR JUROS DUAS VEZES,
-            // UMA VEZ QUE O JUROS DE RECEBIMENTO, POR EXEMPLO, J¡ CRIA UMA NOVA MOVIMENTA«√O.
+            // FOI RETIRADO A SOMA DO JUROS COM O VALOR DA MOVIMENTA√á√ÉO PARA N√ÉO SOMAR JUROS DUAS VEZES,
+            // UMA VEZ QUE O JUROS DE RECEBIMENTO, POR EXEMPLO, J√Å CRIA UMA NOVA MOVIMENTA√á√ÉO.
 
             var filtroFunc = String.Empty;
             if (idFunc > 0)
@@ -465,11 +497,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca o registro da tabela que contÈm o sinal do pedido
+        #region Busca o registro da tabela que cont√©m o sinal do pedido
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Busca o registro da tabela que contÈm o sinal do pedido
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Busca o registro da tabela que cont√©m o sinal do pedido
         /// </summary>
         public CaixaDiario GetPedidoSinal(uint idPedido)
         {
@@ -477,17 +509,17 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca o registro da tabela que contÈm o sinal do pedido
+        /// Busca o registro da tabela que cont√©m o sinal do pedido
         /// </summary>
         public CaixaDiario GetPedidoSinal(GDASession sessao, uint idPedido)
         {
             var caixa = new CaixaDiario();
 
             var sql = @"
-                Select c.*, f.Nome as DescrUsuCad 
-                From caixa_diario c 
-                    Left Join funcionario f On c.UsuCad=f.IdFunc 
-                Where idSinal in (Select idSinal From pedido Where idPedido=" + idPedido + @") 
+                Select c.*, f.Nome as DescrUsuCad
+                From caixa_diario c
+                    Left Join funcionario f On c.UsuCad=f.IdFunc
+                Where idSinal in (Select idSinal From pedido Where idPedido=" + idPedido + @")
                     And idConta In (" + UtilsPlanoConta.ContasSinalPedido() + ")";
 
             var lst = objPersistence.LoadData(sessao, sql).ToList();
@@ -495,7 +527,7 @@ namespace Glass.Data.DAL
             if (lst.Count > 0)
                 return lst[0];
 
-            // Se n„o houver registro de sinal no caixa di·rio, procura no caixa geral
+            // Se n√£o houver registro de sinal no caixa di√°rio, procura no caixa geral
             CaixaGeral caixaGeral = CaixaGeralDAO.Instance.GetPedidoSinal(sessao, idPedido);
 
             if (caixaGeral != null)
@@ -507,7 +539,7 @@ namespace Glass.Data.DAL
                 return caixa;
             }
 
-            // Se n„o houver nenhum registro tambÈm no caixa geral, procura nas movimentaÁıes banc·rias
+            // Se n√£o houver nenhum registro tamb√©m no caixa geral, procura nas movimenta√ß√µes banc√°rias
             MovBanco movBanco = MovBancoDAO.Instance.GetPedidoSinal(sessao, idPedido);
 
             if (movBanco != null)
@@ -524,15 +556,15 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MovimentaÁıes que ser„o usadas no estorno
+        #region Movimenta√ß√µes que ser√£o usadas no estorno
 
         /// <summary>
-        /// Retorna lista com movimentaÁıes que ser„o estornadas
+        /// Retorna lista com movimenta√ß√µes que ser√£o estornadas
         /// </summary>
         /// <param name="idPedido"></param>
         /// <param name="idLiberarPedido"></param>
         /// <param name="idSinal"></param>
-        /// <param name="tipo">1-¿ Vista, 2-Entrada</param>
+        /// <param name="tipo">1-√Ä Vista, 2-Entrada</param>
         /// <returns></returns>
         public CaixaDiario[] GetListForEstorno(uint? idPedido, uint? idLiberarPedido, uint? idSinal, int tipo)
         {
@@ -540,19 +572,19 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna lista com movimentaÁıes que ser„o estornadas
+        /// Retorna lista com movimenta√ß√µes que ser√£o estornadas
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idPedido"></param>
         /// <param name="idLiberarPedido"></param>
         /// <param name="idSinal"></param>
-        /// <param name="tipo">1-¿ Vista, 2-Entrada</param>
+        /// <param name="tipo">1-√Ä Vista, 2-Entrada</param>
         /// <returns></returns>
         public CaixaDiario[] GetListForEstorno(GDASession sessao, uint? idPedido, uint? idLiberarPedido, uint? idSinal, int tipo)
         {
             string idsConta = String.Empty;
 
-            if (tipo == 1) // ¿ Vista
+            if (tipo == 1) // √Ä Vista
                 idsConta += UtilsPlanoConta.ContasAVista() + "," +
                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoVendaGerado);
             else if (tipo == 2) // Entrada
@@ -560,7 +592,7 @@ namespace Glass.Data.DAL
                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoEntradaGerado) + "," +
                     UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoCreditoEntradaGerado);
 
-            // Busca as movimentaÁıes que este pedido possa ter feito no caixa di·rio
+            // Busca as movimenta√ß√µes que este pedido possa ter feito no caixa di√°rio
             string sql = "Select * From caixa_diario Where idConta In (" + idsConta + ") ";
 
             if (idPedido > 0)
@@ -579,10 +611,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se a loja que o pedido foi recebido est· com o caixa aberto
+        #region Verifica se a loja que o pedido foi recebido est√° com o caixa aberto
 
         /// <summary>
-        /// Verifica se a loja que o pedido foi recebido est· com o caixa aberto
+        /// Verifica se a loja que o pedido foi recebido est√° com o caixa aberto
         /// </summary>
         public bool CaixaFechadoPedido(uint idPedido)
         {
@@ -590,18 +622,18 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a loja que o pedido foi recebido est· com o caixa aberto
+        /// Verifica se a loja que o pedido foi recebido est√° com o caixa aberto
         /// </summary>
         public bool CaixaFechadoPedido(GDASession session, uint idPedido)
         {
             string sql = "Select * From caixa_diario Where idConta In ($idsConta) And idPedido=" + idPedido;
 
-            // Busca as movimentaÁıes que este pedido possa ter feito no caixa di·rio
+            // Busca as movimenta√ß√µes que este pedido possa ter feito no caixa di√°rio
             List<CaixaDiario> lstAVista = objPersistence.LoadData(session, sql.Replace("$idsConta", UtilsPlanoConta.ContasAVista()));
 
             string idsMov = String.Empty;
 
-            // Estorna valores ‡ vista
+            // Estorna valores √† vista
             foreach (CaixaDiario c in lstAVista)
                 if (CaixaFechado(session, c.IdLoja))
                     return true;
@@ -611,10 +643,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca crÈdito utilizado em um pedido
+        #region Busca cr√©dito utilizado em um pedido
 
         /// <summary>
-        /// Busca crÈdito utilizado em um pedido
+        /// Busca cr√©dito utilizado em um pedido
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -639,10 +671,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca crÈdito utilizado em uma liberaÁ„o de pedido
+        #region Busca cr√©dito utilizado em uma libera√ß√£o de pedido
 
         /// <summary>
-        /// Busca crÈdito utilizado em uma liberaÁ„o de pedido
+        /// Busca cr√©dito utilizado em uma libera√ß√£o de pedido
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -652,7 +684,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca crÈdito utilizado em uma liberaÁ„o de pedido
+        /// Busca cr√©dito utilizado em uma libera√ß√£o de pedido
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -667,10 +699,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca crÈdito gerado em um pedido
+        #region Busca cr√©dito gerado em um pedido
 
         /// <summary>
-        /// Busca crÈdito gerado em um pedido
+        /// Busca cr√©dito gerado em um pedido
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -695,10 +727,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca crÈdito gerado/usado em uma liberaÁ„o de pedido
+        #region Busca cr√©dito gerado/usado em uma libera√ß√£o de pedido
 
         /// <summary>
-        /// Busca crÈdito gerado em uma liberaÁ„o de pedido
+        /// Busca cr√©dito gerado em uma libera√ß√£o de pedido
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -726,10 +758,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna o id da loja do caixa no qual a liberaÁ„o do pedido foi feita
+        #region Retorna o id da loja do caixa no qual a libera√ß√£o do pedido foi feita
 
         /// <summary>
-        /// Retorna o id da loja do caixa no qual a liberaÁ„o do pedido foi feita
+        /// Retorna o id da loja do caixa no qual a libera√ß√£o do pedido foi feita
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -740,30 +772,30 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Fecha o caixa di·rio
+        #region Fecha o caixa di√°rio
 
         /// <summary>
-        /// Fecha o caixa di·rio.
+        /// Fecha o caixa di√°rio.
         /// </summary>
         public void FechaCaixa(GDASession sessao, uint idLoja, decimal valorTransf, DateTime dataFechamento, bool fechamentoAtrasado)
         {
             CaixaDiario cxDiario = new CaixaDiario();
 
             if (CaixaFechado(sessao, idLoja))
-                throw new Exception("O caixa j· foi fechado.");
+                throw new Exception("O caixa j√° foi fechado.");
 
             uint idCxDiario = 0;
             uint idCxDiarioSaldoRemanescente = 0;
             bool existeMovCxDiario = ExisteMovimentacoes(sessao, idLoja);
             var contadorDataUnica = 0;
 
-            // Busca as movimentaÁıes para ter acesso ao total em dinheiro e cheque
+            // Busca as movimenta√ß√µes para ter acesso ao total em dinheiro e cheque
             cxDiario = GetForRpt(sessao, idLoja, 0, dataFechamento)[0];
 
-            // Busca o saldo acumulado no dia ou do dia que o caixa n„o foi fechado
+            // Busca o saldo acumulado no dia ou do dia que o caixa n√£o foi fechado
             decimal saldo = !fechamentoAtrasado ? GetSaldoByLoja(sessao, idLoja) : GetSaldoDiaAnterior(sessao, idLoja, DateTime.Now);
 
-            // Se houver apenas movimentaÁ„o de restante de saldo, recupera o mesmo
+            // Se houver apenas movimenta√ß√£o de restante de saldo, recupera o mesmo
             decimal saldoAnterior = 0;
             if (saldo == 0 && GetMovimentacoes(sessao, idLoja, 0, DateTime.Now).Length <= 1)
             {
@@ -772,21 +804,21 @@ namespace Glass.Data.DAL
             }
 
             if (saldo < 0)
-                throw new Exception("N„o È possÌvel fechar o caixa com saldo negativo.");
+                throw new Exception("N√£o √© poss√≠vel fechar o caixa com saldo negativo.");
 
             if (valorTransf != saldo)
             {
-                // Verifica se o valor a ser transferido È menor que o saldo disponÌvel
+                // Verifica se o valor a ser transferido √© menor que o saldo dispon√≠vel
                 if (saldo < valorTransf)
-                    throw new Exception("O valor a ser transferido n„o pode ser maior que o saldo do caixa.");
+                    throw new Exception("O valor a ser transferido n√£o pode ser maior que o saldo do caixa.");
 
-                // Verifica se o valor que ser· deixado no caixa È menor ou igual ao valor de dinheiro no caixa
+                // Verifica se o valor que ser√° deixado no caixa √© menor ou igual ao valor de dinheiro no caixa
                 if ((saldo - valorTransf) > cxDiario.TotalDinheiro + saldoAnterior)
-                    throw new Exception("O valor a ser transferido deve ser no mÌnimo de " +
+                    throw new Exception("O valor a ser transferido deve ser no m√≠nimo de " +
                         (saldo - cxDiario.TotalDinheiro + saldoAnterior).ToString("C") + ".");
             }
 
-            // Insere registro no caixa di·rio indicando que o caixa foi fechado
+            // Insere registro no caixa di√°rio indicando que o caixa foi fechado
             CaixaDiario caixa = new CaixaDiario();
             caixa.IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral);
             caixa.IdLoja = idLoja;
@@ -796,11 +828,11 @@ namespace Glass.Data.DAL
             caixa.DataCad = dataFechamento;
             caixa.Usucad = UserInfo.GetUserInfo.CodUser;
             /* Chamado 16661.
-                * Deve chamar o insert base para n„o alterar a data de cadastro da movimentaÁ„o. */
+                * Deve chamar o insert base para n√£o alterar a data de cadastro da movimenta√ß√£o. */
             idCxDiario = base.InsertBase(sessao, caixa);
 
             // Se for fechamento de caixa atrasado e o valor transferido for menor que o saldo daquele dia,
-            // gera uma movimentaÁ„o "saldo remanescente"
+            // gera uma movimenta√ß√£o "saldo remanescente"
             if (fechamentoAtrasado && (saldo - valorTransf) > 0)
             {
                 CaixaDiario caixaSaldoRem = new CaixaDiario();
@@ -812,7 +844,7 @@ namespace Glass.Data.DAL
                 caixaSaldoRem.DataCad = DateTime.Now;
                 caixaSaldoRem.Usucad = UserInfo.GetUserInfo.CodUser;
                 /* Chamado 16661.
-                    * Deve chamar o insert base para n„o alterar a data de cadastro da movimentaÁ„o. */
+                    * Deve chamar o insert base para n√£o alterar a data de cadastro da movimenta√ß√£o. */
                 idCxDiarioSaldoRemanescente = base.InsertBase(sessao, caixaSaldoRem);
             }
 
@@ -832,30 +864,35 @@ namespace Glass.Data.DAL
                     valorTransfTemp -= valor;
                 }
 
-                // Transfere o valor em cart„o para o caixa geral
+                // Transfere o valor em cart√£o para o caixa geral
                 if (cxDiario.TotalCartao > 0)
                 {
-                    // Transfere o total de cart„o de CR…DITO para o caixa geral
+                    if (TipoCartaoCreditoDAO.Instance.VerificarPlanosContaReplicados(sessao))
+                    {
+                        throw new InvalidOperationException("Existem planos de conta duplicados no cadastro de Cart√µes.");
+                    }
+
+                    // Transfere o total de cart√£o de CR√âDITO para o caixa geral
                     valor = cxDiario.Cartoes.Where(f => f.Tipo == TipoCartaoEnum.Credito).Sum(f => f.Valor);
 
                     if (valor > 0)
                     {
                         CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao), 1, 0, valor, 0,
-                            null, false, "Cart„o de crÈdito", dataFechamento, false, contadorDataUnica++);
+                            null, false, "Cart√£o de cr√©dito", dataFechamento, false, contadorDataUnica++);
                         valorTransfTemp -= valor;
                     }
 
-                    // Transfere o total de cart„o de D…BITO para o caixa geral
+                    // Transfere o total de cart√£o de D√âBITO para o caixa geral
                     valor = cxDiario.TotalCartao - valor;
                     if (valor > 0)
                     {
                         CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao), 1, 0, valor, 0,
-                            null, false, "Cart„o de dÈbito", dataFechamento, false, contadorDataUnica++);
+                            null, false, "Cart√£o de d√©bito", dataFechamento, false, contadorDataUnica++);
                         valorTransfTemp -= valor;
                     }
                 }
 
-                // Transfere o valor em depÛsito para o caixa geral
+                // Transfere o valor em dep√≥sito para o caixa geral
                 if (cxDiario.TotalDeposito > 0)
                 {
                     CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDeposito), 1, 0,
@@ -879,7 +916,7 @@ namespace Glass.Data.DAL
                     valorTransfTemp -= cxDiario.TotalBoleto;
                 }
 
-                // Transfere o valor em permuta para o caixa geral (N„o precisa subtrair a permuta de valorTransfTemp, pois este valor n„o È somado no saldo)
+                // Transfere o valor em permuta para o caixa geral (N√£o precisa subtrair a permuta de valorTransfTemp, pois este valor n√£o √© somado no saldo)
                 if (cxDiario.TotalPermuta > 0)
                 {
                     CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioPermuta), 1, 0,
@@ -887,11 +924,11 @@ namespace Glass.Data.DAL
                 }
 
                 // Transfere o valor em dinheiro para o caixa geral, inseri "- (saldo - valorTransf)" para que
-                // o valor do saldo remanescente n„o seja transferido para o caixa geral
+                // o valor do saldo remanescente n√£o seja transferido para o caixa geral
                 valor = Math.Min(valorTransfTemp, cxDiario.TotalDinheiro - (saldo - valorTransf));
 
-                // Caso o total em dinheiro do caixa de hoje esteja vazio, tenha valor em dinheiro para ser transferido e n„o
-                // tenha nenhuma movimentaÁ„o no caixa hoje, forÁa a transferir o valor restante
+                // Caso o total em dinheiro do caixa de hoje esteja vazio, tenha valor em dinheiro para ser transferido e n√£o
+                // tenha nenhuma movimenta√ß√£o no caixa hoje, for√ßa a transferir o valor restante
                 if (cxDiario.TotalDinheiro == 0 && valorTransfTemp > 0 && !existeMovCxDiario)
                     valor = valorTransfTemp;
 
@@ -906,19 +943,19 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Reabre o caixa di·rio
+        #region Reabre o caixa di√°rio
 
         /// <summary>
-        /// Reabre o caixa di·rio.
+        /// Reabre o caixa di√°rio.
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idLoja"></param>
         public void ReabrirCaixa(GDASession sessao, uint idLoja)
         {
             if (!CaixaFechado(sessao, idLoja))
-                throw new Exception("O caixa n„o est· fechado.");
+                throw new Exception("O caixa n√£o est√° fechado.");
 
-            // Apaga a movimentaÁ„o de transferÍncia para o caixa geral
+            // Apaga a movimenta√ß√£o de transfer√™ncia para o caixa geral
             objPersistence.ExecuteCommand(sessao, "delete from caixa_diario where date(dataCad)=date(now()) and idLoja=" +
                 idLoja + " and idConta=" + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral));
 
@@ -931,10 +968,10 @@ namespace Glass.Data.DAL
                 UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioBoleto) + "," +
                 UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioPermuta);
 
-            // Vari·vel com o filtro das consultas SQL
+            // Vari√°vel com o filtro das consultas SQL
             string where = string.Format("date(dataMov)=date(now()) and idLoja={0} and idConta in ({1}) AND (LancManual IS NULL OR LancManual = 0)", idLoja, contas);
 
-            // Ajusta o saldo das movimentaÁıes do caixa geral
+            // Ajusta o saldo das movimenta√ß√µes do caixa geral
             string sql = @"select (select saldo from caixa_geral where idCaixaGeral < all (
                 select idCaixaGeral from caixa_geral where " + where + @") order by idCaixaGeral desc limit 1)-(
                 select saldo from caixa_geral where " + where + " limit 1)";
@@ -944,16 +981,16 @@ namespace Glass.Data.DAL
                 "select idCaixaGeral from (select idCaixaGeral from caixa_geral where " + where + ") as temp)",
                 new GDAParameter("?valor", valorMov));
 
-            // Remove as movimentaÁıes do caixa geral
+            // Remove as movimenta√ß√µes do caixa geral
             objPersistence.ExecuteCommand(sessao, "delete from caixa_geral where " + where);
         }
 
         #endregion
 
-        #region Busca as movimentaÁıes de hoje da loja passada
+        #region Busca as movimenta√ß√µes de hoje da loja passada
 
         /// <summary>
-        /// Busca as movimentaÁıes de hoje da loja passada
+        /// Busca as movimenta√ß√µes de hoje da loja passada
         /// </summary>
         /// <param name="idLoja"></param>
         /// <returns></returns>
@@ -963,7 +1000,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca as movimentaÁıes de hoje da loja passada
+        /// Busca as movimenta√ß√µes de hoje da loja passada
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idLoja"></param>
@@ -975,20 +1012,20 @@ namespace Glass.Data.DAL
             string sql = @"
                 Select c.*, f.Nome as DescrUsuCad, CONCAT(p.Descricao, COALESCE(IF(COALESCE(p.descricao, '') <> '', CONCAT(' (', c.Obs ,')'), ''),'')) as DescrPlanoConta, l.NomeFantasia as NomeLoja, cli.Nome as NomeCliente,
                     coalesce(forn.RazaoSocial, forn.NomeFantasia) as NomeFornecedor
-                From caixa_diario c 
-                    Left Join funcionario f On c.UsuCad=f.IdFunc 
-                    Left Join loja l On c.IdLoja=l.IdLoja 
+                From caixa_diario c
+                    Left Join funcionario f On c.UsuCad=f.IdFunc
+                    Left Join loja l On c.IdLoja=l.IdLoja
                     Left Join cliente cli On cli.id_Cli=c.idCliente
                     Left Join fornecedor forn On forn.idFornec=c.idFornec
-                    Left Join plano_contas p On c.IdConta=p.IdConta 
-                Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(?data) 
-                    And MONTH(c.DataCad)=MONTH(?data) 
-                    And YEAR(c.DataCad)=YEAR(?data) 
+                    Left Join plano_contas p On c.IdConta=p.IdConta
+                Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(?data)
+                    And MONTH(c.DataCad)=MONTH(?data)
+                    And YEAR(c.DataCad)=YEAR(?data)
                     And c.IdLoja=" + idLoja;
 
             if (idFunc > 0)
                 sql += " and c.usuCad=" + idFunc + " And c.idConta<>" + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral);
-            
+
             sql += " Order by c.idCaixaDiario";
 
             GDAParameter param = new GDAParameter("?data", data);
@@ -997,7 +1034,7 @@ namespace Glass.Data.DAL
 
             RecalculaSaldos(session, idFunc, ref lstCx);
 
-            // Se n„o houver movimentaÁıes no caixa de hoje, busca o saldo remanescente do dia anterior
+            // Se n√£o houver movimenta√ß√µes no caixa de hoje, busca o saldo remanescente do dia anterior
             if (lstCx.Count == 0)
             {
                 decimal saldoDiaAnterior = GetSaldoDiaAnterior(session, idLoja, data);
@@ -1018,7 +1055,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recalcula os saldos caso seja usado filtro por funcion·rio
+        /// Recalcula os saldos caso seja usado filtro por funcion√°rio
         /// </summary>
         /// <param name="idFunc"></param>
         /// <param name="lstCx"></param>
@@ -1028,16 +1065,16 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recalcula os saldos caso seja usado filtro por funcion·rio
+        /// Recalcula os saldos caso seja usado filtro por funcion√°rio
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idFunc"></param>
         /// <param name="lstCx"></param>
         private void RecalculaSaldos(GDASession session, uint idFunc, ref List<CaixaDiario> lstCx)
         {
-            // Se houver filtro por funcion·rio, calcula o saldo de 
-            // cada operaÁ„o realizada por ele e estornos, uma vez que o que est· salvo no BD considera todas 
-            // as movimentaÁıes do caixa di·rio
+            // Se houver filtro por funcion√°rio, calcula o saldo de
+            // cada opera√ß√£o realizada por ele e estornos, uma vez que o que est√° salvo no BD considera todas
+            // as movimenta√ß√µes do caixa di√°rio
             if (idFunc > 0)
             {
                 decimal saldo = 0;
@@ -1065,8 +1102,8 @@ namespace Glass.Data.DAL
                         UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfParaCxGeralCheque),
                     };
 
-                    // SÛ altera se o saldo tiver sido alterado
-                    if (lstCx[i].Saldo != ObtemSaldoMovAnterior(session, lstCx[i].IdCaixaDiario) 
+                    // S√≥ altera se o saldo tiver sido alterado
+                    if (lstCx[i].Saldo != ObtemSaldoMovAnterior(session, lstCx[i].IdCaixaDiario)
                         && (lstCx[i].MudarSaldo.GetValueOrDefault() || idsContaTransferencia.Contains(lstCx[i].IdConta)))
                     {
                         if (lstCx[i].TipoMov == 1)
@@ -1081,7 +1118,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se existe alguma movimentaÁ„o neste dia
+        /// Verifica se existe alguma movimenta√ß√£o neste dia
         /// </summary>
         /// <param name="idLoja"></param>
         /// <param name="data"></param>
@@ -1090,10 +1127,10 @@ namespace Glass.Data.DAL
         {
             string sql = @"
                 Select Count(*) > 0
-                From caixa_diario c 
-                Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(?data) 
-                    And MONTH(c.DataCad)=MONTH(?data) 
-                    And YEAR(c.DataCad)=YEAR(?data) 
+                From caixa_diario c
+                Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(?data)
+                    And MONTH(c.DataCad)=MONTH(?data)
+                    And YEAR(c.DataCad)=YEAR(?data)
                     And c.IdLoja=" + idLoja;
 
             return ExecuteScalar<bool>(sessao, sql, new GDAParameter("?data", data));
@@ -1101,10 +1138,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca as movimentaÁıes de hoje da loja passada com os totais em cheque/dinheiro/cart„o/crÈdito
+        #region Busca as movimenta√ß√µes de hoje da loja passada com os totais em cheque/dinheiro/cart√£o/cr√©dito
 
         /// <summary>
-        /// Busca as movimentaÁıes de hoje da loja passada com os totais em cheque/dinheiro/cart„o/crÈdito
+        /// Busca as movimenta√ß√µes de hoje da loja passada com os totais em cheque/dinheiro/cart√£o/cr√©dito
         /// </summary>
         /// <param name="idLoja"></param>
         /// <returns></returns>
@@ -1114,7 +1151,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca as movimentaÁıes de hoje da loja passada com os totais em cheque/dinheiro/cart„o/crÈdito
+        /// Busca as movimenta√ß√µes de hoje da loja passada com os totais em cheque/dinheiro/cart√£o/cr√©dito
         /// </summary>
         /// <param name="idLoja"></param>
         /// <returns></returns>
@@ -1123,15 +1160,15 @@ namespace Glass.Data.DAL
             string sql = @"
                 Select c.*, f.Nome as DescrUsuCad, p.Descricao as DescrPlanoConta, l.NomeFantasia as NomeLoja, cli.Nome as NomeCliente,
                     coalesce(forn.RazaoSocial, forn.NomeFantasia) as NomeFornecedor
-                From caixa_diario c 
-                    Left Join funcionario f On c.UsuCad=f.IdFunc 
-                    Left Join loja l On c.IdLoja=l.IdLoja 
+                From caixa_diario c
+                    Left Join funcionario f On c.UsuCad=f.IdFunc
+                    Left Join loja l On c.IdLoja=l.IdLoja
                     Left Join cliente cli On cli.id_Cli=c.idCliente
                     Left Join fornecedor forn On forn.idFornec=c.idFornec
-                    Left Join plano_contas p On c.IdConta=p.IdConta 
+                    Left Join plano_contas p On c.IdConta=p.IdConta
                 Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(?data)
-                    And MONTH(c.DataCad)=MONTH(?data) 
-                    And YEAR(c.DataCad)=YEAR(?data) 
+                    And MONTH(c.DataCad)=MONTH(?data)
+                    And YEAR(c.DataCad)=YEAR(?data)
                     And c.IdLoja=" + idLoja;
 
             var filtroFunc = String.Empty;
@@ -1208,10 +1245,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna movimentaÁıes relacionadas ao acerto passado
+        #region Retorna movimenta√ß√µes relacionadas ao acerto passado
 
         /// <summary>
-        /// Retorna movimentaÁıes relacionadas ao acerto passado
+        /// Retorna movimenta√ß√µes relacionadas ao acerto passado
         /// </summary>
         /// <param name="idAcerto"></param>
         /// <returns></returns>
@@ -1225,10 +1262,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentaÁıes relacionadas a um acerto de cheques
+        #region Busca movimenta√ß√µes relacionadas a um acerto de cheques
 
         /// <summary>
-        /// Retorna movimentaÁıes relacionadas ao acerto de cheques passado
+        /// Retorna movimenta√ß√µes relacionadas ao acerto de cheques passado
         /// </summary>
         /// <param name="idAcerto"></param>
         /// <returns></returns>
@@ -1238,7 +1275,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna movimentaÁıes relacionadas ao acerto de cheques passado
+        /// Retorna movimenta√ß√µes relacionadas ao acerto de cheques passado
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idAcerto"></param>
@@ -1252,10 +1289,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna movimentaÁıes relacionadas ‡ liberaÁ„o passada
+        #region Retorna movimenta√ß√µes relacionadas √† libera√ß√£o passada
 
         /// <summary>
-        /// Retorna movimentaÁıes relacionadas ‡ liberaÁ„o passada
+        /// Retorna movimenta√ß√µes relacionadas √† libera√ß√£o passada
         /// </summary>
         public CaixaDiario[] GetByLiberacao(GDASession session, uint idLiberarPedido)
         {
@@ -1267,10 +1304,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentaÁıes relacionadas a um sinal de pedido
+        #region Busca movimenta√ß√µes relacionadas a um sinal de pedido
 
         /// <summary>
-        /// Busca movimentaÁıes relacionadas a um sinal de pedido
+        /// Busca movimenta√ß√µes relacionadas a um sinal de pedido
         /// </summary>
         /// <param name="idAcerto"></param>
         /// <returns></returns>
@@ -1278,7 +1315,7 @@ namespace Glass.Data.DAL
         {
             string sql = @"
                 Select * From caixa_diario
-                Where idPedido=" + idPedido + @" 
+                Where idPedido=" + idPedido + @"
                     And idConta in (" + UtilsPlanoConta.ContasSinalPedido() + "," + UtilsPlanoConta.ResumoDiarioContasCreditoGerado() + @")
                 Order By idCaixaDiario Desc";
 
@@ -1287,10 +1324,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna movimentaÁıes relacionadas ‡ uma conta recebida
+        #region Retorna movimenta√ß√µes relacionadas √† uma conta recebida
 
         /// <summary>
-        /// Retorna as ˙ltimas movimentaÁıes relacionadas ‡ uma conta recebida
+        /// Retorna as √∫ltimas movimenta√ß√µes relacionadas √† uma conta recebida
         /// </summary>
         /// <param name="idContaR"></param>
         /// <returns></returns>
@@ -1303,10 +1340,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentaÁıes relacionadas a uma obra
+        #region Busca movimenta√ß√µes relacionadas a uma obra
 
         /// <summary>
-        /// Retorna movimentaÁıes relacionadas a uma obra
+        /// Retorna movimenta√ß√µes relacionadas a uma obra
         /// </summary>
         /// <param name="idObra"></param>
         /// <returns></returns>
@@ -1316,7 +1353,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna movimentaÁıes relacionadas a uma obra
+        /// Retorna movimenta√ß√µes relacionadas a uma obra
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idObra"></param>
@@ -1332,48 +1369,48 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Estorno retirada/crÈdito
+        #region Estorno retirada/cr√©dito
 
         private object EstornarCreditoOuRetiradaLock = new object();
 
-        #region Recupera a movimentaÁ„o de crÈdito/retirada
+        #region Recupera a movimenta√ß√£o de cr√©dito/retirada
 
         /// <summary>
-        /// Recupera a movimentaÁ„o de crÈdito/retirada.
+        /// Recupera a movimenta√ß√£o de cr√©dito/retirada.
         /// </summary>
         public void RecuperarMovimentacaoCreditoOuRetirada(GDASession session, int idCaixaDiario, out CaixaDiario movimentacao)
         {
             if (idCaixaDiario == 0)
-                throw new Exception("Esta movimentaÁ„o n„o existe.");
+                throw new Exception("Esta movimenta√ß√£o n√£o existe.");
 
             movimentacao = GetMovimentacao(session, idCaixaDiario);
 
             if (movimentacao == null)
-                throw new Exception("Esta movimentaÁ„o n„o existe.");
+                throw new Exception("Esta movimenta√ß√£o n√£o existe.");
 
             if (DateTime.Parse(DateTime.Now.ToString("dd/MM/yyyy")) != DateTime.Parse(movimentacao.DataCad.ToString("dd/MM/yyyy")))
-                throw new Exception("Esta movimentaÁ„o n„o foi feita hoje.");
+                throw new Exception("Esta movimenta√ß√£o n√£o foi feita hoje.");
         }
 
         #endregion
 
-        #region Valida o estorno do crÈdito/retirada
+        #region Valida o estorno do cr√©dito/retirada
 
         /// <summary>
-        /// Valida o estorno da movimentaÁ„o.
+        /// Valida o estorno da movimenta√ß√£o.
         /// </summary>
         public void ValidarEstornoCreditoOuRetirada(int idCaixaDiario, int formaSaida)
         {
             if (formaSaida == 0)
-                throw new Exception("SÛ È possÌvel estornar valores lanÁados manualmente no caixa.");
+                throw new Exception("S√≥ √© poss√≠vel estornar valores lan√ßados manualmente no caixa.");
         }
 
         #endregion
 
-        #region Verifica se o estorno do crÈdito/retirada j· foi efetuado
+        #region Verifica se o estorno do cr√©dito/retirada j√° foi efetuado
 
         /// <summary>
-        /// Verifica se o estorno da movimentaÁ„o j· foi efetuado.
+        /// Verifica se o estorno da movimenta√ß√£o j√° foi efetuado.
         /// </summary>
         public void VerificarEstornoCreditoOuRetiradaJaEfetuadoComTransacao(int idCaixaDiario, out CaixaDiario movimentacao)
         {
@@ -1398,7 +1435,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o estorno da movimentaÁ„o j· foi efetuado.
+        /// Verifica se o estorno da movimenta√ß√£o j√° foi efetuado.
         /// </summary>
         public void VerificarEstornoCreditoOuRetiradaJaEfetuado(GDASession session, int idCaixaDiario, out CaixaDiario movimentacao)
         {
@@ -1410,17 +1447,17 @@ namespace Glass.Data.DAL
                     new GDAParameter("?data", DateTime.Now)) == 0;
 
             if (!podeEstornar)
-                throw new Exception(string.Format("{0} j· foi {1}.",
-                    movimentacao.TipoMov == 1 ? "Este crÈdito" : "Esta retirada",
+                throw new Exception(string.Format("{0} j√° foi {1}.",
+                    movimentacao.TipoMov == 1 ? "Este cr√©dito" : "Esta retirada",
                     movimentacao.TipoMov == 1 ? "estornado" : "estornada"));
         }
 
         #endregion
 
-        #region Estorna a movimentaÁ„o de crÈdito/retirada
+        #region Estorna a movimenta√ß√£o de cr√©dito/retirada
 
         /// <summary>
-        /// Valida o estorno da movimentaÁ„o.
+        /// Valida o estorno da movimenta√ß√£o.
         /// </summary>
         public void EstornarCreditoOuRetirada(int idCaixaDiario, string obs)
         {
@@ -1469,10 +1506,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Exclui movimentaÁıes por PKs
+        #region Exclui movimenta√ß√µes por PKs
 
         /// <summary>
-        /// Exclui movimentaÁıes com as PKs passadas
+        /// Exclui movimenta√ß√µes com as PKs passadas
         /// </summary>
         /// <param name="pks"></param>
         public void DeleteByPKs(string pks)
@@ -1487,10 +1524,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se o caixa foi/est· fechado
+        #region Verifica se o caixa foi/est√° fechado
 
         /// <summary>
-        /// Verifica se h· movimentaÁıes no caixa da loja passada hoje
+        /// Verifica se h√° movimenta√ß√µes no caixa da loja passada hoje
         /// </summary>
         public bool ExisteMovimentacoes(uint idLoja)
         {
@@ -1498,18 +1535,18 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se h· movimentaÁıes no caixa da loja passada hoje
+        /// Verifica se h√° movimenta√ß√µes no caixa da loja passada hoje
         /// </summary>
         public bool ExisteMovimentacoes(GDASession session, uint idLoja)
         {
-            // Verifica se h· alguma movimentaÁ„o no cx diario feita hoje
+            // Verifica se h√° alguma movimenta√ß√£o no cx diario feita hoje
             return objPersistence.ExecuteSqlQueryCount(session, "Select count(*) From caixa_diario c " +
                 "Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(current_date) And MONTH(c.DataCad)=MONTH(current_date) " +
                 "And YEAR(c.DataCad)=YEAR(current_date) And c.IdLoja=" + idLoja) > 0;
         }
 
         /// <summary>
-        /// Verifica se o caixa j· foi fechado
+        /// Verifica se o caixa j√° foi fechado
         /// </summary>
         /// <param name="idLoja"></param>
         /// <returns>True-Caixa Fechado</returns>
@@ -1519,14 +1556,14 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o caixa j· foi fechado
+        /// Verifica se o caixa j√° foi fechado
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idLoja"></param>
         /// <returns>True-Caixa Fechado</returns>
         public bool CaixaFechado(GDASession session, uint idLoja)
         {
-            // Verifica se o caixa j· est· fechado
+            // Verifica se o caixa j√° est√° fechado
             string sql = "Select count(*) From caixa_diario c " +
                 "Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(current_date) " +
                 "And MONTH(c.DataCad)=MONTH(current_date) " +
@@ -1562,7 +1599,7 @@ namespace Glass.Data.DAL
         /// Verifica se o caixa foi fechado no dia anterior
         /// </summary>
         /// <param name="idLoja"></param>
-        /// <param name="existeMovimentacoes">true se houver movimentaÁıes no caixa hoje</param>
+        /// <param name="existeMovimentacoes">true se houver movimenta√ß√µes no caixa hoje</param>
         /// <returns>True-Caixa Fechado</returns>
         public bool CaixaFechadoDiaAnterior(uint idLoja, bool existeMovimentacoes)
         {
@@ -1575,31 +1612,31 @@ namespace Glass.Data.DAL
         /// <param name="sessao"></param>
         /// <param name="idLoja"></param>
         /// <returns>True-Caixa Fechado</returns>
-        /// <param name="existeMovimentacoes">true se houver movimentaÁıes no caixa hoje</param>
+        /// <param name="existeMovimentacoes">true se houver movimenta√ß√µes no caixa hoje</param>
         public bool CaixaFechadoDiaAnterior(GDASession sessao, uint idLoja, bool existeMovimentacoes)
         {
-            // Se houver movimentaÁıes no caixa di·rio da loja passada hoje, o caixa È dado como fechado
+            // Se houver movimenta√ß√µes no caixa di√°rio da loja passada hoje, o caixa √© dado como fechado
             if (existeMovimentacoes)
                 return true;
 
-            // Busca a ˙ltima movimentaÁ„o feita no caixa di·rio anterior ‡ hoje
+            // Busca a √∫ltima movimenta√ß√£o feita no caixa di√°rio anterior √† hoje
             uint? obj = ExecuteScalar<uint?>(sessao, "select idConta from caixa_diario where idloja=" + idLoja +
                 " order by idcaixadiario desc limit 1");
 
             if (obj == null)
                 return true;
 
-            // Verifica se a ˙ltima movimentaÁ„o foi de transf. p/ cx geral, se n„o tiver sido,
-            // significa que o caixa n„o foi fechado no dia anterior
+            // Verifica se a √∫ltima movimenta√ß√£o foi de transf. p/ cx geral, se n√£o tiver sido,
+            // significa que o caixa n√£o foi fechado no dia anterior
             return obj == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral);
         }
 
         #endregion
 
-        #region Busca movimentaÁ„o anterior
+        #region Busca movimenta√ß√£o anterior
 
         /// <summary>
-        /// Busca movimentaÁ„o anterior
+        /// Busca movimenta√ß√£o anterior
         /// </summary>
         /// <param name="idCaixaDiario"></param>
         /// <returns></returns>
@@ -1609,7 +1646,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca movimentaÁ„o anterior
+        /// Busca movimenta√ß√£o anterior
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idCaixaDiario"></param>
@@ -1618,7 +1655,7 @@ namespace Glass.Data.DAL
         {
             if (idCaixaDiario == 0)
                 return null;
-            
+
             idCaixaDiario = idCaixaDiario - 1;
 
             while (idCaixaDiario > 0 && objPersistence.ExecuteSqlQueryCount(
@@ -1632,7 +1669,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca o saldo da movimentaÁ„o anterior
+        /// Busca o saldo da movimenta√ß√£o anterior
         /// </summary>
         /// <param name="idCaixaDiario"></param>
         /// <returns></returns>
@@ -1642,7 +1679,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca o saldo da movimentaÁ„o anterior
+        /// Busca o saldo da movimenta√ß√£o anterior
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idCaixaDiario"></param>
@@ -1690,7 +1727,7 @@ namespace Glass.Data.DAL
         /// Retorna saldo deixado no dia anterior
         /// </summary>
         /// <param name="idLoja"></param>
-        /// <param name="data">Ser· considerado o dia antetior ‡ data informada.</param>
+        /// <param name="data">Ser√° considerado o dia antetior √† data informada.</param>
         /// <returns></returns>
         public decimal GetSaldoDiaAnterior(uint idLoja, DateTime? data)
         {
@@ -1702,7 +1739,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idLoja"></param>
-        /// <param name="data">Ser· considerado o dia antetior ‡ data informada.</param>
+        /// <param name="data">Ser√° considerado o dia antetior √† data informada.</param>
         /// <returns></returns>
         public decimal GetSaldoDiaAnterior(GDASession session, uint idLoja, DateTime? data)
         {
@@ -1711,41 +1748,41 @@ namespace Glass.Data.DAL
                 WHERE cd.IdLoja=" + idLoja;
 
             /* Chamado 15938.
-             * O saldo atual estava sendo buscado nas datas onde n„o haviam movimentaÁıes. */
+             * O saldo atual estava sendo buscado nas datas onde n√£o haviam movimenta√ß√µes. */
             if (data != null)
                 sql += " AND DATE(cd.DataCad)<?data";
 
             sql += " ORDER BY cd.IdCaixaDiario DESC LIMIT 1";
 
-            // Busca a ˙ltima movimentaÁ„o feita no caixa di·rio anterior ‡ hoje
+            // Busca a √∫ltima movimenta√ß√£o feita no caixa di√°rio anterior √† hoje
             return ExecuteScalar<decimal>(session, sql, new GDAParameter("?data", data));
         }
 
         #endregion
 
-        #region Retorna o ˙ltimo dia que o caixa n„o foi fechado
+        #region Retorna o √∫ltimo dia que o caixa n√£o foi fechado
 
         /// <summary>
-        /// Retorna o ˙ltimo dia que o caixa n„o foi fechado
+        /// Retorna o √∫ltimo dia que o caixa n√£o foi fechado
         /// </summary>
         /// <param name="idLoja"></param>
         /// <returns></returns>
         public DateTime GetDataCaixaAberto(GDASession sessao, uint idLoja)
         {
-            // Busca a ˙ltima movimentaÁ„o feita no caixa di·rio anterior ‡ hoje
+            // Busca a √∫ltima movimenta√ß√£o feita no caixa di√°rio anterior √† hoje
             return ExecuteScalar<DateTime>(sessao, "select dataCad from caixa_diario where idloja=" + idLoja +
                 " order by idcaixadiario desc limit 1");
         }
 
         #endregion
 
-        #region Recupera as movimentaÁıes por cliente
+        #region Recupera as movimenta√ß√µes por cliente
 
         /// <summary>
-        /// Retorna as movimentaÁıes por cliente.
+        /// Retorna as movimenta√ß√µes por cliente.
         /// </summary>
         /// <param name="idCliente"></param>
-        /// <param name="planosConta">Os planos de conta usados como filtro. Pode ser omitido para n„o filtrar pelos planos de conta.</param>
+        /// <param name="planosConta">Os planos de conta usados como filtro. Pode ser omitido para n√£o filtrar pelos planos de conta.</param>
         /// <returns></returns>
         public IList<CaixaDiario> GetByCliente(uint idCliente, DateTime inicio, DateTime fim, params uint[] planosConta)
         {
@@ -1767,10 +1804,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Existe movimentaÁ„o por pedido?
+        #region Existe movimenta√ß√£o por pedido?
 
         /// <summary>
-        /// Existe movimentaÁ„o por pedido?
+        /// Existe movimenta√ß√£o por pedido?
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -1786,7 +1823,7 @@ namespace Glass.Data.DAL
         #region Transferir Cx. Geral
 
         /// <summary>
-        /// Efetua transferÍncia de valor do caixa di·rio para o caixa geral.
+        /// Efetua transfer√™ncia de valor do caixa di√°rio para o caixa geral.
         /// </summary>
         public void TransferirCxGeral(decimal valor, int formaSaida, string obs)
         {
@@ -1805,11 +1842,11 @@ namespace Glass.Data.DAL
                         var saldoCaixaDiarioCheque = GetSaldoByFormaPagto(transaction, Pagto.FormaPagto.ChequeProprio, 0, idLoja, 0, DateTime.Now, 1);
 
                         if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario))
-                            throw new Exception("Erro\tApenas funcion·rio Caixa Di·rio pode efetuar transferÍncia para o Caixa Geral.");
+                            throw new Exception("Erro\tApenas funcion√°rio Caixa Di√°rio pode efetuar transfer√™ncia para o Caixa Geral.");
 
                         /* Chamado 66573. */
                         if (!CaixaFechadoDiaAnterior(transaction, idLoja))
-                            throw new Exception("O caixa n„o foi fechado no ˙ltimo dia de trabalho.");
+                            throw new Exception("O caixa n√£o foi fechado no √∫ltimo dia de trabalho.");
 
                         // Movimenta caixa geral
                         var idCaixaGeral = CaixaGeralDAO.Instance.MovCxGeral(transaction, null, null, null,
@@ -1817,12 +1854,12 @@ namespace Glass.Data.DAL
                             valor, 0, null, true, null, DateTime.Now, true, null);
 
                         if (idCaixaGeral == 0)
-                            throw new Exception("MovimentaÁ„o n„o foi creditada no caixa geral.");
+                            throw new Exception("Movimenta√ß√£o n√£o foi creditada no caixa geral.");
 
                         var caixaGeral = CaixaGeralDAO.Instance.GetElementByPrimaryKey(transaction, idCaixaGeral);
 
                         if (!CaixaGeralDAO.Instance.Exists(transaction, caixaGeral) || caixaGeral.ValorMov != valor)
-                            throw new Exception("MovimentaÁ„o n„o foi creditada no caixa geral.");
+                            throw new Exception("Movimenta√ß√£o n√£o foi creditada no caixa geral.");
 
                         var caixa = new CaixaDiario();
                         caixa.IdLoja = idLoja;
@@ -1853,7 +1890,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se existe alguma movimentaÁ„o feita com o valor passado nos ˙ltimos segundos
+        /// Verifica se existe alguma movimenta√ß√£o feita com o valor passado nos √∫ltimos segundos
         /// </summary>
         public bool ExisteMovimentacaoRecente(GDASession session, uint idLoja, uint idConta, decimal valor)
         {
@@ -1864,10 +1901,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retirar Cx. Di·rio
+        #region Retirar Cx. Di√°rio
 
         /// <summary>
-        /// Efetua transferÍncia de valor do caixa di·rio para o caixa geral.
+        /// Efetua transfer√™ncia de valor do caixa di√°rio para o caixa geral.
         /// </summary>
         public void RetirarValor(int idLoja, decimal valor, int? idCheque, int idConta, int formaSaida, string obs)
         {
@@ -1878,14 +1915,14 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var valorMov = valor;
-                    // Busca o saldo do caixa di·rio, se o saldo for 0 e n„o houver movimentaÁıes no caixa hoje, retorna o saldo do dia anterior
+                    // Busca o saldo do caixa di√°rio, se o saldo for 0 e n√£o houver movimenta√ß√µes no caixa hoje, retorna o saldo do dia anterior
                     var saldo = GetSaldoByLoja(transaction, (uint)idLoja);
 
                     if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario))
                     {
-                        throw new Exception("Apenas funcion·rio Caixa pode efetuar retirada do caixa.");
+                        throw new Exception("Apenas funcion√°rio Caixa pode efetuar retirada do caixa.");
                     }
-                    
+
                     if (saldo == 0 && GetMovimentacoes(transaction, (uint)idLoja, 0, DateTime.Now).Length <= 1)
                     {
                         saldo = GetSaldoDiaAnterior(transaction, (uint)idLoja);
@@ -1894,12 +1931,12 @@ namespace Glass.Data.DAL
                     // Verifica se o caixa possui saldo para realizar esta retirada
                     if (saldo - valorMov < 0)
                     {
-                        throw new Exception("N„o h· saldo suficiente para realizar esta retirada.");
+                        throw new Exception("N√£o h√° saldo suficiente para realizar esta retirada.");
                     }
 
                     if (ExisteMovimentacaoRecente(transaction, (uint)idLoja, (uint)idConta, valor))
                     {
-                        throw new Exception("Foi feita uma movimentaÁ„o idÍntica nos ˙ltimos segundos, verifique se a operaÁ„o foi efetuada no caixa di·rio.");
+                        throw new Exception("Foi feita uma movimenta√ß√£o id√™ntica nos √∫ltimos segundos, verifique se a opera√ß√£o foi efetuada no caixa di√°rio.");
                     }
 
                     MovCaixa(transaction, (uint)idLoja, null, 2, valorMov, 0, (uint)idConta, null, formaSaida, obs, true, null);
@@ -1927,42 +1964,42 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region ValidaÁıes
+        #region Valida√ß√µes
 
         /// <summary>
         /// Verifica se o saldo do caixa pode ser movimentado.
         /// </summary>
         public void ValidarSaldoMovimentacao(GDASession session, CaixaDiario caixaDiario)
         {
-            // N„o permite movimentar o caixa de forma que o mesmo fique negativo (esta validaÁ„o deve ficar aqui, apÛs a inserÁ„o de saldo acima).
+            // N√£o permite movimentar o caixa de forma que o mesmo fique negativo (esta valida√ß√£o deve ficar aqui, ap√≥s a inser√ß√£o de saldo acima).
             if (caixaDiario.Saldo < 0)
             {
-                throw new Exception("N„o h· saldo suficiente no caixa para esta movimentaÁ„o.");
+                throw new Exception("N√£o h√° saldo suficiente no caixa para esta movimenta√ß√£o.");
             }
 
             var formaPagto = UtilsPlanoConta.GetFormaPagtoByIdConta(caixaDiario.IdConta);
 
             if (caixaDiario.TipoMov == 2)
             {
-                // Se for saÌda de dinheiro, verifica se h· saldo em dinheiro suficiente.
+                // Se for sa√≠da de dinheiro, verifica se h√° saldo em dinheiro suficiente.
                 if (caixaDiario.FormaSaida == 1 || formaPagto?.IdFormaPagto == (uint)Pagto.FormaPagto.Dinheiro)
                 {
                     var saldoDinheiro = GetSaldoByFormaPagto(session, Pagto.FormaPagto.Dinheiro, 0, caixaDiario.IdLoja, 0, DateTime.Now, 1);
 
                     if (caixaDiario.Valor > saldoDinheiro)
                     {
-                        throw new Exception($"N„o h· saldo de dinheiro suficiente para realizar esta retirada. Saldo em dinheiro: { saldoDinheiro }.");
+                        throw new Exception($"N√£o h√° saldo de dinheiro suficiente para realizar esta retirada. Saldo em dinheiro: { saldoDinheiro }.");
                     }
                 }
 
-                // Se for saÌda de cheque, verifica se h· saldo em cheque suficiente.
+                // Se for sa√≠da de cheque, verifica se h√° saldo em cheque suficiente.
                 if (caixaDiario.FormaSaida == 2 || formaPagto?.IdFormaPagto == (uint)Pagto.FormaPagto.ChequeProprio)
                 {
                     var saldoCheque = GetSaldoByFormaPagto(session, Pagto.FormaPagto.ChequeProprio, 0, caixaDiario.IdLoja, 0, DateTime.Now, 1);
 
                     if (caixaDiario.Valor > saldoCheque)
                     {
-                        throw new Exception($"N„o h· saldo de cheque suficiente para realizar esta retirada. Saldo em cheque: { saldoCheque }.");
+                        throw new Exception($"N√£o h√° saldo de cheque suficiente para realizar esta retirada. Saldo em cheque: { saldoCheque }.");
                     }
                 }
 
@@ -1972,7 +2009,7 @@ namespace Glass.Data.DAL
 
                     if (caixaDiario.Valor > saldoDeposito)
                     {
-                        throw new Exception($"N„o h· saldo de depÛsito suficiente para realizar esta retirada. Saldo em depÛsito: { saldoDeposito.ToString("C") }");
+                        throw new Exception($"N√£o h√° saldo de dep√≥sito suficiente para realizar esta retirada. Saldo em dep√≥sito: { saldoDeposito.ToString("C") }");
                     }
                 }
             }
@@ -1980,10 +2017,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos Sobrescritos
+        #region M√©todos Sobrescritos
 
         /// <summary>
-        /// APAGAR: Depois da migraÁ„o
+        /// APAGAR: Depois da migra√ß√£o
         /// </summary>
         public override uint Insert(CaixaDiario objInsert)
         {
@@ -1992,24 +2029,24 @@ namespace Glass.Data.DAL
 
         public override uint Insert(GDASession sessao, CaixaDiario objInsert)
         {
-            // Verifica se o caixa j· foi fechado.
+            // Verifica se o caixa j√° foi fechado.
             if (CaixaFechado(sessao, objInsert.IdLoja))
             {
-                throw new Exception("O caixa j· foi fechado.");
+                throw new Exception("O caixa j√° foi fechado.");
             }
 
-            // Se n„o houver movimentaÁ„o feita no caixa de hoje, verifica se o caixa do dia anterior foi fechado e recupera o saldo do dia anterior.
+            // Se n√£o houver movimenta√ß√£o feita no caixa de hoje, verifica se o caixa do dia anterior foi fechado e recupera o saldo do dia anterior.
             if (!ExisteMovimentacoes(sessao, objInsert.IdLoja))
             {
                 // Verifica se o caixa foi fechado no dia anterior.
                 if (!CaixaFechadoDiaAnterior(sessao, objInsert.IdLoja, false))
                 {
-                    throw new Exception("O caixa n„o foi fechado no ˙ltimo dia de trabalho.");
+                    throw new Exception("O caixa n√£o foi fechado no √∫ltimo dia de trabalho.");
                 }
 
-                // Recupera saldo de dinheiro deixado no dia anterior, se n„o houver movimentaÁıes hoje.
+                // Recupera saldo de dinheiro deixado no dia anterior, se n√£o houver movimenta√ß√µes hoje.
                 var saldoRemanescente = GetSaldoDiaAnterior(sessao, objInsert.IdLoja);
-                // Insere movimentaÁ„o com o saldo remanescente, se houver.
+                // Insere movimenta√ß√£o com o saldo remanescente, se houver.
                 var caixaDiario = new CaixaDiario();
 
                 caixaDiario.IdLoja = objInsert.IdLoja;
@@ -2020,7 +2057,7 @@ namespace Glass.Data.DAL
                 caixaDiario.DataCad = DateTime.Now;
 
                 base.Insert(sessao, caixaDiario);
-                
+
                 objInsert.Saldo += saldoRemanescente;
             }
 
@@ -2034,10 +2071,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentaÁıes relacionadas a uma devoluÁ„o de pagamento
+        #region Busca movimenta√ß√µes relacionadas a uma devolu√ß√£o de pagamento
 
         /// <summary>
-        /// Retorna movimentaÁıes relacionadas a uma devoluÁ„o de pagamento
+        /// Retorna movimenta√ß√µes relacionadas a uma devolu√ß√£o de pagamento
         /// </summary>
         /// <param name="idDevolucaoPagto"></param>
         /// <returns></returns>
@@ -2047,7 +2084,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna movimentaÁıes relacionadas a uma devoluÁ„o de pagamento
+        /// Retorna movimenta√ß√µes relacionadas a uma devolu√ß√£o de pagamento
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idDevolucaoPagto"></param>
@@ -2062,11 +2099,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentaÁıes por data
+        #region Busca movimenta√ß√µes por data
 
         /// <summary>
-        /// ObtÈm as movimentaÁıes do caixa geral pela sua data de cadastro.
-        /// MÈtodo utilizado principalmente para ajustar a tabela pagto_contas_receber.
+        /// Obt√©m as movimenta√ß√µes do caixa geral pela sua data de cadastro.
+        /// M√©todo utilizado principalmente para ajustar a tabela pagto_contas_receber.
         /// </summary>
         public IList<CaixaDiario> ObterMovimentacoesPorData(string dataInicio, string dataFim)
         {
@@ -2091,10 +2128,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Cart„o n„o identificado
+        #region Cart√£o n√£o identificado
 
         /// <summary>
-        /// Associa um cart„o n„o identificado ao caixa geral
+        /// Associa um cart√£o n√£o identificado ao caixa geral
         /// </summary>
         public void AssociarCaixaDiarioIdCartaoNaoIdentificado(GDASession sessao, uint idCxDiario, uint idCartaoNaoIdentificado)
         {
@@ -2103,7 +2140,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// recupera movimentaÁıes a partir do cart„o n„o identificado
+        /// recupera movimenta√ß√µes a partir do cart√£o n√£o identificado
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idCartaoNaoIdentificado"></param>

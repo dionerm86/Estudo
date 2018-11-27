@@ -1386,6 +1386,8 @@ namespace Glass.Data.DAL
 
                     uint idProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.InsertBase(transaction, pe, pedEsp);
 
+                    LogAlteracaoDAO.Instance.CopiarLogImagemProdPed(transaction, (int)p.IdProdPed, (int)idProdPedEsp);
+
                     // Salva os registro da rentabilidade
                     foreach (var registro in ProdutoPedidoRentabilidadeDAO.Instance.ObterPorProdutoPedido(transaction, p.IdProdPed))
                         ProdutoPedidoEspelhoRentabilidadeDAO.Instance.Insert(transaction, new ProdutoPedidoEspelhoRentabilidade
@@ -2399,8 +2401,8 @@ namespace Glass.Data.DAL
             }
 
             // Obra
-            var idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(session, idPedido) : null;
-            if (idObra > 0)
+            var idObra = PedidoDAO.Instance.GetIdObra(session, idPedido);
+            if (PedidoConfig.DadosPedido.UsarControleNovoObra && idObra > 0)
             {
                 var lstProdSemComposicao = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false, true, true).ToArray();
 
@@ -2472,6 +2474,18 @@ namespace Glass.Data.DAL
             try
             {
                 UpdateTotalPedido(session, pedAtual);
+                if (idObra > 0)
+                {
+                    PedidoDAO.Instance.AtualizaSaldoObra(
+                        session,
+                        pedAtual.IdPedido,
+                        null,
+                        idObra,
+                        pedAtual.Total,
+                        pedAtual.Total,
+                        true);
+                }
+
                 AtualizaSituacaoImpressao(session, idPedido);
 
                 //Verifica se deve gerar projeto para cnc
@@ -3061,17 +3075,29 @@ namespace Glass.Data.DAL
 
         #region Altera situação do pedido
 
+        /// <summary>
+        /// Método que altera a situação do Pedido Espelho.
+        /// </summary>
+        /// <param name="session">Sessão do GDA.</param>
+        /// <param name="idPedido">Identificador do Pedido Espelho.</param>
+        /// <param name="situacao">Situacao para qual o pedido será alterado.</param>
+        /// <returns>Retorna um inteiro ínformando o sucesso da execução dos comandos.</returns>
         public int AlteraSituacao(GDASession session, uint idPedido, PedidoEspelho.SituacaoPedido situacao)
         {
-            string sql = "Update pedido_espelho Set Situacao=" + (int)situacao;
+            var situacaoAtual = this.ObtemSituacao(session, idPedido);
+            string sql = $"UPDATE pedido_espelho SET Situacao = {(int)situacao}";
 
-            if (situacao == PedidoEspelho.SituacaoPedido.Finalizado)
-                sql += ", dataConf=now()";
+            if (situacao == PedidoEspelho.SituacaoPedido.Finalizado && situacaoAtual != PedidoEspelho.SituacaoPedido.Impresso)
+            {
+                sql += ", DataConf = NOW()";
+            }
 
             if (situacao == PedidoEspelho.SituacaoPedido.Aberto)
-                sql += ", situacaoCnc=0, dataProjetoCnc=null, usuProjetoCnc=null";
+            {
+                sql += ", SituacaoCnc = 0, DataProjetoCnc = NULL, UsuProjetoCnc = NULL";
+            }
 
-            return objPersistence.ExecuteCommand(session, sql + " Where idPedido=" + idPedido);
+            return this.objPersistence.ExecuteCommand(session, $"{sql} WHERE IdPedido={idPedido}");
         }
 
         public int AlteraSituacao(GDASession session, List<uint> lstIdPedido, PedidoEspelho.SituacaoPedido situacao)
@@ -3837,11 +3863,14 @@ namespace Glass.Data.DAL
             {
                 // Clona as peças
                 uint idPecaItemProjOld = pip.IdPecaItemProj;
+                uint idLogOld = pip.IdLog;
 
-                pip.Beneficiamentos = pip.Beneficiamentos;
                 pip.IdPecaItemProj = 0;
                 pip.IdItemProjeto = idItemProjetoPedEsp;
                 uint idPecaItemProj = PecaItemProjetoDAO.Instance.Insert(sessao, pip);
+                var novaPecaItemProj = PecaItemProjetoDAO.Instance.GetElement(sessao, idPecaItemProj);
+
+                LogAlteracaoDAO.Instance.CopiarLogAlteracaoImagemProducao(sessao, (int)idLogOld, (int)novaPecaItemProj.IdLog);
 
                 foreach (FiguraPecaItemProjeto fig in FiguraPecaItemProjetoDAO.Instance.GetForClone(sessao, idPecaItemProjOld))
                 {

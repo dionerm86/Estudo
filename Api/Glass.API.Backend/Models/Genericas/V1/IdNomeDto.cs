@@ -13,6 +13,19 @@ namespace Glass.API.Backend.Models.Genericas.V1
     [DataContract(Name = "IdNome")]
     public class IdNomeDto : IdDto
     {
+        /// <summary>
+        /// Obtém ou define o nome do item.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("nome")]
+        public string Nome { get; set; }
+
+        /// <summary>
+        /// Tenta realizar a conversão dos parâmetros passados na classe IdNomeDto.
+        /// </summary>
+        /// <param name="id">O identificador do item.</param>
+        /// <param name="nome">O nome do item.</param>
+        /// <returns>Retorna a classe IdNomeDto preenchida com os parâmetros passados.</returns>
         internal static IdNomeDto TentarConverter(int? id, string nome)
         {
             return !id.HasValue || string.IsNullOrWhiteSpace(nome)
@@ -23,12 +36,5 @@ namespace Glass.API.Backend.Models.Genericas.V1
                     Nome = nome,
                 };
         }
-
-        /// <summary>
-        /// Obtém ou define o nome do item.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("nome")]
-        public string Nome { get; set; }
     }
 }

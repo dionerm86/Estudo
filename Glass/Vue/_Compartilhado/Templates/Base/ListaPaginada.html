@@ -24,6 +24,9 @@
                 <slot name="novaLinhaItem" v-bind:item="item" v-bind:index="index"
                     v-bind:classe="estiloLinhaAlternada(index)" v-if="index !== linhaEditando"></slot>
             </template>
+            <tr v-if="exibirTotalizador" v-bind:class="estiloLinhaAlternada(itens.length)">
+                <slot name="itemTotalizador"></slot>
+            </tr>
             <tr v-if="exibirInclusao && linhaEditando === -1" v-bind:class="estiloLinhaAlternada(itens.length)">
                 <slot name="itemIncluir"></slot>
             </tr>

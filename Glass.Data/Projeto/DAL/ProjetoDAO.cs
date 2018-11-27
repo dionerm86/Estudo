@@ -696,7 +696,7 @@ namespace Glass.Data.DAL
                             catch (ValidacaoPedidoFinanceiroException f)
                             {
                                 string mensagem = MensagemAlerta.FormatErrorMsg("", f);
-                                PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, f.IdsPedido, mensagem);
+                                PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(f.IdsPedido, mensagem);
                                 return idPedido;
                             }
                             catch (Exception ex)
@@ -713,7 +713,7 @@ namespace Glass.Data.DAL
                 catch (ValidacaoPedidoFinanceiroException f)
                 {
                     string mensagem = MensagemAlerta.FormatErrorMsg("", f);
-                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, new List<int> { (int)idPedido }, mensagem);
+                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(new List<int> { (int)idPedido }, mensagem);
                     return idPedido;
                 }
                 catch (Exception ex)
@@ -1124,6 +1124,27 @@ namespace Glass.Data.DAL
             }
         }
 
+        public override int DeleteByPrimaryKey(GDASession sessao, int key)
+        {
+            if (Glass.Conversoes.StrParaInt(this.objPersistence.ExecuteScalar(sessao, "Select Count(*) From pedido Where idProjeto=" + key).ToString()) > 0)
+            {
+                throw new InvalidOperationException("Este projeto não pode ser excluído por haver um pedido relacionado ao mesmo.");
+            }
+
+            if (Glass.Conversoes.StrParaInt(this.objPersistence.ExecuteScalar(sessao, "Select Count(*) From orcamento Where idProjeto=" + key).ToString()) > 0)
+            {
+                throw new InvalidOperationException("Este projeto não pode ser excluído por haver um ou mais orçamentos relacionados ao mesmo.");
+            }
+
+            this.objPersistence.ExecuteCommand(sessao, "Delete From material_projeto_benef where idMaterItemProj In (Select idMaterItemProj From material_item_projeto Where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + key + "))");
+            this.objPersistence.ExecuteCommand(sessao, "Delete From material_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + key + ")");
+            this.objPersistence.ExecuteCommand(sessao, "Delete From peca_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + key + ")");
+            this.objPersistence.ExecuteCommand(sessao, "Delete From medida_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + key + ")");
+            this.objPersistence.ExecuteCommand(sessao, "Delete From item_projeto where idprojeto=" + key);
+
+            return base.DeleteByPrimaryKey(sessao, key);
+        }
+
         public override int Delete(Projeto objDelete)
         {
             using (var transaction = new GDATransaction())
@@ -1132,19 +1153,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select Count(*) From pedido Where idProjeto=" + objDelete.IdProjeto).ToString()) > 0)
-                        throw new Exception("Este projeto não pode ser excluído por haver um pedido relacionado ao mesmo.");
-
-                    if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select Count(*) From orcamento Where idProjeto=" + objDelete.IdProjeto).ToString()) > 0)
-                        throw new Exception("Este projeto não pode ser excluído por haver um ou mais orçamentos relacionados ao mesmo.");
-
-                    objPersistence.ExecuteCommand("Delete From material_projeto_benef where idMaterItemProj In (Select idMaterItemProj From material_item_projeto Where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + "))");
-                    objPersistence.ExecuteCommand("Delete From material_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + ")");
-                    objPersistence.ExecuteCommand("Delete From peca_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + ")");
-                    objPersistence.ExecuteCommand("Delete From medida_item_projeto where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + objDelete.IdProjeto + ")");
-                    objPersistence.ExecuteCommand("Delete From item_projeto where idprojeto=" + objDelete.IdProjeto);
-
-                    var retorno = base.Delete(objDelete);
+                    var retorno = this.DeleteByPrimaryKey(transaction, objDelete.IdProjeto);
 
                     transaction.Commit();
                     transaction.Close();

@@ -10,7 +10,7 @@
         <td nowrap="nowrap">
             <asp:ImageButton ID="imgTooltip" runat="server" ImageUrl="~/Images/gear_add.gif" />
             <asp:CheckBoxList ID="cblFormasPagto" runat="server" DataSourceID="odsFormasPagto" Style="display: none"
-                DataTextField="Descricao" DataValueField="IdFormaPagto" OnDataBound="cblFormasPagto_DataBound"
+                DataTextField="Descricao" DataValueField="IdFormaPagto" OnDataBound="CblFormasPagto_DataBound" OnPreRender="CblFormasPagto_PreRender"
                 RepeatColumns="3">
             </asp:CheckBoxList>
         </td>
@@ -23,10 +23,10 @@
                         Forma Pagto. Padrão
                     </td>
                     <td nowrap="nowrap" style="padding-left: 3px">
-                        <asp:DropDownList ID="drpFormaPagto" runat="server" 
+                        <asp:DropDownList ID="drpFormaPagto" runat="server"
                             DataSourceID="odsFormasPagto" DataTextField="Descricao"
-                            DataValueField="IdFormaPagto" AppendDataBoundItems="True" 
-                            OnDataBound="drpFormaPagto_DataBound">
+                            DataValueField="IdFormaPagto" AppendDataBoundItems="True"
+                            OnDataBound="DrpFormaPagto_DataBound">
                             <asp:ListItem></asp:ListItem>
                         </asp:DropDownList>
                     </td>
@@ -39,7 +39,7 @@
     TypeName="Glass.Data.DAL.FormaPagtoDAO">
 </colo:VirtualObjectDataSource>
 <asp:CustomValidator ID="ctvFormasPagtoUsar" runat="server" ClientValidationFunction="validarFormasPagtoUsar"
-    Display="None" 
+    Display="None"
     ErrorMessage="Selecione uma forma de pagamento para continuar."></asp:CustomValidator>
 <asp:ValidationSummary ID="vsuFormasPagtoUsar" runat="server" ShowMessageBox="True"
     ShowSummary="False" />

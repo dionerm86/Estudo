@@ -11,23 +11,5 @@ namespace Glass.UI.Web.Cadastros {
     
     
     public partial class CadParcelas {
-        
-        /// <summary>
-        /// dtvParcela control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DetailsView dtvParcela;
-        
-        /// <summary>
-        /// odsParcelas control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsParcelas;
     }
 }

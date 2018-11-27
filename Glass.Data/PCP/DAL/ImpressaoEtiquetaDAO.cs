@@ -2568,30 +2568,6 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna os números das etiquetas não impressas
-
-        public IList<string> ObtemEtiquetasNaoImpressas(uint idProdPed, int qtdeImprimir)
-        {
-            DadosEtiqueta.Limpar();
-
-            var retorno = new List<string>();
-            var dados = DadosEtiqueta.GetItem(idProdPed, null, null);
-
-            int qtdeSomar = 0;
-            for (int i = 0; i < (int)dados.Qtde && qtdeSomar < qtdeImprimir; i++)
-            {
-                if (dados.ItensImpressos.Contains(i))
-                    continue;
-
-                retorno.Add(EtiquetaDAO.Instance.GetNumEtiqueta(dados.IdPedido, dados.Pos, i + 1, (int)dados.Qtde, ProdutoImpressaoDAO.TipoEtiqueta.Pedido));
-                qtdeSomar++;
-            }
-
-            return retorno;
-        }
-
-        #endregion
-
         #endregion
 
         #region Cancela uma impressão

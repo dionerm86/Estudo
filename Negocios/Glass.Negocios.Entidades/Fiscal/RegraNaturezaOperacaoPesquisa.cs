@@ -115,6 +115,76 @@
         /// </summary>
         public string DescricaoNaturezaOperacaoRevendaStInter { get; set; }
 
+        /// <summary>
+        /// Identificador do tipo cliente.
+        /// </summary>
+        public int? IdTipoCliente { get; set; }
+
+        /// <summary>
+        /// Identificador do grupo de produto.
+        /// </summary>
+        public int? IdGrupoProd { get; set; }
+
+        /// <summary>
+        /// Identificador do subgrupo de produto.
+        /// </summary>
+        public int? IdSubgrupoProd { get; set; }
+
+        /// <summary>
+        /// Identificador da cor do vidro.
+        /// </summary>
+        public int? IdCorVidro { get; set; }
+
+        /// <summary>
+        /// Identificador da cor do vidro.
+        /// </summary>
+        public int? IdCorFerragem { get; set; }
+
+        /// <summary>
+        /// Identificador da cor do alumínio.
+        /// </summary>
+        public int? IdCorAluminio { get; set; }
+
+        /// <summary>
+        /// Identificador da natureza de operação de produção intraestadual.
+        /// </summary>
+        public int IdNaturezaOperacaoProdIntra { get; set; }
+
+        /// <summary>
+        /// Identificador da natureza de operação de revenda intraestadual.
+        /// </summary>
+        public int IdNaturezaOperacaoRevIntra { get; set; }
+
+        /// <summary>
+        /// Identificador da natureza de operação de produção interestadual.
+        /// </summary>
+        public int IdNaturezaOperacaoProdInter { get; set; }
+
+        /// <summary>
+        /// Identificador da natureza de operação de revenda interestadual.
+        /// </summary>
+        public int IdNaturezaOperacaoRevInter { get; set; }
+
+        /// <summary>
+        /// Identificador da natureza de operação de produção intraestadual com ST.
+        /// </summary>
+        public int? IdNaturezaOperacaoProdStIntra { get; set; }
+
+        /// <summary>
+        /// Identificador da natureza de operação de revenda intraestadual com ST.
+        /// </summary>
+        public int? IdNaturezaOperacaoRevStIntra { get; set; }
+
+        /// <summary>
+        /// Identificador da natureza de operação de produção interestadual com ST.
+        /// </summary>
+        public int? IdNaturezaOperacaoProdStInter { get; set; }
+
+        /// <summary>
+        /// Identificador da natureza de operação de revenda interestadual com ST.
+        /// </summary>
+        public int? IdNaturezaOperacaoRevStInter { get; set; }
+
         #endregion
     }
 }

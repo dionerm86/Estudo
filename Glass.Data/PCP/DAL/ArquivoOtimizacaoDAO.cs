@@ -254,15 +254,5 @@ namespace Glass.Data.DAL
                         AS temp)";
             return this.ExecuteScalar<DateTime?>(session, sql, new GDAParameter("numEtiqueta", numeroEtiqueta));
         }
-
-        public int NumeroEtiquetasExportadas(uint idProdPed, int qtdeImprimir)
-        {
-            int numeroExportadas = 0;
-            foreach (var etiqueta in ImpressaoEtiquetaDAO.Instance.ObtemEtiquetasNaoImpressas(idProdPed, qtdeImprimir))
-                if (EtiquetaExportada(etiqueta))
-                    numeroExportadas++;
-
-            return numeroExportadas;
-        }
     }
 }

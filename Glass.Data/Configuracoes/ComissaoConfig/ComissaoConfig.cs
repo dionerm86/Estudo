@@ -1,4 +1,5 @@
 ﻿using Glass.Data.Helper;
+using Glass.Data.Model;
 
 namespace Glass.Configuracoes
 {
@@ -45,11 +46,11 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Verifica se o controle de comissão de contas recebidas sera mostrado.
+        /// Recupera o tipo de controle de comissão de contas recebidas que será utilizado.
         /// </summary>
-        public static bool ComissaoPorContasRecebidas
+        public static TipoComissaoContaRec ComissaoPorContasRecebidas
         {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ComissaoPorContasRecebidas); }
+            get { return Config.GetConfigItem<TipoComissaoContaRec>(Config.ConfigEnum.ComissaoPorContasRecebidas); }
         }
 
         /// <summary>

@@ -49,7 +49,7 @@ namespace Glass.Global.Negocios.Entidades
                     .FindName(f => f.Nome)
                     .Description(f => f.Descricao)
                     .Child<BenefConfig, Glass.Data.Model.BenefConfig>("Filhos", f => f.Filhos, f => f.IdParent, Colosoft.Business.LoadOptions.Lazy)
-                    .Child<BenefConfigPreco, Glass.Data.Model.BenefConfigPreco>("Precos", f => f.Precos, f => f.IdBenefConfig)                        
+                    .Child<BenefConfigPreco, Glass.Data.Model.BenefConfigPreco>("Precos", f => f.Precos, f => f.IdBenefConfig)
                     .Reference<EtiquetaProcesso, Glass.Data.Model.EtiquetaProcesso>("Processo", f => f.Processo, f => f.IdProcesso)
                     .Reference<EtiquetaAplicacao, Glass.Data.Model.EtiquetaAplicacao>("Aplicacao", f => f.Aplicacao, f => f.IdAplicacao)
                     .Reference<Produto, Glass.Data.Model.Produto>("Produto", f => f.Produto, f => f.IdProd)
@@ -62,7 +62,7 @@ namespace Glass.Global.Negocios.Entidades
         #region Variáveis Locais
 
         private Colosoft.Business.IEntityChildrenList<BenefConfig> _filhos;
-        private Colosoft.Business.IEntityChildrenList<BenefConfigPreco> _precos;        
+        private Colosoft.Business.IEntityChildrenList<BenefConfigPreco> _precos;
 
         #endregion
 
@@ -479,15 +479,12 @@ namespace Glass.Global.Negocios.Entidades
         /// <returns></returns>
         public override Colosoft.Business.SaveResult Save(Colosoft.Data.IPersistenceSession session)
         {
-            // Não permite inserir/atualizar beneficiamento que seja "Seleção simples" e que o cálculo seja "Qtd"
-            if (TipoControle == Glass.Data.Model.TipoControleBenef.SelecaoSimples && TipoCalculo == Glass.Data.Model.TipoCalculoBenef.Quantidade)
-                return new Colosoft.Business.SaveResult(false, 
-                    "Não é possível cadastrar beneficiamento que seja do tipo seleção simples e calculado por quantidade.".GetFormatter());
-
             /* Chamado 45472. */
             if (Nome.Contains("$") || Descricao.Contains("$") || Nome.Contains("'") || Descricao.Contains("'"))
+            {
                 return new Colosoft.Business.SaveResult(false,
-                    "O Nome/Descrição do beneficiamento não podem conter os caracteres Cifrão e Aspas.".GetFormatter());
+                      "O Nome/Descrição do beneficiamento não podem conter os caracteres Cifrão e Aspas.".GetFormatter());
+            }
 
             var validador = Microsoft.Practices.ServiceLocation.ServiceLocator
                 .Current.GetInstance<IValidadorBenefConfig>();
@@ -495,12 +492,16 @@ namespace Glass.Global.Negocios.Entidades
             var resultadoValidacao = validador.ValidaAtualizacao(this);
 
             if (resultadoValidacao.Length > 0)
+            {
                 return new Colosoft.Business.SaveResult(false, resultadoValidacao.Join(" "));
+            }
 
             // Calcula a sequência somente quando o beneficiamento não existir no banco.
             if (!this.ExistsInStorage && this.Filhos.Count() > 0)
+            {
                 // Recupera o número da sequencia
                 this.NumSeq = validador.ObtemNumeroSequencia(this);
+            }
 
             return base.Save(session);
         }
@@ -515,7 +516,7 @@ namespace Glass.Global.Negocios.Entidades
             var validador = Microsoft.Practices.ServiceLocation.ServiceLocator
                 .Current.GetInstance<IValidadorBenefConfig>();
 
-            // Verifica se este beneficiamento ou seus filhos estão sendo usados em alguma tabela, 
+            // Verifica se este beneficiamento ou seus filhos estão sendo usados em alguma tabela,
             // se estiverem, não permite que este beneficiamento seja excluído
             if (validador.EmUso(this))
             {
@@ -527,7 +528,7 @@ namespace Glass.Global.Negocios.Entidades
 
                 return new Colosoft.Business.DeleteResult(true, null);
             }
-            
+
             return base.Delete(session);
         }
 

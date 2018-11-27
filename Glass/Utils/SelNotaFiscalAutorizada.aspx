@@ -199,6 +199,7 @@
                         <asp:ControlParameter ControlID="txtValorInicial" Name="valorInicial" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtValorFinal" Name="valorFinal" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtCnpjFornecedor" Name="cnpjFornecedor" PropertyName="Text" Type="String" />
+                        <asp:Parameter Name="apenasNotasFiscaisSemAnexo" Type="Boolean" />
                         <asp:Parameter  Name="lote" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>

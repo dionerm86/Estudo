@@ -75,8 +75,8 @@
     </div>
      <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
-            <asp:ScriptReference Path="~/Vue/Comissionados/Componentes/LstComissionados.js" />
             <asp:ScriptReference Path="~/Vue/Comissionados/Componentes/LstComissionados.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/Comissionados/Componentes/LstComissionados.js" />
         </Scripts>
     </asp:ScriptManager>
 </asp:Content>

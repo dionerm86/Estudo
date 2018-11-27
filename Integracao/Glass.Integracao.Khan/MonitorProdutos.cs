@@ -2,11 +2,12 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Colosoft;
+using Glass.Integracao.Historico;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Glass.Integracao.Khan
 {
@@ -15,18 +16,32 @@ namespace Glass.Integracao.Khan
     /// </summary>
     internal sealed class MonitorProdutos : MonitorEventosEntitidade<Global.Negocios.Entidades.Produto>
     {
+        private readonly Colosoft.Logging.ILogger logger;
         private readonly ConfiguracaoKhan configuracao;
         private readonly string serviceUid = Guid.NewGuid().ToString();
+        private readonly Historico.IProvedorHistorico provedorHistorico;
+        private readonly Global.Negocios.IProdutoFluxo produtoFluxo;
 
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="MonitorProdutos"/>.
         /// </summary>
         /// <param name="domainEvents">Eventos de domínio.</param>
+        /// <param name="logger">Logger.</param>
         /// <param name="configuracao">Configuração.</param>
-        public MonitorProdutos(Colosoft.Domain.IDomainEvents domainEvents, ConfiguracaoKhan configuracao)
+        /// <param name="produtoFluxo">Fluxo de negócio dos produtos.</param>
+        /// <param name="provedorHistorico">Provedor dos históricos.</param>
+        public MonitorProdutos(
+            Colosoft.Domain.IDomainEvents domainEvents,
+            Colosoft.Logging.ILogger logger,
+            ConfiguracaoKhan configuracao,
+            Global.Negocios.IProdutoFluxo produtoFluxo,
+            Historico.IProvedorHistorico provedorHistorico)
             : base(domainEvents)
         {
+            this.logger = logger;
             this.configuracao = configuracao;
+            this.produtoFluxo = produtoFluxo;
+            this.provedorHistorico = provedorHistorico;
             Colosoft.Net.ServiceClientsManager.Current.Register(this.serviceUid, this.CriarCliente);
         }
 
@@ -102,9 +117,57 @@ namespace Glass.Integracao.Khan
         /// <param name="entidade">Produto atualizado.</param>
         protected override void EntidadeAtualizada(Global.Negocios.Entidades.Produto entidade)
         {
-            // Não faz nada
             var produto = Converter(entidade);
-            this.Client.SalvarProdutos(produto);
+
+            this.logger.Info($"Salvando produto '{entidade.CodInterno}' na Khan...".GetFormatter());
+
+            try
+            {
+                this.Client.SalvarProdutos(produto);
+            }
+            catch (Exception ex)
+            {
+                var mensagem = $"Não foi possível salvar os dados do produto '{entidade.CodInterno}' na Khan.";
+                this.logger.Error(mensagem.GetFormatter(), ex);
+                this.provedorHistorico.RegistrarFalha(HistoricoKhan.Produtos, entidade, mensagem, ex);
+                throw;
+            }
+
+            this.provedorHistorico.NotificarIntegracao(HistoricoKhan.Produtos, entidade);
+        }
+
+        /// <summary>
+        /// Configura as operações no gerenciador informado.
+        /// </summary>
+        /// <param name="gerenciadorOperacoes">Gerenciador onde as operações serão configuradas.</param>
+        internal void ConfigurarOperacoes(GerenciadorOperacaoIntegracao gerenciadorOperacoes)
+        {
+            gerenciadorOperacoes.Adicionar(
+                new OperacaoIntegracao(
+                    "SincronizarProduto",
+                    "Sincroniza os dados do produto com o ERP da KHAN",
+                    new ParametroOperacaoIntegracao(
+                        "idProd",
+                        typeof(int),
+                        "Identificador do produto",
+                        0)),
+                new Action<int>(this.SincronizarProduto));
+        }
+
+        /// <summary>
+        /// Atualiza o dados do produto no ERP da Khan.
+        /// </summary>
+        /// <param name="idProd">Identificador do produto que será sincronizado.</param>
+        internal void SincronizarProduto(int idProd)
+        {
+            var produto = this.produtoFluxo.ObtemProduto(idProd);
+
+            if (produto == null)
+            {
+                throw new InvalidOperationException($"Não foi encontrado nenhum produto com o identificador {idProd}.");
+            }
+
+            this.EntidadeAtualizada(produto);
         }
 
         /// <summary>

@@ -1,32 +1,39 @@
-﻿<span style="white-space: nowrap">
-    <span class="form-group">
+﻿<span>
+    <span class="form-group" style="white-space: nowrap">
         <label>
             CEP
         </label>
         <campo-cep v-bind:endereco.sync="enderecoAtual" v-bind="$attrs"></campo-cep>
     </span>
-    <span class="form-group">
+    <span class="form-group" style="white-space: nowrap">
         <label>
             Endereço
         </label>
         <input type="text" v-model="enderecoAtual.logradouro" style="width: 200px" v-bind="$attrs">
     </span>
-    <span class="form-group" v-if="exibirComplemento">
+    <span class="form-group" v-if="exibirNumero" style="white-space: nowrap">
+        <label>
+            Número
+        </label>
+        <input type="text" v-model="enderecoAtual.numero" style="width: 60px" v-bind="$attrs">
+    </span>
+    <span class="form-group" v-if="exibirComplemento" style="white-space: nowrap">
         <label>
             Complemento
         </label>
         <input type="text" v-model="enderecoAtual.complemento" style="width: 80px" v-bind="$attrs">
     </span>
-    <span class="form-group">
+    <span class="form-group" style="white-space: nowrap">
         <label>
             Bairro
         </label>
         <input type="text" v-model="enderecoAtual.bairro" style="width: 130px" v-bind="$attrs">
     </span>
-    <span class="form-group">
+    <span class="form-group" style="white-space: nowrap">
         <label>
             Cidade
         </label>
-        <input type="text" v-model="enderecoAtual.cidade.nome" style="width: 130px" v-bind="$attrs" v-if="enderecoAtual.cidade">
+        <campo-busca-cidade v-bind:cidade.sync="enderecoAtual.cidade" v-bind:uf.sync="enderecoAtual.cidade.uf"
+            v-if="enderecoAtual.cidade"></campo-busca-cidade>
     </span>
 </span>
