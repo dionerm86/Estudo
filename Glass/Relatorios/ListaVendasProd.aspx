@@ -415,8 +415,9 @@
                             <asp:Label ID="Label19" runat="server" Text="Vendedor (Assoc. Cliente)" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpVendedorCliente" runat="server" DataSourceID="odsVendedorCliente" DataTextField="Nome"
+                            <asp:DropDownList ID="drpVendedorCliente" runat="server" DataSourceID="odsVendedorCliente" DataTextField="Nome" AppendDataBoundItems="true"
                                 DataValueField="IdFunc" AutoPostBack="True">
+                                <asp:ListItem Value="0">Todos</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
