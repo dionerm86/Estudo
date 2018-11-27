@@ -500,15 +500,15 @@ namespace Glass.Data.DAL
         /// </returns>
         public Funcionario[] ObterVendedoresAssociadosCliente()
         {
-            string sql = $@"Select * From funcionario f
-              INNER JOIN cliente c on(f.IdFunc = c.IdFunc)
-              Where f.situacao={(int)Situacao.Ativo}
-              Group By f.Nome
-              Order By f.Nome";
+            string sql = $@"
+               SELECT *
+               FROM funcionario f
+                   INNER JOIN cliente c ON (f.IdFunc = c.IdFunc)
+               WHERE f.situacao = {(int)Situacao.Ativo}
+               GROUP BY f.IdFunc
+               ORDER BY f.Nome";
 
-            List<Funcionario> lst = objPersistence.LoadData(sql).ToList();
-
-            return lst.ToArray();
+            return objPersistence.LoadData(sql).ToArray();
         }
 
         #endregion
