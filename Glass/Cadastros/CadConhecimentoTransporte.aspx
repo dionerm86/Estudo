@@ -18,7 +18,7 @@
     TagPrefix="uc2" %>
 <%@ Register Src="../Controls/CTe/EfdCte.ascx" TagName="EfdCte" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    
+
     <link type="text/css" rel="stylesheet" href="<%= ResolveUrl("~/Style/CTe/CadCTe.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/jquery/jquery.maskMoney.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
@@ -40,68 +40,68 @@
                         '.replace(\'' + nomeOriginalControle + '\', \'' + nomeOriginalControle + complementoID + '\');');
             }
         }
-                
+
         function abrirBuscaNf() {
-            openWindow(600, 800, '../Utils/SelNotaFiscalAutorizada.aspx');
+            openWindow(600, 800, '../Utils/SelNotaFiscalAutorizada.aspx?origem=cte');
         }
-        
+
         function buscarNf(numNFe){
-            
+
             if(numNFe == null || numNFe == "")
                 return false;
-            
+
             var retorno = CadConhecimentoTransporte.BuscarNF(numNFe, <%= IsEntradaTerceiros().ToString().ToLower() %>);
-            
+
             if(retorno.error != null){
                 alert(retorno.error.description);
                 setNfReferenciada("", "");
                 return false;
             }
-            
+
             var dadosRetorno = retorno.value.split(';');
             setNfReferenciada(dadosRetorno[0], dadosRetorno[1]);
         }
-        
+
         //Máscara para campos com valor decimal
         function mascaraValor(controle, precisao)
-        {            
+        {
             $("#"+controle.id).unmaskMoney();
             $("#"+controle.id).maskMoney({showSymbol:false,symbol:"R$", decimal:",", precision:precisao ,thousands:".", allowZero:true});
         }
-        
+
         // Seta informações da nota fiscal selecionada no popup.
-        function setNfReferenciada(idNf, numNf) 
+        function setNfReferenciada(idNf, numNf)
         {
             FindControl('txtNumNfIns', 'input').value = numNf;
             FindControl('hdfIdNf', 'input').value = idNf;
             FindControl('lnkInsProd', 'input').click();
-        }               
-        
+        }
+
         // Seta cidade selecionada no popup
         function setCidade(idCidade, nomeCidade, controleTxt, controleHdf)
-        {            
+        {
             FindControl(controleHdf, 'input').value = idCidade;
             FindControl(controleTxt, 'input').value = nomeCidade;
-        }  
-            
-        // Função chamada antes de inserir dados    
-        function onInsert() 
+        }
+
+        // Função chamada antes de inserir dados
+        function onInsert()
         {
             return validar();
         }
-        
-        // Função chamada antes atualizar dados    
-        function onUpdate() 
+
+        // Função chamada antes atualizar dados
+        function onUpdate()
         {
             return validar();
         }
-        
+
         // Validação de dados de inserção ou atualização
-        function validar() 
+        function validar()
         {
             if (!validate('c'))
                 return false;
-        
+
             var tipoCTe = FindControl('dtvConhecimentoTransporte_drpTipoCte', 'select');
             var lotacao = FindControl('ctrlConhecimentoTransRod_chkLotacao', 'input');
             var veiculo = FindControl('CtrlVeiculoCte1_drpPlaca', 'select');
@@ -112,8 +112,8 @@
             {
                 alert('Informe o emitente');
                 return false;
-            }               
-            
+            }
+
             if ((tipoCTe.value == '0' || tipoCTe.value == '3') && lotacao != null && lotacao.checked == true)
             {
                 if(veiculo.value == 'selecione')
@@ -121,11 +121,11 @@
                     alert('Para cte de lotação deve(m) ser selecionada(s) a(s) placa(s) de Veículo(s)');
                     veiculo.focus();
                     return false;
-                }                
+                }
             }
-            
+
             var isEntradaTerceiros = <%= IsEntradaTerceiros().ToString().ToLower() %>;
-            
+
             if (!isEntradaTerceiros && (tipoCTe.value == '0' || tipoCTe.value == '3'))
             {
                 if(drpResponsavelSeguro.value == '6')
@@ -135,9 +135,9 @@
                     return false;
                 }
             }
-        
+
             /* Ordem Coleta
-            Verifica dados de Ordem Coleta*/                              
+            Verifica dados de Ordem Coleta*/
             var idControle = 'ctl00_ContentPlaceHolder1_dtvConhecimentoTransporte_ctrlConhecimentoTransRod_ctrlOrdem';
             var tabelaOrdemColeta = document.getElementById(idControle + '_tabelaOrdemColeta');
 
@@ -147,28 +147,28 @@
                 var dropTransportador = FindControl(idControle + '_drpTransportador', 'select', ultimaLinhaTabela);
                 var txtNumeroOrdemColeta = FindControl(idControle + '_txtNumeroOrdColeta', 'input', ultimaLinhaTabela);
                 var txtData = FindControl(idControle + '_txtData' + (tabelaOrdemColeta.rows.length - 1), 'input', ultimaLinhaTabela);
-            
+
                 if(txtNumeroOrdemColeta.value == '' && txtData.value == '')
                 {}
                 else if(txtNumeroOrdemColeta.value == '' || txtData.value == '')
                 {
                     txtNumeroOrdemColeta.style.border = 'solid 1px red';
                     txtData.style.border = 'solid 1px red';
-                
+
                     alert('Número Ordem Coleta e Data Emissão devem ser ambos preenchidos ou vazios.');
                     return false;
                 }
             }
 
-            
+
 
             /*Fim Ordem Coleta*/
-        
+
             /* Participante Cte.
-            Verifica dados Participante Cte*/            
-            var lblDecrPartExpedidor = FindControl('ctrlPartCte_ctrlParticipanteExpedidor_lblDescrPart', 'span');            
+            Verifica dados Participante Cte*/
+            var lblDecrPartExpedidor = FindControl('ctrlPartCte_ctrlParticipanteExpedidor_lblDescrPart', 'span');
             var lblDecrPartRecebedor = FindControl('ctrlPartCte_ctrlParticipanteRecebedor_lblDescrPart', 'span');
-                                          
+
             if(drpResponsavelSeguro.value != "6")
             {
                 if(drpResponsavelSeguro.value == "1" && lblDecrPartExpedidor.innerText == '')
@@ -182,20 +182,20 @@
                     return false;
                 }
             }
-            /*Fim Participante Cte*/      
-            
+            /*Fim Participante Cte*/
+
             /* Cobrança Cte.
-            Verifica dados Participante Cte*/ 
+            Verifica dados Participante Cte*/
             var chkContaPagar = FindControl("CtrlDupl1_chkGerarContasPagar", "input");
             if (chkContaPagar != null && chkContaPagar.checked && FindControl("ctrlParticipanteEmitente_drpPart", "select").value != "1"){
                 alert('Para gerar contas a pagar é necessário que o emitente seja um fornecedor.');
                 return false;
-            }     
-            /*Fim cobrança Cte*/                    
-            
+            }
+            /*Fim cobrança Cte*/
+
             return true;
-        } 
-        
+        }
+
     </script>
 
     <div class="pagina">
@@ -332,7 +332,7 @@
                                         OnClientClick="openWindow(500, 700, '../Utils/SelCidade.aspx?controleTxt=txtCidadeDestFrete&controleHdf=hdfCidadeDestFrete'); return false;" />
                                     <asp:HiddenField ID="hdfCidadeDestFrete" runat="server" Value='<%# Bind("IdCidadeDestFrete") %>' />
                                 </div>
-                                
+
                             </div>--%>
                             <%--<div class="dtvRow">
                                 <div class="dtvHeader">
@@ -870,21 +870,21 @@
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="Label42" runat="server" Visible='<%# Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "3" || Eval("ObjEntregaCte.TipoPeriodoHora").ToString() == "4"%>'
-                                            Text='<%# Eval("ObjEntregaCte.DataHoraIni") == "3" 
+                                            Text='<%# Eval("ObjEntregaCte.DataHoraIni") == "3"
                                         ? Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraIni")).ToShortTimeString() + " " + Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraIni")).ToShortDateString()
                                         : Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraIni")).ToShortTimeString() + " " + Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraIni")).ToShortDateString()
                                         + " a " + Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraFim").ToString()).ToShortTimeString() + " " + Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraFim").ToString()).ToShortDateString()
                                            %>'></asp:Label>
                                     </div>--%>
                                     <%--<div class="dtvHeaderRO">
-                                        <asp:Label ID="Label45" runat="server" Visible='<%# Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "3" || Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "4" 
+                                        <asp:Label ID="Label45" runat="server" Visible='<%# Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "3" || Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "4"
                                         || Eval("ObjEntregaCte.TipoPeriodoHora").ToString() == "3" || Eval("ObjEntregaCte.TipoPeriodoHora").ToString() == "4" %>'
                                             Text="Data/Hora Final:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
-                                        <asp:Label ID="Label46" runat="server" Visible='<%# Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "3" || Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "4" 
+                                        <asp:Label ID="Label46" runat="server" Visible='<%# Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "3" || Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "4"
                                         || Eval("ObjEntregaCte.TipoPeriodoHora").ToString() == "3" || Eval("ObjEntregaCte.TipoPeriodoHora").ToString() == "4" %>'
-                                            Text='<%# Eval("ObjEntregaCte.DataHoraFim") == "3" 
+                                            Text='<%# Eval("ObjEntregaCte.DataHoraFim") == "3"
                                         ? Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraFim")).ToShortTimeString() + " " + Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraFim")).ToShortDateString()
                                         : Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraIni")).ToShortTimeString() + " " + Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraIni")).ToShortDateString()
                                         + " a " + Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraFim")).ToShortTimeString() + " " + Convert.ToDateTime(Eval("ObjEntregaCte.DataHoraFim")).ToShortDateString()
@@ -1375,7 +1375,7 @@
                                         OnClientClick="openWindow(500, 700, '../Utils/SelCidade.aspx?controleTxt=txtCidadeDestFrete&controleHdf=hdfCidadeDestFrete'); return false;" />
                                     <asp:HiddenField ID="hdfCidadeDestFrete" runat="server" Value='<%# Bind("IdCidadeDestFrete") %>' />
                                 </div>
-                                
+
                             </div>--%>
                             <%--<div class="dtvRow">
                                 <div class="dtvHeader">
@@ -1715,7 +1715,7 @@
                             </EditItemTemplate>
                             <ItemStyle Wrap="False" />
                             <FooterTemplate>
-                                <asp:ImageButton ID="lnkAddChaveAcesso" CausesValidation="false" runat="server" CommandName="Insert" 
+                                <asp:ImageButton ID="lnkAddChaveAcesso" CausesValidation="false" runat="server" CommandName="Insert"
                                     ImageUrl="~/Images/ok.gif" OnClick="lnkAddChaveAcesso_Click"></asp:ImageButton>
                             </FooterTemplate>
                         </asp:TemplateField>
@@ -1768,7 +1768,7 @@
                 <asp:QueryStringParameter Name="idCte" QueryStringField="idCte" Type="UInt32" />
             </SelectParameters>
         </colo:VirtualObjectDataSource>
-        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsChaveAcessoCte" runat="server" 
+        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsChaveAcessoCte" runat="server"
             DataObjectTypeName="Glass.Fiscal.Negocios.Entidades.Cte.ChaveAcessoCte"
             TypeName="Glass.Fiscal.Negocios.ICTeFluxo" EnablePaging="True"
             SelectMethod="PesquisarChavesAcesso"

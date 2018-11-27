@@ -59,8 +59,23 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Verifica se o CTe já foi inserido no Mdfe.
+        /// </summary>
+        /// <param name="chaveAcesso">Chave de acesso do CTe a ser verificado.</param>
+        /// <returns>Um boolean referente à situação do CTe (se o mesmo já está associado ou não a outro CTe).</returns>
+        public bool VerificarCteJaIncluso(string chaveAcesso)
+        {
+            return this.objPersistence.ExecuteSqlQueryCount(
+                $@"SELECT ccdm.IdCidadeDescarga FROM cidade_descarga_mdfe cdm
+	                INNER JOIN cte_cidade_descarga_mdfe ccdm ON (ccdm.IdCidadeDescarga = cdm.IdCidadeDescarga)
+	                INNER JOIN manifesto_eletronico me ON (me.IdManifestoEletronico = cdm.IdManifestoEletronico)
+                   WHERE ccdm.ChaveAcesso={ chaveAcesso } AND me.Situacao <> { (int)SituacaoEnum.Cancelado }") > 0;
+        }
+
+        /// <summary>
         /// Obtém o número do MDFe associado ao CTe informado, através da chave de acesso.
         /// </summary>
+        /// <param name="session">Sessão do GDA.</param>
         /// <param name="chaveAcesso">chaveAcesso.</param>
         /// <returns>Retorna o número do MDFe associado ao CTe informado, através da chave de acesso.</returns>
         public int? ObterNumeroMdfeAssociadoCte(GDASession session, string chaveAcesso)
