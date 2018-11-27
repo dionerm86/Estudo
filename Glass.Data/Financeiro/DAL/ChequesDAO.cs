@@ -2654,16 +2654,13 @@ namespace Glass.Data.DAL
                 cheque.ValorReceb += valorReceber;
                 valorAcumulado -= valorReceber;
 
-                if (cheque.JurosReceb == 0)
+                if (cheque.JurosReceb == 0 && cheque.ValorReceb + cheque.DescontoReceb == 0)
                 {
-                    if (cheque.ValorReceb + cheque.DescontoReceb == 0)
-                    {
-                        chequesValidar.Add((int)cheque.IdCheque, false);
-                    }
-                    else
-                    {
-                        chequesValidar.Add((int)cheque.IdCheque, true);
-                    }
+                    chequesValidar.Add((int)cheque.IdCheque, false);
+                }
+                else
+                {
+                    chequesValidar.Add((int)cheque.IdCheque, true);
                 }
             }
 
