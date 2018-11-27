@@ -1,0 +1,8 @@
+﻿<span>
+    <select v-model="ufAtual">
+        <option></option>
+        <option v-for="uf in ufs" v-bind:value="uf">{{ uf }}</option>
+    </select>
+    <campo-busca v-bind:id="idAtual" v-bind:nome="nomeAtual" v-bind:funcao-buscar-itens="buscarCidades"
+        v-bind:item-selecionado.sync="cidadeAtual"></campo-busca>
+</span>

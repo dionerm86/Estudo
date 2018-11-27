@@ -18,7 +18,7 @@
     tipoItem: {
       required: true,
       twoWay: false,
-      validator: Mixins.Validacao.validarValores('Produto', 'PecaProducao', 'SvgProjeto')
+      validator: Mixins.Validacao.validarValores('Produto', 'PecaProducao', 'SvgProjeto', 'Funcionario')
     },
 
     /**

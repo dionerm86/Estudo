@@ -47,12 +47,12 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
 
                 try
                 {
-                    funcionario = new ConverterCadastroAtualizacaoParaFuncionario(dadosParaAtualizacao, funcionario)
+                    funcionario = new ConverterCadastroAtualizacaoParaFuncionario(funcionarioFluxo, dadosParaAtualizacao, funcionario)
                         .ConverterParaFuncionario();
 
                     var resultado = funcionarioFluxo.SalvarFuncionario(funcionario);
 
-                    return resultado ? this.Aceito(string.Format("Funcionário {0} atualizado com sucesso!", id)) :
+                    return resultado ? this.Aceito(string.Format($"Funcionário {id} atualizado com sucesso!")) :
                         (IHttpActionResult)this.ErroValidacao($"Erro ao atualizar o funcionário {id}. {resultado.Message.Format()}");
                 }
                 catch (Exception e)

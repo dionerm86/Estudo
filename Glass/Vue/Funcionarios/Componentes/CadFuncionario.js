@@ -11,12 +11,13 @@
     tipoFuncionarioAtual: null,
     situacaoAtual: {},
     lojaAtual: {},
+    estadoCivilAtual: {},
   },
 
   methods: {
     /**
-     * Busca os dados de um pedido.
-     * @param {?number} id O número do pedido.
+     * Busca os dados de um funcionário.
+     * @param {?number} id O identificador do funcionário.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     buscarFuncionario: function (id) {
@@ -38,11 +39,11 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterSituacoes: function () {
-      return Servicos.Funcionarios.obterSituacoes();
+      return Servicos.Comum.obterSituacoes();
     },
 
     /**
-     * Retorna os itens para o controle de situações do funcionário.
+     * Retorna os itens para o controle de tipos do funcionário.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterTiposFuncionario: function () {
@@ -50,11 +51,68 @@
     },
 
     /**
-     * Recupera os tipos de pedido para exibição no cadastro ou edição do pedido.
+     * Recupera as Uf's para exibição no cadastro ou edição do funcionário.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterUfs: function () {
-      return Servicos.Cidades.listarUfs();
+    buscarUfs: function () {
+      var vm = this;
+
+      Servicos.Cidades.listarUfs()
+        .then(function (resposta) {
+          var ufAtual = vm.ufAtual;
+
+          resposta.data.sort(function (a, b) {
+            return a.localeCompare(b);
+          });
+
+          vm.ufs = resposta.data;
+
+          if (ufAtual) {
+            vm.ufAtual = ufAtual;
+          }
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+
+          vm.ufs = [];
+        });
+    },
+
+    /**
+     * Recupera os estados civis para exibição no cadastro ou edição do funcionário.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterEstadosCivil: function () {
+      return Servicos.Funcionarios.obterEstadosCivil();
+    },
+
+    /**
+     * Recupera os tipos de funcionário para exibição no cadastro ou edição do funcionário.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterItensTipoPedido: function () {
+      return Servicos.Pedidos.obterTiposPedido();
+    },
+
+    /**
+ * Recupera os tipos de funcionário para exibição no cadastro ou edição do funcionário.
+ * @returns {Promise} Uma Promise com o resultado da busca.
+ */
+    obterItensTipofuncionário: function () {
+      return Servicos.funcionários.obterTiposfuncionário();
+    },
+
+    /**
+     * Retorna os itens para o controle de setores.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterItensSetor: function () {
+      return Servicos.Producao.Setores.obterParaControle(
+       false,
+       false
+     );
     },
 
     /**
@@ -65,63 +123,66 @@
       this.funcionarioOriginal = item ? this.clonar(item) : {};
 
       this.lojaAtual = {
-        id: item && item.loja ? item.loja.id : null
-      };
+        id: item && item.loja ? item.loja.id : null};
 
       this.tipoFuncionarioAtual = {
-        id: item && item.tipoFuncionarioAtual ? item.tipoFuncionarioAtual.id : null
-      };
+        id: item && item.tipoFuncionario ? item.tipoFuncionario.id : null};
 
-      this.situacalAtual = {
-        id: item && item.situacalAtual ? item.situacalAtual.id : null
-      };
+      this.situacaoAtual = {
+        id: item && item.situacao ? item.situacao.id : null};
+
+      this.estadoCivilAtual = {
+        id: item && item.documentosEDadosPessoais && item.documentosEDadosPessoais.estadoCivil ?
+          item.documentosEDadosPessoais.estadoCivil : null};
 
       this.funcionario = {
         id: item && item.id ? item.id : null,
-        idTipoFuncionario: item && item.idTipoFuncionario ? item.idTipoFuncionario : null,
-        idsSetores:item && item.idsSetores ? item.idsSetores : null,
+        idTipoFuncionario: item && item.tipoFuncionario ? item.tipoFuncionario.id : null,
+        idsSetores: item && item.idsSetores ? item.idsSetores : null,
         nome: item && item.nome ? item.nome : null,
         idLoja: item && item.loja ? item.loja.id : null,
-        idSituacao: item && item.situacao ? item.situacao.id : true,
-        numeroDiasParaAtrasarPedidos: item ? item.numeroDiasParaAtrasarPedidos : null,
-        numeroPdv: item ? item.numeroPdv : null,
+        numeroDiasParaAtrasarPedidos: item ? item.numeroDiasParaAtrasarPedidos : 0,
+        numeroPdv: item ? item.numeroPdv : 0,
         idsTiposPedidos: item && item.idsTiposPedidos ? item.idsTiposPedidos : null,
         observacao: item && item.observacao ? item.observacao : null,
-        endereco:{
-          logradouro: item && item.endereco ? item.endereco.logradouro : null,
-          complemento: item && item.endereco ? item.endereco.complemento : null,
-          bairro: item && item.endereco ? item.endereco.bairro : null,
-          cidade: item && item.endereco ? item.endereco.cidade.nome : null,
-          cep: item && item.endereco ? item.endereco.cep : null,
-        },
-        contatos :{
+        contatos: {
           telefoneResidencial: item && item.contatos ? item.contatos.telefoneResidencial : null,
           telefoneCelular: item && item.contatos ? item.contatos.telefoneCelular : null,
           telefoneContato: item && item.contatos ? item.contatos.telefoneContato : null,
           email: item && item.contatos ? item.contatos.email : null,
           ramal: item && item.contatos ? item.contatos.ramal : null,
         },
-        acesso :{
-          login: item && item.acesso ? item.acesso.login : true,
-          senha: item && item.acesso ? item.acesso.senha : true,
+        acesso: {
+          login: item && item.acesso ? item.acesso.login : null,
+          senha: item && item.acesso ? item.acesso.senha : null,
         },
-        documentosEDadosPessoais :{
+        documentosEDadosPessoais: {
           rg: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.rg : null,
           cpf: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.cpf : null,
           funcao: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.funcao : null,
-          idEstadoCivil: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.estadoCivil.id : null,
           dataNascimento: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.dataNascimento : null,
           dataEntrada: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.dataEntrada : null,
           dataSaida: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.dataSaida : null,
-          salario: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.salario : null,
-          gratificacao: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.gratificacao : null,
+          salario: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.salario : 0,
+          gratificacao: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.gratificacao : 0,
           numeroCTPS: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.numeroCTPS : null,
-          auxilioAlimentacao: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.auxilioAlimentacao : null,
+          auxilioAlimentacao: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.auxilioAlimentacao : 0,
           numeroPis: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.numeroPis : null,
           registrado: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.registrado : false,
+          foto: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.foto : null,
+        },
+        endereco: {
+          logradouro: item && item.endereco ? item.endereco.logradouro : null,
+          complemento: item && item.endereco ? item.endereco.complemento : null,
+          bairro: item && item.endereco ? item.endereco.bairro : null,
+          cep: item && item.endereco ? item.endereco.cep : null,
+          cidade: {
+            id: item && item.endereco && item.endereco.cidade ? item.endereco.cidade.id : null,
+            nome: item && item.endereco && item.endereco.cidade ? item.endereco.cidade.nome : null,
+            uf: item && item.endereco && item.endereco.cidade ? item.endereco.cidade.uf : null
+          }
         },
         permissoes: {
-          enviarEmailPedidoFinalizado: item && item.permissoes ? item.permissoes.enviarEmailPedidoFinalizado : false,
           utilizarChat: item && item.permissoes ? item.permissoes.utilizarChat : false,
           habilitarControleUsuarios: item && item.permissoes ? item.permissoes.habilitarControleUsuarios : false,
         }
@@ -129,7 +190,7 @@
     },
 
     /**
-     * Função que indica se o formulário de pedido possui valores válidos de acordo com os controles.
+     * Função que indica se o formulário de funcionário possui valores válidos de acordo com os controles.
      * @param {Object} botao O botão que foi disparado no controle.
      * @returns {boolean} Um valor que indica se o formulário está válido.
      */
@@ -139,7 +200,7 @@
         form = form.parentNode;
       }
 
-      if (!form.checkValidity() || !this.validarBase_()) {
+      if (!form.checkValidity()) {
         return false;
       }
 
@@ -147,7 +208,7 @@
     },
 
     /**
-     * Insere o pedido, se possível.
+     * Insere o funcionário, se possível.
      * @param {Object} event O objeto do evento JavaScript.
      */
     inserirFuncionario: function (event) {
@@ -159,7 +220,7 @@
 
       Servicos.Funcionarios.inserir(this.funcionario)
         .then(function (resposta) {
-          var url = '../Cadastros/LstFuncionario.aspx';
+          var url = '../Listas/LstFuncionario.aspx';
 
           window.location.assign(url);
         })
@@ -171,16 +232,7 @@
     },
 
     /**
- * Inicia o modo de edição do pedido.
- */
-    editar: function () {
-      this.iniciarCadastroOuAtualizacao_(this.funcionario);
-      this.inserindo = false;
-      this.editando = true;
-    },
-
-    /**
-     * Atualiza o pedido, se possível.
+     * Atualiza o funcionário, se possível.
      * @param {Object} event O objeto do evento JavaScript.
      */
     atualizarFuncionario: function (event) {
@@ -204,15 +256,25 @@
     },
 
     /**
-      * Cancela a edição ou cadastro de pedido.
+      * Cancela a edição ou cadastro de funcionário.
       */
     cancelar: function () {
       if (this.editando) {
         this.funcionario = this.clonar(this.funcionarioOriginal);
         this.editando = false;
+        this.redirecionarParaListagem();
       } else if (this.inserindo) {
         this.redirecionarParaListagem();
       }
+    },
+
+    /**
+      * Abre a tela de troca de senha do funcionário.
+      */
+    alterarSenha: function () {
+      var url = '../Utils/TrocarSenha.aspx?IdFunc=' + this.funcionario.id;
+
+      window.open(url);
     },
 
     /**
@@ -229,66 +291,84 @@
       window.location.assign(url);
     },
   },
-    mounted: function () {
-      var id = GetQueryString('idFunc');
-      var vm = this;
 
-      Servicos.Funcionarios.obterConfiguracoesDetalhe(id || 0)
-        .then(function (resposta) {
-          vm.configuracoes = resposta.data;
+  mounted: function () {
+    var id = GetQueryString('idFunc');
+    var vm = this;
 
-          if (!id) {
-            vm.inserindo = true;
-            vm.iniciarCadastroOuAtualizacao_();
+    Servicos.Funcionarios.obterConfiguracoesDetalhe(id || 0)
+      .then(function (resposta) {
+        vm.configuracoes = resposta.data;
+
+        if (!id) {
+          vm.inserindo = true;
+          vm.iniciarCadastroOuAtualizacao_();
+        }
+      })
+      .catch(function (erro) {
+        if (erro && erro.mensagem) {
+          vm.exibirMensagem('Erro', erro.mensagem);
+        }
+      });
+
+    if (id) {
+      this.buscarFuncionario(id)
+        .then(function () {
+          if (!vm.funcionario) {
+            vm.redirecionarParaListagem();
           }
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
+          else {
+            vm.iniciarCadastroOuAtualizacao_(vm.funcionario);
+            vm.inserindo = false;
+            vm.editando = true;
           }
         });
-
-      if (id) {
-        this.buscarFuncionario(id)
-          .then(function () {
-            if (!vm.funcionario || !vm.funcionario.permissoes.podeEditar) {
-              vm.redirecionarParaListagem();
-            }
-          });
-      }
-    },
-    watch: {
-      /**
-     * Observador para a variável 'obraAtual'.
-     * Atualiza o pedido com o ID do item selecionado.
-     */
-      tipoFuncionarioAtual: {
-        handler: function (atual) {
-          this.funcionario.idTipoFuncionario = atual ? atual.id : null;
-        },
-        deep: true
-      },
-
-      /**
-     * Observador para a variável 'obraAtual'.
-     * Atualiza o pedido com o ID do item selecionado.
-     */
-      situacaoAtual: {
-        handler: function (atual) {
-          this.funcionario.idSituacao = atual ? atual.id : null;
-        },
-        deep: true
-      },
-
-      /**
-     * Observador para a variável 'obraAtual'.
-     * Atualiza o pedido com o ID do item selecionado.
-     */
-      lojaAtual: {
-        handler: function (atual) {
-          this.funcionario.idLoja = atual ? atual.id : null;
-        },
-        deep: true
-      }
     }
+  },
+
+  watch: {
+
+    /**
+   * Observador para a variável 'tipoFuncionarioAtual'.
+   * Atualiza o funcionário com o ID do item selecionado.
+   */
+    tipoFuncionarioAtual: {
+      handler: function (atual) {
+        this.funcionario.idTipoFuncionario = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+   * Observador para a variável 'situacaoAtual'.
+   * Atualiza o funcionário com o ID do item selecionado.
+   */
+    situacaoAtual: {
+      handler: function (atual) {
+        this.funcionario.situacao = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+   * Observador para a variável 'lojaAtual'.
+   * Atualiza o funcionário com o ID do item selecionado.
+   */
+    lojaAtual: {
+      handler: function (atual) {
+        this.funcionario.idLoja = atual ? atual.id : null;
+      },
+      deep: true
+    },
+    /**
+   * Observador para a variável 'situacaoAtual'.
+   * Atualiza o funcionário com o ID do item selecionado.
+   */
+    estadoCivilAtual: {
+      handler: function (atual) {
+        this.funcionario.documentosEDadosPessoais.estadoCivil = atual ? atual.id : null;
+      },
+      deep: true
+    }
+  }
 });

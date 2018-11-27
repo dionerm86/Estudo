@@ -99,6 +99,14 @@ Servicos.Funcionarios = (function(http) {
     },
 
     /**
+     * Recupera a lista de estados civís.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterEstadosCivil: function () {
+      return http().get(API + 'estadoscivis');
+    },
+
+    /**
      * Recupera a lista de funcionários medidores.
      * @param {!number} idVendedor O identificador do vendedor que será feita a busca.
      * @returns {Promise} Uma promise com o resultado da busca.
@@ -143,25 +151,6 @@ Servicos.Funcionarios = (function(http) {
      */
     obterConfiguracoesLista: function () {
       return http().get(API + 'configuracoes');
-    },
-
-    /**
-     * Retorna os itens para o controle de tipos fiscal de cliente.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-    obterSituacoes: function () {
-      return Promise.resolve({
-        "data": [
-          {
-            "id": "1",
-            "nome": "Ativo"
-          },
-          {
-            "id": "2",
-            "nome": "Inativo"
-          }
-        ]
-      });
     },
 
     /**

@@ -3,6 +3,7 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
@@ -353,6 +354,25 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
                         Id = s.IdTipoFuncionario,
                         Nome = s.Descricao,
                     });
+
+                return this.Lista(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de funcionários.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos de tipos de funcionários.</returns>
+        [HttpGet]
+        [Route("estadoscivis")]
+        [SwaggerResponse(200, "Estados Civis encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Estados Civis não encontrados.")]
+        public IHttpActionResult ObterEstadosCivis()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = new ConversorEnum<EstadoCivil>()
+                    .ObterTraducao();
 
                 return this.Lista(tipos);
             }

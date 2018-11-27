@@ -73,7 +73,10 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroSetor: function () {
-      return Servicos.Producao.obterSetores();
+      return Servicos.Producao.Setores.obterParaControle(
+       false,
+       false
+     );
     },
   },
 

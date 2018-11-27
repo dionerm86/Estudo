@@ -2,6 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Models.Genericas.V1.CadastroAtualizacao;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
@@ -11,41 +12,61 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
     /// Classe que encapsula os dados de contato.
     /// </summary>
     [DataContract(Name = "Contatos")]
-    public class ContatosDto
+    public class ContatosDto : BaseCadastroAtualizacaoDto<ContatosDto>
     {
         /// <summary>
         /// Obtém ou define o telefone residencial de contato do funcionário.
         /// </summary>
         [DataMember]
         [JsonProperty("telefoneResidencial")]
-        public string TelefoneResidencial { get; set; }
+        public string TelefoneResidencial
+        {
+            get { return this.ObterValor(c => c.TelefoneResidencial); }
+            set { this.AdicionarValor(c => c.TelefoneResidencial, value); }
+        }
 
         /// <summary>
         /// Obtém ou define o telefone celular de contato do funcionário.
         /// </summary>
         [DataMember]
         [JsonProperty("telefoneCelular")]
-        public string TelefoneCelular { get; set; }
+        public string TelefoneCelular
+        {
+            get { return this.ObterValor(c => c.TelefoneCelular); }
+            set { this.AdicionarValor(c => c.TelefoneCelular, value); }
+        }
 
         /// <summary>
         /// Obtém ou define o telefone de contato do funcionário.
         /// </summary>
         [DataMember]
         [JsonProperty("telefoneContato")]
-        public string TelefoneContato { get; set; }
+        public string TelefoneContato
+        {
+            get { return this.ObterValor(c => c.TelefoneContato); }
+            set { this.AdicionarValor(c => c.TelefoneContato, value); }
+        }
 
         /// <summary>
         /// Obtém ou define o email do funcionário.
         /// </summary>
         [DataMember]
         [JsonProperty("email")]
-        public string Email { get; set; }
+        public string Email
+        {
+            get { return this.ObterValor(c => c.Email); }
+            set { this.AdicionarValor(c => c.Email, value); }
+        }
 
         /// <summary>
         /// Obtém ou define o ramal do funcionário.
         /// </summary>
         [DataMember]
         [JsonProperty("ramal")]
-        public string Ramal { get; set; }
+        public string Ramal
+        {
+            get { return this.ObterValor(c => c.Ramal); }
+            set { this.AdicionarValor(c => c.Ramal, value); }
+        }
     }
 }

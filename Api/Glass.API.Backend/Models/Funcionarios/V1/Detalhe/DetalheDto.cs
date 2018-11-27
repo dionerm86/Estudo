@@ -2,6 +2,8 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Models.Genericas.V1;
+using Glass.Data.DAL;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,24 +23,36 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// <param name="funcionario">A model de funcionario.</param>
         internal DetalheDto(Glass.Global.Negocios.Entidades.Funcionario funcionario)
         {
+            this.Id = funcionario.IdFunc;
             this.Nome = funcionario.Nome;
-            this.IdTipoFuncionario = funcionario.IdTipoFunc;
+
+            this.TipoFuncionario = new IdNomeDto
+            {
+                Id = funcionario.IdTipoFunc,
+                Nome = TipoFuncDAO.Instance.GetDescricao((uint)funcionario.IdFunc),
+            };
+
             this.IdsSetores = funcionario.Setores.Select(f => f.IdSetor);
+
             this.Endereco = new Genericas.V1.EnderecoDto
             {
                 Logradouro = funcionario.Endereco,
                 Bairro = funcionario.Bairro,
                 Cep = funcionario.Cep,
                 Complemento = funcionario.Compl,
-                Cidade = new Genericas.V1.CidadeDto
+                Cidade = new CidadeDto
                 {
-                    Id = 1,
                     Nome = funcionario.Cidade,
                     Uf = funcionario.Uf,
                 },
             };
 
-            this.IdLoja = funcionario.IdLoja;
+            this.Loja = new IdNomeDto
+            {
+                Id = funcionario.IdLoja,
+                Nome = LojaDAO.Instance.GetNome((uint)funcionario.IdLoja),
+            };
+
             this.Contatos = new ContatosDto
             {
                 TelefoneResidencial = funcionario.TelRes,
@@ -66,7 +80,12 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
                 Foto = string.Empty,
             };
 
-            this.Situacao = funcionario.Situacao;
+            this.Situacao = new IdNomeDto
+            {
+                Id = (int)funcionario.Situacao,
+                Nome = Colosoft.Translator.Translate(funcionario.Situacao).ToString(),
+            };
+
             this.Acesso = new AcessoDto
             {
                 Login = funcionario.Login,
@@ -76,14 +95,22 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
             this.IdsTiposPedidos = funcionario.TipoPedido.Split(',').Select(f => int.Parse(f));
             this.NumeroDiasParaAtrasarPedidos = funcionario.NumDiasAtrasarPedido;
             this.NumeroPdv = funcionario.NumeroPdv.ToString();
+
             this.Permissoes = new PermisoesDto
             {
-                EnviarEmailPedidoFinalizado = funcionario.EnviarEmail,
                 UtilizarChat = funcionario.HabilitarChat,
+                HabilitarControleUsuarios = funcionario.HabilitarControleUsuarios,
             };
 
-            this.Obsercavao = funcionario.Obs;
+            this.Observacao = funcionario.Obs;
         }
+
+        /// <summary>
+        /// Obtém ou define o identificador do Funcionário.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("id")]
+        public int Id { get; set; }
 
         /// <summary>
         /// Obtém ou define o nome do funcionário.
@@ -96,8 +123,8 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// Obtém ou define o identificador do tipo do funcionário.
         /// </summary>
         [DataMember]
-        [JsonProperty("idTipoFuncionario")]
-        public int IdTipoFuncionario { get; set; }
+        [JsonProperty("tipoFuncionario")]
+        public IdNomeDto TipoFuncionario { get; set; }
 
         /// <summary>
         /// Obtém ou define os identificadores dos setores.
@@ -117,8 +144,8 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// Obtém ou define o identificador da loja.
         /// </summary>
         [DataMember]
-        [JsonProperty("idLoja")]
-        public int IdLoja { get; set; }
+        [JsonProperty("loja")]
+        public IdNomeDto Loja { get; set; }
 
         /// <summary>
         /// Obtém ou define os dados de contato do funcionário.
@@ -139,7 +166,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// </summary>
         [DataMember]
         [JsonProperty("situacao")]
-        public Glass.Situacao Situacao { get; set; }
+        public IdNomeDto Situacao { get; set; }
 
         /// <summary>
         /// Obtém ou define os dados de acesso do funcionário.
@@ -180,7 +207,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// Obtém ou define a observação do funcionário.
         /// </summary>
         [DataMember]
-        [JsonProperty("string")]
-        public string Obsercavao { get; set; }
+        [JsonProperty("observacao")]
+        public string Observacao { get; set; }
     }
 }

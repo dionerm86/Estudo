@@ -141,7 +141,7 @@ namespace Glass.API.Backend.Models.Funcionarios.V1.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("numeroPdv")]
-        public string NumeroPdv
+        public int NumeroPdv
         {
             get { return this.ObterValor(c => c.NumeroPdv); }
             set { this.AdicionarValor(c => c.NumeroPdv, value); }
@@ -162,7 +162,7 @@ namespace Glass.API.Backend.Models.Funcionarios.V1.CadastroAtualizacao
         /// Obtém ou define a observação do funcionário.
         /// </summary>
         [DataMember]
-        [JsonProperty("string")]
+        [JsonProperty("observacao")]
         public string Observacao
         {
             get { return this.ObterValor(c => c.Observacao); }

@@ -3,6 +3,7 @@
 // </copyright>
 
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Funcionarios.V1.Configuracoes
@@ -23,6 +24,7 @@ namespace Glass.API.Backend.Models.Funcionarios.V1.Configuracoes
             this.HabilitarChat = permissao;
             this.HabilitarControleUsuarios = permissao;
             this.EnviarEmailPedidoConfirmado = Glass.Configuracoes.PCPConfig.EmailSMS.EnviarEmailPedidoConfirmadoVendedor;
+            this.IdsTiposFuncionariosComSetor = new int[] { 196 };
         }
 
         /// <summary>
@@ -45,5 +47,12 @@ namespace Glass.API.Backend.Models.Funcionarios.V1.Configuracoes
         [DataMember]
         [JsonProperty("habilitarControleUsuarios")]
         public bool HabilitarControleUsuarios { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o usuário tem permissão de editar funcionários.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idsTiposFuncionariosComSetor")]
+        public IEnumerable<int> IdsTiposFuncionariosComSetor { get; set; }
     }
 }
