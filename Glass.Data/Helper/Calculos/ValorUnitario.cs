@@ -192,7 +192,7 @@ namespace Glass.Data.Helper.Calculos
 
             if (produto.Container is Pedido)
             {
-                calcularMultiploDe5 = !produto.Container.IsPedidoProducaoCorte;
+                calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2 && !produto.Container.IsPedidoProducaoCorte;
             }
 
             var estrategia = ValorUnitarioStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
