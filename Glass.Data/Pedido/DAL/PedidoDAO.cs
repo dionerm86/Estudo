@@ -2720,7 +2720,7 @@ namespace Glass.Data.DAL
                     sql += " ORDER BY p.DataEntrega DESC";
                     break;
                 default:
-                    sql += " ORDER BY p.DataPedido DESC, p.DataCad DESC";
+                    sql += " ORDER BY p.IdPedido DESC";
                     break;
             }
 
