@@ -43,7 +43,7 @@
         }
 
         function abrirBuscaNf() {
-            openWindow(600, 800, '../Utils/SelNotaFiscalAutorizada.aspx');
+            openWindow(600, 800, '../Utils/SelNotaFiscalAutorizada.aspx?origem=cte');
         }
 
         function buscarNf(numNFe){
