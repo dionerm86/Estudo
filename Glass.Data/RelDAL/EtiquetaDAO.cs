@@ -680,7 +680,9 @@ namespace Glass.Data.RelDAL
         internal string ConcatenaEspAltLargNumEtiqueta(Etiqueta etiq)
         {
             if (etiq.BarCodeData == null)
+            {
                 etiq.BarCodeData = etiq.NumEtiqueta;
+            }
 
             var possuiFml = false;
             var possuiDxf = false;
@@ -689,20 +691,22 @@ namespace Glass.Data.RelDAL
 
             if (PCPConfig.EmpresaGeraArquivoFml)
                 possuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(null, etiq.IdProdPedEsp, etiq.NumEtiqueta, true, true);
+
             if (PCPConfig.EmpresaGeraArquivoDxf)
                 possuiDxf = ProdutosPedidoEspelhoDAO.Instance.PossuiDxf(null, etiq.IdProdPedEsp, etiq.NumEtiqueta);
+
             if (PCPConfig.EmpresaGeraArquivoSGlass)
                 possuiSGlass = ProdutosPedidoEspelhoDAO.Instance.PossuiSGlass(null, etiq.IdProdPedEsp, etiq.NumEtiqueta);
+
             if (PCPConfig.EmpresaGeraArquivoIntermac)
                 possuiIntermac = ProdutosPedidoEspelhoDAO.Instance.PossuiIntermac(null, (int)etiq.IdProdPedEsp, etiq.NumEtiqueta);
 
-            if (PCPConfig.ConcatenarEspAltLargAoNumEtiqueta &&
-                //Chamado 76946 (Deve ser inserido no codigo de barras da etiqueta a altura/largura/espessura da peça apenas se possuir FML/DXF/SGLASS/Intermac)
-                (possuiFml || possuiDxf || possuiSGlass || possuiIntermac) &&
-                etiq.BarCodeData != null &&
-                etiq.BarCodeData[0].ToString().ToUpper() != "C" &&
-                etiq.BarCodeData[0].ToString().ToUpper() != "R" &&
-                etiq.BarCodeData[0].ToString().ToUpper() != "N")
+            if ((PCPConfig.ConcatenarEspAltLargAoNumEtiqueta
+                || (PCPConfig.ConcatenarEspAltLargFmlDxfSGlassIntermac && (possuiFml || possuiDxf || possuiIntermac)))
+                && etiq.BarCodeData != null
+                && etiq.BarCodeData[0].ToString().ToUpper() != "C"
+                && etiq.BarCodeData[0].ToString().ToUpper() != "R"
+                && etiq.BarCodeData[0].ToString().ToUpper() != "N")
             {
                 etiq.BarCodeData = (etiq.Espessura.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0') +
                     (Glass.Conversoes.StrParaInt(etiq.Altura) > Glass.Conversoes.StrParaInt(etiq.Largura) ?

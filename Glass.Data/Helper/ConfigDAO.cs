@@ -786,6 +786,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.BloquearExpedicaoApenasPecasProntas);
             itens.Add(Config.ConfigEnum.UsarControleGerenciamentoProjCnc);
             itens.Add(Config.ConfigEnum.ConcatenarEspAltLargAoNumEtiqueta);
+            itens.Add(Config.ConfigEnum.ConcatenarEspAltLargFmlDxfSGlassIntermac);
             itens.Add(Config.ConfigEnum.GerarMarcacaoPecaReposta);
             itens.Add(Config.ConfigEnum.GerarDxf);
             itens.Add(Config.ConfigEnum.GerarFml);
