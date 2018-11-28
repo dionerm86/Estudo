@@ -92,6 +92,18 @@
      */
     obterItensFiltroTiposEntrega: function () {
       return Servicos.Pedidos.obterTiposEntrega();
+    },
+
+    /**
+     * Adiciona a quantidade de meses informada à data base informada.
+     * @param {!date} dataBase A data que será alterada.
+     * @param {!number} meses A quantidade de meses que serão adicionados à data base.
+     * @returns {Date} A database acrescida da quantidade de meses informados.
+     */
+    adicionarMeses: function (dataBase, meses) {
+      var data = new Date(dataBase);
+      data.setMonth(data.getMonth() + meses);
+      return data;
     }
   },
 
@@ -107,8 +119,8 @@
           : [];
 
         var dataAtual = new Date();
-        this.filtroAtual.periodoEntregaPedidoInicio = new Date(dataAtual.setMonth(dataAtual.getMonth() - 1));
-        this.filtroAtual.periodoEntregaPedidoFim = new Date();
+        this.filtroAtual.periodoEntregaPedidoInicio = this.adicionarMeses(dataAtual, -1);
+        this.filtroAtual.periodoEntregaPedidoFim = dataAtual;
         this.filtroAtual.carregarItensAutomaticamente = true;
         
         var vm = this;
