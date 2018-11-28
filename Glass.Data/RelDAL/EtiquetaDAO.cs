@@ -1292,7 +1292,7 @@ namespace Glass.Data.RelDAL
 
                     if (pecaProjMod == null)
                     {
-                        var idProduto = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, prodImp.IdProdPed.Value);
+                        var idProduto = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, prodImp.IdProdPed.GetValueOrDefault());
                         etiqueta.Flags = string.Join(",", FlagArqMesaDAO.Instance.ObtemPorProduto(session, (int)idProduto, false)?.Select(f => f.Descricao));
                     }
                     else
@@ -1302,22 +1302,22 @@ namespace Glass.Data.RelDAL
 
                     if (PCPConfig.EmpresaGeraArquivoFml)
                     {
-                        etiqueta.PossuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(session, prodImp.IdProdPed.Value, etiqueta.NumEtiqueta, true);
+                        etiqueta.PossuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(session, prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta, true);
                     }
 
                     if (PCPConfig.EmpresaGeraArquivoDxf)
                     {
-                        etiqueta.PossuiDxf = ProdutosPedidoEspelhoDAO.Instance.PossuiDxf(session, prodImp.IdProdPed.Value, etiqueta.NumEtiqueta);
+                        etiqueta.PossuiDxf = ProdutosPedidoEspelhoDAO.Instance.PossuiDxf(session, prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta);
                     }
 
                     if (PCPConfig.EmpresaGeraArquivoSGlass)
                     {
-                        etiqueta.PossuiSGlass = ProdutosPedidoEspelhoDAO.Instance.PossuiSGlass(session, prodImp.IdProdPed.Value, etiqueta.NumEtiqueta);
+                        etiqueta.PossuiSGlass = ProdutosPedidoEspelhoDAO.Instance.PossuiSGlass(session, prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta);
                     }
 
                     if (PCPConfig.EmpresaGeraArquivoIntermac)
                     {
-                        etiqueta.PossuiIntermac = ProdutosPedidoEspelhoDAO.Instance.PossuiIntermac(session, (int)prodImp.IdProdPed.Value, etiqueta.NumEtiqueta);
+                        etiqueta.PossuiIntermac = ProdutosPedidoEspelhoDAO.Instance.PossuiIntermac(session, (int)prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta);
                     }
                 }
             }
