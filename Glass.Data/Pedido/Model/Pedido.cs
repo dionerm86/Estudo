@@ -1019,26 +1019,26 @@ namespace Glass.Data.Model
         #endregion
 
         /// <summary>
-        /// Observação do cliente e do pedido concatenados.
+        /// Obtém a observação do cliente e do pedido concatenados.
         /// </summary>
         public string ObservacaoLiberacaoClientePedido
         {
             get
             {
-                var observacao1 = string.IsNullOrWhiteSpace(ObsLiberacao) ? string.Empty : ObsLiberacao;
-                var observacao2 = string.IsNullOrWhiteSpace(ObservacaoLiberacaoCliente) ? string.Empty : ObservacaoLiberacaoCliente;
+                var obsLiberacao = string.IsNullOrWhiteSpace(this.ObsLiberacao) ? string.Empty : this.ObsLiberacao;
+                var observacaoLiberacaoCliente = string.IsNullOrWhiteSpace(this.ObservacaoLiberacaoCliente) ? string.Empty : this.ObservacaoLiberacaoCliente;
 
-                if (observacao1.Trim().Contains(observacao2.Trim()))
+                if (obsLiberacao.Trim().Contains(observacaoLiberacaoCliente.Trim()))
                 {
-                    return observacao1;
+                    return obsLiberacao;
                 }
 
-                if (observacao2.Trim().Contains(observacao1.Trim()))
+                if (observacaoLiberacaoCliente.Trim().Contains(obsLiberacao.Trim()))
                 {
-                    return observacao2;
+                    return observacaoLiberacaoCliente;
                 }
 
-                return observacao1 + observacao2;
+                return $"{obsLiberacao} {observacaoLiberacaoCliente}";
             }
         }
 
