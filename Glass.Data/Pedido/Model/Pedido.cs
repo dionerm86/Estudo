@@ -1025,17 +1025,20 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (!string.IsNullOrEmpty(ObsLiberacao) && ObsLiberacao.Trim().Contains(ObservacaoLiberacaoCliente.Trim()))
+                var observacao1 = string.IsNullOrWhiteSpace(ObsLiberacao) ? string.Empty : ObsLiberacao;
+                var observacao2 = string.IsNullOrWhiteSpace(ObservacaoLiberacaoCliente) ? string.Empty : ObservacaoLiberacaoCliente;
+
+                if (observacao1.Trim().Contains(observacao2.Trim()))
                 {
-                    return ObsLiberacao;
+                    return observacao1;
                 }
 
-                if (!string.IsNullOrEmpty(ObservacaoLiberacaoCliente) && ObservacaoLiberacaoCliente.Trim().Contains(ObsLiberacao.Trim()))
+                if (observacao2.Trim().Contains(observacao1.Trim()))
                 {
-                    return ObservacaoLiberacaoCliente;
+                    return observacao2;
                 }
 
-                return (ObservacaoLiberacaoCliente + " " ?? string.Empty) + (ObsLiberacao ?? string.Empty);
+                return observacao1 + observacao2;
             }
         }
 
@@ -1090,7 +1093,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Quantidadade de peças do pedido, considerando as peças filhas
+        /// Quantidadade de peï¿½as do pedido, considerando as peï¿½as filhas
         /// </summary>
         [XmlIgnore]
         public long QtdePecas
@@ -1099,7 +1102,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Quantidadade de peças do pedido, sem considerar as peças filhas
+        /// Quantidadade de peï¿½as do pedido, sem considerar as peï¿½as filhas
         /// </summary>
         [XmlIgnore]
         public long QtdePecasPai
