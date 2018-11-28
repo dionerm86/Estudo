@@ -700,7 +700,7 @@
                         </td>
                         <td>
                             <asp:DropDownList ID="drpOrdenacao" runat="server">
-                                <asp:ListItem Value="0">Data do pedido (descresc.)</asp:ListItem>
+                                <asp:ListItem Value="0">Data do pedido (decresc.)</asp:ListItem>
                                 <asp:ListItem Value="1">Data de entrega (cresc.)</asp:ListItem>
                                 <asp:ListItem Value="2">Data de entrega (descresc.)</asp:ListItem>
                             </asp:DropDownList>

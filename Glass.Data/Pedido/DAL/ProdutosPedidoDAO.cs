@@ -1171,7 +1171,7 @@ namespace Glass.Data.DAL
                 sql = @"
                     Select pp.*, p.Descricao as DescrProduto, p.CodInterno, p.idGrupoProd, p.idSubgrupoProd, p.LocalArmazenagem as LocalArmazenagem, um.codigo as unidade,
                         apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, ap.Ambiente, ap.Descricao as DescrAmbiente, ap.tipoDesconto As tipoDescontoAmbiente,
-                        ap.desconto As descontoAmbiente, ip.obs as obsProjeto
+                        ap.desconto As descontoAmbiente, ip.obs as obsProjeto, sgp.descricao AS NomeSubGrupoProd
                     From produtos_pedido pp
                         Left Join pedido ped on (pp.idPedido=ped.idPedido)
                         Left Join produto p On (pp.idProd=p.idProd)
@@ -1180,13 +1180,15 @@ namespace Glass.Data.DAL
                         Left Join item_projeto ip On (ap.idItemProjeto=ip.idItemProjeto)
                         Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
                         Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
+                        LEFT JOIN subgrupo_prod sgp ON (p.IdSubGrupoProd = sgp.IdSubGrupoProd)
                     Where pp.idPedido=" + idPedido;
             }
             else
             {
                 sql = @"
                     Select pp.*, p.Descricao as DescrProduto, p.CodInterno, p.idGrupoProd, p.LocalArmazenagem as LocalArmazenagem, um.codigo as unidade,
-                        p.idSubgrupoProd, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, COALESCE(ip.Ambiente, ap.Ambiente) AS Ambiente, ip.obs as obsProjeto
+                        p.idSubgrupoProd, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, COALESCE(ip.Ambiente, ap.Ambiente) AS Ambiente, ip.obs as obsProjeto,
+                        sgp.descricao AS NomeSubGrupoProd
                     From produtos_pedido pp
                         Left Join produto p On (pp.idProd=p.idProd)
                         Left Join unidade_medida um On (p.idUnidadeMedida=um.idUnidadeMedida)
@@ -1194,6 +1196,7 @@ namespace Glass.Data.DAL
                         Left Join item_projeto ip on (pp.idItemProjeto=ip.idItemProjeto)
                         Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
                         Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
+                        LEFT JOIN subgrupo_prod sgp ON (p.IdSubGrupoProd = sgp.IdSubGrupoProd)
                     Where pp.idPedido=" + idPedido;
             }
 
@@ -5788,22 +5791,34 @@ namespace Glass.Data.DAL
             return lista;
         }
 
-        public List<ProdutosPedido> ObterProdutosComExportados(string idsPedido)
+        /// <summary>
+        /// Método que retorna uma lista de produtos pedido exportados.
+        /// </summary>
+        /// <param name="idsPedido">Identificadores do pedido.</param>
+        /// <param name="idExportacao">Identificador da exportação do pedido.</param>
+        /// <returns>Lista contendo os produtos de pedido que foram exportados.</returns>
+        public List<ProdutosPedido> ObterProdutosComExportados(string idsPedido, int idExportacao)
         {
-            string sql = @"select p.CodInterno, p.Descricao as DescrProduto, pp.*, cli.Nome as NomeCliente,
-                           case when (select count(*) from produtos_pedido_exportacao ppe
-                                where ppe.idProd = pp.idprodped) > 0 then true else false end as Exportado
-                           from produtos_pedido pp
-                           inner join pedido ped on(ped.IdPedido=pp.IdPedido)
-                           inner join produto p on(p.IdProd=pp.IdProd)
-                           inner join cliente cli on(ped.IdCli=cli.id_cli)
-                           left join pedido_exportacao pedEx on(pedEx.IdPedido=ped.idPedido)
-						   left join pedido_espelho pedEs on(pedEs.IdPedido=ped.idPedido)
-                           where ped.IdPedido in(" + idsPedido + @")
-                                and IF(pedEx.DATASITUACAO < pedEs.DATACONF, pp.invisivelFluxo,
-                                pp.invisivelPedido) order by p.Descricao asc, exportado desc";
+            string exportacao = string.Empty;
+            if (idExportacao > 0)
+            {
+                exportacao = $" AND pedEx.IdExportacao = {idExportacao}";
+            }
 
-            return objPersistence.LoadData(sql);
+            string sql = $@"SELECT p.CodInterno, p.Descricao as DescrProduto, pp.*, cli.Nome as NomeCliente,
+                           CASE WHEN (SELECT COUNT(*) FROM produtos_pedido_exportacao ppe 
+                                WHERE ppe.IdProd = pp.Idprodped) > 0 THEN TRUE ELSE FALSE END as Exportado
+                           FROM produtos_pedido pp
+                           INNER JOIN pedido ped ON (ped.IdPedido=pp.IdPedido)                                                               
+                           INNER JOIN produto p ON (p.IdProd=pp.IdProd)
+                           INNER JOIN cliente cli ON (ped.IdCli=cli.Id_cli)
+                           LEFT JOIN pedido_exportacao pedEx ON (pedEx.IdPedido=ped.IdPedido)
+						   LEFT JOIN pedido_espelho pedEs ON (pedEs.IdPedido=ped.IdPedido)
+                           WHERE ped.IdPedido in({idsPedido}) {exportacao}
+                                AND IF(pedEx.DataSituacao < pedEs.DataConf, pp.InvisivelFluxo, 
+                                pp.InvisivelPedido) ORDER BY p.Descricao ASC, exportado DESC";
+
+            return this.objPersistence.LoadData(sql);
         }
 
         /// <summary>
@@ -5946,28 +5961,27 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se os produtos do pedido de Revenda j� deram sa�da total. 
+        /// Verifica se os produtos do pedido de Revenda j� deram sa�da total.
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
+        /// <param name="sessao">Sessao do GDA.</param>
+        /// <param name="idPedido">Identificador do Pedido.</param>
+        /// <returns>Retorna o valor de um teste lógico que indica se todos os produtos do pedido já deram saída (Caso o pedido seja de saída).</returns>
         internal bool VerificarSaidaProduto(GDASession sessao, uint idPedido)
         {
-            if(idPedido == 0 || !PedidoDAO.Instance.IsRevenda(sessao, idPedido))
+            if (idPedido == 0 || !PedidoDAO.Instance.IsRevenda(sessao, idPedido))
             {
                 return false;
             }
 
-            var sql = $@"SELECT (SUM(QtdSaida) + 1) >= SUM(Qtde) = COUNT(*)
+            var sql = $@"SELECT COUNT(*) = 0
                 FROM produtos_pedido
-                WHERE IdPedido = {idPedido} 
-                    AND InvisivelPedido = 0";
+                WHERE IdPedido = {idPedido} AND !InvisivelPedido AND ISNULL(IdProdPedParent) AND Qtde > QtdSaida";
 
-            return ExecuteScalar<bool>(sessao, sql);
+            return this.ExecuteScalar<bool>(sessao, sql);
         }
 
         /// <summary>
-        /// Método que retorna uma string contendo o fluxo utilizado no SqlLiberacao
+        /// Método que retorna uma string contendo o fluxo utilizado no SqlLiberacao.
         /// </summary>
         /// <returns>String com os filtros de fluxo da tabela produtos_pedido.</returns>
         private string ObterFluxoSqlLiberacao(string aliasProdutosPedido)
