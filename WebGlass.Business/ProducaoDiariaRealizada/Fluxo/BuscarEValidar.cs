@@ -144,11 +144,7 @@ namespace WebGlass.Business.ProducaoDiariaRealizada.Fluxo
                 diaAtual = dataAnt;
             }
 
-            var retorno = new List<Glass.Data.RelModel.ProducaoDiariaRealizada>();
-
-            //Recupera a previsão de produção
-            foreach (var data in datas)
-                retorno.AddRange(ProducaoDiariaRealizadaDAO.Instance.ObtemProducaoRealizada(data));
+            var retorno = ProducaoDiariaRealizadaDAO.Instance.ObtemProducaoRealizada(datas);
 
             return retorno.OrderBy(f => f.DataFabrica).ToList();
         }
