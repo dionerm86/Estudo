@@ -46,8 +46,30 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
 
                     var resultado = funcionarioFluxo.SalvarFuncionario(funcionario);
 
-                    return resultado ? this.Criado(string.Format($"Funcinário {funcionario.IdFunc} inserido com sucesso!"), funcionario.IdFunc) :
-                        (IHttpActionResult)this.ErroValidacao($"Erro ao inserir o funcionário. {resultado.Message.Format()}");
+                    if (resultado)
+                    {
+                        if (!dadosParaCadastro.VerificarCampoInformado(c => c.DocumentosEDadosPessoais.Foto))
+                        {
+                            return this.Criado(string.Format($"Funcinário {funcionario.IdFunc} inserido com sucesso!"), funcionario.IdFunc);
+                        }
+
+                        byte[] bytes = System.Convert.FromBase64String(dadosParaCadastro.DocumentosEDadosPessoais.Foto);
+
+                        var imagem = new System.IO.MemoryStream(bytes);
+
+                        var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
+                            .Current.GetInstance<Glass.Global.Negocios.Entidades.IFuncionarioRepositorioImagens>();
+
+                        repositorio.SalvarImagem(funcionario.IdFunc, imagem);
+
+                        Microsoft.Practices.ServiceLocation.ServiceLocator
+                                .Current.GetInstance<Global.Negocios.IMenuFluxo>().RemoveMenuFuncMemoria(funcionario.IdFunc);
+
+                        return this.Criado(string.Format($"Funcinário {funcionario.IdFunc} inserido com sucesso!"), funcionario.IdFunc);
+                    }
+
+                    return this.ErroValidacao($"Erro ao inserir o funcionário. {resultado.Message.Format()}");
+
                 }
                 catch (Exception e)
                 {

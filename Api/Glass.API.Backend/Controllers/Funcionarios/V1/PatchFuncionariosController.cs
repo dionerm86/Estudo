@@ -52,8 +52,29 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
 
                     var resultado = funcionarioFluxo.SalvarFuncionario(funcionario);
 
-                    return resultado ? this.Aceito(string.Format($"Funcionário {id} atualizado com sucesso!")) :
-                        (IHttpActionResult)this.ErroValidacao($"Erro ao atualizar o funcionário {id}. {resultado.Message.Format()}");
+                    if (resultado)
+                    {
+                        if (!dadosParaAtualizacao.VerificarCampoInformado(c => c.DocumentosEDadosPessoais.Foto))
+                        {
+                            return this.Aceito(string.Format($"Funcionário {id} atualizado com sucesso!"));
+                        }
+
+                        byte[] bytes = Convert.FromBase64String(dadosParaAtualizacao.DocumentosEDadosPessoais.Foto);
+
+                        var imagem = new System.IO.MemoryStream(bytes);
+
+                        var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
+                            .Current.GetInstance<Global.Negocios.Entidades.IFuncionarioRepositorioImagens>();
+
+                        repositorio.SalvarImagem(funcionario.IdFunc, imagem);
+
+                        Microsoft.Practices.ServiceLocation.ServiceLocator
+                                .Current.GetInstance<Global.Negocios.IMenuFluxo>().RemoveMenuFuncMemoria(funcionario.IdFunc);
+
+                        return this.Aceito(string.Format($"Funcionário {id} atualizado com sucesso!"));
+                    }
+
+                    return this.ErroValidacao($"Erro ao atualizar o funcionário {id}. {resultado.Message.Format()}");
                 }
                 catch (Exception e)
                 {

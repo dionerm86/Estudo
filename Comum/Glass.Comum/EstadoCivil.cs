@@ -21,24 +21,24 @@ namespace Glass
         /// Estado Civil Desquitado
         /// </summary>
         [Description("Desquitado(a)")]
-        Desquitado = 2,
+        Desquitado,
 
         /// <summary>
         /// Estado Civil Viúvo
         /// </summary>
         [Description("Divorciado(a)")]
-        Divociado = 3,
+        Divociado,
 
         /// <summary>
         /// Estado Civil Solteiro
         /// </summary>
         [Description("Solteiro(a)")]
-        Solteiro = 4,
+        Solteiro,
 
         /// <summary>
         /// Estado Civil Viúvo
         /// </summary>
         [Description("Viúvo(a)")]
-        Viuvo = 5,
+        Viuvo,
     }
 }

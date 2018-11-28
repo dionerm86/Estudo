@@ -25,6 +25,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         {
             this.Id = funcionario.IdFunc;
             this.Nome = funcionario.Nome;
+            this.UrlImagem = Glass.Global.UI.Web.Process.Funcionarios.FuncionarioRepositorioImagens.Instance.ObtemUrl(funcionario.IdFunc);
 
             this.TipoFuncionario = new IdNomeDto
             {
@@ -77,7 +78,6 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
                 AuxilioAlimentacao = funcionario.AuxAlimentacao,
                 NumeroPis = funcionario.NumPis,
                 Registrado = funcionario.Registrado,
-                Foto = string.Empty,
             };
 
             this.Situacao = new IdNomeDto
@@ -209,5 +209,12 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         [DataMember]
         [JsonProperty("observacao")]
         public string Observacao { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o usuário tem permissão de editar funcionários.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("urlImagem")]
+        public string UrlImagem { get; set; }
     }
 }

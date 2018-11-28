@@ -51,33 +51,11 @@
     },
 
     /**
-     * Recupera as Uf's para exibição no cadastro ou edição do funcionário.
+     * Retorna os dados da imagem do funcionário em uma string base64.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    buscarUfs: function () {
-      var vm = this;
-
-      Servicos.Cidades.listarUfs()
-        .then(function (resposta) {
-          var ufAtual = vm.ufAtual;
-
-          resposta.data.sort(function (a, b) {
-            return a.localeCompare(b);
-          });
-
-          vm.ufs = resposta.data;
-
-          if (ufAtual) {
-            vm.ufAtual = ufAtual;
-          }
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-
-          vm.ufs = [];
-        });
+    fotoSelecionada: function (arquivo) {
+      this.funcionario.documentosEDadosPessoais.foto = arquivo;
     },
 
     /**
@@ -123,28 +101,33 @@
       this.funcionarioOriginal = item ? this.clonar(item) : {};
 
       this.lojaAtual = {
-        id: item && item.loja ? item.loja.id : null};
+        id: item && item.loja ? item.loja.id : null
+      };
 
       this.tipoFuncionarioAtual = {
-        id: item && item.tipoFuncionario ? item.tipoFuncionario.id : null};
+        id: item && item.tipoFuncionario ? item.tipoFuncionario.id : null
+      };
 
       this.situacaoAtual = {
-        id: item && item.situacao ? item.situacao.id : null};
+        id: item && item.situacao ? item.situacao.id : null
+      };
 
       this.estadoCivilAtual = {
         id: item && item.documentosEDadosPessoais && item.documentosEDadosPessoais.estadoCivil ?
-          item.documentosEDadosPessoais.estadoCivil : null};
+          item.documentosEDadosPessoais.estadoCivil : null
+      };
 
       this.funcionario = {
         id: item && item.id ? item.id : null,
         idTipoFuncionario: item && item.tipoFuncionario ? item.tipoFuncionario.id : null,
-        idsSetores: item && item.idsSetores ? item.idsSetores : null,
+        idsSetores: item && item.idsSetores ? item.idsSetores : [],
         nome: item && item.nome ? item.nome : null,
         idLoja: item && item.loja ? item.loja.id : null,
         numeroDiasParaAtrasarPedidos: item ? item.numeroDiasParaAtrasarPedidos : 0,
         numeroPdv: item ? item.numeroPdv : 0,
-        idsTiposPedidos: item && item.idsTiposPedidos ? item.idsTiposPedidos : null,
+        idsTiposPedidos: item && item.idsTiposPedidos ? item.idsTiposPedidos : [],
         observacao: item && item.observacao ? item.observacao : null,
+        urlImagem: item && item.urlImagem ? item.urlImagem : null,
         contatos: {
           telefoneResidencial: item && item.contatos ? item.contatos.telefoneResidencial : null,
           telefoneCelular: item && item.contatos ? item.contatos.telefoneCelular : null,
@@ -169,7 +152,6 @@
           auxilioAlimentacao: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.auxilioAlimentacao : 0,
           numeroPis: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.numeroPis : null,
           registrado: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.registrado : false,
-          foto: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.foto : null,
         },
         endereco: {
           logradouro: item && item.endereco ? item.endereco.logradouro : null,
@@ -274,7 +256,7 @@
     alterarSenha: function () {
       var url = '../Utils/TrocarSenha.aspx?IdFunc=' + this.funcionario.id;
 
-      window.open(url);
+      this.abrirJanela(150, 300, url);
     },
 
     /**

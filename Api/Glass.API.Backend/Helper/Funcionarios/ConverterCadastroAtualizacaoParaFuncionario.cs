@@ -70,17 +70,19 @@ namespace Glass.API.Backend.Helper.Funcionarios
 
         private void ConverterDadosTiposPedido(Funcionario destino)
         {
-            if (this.cadastro.IdsTiposPedidos != null)
+            if (!this.cadastro.VerificarCampoInformado(c => c.IdsTiposPedidos))
             {
-                var valorDestino = destino.TipoPedido?.Split(',')
+                return;
+            }
+
+            var valorDestino = destino.TipoPedido?.Split(',')
                 .Select(tipoPedido => tipoPedido.StrParaInt());
 
-                var valorNormalizado = this.cadastro.ObterValorNormalizado(c => c.IdsTiposPedidos, valorDestino);
+            var valorNormalizado = this.cadastro.ObterValorNormalizado(c => c.IdsTiposPedidos, valorDestino);
 
-                destino.TipoPedido = valorNormalizado != null
-                    ? string.Join(",", valorNormalizado.Select(tipoPedido => tipoPedido))
-                    : null;
-            }
+            destino.TipoPedido = valorNormalizado != null
+                ? string.Join(",", valorNormalizado.Select(tipoPedido => tipoPedido))
+                : null;
         }
 
         private void ConverterDadosSetores(Funcionario destino)
@@ -106,7 +108,7 @@ namespace Glass.API.Backend.Helper.Funcionarios
                         IdSetor = idSetor,
                     };
 
-                destino.FuncionarioSetores.Add(funcionarioSetor);
+                   destino.FuncionarioSetores.Add(funcionarioSetor);
 
                    setoresAdicionados += SetorDAO.Instance.ObtemDescricaoSetor(funcionarioSetor.IdSetor) + "\n";
                 }

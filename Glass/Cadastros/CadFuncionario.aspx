@@ -120,7 +120,7 @@
                     </label>
                 </span>
                 <span>
-                     <lista-selecao-id-valor :item-selecionado.sync="funcionario.endereco.cidade.uf" :funcao-recuperar-itens="obterUfs"></lista-selecao-id-valor>
+                     <lista-selecao-uf :uf-Selecionada.sync="funcionario.endereco.cidade.uf" ></lista-selecao-uf>
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -223,9 +223,9 @@
                         Aux. Alimentação
                     </label>
                 </span>
-                    <span>
-                        <input type="number" step="0.01" min="0" v-model.number="funcionario.documentosEDadosPessoais.auxilioAlimentacao" />
-                    </span>
+                <span>
+                    <input type="number" step="0.01" min="0" v-model.number="funcionario.documentosEDadosPessoais.auxilioAlimentacao" />
+                </span>
                 <span class="cabecalho">
                     <label>
                         Login
@@ -265,66 +265,75 @@
                         Tipo de Pedido
                     </label>
                 </span>
-            <span class="form-group">
-                <lista-selecao-multipla v-bind:ids-selecionados.sync="funcionario.idsTiposPedidos"
+                <span class="form-group">
+                    <lista-selecao-multipla v-bind:ids-selecionados.sync="funcionario.idsTiposPedidos"
                 v-bind:funcao-recuperar-itens="obterItensTipoPedido" v-bind:ordenar="false"></lista-selecao-multipla>
-            </span>
-            <span class="cabecalho">
+                </span>
+                <span class="cabecalho">
                 <label>
                     Núm. Dias Atrasar Pedido
                 </label>
-            </span>
-            <span>
-                <input type="number" min="0" v-model="funcionario.numeroDiasParaAtrasarPedidos"/>
-            </span>
-            <span class="cabecalho">
-                <label>
-                    Foto Funcionário
-                </label>
-            </span>
-            <span>
-                <%--<input type="file" v-model="funcionario.documentosEDadosPessoais.foto" accept="image/*">--%>
-            </span>
-            <span class="cabecalho">
-                <label>
-                    Numero do PDV
-                </label>
-            </span>
-            <span>
-                <input type="number" min="0"   v-model="funcionario.numeroPdv" />
-            </span>
-            <span class="cabecalho">
-                <label>
-                    Habilitar Chat WebGlass
-                </label>
-            </span>
-                <span>
-                    <input type="checkbox" id="utilizarChat" v-model="funcionario.permissoes.utilizarChat" />
-            </span>
-            <span class="cabecalho">
-                <label>
-                    Exibir controle de usuários
-                </label>
-            </span>
-            <span>
-                <span>
-                    <input type="checkbox" id="habilitarControleUsuarios" v-model="funcionario.permissoes.habilitarControleUsuarios" />
                 </span>
-            </span>
-            <span>                
-            </span>
-            <span>
-            </span>
-            <span class="cabecalho">
-                <label>
-                    Obs
-                </label>
-            </span>
-            <span class="colspan3">
-                <textarea cols="3" style="margin: 2px 0px; width: 230px; height: 50px;" v-model="funcionario.observacao"></textarea>
-            </span>
+                <span>
+                    <input type="number" min="0" v-model="funcionario.numeroDiasParaAtrasarPedidos"/>
+                </span>
+                <span class="cabecalho">
+                    <label>
+                        Foto Funcionário
+                    </label>
+                </span>
+                <span>
+                    <campo-upload @arquivo-selecionado="fotoSelecionada" tipo-arquivo="image/*">            
+                </span>
+                <span class="cabecalho">
+                </span>
+                <span>
+                </span>
+                <span class="cabecalho">
+                </span>
+                <span>
+                        <controle-exibicao-imagem :id-item="funcionario.id" tipo-item="Funcionario"></controle-exibicao-imagem>
+                </span>
+                <span class="cabecalho">
+                    <label>
+                        Numero do PDV
+                    </label>
+                </span>
+                <span>
+                    <input type="number" min="0"   v-model="funcionario.numeroPdv" />
+                </span>
+                <span class="cabecalho">
+                    <label>
+                        Habilitar Chat WebGlass
+                    </label>
+                </span>
+                <span>
+                     <input type="checkbox" id="utilizarChat" v-model="funcionario.permissoes.utilizarChat" />
+                </span>
+                <span class="cabecalho">
+                    <label>
+                        Exibir controle de usuários
+                    </label>
+                </span>
+                <span>
+                    <span>
+                        <input type="checkbox" id="habilitarControleUsuarios" v-model="funcionario.permissoes.habilitarControleUsuarios" />
+                    </span>
+                </span>
+                <span>                
+                </span>
+                <span>
+                </span>
+                <span class="cabecalho">
+                    <label>
+                        Obs
+                    </label>
+                </span>
+                <span class="colspan3">
+                    <textarea cols="3" style="margin: 2px 0px; width: 540px; height: 50px;" v-model="funcionario.observacao"></textarea>
+                </span>
         </div>
-        </section>
+            </section>
         <span class="botoes">
             <span>
             <button @click.prevent="inserirFuncionario" v-if="inserindo">

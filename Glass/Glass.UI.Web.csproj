@@ -1785,6 +1785,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoDataHora.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoDataHoraPeriodo.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoTelefone.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoUpload.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ControleTooltip.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\IndicadorSistemaOcupado.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaPaginada.js" />
@@ -1824,6 +1825,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSetores.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoParcelas.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoUf.js" />
     <Content Include="Vue\_Compartilhado\Componentes\LogCancelamento.js" />
     <Content Include="Vue\_Compartilhado\Componentes\LogAlteracao.js" />
     <Content Include="Vue\_Compartilhado\Filtros\Data.js" />
@@ -1913,6 +1915,7 @@
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoDataHora.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoDataHoraPeriodo.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoTelefone.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoUpload.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\ControleTooltip.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\IndicadorSistemaOcupado.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\ListaPaginada.html" />
@@ -1952,6 +1955,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoSetores.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoParcelas.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoUf.html" />
     <Content Include="Vue\_Compartilhado\Templates\LogCancelamento.html" />
     <Content Include="Vue\_Compartilhado\Templates\LogAlteracao.html" />
     <Content Include="WebGlassParceiros\AlterarObsLiberacaoPedido.aspx" />
