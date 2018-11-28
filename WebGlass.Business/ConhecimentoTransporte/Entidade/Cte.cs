@@ -17,7 +17,7 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
         private Glass.Data.Model.Cte.ConhecimentoTransporte _cte;
 
         #region Contrutores
-      
+
         public Cte()
         {
             _cte = new Glass.Data.Model.Cte.ConhecimentoTransporte();
@@ -55,67 +55,67 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
             get { return _cte.IdCfop; }
         }
 
-        public uint IdCidadeCte 
+        public uint IdCidadeCte
         {
             get { return _cte.IdCidadeCte; }
             set { _cte.IdCidadeCte = value; }
         }
 
-        public uint IdCidadeInicio 
+        public uint IdCidadeInicio
         {
             get { return _cte.IdCidadeInicio; }
             set { _cte.IdCidadeInicio = value; }
         }
 
-        public uint IdCidadeFim 
+        public uint IdCidadeFim
         {
             get { return _cte.IdCidadeFim; }
             set { _cte.IdCidadeFim = value; }
         }
 
-        //public uint IdCidadeOrigFrete 
+        //public uint IdCidadeOrigFrete
         //{
         //    get { return _cte.IdCidadeOrigFrete; }
         //    set { _cte.IdCidadeOrigFrete = value; }
         //}
 
-        //public uint IdCidadeDestFrete 
+        //public uint IdCidadeDestFrete
         //{
         //    get { return _cte.IdCidadeDestFrete; }
         //    set { _cte.IdCidadeDestFrete = value; }
         //}
 
-        public uint? IdCteAnterior 
+        public uint? IdCteAnterior
         {
             get { return _cte.IdCteAnterior; }
             set { _cte.IdCteAnterior = value; }
         }
 
-        public int NumeroCte 
+        public int NumeroCte
         {
             get { return _cte.NumeroCte; }
             set { _cte.NumeroCte = value; }
         }
 
-        public string CodAleatorio 
+        public string CodAleatorio
         {
             get { return _cte.CodAleatorio; }
             set { _cte.CodAleatorio = value; }
         }
-        
-        public string Modelo 
+
+        public string Modelo
         {
             get { return _cte.Modelo; }
             set { _cte.Modelo = value; }
         }
 
-        public string Serie 
+        public string Serie
         {
             get { return _cte.Serie; }
             set { _cte.Serie = value; }
         }
 
-        public DateTime DataEmissao 
+        public DateTime DataEmissao
         {
             get { return _cte.DataEmissao; }
             set { _cte.DataEmissao = value; }
@@ -127,7 +127,7 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
             set { _cte.DataEntradaSaida = value; }
         }
 
-        public int TipoEmissao 
+        public int TipoEmissao
         {
             get { return _cte.TipoEmissao; }
             set { _cte.TipoEmissao = value; }
@@ -145,7 +145,7 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
             }
         }
 
-        public int TipoCte 
+        public int TipoCte
         {
             get { return _cte.TipoCte; }
             set { _cte.TipoCte = value; }
@@ -163,13 +163,13 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
             }
         }
 
-        public string ChaveAcesso 
+        public string ChaveAcesso
         {
             get { return _cte.ChaveAcesso; }
             set { _cte.ChaveAcesso = value; }
         }
 
-        public int TipoServico 
+        public int TipoServico
         {
             get { return _cte.TipoServico; }
             set { _cte.TipoServico = value; }
@@ -187,37 +187,37 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
             }
         }
 
-        public bool Retirada 
+        public bool Retirada
         {
             get { return _cte.Retirada; }
             set { _cte.Retirada = value; }
         }
 
-        public string DetalhesRetirada 
+        public string DetalhesRetirada
         {
             get { return _cte.DetalhesRetirada; }
             set { _cte.DetalhesRetirada = value; }
         }
 
-        public decimal ValorTotal 
+        public decimal ValorTotal
         {
             get { return _cte.ValorTotal; }
             set { _cte.ValorTotal = value; }
         }
 
-        public decimal ValorReceber 
+        public decimal ValorReceber
         {
             get { return _cte.ValorReceber; }
             set { _cte.ValorReceber = value; }
         }
 
-        public string InformAdicionais 
+        public string InformAdicionais
         {
             get { return _cte.InformAdicionais; }
             set { _cte.InformAdicionais = value; }
         }
 
-        public int Situacao 
+        public int Situacao
         {
             get { return _cte.Situacao; }
             set { _cte.Situacao = value; }
@@ -321,6 +321,12 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
             }
         }
 
+        public DateTime? DataAnulacao
+        {
+            get { return _cte.DataAnulacao; }
+            set { _cte.DataAnulacao = value; }
+        }
+
         #endregion
 
         #region Propriedades de suporte
@@ -362,7 +368,7 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
         {
             get
             {
-                return Situacao == 7 || Situacao == 8 || Situacao == 9 || Situacao == 10 || 
+                return Situacao == 7 || Situacao == 8 || Situacao == 9 || Situacao == 10 ||
                     Situacao == 11 || Situacao == 12;
             }
         }
@@ -382,7 +388,7 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
         {
             get { return Situacao == (int)Glass.Data.Model.Cte.ConhecimentoTransporte.SituacaoEnum.FinalizadoTerceiros; }
         }
-        
+
         public bool BaixarXmlVisible
         {
             get

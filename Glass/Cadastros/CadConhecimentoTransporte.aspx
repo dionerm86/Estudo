@@ -17,6 +17,7 @@
 <%@ Register Src="../Controls/ctrlNaturezaOperacao.ascx" TagName="ctrlNaturezaOperacao"
     TagPrefix="uc2" %>
 <%@ Register Src="../Controls/CTe/EfdCte.ascx" TagName="EfdCte" TagPrefix="uc1" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <link type="text/css" rel="stylesheet" href="<%= ResolveUrl("~/Style/CTe/CadCTe.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
@@ -124,6 +125,12 @@
                 }
             }
 
+            if (tipoCTe.value == '2' && FindControl("dtvConhecimentoTransporte_ctrlDataAnulacao_txtData","input") != null && FindControl("dtvConhecimentoTransporte_ctrlDataAnulacao_txtData","input").value == "") {
+
+                alert('Campo Data Anulação deve ser preenchido.');
+                return false;
+            }
+
             var isEntradaTerceiros = <%= IsEntradaTerceiros().ToString().ToLower() %>;
 
             if (!isEntradaTerceiros && (tipoCTe.value == '0' || tipoCTe.value == '3'))
@@ -195,6 +202,23 @@
 
             return true;
         }
+
+        /**
+         * Exibe o controle da data de anulação se o tipo do CT-e for de Anulação de valores, e esconde o mesmo controle, caso não seja.
+         * @param {?Object} controle O dropDownList referente ao tipo do CT-e.
+         */
+        function exibirEsconderDataAnulacao(controle){
+            var tipoCTeAnulacao = 2;
+
+            if(controle.value == tipoCTeAnulacao){
+                FindControl("divLabelDataAnulacao","div").style.display = "";
+                FindControl("divDataAnulacao","div").style.display = "";
+            }else{
+                FindControl("divLabelDataAnulacao","div").style.display = "none";
+                FindControl("divDataAnulacao","div").style.display = "none";
+            }
+        }
+
 
     </script>
 
@@ -386,7 +410,7 @@
                                     <asp:Label ID="Label8" runat="server" Text="Tipo CT-e *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
-                                    <asp:DropDownList ID="drpTipoCte" runat="server" Height="20px" Width="220px" SelectedValue='<%# Bind("TipoCte") %>'>
+                                    <asp:DropDownList ID="drpTipoCte" runat="server" Height="20px" Width="220px" SelectedValue='<%# Bind("TipoCte") %>' OnLoad="drpTipoCte_Load">
                                         <asp:ListItem Value="selecione" Text="Selecione um Tipo"></asp:ListItem>
                                         <asp:ListItem Value="0" Text="CT-e Normal"></asp:ListItem>
                                         <asp:ListItem Value="1" Text="CT-e de Complemento de Valores"></asp:ListItem>
@@ -396,6 +420,12 @@
                                     <asp:CompareValidator ID="cvdrpTipoCte" ControlToValidate="drpTipoCte" runat="server"
                                         ErrorMessage="Selecione um tipo de CT-e" ValueToCompare="selecione" Operator="NotEqual"
                                         ValidationGroup="c">*</asp:CompareValidator>
+                                </div>
+                                <div class="dtvHeader" id="divLabelDataAnulacao" style="display:none">
+                                    <asp:Label ID="Label37" runat="server" Text="Data Anulação"></asp:Label>
+                                </div>
+                                <div class="dtvAlternatingRow" id="divDataAnulacao" style="display:none">
+                                    <uc2:ctrlData ID="ctrlDataAnulacao" runat="server"  DataString='<%# Bind("DataAnulacao")%>'/>
                                 </div>
                                 <div class="dtvHeader">
                                     <asp:Label ID="Label10" runat="server" Text="Tipo Serviço *"></asp:Label>
@@ -1432,7 +1462,7 @@
                                     <asp:Label ID="Label8" runat="server" Text="Tipo CT-e *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
-                                    <asp:DropDownList ID="drpTipoCte" runat="server" Height="20px" Width="220px" SelectedValue='<%# Bind("TipoCte") %>'>
+                                    <asp:DropDownList ID="drpTipoCte" runat="server" Height="20px" Width="220px" SelectedValue='<%# Bind("TipoCte") %>' OnLoad="drpTipoCte_Load">
                                         <asp:ListItem Value="selecione" Text="Selecione um Tipo"></asp:ListItem>
                                         <asp:ListItem Value="0" Text="CT-e Normal"></asp:ListItem>
                                         <asp:ListItem Value="1" Text="CT-e de Complemento de Valores"></asp:ListItem>
@@ -1459,6 +1489,12 @@
                                         ErrorMessage="Selecione um tipo de serviço" ValueToCompare="selecione" Operator="NotEqual"
                                         ValidationGroup="c">*</asp:CompareValidator>
                                 </div>
+                            </div>
+                            <div class="dtvHeader" id="divLabelDataAnulacao" style="display:none">
+                                    <asp:Label ID="Label37" runat="server" Text="Data Anulação"></asp:Label>
+                            </div>
+                            <div class="dtvAlternatingRow" id="divDataAnulacao" style="display:none">
+                                <uc2:ctrlData ID="ctrlDataAnulacao" runat="server"  DataString='<%# Bind("DataAnulacao")%>'/>
                             </div>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
@@ -1719,19 +1755,20 @@
                                     ImageUrl="~/Images/ok.gif" OnClick="lnkAddChaveAcesso_Click"></asp:ImageButton>
                             </FooterTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Chave de Acesso" SortExpression="ChaveAcesso">
+                        <asp:TemplateField HeaderText="Chave de Acesso">
                             <ItemTemplate>
                                 <asp:Label ID="Label331" runat="server" Text='<%# Eval("ChaveAcesso") %>' onkeypress="return soNumeros(event, true, true);"></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtNumChaveAcesso" runat="server" Text='<%# Bind("ChaveAcesso") %>' Width="300px" onkeypress="return soNumeros(event, true, true);"></asp:TextBox>
+                                <asp:TextBox ID="txtNumChaveAcesso" runat="server" Text='<%# Bind("ChaveAcesso") %>' Width="300px" MaxLength="44"
+                                    onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
                             </EditItemTemplate>
                             <FooterTemplate>
-                                <asp:TextBox ID="txtNumChaveAcesso" runat="server" Width="300px"></asp:TextBox>
+                                <asp:TextBox ID="txtNumChaveAcesso" runat="server" Width="300px" MaxLength="44" onkeypress="return soNumeros(event, true, true);"></asp:TextBox>
                             </FooterTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="PIN" SortExpression="Pin">
+                        <asp:TemplateField HeaderText="PIN">
                             <ItemTemplate>
                                 <asp:Label ID="Label330" runat="server" Text='<%# Eval("Pin") %>'></asp:Label>
                             </ItemTemplate>
@@ -1742,6 +1779,21 @@
                                 <asp:TextBox ID="txtNumPin" runat="server" MaxLength="9"></asp:TextBox>
                             </FooterTemplate>
                             <ItemStyle Wrap="False" />
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Finalidade da Chave de Acesso">
+                            <ItemTemplate>
+                                <asp:Label ID="lblFinalidadeChaveAcesso" runat="server" Text='<%# Eval("FinalidadeChaveAcesso") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:DropDownList ID="drpFinalidadeChaveAcesso" runat="server" SelectedValue='<%# Bind("FinalidadeChaveAcesso") %>'
+                                    DataSourceID="odsFinalidadeChaveAcesso" DataTextField="Descr" DataValueField="Id">
+                                </asp:DropDownList>
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:DropDownList ID="drpFinalidadeChaveAcesso" runat="server" DataSourceID="odsFinalidadeChaveAcesso"
+                                    DataTextField="Descr" DataValueField="Id">
+                                </asp:DropDownList>
+                            </FooterTemplate>
                         </asp:TemplateField>
                     </Columns>
 
@@ -1780,6 +1832,12 @@
                 <asp:QueryStringParameter Name="idCte" QueryStringField="idCte" Type="Int32" />
             </SelectParameters>
         </colo:VirtualObjectDataSource>
+        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFinalidadeChaveAcesso" runat="server" SelectMethod="ObterFinalidadeChaveAcesso"
+            TypeName="Glass.Data.Helper.DataSources">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="idCte" QueryStringField="idCte" Type="UInt32" />
+            </SelectParameters>
+        </colo:VirtualObjectDataSource>
         <asp:HiddenField ID="hdfNumProdutos" runat="server" />
         <asp:HiddenField ID="hdfCFOP" runat="server" />
         <asp:HiddenField ID="hdfChaveAcesso" runat="server" />
@@ -1792,6 +1850,10 @@
         if (typeof pegarValorInfo !== 'undefined' && typeof pegarValorInfo === 'function')
             // Chamado 19338
             setTimeout(function(){ pegarValorInfo("ctl00_ctl00_Pagina_Conteudo_dtvConhecimentoTransporte_ctrlInfoCte_ctrlCargaCte"); }, 2000);
+
+        var controle = FindControl('dtvConhecimentoTransporte_drpTipoCte', 'select');
+        exibirEsconderDataAnulacao(controle);
+
     </script>
 
 </asp:Content>

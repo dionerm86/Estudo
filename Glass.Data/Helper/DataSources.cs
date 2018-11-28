@@ -773,6 +773,37 @@ namespace Glass.Data.Helper
             return lstTipoImp.ToArray();
         }
 
+        public GenericModel[] ObterFinalidadeChaveAcesso(int idCte)
+        {
+            var idTipoCte = Data.DAL.CTe.ConhecimentoTransporteDAO.Instance.ObterTipoCte((uint)idCte);
+
+            List<GenericModel> finalidadeChaveAcesso = new List<GenericModel>();
+
+            switch (idTipoCte)
+            {
+                case Model.Cte.ConhecimentoTransporte.TipoCteEnum.Normal:
+                case Model.Cte.ConhecimentoTransporte.TipoCteEnum.ComplementoValores:
+                    finalidadeChaveAcesso.Add(new GenericModel((int)FinalidadeChaveAcesso.Normal, FinalidadeChaveAcesso.Normal.Translate().ToString()));
+                    break;
+
+                case Model.Cte.ConhecimentoTransporte.TipoCteEnum.AnulacaoValores:
+                    finalidadeChaveAcesso.Add(new GenericModel((int)FinalidadeChaveAcesso.CTeOriginal, FinalidadeChaveAcesso.CTeOriginal.Translate().ToString()));
+                    break;
+
+                case Model.Cte.ConhecimentoTransporte.TipoCteEnum.Substituto:
+                    finalidadeChaveAcesso.Add(new GenericModel((int)FinalidadeChaveAcesso.CTeOriginal, FinalidadeChaveAcesso.CTeOriginal.Translate().ToString()));
+                    finalidadeChaveAcesso.Add(new GenericModel((int)FinalidadeChaveAcesso.CTeAnulacao, FinalidadeChaveAcesso.CTeAnulacao.Translate().ToString()));
+                    finalidadeChaveAcesso.Add(new GenericModel((int)FinalidadeChaveAcesso.NFeAnulacao, FinalidadeChaveAcesso.NFeAnulacao.Translate().ToString()));
+                    break;
+
+                default:
+                    finalidadeChaveAcesso.Add(new GenericModel((int)FinalidadeChaveAcesso.Normal, FinalidadeChaveAcesso.Normal.Translate().ToString()));
+                    break;
+            }
+
+            return finalidadeChaveAcesso.ToArray();
+        }
+
         public enum TipoUsoAntecipacaoFornecedor
         {
             CompraOuNotaFiscal,
