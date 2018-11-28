@@ -3653,10 +3653,24 @@ namespace Glass.Data.Helper
 
                 try
                 {
-                    using (var file = new FileStream(caimhoCompleto, FileMode.Create, FileAccess.Write))
+                    using (var stream = new MemoryStream())
                     {
-                        GerarArquivoCadProject(null, peca, pcp, file);
-                        file.Flush();
+                        GerarArquivoCadProject(null, peca, pcp, stream);
+                        stream.Flush();
+                        stream.Position = 0;
+
+                        var read = 0;
+                        var buffer = new byte[1024];
+
+                        using (var file = new FileStream(caimhoCompleto, FileMode.Create, FileAccess.Write))
+                        {
+                            while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                file.Write(buffer, 0, read);
+                            }
+
+                            file.Flush();
+                        }
                     }
                 }
                 catch
