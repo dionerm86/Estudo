@@ -496,6 +496,10 @@
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Utils\AlertaAdministrador.aspx" />
+    <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.OrdensCarga.js" />
+    <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.Filtro.js" />
+    <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.js" />
+    <Content Include="Vue\Carregamentos\Templates\LstCarregamentos.Filtro.html" />
     <Content Include="Vue\Cfops\NaturezasOperacao\Componentes\LstNaturezasOperacao.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.Filtro.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.js" />
@@ -504,6 +508,7 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
     <Content Include="Vue\Projetos\Ferragens\FabricantesFerragem\Componentes\LstFabricantesFerragem.js" />
@@ -542,6 +547,7 @@
     <Content Include="Vue\PlanosConta\GruposConta\Componentes\LstGruposConta.js" />
     <Content Include="Vue\PlanosConta\Templates\LstPlanosConta.Filtro.html" />
     <Content Include="Vue\Producao\Roteiros\Classificacoes\Componentes\LstClassificacoesRoteiro.js" />
+    <Content Include="Vue\Parcelas\Componentes\LstParcelas.js" />
     <Content Include="Vue\Producao\Roteiros\Componentes\LstRoteiros.Filtro.js" />
     <Content Include="Vue\Producao\Roteiros\Templates\LstRoteiros.Filtro.html" />
     <Content Include="Vue\Producao\Setores\Componentes\LstSetores.js" />
@@ -1848,6 +1854,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Carregamentos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ImpressoesEtiquetas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Projetos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comum.js" />
@@ -2234,6 +2241,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="WebGlassParceiros\PainelParceiros.master" />
+    <Content Include="Vue\Carregamentos\Templates\LstCarregamentos.OrdensCarga.html" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -9445,6 +9453,7 @@
     <Folder Include="Relatorios\CFe\" />
     <Folder Include="Relatorios\Clientes\" />
     <Folder Include="Relatorios\Fornecedores\" />
+    <Folder Include="Vue\Carregamentos\OrdensCarga\" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

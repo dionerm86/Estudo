@@ -2,7 +2,6 @@
     CodeBehind="CadFechamento.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadFechamento" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
             "~/Vue/Caixas/Diario/Templates/LstCaixaDiario.Filtro.html")

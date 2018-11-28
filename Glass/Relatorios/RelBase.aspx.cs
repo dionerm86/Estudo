@@ -72,6 +72,7 @@ namespace Glass.UI.Web.Relatorios
                         var situacao = Request["situacao"];
                         var formaEmissao = Glass.Conversoes.StrParaInt(Request["formaEmissao"]);
                         var loja = LojaDAO.Instance.GetElement(login.IdLoja);
+                        var apenasNotasFiscaisSemAnexo = Request["apenasNotasFiscaisSemAnexo"]?.ToLower() == "true";
                         var dados = NotaFiscalDAO.Instance.GetListPorSituacao(numeroNfe, idPedido, Request["modelo"], idLoja, idCliente,
                             Request["nomeCliente"], Glass.Conversoes.StrParaInt(Request["tipoFiscal"]), idFornec, Request["nomeFornec"],
                             Request["codRota"], tipoDoc, situacao, Request["dataIni"], Request["dataFim"],
@@ -79,7 +80,7 @@ namespace Glass.UI.Web.Relatorios
                             Glass.Conversoes.StrParaUint(Request["formaPagto"]), Request["idsFormaPagtoNotaFiscal"],
                             Glass.Conversoes.StrParaInt(Request["tipoNf"]), Glass.Conversoes.StrParaInt(Request["finalidade"]), formaEmissao, Request["infCompl"],
                             Request["codInternoProd"], Request["descrProd"], Request["valorInicial"],
-                            Request["valorFinal"], null, Request["lote"], Glass.Conversoes.StrParaInt(Request["ordenar"]), null, 0, int.MaxValue);
+                            Request["valorFinal"], null, Request["lote"], apenasNotasFiscaisSemAnexo, Glass.Conversoes.StrParaInt(Request["ordenar"]), null, 0, int.MaxValue);
 
                         if (FiscalConfig.Relatorio.RecuperarTotalCst60)
                             foreach (var nf in dados)
@@ -3172,7 +3173,7 @@ namespace Glass.UI.Web.Relatorios
                         report.DataSources.Add(new ReportDataSource("Exportacao", new Exportacao[] { exp }));
                         report.DataSources.Add(new ReportDataSource("PedidoExportacao", PedidoExportacaoDAO.Instance.GetForRpt(exp.IdExportacao, 0)));
                         var idsPedido = ProdutoPedidoExportacaoDAO.Instance.ObtemIdsPedidoPeloIdExportacao(idExportacao);
-                        report.DataSources.Add(new ReportDataSource("ProdutosPedido", ProdutosPedidoDAO.Instance.ObterProdutosComExportados(idsPedido)));
+                        report.DataSources.Add(new ReportDataSource("ProdutosPedido", ProdutosPedidoDAO.Instance.ObterProdutosComExportados(idsPedido, (int)idExportacao)));
 
                         break;
                     }

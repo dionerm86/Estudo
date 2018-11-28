@@ -105,7 +105,7 @@ namespace Glass.Fiscal.Negocios.Componentes
         {
             var consulta = SourceContext.Instance.CreateQuery()
                 .From<Glass.Data.Model.Cte.ChaveAcessoCte>()
-                .Select("IdChaveAcessoCte, IdCte, ChaveAcesso, PIN");
+                .Select("IdChaveAcessoCte, IdCte, ChaveAcesso, PIN, FinalidadeChaveAcesso");
 
             if (idCte > 0)
                 consulta.WhereClause
