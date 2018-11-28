@@ -30,12 +30,12 @@ namespace Glass.API.Backend.Models.ImpressoesEtiquetas.V1.Configuracoes
 
         private string ObterEnderecoECutter()
         {
-            var address = System.Web.HttpContext.Current.Request.Url.AbsoluteUri;
+            var endereco = System.Web.HttpContext.Current.Request.Url.AbsoluteUri;
 
-            address = address.Substring(0, address.IndexOf("/backend", System.StringComparison.InvariantCultureIgnoreCase));
+            endereco = endereco.Substring(0, endereco.IndexOf("/backend", System.StringComparison.InvariantCultureIgnoreCase));
             var token = System.Web.HttpContext.Current.Request.Cookies[System.Web.Security.FormsAuthentication.FormsCookieName]?.Value;
 
-            var uri = new System.Uri($"{address}/handlers/ecutteroptimizationservice.ashx?token={token}&id=");
+            var uri = new System.Uri($"{endereco}/handlers/ecutteroptimizationservice.ashx?token={token}&id=");
 
             return $"ecutter-opt{uri.AbsoluteUri.Substring(uri.Scheme.Length)}";
         }
