@@ -214,6 +214,8 @@
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\CarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\Itens\Pendencias\GetPendenciasCarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\Itens\Pendencias\PendenciasCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PostCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\DeleteCarregamentosController.cs" />
@@ -490,6 +492,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\Carregamentos\ConverterCadastroAtualizacaoParaCarregamento.cs" />
+    <Compile Include="Helper\Carregamentos\Itens\Pendencias\TraducaoOrdenacaoListaPendencisaCarregamentos.cs" />
     <Compile Include="Helper\Cfops\ConverterCadastroAtualizacaoParaCfop.cs" />
     <Compile Include="Helper\Cfops\NaturezasOperacao\ConverterCadastroAtualizacaoParaNaturezaOperacao.cs" />
     <Compile Include="Helper\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\ConverterCadastroAtualizacaoParaRegraNaturezaOperacao.cs" />
@@ -611,6 +614,9 @@
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
     <Compile Include="Models\Carregamentos\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Carregamentos\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Itens\Pendencias\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Itens\Pendencias\FiltroDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Itens\Pendencias\ListaDto.cs" />
     <Compile Include="Models\Carregamentos\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Carregamentos\V1\Lista\DadosFaturamentoDto.cs" />
     <Compile Include="Models\Carregamentos\V1\Lista\ListaDto.cs" />
