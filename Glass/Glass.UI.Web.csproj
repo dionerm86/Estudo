@@ -493,6 +493,7 @@
     <Content Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx" />
     <Content Include="Controls\ctrlProdComposicaoOrcamento.ascx" />
     <Content Include="Listas\LstCfop.aspx" />
+    <Content Include="Relatorios\ListaDreCompetencia.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
@@ -6928,6 +6929,13 @@
     <Compile Include="Relatorios\ListaDefinicaoCargaRota.aspx.designer.cs">
       <DependentUpon>ListaDefinicaoCargaRota.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Relatorios\ListaDreCompetencia.aspx.cs">
+      <DependentUpon>ListaDreCompetencia.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Relatorios\ListaDreCompetencia.aspx.designer.cs">
+      <DependentUpon>ListaDreCompetencia.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Relatorios\ListaEntregaRota.aspx.cs">
       <DependentUpon>ListaEntregaRota.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -9426,6 +9434,8 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Relatorios\rptListaDreCompetencia.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptListaDreCompetenciaDetalhes.rdlc" />
     <EmbeddedResource Include="Relatorios\rptUtilizacaoSistema.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>

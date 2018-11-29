@@ -1338,6 +1338,21 @@ namespace Glass.UI.Web.Relatorios
 
                         break;
                     }
+                case "ListaDreCompetencia":
+                    {
+                        report.ReportPath = "Relatorios/rptListaDreCompetencia{0}.rdlc";
+
+                        report.ReportPath = String.Format(report.ReportPath, bool.Parse(Request["detalhes"]) ? "Detalhes" : "");
+
+                        var idsPlanoConta = Request["idsPlanoConta"]?.Split(',')?.Select(f => f.StrParaUintNullable().GetValueOrDefault()).Where(f => f > 0).ToArray() ?? new uint[0];
+
+                        var lstPlanoContas = Glass.Data.RelDAL.PlanoContasDAO.Instance.PesquisarDreCompetenciaRpt(Glass.Conversoes.StrParaIntNullable(Request["idLoja"]), Request["dataIni"], Request["dataFim"],
+                            Glass.Conversoes.StrParaIntNullable(Request["IdCategoriaConta"]), Glass.Conversoes.StrParaIntNullable(Request["IdGrupoConta"]), idsPlanoConta, bool.Parse(Request["detalhes"]));
+
+                        report.DataSources.Add(new ReportDataSource("PlanoContas", lstPlanoContas));
+
+                        break;
+                    }
                 case "ExtratoBancario":
                     {
                         report.ReportPath = "Relatorios/rptExtratoBancario.rdlc";
