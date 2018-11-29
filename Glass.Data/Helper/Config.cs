@@ -345,6 +345,7 @@ namespace Glass.Data.Helper
             SenhaCalcEngine = 383,
             UsarPercentualBonificacaoCliente = 384,
             EstadosConsiderarRicmsPr = 385,
+            ConcatenarEspAltLargFmlDxfSGlassIntermac = 386,
 
             #region Configs Suporte (Antiga config interna)
 

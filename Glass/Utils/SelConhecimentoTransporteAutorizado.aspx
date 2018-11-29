@@ -11,6 +11,22 @@
     <script type="text/javascript">
 
         function setCTe(idCTe, numCTe) {
+            if ("<%= Request["origem"] %>" == "mdfe") {
+                var retorno = SelConhecimentoTransporteAutorizado.VerificarDisponibilidadeCTeCidadeDescargaMdfe(idNf);
+
+                if (retorno.error != null) {
+                    alert(retorno.error.description);
+                    return;
+                }
+
+                var resultado = retorno.value.split('|');
+
+                if (resultado[0] == "Erro") {
+                    alert(resultado[1]);
+                    return false;
+                }
+            }
+
             // idControle utilizado para saber à qual cidade descarga será associado o CTe no cadastro de MDFe
             var idControle = "<%= Request["IdControle"] %>";
             if (idControle != "") {

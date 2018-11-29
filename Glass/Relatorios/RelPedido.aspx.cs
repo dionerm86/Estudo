@@ -8,6 +8,7 @@ using Glass.Data.RelModel;
 using System.Collections.Generic;
 using Glass.Data.RelDAL;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace Glass.UI.Web.Relatorios
 {
@@ -20,7 +21,7 @@ namespace Glass.UI.Web.Relatorios
             Pcp,
             MemoriaCalculoPcp
         }
-    
+
         protected override object[] Parametros
         {
             get { return new object[] { }; }
@@ -31,9 +32,9 @@ namespace Glass.UI.Web.Relatorios
             get
             {
                 TipoRelatorioPedido tipo = !String.IsNullOrEmpty(Request["tipo"]) ? (TipoRelatorioPedido)Glass.Conversoes.StrParaInt(Request["tipo"]) : TipoRelatorioPedido.Normal;
-    
+
                 return new JavaScriptData(
-                    UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdCliente > 0 && 
+                    UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdCliente > 0 &&
                         PedidoDAO.Instance.ObtemIdCliente(null, Glass.Conversoes.StrParaUint(Request["idPedido"])) != UserInfo.GetUserInfo.IdCliente ||
                         (tipo != TipoRelatorioPedido.Normal && tipo != TipoRelatorioPedido.Pcp),
                     "false"
@@ -57,7 +58,7 @@ namespace Glass.UI.Web.Relatorios
                 nomeRelatorio.ToLower().Contains("rptpedidonrc") ||
                 nomeRelatorio.ToLower().Contains("rptpedidoouropreto") ||
                 nomeRelatorio.ToLower().Contains("rptpedidoterra") ||
-                nomeRelatorio.ToLower().Contains("rptpedidovidrovalle") || 
+                nomeRelatorio.ToLower().Contains("rptpedidovidrovalle") ||
                 nomeRelatorio.ToLower().Contains("rptpedidovintage") ||
                 nomeRelatorio.ToLower().Contains("rptpedidovidrosevidros"))
                 return false;
@@ -68,17 +69,17 @@ namespace Glass.UI.Web.Relatorios
         protected void Page_Load(object sender, EventArgs e)
         {
             TipoRelatorioPedido tipo = !String.IsNullOrEmpty(Request["tipo"]) ? (TipoRelatorioPedido)Glass.Conversoes.StrParaInt(Request["tipo"]) : TipoRelatorioPedido.Normal;
-    
+
             // (ACESSO EXTERNO) Verifica se o usuário tem acesso à este relatório
             if (UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdCliente > 0 && PedidoDAO.Instance.ObtemIdCliente(null, Glass.Conversoes.StrParaUint(Request["idPedido"])) != UserInfo.GetUserInfo.IdCliente)
                 return;
-    
+
             if (!PCPConfig.CriarClone && tipo == TipoRelatorioPedido.Pcp)
             {
                 Response.Redirect("~/Relatorios/RelBase.aspx?rel=PedidoPcp&idPedido=" + Request["idPedido"]);
                 return;
             }
-    
+
             if (tipo == TipoRelatorioPedido.Normal || tipo == TipoRelatorioPedido.Pcp)
             {
                 ProcessaReport(pchTabela);
@@ -86,10 +87,10 @@ namespace Glass.UI.Web.Relatorios
             else
             {
                 bool isPcp = tipo == TipoRelatorioPedido.MemoriaCalculoPcp;
-    
-                Response.Redirect("~/Relatorios/RelBase.aspx?rel=MemoriaCalculoPedido" + 
+
+                Response.Redirect("~/Relatorios/RelBase.aspx?rel=MemoriaCalculoPedido" +
                     (!isPcp ? "" : "Espelho") + "&idPed=" + Request["idPedido"]);
-    
+
                 return;
             }
         }
@@ -100,12 +101,12 @@ namespace Glass.UI.Web.Relatorios
             TipoRelatorioPedido tipo = !String.IsNullOrEmpty(Request["tipo"]) ? (TipoRelatorioPedido)Glass.Conversoes.StrParaInt(Request["tipo"]) : TipoRelatorioPedido.Normal;
             Glass.Data.Model.Pedido[] pedido = PedidoDAO.Instance.GetForRpt(Request["idPedido"], tipo == TipoRelatorioPedido.Pcp, login);
             uint idLoja = pedido[0].IdLoja;
-            
+
             List<ProdutosPedido> prodPedido = new List<ProdutosPedido>();
             List<ParcelasPedido> parcPedido = new List<ParcelasPedido>();
             List<AmbientePedido> ambPedido = new List<AmbientePedido>();
-            List<TextoPedido> textoPedido = new List<TextoPedido>();        
-            
+            List<TextoPedido> textoPedido = new List<TextoPedido>();
+
             report.ReportPath = PedidoConfig.RelatorioPedido.NomeArquivoRelatorio(idLoja).Item1;
 
             Dictionary<int, List<string>> parametros = new Dictionary<int, List<string>>();
@@ -118,7 +119,7 @@ namespace Glass.UI.Web.Relatorios
                 ambPedido.AddRange(AmbientePedidoDAO.Instance.GetByPedido(pedido[i].IdPedido, tipo == TipoRelatorioPedido.Pcp));
                 prodPedido.AddRange(PedidoConfig.RelatorioPedido.ExibirItensProdutosPedido ?
                     ProdutosPedidoDAO.Instance.GetForRpt(pedido[i].IdPedido, tipo == TipoRelatorioPedido.Pcp) :
-                    ProdutosPedidoDAO.Instance.GetForRptAmbiente(pedido[i].IdPedido, 
+                    ProdutosPedidoDAO.Instance.GetForRptAmbiente(pedido[i].IdPedido,
                     tipo == TipoRelatorioPedido.Pcp));
 
                 textoPedido.AddRange(TextoPedidoDAO.Instance.GetByPedido(pedido[i].IdPedido));
@@ -149,7 +150,7 @@ namespace Glass.UI.Web.Relatorios
                 parametros[15].Add(!String.IsNullOrEmpty(pedido[i].CodCliente) ? pedido[i].CodCliente.ToString() : ".");
                 parametros[16].Add(!PedidoConfig.LiberarPedido ? ContasReceberDAO.Instance.GetTotalDescontoParcelas(pedido[i].IdPedido).ToString() : ".");
                 parametros[17].Add(!String.IsNullOrEmpty(pedido[i].Obs) ? "Obs: " + pedido[i].Obs : ".");
-                
+
                 string codRota = string.Empty;
                 string descrRota = string.Empty;
 
@@ -167,15 +168,28 @@ namespace Glass.UI.Web.Relatorios
                 pedido[i].RptIsCliente = login != null ? login.IdCliente > 0 : false;
             }
 
+            var prodPedidoRpt = new List<ProdutosPedido>();
+
+            foreach (var item in prodPedido.Where(f => f.IdProdPedParent == null))
+            {
+                prodPedidoRpt.Add(item);
+
+                foreach (var itemFlilho in prodPedido.Where(f => f.IdProdPedParent == item.IdProdPed))
+                {
+                    prodPedidoRpt.Add(itemFlilho);
+                    prodPedidoRpt.AddRange(prodPedido.Where(f => f.IdProdPedParent == itemFlilho.IdProdPed));
+                }
+            }
+
             if (!IsRelOtimizado((int)idLoja))
             {
                 report.DataSources.Add(new ReportDataSource("Pedido", pedido));
-                report.DataSources.Add(new ReportDataSource("ProdutosPedido", prodPedido));
+                report.DataSources.Add(new ReportDataSource("ProdutosPedido", prodPedidoRpt));
             }
             else
             {
                 report.DataSources.Add(new ReportDataSource("PedidoRpt", PedidoRptDAL.Instance.CopiaLista(pedido, PedidoRpt.TipoConstrutor.RelatorioPedido, false, login)));
-                report.DataSources.Add(new ReportDataSource("ProdutosPedidoRpt", ProdutosPedidoRptDAL.Instance.CopiaLista(prodPedido.ToArray())));
+                report.DataSources.Add(new ReportDataSource("ProdutosPedidoRpt", ProdutosPedidoRptDAL.Instance.CopiaLista(prodPedidoRpt.ToArray())));
             }
 
             lstParam.Add(new ReportParameter("LojaCalculaICMSPedido", LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLoja).ToString()));

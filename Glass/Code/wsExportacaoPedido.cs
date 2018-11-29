@@ -12,7 +12,7 @@ namespace Glass.UI.Web
     public class wsExportacaoPedido : System.Web.Services.WebService
     {
         #region Segurança
-    
+
         private enum TipoErroAutenticacao
         {
             NaoEncontrado = 0,
@@ -21,7 +21,7 @@ namespace Glass.UI.Web
             ClienteInativo = -3,
             FornecedorInativo = -4
         }
-    
+
         /// <summary>
         /// Autentica o usuário
         /// </summary>
@@ -32,7 +32,7 @@ namespace Glass.UI.Web
         public int Autenticar(string cnpj, int tipoUsuario)
         {
             int ret = 0;
-    
+
             switch (tipoUsuario)
             {
                 case 1 :
@@ -46,19 +46,19 @@ namespace Glass.UI.Web
                     }
                     else
                         ret = (int)TipoErroAutenticacao.NaoEncontrado;
-    
+
                     break;
-    
+
                 case 2:
                     string fornec = FornecedorDAO.Instance.GetFornecedorByCPFCNPJ(cnpj);
                     ret = !String.IsNullOrEmpty(fornec) ? Glass.Conversoes.StrParaInt(fornec) : (int)TipoErroAutenticacao.NaoEncontrado;
-                    
+
                     break;
             }
-    
+
             return ret;
         }
-    
+
         private string GetDescrErroAutenticacao(int codErro)
         {
             string erro = "Acesso Negado para uso do serviço de exportação.\n";
@@ -67,31 +67,31 @@ namespace Glass.UI.Web
                 case TipoErroAutenticacao.NaoEncontrado:
                     erro += "Cliente não cadastrado no fornecedor.";
                     break;
-    
+
                 case TipoErroAutenticacao.ClienteInativo:
                     erro += "Cliente Inativo no fornecedor";
                     break;
-    
+
                 case TipoErroAutenticacao.FornecedorInativo:
                     erro += "Fornecedor Inativo";
                     break;
-    
+
                 case TipoErroAutenticacao.ExportacaoDesativada:
                     erro += "Exportação desativada no sistema";
                     break;
-    
+
                 case TipoErroAutenticacao.ImportacaoDesativada:
                     erro += "Importação desativada no Fornecedor";
                     break;
-    
+
                 default:
                     erro += "Erro não especificado. Cód.: " + codErro;
                     break;
             }
-    
+
             return erro;
         }
-    
+
         private string GetLoginStatus()
         {
             if(HttpContext.Current.User.Identity.IsAuthenticated)
@@ -99,15 +99,15 @@ namespace Glass.UI.Web
             else
                 return "não logado";
         }
-    
+
         #endregion
-    
+
         public wsExportacaoPedido()
         {
-            //Uncomment the following line if using designed components 
-            //InitializeComponent(); 
+            //Uncomment the following line if using designed components
+            //InitializeComponent();
         }
-    
+
         /// <summary>
         /// Confirma se a conexão foi efetuada com sucesso.
         /// </summary>
@@ -124,7 +124,7 @@ namespace Glass.UI.Web
                 return "Erro: " + ex.Message;
             }
         }
-    
+
         [WebMethod(Description = "Autentica o usuário.")]
         public bool Login(string userName)
         {
@@ -133,10 +133,10 @@ namespace Glass.UI.Web
                 System.Web.Security.FormsAuthentication.SetAuthCookie(userName, true);
                 return true;
             }
-    
+
             return false;
         }
-    
+
         /// <summary>
         /// Exporta os pedidos enviados pelo cliente para a base de dados do fornecedor.
         /// </summary>
@@ -148,10 +148,10 @@ namespace Glass.UI.Web
         {
             int aut;
             if ((aut = Autenticar(cpfCnpj, tipoUsuario)) > 0)
-            {            
+            {
                 //Importa
                 string[] resultado = UtilsExportacaoPedido.Importar(pedido);
-    
+
                 return resultado;
             }
             else
@@ -159,7 +159,7 @@ namespace Glass.UI.Web
                 return new string[] { "1", GetDescrErroAutenticacao(aut) };
             }
         }
-    
+
         [WebMethod(Description = "Atualiza a Situação do pedido exportado no cliente.")]
         public string[] CancelarPedido(string cpfCnpj, int tipoUsuario, uint idPedidoCliente)
         {
@@ -168,8 +168,8 @@ namespace Glass.UI.Web
             {
                 try
                 {
-                    PedidoExportacaoDAO.Instance.InserirSituacaoExportado(null, idPedidoCliente, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
-    
+                    PedidoExportacaoDAO.Instance.AtualizarSituacao(null, idPedidoCliente, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+
                     return new string[] { "0", "Pedido " + idPedidoCliente + " cancelado com sucesso." };
                 }
                 catch (Exception ex)
@@ -182,7 +182,7 @@ namespace Glass.UI.Web
                 return new string[] { "1", GetDescrErroAutenticacao(aut) };
             }
         }
-    
+
         [WebMethod(Description = "Atualiza a Situação do pedido exportado no cliente.")]
         public string[] MarcarPedidoPronto(string cpfCnpj, int tipoUsuario, uint idPedidoCliente)
         {
@@ -191,8 +191,8 @@ namespace Glass.UI.Web
             {
                 try
                 {
-                    PedidoExportacaoDAO.Instance.InserirSituacaoExportado(null, idPedidoCliente, (int)PedidoExportacao.SituacaoExportacaoEnum.Pronto);
-    
+                    PedidoExportacaoDAO.Instance.AtualizarSituacao(null, idPedidoCliente, (int)PedidoExportacao.SituacaoExportacaoEnum.Pronto);
+
                     return new string[] { "0", "Pedido " + idPedidoCliente + " foi marcado como pronto com sucesso." };
                 }
                 catch (Exception ex)

@@ -2820,6 +2820,12 @@ namespace Glass.Data.DAL
             if (PedidoDAO.Instance.TemVolume(session, idPedido))
                 throw new Exception("O pedido PCP não pode ser reaberto, pois, possui volume gerado. Cancele o volume para reabrir o pedido PCP.");
 
+            // Se o pedido estiver exportado o mesmo não pode ser reaberto sem que se cancele a exportação.
+            if (PedidoExportacaoDAO.Instance.VerificarPossuiExportacao((int)idPedido))
+            {
+                throw new InvalidOperationException("O pedido PCP não pode ser reaberto, o pedido em questão foi exportado. Cancele a exportação para reabrir o pedido PCP.");
+            }
+
             /* Chamado 33285. */
             if (objPersistence.ExecuteSqlQueryCount(session,
                 string.Format(@"SELECT COUNT(*) FROM produtos_pedido_espelho WHERE QtdImpresso>0 AND IdPedido={0};",

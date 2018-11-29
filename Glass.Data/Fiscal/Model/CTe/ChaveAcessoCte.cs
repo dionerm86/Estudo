@@ -16,5 +16,11 @@ namespace Glass.Data.Model.Cte
 
         [PersistenceProperty("PIN")]
         public string PIN { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a finalidade da chave de acesso.
+        /// </summary>
+        [PersistenceProperty("FINALIDADECHAVEACESSO")]
+        public FinalidadeChaveAcesso FinalidadeChaveAcesso { get; set; }
     }
 }
