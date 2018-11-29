@@ -18,31 +18,42 @@ namespace Glass.Data.Model
         /// </summary>
         [Description("SAG")]
         SAG = 1,
+
         /// <summary>
         /// FOR TXT
         /// </summary>
         [Description("FORTxt")]
         FORTxt = 2,
+
         /// <summary>
         /// ISO.
         /// </summary>
         [Description("ISO")]
         ISO = 4,
+
         /// <summary>
         /// DXF.
         /// </summary>
         [Description("DXF")]
         DXF = 8,
+
         /// <summary>
         /// FML Básico
         /// </summary>
         [Description("FML Básico")]
         FMLBasico = 16,
+
         /// <summary>
         /// FML.
         /// </summary>
         [Description("FML")]
-        FML = 32
+        FML = 32,
+
+        /// <summary>
+        /// Todos os tipos.
+        /// </summary>
+        [Description("Todos")]
+        Todos = 0xffffff
     }
 
     /// <summary>
