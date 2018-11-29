@@ -3606,7 +3606,7 @@ namespace Glass.Data.DAL
                         foreach (var produtoChapaCorte in produtosChapaCorte)
                         {
                             // Recupera o tipo de calculo do produto do pedido
-                            var tipoCalculo = DAL.GrupoProdDAO.Instance.TipoCalculo(produtoPedido.IdGrupoProd, produtoPedido.IdSubgrupoProd);
+                            var tipoCalculo = DAL.GrupoProdDAO.Instance.TipoCalculo(null, produtoPedido.IdGrupoProd, produtoPedido.IdSubgrupoProd, false);
 
                             var valorCusto = CalculosFluxo.CalcularValorCusto(sessao,
                                 tipoCalculo,
@@ -3892,7 +3892,7 @@ namespace Glass.Data.DAL
             clone.RentabilidadeFinanceira = prodPedEsp.RentabilidadeFinanceira;
 
             // Calcula o custo do produto
-            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdProd);
+            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdProd, false);
             clone.CustoProd = CalculosFluxo.CalcTotaisItemProdFast(sessao, tipoCalculo, clone.Altura, clone.Largura, clone.Qtde,
                 clone.TotM, ProdutoDAO.Instance.ObtemCustoCompra(sessao, (int)clone.IdProd), clone.AlturaBenef.GetValueOrDefault(2),
                 clone.LarguraBenef.GetValueOrDefault(2));

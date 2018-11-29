@@ -579,10 +579,10 @@ namespace Glass.Data.DAL
             if (validaMedidasRetalho.Count() > 0)
                 throw new Exception(string.Join("\n", validaMedidasRetalho.ToArray()));
 
-            totMPeca = Global.CalculosFluxo.ArredondaM2(session, larguraPeca, alturaPeca, qtdePeca, (int)idProd, isRedondo);
+            totMPeca = Global.CalculosFluxo.ArredondaM2(session, larguraPeca, alturaPeca, qtdePeca, (int)idProd, isRedondo, 0, true);
 
             for (var i = 0; i < alturas.Length; i++)
-                totMTotal += Global.CalculosFluxo.ArredondaM2(session, larguras[i], alturas[i], quantidades[i], (int)idProd, isRedondo);
+                totMTotal += Global.CalculosFluxo.ArredondaM2(session, larguras[i], alturas[i], quantidades[i], (int)idProd, isRedondo, 0, true);
 
             if (totMTotal > totMPeca)
                 return false;

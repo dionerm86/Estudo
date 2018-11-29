@@ -85,7 +85,7 @@ namespace Glass.Data.SIntegra
 
         public float Quantidade
         {
-            get { return ProdutosNfDAO.Instance.ObtemQtdDanfe(_prodNf, true); }
+            get { return ProdutosNfDAO.Instance.ObtemQtdDanfe(null, _prodNf, true); }
         }
 
         public decimal ValorProduto

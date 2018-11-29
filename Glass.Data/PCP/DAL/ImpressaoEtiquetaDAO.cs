@@ -3001,7 +3001,7 @@ namespace Glass.Data.DAL
                                 var idProdPed = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(sessao, (uint)idProdPedProducao);
                                 var passouSetorLaminado = !ProdutoPedidoProducaoDAO.Instance.PecaPassouSetorLaminado(sessao, codEtiqueta);
                                 var prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(sessao, null, idProdPed, true);
-                                var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
+                                var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo, 0, true);
 
                                 MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, prodPedEsp.IdProd, login.IdLoja, (uint)idProdPedProducao, 1, 0, false, false, true);
                                 // Só baixa apenas se a peça possuir produto para baixa associado

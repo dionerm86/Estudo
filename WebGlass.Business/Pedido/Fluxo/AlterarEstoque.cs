@@ -56,7 +56,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                     throw new Exception("Operação cancelada. O produto " + d.DescricaoBaixa + " teve uma saída maior do que sua quantidade.");
                 else
                 {
-                    int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd);
+                    int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
 
                     // Se a empresa trabalha com venda de alumínio no metro e se produto for alumínio, 
                     // coloca o metro linear baixado no campo m²
@@ -68,7 +68,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                     }
                     // Se produto for calculado por m², dá baixa somente no m² da qtde de peças que foram dado baixa
                     else if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto)
-                        prodPed.TotM = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPed.Largura, (int)prodPed.Altura, d.Qtde, (int)prodPed.IdProd, prodPed.Redondo);
+                        prodPed.TotM = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPed.Largura, (int)prodPed.Altura, d.Qtde, (int)prodPed.IdProd, prodPed.Redondo, 0, true);
 
                     prodPed.QtdMarcadaSaida = d.Qtde;
 
@@ -91,7 +91,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                     // Marca quantos produtos do pedido foi marcado como saída
                     ProdutosPedidoDAO.Instance.MarcarSaida(sessao, p.IdProdPed, p.QtdMarcadaSaida, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd, false);
                     var qtdSaida = p.QtdMarcadaSaida;
 
                     if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
@@ -161,7 +161,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                     throw new Exception("Operação cancelada. O produto " + d.DescricaoBaixa + " está tendo um estono maior do que a quantidade que já joi dado saída.");
                 else
                 {
-                    int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPed.IdProd);
+                    int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPed.IdProd, false);
 
                     // Se a empresa trabalha com venda de alumínio no metro e se produto for alumínio, 
                     // coloca o metro linear baixado no campo m²
@@ -173,7 +173,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                     }
                     // Se produto for calculado por m², dá baixa somente no m² da qtde de peças que foram dado baixa
                     else if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto)
-                        prodPed.TotM = Glass.Global.CalculosFluxo.ArredondaM2(prodPed.Largura, (int)prodPed.Altura, d.Qtde, (int)prodPed.IdProd, prodPed.Redondo);
+                        prodPed.TotM = Glass.Global.CalculosFluxo.ArredondaM2(null, prodPed.Largura, (int)prodPed.Altura, d.Qtde, (int)prodPed.IdProd, prodPed.Redondo, 0, true);
 
                     prodPed.QtdMarcadaSaida = d.Qtde;
 
@@ -197,7 +197,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                     // Marca quantos produtos do pedido foram estornados
                     ProdutosPedidoDAO.Instance.EstornoSaida(sessao, p.IdProdPed, p.QtdMarcadaSaida, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd, false);
                     var qtdMov = p.QtdMarcadaSaida;
 
                     if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
@@ -260,7 +260,7 @@ namespace WebGlass.Business.Pedido.Fluxo
             {
                 var prodPed = ProdutosPedidoDAO.Instance.GetElement(sessao, (uint)d.IdProdPed);
                 prod = ProdutoDAO.Instance.GetElement(sessao, prodPed.IdProd);
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
 
                 // Se a empresa trabalha com venda de alumínio no metro e se produto for alumínio, 
                 // coloca o metro linear baixado no campo m²
@@ -272,7 +272,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                 }
                 // Se produto for calculado por m², dá baixa somente no m² da qtde de peças que foram dado baixa
                 else if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto)
-                    prodPed.TotM = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPed.Largura, (int)prodPed.Altura, d.Qtde, (int)prodPed.IdProd, prodPed.Redondo);
+                    prodPed.TotM = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPed.Largura, (int)prodPed.Altura, d.Qtde, (int)prodPed.IdProd, prodPed.Redondo, 0, true);
 
                 prodPed.QtdMarcadaSaida = d.Qtde;
 
@@ -292,7 +292,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                     if (p.QtdMarcadaSaida == 0)
                         continue;
 
-                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd);
+                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd, false);
                     float qtdMov = p.QtdMarcadaSaida;
 
                     if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
@@ -321,7 +321,7 @@ namespace WebGlass.Business.Pedido.Fluxo
             {
                 var prodPed = ProdutosPedidoDAO.Instance.GetElement(sessao, (uint)d.IdProdPed);
                 prod = ProdutoDAO.Instance.GetElement(sessao, prodPed.IdProd);
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
 
                 // Se a empresa trabalha com venda de alumínio no metro e se produto for alumínio, 
                 // coloca o metro linear baixado no campo m²
@@ -333,7 +333,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                 }
                 // Se produto for calculado por m², dá baixa somente no m² da qtde de peças que foram dado baixa
                 else if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto)
-                    prodPed.TotM = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPed.Largura, (int)prodPed.Altura, d.Qtde, (int)prodPed.IdProd, prodPed.Redondo);
+                    prodPed.TotM = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPed.Largura, (int)prodPed.Altura, d.Qtde, (int)prodPed.IdProd, prodPed.Redondo, 0, true);
 
                 prodPed.QtdMarcadaSaida = d.Qtde;
 
@@ -352,7 +352,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                     if (p.QtdMarcadaSaida == 0)
                         continue;
 
-                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd);
+                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd, false);
                     float qtdMov = p.QtdMarcadaSaida;
 
                     if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||

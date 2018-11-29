@@ -1338,7 +1338,7 @@ namespace Glass.Data.DAL
                     pe.Largura = pipLargura > 0 ? pipLargura.Value : mipLargura > 0 ? mipLargura.Value : p.Largura;
 
                     pe.TotM = pipAltura > 0 && pipLargura > 0
-                        ? Glass.Global.CalculosFluxo.ArredondaM2(transaction, pipLargura.Value, pipAltura.Value, pe.Qtde, (int)pe.IdProd, pe.Redondo)
+                        ? Glass.Global.CalculosFluxo.ArredondaM2(transaction, pipLargura.Value, pipAltura.Value, pe.Qtde, (int)pe.IdProd, pe.Redondo, 0, true)
                         : mipTotM > 0
                             ? mipTotM.Value
                             : p.TotM;
@@ -2338,7 +2338,7 @@ namespace Glass.Data.DAL
                                 "IdAmbientePedido=" + prod.IdAmbientePedido.Value) + " está vazio, exclua-o.");
                 }
 
-                var tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd);
+                var tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd, false);
 
                 // Verifica se o processo e a aplicação foram informados
                 if (obrigaInformarProcApl && Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro((int)prod.IdGrupoProd) &&
@@ -2379,7 +2379,7 @@ namespace Glass.Data.DAL
 
                 foreach (var produtoPedido in ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false))
                 {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoPedido.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoPedido.IdProd, false);
 
                     var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
                                 tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
@@ -2699,7 +2699,7 @@ namespace Glass.Data.DAL
 
                     if (prodOrca.IdProduto != null)
                     {
-                        prodOrca.TipoCalculoUsado = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodOrca.IdProduto.Value);
+                        prodOrca.TipoCalculoUsado = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodOrca.IdProduto.Value, false);
                         prodOrca.Custo = mip.Custo;
                         prodOrca.Espessura = mip.Espessura;
 
@@ -2956,7 +2956,7 @@ namespace Glass.Data.DAL
                 // Insere na reserva peças do pedido original
                 foreach (var ppe in ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false))
                 {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd, false);
 
                     var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
                                 tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
@@ -2985,7 +2985,7 @@ namespace Glass.Data.DAL
                 // Remove da reserva peças da conferência
                 foreach (var ppe in ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false))
                 {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd, false);
 
                     var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
                                 tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
@@ -3291,7 +3291,7 @@ namespace Glass.Data.DAL
 
                 foreach (var ppe in ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false))
                 {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd, false);
 
                     var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
                                 tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
