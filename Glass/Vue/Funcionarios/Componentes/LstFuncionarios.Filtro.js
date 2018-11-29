@@ -57,7 +57,7 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroSituacao: function () {
-      return Servicos.Funcionarios.obterSituacoes();
+      return Servicos.Comum.obterSituacoes();
     },
 
     /**
