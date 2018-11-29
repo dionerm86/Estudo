@@ -1019,23 +1019,26 @@ namespace Glass.Data.Model
         #endregion
 
         /// <summary>
-        /// ObservaÃ§Ã£o do cliente e do pedido concatenados.
+        /// ObtÃ©m a observaÃ§Ã£o do cliente e do pedido concatenados.
         /// </summary>
         public string ObservacaoLiberacaoClientePedido
         {
             get
             {
-                if (!string.IsNullOrEmpty(ObsLiberacao) && ObsLiberacao.Trim().Contains(ObservacaoLiberacaoCliente.Trim()))
+                var obsLiberacao = string.IsNullOrWhiteSpace(this.ObsLiberacao) ? string.Empty : this.ObsLiberacao;
+                var observacaoLiberacaoCliente = string.IsNullOrWhiteSpace(this.ObservacaoLiberacaoCliente) ? string.Empty : this.ObservacaoLiberacaoCliente;
+
+                if (obsLiberacao.Trim().Contains(observacaoLiberacaoCliente.Trim()))
                 {
-                    return ObsLiberacao;
+                    return obsLiberacao;
                 }
 
-                if (!string.IsNullOrEmpty(ObservacaoLiberacaoCliente) && ObservacaoLiberacaoCliente.Trim().Contains(ObsLiberacao.Trim()))
+                if (observacaoLiberacaoCliente.Trim().Contains(obsLiberacao.Trim()))
                 {
-                    return ObservacaoLiberacaoCliente;
+                    return observacaoLiberacaoCliente;
                 }
 
-                return (ObservacaoLiberacaoCliente + " " ?? string.Empty) + (ObsLiberacao ?? string.Empty);
+                return $"{obsLiberacao} {observacaoLiberacaoCliente}";
             }
         }
 
@@ -1090,7 +1093,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Quantidadade de peças do pedido, considerando as peças filhas
+        /// Quantidadade de peï¿½as do pedido, considerando as peï¿½as filhas
         /// </summary>
         [XmlIgnore]
         public long QtdePecas
@@ -1099,7 +1102,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Quantidadade de peças do pedido, sem considerar as peças filhas
+        /// Quantidadade de peï¿½as do pedido, sem considerar as peï¿½as filhas
         /// </summary>
         [XmlIgnore]
         public long QtdePecasPai
