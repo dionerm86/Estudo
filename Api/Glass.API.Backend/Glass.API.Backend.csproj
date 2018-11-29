@@ -245,6 +245,8 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
     <Compile Include="Controllers\Parcelas\V1\PatchParcelasController.cs" />
     <Compile Include="Controllers\Parcelas\V1\PostParcelasController.cs" />
+    <Compile Include="Controllers\ImpressoesEtiquetas\V1\ImpressoesEtiquetasController.cs" />
+    <Compile Include="Controllers\ImpressoesEtiquetas\V1\GetImpressoesEtiquetasController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\DeleteFerragensController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\DeleteFabricantesFerragemController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\FabricantesFerragemController.cs" />
@@ -500,6 +502,7 @@
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
     <Compile Include="Helper\Parcelas\ConverterCadastroAtualizacaoParaParcelas.cs" />
     <Compile Include="Helper\Carregamentos\TraducaoOrdenacaoListaCarregamentos.cs" />
+    <Compile Include="Helper\ImpressoesEtiquetas\TraducaoOrdenacaoListaImpressoesEtiquetas.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\ConverterCadastroAtualizacaoParaFabricanteFerragem.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\TraducaoOrdenacaoListaFabricantesFerragem.cs" />
     <Compile Include="Helper\Projetos\MedidasProjeto\ConverterCadastroAtualizacaoParaMedidaProjeto.cs" />
@@ -649,6 +652,10 @@
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
     <Compile Include="Models\Genericas\V1\CodigoNomeDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Lista\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\ExecucaoOperacaoIntegracao\DadosExecucaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ConfiguracaoIntegradorDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\EsquemaHistoricoDto.cs" />
