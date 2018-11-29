@@ -99,7 +99,7 @@ namespace Glass.Data.RelDAL
                             ppe.Qtde,
                             ppe.TotM2Calc,
                             gp.IdGrupoProd,
-                            gp.IdSubgrupoProd,
+                            sp.IdSubgrupoProd,
                             gp.TipoCalculo AS TipoCalculoGrupo,
                             gp.TipoCalculoNf AS TipoCalculoNfGrupo,
                             sp.TipoCalculo AS TipoCalculoSubgrupo,
@@ -382,6 +382,7 @@ namespace Glass.Data.RelDAL
             var sqlProdPedProducaoParaItensProduzidosEFD = $@"SELECT DISTINCT(ppp.IdProdPedProducao)
                 FROM produto_pedido_producao ppp
                     INNER JOIN produtos_pedido pp ON (ppp.IdProdPed = pp.IdProdPedEsp)
+                    INNER JOIN produto prod ON (pp.IdProd = prod.IdProd)
                     INNER JOIN pedido p ON (pp.IdPedido = p.IdPedido)
                 WHERE prod.TipoMercadoria IN ({(int)TipoMercadoria.ProdutoEmProcesso}, {(int)TipoMercadoria.ProdutoAcabado})
                     AND p.IdLoja = {idLoja}

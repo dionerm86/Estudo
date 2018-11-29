@@ -244,10 +244,22 @@ namespace Glass.Data.DAL
         {
             try
             {
-                var tipoCalculoGrupo = (TipoCalculoGrupoProd?)this.ObtemTipoCalculo(session, idGrupo, false);
-                var tipoCalculoNfGrupo = (TipoCalculoGrupoProd?)this.ObtemTipoCalculo(session, idGrupo, true);
-                var tipoCalculoSubgrupo = (TipoCalculoGrupoProd?)SubgrupoProdDAO.Instance.ObtemTipoCalculo(session, idSubgrupo.Value, false);
-                var tipoCalculoNfSubgrupo = (TipoCalculoGrupoProd?)SubgrupoProdDAO.Instance.ObtemTipoCalculo(session, idSubgrupo.Value, true);
+                TipoCalculoGrupoProd? tipoCalculoGrupo = null;
+                TipoCalculoGrupoProd? tipoCalculoNfGrupo = null;
+                TipoCalculoGrupoProd? tipoCalculoSubgrupo = null;
+                TipoCalculoGrupoProd? tipoCalculoNfSubgrupo = null;
+
+                if (idGrupo > 0)
+                {
+                    tipoCalculoGrupo = (TipoCalculoGrupoProd?)this.ObtemTipoCalculo(session, idGrupo, false);
+                    tipoCalculoNfGrupo = (TipoCalculoGrupoProd?)this.ObtemTipoCalculo(session, idGrupo, true);
+                }
+
+                if (idSubgrupo > 0)
+                {
+                    tipoCalculoSubgrupo = (TipoCalculoGrupoProd?)SubgrupoProdDAO.Instance.ObtemTipoCalculo(session, idSubgrupo.Value, false);
+                    tipoCalculoNfSubgrupo = (TipoCalculoGrupoProd?)SubgrupoProdDAO.Instance.ObtemTipoCalculo(session, idSubgrupo.Value, true);
+                }
 
                 return this.TipoCalculo(
                     idGrupo,
