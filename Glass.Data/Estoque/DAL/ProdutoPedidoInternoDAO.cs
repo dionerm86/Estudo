@@ -42,10 +42,13 @@ namespace Glass.Data.DAL
         private string SqlRptProdutoPedidoInterno(int idSubGrupo, string dataInicio, string dataFim, int idGrupo, int idPedInterno, int idFuncCad, int idFuncReceb, bool selecionar)
         {
             var sql = $@"SELECT ppi.*, p.CodInterno, p.Descricao AS DescrProduto, SUM(ppi.Qtde) AS QtdeSomada, SUM(ppi.TotM) AS TotM2,
-                    ROUND(SUM((IF(p.CustoCompra > 0, p.CustoCompra, IF(p.CustoFabBase > 0, p.CustoFabBase, 0)) * IF(ppi.TotM > 0, ppi.TotM, IF(ppi.Qtde > 0, ppi.Qtde, 0)))), 2) AS Custo
+                    ROUND(SUM((IF(p.CustoCompra > 0, p.CustoCompra, IF(p.CustoFabBase > 0, p.CustoFabBase, 0)) * COALESCE(IF(sgp.TipoCalculo = {(int)TipoCalculoGrupoProd.M2}
+                    OR gp.TipoCalculo = {(int)TipoCalculoGrupoProd.M2}, ppi.TotM, ppi.Qtde), ppi.Qtde, 0))), 2) AS Custo
                 FROM pedido_interno pi
                     INNER JOIN produto_pedido_interno ppi ON (ppi.IdPedidoInterno = pi.IdPedidoInterno)
                     INNER JOIN produto p ON (p.IdProd = ppi.IdProd)
+                    INNER JOIN subgrupo_prod sgp ON (p.idSubGrupoProd = sgp.idSubGrupoProd)
+                    INNER JOIN grupo_prod gp ON (p.idGrupoProd = gp.idGrupoProd)
                 WHERE 1";
 
             if (idPedInterno > 0)
