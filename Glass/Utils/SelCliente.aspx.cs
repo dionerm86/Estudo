@@ -22,6 +22,12 @@ namespace Glass.UI.Web.Utils
     
             if (!IsPostBack)
                 txtNome.Focus();
+
+            if(hdfNfe.Value == "1")
+            {
+                hdfSituacaoBusca.Value = ((int)Data.Model.SituacaoCliente.Ativo).ToString();
+            }
+
         }
         
         #region Métodos Ajax
