@@ -1001,7 +1001,7 @@ namespace Glass.Data.DAL
                 contaRecebidaSinal.IdConta = UtilsPlanoConta.GetPlanoSinal((uint)idsFormaPagamento.ElementAtOrDefault(i));
                 contaRecebidaSinal.DataVec = DateTime.Now;
                 contaRecebidaSinal.ValorVec = valoresRecebimento.ElementAtOrDefault(i).GetValueOrDefault();
-                contaRecebidaSinal.DataRec = DateTime.Now;
+                contaRecebidaSinal.DataRec = sinal.DataRecebimento != null ? sinal.DataRecebimento : DateTime.Now;
                 contaRecebidaSinal.ValorRec = valoresRecebimento.ElementAtOrDefault(i).GetValueOrDefault();
                 contaRecebidaSinal.Recebida = true;
                 contaRecebidaSinal.UsuRec = usuarioLogado.CodUser;
@@ -1066,7 +1066,7 @@ namespace Glass.Data.DAL
                 contaReceberCredito.IdConta = UtilsPlanoConta.GetPlanoSinal((uint)Pagto.FormaPagto.Credito);
                 contaReceberCredito.DataVec = DateTime.Now;
                 contaReceberCredito.ValorVec = creditoUtilizado;
-                contaReceberCredito.DataRec = DateTime.Now;
+                contaReceberCredito.DataRec = sinal.DataRecebimento != null ? sinal.DataRecebimento : DateTime.Now;
                 contaReceberCredito.ValorRec = creditoUtilizado;
                 contaReceberCredito.Recebida = true;
                 contaReceberCredito.UsuRec = usuarioLogado.CodUser;
