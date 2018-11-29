@@ -61,6 +61,8 @@ namespace Glass.Integracao.Khan
         /// </summary>
         public void ImportarIndicadores()
         {
+            this.logger.Info("Executando integração dos indicadores financeiros...".GetFormatter());
+
             var indicadores = this.Client.ConsultarIndicadores(null, null);
 
             var atualizacoes = indicadores.Select(f => new Rentabilidade.Negocios.AtualizacaoIndicadorFinanceiro

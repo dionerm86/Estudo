@@ -58,33 +58,15 @@
     <Reference Include="Boleto.Net">
       <HintPath>..\Dlls\Boleto.Net.dll</HintPath>
     </Reference>
-    <Reference Include="CalcEngine, Version=1.9.93.0, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.1.9.93\lib\net35\CalcEngine.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CalcEngine.Biesse, Version=1.9.93.0, Culture=neutral, PublicKeyToken=950a3a768abe9821, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Biesse.1.9.93\lib\net40\CalcEngine.Biesse.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CalcEngine, Version=2.1.18324.4, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.2.1.18324.004-final\lib\net452\CalcEngine.dll</HintPath>
     </Reference>
     <Reference Include="CalcEngine.Drawing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=480c19f8f9d8709d, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Drawing.1.7.2.232\lib\net35\CalcEngine.Drawing.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Dxf, Version=1.9.93.0, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Dxf.1.9.93\lib\net35\CalcEngine.Dxf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CalcEngine.Forvet, Version=1.9.93.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Forvet.1.9.93\lib\net35\CalcEngine.Forvet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CalcEngine.Optima, Version=1.9.93.0, Culture=neutral, PublicKeyToken=623f0300398dc53a, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Optima.1.9.93\lib\net35\CalcEngine.Optima.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CalcEngine.SGlass, Version=1.9.93.0, Culture=neutral, PublicKeyToken=223900421e0d49c5, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.SGlass.1.9.93\lib\net35\CalcEngine.SGlass.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CalcEngine.Dxf, Version=2.1.18324.4, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Dxf.2.1.18324.004-final\lib\net452\CalcEngine.Dxf.dll</HintPath>
     </Reference>
     <Reference Include="CalcEngine.Text, Version=1.5.0.0, Culture=neutral, PublicKeyToken=34659d78168384a4, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Text.1.7.2.232\lib\net35\CalcEngine.Text.dll</HintPath>
@@ -196,10 +178,6 @@
     </Reference>
     <Reference Include="EditorConfig.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=fe6ce3ea283749f2, processorArchitecture=MSIL">
       <HintPath>..\packages\editorconfig.0.12.1\lib\net45\EditorConfig.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FC, Version=4.3.1771.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Forvet.1.9.93\lib\net35\FC.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentScheduler, Version=5.3.0.0, Culture=neutral, PublicKeyToken=b76503528a14ebd1, processorArchitecture=MSIL">
@@ -359,10 +337,6 @@
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.IO.Abstractions, Version=1.4.0.86, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Biesse.1.9.93\lib\net40\System.IO.Abstractions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Linq.Dynamics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca26a82b62119865, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Dynamics.1.0.0\lib\net35\System.Linq.Dynamics.dll</HintPath>
       <Private>True</Private>
@@ -496,15 +470,59 @@
     <Content Include="Relatorios\ListaDreCompetencia.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
+    <Content Include="Utils\AlertaAdministrador.aspx" />
+    <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.OrdensCarga.js" />
+    <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.Filtro.js" />
+    <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.js" />
+    <Content Include="Vue\Carregamentos\Templates\LstCarregamentos.Filtro.html" />
+    <Content Include="Vue\Cfops\NaturezasOperacao\Componentes\LstNaturezasOperacao.js" />
+    <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.Filtro.js" />
+    <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.js" />
+    <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Templates\LstRegrasNaturezaOperacao.Filtro.html" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
+    <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
+    <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
+    <Content Include="Vue\Projetos\Ferragens\FabricantesFerragem\Componentes\LstFabricantesFerragem.js" />
+    <Content Include="Vue\Projetos\MedidasProjeto\Componentes\LstMedidasProjeto.js" />
+    <Content Include="Vue\Projetos\MedidasProjeto\Componentes\LstMedidasProjeto.Filtro.js" />
+    <Content Include="Vue\Projetos\MedidasProjeto\Templates\LstMedidasProjeto.Filtro.html" />
+    <Content Include="Vue\Projetos\Ferragens\Componentes\LstFerragens.Filtro.js" />
+    <Content Include="Vue\Projetos\Ferragens\Componentes\LstFerragens.js" />
+    <Content Include="Vue\Projetos\Ferragens\Templates\LstFerragens.Filtro.html" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.Filtro.js" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.js" />
+    <Content Include="Vue\Projetos\ModelosProjeto\Templates\LstModelosProjeto.Filtro.html" />
+    <Content Include="Vue\Projetos\Templates\LstProjetos.Filtro.html" />
+    <Content Include="Vue\Contabilistas\Componentes\LstContabilistas.js" />
+    <Content Include="Vue\Integracao\Integradores\Assets\LstIntegradores.css" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.Configuracao.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.ItemHistorico.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.ItemLogger.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.ItemEsquemaHistorico.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.JobIntegracao.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.Logger.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.OperacaoIntegracao.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.Integrador.js" />
+    <Content Include="Vue\Integracao\Integradores\Componentes\LstIntegradores.js" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.Configuracao.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.ItemHistorico.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.ItemLogger.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.ItemEsquemaHistorico.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.Logger.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.JobIntegracao.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.ParametroOperacaoIntegracao.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.OperacaoIntegracao.html" />
+    <Content Include="Vue\Integracao\Integradores\Templates\LstIntegradores.Integrador.html" />
     <Content Include="Vue\PlanosConta\Componentes\LstPlanosConta.Filtro.js" />
     <Content Include="Vue\PlanosConta\CategoriasConta\Componentes\LstCategoriasConta.js" />
     <Content Include="Vue\PlanosConta\GruposConta\Componentes\LstGruposConta.js" />
     <Content Include="Vue\PlanosConta\Templates\LstPlanosConta.Filtro.html" />
     <Content Include="Vue\Producao\Roteiros\Classificacoes\Componentes\LstClassificacoesRoteiro.js" />
+    <Content Include="Vue\Parcelas\Componentes\LstParcelas.js" />
     <Content Include="Vue\Producao\Roteiros\Componentes\LstRoteiros.Filtro.js" />
     <Content Include="Vue\Producao\Roteiros\Templates\LstRoteiros.Filtro.html" />
     <Content Include="Vue\Producao\Setores\Componentes\LstSetores.js" />
@@ -530,6 +548,7 @@
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.js" />
     <Content Include="Vue\Fornecedores\Templates\LstFornecedores.Filtro.html" />
     <Content Include="Vue\Condutores\Componentes\CadCondutores.js" />
+    <Content Include="Vue\Projetos\GruposProjeto\Componentes\LstGruposProjeto.js" />
     <Content Include="Vue\Rotas\Componentes\LstRotas.js" />
     <Content Include="Vue\TabelasDescontoAcrescimoCliente\Componentes\LstTabelasDescontoAcrescimoCliente.js" />
     <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
@@ -704,7 +723,6 @@
     <Content Include="Cadastros\CadRecebChequeDevolvido.aspx" />
     <Content Include="Cadastros\CadReceberSinal.aspx" />
     <Content Include="Cadastros\CadReceitaDiversa.aspx" />
-    <Content Include="Cadastros\CadRegraNaturezaOperacao.aspx" />
     <Content Include="Cadastros\CadRetificarComissao.aspx" />
     <Content Include="Cadastros\CadRetificarConferencia.aspx" />
     <Content Include="Cadastros\CadRetificarDepositoCheque.aspx" />
@@ -1269,7 +1287,6 @@
     <Content Include="Listas\LstDebitosPisCofins.aspx" />
     <Content Include="Listas\LstDeclaracaoCheque.aspx" />
     <Content Include="Listas\LstDeducaoDiversa.aspx" />
-    <Content Include="Listas\LstDepartamento.aspx" />
     <Content Include="Listas\LstDeposito.aspx" />
     <Content Include="Listas\LstCartaoNaoIdentificado.aspx" />
     <Content Include="Listas\LstDepositoNaoIdentificado.aspx" />
@@ -1295,7 +1312,6 @@
     <Content Include="Listas\LstFornada.aspx" />
     <Content Include="Listas\LstFornecedor.aspx" />
     <Content Include="Listas\LstFornecedorCredito.aspx" />
-    <Content Include="Listas\LstFuncDepartamento.aspx" />
     <Content Include="Listas\LstFuncionario.aspx" />
     <Content Include="Listas\LstHistoricoCliente.aspx" />
     <Content Include="Listas\LstHistoricoFornec.aspx" />
@@ -1677,7 +1693,6 @@
     <Content Include="Utils\SetMotivoCancProdImpressao.aspx" />
     <Content Include="Utils\SetMotivoCancProj.aspx" />
     <Content Include="Utils\SetMotivoCancReceb.aspx" />
-    <Content Include="Utils\SetMotivoCancRegraNatOp.aspx" />
     <Content Include="Utils\SetMotivoPerdaRetalho.aspx" />
     <Content Include="Utils\SetMotivoCancRetalho.aspx" />
     <Content Include="Utils\SetMotivoCancTroca.aspx" />
@@ -1757,11 +1772,13 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoAreaM2.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaCidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaCliente.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaNaturezaOperacao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaAplicacao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaProcesso.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaProduto.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCep.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCnpj.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoTelefone.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCpf.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoDescontoQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoEndereco.js" />
@@ -1777,6 +1794,8 @@
     <Content Include="Vue\_Compartilhado\Componentes\ControleSelecaoParticipanteFiscal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoFuncionarios.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoMultiplaUf.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoTiposPessoa.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSituacoes.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSetores.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
@@ -1807,7 +1826,10 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Carregamentos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Projetos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comum.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Contabilistas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Condutores.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Seguradoras.js" />
@@ -1878,11 +1900,13 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoAreaM2.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaCidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaCliente.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoBuscaNaturezaOperacao.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaEtiquetaAplicacao.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaEtiquetaProcesso.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaProduto.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCep.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCnpj.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoTelefone.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCpf.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoDescontoQuantidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoEndereco.html" />
@@ -1898,6 +1922,8 @@
     <Content Include="Vue\_Compartilhado\Templates\ControleSelecaoParticipanteFiscal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoFuncionarios.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoMultiplaUf.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoTiposPessoa.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoSituacoes.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoSetores.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />
@@ -1975,6 +2001,7 @@
     </AdditionalFiles>
     <Content Include="packages.config" />
     <Content Include="Handlers\ArquivoCheques.ashx" />
+    <Content Include="biesse.config" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -2186,6 +2213,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="WebGlassParceiros\PainelParceiros.master" />
+    <Content Include="Vue\Carregamentos\Templates\LstCarregamentos.OrdensCarga.html" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -4431,13 +4459,6 @@
     <Compile Include="Cadastros\CadReceitaDiversa.aspx.designer.cs">
       <DependentUpon>CadReceitaDiversa.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Cadastros\CadRegraNaturezaOperacao.aspx.cs">
-      <DependentUpon>CadRegraNaturezaOperacao.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Cadastros\CadRegraNaturezaOperacao.aspx.designer.cs">
-      <DependentUpon>CadRegraNaturezaOperacao.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Cadastros\CadRetificarComissao.aspx.cs">
       <DependentUpon>CadRetificarComissao.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -5726,13 +5747,6 @@
     <Compile Include="Listas\LstDeducaoDiversa.aspx.designer.cs">
       <DependentUpon>LstDeducaoDiversa.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Listas\LstDepartamento.aspx.cs">
-      <DependentUpon>LstDepartamento.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Listas\LstDepartamento.aspx.designer.cs">
-      <DependentUpon>LstDepartamento.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Listas\LstDeposito.aspx.cs">
       <DependentUpon>LstDeposito.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -5907,13 +5921,6 @@
     </Compile>
     <Compile Include="Listas\LstFornecedorCredito.aspx.designer.cs">
       <DependentUpon>LstFornecedorCredito.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Listas\LstFuncDepartamento.aspx.cs">
-      <DependentUpon>LstFuncDepartamento.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Listas\LstFuncDepartamento.aspx.designer.cs">
-      <DependentUpon>LstFuncDepartamento.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstFuncionario.aspx.cs">
       <DependentUpon>LstFuncionario.aspx</DependentUpon>
@@ -7433,6 +7440,13 @@
     <Compile Include="Relatorios\ResumoDiario.aspx.designer.cs">
       <DependentUpon>ResumoDiario.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Utils\AlertaAdministrador.aspx.cs">
+      <DependentUpon>AlertaAdministrador.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\AlertaAdministrador.aspx.designer.cs">
+      <DependentUpon>AlertaAdministrador.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Utils\AlterarProcessoAplicacao.aspx.cs">
       <DependentUpon>AlterarProcessoAplicacao.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -8349,13 +8363,6 @@
     <Compile Include="Utils\SetMotivoCancReceb.aspx.designer.cs">
       <DependentUpon>SetMotivoCancReceb.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Utils\SetMotivoCancRegraNatOp.aspx.cs">
-      <DependentUpon>SetMotivoCancRegraNatOp.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Utils\SetMotivoCancRegraNatOp.aspx.designer.cs">
-      <DependentUpon>SetMotivoCancRegraNatOp.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Utils\SetMotivoPerdaRetalho.aspx.cs">
       <DependentUpon>SetMotivoPerdaRetalho.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -8745,6 +8752,10 @@
     <ProjectReference Include="..\Otimizacao\UI\Web\Glass.Otimizacao.UI.Web.Process\Glass.Otimizacao.UI.Web.Process.csproj">
       <Project>{b48a8a08-4332-41fc-a6bb-ed85a3a99f9d}</Project>
       <Name>Glass.Otimizacao.UI.Web.Process</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Projeto\Glass.Projeto\Glass.Projeto.csproj">
+      <Project>{80e41ddf-89b0-4c31-8893-9139cfd8fe0b}</Project>
+      <Name>Glass.Projeto</Name>
     </ProjectReference>
     <ProjectReference Include="..\Relatorios\Glass.Relatorios\Glass.Relatorios.csproj">
       <Project>{fe3e730f-5b2d-42dc-b491-d16c7f04b96c}</Project>
@@ -9428,6 +9439,7 @@
     <Folder Include="Relatorios\CFe\" />
     <Folder Include="Relatorios\Clientes\" />
     <Folder Include="Relatorios\Fornecedores\" />
+    <Folder Include="Vue\Carregamentos\OrdensCarga\" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

@@ -52,33 +52,15 @@
       <HintPath>..\packages\CADProject.Remote.Client.1.0.3\lib\net40\CADProject.Remote.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine, Version=1.9.93.0, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.1.9.93\lib\net35\CalcEngine.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CalcEngine.Biesse, Version=1.9.93.0, Culture=neutral, PublicKeyToken=950a3a768abe9821, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Biesse.1.9.93\lib\net40\CalcEngine.Biesse.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CalcEngine, Version=2.1.18324.4, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.2.1.18324.004-final\lib\net452\CalcEngine.dll</HintPath>
     </Reference>
     <Reference Include="CalcEngine.Drawing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=480c19f8f9d8709d, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Drawing.1.7.2.232\lib\net35\CalcEngine.Drawing.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Dxf, Version=1.9.93.0, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Dxf.1.9.93\lib\net35\CalcEngine.Dxf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CalcEngine.Forvet, Version=1.9.93.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Forvet.1.9.93\lib\net35\CalcEngine.Forvet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CalcEngine.Optima, Version=1.9.93.0, Culture=neutral, PublicKeyToken=623f0300398dc53a, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Optima.1.9.93\lib\net35\CalcEngine.Optima.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CalcEngine.SGlass, Version=1.9.93.0, Culture=neutral, PublicKeyToken=223900421e0d49c5, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.SGlass.1.9.93\lib\net35\CalcEngine.SGlass.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CalcEngine.Dxf, Version=2.1.18324.4, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Dxf.2.1.18324.004-final\lib\net452\CalcEngine.Dxf.dll</HintPath>
     </Reference>
     <Reference Include="CalcEngine.Text, Version=1.5.0.0, Culture=neutral, PublicKeyToken=34659d78168384a4, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Text.1.7.2.232\lib\net35\CalcEngine.Text.dll</HintPath>
@@ -122,10 +104,6 @@
     </Reference>
     <Reference Include="EditorConfig.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=fe6ce3ea283749f2, processorArchitecture=MSIL">
       <HintPath>..\packages\editorconfig.0.12.1\lib\net45\EditorConfig.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FC, Version=4.3.1771.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Forvet.1.9.93\lib\net35\FC.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
@@ -236,10 +214,6 @@
     </Reference>
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.EnterpriseServices">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.IO.Abstractions, Version=1.4.0.86, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Biesse.1.9.93\lib\net40\System.IO.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Linq.Dynamics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca26a82b62119865, processorArchitecture=MSIL">
@@ -359,6 +333,7 @@
     <Compile Include="Configuracoes\OrcamentoConfig\TelaCadastroProdutoOrcamento.cs" />
     <Compile Include="Configuracoes\OrdemCargaConfig\OrdemCargaConfig.cs" />
     <Compile Include="Configuracoes\OtimizacaoConfig\OtimizacaoConfig.cs" />
+    <Compile Include="Configuracoes\PCPConfig\CalcEngineConfig.cs" />
     <Compile Include="Configuracoes\PCPConfig\EmailSMS.cs" />
     <Compile Include="Configuracoes\PCPConfig\Etiqueta.cs" />
     <Compile Include="Configuracoes\PCPConfig\PainelProducao.cs" />
@@ -409,6 +384,8 @@
     <Compile Include="EFD\DataSourcesEFD.cs" />
     <Compile Include="EFD\EFD.cs" />
     <Compile Include="EFD\RecuperaDados.cs" />
+    <Compile Include="Enumeradores\TipoComissaoContaRec.cs" />
+    <Compile Include="Enumeradores\FinalidadeChaveAcesso.cs" />
     <Compile Include="Estoque\DAL\ChapaTrocadaDevolvidaDAO.cs" />
     <Compile Include="Estoque\DAL\MovEstoqueCentroCustoDAO.cs" />
     <Compile Include="Estoque\DAL\MovInternaEstoqueFiscalDAO.cs" />
@@ -597,8 +574,6 @@
     <Compile Include="Helper\CalculoIcmsStMT.cs" />
     <Compile Include="Helper\Calculos\Cache\CacheCalculo.cs" />
     <Compile Include="Helper\Calculos\CalculoM2.cs" />
-    <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Comissao\BaseComissaoStrategy.cs" />
-    <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Desconto\BaseDescontoStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\ValorTotal\BaseStrategy.cs" />
     <Compile Include="Helper\Calculos\Estrategia\ValorTotal\Enum\ArredondarAluminio.cs" />
     <Compile Include="Helper\Calculos\Estrategia\ValorTotal\GenericoStrategy.cs" />
@@ -717,7 +692,6 @@
     <Compile Include="Fiscal\DAL\CTe\SeguroCteDAO.cs" />
     <Compile Include="Fiscal\DAL\CTe\ValePedagioCteRodDAO.cs" />
     <Compile Include="Fiscal\DAL\CTe\VeiculoCteDAO.cs" />
-    <Compile Include="Global\DAL\DepartamentoDAO.cs" />
     <Compile Include="Financeiro\DAL\DepositoNaoIdentificadoDAO.cs" />
     <Compile Include="Fiscal\DAL\AjusteApuracaoIdentificacaoDocFiscalDAO.cs" />
     <Compile Include="Fiscal\DAL\AjusteApuracaoInfoAdicionalDAO.cs" />
@@ -752,6 +726,11 @@
     <Compile Include="Financeiro\DAL\FotosImpostoServDAO.cs" />
     <Compile Include="Financeiro\DAL\FotosLiberacaoDAO.cs" />
     <Compile Include="Handlers\HandlerDownloadArquivo.cs" />
+    <Compile Include="Integracao\Model\EventoItemIntegracao.cs" />
+    <Compile Include="Integracao\Model\FalhaIntegracao.cs" />
+    <Compile Include="Integracao\Model\ItemIntegracao.cs" />
+    <Compile Include="Integracao\Model\SituacaoItemIntegracao.cs" />
+    <Compile Include="Integracao\Model\TipoEventoItemIntegracao.cs" />
     <Compile Include="MDFeUtils\ConfigMDFe.cs" />
     <Compile Include="MDFeUtils\ConsultaSituacao.cs" />
     <Compile Include="MDFeUtils\EnviaXML.cs" />
@@ -824,7 +803,6 @@
     <Compile Include="Pedido\DAL\AmbientePedidoRentabilidadeDAO.cs" />
     <Compile Include="Pedido\DAL\FotosPedidoDAO.cs" />
     <Compile Include="Estoque\DAL\FotosTrocaDevolucaoDAO.cs" />
-    <Compile Include="Global\DAL\FuncDepartamentoDAO.cs" />
     <Compile Include="Global\DAL\FuncionarioDAO.cs" />
     <Compile Include="Global\DAL\FuncionarioSetorDAO.cs" />
     <Compile Include="Global\DAL\FuncModuloDAO.cs" />
@@ -1325,8 +1303,6 @@
     <Compile Include="Fiscal\Model\MovimentacaoBemAtivoImob.cs" />
     <Compile Include="Financeiro\Model\PagtoAcerto.cs" />
     <Compile Include="Financeiro\Model\PagtoPagto.cs" />
-    <Compile Include="Global\Model\Departamento.cs" />
-    <Compile Include="Global\Model\FuncDepartamento.cs" />
     <Compile Include="Fiscal\Model\PlanoContaContabil.cs" />
     <Compile Include="Fiscal\Model\ProcessoReferenciado.cs" />
     <Compile Include="Global\Model\FormaPagtoCliente.cs" />

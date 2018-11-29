@@ -67,7 +67,7 @@ namespace Glass.UI.Web.Relatorios.Administrativos
                     var chartVendasImagem = new ChartVendasImagem();
                     var chartVendasDict = ChartVendasDAO.Instance.GetForRpt(Request["idLoja"].StrParaUint(), Request["idVendedor"].StrParaUint(), Request["tipoFunc"].StrParaInt(),
                         Request["idCliente"].StrParaUint(), Request["nomeCliente"], Request["tipoPedido"], Request["idRota"].StrParaUint(), Request["dataIni"], Request["dataFim"],
-                        Request["agrupar"].StrParaInt(), login, out criterio);
+                        Request["agrupar"].StrParaInt(), out criterio);
 
                     foreach (var entry in chartVendasDict)
                         foreach (var c in entry.Value)

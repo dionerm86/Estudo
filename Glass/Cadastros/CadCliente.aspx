@@ -1085,6 +1085,16 @@
                                                         <asp:Label ID="Label91" runat="server" Text="%"></asp:Label>
                                                     </td>
                                                 </tr>
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() && UsarPercentualBonificacaoCliente()  ? "": "display: none") %>'>
+                                                    <td align="left" class="dtvHeader"  style="width: 170px">
+                                                        <asp:Label ID="lblPercBonificacao" runat="server" Text="Perc. Bonificação"></asp:Label>
+                                                    </td>
+                                                    <td align="left" style="width: 380px">
+                                                        <asp:TextBox ID="txtPercBonificacao" runat="server" Width="50px"
+                                                            onkeypress="return soNumeros(event, false, true);" Text='<%# Bind("PercentualBonificacao") %>'></asp:TextBox>
+                                                        <asp:Label ID="Label112" runat="server" Text="%"></asp:Label>
+                                                    </td>
+                                                </tr>
                                             </table>
                                         </td>
                                     </tr>
@@ -2043,6 +2053,16 @@
                                                     <td align="left">
                                                         <asp:TextBox ID="txtDescontoEcommerce" runat="server" Text='<%# Bind("DescontoEcommerce")%>' Width="70px" />
                                                         <asp:Label ID="Label91" runat="server" Text="%"></asp:Label>
+                                                    </td>
+                                                </tr>
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() && UsarPercentualBonificacaoCliente()  ? "": "display: none") %>'>
+                                                    <td align="left" class="dtvHeader"  style="width: 170px">
+                                                        <asp:Label ID="lblPercBonificacao" runat="server" Text="Perc. Bonificação"></asp:Label>
+                                                    </td>
+                                                    <td align="left" style="width: 380px">
+                                                        <asp:TextBox ID="txtPercBonificacao" runat="server" Width="50px"
+                                                            onkeypress="return soNumeros(event, false, true);" Text='<%# Bind("PercentualBonificacao") %>'></asp:TextBox>
+                                                        <asp:Label ID="Label112" runat="server" Text="%"></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>

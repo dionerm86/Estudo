@@ -1,4 +1,4 @@
-Vue.component('lista-itens-venda', {
+﻿Vue.component('lista-itens-venda', {
   mixins: [Mixins.Objetos, Mixins.OrdenacaoLista()],
   props: {
     /**
@@ -594,6 +594,13 @@ Vue.component('lista-itens-venda', {
      */
     numeroColunasLista: function () {
       return this.$refs.lista.numeroColunas();
+    },
+
+    /**
+     * Limpa a lista de filhos exibidos ao paginar a lista.
+     */
+    atualizouItens: function () {
+      this.filhosEmExibicao.splice(0, this.filhosEmExibicao.length);
     }
   },
 

@@ -1190,10 +1190,10 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>="Totais do cliente " + Fields!NomeCliente.Value + ": " + 
-Count(Fields!IdPedido.Value).ToString() + " pedido(s)   " + 
-Format(Sum(Fields!TotM.Value), "N").ToString() + "m²   " + 
-Format(Sum(Fields!Peso.Value), "N").ToString() + "kg" + 
+                              <Value>="Totais do cliente " + Fields!NomeCliente.Value + ": " +
+Count(Fields!IdPedido.Value).ToString() + " pedido(s)   " +
+Format(Sum(Fields!TotM.Value), "N").ToString() + "m²   " +
+Format(Sum(Fields!Peso.Value), "N").ToString() + "kg" +
 IIf(Len(Fields!DadosVidrosVendidos.Value) &gt; 0, vbCrLf +
 "Produtos: " + Fields!DadosVidrosVendidos.Value, "")</Value>
                               <Style>
@@ -1363,10 +1363,10 @@ IIf(Len(Fields!DadosVidrosVendidos.Value) &gt; 0, vbCrLf +
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>="Totais do dia " + Fields!DataCad.Value + ": " + 
-Count(Fields!IdPedido.Value).ToString() + " pedido(s)   " + 
-Format(Sum(Fields!TotM.Value), "N").ToString() + "m²   " + 
-Format(Sum(Fields!Peso.Value), "N").ToString() + "kg" + 
+                              <Value>="Totais do dia " + Fields!DataCad.Value + ": " +
+Count(Fields!IdPedido.Value).ToString() + " pedido(s)   " +
+Format(Sum(Fields!TotM.Value), "N").ToString() + "m²   " +
+Format(Sum(Fields!Peso.Value), "N").ToString() + "kg" +
 IIf(Len(Fields!DadosVidrosVendidos.Value) &gt; 0, vbCrLf +
 "Produtos: " + Fields!DadosVidrosVendidos.Value, "")</Value>
                               <Style>
@@ -1515,9 +1515,9 @@ IIf(Len(Fields!DadosVidrosVendidos.Value) &gt; 0, vbCrLf +
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Count(Fields!IdPedido.Value).ToString() + " pedido(s)   " + 
+                              <Value>=Count(Fields!IdPedido.Value).ToString() + " pedido(s)   " +
 Format(Sum(Fields!TotM.Value), "N").ToString() + "m²   " +
-Format(Sum(Fields!QtdePecas.Value)).ToString() + " peças (total de peças referente ao m² exibido)  " +
+Format(Sum(Fields!QtdePecasPai.Value)).ToString() + " peças (total de peças referente ao m² exibido)  " +
 Format(Sum(Fields!Peso.Value), "N").ToString() + "kg"</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
@@ -1986,7 +1986,7 @@ Format(Sum(Fields!Peso.Value), "N").ToString() + "kg"</Value>
                 <TablixMember>
                   <Group Name="table1_Group2">
                     <GroupExpressions>
-                      <GroupExpression>=IIf(("," + Parameters!Agrupar.Value + ",").ToString().Contains(",2,"), Fields!IdFunc.Value, Iif(("," + Parameters!Agrupar.Value + ",").ToString().Contains(",3,"), 
+                      <GroupExpression>=IIf(("," + Parameters!Agrupar.Value + ",").ToString().Contains(",2,"), Fields!IdFunc.Value, Iif(("," + Parameters!Agrupar.Value + ",").ToString().Contains(",3,"),
 Fields!IdFuncCliente.Value, 0))</GroupExpression>
                     </GroupExpressions>
                   </Group>
@@ -1998,7 +1998,7 @@ Fields!IdFuncCliente.Value, 0))</GroupExpression>
                   <TablixMembers>
                     <TablixMember>
                       <Visibility>
-                        <Hidden>=(Not ("," + Parameters!Agrupar.Value + ",").ToString().Contains(",2,")) And 
+                        <Hidden>=(Not ("," + Parameters!Agrupar.Value + ",").ToString().Contains(",2,")) And
 (Not ("," + Parameters!Agrupar.Value + ",").ToString().Contains(",3,"))</Hidden>
                       </Visibility>
                       <KeepTogether>true</KeepTogether>
@@ -2073,7 +2073,7 @@ Fields!IdFuncCliente.Value, 0))</GroupExpression>
                     </TablixMember>
                     <TablixMember>
                       <Visibility>
-                        <Hidden>=(Not ("," + Parameters!Agrupar.Value + ",").ToString().Contains(",2,")) And 
+                        <Hidden>=(Not ("," + Parameters!Agrupar.Value + ",").ToString().Contains(",2,")) And
 (Not ("," + Parameters!Agrupar.Value + ",").ToString().Contains(",3,"))</Hidden>
                       </Visibility>
                       <KeepTogether>true</KeepTogether>
@@ -2413,6 +2413,10 @@ Fields!IdFuncCliente.Value, 0))</GroupExpression>
         </Field>
         <Field Name="QtdePecas">
           <DataField>QtdePecas</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="QtdePecasPai">
+          <DataField>QtdePecasPai</DataField>
           <rd:TypeName>System.Int64</rd:TypeName>
         </Field>
         <Field Name="TotM">

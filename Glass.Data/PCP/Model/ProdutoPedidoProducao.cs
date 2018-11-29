@@ -359,6 +359,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("NumCavalete", DirectionParameter.InputOptional)]
         public string NumCavalete { get; set; }
 
+        [PersistenceProperty("VALORTOTAL", DirectionParameter.InputOptional)]
+        public decimal ValorTotal { get; set; }
+
         public bool IsProdutoLaminadoComposicao
         {
             get

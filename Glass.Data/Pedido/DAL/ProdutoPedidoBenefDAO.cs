@@ -35,7 +35,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idProdPed"></param>
         /// <returns></returns>
-        public ProdutoPedidoBenef[] GetByProdutoPedido(uint idProdPed)
+        public ProdutoPedidoBenef[] GetByProdutoPedido(GDASession sessao, uint idProdPed)
         {
             string descricaoBenef = "if(bc.idParent>0, Concat(bcpai.Descricao, ' ', bc.Descricao), bc.Descricao)";
             string tipoCalcBenef = "if(bc.idParent>0, bcpai.TipoCalculo, bc.TipoCalculo)";
@@ -45,7 +45,17 @@ namespace Glass.Data.DAL
                 Left Join benef_config bcavo On (bcpai.idParent=bcavo.idBenefConfig) 
                 Where ppb.idProdPed=" + idProdPed;
 
-            return objPersistence.LoadData(sql).ToList().ToArray();
+            return objPersistence.LoadData(sessao, sql).ToList().ToArray();
+        }
+
+        /// <summary>
+        /// Busca beneficiamentos feitos no produtoPedido
+        /// </summary>
+        /// <param name="idProdPed"></param>
+        /// <returns></returns>
+        public ProdutoPedidoBenef[] GetByProdutoPedido(uint idProdPed)
+        {
+            return this.GetByProdutoPedido(null, idProdPed);
         }
 
         /// <summary>

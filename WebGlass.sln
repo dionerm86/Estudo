@@ -103,6 +103,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glass.Integracao.Khan", "In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glass.Integracao", "Integracao\Glass.Integracao\Glass.Integracao.csproj", "{EDDBA46B-4412-433B-A587-C481BA2831FD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projeto", "Projeto", "{82803107-EB1C-4664-BAA7-9913828326C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Glass.Projeto", "Projeto\Glass.Projeto\Glass.Projeto.csproj", "{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
@@ -410,6 +414,18 @@ Global
 		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{EDDBA46B-4412-433B-A587-C481BA2831FD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Debug|.NET.Build.0 = Debug|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Release|.NET.ActiveCfg = Release|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Release|.NET.Build.0 = Release|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -450,6 +466,10 @@ Global
 		{940C0850-AA35-466C-915C-0E5B5C986561} = {320171AD-F2D1-411E-BC00-F757D7B4E117}
 		{3DB16AA0-B7B1-4500-8541-1BC155742124} = {8087DCE2-5F1B-4523-A805-E3B6CCE2617C}
 		{EDDBA46B-4412-433B-A587-C481BA2831FD} = {8087DCE2-5F1B-4523-A805-E3B6CCE2617C}
+		{80E41DDF-89B0-4C31-8893-9139CFD8FE0B} = {82803107-EB1C-4664-BAA7-9913828326C5}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {10CB548B-608D-4026-9BEA-8486026A360D}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

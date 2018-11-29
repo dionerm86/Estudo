@@ -14,7 +14,7 @@ namespace Glass.Data.DAL
         {
             var campos = selecionar ? "c.*, tc.descricao as DescrTipo" : "Count(*)";
             var sql = @"
-                Select " + campos + @" From cfop c 
+                Select " + campos + @" From cfop c
                     Left Join tipo_cfop tc On (c.idTipoCfop=tc.idTipoCfop)
                 Where 1 ";
 
@@ -25,6 +25,11 @@ namespace Glass.Data.DAL
                 sql += " And c.descricao like ?descricao";
 
             return sql;
+        }
+
+        public IList<Cfop> GetSortedByCodInterno()
+        {
+            return objPersistence.LoadData(SqlList(null, null, true) + " order by c.codInterno asc").ToList();
         }
 
         /// <summary>
@@ -48,7 +53,7 @@ namespace Glass.Data.DAL
             return retorno;
         }
 
-        public Cfop[] GetListForRpt()
+        public IList<Cfop> GetListForRpt()
         {
             return ObterListaOrdenadaPeloCodInterno(null);
         }
@@ -248,12 +253,12 @@ namespace Glass.Data.DAL
         public bool IsCfopDevolucao(string codInterno)
         {
             List<string> cfopDevolucao = new List<string>() { "1201", "1202", "1203",
-                "1204", "1208", "1209", "1410", "1411", "1503", "1504", "1505", "1506", 
-                "1553", "1660", "1661", "1662", "1918", "1919", "2201", "2202", "2203", "2204", "2208", 
-                "2209", "2410", "2411", "2503", "2504", "2505", "2506", "2553", "2660", "2661", "2662", "2918", "2919", 
-                "3201", "3202", "3211", "3503", "3553", "5201", "5202", "5208", "5209", "5210", "5410", "5411", "5412", "5413", 
-                "5503", "5553", "5555", "5556", "5660", "5661", "5662", "5918", "5919", "5921", "6201", "6202","6208", "6209", "6210", 
-                "6410", "6411", "6412", "6413", "6503", "6553", "6555", "6556", "6660", "6661", "6662", "6918", "6919", "6921", "7201", 
+                "1204", "1208", "1209", "1410", "1411", "1503", "1504", "1505", "1506",
+                "1553", "1660", "1661", "1662", "1918", "1919", "2201", "2202", "2203", "2204", "2208",
+                "2209", "2410", "2411", "2503", "2504", "2505", "2506", "2553", "2660", "2661", "2662", "2918", "2919",
+                "3201", "3202", "3211", "3503", "3553", "5201", "5202", "5208", "5209", "5210", "5410", "5411", "5412", "5413",
+                "5503", "5553", "5555", "5556", "5660", "5661", "5662", "5918", "5919", "5921", "6201", "6202","6208", "6209", "6210",
+                "6410", "6411", "6412", "6413", "6503", "6553", "6555", "6556", "6660", "6661", "6662", "6918", "6919", "6921", "7201",
                 "7202", "7210", "7211", "7553", "7556",
                 "7930" };
 
@@ -274,7 +279,7 @@ namespace Glass.Data.DAL
 
         /// <summary>
         /// Verifica se o CFOP é de devolução e necessita referenciar NFe na emissão do mesmo tipo.
-        /// CFOPs que não precisam ter nota de referência quando emitir nota de devolução 
+        /// CFOPs que não precisam ter nota de referência quando emitir nota de devolução
         /// 1.201, 1.202, 1.410, 1.411, 5,921 e 6,921  (NT 2013/005 v 1.20)
         /// </summary>
         /// <param name="codInterno"></param>
@@ -284,12 +289,12 @@ namespace Glass.Data.DAL
             if (string.IsNullOrEmpty(codInterno))
                 return true;
             List<string> cfopDevolucao = new List<string>() { "1203",
-                "1204", "1208", "1209", "1503", "1504", "1505", "1506", 
-                "1553", "1660", "1661", "1662", "1918", "1919", "2201", "2202", "2203", "2204", "2208", 
-                "2209", "2410", "2411", "2503", "2504", "2505", "2506", "2553", "2660", "2661", "2662", "2918", "2919", 
-                "3201", "3202", "3211", "3503", "3553", "5201", "5202", "5208", "5209", "5210", "5410", "5411", "5412", "5413", 
-                "5503", "5553", "5555", "5556", "5660", "5661", "5662", "5916", "5918", "5919", "6201", "6202","6208", "6209", "6210", 
-                "6410", "6411", "6412", "6413", "6503", "6553", "6555", "6556", "6660", "6661", "6662", "6918", "6919", "7201", 
+                "1204", "1208", "1209", "1503", "1504", "1505", "1506",
+                "1553", "1660", "1661", "1662", "1918", "1919", "2201", "2202", "2203", "2204", "2208",
+                "2209", "2410", "2411", "2503", "2504", "2505", "2506", "2553", "2660", "2661", "2662", "2918", "2919",
+                "3201", "3202", "3211", "3503", "3553", "5201", "5202", "5208", "5209", "5210", "5410", "5411", "5412", "5413",
+                "5503", "5553", "5555", "5556", "5660", "5661", "5662", "5916", "5918", "5919", "6201", "6202","6208", "6209", "6210",
+                "6410", "6411", "6412", "6413", "6503", "6553", "6555", "6556", "6660", "6661", "6662", "6918", "6919", "7201",
                 "7202", "7210", "7211", "7553", "7556",
                 "7930" };
 
@@ -351,7 +356,7 @@ namespace Glass.Data.DAL
 
         public override int Update(Cfop objUpdate)
         {
-            // Se o código do CFOP estiver sendo alterado, não permite realizar esta alteração 
+            // Se o código do CFOP estiver sendo alterado, não permite realizar esta alteração
             // se este CFOP já estiver sendo usado por alguma nota fiscal
             /*if (ObtemValorCampo<string>("codInterno", "idCfop=" + objUpdate.IdCfop) != objUpdate.CodInterno &&
                 objPersistence.ExecuteSqlQueryCount("Select count(*) from nota_fiscal Where idNaturezaOperacao in (" +
@@ -366,7 +371,7 @@ namespace Glass.Data.DAL
         public override int DeleteByPrimaryKey(uint Key)
         {
             // Verifica se esta CFOP está sendo utilizada em alguma nota
-            /*if (objPersistence.ExecuteSqlQueryCount("Select count(*) from nota_fiscal Where idNaturezaOperacao in (" + 
+            /*if (objPersistence.ExecuteSqlQueryCount("Select count(*) from nota_fiscal Where idNaturezaOperacao in (" +
                 NaturezaOperacaoDAO.Instance.ObtemIdsNaturezaOperacaoPorCfop(Key) + ")") > 0)
                 throw new Exception("Este CFOP não pode ser excluído por haver notas fiscais relacionadas ao mesmo.");
 

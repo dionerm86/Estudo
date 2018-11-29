@@ -492,6 +492,25 @@ namespace Glass.Data.DAL
             return retorno.ToArray();
         }
 
+        /// <summary>
+        /// Busca funcionarios associados aos clientes.
+        /// </summary>
+        /// <returns>
+        /// Retorna um array de funcionários associados aos clientes.
+        /// </returns>
+        public Funcionario[] ObterVendedoresAssociadosCliente()
+        {
+            string sql = $@"
+               SELECT *
+               FROM funcionario f
+                   INNER JOIN cliente c ON (f.IdFunc = c.IdFunc)
+               WHERE f.situacao = {(int)Situacao.Ativo}
+               GROUP BY f.IdFunc
+               ORDER BY f.Nome";
+
+            return objPersistence.LoadData(sql).ToArray();
+        }
+
         #endregion
 
         #region Busca funcionários que tiram pedidos por loja (para filtro, com opção "TODOS")
@@ -1026,23 +1045,6 @@ namespace Glass.Data.DAL
         {
             string sql = Sql(0, "Todas", null, 0, false, 0, null, null, null, true);
             sql += " and idFunc in (select distinct idFunc from mov_func where saldo<0 group by idFunc order by idMovFunc desc)";
-
-            return objPersistence.LoadData(sql).ToList();
-        }
-
-        #endregion
-
-        #region Funcionários por departamento
-
-        /// <summary>
-        /// Retorna os funcionários que ainda não estão em um departamento.
-        /// </summary>
-        /// <param name="idDepartamento"></param>
-        /// <returns></returns>
-        public IList<Funcionario> GetNotInDepartamento(uint idDepartamento)
-        {
-            string sql = "select * from funcionario where idFunc not in (select idFunc from func_departamento where idDepartamento=" +
-                idDepartamento + ") order by nome asc";
 
             return objPersistence.LoadData(sql).ToList();
         }

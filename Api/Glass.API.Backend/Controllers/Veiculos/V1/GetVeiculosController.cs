@@ -4,6 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.API.Backend.Models.Veiculos.V1.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -66,6 +67,29 @@ namespace Glass.API.Backend.Controllers.Veiculos.V1
                         .Select(entidade => new ListaDto(entidade)),
                     filtro,
                     () => veiculos.Count);
+            }
+        }
+
+        /// <summary>
+        /// Obtém uma lista de veículos.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos veículos.</returns>
+        [HttpGet]
+        [Route("filtro")]
+        [SwaggerResponse(200, "Veículos encontrados.", Type = typeof(IEnumerable<CodigoNomeDto>))]
+        [SwaggerResponse(204, "Veículos não encontrados.")]
+        public IHttpActionResult ObterVeiculos()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var medidores = VeiculoDAO.Instance.GetOrdered()
+                    .Select(f => new CodigoNomeDto
+                    {
+                        Codigo = f.Placa,
+                        Nome = f.DescricaoCompleta,
+                    });
+
+                return this.Lista(medidores);
             }
         }
     }

@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass.Configuracoes;
 using Glass.Data.EFD;
 using Glass.Data.Helper;
@@ -547,7 +547,7 @@ namespace Glass.Data.DAL
                                 nf.ModalidadeFrete = ModalidadeFrete.ContaDoRemetente;
                                 nf.VeicPlaca = veiculo.Key;
                                 nf.VeicUf = veiculo.Value;
-                                nf.QtdVol = 1;
+                                nf.QtdVol = Convert.ToInt32(PedidoDAO.Instance.GetPedidosForOC(idsPedidos, 0, false).Sum(f => f.QtdePecasVidro + f.QtdeVolume));
                             }
                         }
 
@@ -3360,6 +3360,7 @@ namespace Glass.Data.DAL
                     decimal aliqIcmsSt = !nfeComplAjuste ? (decimal)pnf.AliqIcmsSt : (nf.ValorIcmsSt > 0 && nf.BcIcmsSt > 0 ? nf.ValorIcmsSt / nf.BcIcmsSt : 0);
                     decimal valorIcmsSt = !nfeComplAjuste ? pnf.ValorIcmsSt : nf.ValorIcmsSt;
 
+                    var operacaoInterNaoContribuinte = this.VerificarFCPConsumidorFinalNaoContribuinteOperacaoInterestadual(nf, cliente);
                     // Busca os valores referente ao FCP.
                     decimal bcFcp = !nfeComplAjuste ? pnf.BcFcp : nf.BcFcp;
                     decimal aliqFcp = (decimal)pnf.AliqFcp;
@@ -3404,7 +3405,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms00, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms00, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms00, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
-                                if (aliqFcp > 0)
+                                if (aliqFcp > 0 && !operacaoInterNaoContribuinte)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms00, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
                                     ManipulacaoXml.SetNode(doc, icms00, "vFCP", Formatacoes.TrataValorDecimal(valorFcp, 2));
@@ -3422,7 +3423,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms10, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms10, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms10, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
-                                if (aliqFcp > 0)
+                                if (aliqFcp > 0 && !operacaoInterNaoContribuinte)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms10, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
                                     ManipulacaoXml.SetNode(doc, icms10, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
@@ -3456,7 +3457,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms20, "vBC", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms20, "pICMS", Formatacoes.TrataValorDouble(pnf.AliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms20, "vICMS", Formatacoes.TrataValorDecimal(pnf.ValorIcms, 2));
-                                if (aliqFcp > 0)
+                                if (aliqFcp > 0 && !operacaoInterNaoContribuinte)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms20, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
                                     ManipulacaoXml.SetNode(doc, icms20, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
@@ -3557,7 +3558,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms70, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms70, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms70, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
-                                if (aliqFcp > 0)
+                                if (aliqFcp > 0 && !operacaoInterNaoContribuinte)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms70, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
                                     ManipulacaoXml.SetNode(doc, icms70, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
@@ -3597,7 +3598,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icms90, "vBC", Formatacoes.TrataValorDecimal(bcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms90, "pICMS", Formatacoes.TrataValorDecimal(aliqIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icms90, "vICMS", Formatacoes.TrataValorDecimal(valorIcms, 2));
-                                if (aliqFcp > 0)
+                                if (aliqFcp > 0 && !operacaoInterNaoContribuinte)
                                 {
                                     ManipulacaoXml.SetNode(doc, icms90, "vBCFCP", Formatacoes.TrataValorDecimal(bcFcp, 2));
                                     ManipulacaoXml.SetNode(doc, icms90, "pFCP", Formatacoes.TrataValorDecimal(aliqFcp, 2));
@@ -4041,16 +4042,9 @@ namespace Glass.Data.DAL
                                 var percentualIcmsInterestadual = pnf.CstOrig == 1 ? 4 : origemSulSudesteExcetoES && destinoNorteNordesteCentroOesteES ? 7 : 12;
                                 var valorDifal = (pnf.BcIcms * ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)) - (pnf.BcIcms * ((decimal)percentualIcmsInterestadual / 100));
 
-                                var difalRIcmsPr =
-                                    nomeUfOrigem.ToUpper().Contains("SP") &&
-                                    (nomeUfDestino.ToUpper().Contains("BA") ||
-                                    nomeUfDestino.ToUpper().Contains("MG") ||
-                                    nomeUfDestino.ToUpper().Contains("PA") ||
-                                    nomeUfDestino.ToUpper().Contains("PI") ||
-                                    nomeUfDestino.ToUpper().Contains("PR") ||
-                                    nomeUfDestino.ToUpper().Contains("RS") ||
-                                    nomeUfDestino.ToUpper().Contains("SE") ||
-                                    nomeUfDestino.ToUpper().Contains("TO"));
+                                var estadosDifalRIcmsPr = FiscalConfig.EstadosConsiderarRicmsPr;
+
+                                var difalRIcmsPr = nomeUfOrigem.ToUpper().Contains("SP") && estadosDifalRIcmsPr.Contains(nomeUfDestino.ToUpper());
 
                                 if (difalRIcmsPr)
                                 {
@@ -4061,7 +4055,7 @@ namespace Glass.Data.DAL
                                 var percentualIcmsUFRemetente = DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
                                 valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
                                 valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
-                                var valorIcmsFCP = Math.Round(pnf.BcIcms * (FiscalConfig.PercentualFundoPobreza / 100), 2);
+                                var valorIcmsFCP = Math.Round(pnf.BcIcms * (aliqFcp / 100), 2);
 
                                 totalIcmsUFDestino += valorIcmsUFDestino;
                                 totalIcmsUFRemetente += valorIcmsUFRemetente;
@@ -4071,7 +4065,7 @@ namespace Glass.Data.DAL
 
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCFCPUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));// Valor da Base de Cálculo do FCP na UF de destino.
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(FiscalConfig.PercentualFundoPobreza, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(aliqFcp, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInternaDestinatario, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal(percentualIcmsInterestadual, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart", Formatacoes.TrataValorDecimal(percentualIcmsUFDestino * 100, 2));
@@ -4147,8 +4141,12 @@ namespace Glass.Data.DAL
                     ManipulacaoXml.SetNode(doc, icmsTot, "vICMSUFRemet", Formatacoes.TrataValorDecimal(totalIcmsUFRemetente, 2));
                 }
 
+                bool fcpConsumidorFinal = this.VerificarFCPConsumidorFinalNaoContribuinteOperacaoInterestadual(nf, cliente);
+
+                var vFCP = fcpConsumidorFinal ? 0 : nf.ValorFcp;
+
                 // FCP
-                ManipulacaoXml.SetNode(doc, icmsTot, "vFCP", Formatacoes.TrataValorDecimal(nf.ValorFcp, 2));
+                ManipulacaoXml.SetNode(doc, icmsTot, "vFCP", Formatacoes.TrataValorDecimal(vFCP, 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vBCST", Formatacoes.TrataValorDecimal(nf.BcIcmsSt, 2)); // Verificar
                 ManipulacaoXml.SetNode(doc, icmsTot, "vST", Formatacoes.TrataValorDecimal(nf.ValorIcmsSt, 2)); // Verificar
                 ManipulacaoXml.SetNode(doc, icmsTot, "vFCPST", Formatacoes.TrataValorDecimal(nf.ValorFcpSt, 2));
@@ -4479,6 +4477,23 @@ namespace Glass.Data.DAL
             #endregion
 
             return doc;
+        }
+
+        private bool VerificarFCPConsumidorFinalNaoContribuinteOperacaoInterestadual(NotaFiscal nf, Cliente cliente)
+        {
+            if(cliente == null || nf == null)
+            {
+                return false;
+            }
+
+            Cidade cidadeFornec;
+            var primeiroDigitoCfop = nf.CodCfop[0];
+
+            var operacaoInterEstadual = (new char[]{'2', '3', '6', '7'}).Contains(primeiroDigitoCfop);
+
+            var naoContribuinte = ObterIndicadorIE(nf, null, cliente, null, out cidadeFornec) == IndicadorIEDestinatario.NaoContribuinte;
+
+            return cliente.TipoFiscal == 1 && naoContribuinte && operacaoInterEstadual;
         }
 
         public void VerificaEstoque(ProdutosNf pnf, ProdutosNf[] lstProdNfValida, uint idLoja)
@@ -5140,7 +5155,7 @@ namespace Glass.Data.DAL
                     return;
 
                 /* Chamado 38752. */
-                if (!Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas ||
+                if (!ComissaoDAO.Instance.VerificarComissaoContasRecebidas() ||
                     !FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber ||
                     nf.TipoDocumento != (int)NotaFiscal.TipoDoc.Saída)
                     return;
@@ -5199,7 +5214,7 @@ namespace Glass.Data.DAL
         public void DesvinculaReferenciaPedidosAntecipados(GDASession session, int nf)
         {
             /* Chamado 38752. */
-            if (!Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas ||
+            if (!ComissaoDAO.Instance.VerificarComissaoContasRecebidas() ||
                 !FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber ||
                 ObtemValorCampo<int>("TipoDocumento", string.Format("IdNf={0}", nf)) != (int)NotaFiscal.TipoDoc.Saída)
                 return;
@@ -5284,6 +5299,7 @@ namespace Glass.Data.DAL
                     }
 
                     var cStat = xmlProt?["infProt"]?["cStat"]?.InnerXml;
+                    int codigoStatusRetorno = cStat.StrParaInt();
 
                     if (xmlProt?["infProt"]?["xMotivo"] == null)
                     {
@@ -5296,13 +5312,13 @@ namespace Glass.Data.DAL
                     var path = $"{ nfePath }{ nf.ChaveAcesso }-nfe.xml";
 
                     // Atualiza número do protocolo de uso da NFe
-                    if (cStat == "100" || cStat == "150")
+                    if (codigoStatusRetorno == 100 || codigoStatusRetorno == 150)
                     {
                         IncluiProtocoloXML(path, xmlProt);
                         AutorizaNotaFiscal(nf, xmlProt);
                     }
                     // NFe denegada
-                    else if (cStat == "301" || cStat == "302" || cStat == "303" || cStat == "110" || cStat == "205")
+                    else if (codigoStatusRetorno == 301 || codigoStatusRetorno == 302 || codigoStatusRetorno == 303 || codigoStatusRetorno == 110 || codigoStatusRetorno == 205)
                     {
                         // Salva protocolo de denegação de uso
                         if (xmlProt?["infProt"]?["nProt"] != null)
@@ -5319,6 +5335,10 @@ namespace Glass.Data.DAL
                     else if (cStat.StrParaInt() > 105)
                     {
                         AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
+                    }
+                    else
+                    {
+                        LogNfDAO.Instance.NewLog(nf.IdNf, "Emissão", codigoStatusRetorno, "O código de retorno não se encaixa em nenhuma situação prevista");
                     }
 
                     BaixaCreditaEstoqueFiscalReal(cStat, nf);
@@ -5365,6 +5385,14 @@ namespace Glass.Data.DAL
             // Altera situação da NFe para autorizada
             AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
 
+            // Altera a data emissão da NFe para a data de autorização do retorno do xml.
+            if (xmlProt?["protNFe"]?["infProt"]?["dhRecbto"] != null)
+            {
+                var dataAutorizacaoNotaFiscal = DateTime.Parse(xmlProt?["protNFe"]?["infProt"]?["dhRecbto"]?.InnerXml);
+
+                objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET dataEmissao=?dataEmissaoNf WHERE IdNf={ nf.IdNf }", new GDAParameter[] { new GDAParameter("?dataEmissaoNf", dataAutorizacaoNotaFiscal) });
+            }
+
             // Envia email para o cliente com o XML
             EnviarEmailXml(nf);
         }
@@ -5384,32 +5412,33 @@ namespace Glass.Data.DAL
             }
 
             var cStat = xmlRetConsSit?["cStat"]?.InnerXml;
+            int codigoStatusRetorno = cStat.StrParaInt(); //Chamado 85114 - Variavel utilizada nas validações para evitar conversões
 
             // Gera log do ocorrido
             LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", cStat.StrParaInt(), xmlRetConsSit?["xMotivo"]?.InnerXml);
 
             // Atualiza número do protocolo de uso da NFe
-            if (cStat == "100" || cStat == "150")
+            if (codigoStatusRetorno == 100 || codigoStatusRetorno == 150)
             {
                 var path = $"{ Utils.GetNfeXmlPath }{ nf.ChaveAcesso }-nfe.xml";
 
                 IncluiProtocoloXML(path, xmlRetConsSit?["protNFe"]);
                 AutorizaNotaFiscal(nf, xmlRetConsSit);
             }
-            else if (cStat == "206" || cStat == "256") // NF-e já está inutilizada
+            else if (codigoStatusRetorno == 206 || codigoStatusRetorno == 256) // NF-e já está inutilizada
             {
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Inutilizada);
             }
-            else if (cStat == "218" || cStat == "420" || cStat == "101" || cStat == "151") // NF-e já está cancelada
+            else if (codigoStatusRetorno == 218 || codigoStatusRetorno == 420 || codigoStatusRetorno == 101 || codigoStatusRetorno == 151) // NF-e já está cancelada
             {
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Cancelada);
             }
-            else if (cStat == "220") // NF-e já está autorizada há mais de 7 dias
+            else if (codigoStatusRetorno == 220) // NF-e já está autorizada há mais de 7 dias
             {
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
             }
             // NFe denegada
-            else if (cStat == "301" || cStat == "302" || cStat == "303" || cStat == "110" || cStat == "205")
+            else if (codigoStatusRetorno == 301 || codigoStatusRetorno == 302 || codigoStatusRetorno == 303 || codigoStatusRetorno == 110 || codigoStatusRetorno == 205)
             {
                 if (xmlRetConsSit?["protNFe"] != null)
                 {
@@ -5424,6 +5453,10 @@ namespace Glass.Data.DAL
             else if (Convert.ToInt32(cStat) > 105)
             {
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
+            }
+            else
+            {
+                LogNfDAO.Instance.NewLog(nf.IdNf, "Emissão", codigoStatusRetorno, "O código de retorno não se encaixa em nenhuma situação prevista");
             }
 
             BaixaCreditaEstoqueFiscalReal(cStat, nf);
@@ -5892,7 +5925,7 @@ namespace Glass.Data.DAL
         private string SqlPorSituacao(uint idNf, uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente,
             int tipoFiscal, uint idFornec, string nomeFornec, string codRota, string situacao, int tipoDoc, string dataIni, string dataFim,
             string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf,
-            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, string valorInicial, string valorFinal,
+            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, bool? apenasNotasFiscaisSemAnexo, string valorInicial, string valorFinal,
             string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
             string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor,
@@ -5919,7 +5952,6 @@ namespace Glass.Data.DAL
                     Left Join transportador t On (n.idTransportador=t.idTransportador)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
-                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Left Join (
                         select pnf.idNf
                         from movimentacao_bem_ativo_imob mbai
@@ -5939,7 +5971,6 @@ namespace Glass.Data.DAL
                     Left Join transportador t On (n.idTransportador=t.idTransportador)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
-                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
 
             NotaFiscal temp = new NotaFiscal();
@@ -6228,6 +6259,12 @@ namespace Glass.Data.DAL
                 criterio += "Lote: " + lote + "    ";
             }
 
+            if (apenasNotasFiscaisSemAnexo == true)
+            {
+                sql += " And (Select Count(*) = 0 From fotos_nota_fiscal Where fotos_nota_fiscal.IdNf = n.IdNf)";
+                criterio += " Nota Fiscal Sem Anexo";
+            }
+
             if (!String.IsNullOrEmpty(valorInicial))
             {
                 sql += " And n.TotalNota >= " + valorInicial.Replace(",", ".");
@@ -6284,14 +6321,14 @@ namespace Glass.Data.DAL
         public IList<NotaFiscal> GetListPorSituacao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote,
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, bool? apenasNotasFiscaisSemAnexo,
             int ordenar, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "n.idNf desc" : sortExpression;
 
             return LoadDataWithSortExpression(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
+                infCompl, codInternoProd, descrProd, lote, apenasNotasFiscaisSemAnexo , valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
                 valorInicial, valorFinal, cnpjFornecedor, lote));
         }
@@ -6299,11 +6336,11 @@ namespace Glass.Data.DAL
         public int GetCountPorSituacao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, int ordenar)
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, bool? apenasNotasFiscaisSemAnexo, int ordenar)
         {
             return objPersistence.ExecuteSqlQueryCount(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec,
                 codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
-                formaEmissao, infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
+                formaEmissao, infCompl, codInternoProd, descrProd, lote, apenasNotasFiscaisSemAnexo , valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, cnpjFornecedor, lote));
         }
@@ -6311,11 +6348,11 @@ namespace Glass.Data.DAL
         public List<uint> GetListPorSituacaoAjax(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string lote)
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string lote, bool? apenasNotasFiscaisSemAnexo)
         {
             return objPersistence.LoadResult(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, null, 0, false, false, true),
+                infCompl, codInternoProd, descrProd, lote, apenasNotasFiscaisSemAnexo, valorInicial, valorFinal, null, 0, false, false, true),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, null, null))
                 .Select(f => f.GetUInt32(0))
@@ -6330,7 +6367,7 @@ namespace Glass.Data.DAL
             int tipoFiscal, uint idFornec, string nomeFornec, string codRota, string situacao, int tipoDoc, string dataIni, string dataFim,
             string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf,
             int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, string valorInicial, string valorFinal,
-            string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
+            string cnpjFornecedor, bool? apenasNotasFiscaisSemAnexo, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
             string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor,
                 " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, '$$$' as Criterio,
@@ -6663,6 +6700,12 @@ namespace Glass.Data.DAL
                 sql += " And n.TotalNota <= " + valorFinal.Replace(",", ".");
             }
 
+            if (apenasNotasFiscaisSemAnexo == true)
+            {
+                sql += " And (Select Count(*) = 0 From fotos_nota_fiscal Where n.IdNf = fotos_nota_fiscal.IdNf)";
+                criterio += " Nota Fiscal Sem Anexo";
+            }
+
             switch (ordenar)
             {
                 case 1:
@@ -6695,14 +6738,14 @@ namespace Glass.Data.DAL
         public IList<NotaFiscal> GetListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote,
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, bool? apenasNotasFiscaisSemAnexo,
             int ordenar, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "n.idNf desc" : sortExpression;
 
             return LoadDataWithSortExpression(SqlListaPadrao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
+                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, apenasNotasFiscaisSemAnexo, ordenar, false, false, true), sortExpression, startRow, pageSize,
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
                 valorInicial, valorFinal, cnpjFornecedor, lote));
         }
@@ -6710,11 +6753,11 @@ namespace Glass.Data.DAL
         public int GetCountListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, int ordenar)
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, bool? apenasNotasFiscaisSemAnexo, int ordenar)
         {
             return objPersistence.ExecuteSqlQueryCount(SqlListaPadrao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec,
                 codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
-                formaEmissao, infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
+                formaEmissao, infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, apenasNotasFiscaisSemAnexo, ordenar, false, false, false),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, cnpjFornecedor, lote));
         }
@@ -6803,7 +6846,6 @@ namespace Glass.Data.DAL
                 Left Join transportador t On (n.idTransportador=t.idTransportador)
                 Left Join funcionario func On (n.usuCad=func.idFunc)
                 Left Join plano_contas pc on (n.idConta=pc.idConta)
-                Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                 Left Join (
                     select pnf.idNf
                     from movimentacao_bem_ativo_imob mbai
@@ -9933,7 +9975,7 @@ namespace Glass.Data.DAL
         public List<NotaFiscal> ObtemAutorizadasFinalizadas()
         {
             string sql = SqlPorSituacao(0, 0, 0, null, 0, 0, null, 0, 0, null, null, "2,13", 0, null, null, null, null, null, null, 0, null, 0, 0, 0,
-                null, null, null, null, null, null, null, 0, false, false, true);
+                null, null, null, null, false, null, null, null, 0, false, false, true);
             return objPersistence.LoadData(sql).ToList();
         }
 
@@ -10352,8 +10394,8 @@ namespace Glass.Data.DAL
             /// <WS>?p=<chave_acesso>|<versao_qrcode>|<tipo_ambiente>|<identificador_csc>|<codigo_hash>
             /// <WS>?p=<chave_acesso>|<versao_qrcode>|<tipo_ambiente>|<dia_data_emissao>|<valor_total_nfce>|<digVal>|<identificador_csc>|<codigo_hash>
 
-            var offline = nfe.Situacao == (int)SituacaoEnum.ContingenciaOffline
-                ? $"|{DateTime.Now.Day.ToString().PadLeft(2, '0')}|{nfe.TotalNota.ToString().Replace(",", ".")}|{digestValue}"
+            var offline = nfe.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaNFCe
+                ? $"|{DateTime.Now.Day.ToString().PadLeft(2, '0')}|{Math.Round(nfe.TotalNota,2).ToString().Replace(",", ".")}|{digValHex}"
                 : string.Empty;
 
             link = $@"{chaveAcesso}|2|{nfe.TipoAmbiente}{offline}|{Conversoes.StrParaInt(idCsc)}";

@@ -32,6 +32,7 @@ namespace Glass.API.Backend.Models.Clientes.V1.Filtro
             this.Nome = cliente.Nome;
             this.Revenda = cliente.Revenda;
             this.Observacoes = this.ObterObservacoesCliente(cliente, tipoValidacao);
+            this.ObservacaoLiberacao = cliente.ObsLiberacao;
             this.Credito = PedidoConfig.TelaCadastro.ExibirCreditoClienteAoBuscar
                 ? cliente.Credito
                 : (decimal?)null;
@@ -175,6 +176,13 @@ namespace Glass.API.Backend.Models.Clientes.V1.Filtro
         [DataMember]
         [JsonProperty("parcela")]
         public ParcelaDto Parcela { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a observação da liberação cadastrada para o cliente.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("observacaoLiberacao")]
+        public string ObservacaoLiberacao { get; set; }
 
         private string ObterObservacoesCliente(Cliente cliente, string tipoValidacao)
         {

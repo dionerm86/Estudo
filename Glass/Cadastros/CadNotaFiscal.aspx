@@ -1695,6 +1695,29 @@
 
             return true;
         }
+
+        function preencherDadosVeiculo(placa){
+            var retorno = CadNotaFiscal.ObterDadosVeiculo(placa);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+
+                FindControl("txtVeicRntc", "input").value = "";
+                FindControl("drpVeicUf", "select").value = "";
+
+                return;
+            }
+            if (retorno != null && retorno.value != "") {
+
+                var resultado = retorno.value.split(',');
+
+                FindControl("txtVeicRntc", "input").value = resultado[0];
+                FindControl("drpVeicUf", "select").value = resultado[1];
+
+                return;
+            }
+        }
+
     </script>
 
     <table style="width: 100%">
@@ -2372,7 +2395,7 @@
                                             <asp:Label ID="Label315" runat="server" Text="Placa"></asp:Label>
                                         </td>
                                         <td>
-                                            <asp:TextBox ID="txtVeicPlaca" runat="server" Text='<%# Bind("VeicPlaca") %>' MaxLength="8"
+                                            <asp:TextBox ID="txtVeicPlaca" runat="server" Text='<%# Bind("VeicPlaca") %>' MaxLength="8" onblur="preencherDadosVeiculo(this.value);"
                                                 Width="70px"></asp:TextBox>
                                         </td>
                                         <td>
@@ -2958,7 +2981,7 @@
                                             <asp:Label ID="Label315" runat="server" Text="Placa"></asp:Label>
                                         </td>
                                         <td>
-                                            <asp:TextBox ID="txtVeicPlaca" runat="server" Text='<%# Bind("VeicPlaca") %>' MaxLength="8"
+                                            <asp:TextBox ID="txtVeicPlaca" runat="server" Text='<%# Bind("VeicPlaca") %>' MaxLength="8" onblur="preencherDadosVeiculo(this.value);"
                                                 Width="70px"></asp:TextBox>
                                         </td>
                                         <td>

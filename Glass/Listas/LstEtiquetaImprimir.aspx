@@ -1,4 +1,4 @@
-<%@ Page Title="Impress„o de Etiquetas" Language="C#" MasterPageFile="~/Painel.master"
+Ôªø<%@ Page Title="Impress√£o de Etiquetas" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="LstEtiquetaImprimir.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEtiquetaImprimir" %>
 
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
@@ -10,12 +10,12 @@
 <%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc5" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <style type="text/css">
-        .tabela 
+        .tabela
         {
             padding: 0;
             border-spacing: 0;
         }
-        
+
         .tabela td
         {
             padding: 0 2px;
@@ -44,11 +44,11 @@
         {
             return tipo == "<%= GetTipoImpressaoEtiquetaPedido() %>";
         }
-        
+
         function textoTipoImpressaoEtiqueta(drpTipoEtiqueta) {
             return drpTipoEtiqueta.options[drpTipoEtiqueta.selectedIndex].text;
         }
-        
+
         function buscarPedidos()
         {
             var idCorVidro = FindControl("drpCorVidro", "select").value;
@@ -58,13 +58,13 @@
             var alturaMax = FindControl("txtAlturaMax", "input").value;
             var larguraMin = FindControl("txtLarguraMin", "input").value;
             var larguraMax = FindControl("txtLarguraMax", "input").value;
-            
+
             openWindow(600, 800, "../Utils/SelPedidoEspelhoImpressaoEtiqueta.aspx" +
-                "?idCorVidro=" + idCorVidro + 
-                "&espessura=" + espessura + 
-                "&idSubgrupoProd=" + idSubgrupoProd + 
-                "&alturaMin=" + alturaMin + 
-                "&alturaMax=" + alturaMax + 
+                "?idCorVidro=" + idCorVidro +
+                "&espessura=" + espessura +
+                "&idSubgrupoProd=" + idSubgrupoProd +
+                "&alturaMin=" + alturaMin +
+                "&alturaMax=" + alturaMax +
                 "&larguraMin=" + larguraMin +
                 "&larguraMax=" + larguraMax);
         }
@@ -83,7 +83,7 @@
             document.getElementById('aplicacao2').style.display = isPedido ? '' : 'none';
             document.getElementById('subgrupo1').style.display = isPedido ? '' : 'none';
             document.getElementById('subgrupo2').style.display = isPedido ? '' : 'none';
-            
+
             var lstProd = document.getElementById("lstProd");
             if (lstProd.rows.length > 0)
                 lstProd.rows[0].cells[1].innerHTML = textoTipoImpressaoEtiqueta(tipoEtiqueta);
@@ -108,22 +108,22 @@
 
             if (numero.value == "")
             {
-                alert("Informe o n˙mero d" + (isPedido ? "o " : "a ") + textoTipoImpressaoEtiqueta(tipo) + ".");
+                alert("Informe o n√∫mero d" + (isPedido ? "o " : "a ") + textoTipoImpressaoEtiqueta(tipo) + ".");
                 numero.focus();
                 return false;
             }
 
             if (LstEtiquetaImprimir.PodeImprimirPedidoImportado(numero.value).value.toLowerCase() == "false") {
-                alert("O pedido importado ainda n„o foi conferido, confira o mesmo antes de imprimir");
+                alert("O pedido importado ainda n√£o foi conferido, confira o mesmo antes de imprimir");
                 return false;
             }
-            
+
             var tipo = FindControl("drpTipoEtiqueta", "select");
             var isPedido = isTipoImpressaoEtiquetaPedido(tipo.value);
             var loja = FindControl("drpLoja", "select").value;
             var idProcesso = FindControl("drpProcesso", "select").value;
             var idAplicacao = FindControl("drpAplicacao", "select").value;
-            
+
             idCorVidro = !!idCorVidro ? idCorVidro : FindControl("drpCorVidro", "select").value;
             espessura = !!espessura ? espessura : FindControl("txtEspessura", "input").value;
             idSubgrupoProd = !!idSubgrupoProd ? idSubgrupoProd : FindControl("drpSubgrupoProd", "select").value;
@@ -137,12 +137,12 @@
             idsProdPedNf = !!idsProdPedNf ? idsProdPedNf : "";
 
             if (isPedido)
-                response = LstEtiquetaImprimir.GetProdByPedido(numero.value, loja, idProcesso, idAplicacao, idsProdPedNf, idCorVidro, espessura, 
+                response = LstEtiquetaImprimir.GetProdByPedido(numero.value, loja, idProcesso, idAplicacao, idsProdPedNf, idCorVidro, espessura,
                     idSubgrupoProd, alturaMin, alturaMax, larguraMin, larguraMax, noCache.getMilliseconds()).value;
             else
             {
                 var idFornec = FindControl("ctrlSelFornecBuscar_hdfValor", "input").value;
-                response = LstEtiquetaImprimir.GetProdByNFe(numero.value, idFornec, idsProdPedNf, idCorVidro, espessura, alturaMin, 
+                response = LstEtiquetaImprimir.GetProdByNFe(numero.value, idFornec, idsProdPedNf, idCorVidro, espessura, alturaMin,
                     alturaMax, larguraMin, larguraMax, noCache.getMilliseconds()).value;
             }
 
@@ -152,7 +152,7 @@
             }
 
             response = response.split('\t');
-            
+
             exibirErro = exibirErro == false ? false : true;
 
             if (response[0] == "Erro") {
@@ -169,31 +169,76 @@
             {
                 if (produtos[j] == "")
                     continue;
-                
+
                 var items = produtos[j].split(';');
 
                 if (isPedido)
                 {
-                    setProdEtiqueta(items[0], items[1], items[2], "", "", items[3], items[4], items[5], items[6],
-                        items[7], items[6] - items[7], items[8], items[9], items[10], items[11], null, null,
-                        items[12] != '', items[12], null, items[13], null);
+                    setProdEtiqueta(
+                        items[0],
+                        items[1],
+                        items[2],
+                        "",
+                        "",
+                        items[3],
+                        items[4],
+                        items[5],
+                        items[6],
+                        items[7],
+                        items[6] - items[7],
+                        items[8],
+                        items[9],
+                        items[10],
+                        items[11],
+                        null,
+                        null,
+                        items[12] != '',
+                        items[12],
+                        null,
+                        items[13],
+                        null,
+                        null,
+                        items[14]);
                 }
                 else
                 {
-                    setProdEtiqueta("", "", "", items[0], items[1], items[2], "", "", items[3], items[4],
-                        items[3] - items[4], items[5], items[6], "", items[7], null, null, false, "", null, null, items[9]);
+                    setProdEtiqueta(
+                        "",
+                        "",
+                        "",
+                        items[0],
+                        items[1],
+                        items[2],
+                        "",
+                        "",
+                        items[3],
+                        items[4],
+                        items[3] - items[4],
+                        items[5],
+                        items[6],
+                        "",
+                        items[7],
+                        null,
+                        null,
+                        false,
+                        "",
+                        null,
+                        null,
+                        items[9],
+                        null,
+                        null);
                 }
             }
-            
+
             if (produtosJaAdicionados)
-                alert("Alguns produtos j· haviam sido adicionados.");
-            
+                alert("Alguns produtos j√° haviam sido adicionados.");
+
             numero.value = "";
             numero.focus();
 
             return false;
         }
-        
+
         function verificarProdutoPlanoCorte(id, planoCorte) {
             if (planoCorte != null && planoCorte != undefined) {
                 for (j = 0; j < produtoPlanoCorte.length; j++)
@@ -205,49 +250,99 @@
             else
                 return true;
         }
-        
+
         function numeroColunaEtiquetasExportadas()
         {
             var linhas = document.getElementById("lstProd").rows;
             if (linhas.length == 0)
                 return -1;
-            
+
             return linhas[0].cells.length - 2;
         }
-        
-        function verificaEtiquetasExportadas(controle, idProdPed, qtdeImprimir)
-        {
-            LstEtiquetaImprimir.NumeroEtiquetasExportadas(idProdPed, qtdeImprimir, function(response)
-            {
-                var linha = controle;
-                while (linha.nodeName.toLowerCase() != "tr")
-                    linha = linha.parentNode;
-                
-                linha.cells[numeroColunaEtiquetasExportadas()].innerHTML  = response.value;
-            });
+
+        /**
+         * Cria a label que exibe a quantidade de etiquetas exportadas para o produto de pedido adicionado na tela.
+         * Esse m√©todo deve ser chamado ao adicionar o produto na tela e tamb√©m no momento em que o usu√°rio altera a quantidade a ser impressa.
+         * A quantidade de pe√ßas exportadas n√£o pode ser maior que a quantidade a ser impressa, informada na tela, do produto.
+         * @param {Object} controle Campo onde a quantidade a ser impressa √© informada.
+         * @param {number} quantidadeImprimir Quantidade a ser impressa para o produto.
+         * @param {number} quantidadeEtiquetasExportadas Quantidade de etiquetas exportadas para o produto.
+         */
+        function criarControleEtiquetasExportadas(controle, quantidadeImprimir, quantidadeEtiquetasExportadas) {
+            if (quantidadeEtiquetasExportadas === undefined ||
+                quantidadeEtiquetasExportadas === null ||
+                quantidadeEtiquetasExportadas === "" ||
+                quantidadeEtiquetasExportadas === 0) {
+                return false;
+            }
+
+            var quantidadeExibirControle = Math.min(quantidadeImprimir, quantidadeEtiquetasExportadas);
+
+            var plural = "";
+
+            if (quantidadeExibirControle > 1) {
+                plural = "s";
+            }
+
+            var controleEtiquetasExportadas = "";
+
+            if (quantidadeExibirControle > 0) {
+                controleEtiquetasExportadas = "<span style='color: red'>" + quantidadeExibirControle + " etiqueta" + plural + " exportada" + plural + "</span>";
+            }
+
+            var linha = controle;
+
+            while (linha.nodeName.toLowerCase() != "tr") {
+                linha = linha.parentNode;
+            }
+
+            linha.cells[numeroColunaEtiquetasExportadas()].innerHTML = controleEtiquetasExportadas;
         }
-        
+
         function formataObjId(etiqRepos, objId) {
             return (etiqRepos + objId).replace(/-/g, "_").replace(/\//g, "_");
         }
 
-        /*
-            FunÁ„o chamada em:
-            - Nesta tela na funÁ„o javascript getProduto();
-            - Utils/SelArquivoOtimizado.aspx, no mÈtodo ASP btnImportarArquivo_Click
-            - Utils/SelProdEtiqueta, na funÁ„o javascript setProdEtiqueta
-            - Utils/SelProdEtiqueta, na funÁ„o ASP lnkAddAll_Click
-            - Utils/SelEtiquetaNFe, na funÁ„o javascript setProdEtiqueta
-            - Utils/SelEtiquetaNFe, na funÁ„o ASP lnkAddAll_Click
-            - Utils/SelPedidoEspelhoImpressaoEtiqueta, na funÁ„o javascript setPedido
-            - Utils/SelPedidoEspelhoImpressaoEtiqueta, na funÁao ASP lnkAddAll_Click
-        */
-        function setProdEtiqueta(idProdPed, idAmbiente, idPedido, idProdNf, idNf, descrProd, codProc, codApl, qtd, qtdImpresso, 
-            qtdImprimir, altura, largura, obs, totM, planoCorte, selInstWin, arquivoOtimizado, etiquetas, atualizarTotais, totMCalc, lote, podeExcluir) {
-            
+        /**
+         * M√©todo chamado nas seguintes telas:
+         * - Nesta tela na fun√ß√£o javascript getProduto.
+         * - Utils/SelArquivoOtimizado.aspx, no m√©todo ASP btnImportarArquivo_Click.
+         * - Utils/SelProdEtiqueta, na fun√ß√£o javascript setProdEtiqueta.
+         * - Utils/SelProdEtiqueta, na fun√ß√£o ASP lnkAddAll_Click.
+         * - Utils/SelEtiquetaNFe, na fun√ß√£o javascript setProdEtiqueta.
+         * - Utils/SelEtiquetaNFe, na fun√ß√£o ASP lnkAddAll_Click.
+         * - Utils/SelPedidoEspelhoImpressaoEtiqueta, na fun√ß√£o javascript setPedido.
+         * - Utils/SelPedidoEspelhoImpressaoEtiqueta, na fun√ßao ASP lnkAddAll_Click.
+         */
+        function setProdEtiqueta(
+            idProdPed,
+            idAmbiente,
+            idPedido,
+            idProdNf,
+            idNf,
+            descrProd,
+            codProc,
+            codApl,
+            qtd,
+            qtdImpresso,
+            qtdImprimir,
+            altura,
+            largura,
+            obs,
+            totM,
+            planoCorte,
+            selInstWin,
+            arquivoOtimizado,
+            etiquetas,
+            atualizarTotais,
+            totMCalc,
+            lote,
+            podeExcluir,
+            quantidadeEtiquetasExportadas) {
+
             document.getElementById("tabelaAlteraDataFab").style.display = "";
-            
-            // Verifica se o produto j· foi adicionado
+
+            // Verifica se o produto j√° foi adicionado
             var produtos = FindControl("hdfIdProdPedNf", "input").value.split(',');
 
             var tipoEtiqueta = FindControl("drpTipoEtiqueta", "select");
@@ -261,45 +356,45 @@
             if (planoCorte != null && planoCorte != undefined)
                 id += "_" + planoCorte;
 
-            // SÛ faz a verificaÁ„o de peÁas j· adicionadas se n„o estiver clicado na opÁ„o "Adicionar todas" no popup
+            // S√≥ faz a verifica√ß√£o de pe√ßas j√° adicionadas se n√£o estiver clicado na op√ß√£o "Adicionar todas" no popup
             //if (atualizarTotais == undefined || atualizarTotais == true)
             for (i = 0; i < produtos.length; i++) {
                 if (id != produtos[i].replace("R", ""))
                     continue;
 
-                // Verifica se a etiqueta j· foi adicionada pelo id, caso seja reposiÁ„o, n„o deve validar, pois pode acontecer em certos casos
-                // do mesmo produto do pedido possuir uma peÁa de reposiÁ„o e outras peÁas normais, o cÛdigo ".replace("R", "")" foi removido por este
-                // motivo, para permitir adicionar peÁas normais mesmo que o produto_pedido_espelho possua uma peÁa reposiÁ„o nesta impress„o
+                // Verifica se a etiqueta j√° foi adicionada pelo id, caso seja reposi√ß√£o, n√£o deve validar, pois pode acontecer em certos casos
+                // do mesmo produto do pedido possuir uma pe√ßa de reposi√ß√£o e outras pe√ßas normais, o c√≥digo ".replace("R", "")" foi removido por este
+                // motivo, para permitir adicionar pe√ßas normais mesmo que o produto_pedido_espelho possua uma pe√ßa reposi√ß√£o nesta impress√£o
                 var txtQtdImp = FindControl("txtQtdImp_" + idProdPed, "input");
                 txtQtdImp = txtQtdImp == null ? FindControl("txtQtdImp_R" + idProdPed, "input") : txtQtdImp;
- 
+
                 if ((id == produtos[i]/*.replace("R", "")*/ && (qtdImprimir > 0 || txtQtdImp == null || txtQtdImp.value == "0")) ||
-                // N„o deixa adicionar a mesma peÁa de reposiÁ„o duas vezes
+                // N√£o deixa adicionar a mesma pe√ßa de reposi√ß√£o duas vezes
                 (id == produtos[i].replace("R", "") && produtos[i][0] == "R" && qtdImprimir == 0)) {
                     if (selInstWin != null)
-                        selInstWin.alert("Produto j· adicionado.");
- 
+                        selInstWin.alert("Produto j√° adicionado.");
+
                     produtosJaAdicionados = true;
                     return false;
                 }
             }
 
-            // Salva o pedido/NF-e da peÁa inserida para alterar a data de fabricaÁ„o do mesmo caso necessite.
+            // Salva o pedido/NF-e da pe√ßa inserida para alterar a data de fabrica√ß√£o do mesmo caso necessite.
             var hdfIdsPedidoNFe = FindControl("hdfIdsPedidoNFe", "input");
             if (("," + hdfIdsPedidoNFe.value + ",").indexOf("," + idUsar + ",") == -1)
                 hdfIdsPedidoNFe.value += idUsar + ",";
-            
-            // Se a etiqueta for de reposiÁ„o, altera o nome dos controles
+
+            // Se a etiqueta for de reposi√ß√£o, altera o nome dos controles
             var etiqRepos = "";
 
             if (qtdImprimir == 0 && etiquetas != "") {
-                descrProd += " (" + etiquetas.split('_').length + " peÁa(s) de reposiÁ„o)";
+                descrProd += " (" + etiquetas.split('_').length + " pe√ßa(s) de reposi√ß√£o)";
                 etiqRepos += "R";
             }
 
             if (planoCorte != null && planoCorte != undefined && planoCorte != "") {
                 if (planoCorte.toLowerCase().indexOf("arquivo") >= 0) {
-                    alert("Plano de corte " + planoCorte + " inv·lido.");
+                    alert("Plano de corte " + planoCorte + " inv√°lido.");
                     return false;
                 }
                 produtoPlanoCorte.push(new Array(id, planoCorte));
@@ -307,54 +402,54 @@
 
             arquivoOtimizado = arquivoOtimizado == true ? true : false;
 
-            // txtQtdImprimir (Qtd que o usu·rio planeja imprimir) e hdfQtdImprimir (Qtd m·xima que poder· ser impressa)
+            // txtQtdImprimir (Qtd que o usu√°rio planeja imprimir) e hdfQtdImprimir (Qtd m√°xima que poder√° ser impressa)
             var inputQtdImp = "<input name='txtQtdImp_" + etiqRepos + id + "' type='text' id='txtQtdImp_" + etiqRepos + id + "' " +
                 (arquivoOtimizado ? "disabled='true'" : "") + " value='" + qtdImprimir + "' style='width: 30px' onkeypress='return soNumeros(event, true, true)' " +
-                "onchange='verificaEtiquetasExportadas(this, \"" + idProdPed + "\", this.value)' />" +
+                "onchange='criarControleEtiquetasExportadas(this, this.value, " + quantidadeEtiquetasExportadas + ")' />" +
                 "<input type='hidden' name='hdfQtdImp_" + etiqRepos + id + "' id='hdfQtdImp_" + etiqRepos + id + "' value='" + qtdImprimir + "' />" +
                 "<input type='hidden' name='hdfQtdImpresso_" + etiqRepos + id + "' id='hdfQtdImpresso_" + etiqRepos + id + "' value='" + qtdImpresso + "' />";
 
-            // ObservaÁ„o a ser anexada junto ‡ etiqueta, e Etiquetas retornadas do plano de corte (se houver)
+            // Observa√ß√£o a ser anexada junto √† etiqueta, e Etiquetas retornadas do plano de corte (se houver)
             if (obs == null) obs = "";
             var inputObs = "<input name='txtObs_" + etiqRepos + id + "' type='text' id='txtObs_" + etiqRepos + id +
                 "' value='" + obs + "' style='width: 100px' maxlength='200' /><input type='hidden' name='hdfEtiquetas_" +
                 etiqRepos + id + "' id='hdfEtiquetas_" + etiqRepos + id + "' value='" + etiquetas + "' />";
 
             var linkRetalhos = "<input type='hidden' id='hdfIdRetalhosProducao_" + formataObjId(etiqRepos, id) + "' />";
-            
+
             var dadosRetalhos = LstEtiquetaImprimir.GetLinkRetalhos(formataObjId(etiqRepos, id), etiqRepos + idProdPed, "txtQtdImp_" + etiqRepos + id).value.split("|");
             linkRetalhos += dadosRetalhos[0];
             var funcaoExecutar = dadosRetalhos[1];
-            
+
             if (planoCorte != null && planoCorte != undefined) {
-                // Adiciona item ‡ tabela com o plano de corte
+                // Adiciona item √† tabela com o plano de corte
                 addItem(new Array(idUsar, descrProd, largura + " x " + altura, totM, isPedido ? totMCalc : null, codProc, codApl, qtd, qtdImpresso, inputQtdImp, planoCorte, inputObs, '', linkRetalhos),
-                    new Array(textoEtiqueta, 'Produto', 'Largura x Altura', 'Tot. M≤', isPedido ? 'Tot. M≤ Calc.' : null, 'Proc.', 'Apl.', 'Qtd.', 'Qtd. j· impresso', 'Qtd. a imprimir', 'Plano Corte', 'Obs', '', ''),
+                    new Array(textoEtiqueta, 'Produto', 'Largura x Altura', 'Tot. M¬≤', isPedido ? 'Tot. M¬≤ Calc.' : null, 'Proc.', 'Apl.', 'Qtd.', 'Qtd. j√° impresso', 'Qtd. a imprimir', 'Plano Corte', 'Obs', '', ''),
                     'lstProd', etiqRepos + id, "hdfIdProdPedNf", null, null, "callbackRemover", true, podeExcluir);
             }
             else {
-                // Adiciona item ‡ tabela
+                // Adiciona item √† tabela
                 addItem(new Array(idUsar, descrProd, largura + " x " + altura, totM, isPedido ? totMCalc : null, codProc, codApl, qtd, qtdImpresso, inputQtdImp, inputObs, isPedido ? null : lote, '', linkRetalhos),
-                    new Array(textoEtiqueta, 'Produto', 'Largura x Altura', 'Tot. M≤', isPedido ? 'Tot. M≤ Calc.' : null, 'Proc.', 'Apl.', 'Qtd.', 'Qtd. j· impresso', 'Qtd. a imprimir', 'Obs', isPedido ? null : 'Lote', '', ''),
+                    new Array(textoEtiqueta, 'Produto', 'Largura x Altura', 'Tot. M¬≤', isPedido ? 'Tot. M¬≤ Calc.' : null, 'Proc.', 'Apl.', 'Qtd.', 'Qtd. j√° impresso', 'Qtd. a imprimir', 'Obs', isPedido ? null : 'Lote', '', ''),
                     'lstProd', etiqRepos + id, "hdfIdProdPedNf", null, null, "callbackRemover", true, podeExcluir);
             }
-            
+
             // Verifica as etiquetas exportadas
             FindControl("txtQtdImp_" + etiqRepos + id, "input").onchange();
-            
+
             var linha = document.getElementById("lstProd_row" + (countItem["lstProd"] - 1));
             linha.cells[linha.cells.length - 1].width = "1px";
-            
+
             if (funcaoExecutar)
                 eval(funcaoExecutar);
-            
+
             if (dadosRetalhos[2])
                 controlesRetalhos.push(dadosRetalhos[2]);
-            
-            // Devem ser trÍs iguais, para que caso o valor seja undefined n„o entre neste if
+
+            // Devem ser tr√™s iguais, para que caso o valor seja undefined n√£o entre neste if
             if (atualizarTotais === false)
                 return false;
-            
+
             FindControl("drpTipoEtiqueta", "select").disabled = true;
             FindControl("lnkImprimir", "a").style.visibility = "visible";
             FindControl("lnkImprimirApenasPlanos", "a").style.visibility = "visible";
@@ -376,31 +471,31 @@
             }
 
             atualizaTotais();
-            
+
             return false;
         }
-        
+
         function callbackRetalhos(nomeControle)
         {
             var controle = eval(nomeControle);
             temRetalhos[nomeControle] = controle.PossuiRetalhosFolga();
-            
+
             var nova = FindControl("novaImpressao", "span").style.display != "none";
             document.getElementById("selecionarRetalhos").style.display = verificaTemRetalhos() && !nova ? "" : "none";
         }
-        
+
         function callbackSelecaoRetalhos(nomeControle)
         {
             var nova = FindControl("novaImpressao", "span").style.display != "none";
             document.getElementById("imprimirApenasRetalhos").style.display = temRetalhosSelecionados(false, true, true) && !nova ? "" : "none";
         }
-        
+
         function alterarAjaxRetalhos(parar)
         {
             for (var c in controlesRetalhos)
             {
                 var controle = window[controlesRetalhos[c]];
-                
+
                 if (parar)
                     controle.Parar();
                 else
@@ -418,17 +513,17 @@
             for (i = 1; i < tabela.rows.length; i++)
                 if (tabela.rows[i].style.display != 'none')
                     numeroLinhas++;
-            
-            // Remove a referÍncia dos retalhos do controle
+
+            // Remove a refer√™ncia dos retalhos do controle
             var c = "ctrlRetalhos_" + formataObjId("", linha.getAttribute("objId"));
-            
+
             if (!!window[c])
             {
                 c = eval(c);
                 c.IdProdPed = "";
                 c.Parar();
             }
-            
+
             FindControl("drpTipoEtiqueta", "select").disabled = numeroLinhas > 0;
             atualizaTotais();
         }
@@ -439,7 +534,7 @@
             var linha = tabela.rows.length - 1;
             while (linha >= 0 && tabela.rows[linha].style.display == "none")
                 linha--;
-            
+
             if (linha >= 0)
                 tabela.rows[linha].cells[0].innerHTML = "";
         }
@@ -467,68 +562,68 @@
                 if (tabela.rows[t].style.display == "none")
                     continue;
 
-                // Soma o total de m≤
+                // Soma o total de m¬≤
                 var totM_Linha = parseFloat(tabela.rows[t].cells[4].innerHTML.replace(",", "."));
                 totM += !isNaN(totM_Linha) ? totM_Linha : 0;
 
-                // Soma o total de m≤ calc
+                // Soma o total de m¬≤ calc
                 var totMCalc_Linha = parseFloat(tabela.rows[t].cells[5].innerHTML.replace(",", "."));
                 totMCalc += !isNaN(totMCalc_Linha) ? totMCalc_Linha : 0;
             }
 
             FindControl("lblTotM", "span").innerHTML = totM.toFixed(2).replace(".", ",") + (isPedido? ' (' + totMCalc.toFixed(2).replace(".", ",") + ')':'');
         }
-        
+
         function verificaTemRetalhos()
         {
             for (var i in temRetalhos)
                 if (temRetalhos[i])
                     return true;
-            
+
             return false;
         }
-        
+
         function temRetalhosSelecionados(imprimir, apenasRetalhos, retornarSelecionados)
         {
             if (!verificaTemRetalhos())
                 return false;
-            
+
             var selecionados = false;
             var todasSemRetalhos = true;
             var linhas = document.getElementById("lstProd").rows;
-            
+
             for (var i = 1; i < linhas.length; i++)
             {
                 if (linhas[i].style.display == "none")
                     continue;
-                    
+
                 var c = "ctrlRetalhos_" + formataObjId("", linhas[i].getAttribute("objId"));
-            
+
                 if (window[c] == null || window[c] == undefined)
                     return false;
-                
+
                 if (document.getElementById(c + "_imgSelecionar").style.display != "none")
                 {
                     todasSemRetalhos = false;
-                    
+
                     var retalhosAssociados = eval(c).RetalhosAssociados();
                     selecionados = selecionados || retalhosAssociados != "";
-                    
+
                     document.getElementById("hdfIdRetalhosProducao_" + formataObjId("", linhas[i].getAttribute("objId"))).value = retalhosAssociados;
                 }
             }
-            
+
             if (selecionados || todasSemRetalhos)
                 return true;
-            
+
             else if (!apenasRetalhos)
-                return confirm("H· retalhos disponÌveis para seleÁ„o.\nDeseja " + 
-                    (imprimir ? "imprimir as peÁas" : "gerar o arquivo de otimizaÁ„o") + " sem selecion·-los?");
-            
+                return confirm("H√° retalhos dispon√≠veis para sele√ß√£o.\nDeseja " +
+                    (imprimir ? "imprimir as pe√ßas" : "gerar o arquivo de otimiza√ß√£o") + " sem selecion√°-los?");
+
             else
                 return !retornarSelecionados ? true : selecionados;
         }
-        
+
         function temEtiquetasExportadas()
         {
             var linhas = document.getElementById("lstProd").rows;
@@ -536,33 +631,33 @@
             {
                 if (linhas[i].style.display == "none")
                     continue;
-                
+
                 if (linhas[i].cells[numeroColunaEtiquetasExportadas()].innerHTML != "")
                     return true;
             }
-            
+
             return false;
         }
 
         // Gera PDF das etiquetas
         function imprimir(apenasPlano, apenasRetalho) {
             if (!permissaoImprimir && !permissaoImprimirMaoDeObra && !permissaoImprimirNFe){
-                alert('VocÍ n„o tem permiss„o para imprimir etiquetas.');
+                alert('Voc√™ n√£o tem permiss√£o para imprimir etiquetas.');
                 return false;
             }
 
-            //O replace È necessario -> Express„o regular para remover a ˙ltima vÌrgula.
+            //O replace √© necessario -> Express√£o regular para remover a √∫ltima v√≠rgula.
             var idsPedido = FindControl("hdfIdsPedido", "input").value.replace(/,\s*$/g, "");
             var idsPedidosImportados = LstEtiquetaImprimir.PodeImprimirPedidosImportados(idsPedido).value.toLowerCase()
             if (idsPedidosImportados != ""){
-                alert(" O(s) pedido(s) importado(s) " + idsPedidosImportados + " n„o foi(ram) conferido(s).");
+                alert(" O(s) pedido(s) importado(s) " + idsPedidosImportados + " n√£o foi(ram) conferido(s).");
                 return false;
             }
-        
-            if (!confirm('Tem certeza que deseja imprimir etiquetas para os produtos ' + 
+
+            if (!confirm('Tem certeza que deseja imprimir etiquetas para os produtos ' +
                 (apenasRetalho ? "com retalhos associados" : "selecionados") + '?'))
                 return false;
-            
+
             if (verificaTemRetalhos())
             {
                 if (!temRetalhosSelecionados(true, apenasRetalho, false))
@@ -570,21 +665,21 @@
                 else if (controlesRetalhos.length > 0 && !eval(controlesRetalhos[0]).Validar())
                     return false;
             }
-            
-            if (temEtiquetasExportadas() && !confirm("H· etiquetas exportadas para otimizaÁ„o nesta impress„o.\nTem certeza que deseja imprimi-las?"))
+
+            if (temEtiquetasExportadas() && !confirm("H√° etiquetas exportadas para otimiza√ß√£o nesta impress√£o.\nTem certeza que deseja imprimi-las?"))
                 return false;
-            
+
             FindControl("hdfSomenteRetalhos", "input").value = apenasRetalho ? "1" : "";
-            
-            // Verifica se existem impressıes na situaÁ„o "Processando"
+
+            // Verifica se existem impress√µes na situa√ß√£o "Processando"
             var podeImprimir = LstEtiquetaImprimir.PodeImprimir().value.split('|');
             if (podeImprimir[0] != "" && podeImprimir[0] != null) {
-                alert("As impressıes " + podeImprimir[0] + " est„o em estado \"Processando\", cancele-as antes de imprimir outras etiquetas na listagem de impressıes.");
+                alert("As impress√µes " + podeImprimir[0] + " est√£o em estado \"Processando\", cancele-as antes de imprimir outras etiquetas na listagem de impress√µes.");
                 return false;
             }
-            // Verifica se existem produtos de impress„o sem impress„o de etiqueta.
+            // Verifica se existem produtos de impress√£o sem impress√£o de etiqueta.
             else if (podeImprimir[1] == "true") {
-                alert("Existem produtos de impress„o sem impress„o associada.");
+                alert("Existem produtos de impress√£o sem impress√£o associada.");
                 return false;
             }
 
@@ -614,12 +709,12 @@
             }
 
 
-            // Desabilita link de impress„o
+            // Desabilita link de impress√£o
             document.getElementById("lnkImprimir").style.visibility = "hidden";
             FindControl("lnkImprimirApenasPlanos", "a").style.visibility = "hidden";
             document.getElementById("selecionarRetalhos").style.display = "none";
             document.getElementById("imprimirApenasRetalhos").style.display = "none";
-            
+
             FindControl("lnkArqOtimizacao", "a").style.visibility = "hidden";
             if (FindControl("lnkArqOtimizacaoSemSag", "a") != null)
                 FindControl("lnkArqOtimizacaoSemSag", "a").style.visibility = "hidden";
@@ -630,11 +725,11 @@
             FindControl('lnkBuscarProd', 'a').style.visibility = "hidden";
             FindControl('txtNumero', 'input').disabled = true;
             FindControl('imgAddProd', 'input').disabled = true;
-       
-            // Abre tela de impress„o de etiquetas
+
+            // Abre tela de impress√£o de etiquetas
             openWindow(500, 700, '../Relatorios/RelEtiquetas.aspx?apenasPlano=' + apenasPlano);
             document.getElementById("reimprimir").style.display = verificaTemRetalhos() && apenasRetalho ? "" : "none";
-            
+
             return false;
         }
 
@@ -642,18 +737,18 @@
             produtosJaAdicionados = false;
             temRetalhos = [];
             countItem["lstProd"] = 1;
-            
+
             FindControl("lnkImprimir", "a").style.visibility = "hidden";
             FindControl("lnkImprimirApenasPlanos", "a").style.visibility = "hidden";
             document.getElementById("selecionarRetalhos").style.display = "none";
             document.getElementById("imprimirApenasRetalhos").style.display = "none";
-            
+
             FindControl("novaImpressao", "span").style.display = "none";
             FindControl('lnkBuscarProd', 'a').style.visibility = "visible";
             FindControl('txtNumero', 'input').disabled = false;
             FindControl('imgAddProd', 'input').disabled = false;
             FindControl("drpTipoEtiqueta", "select").disabled = false;
-            
+
             FindControl("ctrlSelFornecBuscar_txtDescr", "input").value = "";
             FindControl("ctrlSelFornecBuscar_hdfValor", "input").value = "";
             FindControl("lblNomeFornec", "span").innerHTML = "";
@@ -688,6 +783,9 @@
         }
 
         function showArqOtimizacao(ignorarExportadas, ignorarSag) {
+            FindControl("lnkImprimir", "a").style.display = "none";
+            FindControl("lnkImprimirApenasPlanos", "a").style.display = "none";
+
             if (verificaTemRetalhos())
             {
                 if (!temRetalhosSelecionados(false, false, false))
@@ -695,16 +793,16 @@
                 else if (controlesRetalhos.length > 0 && !eval(controlesRetalhos[0]).Validar())
                     return false;
             }
-                    
+
             var idsProdPed = document.getElementById("<%= hdfIdProdPedNf.ClientID %>").value;
 
-            // Remove a ˙ltima ','
+            // Remove a √∫ltima ','
             idsProdPed = idsProdPed.substring(0, idsProdPed.length - 1);
 
             // Gera um vetor dos ids
             idsProdPed = idsProdPed.split(',');
-                                    
-            // Verifica se pedidos j· foram exportados anteriormente
+
+            // Verifica se pedidos j√° foram exportados anteriormente
             var tipo = FindControl("drpTipoEtiqueta", "select").value;
             if (isTipoImpressaoEtiquetaPedido(tipo) && !ignorarExportadas) {
                 var retorno = LstEtiquetaImprimir.ValidarPedidosJaExportados(idsProdPed).value.split('\t');
@@ -712,20 +810,20 @@
                 if (retorno[0] == "Erro")
                     alert(retorno[1]);
                 else if (retorno[0] == "true") {
-                    if (!confirm("Os seguintes pedidos j· foram exportados: " + retorno[1] + ". Tem certeza que deseja export·-los novamente?"))
+                    if (!confirm("Os seguintes pedidos j√° foram exportados: " + retorno[1] + ". Tem certeza que deseja export√°-los novamente?"))
                         return false;
                 }
             }
-            
+
             var etiquetas = "";
-            
+
             // Busca as qtde a serem impressas dos produtos
             for (var i = 0; i < idsProdPed.length; i++) {
-                
+
                 // Qtd informada para ser impressa
                 var qtdImpUsuario = document.getElementById("txtQtdImp_" + idsProdPed[i]).value;
 
-                // Qtd m·xima que pode ser impressa
+                // Qtd m√°xima que pode ser impressa
                 var qtdImpMaxima = document.getElementById("hdfQtdImp_" + idsProdPed[i]).value;
 
                 // Obs da etiqueta
@@ -747,13 +845,13 @@
                     return false;
                 }
 
-                // Verifica se a qtde especificada para ser impressa È maior que a qtde m·xima permitida
+                // Verifica se a qtde especificada para ser impressa √© maior que a qtde m√°xima permitida
                 if (parseInt(qtdImpUsuario) > parseInt(qtdImpMaxima)) {
-                    alert("A quantidade especificada de um dos itens para ser impressa est· maior que a quantidade m·xima ('Qtd.' - 'Qtd j· impresso').");
+                    alert("A quantidade especificada de um dos itens para ser impressa est√° maior que a quantidade m√°xima ('Qtd.' - 'Qtd j√° impresso').");
                     return false;
                 }
 
-                // Monta arquivo a ser passado para o handler para gerar a otimizaÁ„o
+                // Monta arquivo a ser passado para o handler para gerar a otimiza√ß√£o
                 etiquetas += idsProdPed[i] + ";" + qtdImpUsuario + ";" + obs;
 
                 var etiqRepos = FindControl("hdfEtiquetas_" + idsProdPed[i], "input");
@@ -824,7 +922,7 @@
                                             <tr>
                                                 <td>
                                                     <asp:TextBox ID="txtNumero" runat="server" Width="60px" onkeydown="if (isEnter(event)) return getProduto();"
-                                                        onkeypress="if (isEnter(event)) return false;" ToolTip="Campo obrigatÛrio."></asp:TextBox>
+                                                        onkeypress="if (isEnter(event)) return false;" ToolTip="Campo obrigat√≥rio."></asp:TextBox>
                                                 </td>
                                                 <td id="loja1" style="color: #0066FF">
                                                     Loja
@@ -843,7 +941,7 @@
                                                             </td>
                                                             <td style="color: Blue">
                                                                 * O fornecedor pode ser deixado em
-                                                                branco para buscar NF-e de ImportaÁ„o
+                                                                branco para buscar NF-e de Importa√ß√£o
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -858,7 +956,7 @@
                                                     </asp:DropDownList>
                                                 </td>
                                                 <td id="aplicacao1" style="color: #0066FF">
-                                                    AplicaÁ„o
+                                                    Aplica√ß√£o
                                                 </td>
                                                 <td id="aplicacao2">
                                                     <asp:DropDownList ID="drpAplicacao" runat="server" AppendDataBoundItems="True" DataSourceID="odsAplicacao"
@@ -904,14 +1002,14 @@
                                         Altura
                                     </td>
                                     <td>
-                                        mÌn.:
+                                        m√≠n.:
                                     </td>
                                     <td>
                                         <asp:TextBox ID="txtAlturaMin" runat="server" Width="50px"
                                             onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
                                     </td>
                                     <td>
-                                        m·x.:
+                                        m√°x.:
                                     </td>
                                     <td>
                                         <asp:TextBox ID="txtAlturaMax" runat="server" Width="50px"
@@ -921,14 +1019,14 @@
                                         Largura
                                     </td>
                                     <td>
-                                        mÌn.:
+                                        m√≠n.:
                                     </td>
                                     <td>
                                         <asp:TextBox ID="txtLarguraMin" runat="server" Width="50px"
                                             onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
                                     </td>
                                     <td>
-                                        m·x.:
+                                        m√°x.:
                                     </td>
                                     <td>
                                         <asp:TextBox ID="txtLarguraMax" runat="server" Width="50px"
@@ -939,7 +1037,7 @@
                         </td>
                         <td style="padding-left: 8px">
                             <asp:ImageButton ID="imgAddProd" runat="server" ImageUrl="~/Images/Insert.gif" OnClientClick="getProduto(); return false;"
-                                ToolTip="Adicionar InstalaÁ„o" Width="16px" />
+                                ToolTip="Adicionar Instala√ß√£o" Width="16px" />
                         </td>
                     </tr>
                 </table>
@@ -950,13 +1048,13 @@
                                 style="font-size: small;">Buscar Pedidos</a>
                         </td>
                         <td id="buscar3">
-                            <a href="#" id="lnkBuscarProd" 
+                            <a href="#" id="lnkBuscarProd"
                                  onclick="<%= "openWindow(500, 750, FindControl('drpTipoEtiqueta', 'select').value == 1 ? '../Utils/SelProdEtiqueta.aspx' : '../Utils/SelEtiquetaNFe.aspx'); return false;" %>"
                                 style="font-size: small;">Buscar Produtos</a>
                         </td>
                         <td id="importar">
                             <asp:LinkButton ID="lnkImportarArquivo" runat="server" Style="font-size: small;"
-                                OnClientClick="return openWindow(500, 700, '../Utils/SelArquivoOtimizado.aspx');"> Importar Arquivo de OtimizaÁ„o</asp:LinkButton>
+                                OnClientClick="return openWindow(500, 700, '../Utils/SelArquivoOtimizado.aspx');"> Importar Arquivo de Otimiza√ß√£o</asp:LinkButton>
                         </td>
                     </tr>
                 </table>
@@ -978,18 +1076,18 @@
                 <table style="padding-top: 10px">
                     <tr>
                         <td style="font-weight: bold; font-size: 130%">
-                            Total M≤
+                            Total M¬≤
                         </td>
                         <td style="font-size: 130%">
                             <asp:Label ID="lblTotM" runat="server" Text="0,00"></asp:Label>
-                            m≤
+                            m¬≤
                         </td>
                     </tr>
                 </table>
                 <table style="padding-top: 10px; display: none" id="tabelaAlteraDataFab">
                     <tr>
                         <td>
-                            <asp:HyperLink ID="lnkALterarDataFab" NavigateUrl="#" runat="server" onclick="mostraData();">Alterar Data FabricaÁ„o</asp:HyperLink>
+                            <asp:HyperLink ID="lnkALterarDataFab" NavigateUrl="#" runat="server" onclick="mostraData();">Alterar Data Fabrica√ß√£o</asp:HyperLink>
                         </td>
                     </tr>
                     <tr>
@@ -1004,7 +1102,7 @@
                     <tr>
                         <td style="text-align: center; padding: 10px;">
                             <div id="alterarReposicao" style="display: none">
-                                <asp:CheckBox ID="chkAlterarReposicao" runat="server" Checked="true" Text="Alterar pedidos com/de reposiÁ„o" />
+                                <asp:CheckBox ID="chkAlterarReposicao" runat="server" Checked="true" Text="Alterar pedidos com/de reposi√ß√£o" />
                             </div>
                         </td>
                     </tr>
@@ -1021,18 +1119,18 @@
                 <br />
                 <a href="#" id="lnkArqOtimizacao" onclick="return showArqOtimizacao(false, false);" style="visibility: hidden">
                     <img alt="" border="0" src="../Images/blocodenotas.png" />
-                    Arquivo de OtimizaÁ„o</a> 
+                    Arquivo de Otimiza√ß√£o</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="#" id="lnkArqOtimizacaoSemSag" onclick="return showArqOtimizacao(false, true);" style="visibility: hidden"
                     runat="server" clientidmode="Static">
                     <img alt="" border="0" src="../Images/blocodenotas.png" />
-                    Arquivo de OtimizaÁ„o (Sem arquivo SAG)</a>
+                    Arquivo de Otimiza√ß√£o (Sem arquivo SAG)</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="#" id="lnkArqOtimizacaoSemExportadas" onclick="return showArqOtimizacao(true, false);" style="visibility: hidden"
                     runat="server" clientidmode="Static">
                     <img alt="" border="0" src="../Images/blocodenotas.png" />
-                    Arquivo de OtimizaÁ„o (Ignorar etiquetas exportadas anteriormente)</a>
-                
+                    Arquivo de Otimiza√ß√£o (Ignorar etiquetas exportadas anteriormente)</a>
+
                 <span id="selecionarRetalhos" style="display: none">&nbsp;&nbsp;&nbsp;&nbsp;
                         <a href="#" onclick="alterarAjaxRetalhos(true); openWindow(600, 800, '../Utils/AtribuirRetalhos.aspx?popup=true'); return false"
                             id="lnkSelRetalhos">Selecionar/otimizar retalhos</a> </span>
@@ -1047,12 +1145,12 @@
                             &nbsp;&nbsp;&nbsp;&nbsp; <a href="#" onclick="alterarAjaxRetalhos(true); imprimir(false, true); return false"
                                 id="lnkImprimirRetalhos">
                                 <img alt="" border="0" src="../Images/printer.png" />
-                                Imprimir (apenas peÁas com retalhos)</a></span> <span id="novaImpressao" style="display: none">
+                                Imprimir (apenas pe√ßas com retalhos)</a></span> <span id="novaImpressao" style="display: none">
                                     <br />
                                     <br />
-                                    <asp:Button ID="btnNova" runat="server" Text="Nova Impress„o" OnClick="btnNova_Click" />
+                                    <asp:Button ID="btnNova" runat="server" Text="Nova Impress√£o" OnClick="btnNova_Click" />
                                     <span id="reimprimir" style="display: none">&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <asp:Button ID="btnReimprimir" runat="server" Text="Imprimir peÁas restantes" OnClientClick="atualizarPagina(); return false" />
+                                        <asp:Button ID="btnReimprimir" runat="server" Text="Imprimir pe√ßas restantes" OnClientClick="atualizarPagina(); return false" />
                                     </span></span>
             </td>
         </tr>
@@ -1078,7 +1176,7 @@
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <div style="display: none">
-                    <!-- N„o È usado -->
+                    <!-- N√£o √© usado -->
                     <uc4:ctrlRetalhoAssociado ID="ctrlRetalhoAssociado1" runat="server" />
                 </div>
             </td>
@@ -1089,7 +1187,7 @@
         esconderBuscaPedido();
         alteraTipoEtiqueta(document.getElementById("<%= drpTipoEtiqueta.ClientID %>"));
 
-        // N„o permite imprimir por plano de corte se a empresa n„o utiliza esse controle
+        // N√£o permite imprimir por plano de corte se a empresa n√£o utiliza esse controle
         if (!usarPlanoCorte)
             FindControl("lnkImprimirApenasPlanos", "a").style.display = "none";
 
@@ -1105,10 +1203,10 @@
 
                 if (item.Tipo == "Peca") {
                     setProdEtiqueta(
-                        item.IdProdPed, item.IdAmbiente, item.IdPedido, item.IdProdNf, item.IdNf, 
+                        item.IdProdPed, item.IdAmbiente, item.IdPedido, item.IdProdNf, item.IdNf,
                         item.DescricaoProduto, item.CodProcesso, item.CodAplicacao, item.Qtd,
-                        item.QtdImpresso, item.QtdImprimir, item.Altura, item.Largura, 
-                        item.Obs, item.TotM2, item.PlanoCorte, null, item.ArquivoOtimizado, 
+                        item.QtdImpresso, item.QtdImprimir, item.Altura, item.Largura,
+                        item.Obs, item.TotM2, item.PlanoCorte, null, item.ArquivoOtimizado,
                         item.Etiquetas, item.AtualizarTotais, item.TotMCalc, item.Lote, false);
                 } else {
 
@@ -1118,7 +1216,7 @@
                         exibirRetalhos = true;
                     }
 
-                    // Adiciona retalho ‡ tabela
+                    // Adiciona retalho √† tabela
                     addItem(new Array(item.DescricaoProduto, item.Largura + " x " + item.Altura, item.Qtd, item.PlanoCorte),
                         new Array('Produto', 'Largura x Altura', 'Qtd.', 'Plano Corte'),
                         'lstRetalhos', null, null, null, null, null, true, false);
@@ -1193,7 +1291,7 @@
                         }
 
                         var $grid = $("#grid");
-                        $grid.append("<span style='font-weight:bold; margin-bottom:5px'>* Data F·brica</span>");
+                        $grid.append("<span style='font-weight:bold; margin-bottom:5px'>* Data F√°brica</span>");
                         var $table = $("<table class='gridStyle'>");
                         $table.css("width", "100%");
 
@@ -1218,7 +1316,7 @@
                             html += "<tbody><tr><td>" + producaoData.Pendente.toFixed(2) + "</td><td>" + producaoData.Pronto.toFixed(2) + "</td></tr>";
 
                             if (producaoData.ProducaoMaximaDia > 0)
-                                html += "<tr><td style='font-weight:bold'>Prod. M·x. Dia:</td><td>" + producaoData.ProducaoMaximaDia.toFixed(2) + "</td></tr>";
+                                html += "<tr><td style='font-weight:bold'>Prod. M√°x. Dia:</td><td>" + producaoData.ProducaoMaximaDia.toFixed(2) + "</td></tr>";
 
                             html += "<tr style='background: #F6F6F6;'><td colspan='2' style='font-weight:bold;text-align:center'>Total: <span style='color:" + color + "'>" + producaoData.Total.toFixed(2) + "</span></td></tbody>";
                             $tbody.children('tr:last').append("<td style='text-align:center'>" + html + "</td>");

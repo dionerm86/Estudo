@@ -1045,10 +1045,10 @@ namespace Glass.Data.DAL
         /// Cria o Log de Alterações para a medida do projeto.
         /// </summary>
         /// <param name="medidaProjeto"></param>
-        public void LogMedidaProjeto(MedidaProjeto medidaProjeto)
+        public void LogMedidaProjeto(GDASession sessao, MedidaProjeto medidaProjeto)
         {
-            MedidaProjeto atual = MedidaProjetoDAO.Instance.GetElementByPrimaryKey(medidaProjeto.IdMedidaProjeto);
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.MedidaProjeto, medidaProjeto.IdMedidaProjeto, atual, medidaProjeto);
+            MedidaProjeto atual = MedidaProjetoDAO.Instance.GetElementByPrimaryKey(sessao, medidaProjeto.IdMedidaProjeto);
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.MedidaProjeto, medidaProjeto.IdMedidaProjeto, atual, medidaProjeto);
         }
 
         /// <summary>
@@ -1980,15 +1980,6 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Apaga o Log de Alterações para o grupo de modelos de projeto.
-        /// </summary>
-        /// <param name="idGrupoModelo"></param>
-        public void ApagaLogGrupoModelo(uint idGrupoModelo)
-        {
-            ApagaLog(LogAlteracao.TabelaAlteracao.GrupoModelo, idGrupoModelo);
-        }
-
-        /// <summary>
         /// Apaga o Log de Alterações para a posição da peça individual do modelo de projeto.
         /// </summary>
         /// <param name="idPosicaoPecaIndividual"></param>
@@ -2443,5 +2434,48 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        /// <summary>
+        /// Copia o log de alterações de imagens-produção da peça do pedido para a peça do pedido espelho.
+        /// </summary>
+        /// <param name="sessao">Transação.</param>
+        /// <param name="idLogComercial">Identificador do log da peça do item do projeto associado ao produto do pedido.</param>
+        /// <param name="idLogPCP">Identificador do log da peça do item do projeto associado ao produto do pedido espelho.</param>
+        public void CopiarLogAlteracaoImagemProducao(GDASession sessao, int idLogComercial, int idLogPCP)
+        {
+            var sql = $@"
+                SELECT *
+                FROM log_alteracao
+                WHERE Tabela = {(int)LogAlteracao.TabelaAlteracao.ImagemProducao} AND IdRegistroAlt = " + idLogComercial;
+            var logAlteracao = this.objPersistence.LoadData(sessao, sql).ToList();
+            foreach (var alteracao in logAlteracao)
+            {
+                alteracao.IdRegistroAlt = idLogPCP;
+                this.Insert(sessao, alteracao);
+            }
+        }
+
+        /// <summary>
+        /// Copia o log de alterações de imagens da peça do pedido para a peça do pedido espelho.
+        /// </summary>
+        /// <param name="sessao">Transação.</param>
+        /// <param name="idProdPed">Identificador do produto do pedido.</param>
+        /// <param name="idProdPedEsp">Identificador do produto do pedido espelho.</param>
+        public void CopiarLogImagemProdPed(GDASession sessao, int idProdPed, int idProdPedEsp)
+        {
+            var sql = $@"
+                SELECT *
+                FROM log_alteracao
+                WHERE Tabela = {(int)LogAlteracao.TabelaAlteracao.ImagemProdPed} AND IdRegistroAlt = " + idProdPed;
+
+            var logAlteracao = this.objPersistence.LoadData(sessao, sql);
+
+            foreach (var alteracao in logAlteracao)
+            {
+                alteracao.IdRegistroAlt = idProdPedEsp;
+                alteracao.Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPedEsp;
+                this.Insert(sessao, alteracao);
+            }
+        }
     }
 }

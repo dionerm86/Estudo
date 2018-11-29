@@ -72,5 +72,11 @@ namespace Glass.Integracao.Khan
                 this[nameof(this.Empresa)] = value;
             }
         }
+
+        /// <inheritdoc />
+        public override bool VerificarSomenteLeitura(string nome)
+        {
+            return true;
+        }
     }
 }

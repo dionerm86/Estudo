@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Web;
 using Microsoft.Reporting.WebForms;
 using Glass.Data.Model;
@@ -48,10 +48,10 @@ namespace Glass.UI.Web.Relatorios
             var idLojaLogotipo = new uint?();
             var incluirDataTextoRodape = true;
 
-            // Nome do relatÛrio
+            // Nome do relat√≥rio
             string reportName = null;
 
-            // Verifica qual relatÛrio ser· chamado
+            // Verifica qual relat√≥rio ser√° chamado
             switch (Request["rel"])
             {
                 case "Fiscal":
@@ -72,6 +72,7 @@ namespace Glass.UI.Web.Relatorios
                         var situacao = Request["situacao"];
                         var formaEmissao = Glass.Conversoes.StrParaInt(Request["formaEmissao"]);
                         var loja = LojaDAO.Instance.GetElement(login.IdLoja);
+                        var apenasNotasFiscaisSemAnexo = Request["apenasNotasFiscaisSemAnexo"]?.ToLower() == "true";
                         var dados = NotaFiscalDAO.Instance.GetListPorSituacao(numeroNfe, idPedido, Request["modelo"], idLoja, idCliente,
                             Request["nomeCliente"], Glass.Conversoes.StrParaInt(Request["tipoFiscal"]), idFornec, Request["nomeFornec"],
                             Request["codRota"], tipoDoc, situacao, Request["dataIni"], Request["dataFim"],
@@ -79,7 +80,7 @@ namespace Glass.UI.Web.Relatorios
                             Glass.Conversoes.StrParaUint(Request["formaPagto"]), Request["idsFormaPagtoNotaFiscal"],
                             Glass.Conversoes.StrParaInt(Request["tipoNf"]), Glass.Conversoes.StrParaInt(Request["finalidade"]), formaEmissao, Request["infCompl"],
                             Request["codInternoProd"], Request["descrProd"], Request["valorInicial"],
-                            Request["valorFinal"], null, Request["lote"], Glass.Conversoes.StrParaInt(Request["ordenar"]), null, 0, int.MaxValue);
+                            Request["valorFinal"], null, Request["lote"], apenasNotasFiscaisSemAnexo, Glass.Conversoes.StrParaInt(Request["ordenar"]), null, 0, int.MaxValue);
 
                         if (FiscalConfig.Relatorio.RecuperarTotalCst60)
                             foreach (var nf in dados)
@@ -268,7 +269,7 @@ namespace Glass.UI.Web.Relatorios
                         var memoriaCalculoOrca = Glass.Data.RelDAL.MemoriaCalculoDAO.Instance.GetMemoriaCalculo(orca);
                         var dadosMemoriaCalculo = MemoriaCalculoDAO.Instance.GetDadosMemoriaCalculo(orca);
 
-                        lstParam.Add(new ReportParameter("Cabecalho_Titulo", "OrÁamento"));
+                        lstParam.Add(new ReportParameter("Cabecalho_Titulo", "Or√ßamento"));
                         lstParam.Add(new ReportParameter("Cabecalho_Id", memoriaCalculoOrca[0].Id));
                         lstParam.Add(new ReportParameter("Cabecalho_IdProjeto", memoriaCalculoOrca[0].IdProjeto));
                         lstParam.Add(new ReportParameter("Cabecalho_NomeCliente", memoriaCalculoOrca[0].NomeCliente));
@@ -829,7 +830,7 @@ namespace Glass.UI.Web.Relatorios
                                 Request["descrProd"], Request["exibirProdutos"] == "true", Request["rel"] == "ListaPedidosRota" ? true : false, Request["fastDelivery"].StrParaInt(),
                                 Request["idCarregamento"].StrParaInt(), Request["idCli"], Request["idFunc"].StrParaInt(), Request["idMedidor"].StrParaInt(), Request["idOC"].StrParaInt(),
                                 Request["IdOrcamento"].StrParaInt(), Request["IdPedido"].StrParaInt(), Request["idsBenef"], Request["idsGrupos"], Request["idsPedidos"], Request["idsRota"],
-                                Request["idsSubgrupoProd"], Request["idVendAssoc"].StrParaInt(), Request["largura"].StrParaInt(), login, Request["loja"], Request["nomeCli"],
+                                Request["idsSubgrupoProd"], Request["idVendAssoc"].StrParaInt(), Request["idAtendente"].StrParaInt(), Request["largura"].StrParaInt(), login, Request["loja"], Request["nomeCli"],
                                 Request["diasDifProntoLib"].StrParaInt(), Request["observacao"], Request["ordenacao"].StrParaInt(), Request["origemPedido"].StrParaInt(), Request["pedidosSemAnexos"] == "true",
                                 Request["situacao"], Request["situacaoProd"], Request["tipo"], Request["tipoCliente"], Request["tipoEntrega"].StrParaInt(), Request["tipoFiscal"].StrParaInt(),
                                 Request["tipoVenda"], Request["trazerPedCliVinculado"] == "true", Request["usuCad"].StrParaInt(), Request["grupoCliente"], Request["complemento"]);
@@ -938,7 +939,7 @@ namespace Glass.UI.Web.Relatorios
                         var situacaoCliente = Request["situacao"];
                         //dados cadastrais
                         var clCons = ClienteDAO.Instance.GetElement(idCliConsRapida);
-                        //>>nome do vendedor n„o est· chegando correto, ver o que È
+                        //>>nome do vendedor n√£o est√° chegando correto, ver o que √©
                         var clVendedor = clCons.IdFunc == null ? "" : FuncionarioDAO.Instance.GetNome((uint)clCons.IdFunc);
                         //dados financeiros
                         var financLimDisp = clCons.Limite > 0 ? (clCons.Limite - ContasReceberDAO.Instance.GetDebitos((uint)clCons.IdCli, null)).ToString("C") : "";
@@ -947,13 +948,13 @@ namespace Glass.UI.Web.Relatorios
                         var financParcPadrao = parc != null ? parc.DescrCompleta : String.Empty;
                         var formasPagtoDisp = FormaPagtoDAO.Instance.GetByCliente((uint)clCons.IdCli);
                         var parcelasDisp = new List<Parcelas>(ParcelasDAO.Instance.GetByClienteFornecedor((uint)clCons.IdCli, 0, false, ParcelasDAO.TipoConsulta.Todos));
-                        //pedidos prontos e n„o liberados a x dias
-                        var paramPedidosProntos = "Pedidos prontos porÈm n„o liberados a " + PedidoConfig.NumeroDiasPedidoProntoAtrasado + " dias";
+                        //pedidos prontos e n√£o liberados a x dias
+                        var paramPedidosProntos = "Pedidos prontos por√©m n√£o liberados a " + PedidoConfig.NumeroDiasPedidoProntoAtrasado + " dias";
                         var pedsBloqueioEmissao = PedidoDAO.Instance.GetPedidosBloqueioEmissaoByCliente(idCliConsRapida);
-                        //descontos / acrÈscimos
+                        //descontos / acr√©scimos
                         var descAcresCliente = DescontoAcrescimoClienteDAO.Instance.GetOcorrenciasByCliente(idCliConsRapida);
                         var lstDacProdutos = new List<DescontoAcrescimoCliente>();
-                        //dÈbitos
+                        //d√©bitos
                         var debitosCliente = ContasReceberDAO.Instance.GetDebitosList(idCliConsRapida, 0, 0, null, 0, 0, null, null, null, 0, 0);
                         var sugestoes = SugestaoClienteDAO.Instance.GetList(0, idCliConsRapida, 0, null, null, null, null, 0, null, situacaoCliente, null, 0, 0);
 
@@ -1271,7 +1272,7 @@ namespace Glass.UI.Web.Relatorios
                             var imcPercent = decimal.Round(((imc * 100) / (receita > 0 ? receita : 1)) / 100, 2);
                             lucroLiquido = imc - despesaFixa;
 
-                            //PE (R$) = Custo fixo / IMC (Ãndice Margem ContribuiÁ„o)
+                            //PE (R$) = Custo fixo / IMC (√åndice Margem Contribui√ß√£o)
                             //Ex: PE (R$) = R$ 7.500 / 0,35 = R$ 21.428,57
                             pontoEquilibrio = decimal.Round((despesaFixa / (imcPercent == 0 ? 1 : imcPercent)), 2);
 
@@ -1362,7 +1363,7 @@ namespace Glass.UI.Web.Relatorios
                             Request["lancManual"] == "true");
 
                         lstParam.Add(new ReportParameter("ExibirLinhaVermelhaSaida", "true"));
-                        lstParam.Add(new ReportParameter("EsconderSaldo", (Glass.Conversoes.StrParaUint(Request["idContaBanco"]) == 0).ToString())); // Esconde coluna saldo se n„o houver filtro por conta banc·ria
+                        lstParam.Add(new ReportParameter("EsconderSaldo", (Glass.Conversoes.StrParaUint(Request["idContaBanco"]) == 0).ToString())); // Esconde coluna saldo se n√£o houver filtro por conta banc√°ria
 
                         report.DataSources.Add(new ReportDataSource("MovBanco", lstMovBanco));
 
@@ -1433,11 +1434,11 @@ namespace Glass.UI.Web.Relatorios
                         else
                             exibirComissao = true;
 
-                        // Insere na vari·vel idLojaLogotipo o id da loja do pedido da primeira comiss„o da lista, para fazer a comparaÁ„o de lojas
+                        // Insere na vari√°vel idLojaLogotipo o id da loja do pedido da primeira comiss√£o da lista, para fazer a compara√ß√£o de lojas
                         idLojaLogotipo = PedidoDAO.Instance.ObtemIdLoja(null, lstComissaoDetalhada[0].IdPedido);
 
-                        // Verifica se a loja de todos os pedidos È a mesma, caso seja, ent„o a logomarca a ser buscada ser· a logomarca desta loja
-                        // caso contr·rio ser· buscada a logomarca da loja do funcion·rio que gerou a comiss„o.
+                        // Verifica se a loja de todos os pedidos √© a mesma, caso seja, ent√£o a logomarca a ser buscada ser√° a logomarca desta loja
+                        // caso contr√°rio ser√° buscada a logomarca da loja do funcion√°rio que gerou a comiss√£o.
                         foreach (var comissao in lstComissaoDetalhada)
                             if (idLojaLogotipo != PedidoDAO.Instance.ObtemIdLoja(null, comissao.IdPedido))
                             {
@@ -1486,7 +1487,7 @@ namespace Glass.UI.Web.Relatorios
                         var pedido = PedidoDAO.Instance.ObterPedidosPorIdsPedidoParaImpressaoPcp(null, Request["idPedido"]);
                         var pedidoEspelho = PedidoEspelhoDAO.Instance.GetByIds(Request["idPedido"]);
 
-                        #region Vari·veis criadas para salvar dados dos pedidos
+                        #region Vari√°veis criadas para salvar dados dos pedidos
 
                         var pedidoAcrescimos = new string[pedido.Length];
                         var pedidoDatasEntrega = new string[pedido.Length];
@@ -1518,9 +1519,9 @@ namespace Glass.UI.Web.Relatorios
 
                         /* Chamado 55724. */
                         if (pedido.Count() != pedidoEspelho.Count())
-                            throw new Exception("Um ou mais pedidos impressos n„o possuem conferÍncia gerada.");
+                            throw new Exception("Um ou mais pedidos impressos n√£o possuem confer√™ncia gerada.");
 
-                        #region Preenche propriedades dos pedidos em vari·veis
+                        #region Preenche propriedades dos pedidos em vari√°veis
 
                         for (var i = 0; i < pedido.Length; i++)
                         {
@@ -1662,7 +1663,7 @@ namespace Glass.UI.Web.Relatorios
                             report.DataSources.Add(new ReportDataSource("ItemProjeto", ItemProjetoDAO.Instance.GetByString(string.Join(",", idsItemProjeto))));
                         }
 
-                        #region Par‚metros pedido
+                        #region Par√¢metros pedido
 
                         lstParam.Add(new ReportParameter("Pedido_Acrescimos", pedidoAcrescimos));
                         lstParam.Add(new ReportParameter("Pedido_DatasEntrega", pedidoDatasEntrega));
@@ -1884,8 +1885,8 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "PedidoEspelho":
                     {
-                        // Ao recuperar o valor da query string "pedidos", deve ser buscado sem Request, o motivo disso È para
-                        // que a tela de impress„o seletiva no menu PCP funcione corretamente
+                        // Ao recuperar o valor da query string "pedidos", deve ser buscado sem Request, o motivo disso √© para
+                        // que a tela de impress√£o seletiva no menu PCP funcione corretamente
                         report.ReportPath = "Relatorios/rptPedidoEspelho.rdlc";
                         var lstPedEsp = PedidoEspelhoDAO.Instance.GetForRpt(Conversoes.StrParaUint(Request["idPedido"]),
                             Conversoes.StrParaUint(Request["idCliente"]), Request["NomeCliente"], Conversoes.StrParaUint(Request["idLoja"]),
@@ -1918,7 +1919,7 @@ namespace Glass.UI.Web.Relatorios
                 case "ProducaoPassou":
                 case "ProducaoPedidos":
                     {
-                        #region DefiniÁ„o do relatÛrio
+                        #region Defini√ß√£o do relat√≥rio
 
                         switch (Request["rel"])
                         {
@@ -1944,13 +1945,13 @@ namespace Glass.UI.Web.Relatorios
 
                             default:
                                 {
-                                    throw new Exception("RelatÛrio n„o mapeado.");
+                                    throw new Exception("Relat√≥rio n√£o mapeado.");
                                 }
                         }
 
                         #endregion
 
-                        #region DeclaraÁ„o de vari·veis
+                        #region Declara√ß√£o de vari√°veis
 
                         var aguardandoEntradaEstoque = Request["aguardEntrEstoque"] == "true";
                         var aguardandoExpedicao = Request["aguardExpedicao"] == "true";
@@ -2006,7 +2007,7 @@ namespace Glass.UI.Web.Relatorios
                         {
                             report.ReportPath = report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/Producao/rptProducaoAltLarg{0}.rdlc");
 
-                            // O filtro de situaÁ„o foi removido, pois esse mÈtodo ser· chamado somente caso a situaÁ„o filtrada seja Perda.
+                            // O filtro de situa√ß√£o foi removido, pois esse m√©todo ser√° chamado somente caso a situa√ß√£o filtrada seja Perda.
                             var perdasProducao = ProducaoDAO.Instance.PesquisarProducaoRelatorio(aguardandoEntradaEstoque, aguardandoExpedicao, altura, codigoEtiqueta, codigoPedidoCliente,
                                 Request["codRota"], dataEntregaFim, dataEntregaInicio, dataLeituraFim, dataLeituraInicio, idCarregamento, idCliente, idCorVidro, idFuncionario, idImpressao,
                                 idLiberarPedido, idPedido, idPedidoImportado, idSetor, idsSubgrupo, largura, nomeCliente, pecasCanceladas, tipoEntrega, tiposPedido, tipoSituacao);
@@ -2080,7 +2081,7 @@ namespace Glass.UI.Web.Relatorios
                                 pecasRepostas, planoCorte, produtoComposicao, situacaoPedido, situacoes, tipoEntrega, tiposPedido, tipoSituacao);
                             var pedidos = PedidoDAO.Instance.ObterPedidosProducao(null, idsPedido?.Select(f => (uint)f)?.ToList() ?? new List<uint>());
 
-                            lstParam.Add(new ReportParameter("Titulo", "Pedidos produÁ„o"));
+                            lstParam.Add(new ReportParameter("Titulo", "Pedidos produ√ß√£o"));
 
                             report.ReportPath = "Relatorios/rptLstPedidos.rdlc";
                             report.DataSources.Add(new ReportDataSource("Pedidos", pedidos));
@@ -2110,11 +2111,11 @@ namespace Glass.UI.Web.Relatorios
                             Request["planoCorte"], Request["numEtiquetaChapa"], (uint)fastDelivery, Request["pecaParadaProducao"] == "true", Request["pecasRepostas"] == "true",
                             Request["idLoja"].StrParaUint(), (int)produtoComposicao);
 
-                        lstParam.Add(new ReportParameter("PecasPendentes", string.Format("{0} ({1} / {2} m≤)", cont.Pendentes, cont.TotMPendentes, cont.TotMPendentesCalc)));
-                        lstParam.Add(new ReportParameter("PecasProntas", string.Format("{0} ({1} / {2} m≤)", cont.Prontas, cont.TotMProntas, cont.TotMProntasCalc)));
-                        lstParam.Add(new ReportParameter("PecasEntregues", string.Format("{0} ({1} / {2} m≤)", cont.Entregues, cont.TotMEntregues, cont.TotMEntreguesCalc)));
-                        lstParam.Add(new ReportParameter("PecasPerdidas", string.Format("{0} ({1} / {2} m≤)", cont.Perdidas, cont.TotMPerdidas, cont.TotMPerdidasCalc)));
-                        lstParam.Add(new ReportParameter("PecasCanceladas", string.Format("{0} ({1} / {2} m≤)", cont.Canceladas, cont.TotMCanceladas, cont.TotMCanceladasCalc)));
+                        lstParam.Add(new ReportParameter("PecasPendentes", string.Format("{0} ({1} / {2} m¬≤)", cont.Pendentes, cont.TotMPendentes, cont.TotMPendentesCalc)));
+                        lstParam.Add(new ReportParameter("PecasProntas", string.Format("{0} ({1} / {2} m¬≤)", cont.Prontas, cont.TotMProntas, cont.TotMProntasCalc)));
+                        lstParam.Add(new ReportParameter("PecasEntregues", string.Format("{0} ({1} / {2} m¬≤)", cont.Entregues, cont.TotMEntregues, cont.TotMEntreguesCalc)));
+                        lstParam.Add(new ReportParameter("PecasPerdidas", string.Format("{0} ({1} / {2} m¬≤)", cont.Perdidas, cont.TotMPerdidas, cont.TotMPerdidasCalc)));
+                        lstParam.Add(new ReportParameter("PecasCanceladas", string.Format("{0} ({1} / {2} m¬≤)", cont.Canceladas, cont.TotMCanceladas, cont.TotMCanceladasCalc)));
 
                         if (Request["rel"] == "ProducaoAgrupada")
                         {
@@ -2144,7 +2145,7 @@ namespace Glass.UI.Web.Relatorios
                             Glass.Conversoes.StrParaInt(Request["liberacaoNf"]), Request["dataIni"], Request["dataFim"], Glass.Conversoes.StrParaInt(Request["situacao"]), Glass.Conversoes.StrParaUint(Request["idLoja"]),
                             Request["dataIniCanc"], Request["dataFimCanc"]);
 
-                        // Recupera os pedidos de cada liberaÁ„o
+                        // Recupera os pedidos de cada libera√ß√£o
                         foreach (var lp in lstLiberacao)
                             lp.IdsPedidos = LiberarPedidoDAO.Instance.IdsPedidos(null, lp.IdLiberarPedido.ToString());
 
@@ -2413,7 +2414,7 @@ namespace Glass.UI.Web.Relatorios
                             case "MovEstoqueTotalComparativo":
                                 report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptMovEstoqueTotalComparativo{0}.rdlc"); break;
 
-                            default: throw new Exception("RelatÛrio n„o mapeado.");
+                            default: throw new Exception("Relat√≥rio n√£o mapeado.");
                         }
 
                         var movEstoqueFiscal = Request["fiscal"] == "1";
@@ -2475,11 +2476,11 @@ namespace Glass.UI.Web.Relatorios
                                         var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)mov[i].IdProd);
                                         int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo((int)mov[i].IdProd);
 
-                                        // Caso o tipo de c·lculo do produto for por barra de alumÌnio o campo complemento qtd deve ser preenchido.
+                                        // Caso o tipo de c√°lculo do produto for por barra de alum√≠nio o campo complemento qtd deve ser preenchido.
                                         if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
                                             tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6)
                                             mov[i].ComplementoQtdRealFiscal = " (" + Math.Round(movComparativo[j].QtdeSaldo / 6, 2) + " barras)";
-                                        // Remove da lista o item que j· foi preenchido.
+                                        // Remove da lista o item que j√° foi preenchido.
                                         movComparativo.RemoveAt(j);
                                         break;
                                     }
@@ -2493,7 +2494,7 @@ namespace Glass.UI.Web.Relatorios
                         if (Request["rel"] != "MovEstoqueTotalComparativo")
                             lstParam.Add(new ReportParameter("Cliente", movEstoqueCliente.ToString()));
 
-                        // Caso seja requisitado o invent·rio comparativo s„o feitas alteraÁıes na vari·vel mov, sendo assim ela deve ser adicionada ao report apÛs todas as atribuiÁıes.
+                        // Caso seja requisitado o invent√°rio comparativo s√£o feitas altera√ß√µes na vari√°vel mov, sendo assim ela deve ser adicionada ao report ap√≥s todas as atribui√ß√µes.
                         report.DataSources.Add(new ReportDataSource("MovimentacaoEstoque", mov));
 
                         break;
@@ -2644,7 +2645,6 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("AgruparFuncionarioAssociadoCliente",
                             (!String.IsNullOrEmpty(Request["agruparFuncionarioAssociadoCliente"]) ?
                             Request["agruparFuncionarioAssociadoCliente"].ToLower() == "true" : false).ToString()));
-                        lstParam.Add(new ReportParameter("AgruparDepto", (Request["agruparDepto"].ToLower() == "true").ToString()));
 
                         report.DataSources.Add(new ReportDataSource("ProdutoTrocado", pt.ToArray()));
 
@@ -3188,7 +3188,7 @@ namespace Glass.UI.Web.Relatorios
                         report.DataSources.Add(new ReportDataSource("Exportacao", new Exportacao[] { exp }));
                         report.DataSources.Add(new ReportDataSource("PedidoExportacao", PedidoExportacaoDAO.Instance.GetForRpt(exp.IdExportacao, 0)));
                         var idsPedido = ProdutoPedidoExportacaoDAO.Instance.ObtemIdsPedidoPeloIdExportacao(idExportacao);
-                        report.DataSources.Add(new ReportDataSource("ProdutosPedido", ProdutosPedidoDAO.Instance.ObterProdutosComExportados(idsPedido)));
+                        report.DataSources.Add(new ReportDataSource("ProdutosPedido", ProdutosPedidoDAO.Instance.ObterProdutosComExportados(idsPedido, (int)idExportacao)));
 
                         break;
                     }
@@ -3542,7 +3542,7 @@ namespace Glass.UI.Web.Relatorios
                             var qtdImprimir = Glass.Conversoes.StrParaInt(prod.Split(';')[1]);
 
                             /* Chamado 15816.
-                             * Haviam v·rias impressıes de box sem produtos, criamos esta verificaÁ„o para impedir que isto ocorra novamente. */
+                             * Haviam v√°rias impress√µes de box sem produtos, criamos esta verifica√ß√£o para impedir que isto ocorra novamente. */
                             if (qtdImprimir == 0)
                                 continue;
 
@@ -3637,7 +3637,7 @@ namespace Glass.UI.Web.Relatorios
                         var compraGerada = Request["compraGerada"];
                         var ordenarPor = Glass.Conversoes.StrParaInt(Request["ordenarPor"]);
 
-                        // Chamado 9519, feito para que, caso o usu·rio filtre os pedidos pela loja, exiba no relatÛrio a logomarca da loja filtrada.
+                        // Chamado 9519, feito para que, caso o usu√°rio filtre os pedidos pela loja, exiba no relat√≥rio a logomarca da loja filtrada.
                         idLojaLogotipo = idLoja > 0 ? (uint?)idLoja : null;
 
                         if (String.IsNullOrEmpty(compraGerada) || compraGerada == "0")
@@ -3767,28 +3767,28 @@ namespace Glass.UI.Web.Relatorios
                         {
                             case "DIPJEntradaFornecedores":
                                 titulo = "DIPJ (Entrada de Fornecedores)";
-                                tituloColunaId = "IdentificaÁ„o";
+                                tituloColunaId = "Identifica√ß√£o";
                                 dados = Glass.Data.RelDAL.DipjDAO.Instance
                                          .ObtemEntradaFornecedores(dataEmissaoInicial, dataEmissaoFinal, 0);
                                 break;
                             case "DIPJEntradaProdutos":
                                 titulo = "DIPJ (Entrada de Produtos)";
-                                tituloColunaId = "ClassificaÁ„o Fiscal";
+                                tituloColunaId = "Classifica√ß√£o Fiscal";
                                 tituloColunaNome = "Mercadoria";
                                 dados =
                                     Glass.Data.RelDAL.DipjDAO.Instance
                                          .ObtemEntradaProdutos(dataEmissaoInicial, dataEmissaoFinal, 0);
                                 break;
                             case "DIPJSaidaProdutos":
-                                titulo = "DIPJ (SaÌda de Produtos)";
-                                tituloColunaId = "ClassificaÁ„o Fiscal";
+                                titulo = "DIPJ (Sa√≠da de Produtos)";
+                                tituloColunaId = "Classifica√ß√£o Fiscal";
                                 tituloColunaNome = "Mercadoria";
                                 dados = Glass.Data.RelDAL.DipjDAO.Instance
                                          .ObtemSaidaProdutos(dataEmissaoInicial, dataEmissaoFinal, 0);
                                 break;
                             case "DIPJSaidaClientes":
-                                titulo = "DIPJ (SaÌda de Clientes)";
-                                tituloColunaId = "IdentificaÁ„o";
+                                titulo = "DIPJ (Sa√≠da de Clientes)";
+                                tituloColunaId = "Identifica√ß√£o";
                                 tituloColunaNome = "Nome";
                                 dados = Glass.Data.RelDAL.DipjDAO.Instance
                                          .ObtemSaidaClientes(dataEmissaoInicial, dataEmissaoFinal, 0);
@@ -3925,7 +3925,7 @@ namespace Glass.UI.Web.Relatorios
                             .ObterCavalete(idCavalete);
 
                         if (cavalete == null)
-                            throw new Exception("O cavalete n„o foi encontrado.");
+                            throw new Exception("O cavalete n√£o foi encontrado.");
 
                         report.DataSources.Add(new ReportDataSource("Cavalete", new List<PCP.Negocios.Entidades.Cavalete>() { cavalete }));
 
@@ -3942,7 +3942,7 @@ namespace Glass.UI.Web.Relatorios
                             .ObterOtimizacao(idOtimizacao);
 
                         if (otimizacao == null)
-                            throw new Exception("A otimizaÁ„o n„o foi encontrada.");
+                            throw new Exception("A otimiza√ß√£o n√£o foi encontrada.");
 
                         var layouts = new List<Glass.PCP.Negocios.Entidades.LayoutPecaOtimizada>();
                         var pecas = new List<Glass.PCP.Negocios.Entidades.PecaOtimizada>();
@@ -3968,7 +3968,7 @@ namespace Glass.UI.Web.Relatorios
                             .ObterOtimizacao(idOtimizacao);
 
                         if (otimizacao == null)
-                            throw new Exception("A otimizaÁ„o n„o foi encontrada.");
+                            throw new Exception("A otimiza√ß√£o n√£o foi encontrada.");
 
                         report.DataSources.Add(new ReportDataSource("Otimizacao", new List<Glass.PCP.Negocios.Entidades.Otimizacao>() { otimizacao }));
                         report.DataSources.Add(new ReportDataSource("Layouts", otimizacao.LayoutsOtimizacao));
@@ -3999,7 +3999,7 @@ namespace Glass.UI.Web.Relatorios
 
                         report.ReportPath = analitico ? "Relatorios/rptFornadaAnalitico.rdlc" : "Relatorios/rptFornadaSintetico.rdlc";
 
-                        //Se for o relatÛrio analitico exibe tambÈm as peÁas passadas nessa fornada
+                        //Se for o relat√≥rio analitico exibe tamb√©m as pe√ßas passadas nessa fornada
                         if (analitico)
                         {
                             var produtoPedidoProducao = ProdutoPedidoProducaoDAO.Instance.ObterPecasFornadaRpt(string.Join(",", dados.Select(f => f.IdFornada).ToArray()));
@@ -4027,7 +4027,7 @@ namespace Glass.UI.Web.Relatorios
                         var idSetor = Request["idSetor"].StrParaUint();
                         var pedidos = PedidoDAO.Instance.ObterPedidosPendentesLeitura(null, idSetor);
                         var nomeSetor = SetorDAO.Instance.ObtemDescricaoSetor(null, (int)idSetor);
-                        lstParam.Add(new ReportParameter("Titulo", "Pedidos com peÁas disponÌveis para leitura no setor " + nomeSetor));
+                        lstParam.Add(new ReportParameter("Titulo", "Pedidos com pe√ßas dispon√≠veis para leitura no setor " + nomeSetor));
                         report.ReportPath = "Relatorios/rptLstPedidos.rdlc";
                         report.DataSources.Add(new ReportDataSource("Pedidos", pedidos));
                         break;
@@ -4051,7 +4051,7 @@ namespace Glass.UI.Web.Relatorios
                     }
 
                 default:
-                    throw new Exception("Nenhum relatÛrio especificado.");
+                    throw new Exception("Nenhum relat√≥rio especificado.");
             }
 
             if (reportName != null)
@@ -4079,7 +4079,7 @@ namespace Glass.UI.Web.Relatorios
 
         protected override void report_SubreportProcessing(object sender, SubreportProcessingEventArgs e)
         {
-            // SÛ carrega o subreport do relatÛrio de Produtos Comprados se o checkbox de exibir detalhes estiver marcado
+            // S√≥ carrega o subreport do relat√≥rio de Produtos Comprados se o checkbox de exibir detalhes estiver marcado
             if (!_loadSubreport)
                 e.DataSources.Add(new ReportDataSource("Produto", new Produto[0]));
             else

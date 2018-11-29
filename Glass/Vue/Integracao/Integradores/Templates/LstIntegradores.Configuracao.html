@@ -1,0 +1,42 @@
+﻿<div class="opblock opblock-get">
+    <div class="opblock-body">
+        <div class="opblock-section">
+            <div class="opblock-section-header">
+                <div class="tab-header">
+                    <h4 class="opblock-title">Entradas</h4>
+                </div>
+                <div class="try-out">
+                    <button class="btn try-out__btn" type="button" v-if="!editando" @click.prevent="editar()">Editar</button>
+                    <button class="btn try-out__btn cancel" type="button" v-if="editando" @click.prevent="cancelarEdicao()">Cancelar</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="entradas">
+                    <thead>
+                        <tr>
+                            <th class="col col_header config-col_nome">Nome</th>
+                            <th class="col col_header config-col_descricao">Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="entrada in configuracao">
+                            <td class="col entradas-col_nome">
+                                <div class="nome__entrada">
+                                    {{entrada.nome}}
+                                </div>
+                            </td>
+                            <td class="col entradas-col_valor">
+                                <div v-if="!editando || entrada.somenteLeitura" class="markdown">{{entrada.valor}}</div>
+                                <input v-if="editando && !entrada.somenteLeitura" type="text" class="" title="" v-model="entrada.valor" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="execute-wrapper">
+        <button class="btn execute opblock-control__btn" type="button" v-if="editando" @click.prevent="salvar()">Salvar</button>
+    </div>
+    <div class="responses-wrapper"></div>
+</div>

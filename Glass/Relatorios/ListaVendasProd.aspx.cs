@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Sync.Controls;
@@ -20,7 +20,7 @@ namespace Glass.UI.Web.Relatorios
                     lblSituacao.Style.Add("display", "none");
                     cbdSituacao.Style.Add("display", "none");
                     cbdSituacao.SelectedValue = ((int)Glass.Data.Model.Pedido.SituacaoPedido.Confirmado).ToString();
-                    lblPeriodoSituacao.Text = "PerÌodo (ConfirmaÁ„o)";
+                    lblPeriodoSituacao.Text = "Per√≠odo (Confirma√ß√£o)";
                     chkAgruparLiberacao.Visible = false;
                 }
     
@@ -67,7 +67,7 @@ namespace Glass.UI.Web.Relatorios
         }
         protected void cbdTipoVenda_DataBound(object sender, EventArgs e)
         {
-            // Define como filtro padr„o pedidos ¿ Vista e ¿ Prazo
+            // Define como filtro padr√£o pedidos √Ä Vista e √Ä Prazo
             foreach (ListItem li in ((CheckBoxListDropDown)sender).Items)
             {
                 switch (Glass.Conversoes.StrParaUint(li.Value))

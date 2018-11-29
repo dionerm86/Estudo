@@ -119,6 +119,9 @@
     <Compile Include="Fiscal\IProvedorIcmsProdutoUf.cs" />
     <Compile Include="Fiscal\IProvedorMvaProdutoUf.cs" />
     <Compile Include="Global\GrupoCliente.cs" />
+    <Compile Include="Integracao\EventoItemIntegracao.cs" />
+    <Compile Include="Integracao\FalhaIntegracao.cs" />
+    <Compile Include="Integracao\ItemIntegracao.cs" />
     <Compile Include="Otimizacao\EstoqueChapaEntrada.cs" />
     <Compile Include="Estoque\ProdutoBaixaEstoquePesquisa.cs" />
     <Compile Include="Financeiro\ArquivoCartaoNaoIdentificado.cs" />
@@ -211,7 +214,6 @@
     <Compile Include="Global\CorAluminio.cs" />
     <Compile Include="Global\CorFerragem.cs" />
     <Compile Include="Global\CorVidro.cs" />
-    <Compile Include="Global\Departamento.cs" />
     <Compile Include="Financeiro\GrupoConta.cs" />
     <Compile Include="Global\DescontoAcrescimoCliente.cs" />
     <Compile Include="Global\DescontoAcrescimoClientePesquisa.cs" />
@@ -229,7 +231,6 @@
     <Compile Include="Global\FlagArqMesaProduto.cs" />
     <Compile Include="Global\Fornecedor.cs" />
     <Compile Include="Global\FornecedorPesquisa.cs" />
-    <Compile Include="Global\FuncDepartamento.cs" />
     <Compile Include="Global\Funcionario.cs" />
     <Compile Include="Global\FuncModulo.cs" />
     <Compile Include="Global\FuncionarioPesquisa.cs" />

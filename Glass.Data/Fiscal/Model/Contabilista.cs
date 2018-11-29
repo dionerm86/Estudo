@@ -71,6 +71,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("CODIBGEUF", DirectionParameter.InputOptional)]
         public string CodIbgeUf { get; set; }
 
+        [PersistenceProperty("NOMEUF", DirectionParameter.InputOptional)]
+        public string NomeUf { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte

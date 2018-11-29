@@ -339,6 +339,13 @@ namespace Glass.Data.Helper
             MaximoDiasEnviarEmailCobrancaAposVencimento = 377,
             DesmembrarOrcamentoPorSubgrupoGerarPedido = 378,
             ConsiderarApenasDebitoComoPagtoAvista = 379,
+            ServidorCalcEngine = 380,
+            PortaCalcEngine = 381,
+            UsuarioCalcEngine = 382,
+            SenhaCalcEngine = 383,
+            UsarPercentualBonificacaoCliente = 384,
+            EstadosConsiderarRicmsPr = 385,
+            ConcatenarEspAltLargFmlDxfSGlassIntermac = 386,
 
             #region Configs Suporte (Antiga config interna)
 
@@ -750,7 +757,6 @@ namespace Glass.Data.Helper
             ListaVendasPedidosVaziaPorPadrao = 1532,
             UsarTLS12NFe = 1533,
             TextoEmailAdministradores = 1534
-
             #endregion
         }
 
@@ -850,7 +856,8 @@ namespace Glass.Data.Helper
             CadastrarProduto,
             PermitirEnvioMensagemInterna,
             PermitirCancelarCni,
-            AnexarArquivosFornecedor                    //30
+            AnexarArquivosFornecedor,                    //30
+            PermitirAlterarRotaCliente
         }
 
         [ModuloAttr(Modulo.Medicao)]

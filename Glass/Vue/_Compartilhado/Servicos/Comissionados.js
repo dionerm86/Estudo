@@ -31,7 +31,7 @@ Servicos.Comissionados = (function(http) {
 
     /**
      * Remove um comissionado.
-     * @param {!number} idComissionado O identificador do transportador que será excluído.
+     * @param {!number} idComissionado O identificador do comissionado que será excluído.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     excluir: function (idComissionado) {
