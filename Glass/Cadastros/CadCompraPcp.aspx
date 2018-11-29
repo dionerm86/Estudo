@@ -1,4 +1,4 @@
-<%@ Page Title="Cadastro de Compra de Mercadoria" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadCompraPcp.aspx.cs"
+Ôªø<%@ Page Title="Cadastro de Compra de Mercadoria" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadCompraPcp.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.CadCompraPcp" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
@@ -26,16 +26,24 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript">
         
-        // Vari·vel de controle dos produtos selecionados
+        // Vari√°vel de controle dos produtos selecionados
         var produtos = new Array();
         var linhas = new Array();
 
         function adicionar()
         {
+            // Chamado: 85525
+            var existePedidoInserido = FindControl("hdfIdsPedidos", "input").value != "";
+            if (existePedidoInserido) {
+                alert("Apenas um pedido poder√° ser associado a compra de mercadorias");
+                FindControl("txtIdPedido", "input").value = "";
+                return;
+            }
+
             var idPedido = FindControl("txtIdPedido", "input").value;
             if (idPedido == "")
             {
-                alert("Digite o n˙mero do pedido.");
+                alert("Digite o n√∫mero do pedido.");
                 return;
             }
 
@@ -120,7 +128,7 @@
             
             if (inputs.length == 0)
             {
-                alert("Os ambientes do pedido n„o foram carregados. Verifique se o pedido est· cadastrado no PCP.");
+                alert("Os ambientes do pedido n√£o foram carregados. Verifique se o pedido est√° cadastrado no PCP.");
                 return false;
             }
             
@@ -156,13 +164,13 @@
             botao.src = botao.src.replace(textoAtual, textoNovo);
         }
         
-        // FunÁ„o executada para exibir/esconder os produtos de um ambiente
+        // Fun√ß√£o executada para exibir/esconder os produtos de um ambiente
         function exibirAmbiente(botao, id)
         {
             exibir(botao, "ambiente_" + id);
         }
                 
-        // FunÁ„o executada para carregar o plano de contas padr„o do fornecedor
+        // Fun√ß√£o executada para carregar o plano de contas padr√£o do fornecedor
         function alteraFornecedor(idFornecedor)
         {
             var planoConta = CadCompraPcp.GetPlanoConta(idFornecedor).value;
@@ -175,10 +183,10 @@
             FindControl("txtIdPedido", "input").value = idPedido;
         }
         
-        // FunÁ„o executada para incluir um produto na tabela de cadastro
+        // Fun√ß√£o executada para incluir um produto na tabela de cadastro
         function setProduto(botao, id, codigo, ambiente, produto, qtdeMax, apenasBeneficiamentos)
         {
-            // Recupera as linhas que ser„o escondidas
+            // Recupera as linhas que ser√£o escondidas
             var linha = botao.parentNode.parentNode;
             var linhaBenef = linha.nextSibling;
             while (linhaBenef.nodeName.toLowerCase() != "tr")
@@ -235,17 +243,17 @@
             else
                 nomeBenef = "";
 
-            // Cria as vari·veis que ser„o passadas para a funÁ„o de criaÁ„o da tabela
-            var titulos = new Array("CÛd.", "Ambiente", "Produto", "Qtde", "SÛ benef.?");
+            // Cria as vari√°veis que ser√£o passadas para a fun√ß√£o de cria√ß√£o da tabela
+            var titulos = new Array("C√≥d.", "Ambiente", "Produto", "Qtde", "S√≥ benef.?");
             var celulaCodigo = "<span>" + codigo + "</span><input type='hidden' value='" + id + "' /><input type='hidden' value='" + benef + "' />" +
                 "<input type='hidden' value='" + apenasBeneficiamentos + "' /><input type='hidden' value='" + nomeBenef + "' />";
             var celulaQtde = "<input type='text' value='" + qtdeMax + "' disabled='disabled' onkeypress='return soNumeros(event, false, true)' style='width: 40px' /><input type='hidden' value='" + qtdeMax + "' />";
-            var itens = new Array(celulaCodigo, ambiente, produto + descrBenef, celulaQtde, apenasBeneficiamentos ? "Sim" : "N„o");
+            var itens = new Array(celulaCodigo, ambiente, produto + descrBenef, celulaQtde, apenasBeneficiamentos ? "Sim" : "N√£o");
             
             // Cria a linha na tabela
             addItem(itens, titulos, "tbProdutos", null, null, null, null, "removerProduto");
             
-            // Adiciona o produto ‡s vari·veis de controle
+            // Adiciona o produto √†s vari√°veis de controle
             produtos.push(id);
             linhas.push(linha);
             linhas.push(linhaBenef);
@@ -263,17 +271,17 @@
             drawAlternateLinesEx(tabela.id, 2);
         }
         
-        // FunÁ„o executada ao remover um produto da tabela
+        // Fun√ß√£o executada ao remover um produto da tabela
         function removerProduto(linha)
         {
-            // Cria duas vari·veis novas
+            // Cria duas vari√°veis novas
             var produtosNova = new Array();
             var linhasNova = new Array();
             
             // Recupera o id do produto
             var id = linha.cells[1].getElementsByTagName("input")[0].value;
             
-            // Remove o id do produto da vari·vel de controle e exibe as linhas novamente
+            // Remove o id do produto da vari√°vel de controle e exibe as linhas novamente
             for (i = 0; i < produtos.length; i++)
                 if (produtos[i] != id)
                 {
@@ -287,7 +295,7 @@
                     linhas[i * 2 + 1].style.display = "";
                 }
             
-            // Atualiza as vari·veis de controle
+            // Atualiza as vari√°veis de controle
             produtos = produtosNova;
             linhas = linhasNova;
             
@@ -300,7 +308,7 @@
             drawAlternateLinesEx(tabela.id, 2);
         }
         
-        // FunÁ„o que valida a p·gina
+        // Fun√ß√£o que valida a p√°gina
         function validar()
         {
             //if (!validate())
@@ -342,16 +350,16 @@
                 
                 if (parseInt(qtde, 10) == 0)
                 {
-                    alert("VocÍ deve escolher uma quantidade de itens para o produto de cÛdigo '" + codigo + "'.");
+                    alert("Voc√™ deve escolher uma quantidade de itens para o produto de c√≥digo '" + codigo + "'.");
                     return false;
                 }
                 
                 if (parseInt(qtde, 10) > parseInt(qtdeMax, 10))
                 {
                     if (nomeBenef == "")
-                        alert("A quantidade de itens do produto de cÛdigo '" + codigo + "' (" + qtde + ") È maior que a quantidade de itens a comprar do pedido (" + qtdeMax + ").");
+                        alert("A quantidade de itens do produto de c√≥digo '" + codigo + "' (" + qtde + ") √© maior que a quantidade de itens a comprar do pedido (" + qtdeMax + ").");
                     else
-                        alert("A quantidade m·xima de itens do produto de cÛdigo '" + codigo + "' deve ser " + qtdeMax + ", que È a quantidade m·xima para o beneficiamento '" + nomeBenef + "'.");
+                        alert("A quantidade m√°xima de itens do produto de c√≥digo '" + codigo + "' deve ser " + qtdeMax + ", que √© a quantidade m√°xima para o beneficiamento '" + nomeBenef + "'.");
                     
                     return false;
                 }
@@ -360,7 +368,7 @@
             return true;
         }
         
-        // FunÁ„o que cria a string usada para cadastrar os produtos da compra
+        // Fun√ß√£o que cria a string usada para cadastrar os produtos da compra
         function setDadosProdutos()
         {
             if (linhas.length == 0)
@@ -483,13 +491,13 @@
                             <InsertItemTemplate>
                                 <br />
                                 <div style="padding: 4px; margin-top: 4px; text-align: center" class="dtvHeader">
-                                    Selecione os produtos que ser„o usados nessa compra:
+                                    Selecione os produtos que ser√£o usados nessa compra:
                                 </div>
                                 <br />
                                 <table width="100%">
                                     <tr>
                                         <td align="center">
-                                            DisponÌveis
+                                            Dispon√≠veis
                                         </td>
                                         <td>
                                         </td>
@@ -542,7 +550,7 @@
                                                                                     </ItemTemplate>
                                                                                     <ItemStyle Wrap="False" />
                                                                                 </asp:TemplateField>
-                                                                                <asp:BoundField DataField="CodInterno" HeaderText="CÛd." 
+                                                                                <asp:BoundField DataField="CodInterno" HeaderText="C√≥d." 
                                                                                     SortExpression="CodInterno">
                                                                                     <ItemStyle Wrap="True" />
                                                                                 </asp:BoundField>
@@ -550,7 +558,7 @@
                                                                                     SortExpression="DescrProduto" />
                                                                                 <asp:BoundField DataField="QtdeComprar" HeaderText="Qtde" 
                                                                                     SortExpression="Qtde" />
-                                                                                <asp:TemplateField HeaderText="Cobrar sÛ benef.?">
+                                                                                <asp:TemplateField HeaderText="Cobrar s√≥ benef.?">
                                                                                     <ItemTemplate>
                                                                                         <asp:CheckBox ID="chkNaoCobrarVidro" runat="server" 
                                                                                             ondatabinding="chkNaoCobrarVidro_DataBinding" />
@@ -645,13 +653,13 @@
                                                             </ItemTemplate>
                                                             <ItemStyle Wrap="False" />
                                                         </asp:TemplateField>
-                                                        <asp:BoundField DataField="CodInterno" HeaderText="CÛd." 
+                                                        <asp:BoundField DataField="CodInterno" HeaderText="C√≥d." 
                                                             SortExpression="CodInterno">
                                                             <ItemStyle Wrap="True" />
                                                         </asp:BoundField>
                                                         <asp:BoundField DataField="DescrProduto" HeaderText="Produto" SortExpression="DescrProduto" />
                                                         <asp:BoundField DataField="QtdeComprar" HeaderText="Qtde" SortExpression="Qtde" />
-                                                        <asp:TemplateField HeaderText="Cobrar sÛ benef.?">
+                                                        <asp:TemplateField HeaderText="Cobrar s√≥ benef.?">
                                                             <ItemTemplate>
                                                                 <asp:CheckBox ID="chkNaoCobrarVidro" runat="server" 
                                                                     ondatabinding="chkNaoCobrarVidro_DataBinding" />
@@ -720,7 +728,7 @@
                             </InsertItemTemplate>
                             <ItemStyle HorizontalAlign="Center" />
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="(botıes)" ShowHeader="False">
+                        <asp:TemplateField HeaderText="(bot√µes)" ShowHeader="False">
                             <InsertItemTemplate>
                                 <asp:Button ID="btnInserir" runat="server" CommandName="Insert" Text="Inserir" 
                                     onclientclick="if (!validar()) return false;" />

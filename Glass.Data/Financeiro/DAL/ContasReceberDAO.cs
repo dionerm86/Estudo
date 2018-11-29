@@ -2842,6 +2842,20 @@ namespace Glass.Data.DAL
                             PagtoAcertoDAO.Instance.Insert(session, dadosPagamento);
                         }
                     }
+                    else if (idsFormaPagamento.Count() > i && idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0)
+                    {
+                        var idContabancoDepositoNaoIdentificado = DepositoNaoIdentificadoDAO.Instance.ObtemIdContaBanco(session, idsDepositoNaoIdentificado.ElementAtOrDefault(i));
+
+                        PagtoAcerto dadosPagamento = new PagtoAcerto();
+                        dadosPagamento.IdAcerto = acerto.IdAcerto;
+                        dadosPagamento.NumFormaPagto = ++contadorPagamento;
+                        dadosPagamento.IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i);
+                        dadosPagamento.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null;
+                        dadosPagamento.ValorPagto = valoresRecebimento.ElementAt(i);
+                        dadosPagamento.IdContaBanco = (uint)idContabancoDepositoNaoIdentificado;
+
+                        PagtoAcertoDAO.Instance.Insert(session, dadosPagamento);
+                    }
                     else
                     {
                         var pagamentoAcerto = new PagtoAcerto();
@@ -6542,7 +6556,7 @@ namespace Glass.Data.DAL
             string campos = selecionar || agrupar ?
                 @"c.*, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta,
                 CONCAT(jpc.Juros,'%') AS TaxaJuros, CONCAT(oc.DESCRICAO, ' ', bc.DESCRICAO, ' ', (CASE tcc.TIPO WHEN 1 THEN 'Débito' ELSE 'Crédito' END)   ) AS DescricaoCartao,
-                concat(coalesce(cb.nome, ''), ' (Ag. ', coalesce(cb.agencia, ''), ' Conta ', coalesce(cb.conta, ''), ')') as contaBanco, '$$$' as criterio" : "Count(*)";
+                concat(coalesce(cb.nome, ''), ' (Ag. ', coalesce(cb.agencia, ''), ' Conta ', coalesce(cb.conta, ''), ')') as contaBanco, tcc.IdTipoCartao AS tipoCartao, '$$$' as criterio" : "Count(*)";
 
             string where = String.Empty;
 
@@ -6761,7 +6775,7 @@ namespace Glass.Data.DAL
                 sql = "SELECT " + camposAgrupar +
                     " FROM (" + sql + @") as c
                         LEFT JOIN loja l on (c.idLoja = l.idLoja) " +
-                    "GROUP BY " + (PedidoConfig.LiberarPedido ? "" : "c.idLoja,") + "date(c.dataVec), c.IdConta";
+                    "GROUP BY " + (PedidoConfig.LiberarPedido ? "" : "c.idLoja,") + "date(c.dataVec), c.tipoCartao, c.IdConta";
             }
 
             if (!agrupar)

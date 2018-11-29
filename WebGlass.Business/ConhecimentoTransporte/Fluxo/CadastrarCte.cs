@@ -137,7 +137,7 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
                                 situacaoCTe == Glass.Data.Model.Cte.ConhecimentoTransporte.SituacaoEnum.Autorizado ? "autorizado" : "finalizado"));
 
                         var emitente = cte.ObjParticipanteCte.Where(c => c.TipoParticipante == Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Emitente).FirstOrDefault();
-                      
+
                         if (emitente == null)
                             throw new Exception("O emitente não foi informado.");
 
@@ -323,7 +323,8 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
                 ValorTotal = cte.ValorTotal,
                 Situacao = cte.Situacao,
                 TipoDocumentoCte = cte.TipoDocumentoCte,
-                GerarContasReceber = cte.GerarContasReceber
+                GerarContasReceber = cte.GerarContasReceber,
+                DataAnulacao = cte.DataAnulacao
             };
         }
 
@@ -379,7 +380,7 @@ namespace WebGlass.Business.ConhecimentoTransporte.Fluxo
 
                 cte.NumeroCte = GetUltimoNumeroCte(idLoja.Value, Glass.Conversoes.StrParaInt(cte.Serie), cte.TipoEmissao);
 
-                cte.CodAleatorio = (cte.NumeroCte + (cte.TipoEmissao == (int)Glass.Data.Model.Cte.ConhecimentoTransporte.TipoEmissaoEnum.Normal ? 10203040 : 9020304)).ToString();                
+                cte.CodAleatorio = (cte.NumeroCte + (cte.TipoEmissao == (int)Glass.Data.Model.Cte.ConhecimentoTransporte.TipoEmissaoEnum.Normal ? 10203040 : 9020304)).ToString();
 
                 cte.ChaveAcesso = ChaveDeAcesso(cidadeEmitente.CodIbgeUf, cte.DataEmissao.ToString("yyMM"), emitente.Cnpj, Glass.Data.CTeUtils.ConfigCTe.Modelo,
                     cte.Serie.ToString().PadLeft(3, '0'), cte.NumeroCte.ToString(), cte.TipoEmissao.ToString(), cte.CodAleatorio);

@@ -341,6 +341,7 @@ namespace Glass.Data.Helper
             ConsiderarApenasDebitoComoPagtoAvista = 379,
             UsarPercentualBonificacaoCliente = 384,
             EstadosConsiderarRicmsPr = 385,
+            ConcatenarEspAltLargFmlDxfSGlassIntermac = 386,
 
             #region Configs Suporte (Antiga config interna)
 

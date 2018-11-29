@@ -7,6 +7,7 @@ using Glass.Data.Model;
 using GDA;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace Glass.Data.RelDAL
 {
@@ -47,7 +48,7 @@ namespace Glass.Data.RelDAL
                 idSetor > 0 ? " and rps.idSetor=" + idSetor : String.Empty);
         }
 
-        private string SqlProducaoRealizada(int idSetor, DateTime? dataFabrica, bool agruparSetor)
+        private string SqlProducaoRealizada(int idSetor, List<DateTime> datasFabrica, bool agruparSetor)
         {
             string campos = @"
                 CAST(ROUND(SUM(IF(p.tipoPedido = 3,
@@ -79,8 +80,17 @@ namespace Glass.Data.RelDAL
                 WHERE 1
                     AND ppp.situacao = " + (int)ProdutoPedidoProducao.SituacaoEnum.Producao;
 
-            if (dataFabrica.HasValue)
-                sql += " AND date(pe.dataFabrica) = ?data";
+            if (datasFabrica != null && datasFabrica.Count > 0)
+            {
+                sql += " AND date(pe.dataFabrica) IN (";
+
+                for (var i = 0; i < datasFabrica.Count; i++)
+                {
+                    sql += $"?data{i},";
+                }
+
+                sql = sql.TrimEnd(',') + ")";
+            }
 
             if (agruparSetor && idSetor > 0)
                 sql += " AND rpe.idSetor = " + idSetor;
@@ -213,22 +223,27 @@ namespace Glass.Data.RelDAL
             return objPersistence.LoadData(sql, new GDAParameter("?data", dataProducao)).ToList();
         }
 
-        public IList<ProducaoDiariaRealizada> ObtemProducaoRealizada(DateTime dataFabrica)
+        public IList<ProducaoDiariaRealizada> ObtemProducaoRealizada(List<DateTime> dataFabrica)
         {
             return objPersistence.LoadData(SqlProducaoRealizada(0, dataFabrica, false), GetParams(dataFabrica)).ToList();
         }
 
         public IList<ProducaoDiariaRealizada> ObtemProducaoRealizadaPorSetor(int idSetor, DateTime dataFabrica)
         {
-            return objPersistence.LoadData(SqlProducaoRealizada(idSetor, dataFabrica, true), GetParams(dataFabrica)).ToList();
+            return objPersistence.LoadData(SqlProducaoRealizada(idSetor, new List<DateTime>() { dataFabrica }, true), GetParams(new List<DateTime>() { dataFabrica })).ToList();
         }
 
-        private GDAParameter[] GetParams(DateTime? dataFabrica)
+        private GDAParameter[] GetParams(List<DateTime> datasFabrica)
         {
             List<GDAParameter> lstParam = new List<GDAParameter>();
 
-            if (dataFabrica.HasValue)
-                lstParam.Add(new GDAParameter("?data", dataFabrica.Value.Date));
+            if (datasFabrica != null && datasFabrica.Count > 0)
+            {
+                for (var i = 0; i < datasFabrica.Count; i++)
+                {
+                    lstParam.Add(new GDAParameter($"?data{i}", datasFabrica[i]));
+                }
+            }
 
             return lstParam.Count == 0 ? null : lstParam.ToArray();
         }

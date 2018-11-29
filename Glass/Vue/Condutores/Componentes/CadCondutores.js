@@ -1,6 +1,6 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('id', 'asc')],
+  mixins: [Mixins.Objetos, Mixins.ExecutarTimeout],
 
   data: {
     configuracoes: {},

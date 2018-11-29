@@ -107,6 +107,27 @@ namespace Glass.Fiscal.Negocios.Entidades.Cte
             }
         }
 
+        /// <summary>
+        /// Obtém ou define a finalidade da chave de acesso.
+        /// </summary>
+        public Data.Model.FinalidadeChaveAcesso FinalidadeChaveAcesso
+        {
+            get
+            {
+                return this.DataModel.FinalidadeChaveAcesso;
+            }
+
+            set
+            {
+                if (this.DataModel.FinalidadeChaveAcesso != value &&
+                    this.RaisePropertyChanging("FinalidadeChaveAcesso", value))
+                {
+                    this.DataModel.FinalidadeChaveAcesso = value;
+                    this.RaisePropertyChanged("FinalidadeChaveAcesso");
+                }
+            }
+        }
+
         #endregion
 
         #region Construtores
@@ -144,7 +165,7 @@ namespace Glass.Fiscal.Negocios.Entidades.Cte
 
         #endregion
 
-        #region Métodos Publicos 
+        #region Métodos Publicos
 
         public override Colosoft.Business.SaveResult Save(Colosoft.Data.IPersistenceSession session)
         {

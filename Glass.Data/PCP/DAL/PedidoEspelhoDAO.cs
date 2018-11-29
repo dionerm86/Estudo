@@ -1386,6 +1386,8 @@ namespace Glass.Data.DAL
 
                     uint idProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.InsertBase(transaction, pe, pedEsp);
 
+                    LogAlteracaoDAO.Instance.CopiarLogImagemProdPed(transaction, (int)p.IdProdPed, (int)idProdPedEsp);
+
                     // Salva os registro da rentabilidade
                     foreach (var registro in ProdutoPedidoRentabilidadeDAO.Instance.ObterPorProdutoPedido(transaction, p.IdProdPed))
                         ProdutoPedidoEspelhoRentabilidadeDAO.Instance.Insert(transaction, new ProdutoPedidoEspelhoRentabilidade
@@ -2818,6 +2820,12 @@ namespace Glass.Data.DAL
             if (PedidoDAO.Instance.TemVolume(session, idPedido))
                 throw new Exception("O pedido PCP não pode ser reaberto, pois, possui volume gerado. Cancele o volume para reabrir o pedido PCP.");
 
+            // Se o pedido estiver exportado o mesmo não pode ser reaberto sem que se cancele a exportação.
+            if (PedidoExportacaoDAO.Instance.VerificarPossuiExportacao((int)idPedido))
+            {
+                throw new InvalidOperationException("O pedido PCP não pode ser reaberto, o pedido em questão foi exportado. Cancele a exportação para reabrir o pedido PCP.");
+            }
+
             /* Chamado 33285. */
             if (objPersistence.ExecuteSqlQueryCount(session,
                 string.Format(@"SELECT COUNT(*) FROM produtos_pedido_espelho WHERE QtdImpresso>0 AND IdPedido={0};",
@@ -3861,11 +3869,14 @@ namespace Glass.Data.DAL
             {
                 // Clona as peças
                 uint idPecaItemProjOld = pip.IdPecaItemProj;
+                uint idLogOld = pip.IdLog;
 
-                pip.Beneficiamentos = pip.Beneficiamentos;
                 pip.IdPecaItemProj = 0;
                 pip.IdItemProjeto = idItemProjetoPedEsp;
                 uint idPecaItemProj = PecaItemProjetoDAO.Instance.Insert(sessao, pip);
+                var novaPecaItemProj = PecaItemProjetoDAO.Instance.GetElement(sessao, idPecaItemProj);
+
+                LogAlteracaoDAO.Instance.CopiarLogAlteracaoImagemProducao(sessao, (int)idLogOld, (int)novaPecaItemProj.IdLog);
 
                 foreach (FiguraPecaItemProjeto fig in FiguraPecaItemProjetoDAO.Instance.GetForClone(sessao, idPecaItemProjOld))
                 {

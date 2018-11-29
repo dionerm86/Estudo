@@ -143,6 +143,29 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         }
 
         /// <summary>
+        /// Obtém uma lista de motoristas.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos motoristas.</returns>
+        [HttpGet]
+        [Route("motoristas")]
+        [SwaggerResponse(200, "Motoristas encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Motoristas não encontrados.")]
+        public IHttpActionResult ObterMotoristas()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var motoristas = FuncionarioDAO.Instance.GetMotoristas(null)
+                    .Select(f => new IdNomeDto
+                    {
+                        Id = f.IdFunc,
+                        Nome = f.Nome,
+                    });
+
+                return this.Lista(motoristas);
+            }
+        }
+
+        /// <summary>
         /// Obtém uma lista de conferentes.
         /// </summary>
         /// <returns>Uma lista JSON com os dados básicos dos conferentes.</returns>
