@@ -1925,7 +1925,7 @@ namespace Glass.UI.Web.Relatorios
 
                             case "ProducaoPedidos":
                                 {
-                                    report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptLstPedidos.rdlc"); break;
+                                    report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptLstPedidos{0}.rdlc"); break;
                                 }
 
                             default:
@@ -2068,7 +2068,7 @@ namespace Glass.UI.Web.Relatorios
 
                             lstParam.Add(new ReportParameter("Titulo", "Pedidos produção"));
 
-                            report.ReportPath = "Relatorios/rptLstPedidos.rdlc";
+                            report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptLstPedidos{0}.rdlc");
                             report.DataSources.Add(new ReportDataSource("Pedidos", pedidos));
 
                             break;
@@ -4001,7 +4001,7 @@ namespace Glass.UI.Web.Relatorios
                         var idCarregamento = Request["idCarregamento"].StrParaUint();
                         var pedidos = PedidoDAO.Instance.ObterPedidosProntosSemCarregamento(null, idCarregamento);
                         lstParam.Add(new ReportParameter("Titulo", "Pedidos prontos sem carregamento"));
-                        report.ReportPath = "Relatorios/rptLstPedidos.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptLstPedidos{0}.rdlc");
                         report.DataSources.Add(new ReportDataSource("Pedidos", pedidos));
 
                         break;
@@ -4013,7 +4013,7 @@ namespace Glass.UI.Web.Relatorios
                         var pedidos = PedidoDAO.Instance.ObterPedidosPendentesLeitura(null, idSetor);
                         var nomeSetor = SetorDAO.Instance.ObtemDescricaoSetor(null, (int)idSetor);
                         lstParam.Add(new ReportParameter("Titulo", "Pedidos com peças disponíveis para leitura no setor " + nomeSetor));
-                        report.ReportPath = "Relatorios/rptLstPedidos.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptLstPedidos{0}.rdlc");
                         report.DataSources.Add(new ReportDataSource("Pedidos", pedidos));
                         break;
                     }
