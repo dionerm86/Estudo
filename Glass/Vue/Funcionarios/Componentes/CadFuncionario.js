@@ -128,6 +128,8 @@
         idsTiposPedidos: item && item.idsTiposPedidos ? item.idsTiposPedidos : [],
         observacao: item && item.observacao ? item.observacao : null,
         adminSync: item && item.adminSync ? item.adminSync : false,
+        urlImagem: item && item.urlImagem ? item.urlImagem : null,
+        possuiImagem: item && item.possuiImagem ? item.possuiImagem : false,
         contatos: {
           telefoneResidencial: item && item.contatos ? item.contatos.telefoneResidencial : null,
           telefoneCelular: item && item.contatos ? item.contatos.telefoneCelular : null,

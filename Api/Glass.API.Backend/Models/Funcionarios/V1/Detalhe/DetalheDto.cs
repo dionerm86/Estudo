@@ -27,6 +27,8 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
             this.Id = funcionario.IdFunc;
             this.Nome = funcionario.Nome;
             this.AdminSync = funcionario.AdminSync;
+            this.UrlImagem = Global.UI.Web.Process.Funcionarios.FuncionarioRepositorioImagens.Instance.ObtemUrl(funcionario.IdFunc).Replace("~", "..");
+            this.PossuiImagem = Glass.Global.UI.Web.Process.Funcionarios.FuncionarioRepositorioImagens.Instance.PossuiImagem(funcionario.IdFunc);
 
             this.TipoFuncionario = new IdNomeDto
             {
@@ -219,5 +221,19 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         [DataMember]
         [JsonProperty("adminSync")]
         public bool AdminSync { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a url da imagem do funcionário.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("urlImagem")]
+        public string UrlImagem { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o usuário tem uma imagem.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("possuiImagem")]
+        public bool PossuiImagem { get; set; }
     }
 }

@@ -282,21 +282,22 @@
                     <input type="number" min="0" v-model="funcionario.numeroDiasParaAtrasarPedidos"/>
                 </span>
                 <span class="cabecalho">
+                </span>
+                <span>
+                    <img v-bind:src="funcionario.urlImagem" style="width:140px;height:120px;"></img>
+                </span>
+                <span class="cabecalho">
+                </span>
+                <span>
+                </span>
+                <span class="cabecalho">
                     <label>
                         Foto Funcionário
                     </label>
                 </span>
                 <span>
-                    <campo-upload @arquivo-selecionado="fotoSelecionada" tipo-arquivo="image/*">
-                </span>
-                <span class="cabecalho">
-                </span>
-                <span>
-                </span>
-                <span class="cabecalho">
-                </span>
-                <span>
-                        <controle-exibicao-imagem :id-item="funcionario.id" tipo-item="Funcionario"></controle-exibicao-imagem>
+                <span><campo-upload @arquivo-selecionado="fotoSelecionada" tipo-arquivo="image/*"></span>
+                <span><controle-exibicao-imagem :id-item="funcionario.id" tipo-item="Funcionario"></controle-exibicao-imagem></span>
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -304,7 +305,7 @@
                     </label>
                 </span>
                 <span>
-                    <input type="number" min="0"   v-model="funcionario.numeroPdv" />
+                    <input type="number" min="0" v-model="funcionario.numeroPdv" />
                 </span>
                 <span class="cabecalho" v-if="configuracoes && configuracoes.enviarEmailPedidoConfirmado">
                     <label>
