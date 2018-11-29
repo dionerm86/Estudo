@@ -1,7 +1,10 @@
-﻿using System;
+﻿// <copyright file="ConfiguracaoBiesse.cs" company="Sync Softwares">
+// Copyright (c) Sync Softwares. Todos os direitos reservados.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Glass.Data.Helper
 {
@@ -10,7 +13,14 @@ namespace Glass.Data.Helper
     /// </summary>
     public sealed class ConfiguracaoBiesse
     {
-        private readonly List<Exception> _erros = new List<Exception>();
+        private readonly List<Exception> erros = new List<Exception>();
+
+        /// <summary>
+        /// Inicia uma nova instância da classe <see cref="ConfiguracaoBiesse"/>.
+        /// </summary>
+        private ConfiguracaoBiesse()
+        {
+        }
 
         /// <summary>
         /// Obtém a instancia da configuração.
@@ -25,14 +35,7 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Obtém os erros da configuração.
         /// </summary>
-        public IEnumerable<Exception> Erros => _erros;
-
-        /// <summary>
-        /// Inicia uma nova instância da classe <see cref="ConfiguracaoBiesse"/>.
-        /// </summary>
-        private ConfiguracaoBiesse()
-        {
-        }
+        public IEnumerable<Exception> Erros => erros;
 
         /// <summary>
         /// Carrega os contexto com base nas configurações contidas no diretório informado.
@@ -46,59 +49,36 @@ namespace Glass.Data.Helper
                 yield break;
             }
 
-            foreach (var dir in System.IO.Directory.GetDirectories(diretorio, "*.*", System.IO.SearchOption.TopDirectoryOnly))
+            var arquivoConfiguracoes = System.IO.Path.Combine(diretorio, "Biesse.config");
+            if (System.IO.File.Exists(arquivoConfiguracoes))
             {
-                var setupDataFileName = System.IO.Path.Combine(dir, "SetupData.xml");
-
-                // Verifica se o arquivo base de configuração existe
-                if (System.IO.File.Exists(setupDataFileName))
+                Configuracoes configuracoes = null;
+                var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Configuracoes));
+                try
                 {
-                    CalcEngine.Biesse.OutputGenerator geradorSaida = CalcEngine.Biesse.OutputGenerator.iCam;
-
-                    string maquina = null;
-                    string diretorioSaida = Configuracoes.PCPConfig.CaminhoSalvarIntermac;
-
-                    var arquivoMaquina = System.IO.Path.Combine(dir, "Maquina.config");
-                    if (System.IO.File.Exists(arquivoMaquina))
+                    using (var conteudo = System.IO.File.OpenRead(arquivoConfiguracoes))
                     {
-                        var serializer = new System.Xml.Serialization.XmlSerializer(typeof(ConfiguracaoMaquina));
-                        try
-                        {
-                            using (var conteudo = System.IO.File.OpenRead(arquivoMaquina))
-                            {
-                                var configuracao = (ConfiguracaoMaquina)serializer.Deserialize(conteudo);
-                                maquina = configuracao.Maquina;
-                                diretorioSaida = configuracao.DiretorioSaida ?? Configuracoes.PCPConfig.CaminhoSalvarIntermac;
-                                geradorSaida = configuracao.GeradorSaida;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            _erros.Add(ex);
-                            // Ignora erros
-                        }
+                        configuracoes = (Configuracoes)serializer.Deserialize(conteudo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.erros.Add(ex);
+                    yield break;
+                }
+
+                if (configuracoes != null)
+                {
+                    foreach (var config in configuracoes.Contextos)
+                    {
+                        yield return new Contexto(config.Nome, config.DiretorioSaida ?? Glass.Configuracoes.PCPConfig.CaminhoSalvarIntermac);
                     }
 
-                    if (maquina == null)
-                    {
-                        maquina = "VertMax Sx_Dx";
-                    }
-
-                    CalcEngine.Biesse.DxfImporterContext importerContext = null;
-                    try
-                    {
-                        importerContext = new CalcEngine.Biesse.DxfImporterContext(new System.IO.Abstractions.FileSystem(), dir, geradorSaida);
-                    }
-                    catch (Exception ex)
-                    {
-                        _erros.Add(ex);
-                        // Igonra erros ao carregar o contexto
-                        continue;
-                    }
-
-                    yield return new Contexto(System.IO.Path.GetFileNameWithoutExtension(dir), maquina, diretorioSaida, importerContext);
+                    yield break;
                 }
             }
+
+            yield return new Contexto("default", Glass.Configuracoes.PCPConfig.CaminhoSalvarIntermac);
         }
 
         /// <summary>
@@ -116,60 +96,55 @@ namespace Glass.Data.Helper
         public class Contexto
         {
             /// <summary>
+            /// Inicia uma nova instância da classe <see cref="Contexto"/>.
+            /// </summary>
+            /// <param name="nome">Nome do contexto.</param>
+            /// <param name="diretorioSaida">Diretório de saída.</param>
+            internal Contexto(string nome, string diretorioSaida)
+            {
+                this.Nome = nome;
+                this.DiretorioSaida = diretorioSaida;
+            }
+
+            /// <summary>
             /// Obtém o nome do contexto.
             /// </summary>
             public string Nome { get; }
 
             /// <summary>
-            /// Obtém o nome da máquina.
-            /// </summary>
-            public string NomeMaquina { get; }
-
-            /// <summary>
             /// Obtém o caminho do diretório de saída dos arquivos.
             /// </summary>
             public string DiretorioSaida { get; }
-
-            /// <summary>
-            /// Obtém o contexto do importador.
-            /// </summary>
-            public CalcEngine.Biesse.DxfImporterContext ImporterContext { get; }
-
-            /// <summary>
-            /// Inicia uma nova instância da classe <see cref="Contexto"/>.
-            /// </summary>
-            /// <param name="nome">Nome do contexto.</param>
-            /// <param name="nomeMaquina">Nome da máquina do contexto.</param>
-            /// <param name="diretorioSaida">Diretório de saída.</param>
-            /// <param name="importerContext">Contexto do importador.</param>
-            internal Contexto(string nome, string nomeMaquina, string diretorioSaida, CalcEngine.Biesse.DxfImporterContext importerContext)
-            {
-                this.Nome = nome;
-                this.NomeMaquina = nomeMaquina;
-                this.DiretorioSaida = diretorioSaida;
-                this.ImporterContext = importerContext;
-            }
         }
 
         /// <summary>
         /// Representa os dados da configuração da máquina.
         /// </summary>
-        public class ConfiguracaoMaquina
+        public class ConfiguracaoContexto
         {
             /// <summary>
-            /// Obtém ou define o nome da máquina.
+            /// Obtém ou define o nome do contexto.
             /// </summary>
-            public string Maquina { get; set; }
+            [System.Xml.Serialization.XmlAttribute("nome")]
+            public string Nome { get; set; }
 
             /// <summary>
             /// Obtém ou define o diretório de saída.
             /// </summary>
+            [System.Xml.Serialization.XmlAttribute("diretorioSaida")]
             public string DiretorioSaida { get; set; }
+        }
 
+        /// <summary>
+        /// Representa as configurações.
+        /// </summary>
+        public class Configuracoes
+        {
             /// <summary>
-            /// Obtém ou define o tipo do gerador de saída.
+            /// Obtém os contextos.
             /// </summary>
-            public CalcEngine.Biesse.OutputGenerator GeradorSaida { get; set; }
+            [System.Xml.Serialization.XmlArrayItem("Contexto")]
+            public List<ConfiguracaoContexto> Contextos { get; } = new List<ConfiguracaoContexto>();
         }
     }
 }

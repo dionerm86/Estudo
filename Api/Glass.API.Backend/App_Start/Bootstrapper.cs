@@ -1,4 +1,4 @@
-// <copyright file="Bootstrapper.cs" company="Sync Softwares">
+﻿// <copyright file="Bootstrapper.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -281,8 +281,12 @@ namespace Glass.API.Backend
             this.Container.GetExportedValue<Colosoft.DataAccess.IQueryDataSourceSelector>();
 
             this.InicializarIntegradores();
+
+            Data.Helper.ConfiguracaoBiesse.Instancia.Inicializar(
+                HttpContext.Current?.Server?.MapPath("~") ?? System.IO.Path.GetDirectoryName(typeof(Bootstrapper).Assembly.Location));
         }
 
+        /// <inheritdoc />
         public void Stop(bool immediate)
         {
             System.Web.Hosting.HostingEnvironment.UnregisterObject(this);

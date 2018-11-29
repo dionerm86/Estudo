@@ -6,6 +6,7 @@ using Glass.Data.Helper;
 using Glass.Data.EFD;
 using System.Linq;
 using Glass.Configuracoes;
+using System.ComponentModel;
 
 namespace Glass.Data.DAL
 {
@@ -17,9 +18,25 @@ namespace Glass.Data.DAL
 
         public enum TipoEtiqueta : long
         {
+            /// <summary>
+            /// Etiqueta de pedido.
+            /// </summary>
             Pedido = 1,
+
+            /// <summary>
+            /// Etiqueta de nota fiscal,
+            /// </summary>
+            [Description("Nota fiscal")]
             NotaFiscal,
+
+            /// <summary>
+            /// Etiqueta de retalho
+            /// </summary>
             Retalho,
+
+            /// <summary>
+            /// Etiqueta de box
+            /// </summary>
             Box
         }
 

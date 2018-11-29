@@ -72,6 +72,7 @@ namespace Glass.UI.Web.Relatorios
                         var situacao = Request["situacao"];
                         var formaEmissao = Glass.Conversoes.StrParaInt(Request["formaEmissao"]);
                         var loja = LojaDAO.Instance.GetElement(login.IdLoja);
+                        var apenasNotasFiscaisSemAnexo = Request["apenasNotasFiscaisSemAnexo"]?.ToLower() == "true";
                         var dados = NotaFiscalDAO.Instance.GetListPorSituacao(numeroNfe, idPedido, Request["modelo"], idLoja, idCliente,
                             Request["nomeCliente"], Glass.Conversoes.StrParaInt(Request["tipoFiscal"]), idFornec, Request["nomeFornec"],
                             Request["codRota"], tipoDoc, situacao, Request["dataIni"], Request["dataFim"],
@@ -79,7 +80,7 @@ namespace Glass.UI.Web.Relatorios
                             Glass.Conversoes.StrParaUint(Request["formaPagto"]), Request["idsFormaPagtoNotaFiscal"],
                             Glass.Conversoes.StrParaInt(Request["tipoNf"]), Glass.Conversoes.StrParaInt(Request["finalidade"]), formaEmissao, Request["infCompl"],
                             Request["codInternoProd"], Request["descrProd"], Request["valorInicial"],
-                            Request["valorFinal"], null, Request["lote"], Glass.Conversoes.StrParaInt(Request["ordenar"]), null, 0, int.MaxValue);
+                            Request["valorFinal"], null, Request["lote"], apenasNotasFiscaisSemAnexo, Glass.Conversoes.StrParaInt(Request["ordenar"]), null, 0, int.MaxValue);
 
                         if (FiscalConfig.Relatorio.RecuperarTotalCst60)
                             foreach (var nf in dados)
@@ -1338,6 +1339,21 @@ namespace Glass.UI.Web.Relatorios
 
                         break;
                     }
+                case "ListaDreCompetencia":
+                    {
+                        report.ReportPath = "Relatorios/rptListaDreCompetencia{0}.rdlc";
+
+                        report.ReportPath = String.Format(report.ReportPath, bool.Parse(Request["detalhes"]) ? "Detalhes" : "");
+
+                        var idsPlanoConta = Request["idsPlanoConta"]?.Split(',')?.Select(f => f.StrParaUintNullable().GetValueOrDefault()).Where(f => f > 0).ToArray() ?? new uint[0];
+
+                        var lstPlanoContas = Glass.Data.RelDAL.PlanoContasDAO.Instance.PesquisarDreCompetenciaRpt(Glass.Conversoes.StrParaIntNullable(Request["idLoja"]), Request["dataIni"], Request["dataFim"],
+                            Glass.Conversoes.StrParaIntNullable(Request["IdCategoriaConta"]), Glass.Conversoes.StrParaIntNullable(Request["IdGrupoConta"]), idsPlanoConta, bool.Parse(Request["detalhes"]));
+
+                        report.DataSources.Add(new ReportDataSource("PlanoContas", lstPlanoContas));
+
+                        break;
+                    }
                 case "ExtratoBancario":
                     {
                         report.ReportPath = "Relatorios/rptExtratoBancario.rdlc";
@@ -1924,7 +1940,7 @@ namespace Glass.UI.Web.Relatorios
 
                             case "ProducaoPedidos":
                                 {
-                                    report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptLstPedidos.rdlc"); break;
+                                    report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptLstPedidos{0}.rdlc"); break;
                                 }
 
                             default:
@@ -2067,7 +2083,7 @@ namespace Glass.UI.Web.Relatorios
 
                             lstParam.Add(new ReportParameter("Titulo", "Pedidos produção"));
 
-                            report.ReportPath = "Relatorios/rptLstPedidos.rdlc";
+                            report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptLstPedidos{0}.rdlc");
                             report.DataSources.Add(new ReportDataSource("Pedidos", pedidos));
 
                             break;
@@ -3172,7 +3188,7 @@ namespace Glass.UI.Web.Relatorios
                         report.DataSources.Add(new ReportDataSource("Exportacao", new Exportacao[] { exp }));
                         report.DataSources.Add(new ReportDataSource("PedidoExportacao", PedidoExportacaoDAO.Instance.GetForRpt(exp.IdExportacao, 0)));
                         var idsPedido = ProdutoPedidoExportacaoDAO.Instance.ObtemIdsPedidoPeloIdExportacao(idExportacao);
-                        report.DataSources.Add(new ReportDataSource("ProdutosPedido", ProdutosPedidoDAO.Instance.ObterProdutosComExportados(idsPedido)));
+                        report.DataSources.Add(new ReportDataSource("ProdutosPedido", ProdutosPedidoDAO.Instance.ObterProdutosComExportados(idsPedido, (int)idExportacao)));
 
                         break;
                     }
@@ -4000,7 +4016,7 @@ namespace Glass.UI.Web.Relatorios
                         var idCarregamento = Request["idCarregamento"].StrParaUint();
                         var pedidos = PedidoDAO.Instance.ObterPedidosProntosSemCarregamento(null, idCarregamento);
                         lstParam.Add(new ReportParameter("Titulo", "Pedidos prontos sem carregamento"));
-                        report.ReportPath = "Relatorios/rptLstPedidos.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptLstPedidos{0}.rdlc");
                         report.DataSources.Add(new ReportDataSource("Pedidos", pedidos));
 
                         break;
@@ -4012,7 +4028,7 @@ namespace Glass.UI.Web.Relatorios
                         var pedidos = PedidoDAO.Instance.ObterPedidosPendentesLeitura(null, idSetor);
                         var nomeSetor = SetorDAO.Instance.ObtemDescricaoSetor(null, (int)idSetor);
                         lstParam.Add(new ReportParameter("Titulo", "Pedidos com peças disponíveis para leitura no setor " + nomeSetor));
-                        report.ReportPath = "Relatorios/rptLstPedidos.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptLstPedidos{0}.rdlc");
                         report.DataSources.Add(new ReportDataSource("Pedidos", pedidos));
                         break;
                     }

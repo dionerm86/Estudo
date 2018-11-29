@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{80E41DDF-89B0-4C31-8893-9139CFD8FE0B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Glass.Projeto</RootNamespace>
+    <AssemblyName>Glass.Projeto</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CalcEngine, Version=2.1.18324.4, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.2.1.18324.004-final\lib\net452\CalcEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="CalcEngine.Drawing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=480c19f8f9d8709d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.Drawing.1.0.0\lib\net35\CalcEngine.Drawing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CalcEngine.Dxf, Version=2.1.18324.4, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.Dxf.2.1.18324.004-final\lib\net452\CalcEngine.Dxf.dll</HintPath>
+    </Reference>
+    <Reference Include="CalcEngine.Services, Version=2.1.18324.4, Culture=neutral, PublicKeyToken=4d82ee814860a525, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.Services.2.1.18324.004-final\lib\net452\CalcEngine.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="CalcEngine.Text, Version=1.5.0.0, Culture=neutral, PublicKeyToken=34659d78168384a4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.Text.1.5.0\lib\net35\CalcEngine.Text.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Linq.Dynamics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca26a82b62119865, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.Dynamics.1.0.0\lib\net35\System.Linq.Dynamics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CustomOutputDriverProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </AdditionalFiles>
+    <AdditionalFiles Include="..\..\stylecop.json">
+      <Link>stylecop.json</Link>
+    </AdditionalFiles>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Glass.Data\Glass.Data.csproj">
+      <Project>{4f2eaa30-6616-4d69-8355-44557e20c398}</Project>
+      <Name>Glass.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

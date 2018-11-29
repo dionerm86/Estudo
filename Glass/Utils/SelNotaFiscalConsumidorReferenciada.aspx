@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SelNotaFiscalConsumidorReferenciada.aspx.cs" Inherits="Glass.UI.Web.Utils.SelNotaFiscalConsumidorReferenciada"
+ï»¿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SelNotaFiscalConsumidorReferenciada.aspx.cs" Inherits="Glass.UI.Web.Utils.SelNotaFiscalConsumidorReferenciada"
     Title="Selecione a Nota Fiscal de Consumidor" MasterPageFile="~/Layout.master" %>
 
 <%@ Register Src="../Controls/ctrlTextoTooltip.ascx" TagName="ctrlTextoTooltip" TagPrefix="uc1" %>
@@ -145,7 +145,7 @@
                 <table>
                     <tr>
                         <td nowrap="nowrap">
-                            <asp:Label ID="Label8" runat="server" Text="Período Emissão" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label8" runat="server" Text="PerÃ­odo EmissÃ£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td nowrap="nowrap">
                             <uc3:ctrlData ID="ctrlDataIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
@@ -158,7 +158,7 @@
                                 ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:Label ID="Label11" runat="server" Text="Período Entrada/Saída" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label11" runat="server" Text="PerÃ­odo Entrada/SaÃ­da" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <uc3:ctrlData ID="ctrlDataEntSaiIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
@@ -171,13 +171,13 @@
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:Label ID="Label17" runat="server" Text="Forma de emissão" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label17" runat="server" Text="Forma de emissÃ£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpFormaEmissao" runat="server">
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
                                 <asp:ListItem Value="1">Normal</asp:ListItem>
-                                <asp:ListItem Value="3">Contingência com SCAN</asp:ListItem>
+                                <asp:ListItem Value="3">ContingÃªncia com SCAN</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
@@ -205,8 +205,8 @@
                         <td>
                             <asp:DropDownList ID="drpFormaPagto" runat="server">
                                 <asp:ListItem Value="0">Todas</asp:ListItem>
-                                <asp:ListItem Value="1">À Vista</asp:ListItem>
-                                <asp:ListItem Value="2">À Prazo</asp:ListItem>
+                                <asp:ListItem Value="1">Ã€ Vista</asp:ListItem>
+                                <asp:ListItem Value="2">Ã€ Prazo</asp:ListItem>
                                 <asp:ListItem Value="3">Outros</asp:ListItem>
                             </asp:DropDownList>
                             <sync:CheckBoxListDropDown ID="cbdFormaPagtoNotaFiscal" runat="server" DataSourceID="odsFormaPagtoNotaFiscal"
@@ -222,12 +222,12 @@
                         </td>
                         <td>
                             <asp:DropDownList ID="drpOrdenar" runat="server" AutoPostBack="True">
-                                <asp:ListItem Value="1">Número NF (decresc.)</asp:ListItem>
-                                <asp:ListItem Value="2">Número NF (cresc.)</asp:ListItem>
-                                <asp:ListItem Value="3" Selected="True">Data de emissão (descresc.)</asp:ListItem>
-                                <asp:ListItem Value="4">Data de emissão (cresc.)</asp:ListItem>
-                                <asp:ListItem Value="5">Data de entrada/saída (descresc.)</asp:ListItem>
-                                <asp:ListItem Value="6">Data de entrada/saída (cresc.)</asp:ListItem>
+                                <asp:ListItem Value="1">NÃºmero NF (decresc.)</asp:ListItem>
+                                <asp:ListItem Value="2">NÃºmero NF (cresc.)</asp:ListItem>
+                                <asp:ListItem Value="3" Selected="True">Data de emissÃ£o (descresc.)</asp:ListItem>
+                                <asp:ListItem Value="4">Data de emissÃ£o (cresc.)</asp:ListItem>
+                                <asp:ListItem Value="5">Data de entrada/saÃ­da (descresc.)</asp:ListItem>
+                                <asp:ListItem Value="6">Data de entrada/saÃ­da (cresc.)</asp:ListItem>
                                 <asp:ListItem Value="7">Valor Total(cresc.)</asp:ListItem>
                                 <asp:ListItem Value="8">Valor Total (descresc.)</asp:ListItem>
                             </asp:DropDownList>
@@ -240,7 +240,7 @@
                             <asp:DropDownList ID="drpTipoNFe" runat="server" AutoPostBack="True">
                                 <asp:ListItem Value="0">Todas</asp:ListItem>                                
                                 <asp:ListItem Value="1">Entrada</asp:ListItem>
-                                <asp:ListItem Value="2">Saída</asp:ListItem>
+                                <asp:ListItem Value="2">SaÃ­da</asp:ListItem>
                                 <asp:ListItem Value="3">Entrada (terceiros)</asp:ListItem>
                                 <asp:ListItem Value="4">Transporte</asp:ListItem>
                             </asp:DropDownList>
@@ -323,14 +323,14 @@
                         <asp:BoundField DataField="Modelo" HeaderText="Modelo" SortExpression="Modelo" />
                         <asp:BoundField DataField="CodCfop" HeaderText="CFOP" SortExpression="CodCfop" />
                         <asp:BoundField DataField="TipoDocumentoString" HeaderText="Tipo" SortExpression="TipoDocumentoString" />
-                        <asp:BoundField DataField="DescrUsuCad" HeaderText="Funcionário" SortExpression="DescrUsuCad" />
+                        <asp:BoundField DataField="DescrUsuCad" HeaderText="FuncionÃ¡rio" SortExpression="DescrUsuCad" />
                         <asp:BoundField DataField="NomeEmitente" HeaderText="Emitente" SortExpression="NomeEmitente" />
-                        <asp:BoundField DataField="NomeDestRem" HeaderText="Destinatário/Remetente" SortExpression="NomeDestRem" />
+                        <asp:BoundField DataField="NomeDestRem" HeaderText="DestinatÃ¡rio/Remetente" SortExpression="NomeDestRem" />
                         <asp:BoundField DataField="TotalNota" HeaderText="Total" SortExpression="TotalNota"
                             DataFormatString="{0:C}" />
-                        <asp:BoundField DataField="DataEmissao" DataFormatString="{0:d}" HeaderText="Data Emissão"
+                        <asp:BoundField DataField="DataEmissao" DataFormatString="{0:d}" HeaderText="Data EmissÃ£o"
                             SortExpression="DataEmissao" />
-                        <asp:BoundField DataField="SituacaoString" HeaderText="Situação" SortExpression="SituacaoString" />
+                        <asp:BoundField DataField="SituacaoString" HeaderText="SituaÃ§Ã£o" SortExpression="SituacaoString" />
                     </Columns>
                     <PagerStyle />
                     <EditRowStyle />
@@ -374,6 +374,7 @@
                         <asp:ControlParameter ControlID="txtDescr" Name="descrProd" PropertyName="Text" Type="String" />
                          <asp:ControlParameter ControlID="txtValorInicial" Name="valorInicial" PropertyName="Text" />
                         <asp:ControlParameter ControlID="txtValorFinal" Name="valorFinal" PropertyName="Text" />
+                        <asp:Parameter Name="apenasNotasFiscaisSemAnexo" Type="Boolean" />
                         <asp:Parameter Name="cnpjFornecedor" DefaultValue="" />
                         <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue" Type="Int32" />
                         <asp:Parameter  Name="lote" Type="String" />
