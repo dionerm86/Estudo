@@ -27,7 +27,7 @@
                     </label>
                 </span>
                 <span>
-                    <lista-selecao-id-valor :item-selecionado.sync="tipoFuncionarioAtual" :funcao-recuperar-itens="obterTiposFuncionario" required></lista-selecao-id-valor>                    
+                    <lista-selecao-id-valor :item-selecionado.sync="tipoFuncionarioAtual" :funcao-recuperar-itens="obterTiposFuncionario" required></lista-selecao-id-valor>
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -49,7 +49,7 @@
                 <span class="cabecalho" v-if="configuracoes && configuracoes.idsTiposFuncionariosComSetor && configuracoes.idsTiposFuncionariosComSetor.indexOf(tipoFuncionarioAtual.id) > -1">
                 </span>
                 <span v-if="configuracoes && configuracoes.idsTiposFuncionariosComSetor && configuracoes.idsTiposFuncionariosComSetor.indexOf(tipoFuncionarioAtual.id) > -1">
-                </span>                                                
+                </span>
                 <span class="cabecalho">
                     <label>
                         Data Nasc.
@@ -250,6 +250,10 @@
                 <span v-if="inserindo">
                     <input type="text" v-model="funcionario.acesso.senha"/>
                 </span>
+                <span class="cabecalho" v-if="inserindo">
+                </span>
+                <span v-if="inserindo">
+                </span>
                 <span class="cabecalho">
                     <label>
                         Resgistrado
@@ -283,7 +287,7 @@
                     </label>
                 </span>
                 <span>
-                    <campo-upload @arquivo-selecionado="fotoSelecionada" tipo-arquivo="image/*">            
+                    <campo-upload @arquivo-selecionado="fotoSelecionada" tipo-arquivo="image/*">
                 </span>
                 <span class="cabecalho">
                 </span>
@@ -302,25 +306,35 @@
                 <span>
                     <input type="number" min="0"   v-model="funcionario.numeroPdv" />
                 </span>
-                <span class="cabecalho">
+                <span class="cabecalho" v-if="configuracoes && configuracoes.enviarEmailPedidoConfirmado">
+                    <label>
+                        Enviar Email Pedido Confirmado Vendedor
+                    </label>
+                </span>
+                <span v-if="configuracoes && configuracoes.enviarEmailPedidoConfirmado">
+                     <input type="checkbox" id="enviarEmailPedidoConfirmado" v-model="funcionario.permissoes.enviarEmailPedidoConfirmadoVendedor" />
+                </span>
+                <span class="cabecalho" v-if="configuracoes && configuracoes.habilitarChat">
                     <label>
                         Habilitar Chat WebGlass
                     </label>
                 </span>
-                <span>
+                <span v-if="configuracoes && configuracoes.habilitarChat">
                      <input type="checkbox" id="utilizarChat" v-model="funcionario.permissoes.utilizarChat" />
                 </span>
-                <span class="cabecalho">
+                <span class="cabecalho" v-if="configuracoes && configuracoes.habilitarControleUsuarios">
                     <label>
                         Exibir controle de usuários
                     </label>
                 </span>
                 <span>
-                    <span>
+                    <span v-if="configuracoes && configuracoes.habilitarControleUsuarios">
                         <input type="checkbox" id="habilitarControleUsuarios" v-model="funcionario.permissoes.habilitarControleUsuarios" />
                     </span>
                 </span>
-                <span>                
+                <span v-if="configuracoes && configuracoes.enviarEmailPedidoConfirmado">
+                </span>
+                <span>
                 </span>
                 <span>
                 </span>

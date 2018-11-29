@@ -205,6 +205,7 @@ namespace Glass.API.Backend.Helper.Funcionarios
 
             destino.HabilitarChat = this.cadastro.Permissoes.ObterValorNormalizado(c => c.UtilizarChat, destino.HabilitarChat);
             destino.HabilitarControleUsuarios = this.cadastro.Permissoes.ObterValorNormalizado(c => c.HabilitarControleUsuarios, destino.HabilitarControleUsuarios);
+            destino.EnviarEmail = this.cadastro.Permissoes.ObterValorNormalizado(c => c.EnviarEmailPedidoConfirmadoVendedor, destino.EnviarEmail);
         }
     }
 }

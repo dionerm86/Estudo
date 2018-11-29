@@ -35,5 +35,27 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
             get { return this.ObterValor(c => c.HabilitarControleUsuarios); }
             set { this.AdicionarValor(c => c.HabilitarControleUsuarios, value); }
         }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se deve enviar e-mail ao finalizar PCP.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("enviarEmailPedidoConfirmadoVendedor")]
+        public bool EnviarEmailPedidoConfirmadoVendedor
+        {
+            get { return this.ObterValor(c => c.EnviarEmailPedidoConfirmadoVendedor); }
+            set { this.AdicionarValor(c => c.EnviarEmailPedidoConfirmadoVendedor, value); }
+        }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o funcionário é administrador sync.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("adminSync")]
+        public bool AdminSync
+        {
+            get { return this.ObterValor(c => c.AdminSync); }
+            set { this.AdicionarValor(c => c.AdminSync, value); }
+        }
     }
 }

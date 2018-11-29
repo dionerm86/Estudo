@@ -127,7 +127,7 @@
         numeroPdv: item ? item.numeroPdv : 0,
         idsTiposPedidos: item && item.idsTiposPedidos ? item.idsTiposPedidos : [],
         observacao: item && item.observacao ? item.observacao : null,
-        urlImagem: item && item.urlImagem ? item.urlImagem : null,
+        adminSync: item && item.adminSync ? item.adminSync : false,
         contatos: {
           telefoneResidencial: item && item.contatos ? item.contatos.telefoneResidencial : null,
           telefoneCelular: item && item.contatos ? item.contatos.telefoneCelular : null,
@@ -167,6 +167,7 @@
         permissoes: {
           utilizarChat: item && item.permissoes ? item.permissoes.utilizarChat : false,
           habilitarControleUsuarios: item && item.permissoes ? item.permissoes.habilitarControleUsuarios : false,
+          enviarEmailPedidoConfirmadoVendedor: item && item.permissoes ? item.permissoes.enviarEmailPedidoConfirmadoVendedor : false,
         }
       };
     },
@@ -296,7 +297,10 @@
     if (id) {
       this.buscarFuncionario(id)
         .then(function () {
-          if (!vm.funcionario) {
+          if (!vm.funcionario || !vm.configuracoes.podeCadastrarFuncionario) {
+            vm.redirecionarParaListagem();
+          }
+          else if (vm.funcionario.adminSync && !vm.funcionario.permissoes.adminSync) {
             vm.redirecionarParaListagem();
           }
           else {

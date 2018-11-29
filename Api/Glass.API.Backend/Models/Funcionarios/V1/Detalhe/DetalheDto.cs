@@ -4,6 +4,7 @@
 
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
+using Glass.Data.Helper;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +22,11 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// Inicia uma nova instância da classe <see cref="DetalheDto"/>.
         /// </summary>
         /// <param name="funcionario">A model de funcionario.</param>
-        internal DetalheDto(Glass.Global.Negocios.Entidades.Funcionario funcionario)
+        internal DetalheDto(Global.Negocios.Entidades.Funcionario funcionario)
         {
             this.Id = funcionario.IdFunc;
             this.Nome = funcionario.Nome;
-            this.UrlImagem = Glass.Global.UI.Web.Process.Funcionarios.FuncionarioRepositorioImagens.Instance.ObtemUrl(funcionario.IdFunc);
+            this.AdminSync = funcionario.AdminSync;
 
             this.TipoFuncionario = new IdNomeDto
             {
@@ -100,6 +101,8 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
             {
                 UtilizarChat = funcionario.HabilitarChat,
                 HabilitarControleUsuarios = funcionario.HabilitarControleUsuarios,
+                EnviarEmailPedidoConfirmadoVendedor = funcionario.EnviarEmail,
+                AdminSync = UserInfo.GetUserInfo.IsAdminSync,
             };
 
             this.Observacao = funcionario.Obs;
@@ -214,7 +217,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// Obtém ou define um valor que indica se o usuário tem permissão de editar funcionários.
         /// </summary>
         [DataMember]
-        [JsonProperty("urlImagem")]
-        public string UrlImagem { get; set; }
+        [JsonProperty("adminSync")]
+        public bool AdminSync { get; set; }
     }
 }
