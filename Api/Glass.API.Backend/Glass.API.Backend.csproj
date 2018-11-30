@@ -243,6 +243,12 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\PostMovimentacaoEstoqueRealController.cs" />
+    <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\DeleteMovimentacaoEstoqueRealController.cs" />
+    <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\GetMovimentacaoEstoqueRealController.cs" />
+    <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\MovimentacaoEstoqueRealController.cs" />
     <Compile Include="Controllers\Parcelas\V1\PatchParcelasController.cs" />
     <Compile Include="Controllers\Parcelas\V1\PostParcelasController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\DeleteFerragensController.cs" />
@@ -498,6 +504,7 @@
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Estoques\Movimentacoes\Reais\TraducaoOrdenacaoMovimentacaoEstoqueReal.cs" />
     <Compile Include="Helper\Parcelas\ConverterCadastroAtualizacaoParaParcelas.cs" />
     <Compile Include="Helper\Carregamentos\TraducaoOrdenacaoListaCarregamentos.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\ConverterCadastroAtualizacaoParaFabricanteFerragem.cs" />
@@ -648,6 +655,11 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\DadosEstoqueDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\DataCadastroMovimentacaoDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\FiltroDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\ListaDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\PermissoesDto.cs" />
     <Compile Include="Models\Genericas\V1\CodigoNomeDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\ExecucaoOperacaoIntegracao\DadosExecucaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ConfiguracaoIntegradorDto.cs" />
