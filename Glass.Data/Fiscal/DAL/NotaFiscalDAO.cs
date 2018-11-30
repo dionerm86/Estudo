@@ -10394,8 +10394,8 @@ namespace Glass.Data.DAL
             /// <WS>?p=<chave_acesso>|<versao_qrcode>|<tipo_ambiente>|<identificador_csc>|<codigo_hash>
             /// <WS>?p=<chave_acesso>|<versao_qrcode>|<tipo_ambiente>|<dia_data_emissao>|<valor_total_nfce>|<digVal>|<identificador_csc>|<codigo_hash>
 
-            var offline = nfe.Situacao == (int)SituacaoEnum.ContingenciaOffline
-                ? $"|{DateTime.Now.Day.ToString().PadLeft(2, '0')}|{nfe.TotalNota.ToString().Replace(",", ".")}|{digestValue}"
+            var offline = nfe.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaNFCe
+                ? $"|{DateTime.Now.Day.ToString().PadLeft(2, '0')}|{Math.Round(nfe.TotalNota,2).ToString().Replace(",", ".")}|{digValHex}"
                 : string.Empty;
 
             link = $@"{chaveAcesso}|2|{nfe.TipoAmbiente}{offline}|{Conversoes.StrParaInt(idCsc)}";

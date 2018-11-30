@@ -871,7 +871,9 @@ namespace Glass.Data.DAL
                     #endregion
 
                     if (!ignorarSag)
-                        MontaArquivoMesaOptyway(transaction, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, true, false);
+                    {
+                        this.MontaArquivoMesaOptyway(transaction, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, true, (int)TipoArquivoMesaCorte.SAG, false, false, false);
+                    }
 
                     var versao = PCPConfig.VersaoArquivoOptyway;
 
@@ -1246,27 +1248,9 @@ namespace Glass.Data.DAL
                     transaction.Close();
 
                     ErroDAO.Instance.InserirFromException("ArquivoOtimizacaoOptyWay", ex);
-                    throw ex;
+                    throw;
                 }
             }
-        }
-
-        /// <summary>
-        /// Monta os arquivos de mesa com base nas etiquetas passadas
-        /// </summary>
-        public void MontaArquivoMesaOptyway(List<Etiqueta> lstEtiqueta, List<byte[]> lstArqMesa, List<string> lstCodArq,
-            List<KeyValuePair<string, Exception>> lstErrosArq, uint idSetor, bool arquivoOtimizacao, bool converterCaractereEspecial)
-        {
-            MontaArquivoMesaOptyway(null, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, idSetor, arquivoOtimizacao, converterCaractereEspecial);
-        }
-
-        /// <summary>
-        /// Monta os arquivos de mesa com base nas etiquetas passadas
-        /// </summary>
-        public void MontaArquivoMesaOptyway(GDASession session, List<Etiqueta> lstEtiqueta, List<byte[]> lstArqMesa, List<string> lstCodArq,
-             List<KeyValuePair<string, Exception>> lstErrosArq, uint idSetor, bool arquivoOtimizacao, bool converterCaractereEspecial)
-        {
-            MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, idSetor, arquivoOtimizacao, 0, false, false, converterCaractereEspecial);
         }
 
         /// <summary>
@@ -1275,11 +1259,6 @@ namespace Glass.Data.DAL
         public void MontaArquivoMesaOptyway(GDASession session, List<Etiqueta> lstEtiqueta, List<byte[]> lstArqMesa, List<string> lstCodArq,
              List<KeyValuePair<string, Exception>> lstErrosArq, uint idSetor, bool arquivoOtimizacao, int tipoArquivo, bool forSGlass, bool forIntermac, bool converterCaractereEspecial)
         {
-            // Quantidade máxima de dígitos que os arquivos de mesa podem ter
-            int qtdDigitosArqMesa = PCPConfig.QtdDigitosNomeArquivoMesa;
-
-            bool criarArquivoSAGComNumDecimal = PCPConfig.CriarArquivoSAGComNumDecimal;
-
             if (lstEtiqueta.Count > 0 && PCPConfig.Etiqueta.GerarArquivoMesaCorte)
             {
                 List<Etiqueta> lstEtiqMesaCorte = new List<Etiqueta>();
@@ -1300,13 +1279,17 @@ namespace Glass.Data.DAL
 
                     var pecaEstaReposta = ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(session, etiq.NumEtiqueta, false);
 
+                    var idPedido = ProdutosPedidoEspelhoDAO.Instance.ObtemIdPedido(session, etiq.IdProdPedEsp);
+                    var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(session, idPedido);
+
                     // Gera os arquivos de Mesa
                     using (var ms = new System.IO.MemoryStream())
                     {
                         try
                         {
                             ArquivoMesaCorteDAO.Instance.GetArquivoMesaCorte(session, etiq.IdPedido.StrParaUint(), etiq.IdProdPedEsp,
-                                idSetor, ref idArquivoMesaCorte, arquivoOtimizacao, ms, ref tipoArquivo, forSGlass, forIntermac);
+                                idSetor, ref idArquivoMesaCorte, arquivoOtimizacao, ms, ref tipoArquivo, forSGlass, forIntermac, pedidoImportado);
+                            lstErrosArq.Add(new KeyValuePair<string, Exception>(null, null));
                         }
                         catch (Exception ex)
                         {
@@ -1342,9 +1325,6 @@ namespace Glass.Data.DAL
                     // para gerar uma forma inexistente, gera a mesma
                     else
                     {
-                        var idPedido = ProdutosPedidoEspelhoDAO.Instance.ObtemIdPedido(session, etiq.IdProdPedEsp);
-                        var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(session, idPedido);
-
                         if (!pecaEstaReposta || PCPConfig.GerarMarcacaoPecaReposta)
                         {
                             /* Chamado 57976. */
@@ -1488,6 +1468,36 @@ namespace Glass.Data.DAL
                 ".SAG";
 
             return retorno.Replace("  ", "").Replace(" ", "");
+        }
+
+        private static string ObterExtensaoArquivo(TipoArquivoMesaCorte tipoArquivo, bool arquivoIntermac)
+        {
+            if (arquivoIntermac)
+            {
+                return ".CNI";
+            }
+            else
+            {
+                switch (tipoArquivo)
+                {
+                    case TipoArquivoMesaCorte.SAG:
+                        return ".SAG";
+                    case TipoArquivoMesaCorte.FORTxt:
+                        return ".FOR";
+                    case TipoArquivoMesaCorte.ISO:
+                        return ".ISO";
+                    case TipoArquivoMesaCorte.DXF:
+                        return ".DXF";
+                    case TipoArquivoMesaCorte.FMLBasico:
+                    case TipoArquivoMesaCorte.FML:
+                        return ".FML";
+
+                    case TipoArquivoMesaCorte.Todos:
+                        return ".DXF";
+                }
+            }
+
+            return ".SAG";
         }
 
         /// <summary>
