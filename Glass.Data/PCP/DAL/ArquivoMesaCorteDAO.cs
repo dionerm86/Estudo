@@ -92,6 +92,10 @@ namespace Glass.Data.DAL
                         return true;
                     }
                 }
+                else if (tipoArquivo == (int)TipoArquivoMesaCorte.SAG)
+                {
+                    return false;
+                }
             }
 
             var pecaItemProjeto = new PecaItemProjeto();
