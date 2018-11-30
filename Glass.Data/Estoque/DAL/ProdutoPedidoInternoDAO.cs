@@ -47,8 +47,8 @@ namespace Glass.Data.DAL
                 FROM pedido_interno pi
                     INNER JOIN produto_pedido_interno ppi ON (ppi.IdPedidoInterno = pi.IdPedidoInterno)
                     INNER JOIN produto p ON (p.IdProd = ppi.IdProd)
-                    INNER JOIN subgrupo_prod sgp ON (p.idSubGrupoProd = sgp.idSubGrupoProd)
-                    INNER JOIN grupo_prod gp ON (p.idGrupoProd = gp.idGrupoProd)
+                    INNER JOIN subgrupo_prod sgp ON (p.IdSubGrupoProd = sgp.IdSubGrupoProd)
+                    INNER JOIN grupo_prod gp ON (p.IdGrupoProd = gp.IdGrupoProd)
                 WHERE 1";
 
             if (idPedInterno > 0)
