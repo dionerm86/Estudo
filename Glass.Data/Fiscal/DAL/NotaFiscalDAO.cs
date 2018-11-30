@@ -7719,14 +7719,13 @@ namespace Glass.Data.DAL
             uint idNfEmissaoNormal = nf.IdNf;
             uint idNf = 0;
 
-            
             var uf = CidadeDAO.Instance.ObtemValorCampo<string>("NomeUf", "idCidade=" + nf.IdCidade);
 
             nf.FormaEmissao = (int)ConfigNFe.ObtemTipoContingencia(uf);
             nf.CodAleatorio = null;
             nf.NumeroNFe = ProxNumeroNFe(nf.IdLoja.Value, Conversoes.StrParaInt(nf.Serie));
 
-            if(nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.Normal)
+            if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.Normal)
             {
                 idNf = NotaFiscalDAO.Instance.Insert(nf);
             }
@@ -7754,7 +7753,6 @@ namespace Glass.Data.DAL
                     PedidosNotaFiscalDAO.Instance.Insert(ped);
                 }
             }
-            
 
             return idNf;
         }
