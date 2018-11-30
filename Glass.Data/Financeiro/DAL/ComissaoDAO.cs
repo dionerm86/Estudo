@@ -23,16 +23,16 @@ namespace Glass.Data.DAL
         private string Sql(GDASession session, uint idComissao, string idsComissoes, Pedido.TipoComissao tipoFunc, uint idFuncComissionado,
             uint idPedido, string dataIni, string dataFim, bool selecionar)
         {
-            string campos = selecionar ? @"c.*, f.Nome as NomeFuncionario, com.Nome as NomeComissionado, i.Nome as NomeInstalador, 
+            string campos = selecionar ? @"c.*, f.Nome as NomeFuncionario, com.Nome as NomeComissionado, i.Nome as NomeInstalador,
                 '$$$' as criterio" : "Count(*)";
             string criterio = "";
 
             string sql = @"
-                Select " + campos + @" 
-                From comissao c 
-                    Left Join comissionado com On (c.idComissionado=com.idComissionado) 
-                    Left Join funcionario f On (c.idFunc=f.idFunc) 
-                    Left Join funcionario i On (c.idInstalador=i.idFunc) 
+                Select " + campos + @"
+                From comissao c
+                    Left Join comissionado com On (c.idComissionado=com.idComissionado)
+                    Left Join funcionario f On (c.idFunc=f.idFunc)
+                    Left Join funcionario i On (c.idInstalador=i.idFunc)
                     LEFT JOIN comissao_contas_receber ccr ON (ccr.IdComissao = c.IdComissao)
                 Where ccr.IdComissaoContasReceber IS NULL";
 
@@ -207,7 +207,7 @@ namespace Glass.Data.DAL
             }
         }
 
-        /// <summary>        
+        /// <summary>
         /// Gera comissão para o funcionário/comissionado referente aos pedidos passados
         /// </summary>
         /// <param name="tipoComissao">0-Funcionário, 1-Comissionado, 2-Instalador</param>
@@ -286,12 +286,12 @@ namespace Glass.Data.DAL
             {
                 idComissao = Insert(sessao, comissao);
 
-                // Associa os pedidos 
+                // Associa os pedidos
                 string sqlInsert = String.Empty;
 
                 // Salva o valor pago por pedido
                 foreach (Pedido p in pedidos)
-                {                                       
+                {
                     var valorComissaoPedido = p.ValorComissaoPagar * percAcrescimo;
                     decimal baseCalcRecebido = Convert.ToDecimal(ComissaoPedidoDAO.Instance.GetTotalBaseCalcComissaoPedido(p.IdPedido, (int)tipoComissao, idFuncComissionado));
                     decimal baseCalcAtual = p.ValorBaseCalcComissao - (PedidoConfig.LiberarPedido ? 0 : baseCalcRecebido);
@@ -304,7 +304,7 @@ namespace Glass.Data.DAL
 
                     sqlInsert += "Insert Into comissao_pedido (idPedido, idComissao, valor, basecalccomissao)" +
                         " values (" + p.IdPedido + ", " + idComissao + ", " + valorComissaoPedido.ToString().Replace(',', '.') + ", " + baseCalc + ");";
-                    
+
                     if (tipoComissao == Pedido.TipoComissao.Gerente)
                         p.ValorComissaoGerentePago = decimal.Round(valorComissaoPedido, 2);
                 }
@@ -499,7 +499,7 @@ namespace Glass.Data.DAL
             if (tipoFunc == Pedido.TipoComissao.Funcionario)
             {
                 foreach (uint idPedido in idsPedidos)
-                {   
+                {
                    var valorPago = ExecuteScalar<decimal>(
                         string.Format("Select valor From comissao_pedido Where idPedido={0} And idComissao={1}", idPedido, objDelete.IdComissao));
 
@@ -507,7 +507,7 @@ namespace Glass.Data.DAL
                         string.Format("Update pedido_comissao Set ValorPago=ValorPago-?valorPago Where idFunc={0} And idPedido={1}",
                         ObtemValorCampo<uint>("IdFunc", "IdComissao=" + objDelete.IdComissao), idPedido), new GDAParameter("?valorPago", valorPago));
                 }
-            }     
+            }
 
             if(tipoFunc == Pedido.TipoComissao.Gerente)
             {
@@ -583,7 +583,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="idFunc"></param>
         /// <param name="idLoja"></param>
@@ -602,7 +602,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="idFunc"></param>
         /// <param name="idLoja"></param>
@@ -825,10 +825,10 @@ namespace Glass.Data.DAL
                     trans.Close();
 
                     ErroDAO.Instance.InserirFromException("Cancelar comissão de contas recebidas", ex);
-                    
+
                     throw ex;
                 }
-                
+
 
 
             }
@@ -909,7 +909,7 @@ namespace Glass.Data.DAL
 
             return Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas == TipoComissaoContaRec.VendedorAssociadoPedido
                 ? (int)PedidoDAO.Instance.ObtemIdFunc(session, (uint)idPedido)
-                : (int)ClienteDAO.Instance.ObtemIdFunc(session, idCliente);
+                : (int?)ClienteDAO.Instance.ObtemIdFunc(session, idCliente).GetValueOrDefault();
         }
     }
 }
