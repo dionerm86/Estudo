@@ -120,24 +120,30 @@ namespace Glass.Data.Model
         {
             get
             {
-                var descr = "";
+                var descr = string.Empty;
 
-                if (((Sync.Utils.CodigoBanco)CodBanco) != Sync.Utils.CodigoBanco.Sicredi) {
+                if (((Sync.Utils.CodigoBanco)CodBanco) != Sync.Utils.CodigoBanco.Sicredi)
+                {
 
                     if (Instrucao1 > 0)
+                    {
                         descr += new Sync.Utils.Boleto.Instrucoes.Instrucao((TipoArquivo)TipoCnab, CodBanco, Instrucao1, JurosMoraDias, JurosMoraValor,
-                            DescontoDias, DescontoValor, ProtestoDias, MultaValor, BaixaDevolucaoDias)
+                            DescontoDias, DescontoValor, ProtestoDias, MultaValor, BaixaDevolucaoDias, JurosMoraCod)
                             .Descricao + Environment.NewLine;
+                    }
 
                     if (Instrucao2 > 0)
+                    {
                         descr += new Sync.Utils.Boleto.Instrucoes.Instrucao((TipoArquivo)TipoCnab, CodBanco, Instrucao2, JurosMoraDias, JurosMoraValor,
-                           DescontoDias, DescontoValor, ProtestoDias, MultaValor, BaixaDevolucaoDias)
+                           DescontoDias, DescontoValor, ProtestoDias, MultaValor, BaixaDevolucaoDias, JurosMoraCod)
                            .Descricao + Environment.NewLine;
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(Mensagem))
+                {
                     descr += Mensagem;
-
+                }
 
                 return descr.ToUpper();
             }
