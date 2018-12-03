@@ -77,16 +77,16 @@ namespace Glass.UI.Web.Utils
             try
             {
                 var idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
-                var pcp = !String.IsNullOrEmpty(Request["pcp"]) ? Request["pcp"] == "true" : false;
+                var pcp = !string.IsNullOrEmpty(Request["pcp"]) ? Request["pcp"] == "true" : false;
     
                 // Recupera os dados da mão de obra
                 var idProdMaoObra = Glass.Conversoes.StrParaUint(hdfIdProdMaoObra.Value);
                 int qtdeMaoObra = Glass.Conversoes.StrParaInt(txtQtdeMaoObra.Text);
                 var valorMaoObra = Glass.Conversoes.StrParaDecimal(txtValorUnitMaoObra.Text);
                 var tipoCalcMaoObra = Glass.Conversoes.StrParaInt(hdfTipoCalcMaoObra.Value);
-                var alturaBenef = !String.IsNullOrEmpty(drpAltBenef.SelectedValue) ? Glass.Conversoes.StrParaInt(drpAltBenef.SelectedValue) : 0;
-                var larguraBenef = !String.IsNullOrEmpty(drpLargBenef.SelectedValue) ? Glass.Conversoes.StrParaInt(drpLargBenef.SelectedValue) : 0;
-                var espBenef = !String.IsNullOrEmpty(txtEspBenef.Text) ? (int?)Glass.Conversoes.StrParaInt(txtEspBenef.Text) : null;
+                var alturaBenef = !string.IsNullOrEmpty(drpAltBenef.SelectedValue) ? Glass.Conversoes.StrParaInt(drpAltBenef.SelectedValue) : 0;
+                var larguraBenef = !string.IsNullOrEmpty(drpLargBenef.SelectedValue) ? Glass.Conversoes.StrParaInt(drpLargBenef.SelectedValue) : 0;
+                var espBenef = !string.IsNullOrEmpty(txtEspBenef.Text) ? (int?)Glass.Conversoes.StrParaInt(txtEspBenef.Text) : null;
     
                 for (var i = 1; i <= 10; i++)
                 {
@@ -94,8 +94,10 @@ namespace Glass.UI.Web.Utils
                         Glass.Conversoes.StrParaUint(((HiddenField)Master.FindControl("pagina").FindControl("hdfAmbIdProd" + i)).Value) : 0;
     
                     if (idProdAmbiente == 0)
+                    {
                         continue;
-    
+                    }
+
                     var codAmbiente = (TextBox)Master.FindControl("pagina").FindControl("txtCodAmb" + i) != null ?
                         ((TextBox)Master.FindControl("pagina").FindControl("txtCodAmb" + i)).Text : "";
     
@@ -137,9 +139,11 @@ namespace Glass.UI.Web.Utils
                         novo.Redondo = redondoAmbiente;
 
                         if (novo.Altura != novo.Largura && redondoAmbiente)
+                        {
                             throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
+                        }
     
-                        idAmbiente = AmbientePedidoDAO.Instance.Insert(novo);
+                        idAmbiente = AmbientePedidoDAO.Instance.InsertComTransacao(novo);
                     }
                     else
                     {
@@ -153,13 +157,17 @@ namespace Glass.UI.Web.Utils
                         novo.Redondo = redondoAmbiente;
 
                         if (novo.Altura != novo.Largura && redondoAmbiente)
+                        {
                             throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
+                        }
 
-                        idAmbiente = AmbientePedidoEspelhoDAO.Instance.Insert(novo);
+                        idAmbiente = AmbientePedidoEspelhoDAO.Instance.InsertComTransacao(novo);
                     }
     
                     if (idAmbiente <= 0)
+                    {
                         throw new Exception("Ambiente não cadastrado.");
+                    }
     
                     // Insere a mão de obra no ambiente
                     if (!pcp)
@@ -210,7 +218,7 @@ namespace Glass.UI.Web.Utils
                         prod.IdGrupoProd = (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)prod.IdProd);
                         prod.IdSubgrupoProd = (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)prod.IdProd).GetValueOrDefault(0);
 
-                        ProdutosPedidoEspelhoDAO.Instance.Insert(prod);
+                        ProdutosPedidoEspelhoDAO.Instance.InsertComTransacao(prod);
                     }
                 }
     
