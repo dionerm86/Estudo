@@ -26,7 +26,7 @@
                     <td>
                         {{ item.id }}
                     </td>
-                    <td v-if="configuracoes.controlarPedidosImportados && item.clienteExterno.id">
+                    <td v-if="item.clienteExterno && item.clienteExterno.id && configuracoes.controlarPedidosImportados ">
                         {{ item.clienteExterno.id }} - {{ item.clienteExterno.nome }}
                     </td>
                     <td v-else>
