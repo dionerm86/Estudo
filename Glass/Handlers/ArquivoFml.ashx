@@ -25,7 +25,7 @@ public class ArquivoFml : IHttpHandler
             context.Request["dataIniEnt"], context.Request["dataFimEnt"], context.Request["dataIniFab"], context.Request["dataFimFab"],
             context.Request["dataIniFin"], context.Request["dataFimFin"], context.Request["dataIniConf"], context.Request["dataFimConf"],
             false, context.Request["pedidosSemAnexos"] == "true", context.Request["pedidosAComprar"] == "true", context.Request["pedidos"],
-            null, null, null, context.Request["tipoPedido"], context.Request["idsRotas"], Glass.Conversoes.StrParaInt(context.Request["origemPedido"]), Glass.Conversoes.StrParaInt(context.Request["pedidosConferidos"]));
+            null, null, null, context.Request["tipoPedido"], context.Request["idsRotas"], Glass.Conversoes.StrParaInt(context.Request["origemPedido"]), Glass.Conversoes.StrParaInt(context.Request["pedidosConferidos"]), null);
 
         var resultado = PedidoEspelhoDAO.Instance.GerarArquivoFmlPeloPedido(lstProdPedEsp, false);
 

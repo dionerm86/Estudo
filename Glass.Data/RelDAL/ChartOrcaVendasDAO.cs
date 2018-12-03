@@ -22,17 +22,9 @@ namespace Glass.Data.RelDAL
                 var serie = new ChartOrcaVendas();
                 serie.Periodo = periodoIni.ToString("MMM-yy");
 
-                var login = UserInfo.GetUserInfo;
-                var administrador = login.IsAdministrador;
-                var cliente = login.IsCliente;
-                var emitirGarantia = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
-                var emitirReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao);
-                var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
-
                 var orcamento = GraficoOrcamentosDAO.Instance.GetOrcamentos(idLoja, idVendedor, situacao, periodoIni.ToString("dd/MM/yyyy"), periodoIni.AddMonths(1).AddDays(-1).ToString("dd/MM/yyyy"), 0, false);
                 var venda = ChartVendasDAO.Instance.GetVendas((int?)idLoja, tipoFunc, (int?)idVendedor, 0, 0, null,
-                    periodoIni.ToString("dd/MM/yyyy"), periodoIni.AddMonths(1).AddDays(-1).ToString("dd/MM/yyyy"), null, 0,
-                    cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario);
+                    periodoIni.ToString("dd/MM/yyyy"), periodoIni.AddMonths(1).AddDays(-1).ToString("dd/MM/yyyy"), null, 0);
 
                 if (orcamento.Count > 0 && venda.Length > 0)
                 {

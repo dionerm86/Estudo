@@ -1,4 +1,4 @@
-<section class="filtros">
+﻿<section class="filtros">
     <div>
         <span class="form-group">
             <label>Num. NF</label>
@@ -67,7 +67,7 @@
         <span class="form-group">
             <label>Rota</label>
             <campo-busca-com-popup v-bind:nome.sync="filtroAtual.codigoRota" v-bind:item-selecionado.sync="rotaAtual" v-bind:funcao-buscar-itens="obterItensFiltroRotas"
-                url-popup="../Utils/SelRota.aspx" v-bind:largura-popup="700" v-bind:altura-popup="500" style="width: 80px"></campo-busca-com-popup>
+                                   url-popup="../Utils/SelRota.aspx" v-bind:largura-popup="700" v-bind:altura-popup="500" style="width: 80px"></campo-busca-com-popup>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -173,6 +173,13 @@
                 <option Value="7">Valor Total(cresc.)</option>
                 <option Value="8">Valor Total (descresc.)</option>
             </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <input id="apenasNotasFiscaisSemAnexo" type="checkbox" v-model="filtroAtual.apenasNotasFiscaisSemAnexo" />
+            <label for="apenasNotasFiscaisSemAnexo">NF-e sem anexos</label>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>

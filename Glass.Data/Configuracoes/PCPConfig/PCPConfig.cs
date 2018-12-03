@@ -180,7 +180,16 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ConcatenarEspAltLargAoNumEtiqueta); }
         }
-        
+
+        /// <summary>
+        /// Define que será concatenado no início da etiqueta a espessura, largura e altura no formato EELLLLAAAA,
+        /// a largura será exibida primeiro apenas se for maior que a altura, e vice-versa, somente caso utilize FML, Sglass, DXF e Intermac.
+        /// </summary>
+        public static bool ConcatenarEspAltLargFmlDxfSGlassIntermac
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ConcatenarEspAltLargFmlDxfSGlassIntermac); }
+        }
+
         /// <summary>
         /// Define se serão criados clones
         /// </summary>

@@ -47,7 +47,7 @@ namespace Glass.Data.DAL.CTe
             if (idTransportador > 0)
             {
                 sql += @" and c.IdCte In (
-                    select part.idCte from participante_cte part 
+                    select part.idCte from participante_cte part
                     where idCte=c.idCte and idTransportador=" + idTransportador + @" or part.idFornec in (
                         select idFornec from fornecedor where idFornec=part.idFornec and cpfCnpj=(
 	                        select cpfCnpj from transportador where idTransportador=" + idTransportador + @"
@@ -291,8 +291,8 @@ namespace Glass.Data.DAL.CTe
 
             // Filtra pela loja selecionada
             if (!String.IsNullOrEmpty(idsLojas) && idsLojas != "0")
-                sql += " And exists (select * from participante_cte where idCte=c.idCte and tipoParticipante=if(c.tipoDocumentoCte=" + 
-                    (int)ConhecimentoTransporte.TipoDocumentoCteEnum.Saida + ", " + (int)ParticipanteCte.TipoParticipanteEnum.Emitente + ", " + 
+                sql += " And exists (select * from participante_cte where idCte=c.idCte and tipoParticipante=if(c.tipoDocumentoCte=" +
+                    (int)ConhecimentoTransporte.TipoDocumentoCteEnum.Saida + ", " + (int)ParticipanteCte.TipoParticipanteEnum.Emitente + ", " +
                     (int)ParticipanteCte.TipoParticipanteEnum.Destinatario + ") and idLoja in (" + idsLojas + "))";
 
             return objPersistence.LoadData(sql, GetParams(dataIni, dataFim)).ToArray();
@@ -332,7 +332,7 @@ namespace Glass.Data.DAL.CTe
             uint idCte = base.Insert(session, objInsert);
 
             return idCte;
-        }        
+        }
 
         /// <summary>
         /// Atualiza tabela do cte com motivo do cancelamento, quando for o caso;
@@ -417,7 +417,7 @@ namespace Glass.Data.DAL.CTe
         /// 1-Normal
         /// 5-Contingência FSDA
         /// 7-Autorização pela SVC-RS
-        /// 8-Autorização pela SVC-SP  
+        /// 8-Autorização pela SVC-SP
         /// </summary>
         /// <param name="idCte"></param>
         /// <returns></returns>
@@ -454,6 +454,11 @@ namespace Glass.Data.DAL.CTe
             var ultimaInsercao = ExecuteScalar<DateTime>(sessao, @"SELECT MAX(DataCad) FROM conhecimento_transporte cte");
 
             return ultimaInsercao > dataAtual;
+        }
+
+        public ConhecimentoTransporte.TipoCteEnum ObterTipoCte(uint idCte)
+        {
+            return ObtemValorCampo<ConhecimentoTransporte.TipoCteEnum>("TipoCte", "idCte=" + idCte);
         }
 
         #endregion
@@ -503,8 +508,8 @@ namespace Glass.Data.DAL.CTe
         {
             string sql = null;
 
-            sql = @"select Coalesce(Max(NUMEROCTE) + 1, 1) From conhecimento_transporte con                            
-                  inner join participante_cte part ON(con.IDCTE=part.IDCTE)                            
+            sql = @"select Coalesce(Max(NUMEROCTE) + 1, 1) From conhecimento_transporte con
+                  inner join participante_cte part ON(con.IDCTE=part.IDCTE)
                   Where part.idLoja=" + idLoja + " And con.serie=" + serie +
                   " AND con.TipoDocumentoCte NOT IN(" + (int)ConhecimentoTransporte.TipoDocumentoCteEnum.EntradaTerceiros + ")";
 
@@ -512,7 +517,7 @@ namespace Glass.Data.DAL.CTe
         }
 
         #endregion
-        
+
         #region Retorno da emissão do CT-e
 
         /// <summary>
@@ -532,19 +537,19 @@ namespace Glass.Data.DAL.CTe
                     IdCte = idCte,
                     NumRecibo = numRecibo,
                     TipoProtocolo = (int)ProtocoloCte.TipoProtocoloEnum.Autorizacao
-                });                
+                });
             }
             else if(!String.IsNullOrEmpty(numRecibo))
                 ProtocoloCteDAO.Instance.Insert(new ProtocoloCte
                 {
                     DataCad = DateTime.Now,
-                    IdCte = idCte,                    
+                    IdCte = idCte,
                     NumRecibo = numRecibo,
                     TipoProtocolo = (int)ProtocoloCte.TipoProtocoloEnum.Autorizacao
-                });                
+                });
 
             AlteraSituacao(idCte, Glass.Data.Model.Cte.ConhecimentoTransporte.SituacaoEnum.ProcessoEmissao);
-        }                
+        }
 
         /// <summary>
         /// Retorno da consulta de emissão do CTe
@@ -728,7 +733,7 @@ namespace Glass.Data.DAL.CTe
                 };
 
                 ProtocoloCteDAO.Instance.Insert(protocoloCteInut);
-                
+
                 AlteraSituacao(idCte, ConhecimentoTransporte.SituacaoEnum.Inutilizado);
             }
             else if (cod == 206 || cod == 256) // CT-e já está inutilizada
@@ -774,7 +779,7 @@ namespace Glass.Data.DAL.CTe
             }
         }
 
-        #endregion          
+        #endregion
 
         #region Obtém CTe pela chave de acesso
 
@@ -831,7 +836,7 @@ namespace Glass.Data.DAL.CTe
             {
                 // Salva protocolo de denegação de uso
                 if (xmlRetConsSit["protCTe"] != null)
-                    objPersistence.ExecuteCommand("Update protocolo_cte set NUMPROTOCOLO=?numProt Where IDCTE" + cte.IdCte, 
+                    objPersistence.ExecuteCommand("Update protocolo_cte set NUMPROTOCOLO=?numProt Where IDCTE" + cte.IdCte,
                     new GDAParameter[] { new GDAParameter("?numProt", xmlRetConsSit["protCTe"]["infProt"]["nProt"].InnerXml) });
 
                 // Altera situação da CTe para denegado
@@ -866,7 +871,7 @@ namespace Glass.Data.DAL.CTe
 
             try
             {
-                // Lê Xml de retorno do envio do lote                
+                // Lê Xml de retorno do envio do lote
                 int statusProcessamento = Glass.Conversoes.StrParaInt(xmlRetCanc["infEvento"]["cStat"].InnerText);
                 string respostaProcessamento = xmlRetCanc["infEvento"]["xMotivo"].InnerText;
 
@@ -979,8 +984,8 @@ namespace Glass.Data.DAL.CTe
 
             if (String.IsNullOrEmpty(codUf))
                 throw new Exception("UF do emitente é não pode ser nula");
-            
-            // Monta o atributo ID, necessário para identificar esse pedido de inutilização            
+
+            // Monta o atributo ID, necessário para identificar esse pedido de inutilização
             string idInut = Formatacoes.TrataStringDocFiscal("ID" + codUf + cnpj + cte.Modelo.PadLeft(2, '0') +
                 cte.Serie.ToString().PadLeft(3, '0') + cte.NumeroCte.ToString().PadLeft(9, '0') + cte.NumeroCte.ToString().PadLeft(9, '0'));
 
@@ -1113,14 +1118,14 @@ namespace Glass.Data.DAL.CTe
 
             XmlElement infEvento = xmlCanc.CreateElement("infEvento");
 
-            //Identificador da TAG a ser assinada, a regra de formação 
-            //do Id é: 
-            //“ID” + tpEvento +  chave da NF-e + nSeqEvento 
+            //Identificador da TAG a ser assinada, a regra de formação
+            //do Id é:
+            //“ID” + tpEvento +  chave da NF-e + nSeqEvento
             infEvento.SetAttribute("Id", "ID110111" + cte.ChaveAcesso + "1".PadLeft(2, '0'));
             evento.AppendChild(infEvento);
 
-            // Código do órgão de recepção do Evento. Utilizar a Tabela 
-            // do IBGE, utilizar 90 para identificar o Ambiente Nacional. 
+            // Código do órgão de recepção do Evento. Utilizar a Tabela
+            // do IBGE, utilizar 90 para identificar o Ambiente Nacional.
             XmlElement cOrgao = xmlCanc.CreateElement("cOrgao");
             uint idCidade = LojaDAO.Instance.ObtemValorCampo<uint>("idCidade", "idLoja=" + emitente.IdLoja);
             string codIbgeUf = CidadeDAO.Instance.ObtemValorCampo<string>("codIbgeUf", "idCidade=" + idCidade);
@@ -1128,8 +1133,8 @@ namespace Glass.Data.DAL.CTe
             infEvento.AppendChild(cOrgao);
 
             // Identificação do Amb
-            // 1 - Produção 
-            // 2 – Homologação 
+            // 1 - Produção
+            // 2 – Homologação
             XmlElement tpAmb = xmlCanc.CreateElement("tpAmb");
             tpAmb.InnerText = ((int)ConfigCTe.TipoAmbiente).ToString();
             infEvento.AppendChild(tpAmb);
@@ -1286,7 +1291,7 @@ namespace Glass.Data.DAL.CTe
 
             XmlElement infCte = doc.CreateElement("infCte");
             infCte.SetAttribute("versao", ConfigCTe.VersaoCte);
-            infCte.SetAttribute("Id", "CTe" + cte.ChaveAcesso);            
+            infCte.SetAttribute("Id", "CTe" + cte.ChaveAcesso);
             CTe.AppendChild(infCte);
 
             #region Informações do CTe
@@ -1307,7 +1312,7 @@ namespace Glass.Data.DAL.CTe
                 ManipulacaoXml.SetNode(doc, ide, "CFOP", cfop.CodInterno.PadLeft(4, '0'));
                 ManipulacaoXml.SetNode(doc, ide, "natOp", Formatacoes.TrataStringDocFiscal(cfop.CodInterno + "-" + cfop.Descricao));
                 ManipulacaoXml.SetNode(doc, ide, "mod", cte.Modelo);
-                                                   
+
                 ManipulacaoXml.SetNode(doc, ide, "serie", Glass.Conversoes.StrParaInt(cte.Serie).ToString());
                 ManipulacaoXml.SetNode(doc, ide, "nCT", cte.NumeroCte.ToString());
                 var dataEmissao = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz");
@@ -1323,7 +1328,7 @@ namespace Glass.Data.DAL.CTe
                 ManipulacaoXml.SetNode(doc, ide, "cDV", cte.ChaveAcesso[43].ToString());
                 ManipulacaoXml.SetNode(doc, ide, "tpAmb", ((int)ConfigCTe.TipoAmbiente).ToString()); // 1-Produção 2-Homologação
                 ManipulacaoXml.SetNode(doc, ide, "tpCTe", cte.TipoCte.ToString());
-                ManipulacaoXml.SetNode(doc, ide, "procEmi", "0"); // Emissão de CT-e com aplicativo do contribuinte                                
+                ManipulacaoXml.SetNode(doc, ide, "procEmi", "0"); // Emissão de CT-e com aplicativo do contribuinte
                 ManipulacaoXml.SetNode(doc, ide, "verProc", ConfigCTe.VersaoCte);
 
                 ManipulacaoXml.SetNode(doc, ide, "cMunEnv", cidadeLoja.CodUfMunicipio);
@@ -1357,7 +1362,7 @@ namespace Glass.Data.DAL.CTe
                 var inscricaoEstadualTomador = clienteTomador != null ? clienteTomador.RgEscinst : fornecedorTomador != null ? fornecedorTomador.RgInscEst : lojaTomador != null ? lojaTomador.InscEst : string.Empty;
                 Cidade cidadeFornec;
                 var indicadorIEDestinatario = NotaFiscalDAO.Instance.ObterIndicadorIE(null, cte, clienteTomador, fornecedorTomador, out cidadeFornec);
-                
+
                 if (indicadorIEDestinatario == null && loja != null)
                 {
                     if (string.IsNullOrEmpty(loja.InscEst) || loja.InscEst.ToLower().Contains("isento"))
@@ -1401,7 +1406,7 @@ namespace Glass.Data.DAL.CTe
                     dataContingencia = DateTime.Now;
 
                 //ManipulacaoXml.SetNode(doc, ide, "dhCont", dataContingencia.Value.ToString("yyyy-MM-ddTHH:mm:ss"));
-                //ManipulacaoXml.SetNode(doc, ide, "xJust", "bla bla bla bla bla bla bla bla bla bla bla");                               
+                //ManipulacaoXml.SetNode(doc, ide, "xJust", "bla bla bla bla bla bla bla bla bla bla bla");
 
                 infCte.AppendChild(ide);
             }
@@ -1435,7 +1440,7 @@ namespace Glass.Data.DAL.CTe
 
             try
             {
-                // Emitente                
+                // Emitente
 
                 XmlElement emit = doc.CreateElement("emit");
                 ManipulacaoXml.SetNode(doc, emit, "CNPJ", Formatacoes.TrataStringDocFiscal(loja.Cnpj).PadLeft(14, '0'));
@@ -1487,7 +1492,7 @@ namespace Glass.Data.DAL.CTe
                     var idCidadeRemetente = lojaRemetente.IdCidade != null ? lojaRemetente.IdCidade.ToString() : "0";
                     if (idCidadeRemetente == "0")
                         throw new Exception("Remetente não possui cidade em seu cadastro.");
-                    var cidadeRemetente = CidadeDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idCidadeRemetente));                   
+                    var cidadeRemetente = CidadeDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idCidadeRemetente));
 
                     if (string.IsNullOrEmpty(lojaRemetente.Cnpj))
                         throw new Exception("Remetente não possui CNPJ cadastrado");
@@ -1501,7 +1506,7 @@ namespace Glass.Data.DAL.CTe
                         ManipulacaoXml.SetNode(doc, rem, "xNome", "CT-E EMITIDO EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
                     else
                         ManipulacaoXml.SetNode(doc, rem, "xNome", Formatacoes.TrataStringDocFiscal(lojaRemetente.RazaoSocial));
-                    
+
                     XmlElement enderReme = doc.CreateElement("enderReme");
 
                     if (string.IsNullOrEmpty(lojaRemetente.Endereco))
@@ -1518,7 +1523,7 @@ namespace Glass.Data.DAL.CTe
                     if (string.IsNullOrEmpty(lojaRemetente.Bairro))
                         throw new Exception("Remetente não possui bairro cadastrado");
                     ManipulacaoXml.SetNode(doc, enderReme, "xBairro", Formatacoes.TrataStringDocFiscal(lojaRemetente.Bairro));
-                                        
+
                     ManipulacaoXml.SetNode(doc, enderReme, "cMun", cidadeRemetente.CodUfMunicipio);
 
                     ManipulacaoXml.SetNode(doc, enderReme, "xMun", Formatacoes.TrataStringDocFiscal(cidadeRemetente.NomeCidade));
@@ -1533,7 +1538,7 @@ namespace Glass.Data.DAL.CTe
                     rem.AppendChild(enderReme);
                 }
                 else if (participanteRemetente.IdCliente > 0)
-                {                    
+                {
                     var remetente = ClienteDAO.Instance.GetElement(participanteRemetente.IdCliente.Value);
                     var pj = remetente.TipoPessoa.ToUpper() == "J";
 
@@ -1541,7 +1546,7 @@ namespace Glass.Data.DAL.CTe
 
                     if (idCidadeRemetente == "0")
                         throw new Exception("Remetente não possui cidade em seu cadastro.");
-                    var cidadeRemetente = CidadeDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idCidadeRemetente));                    
+                    var cidadeRemetente = CidadeDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idCidadeRemetente));
 
                     var numDocumento = Formatacoes.TrataStringDocFiscal(remetente.CpfCnpj);
 
@@ -1565,7 +1570,7 @@ namespace Glass.Data.DAL.CTe
                         ManipulacaoXml.SetNode(doc, rem, "xNome", "CT-E EMITIDO EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
                     else
                         ManipulacaoXml.SetNode(doc, rem, "xNome", Formatacoes.TrataStringDocFiscal(remetente.Nome));
-                    
+
                     XmlElement enderReme = doc.CreateElement("enderReme");
 
                     ManipulacaoXml.SetNode(doc, enderReme, "xLgr", Formatacoes.TrataStringDocFiscal(remetente.Endereco));
@@ -1598,7 +1603,7 @@ namespace Glass.Data.DAL.CTe
 
                     if (idCidadeRemetente == "0")
                         throw new Exception("Remetente não possui cidade em seu cadastro.");
-                    var cidadeRemetente = CidadeDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idCidadeRemetente));                    
+                    var cidadeRemetente = CidadeDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idCidadeRemetente));
 
                     var numDocumento = Formatacoes.TrataStringDocFiscal(remetente.CpfCnpj);
 
@@ -1622,7 +1627,7 @@ namespace Glass.Data.DAL.CTe
                         ManipulacaoXml.SetNode(doc, rem, "xNome", "CT-E EMITIDO EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
                     else
                         ManipulacaoXml.SetNode(doc, rem, "xNome", Formatacoes.TrataStringDocFiscal(remetente.Razaosocial));
-                    
+
                     XmlElement enderReme = doc.CreateElement("enderReme");
 
                     ManipulacaoXml.SetNode(doc, enderReme, "xLgr", Formatacoes.TrataStringDocFiscal(remetente.Endereco));
@@ -1679,7 +1684,7 @@ namespace Glass.Data.DAL.CTe
                             throw new Exception("Remetente não possui nome cadastrado");
                         ManipulacaoXml.SetNode(doc, rem, "xNome", Formatacoes.TrataStringDocFiscal(remetente.Nome));
                     }
-                    
+
                     XmlElement enderReme = doc.CreateElement("enderReme");
 
                     if (string.IsNullOrEmpty(remetente.Endereco))
@@ -1688,7 +1693,7 @@ namespace Glass.Data.DAL.CTe
 
                     if (string.IsNullOrEmpty(remetente.Numero))
                         throw new Exception("Remetente não possui número cadastrado");
-                    ManipulacaoXml.SetNode(doc, enderReme, "nro", Formatacoes.TrataStringDocFiscal(remetente.Numero));                    
+                    ManipulacaoXml.SetNode(doc, enderReme, "nro", Formatacoes.TrataStringDocFiscal(remetente.Numero));
 
                     if (string.IsNullOrEmpty(remetente.Bairro))
                         throw new Exception("Remetente não possui bairro cadastrado");
@@ -1710,7 +1715,7 @@ namespace Glass.Data.DAL.CTe
                     ManipulacaoXml.SetNode(doc, enderReme, "UF", cidadeRemetente.NomeUf);
 
                     rem.AppendChild(enderReme);
-                }                                
+                }
 
                 infCte.AppendChild(rem);
             }
@@ -1756,7 +1761,7 @@ namespace Glass.Data.DAL.CTe
                                 throw new Exception("Informe a inscrição estadual do expedidor.");
                             ManipulacaoXml.SetNode(doc, exped, "IE", Formatacoes.TrataStringDocFiscal(expedidor.RgEscinst));
                         }
-                        
+
                         if (ConfigCTe.TipoAmbiente == ConfigCTe.TipoAmbienteCte.Homologacao)
                             ManipulacaoXml.SetNode(doc, exped, "xNome", "CT-E EMITIDO EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
                         else
@@ -1818,7 +1823,7 @@ namespace Glass.Data.DAL.CTe
                     else if (participanteExpedidor.IdFornec > 0)
                     {
                         //throw new Exception("Expedidor não possui inscrição estadual");
-                        
+
                         var expedidor = FornecedorDAO.Instance.GetElement(participanteExpedidor.IdFornec.Value);
 
                         var pj = expedidor.TipoPessoa.ToUpper() == "J";
@@ -2128,12 +2133,12 @@ namespace Glass.Data.DAL.CTe
                             throw new Exception("Informe a inscrição estadual do cliente.");
                         ManipulacaoXml.SetNode(doc, dest, "IE", Formatacoes.TrataStringDocFiscal(clienteDest.RgEscinst));
                     }
-                    
+
                     if (ConfigCTe.TipoAmbiente == ConfigCTe.TipoAmbienteCte.Homologacao)
                         ManipulacaoXml.SetNode(doc, dest, "xNome", "CT-E EMITIDO EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
                     else
                         ManipulacaoXml.SetNode(doc, dest, "xNome", Formatacoes.TrataStringDocFiscal(clienteDest.Nome));
-                    
+
                     XmlElement enderDest = doc.CreateElement("enderDest");
                     ManipulacaoXml.SetNode(doc, enderDest, "xLgr", Formatacoes.TrataStringDocFiscal(clienteDest.Endereco));
                     ManipulacaoXml.SetNode(doc, enderDest, "nro", Formatacoes.TrataStringDocFiscal(clienteDest.Numero));
@@ -2159,12 +2164,12 @@ namespace Glass.Data.DAL.CTe
                     var cidadeDestinatario = CidadeDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idCidadeDestinatario));
 
                     ManipulacaoXml.SetNode(doc, dest, "CNPJ", Formatacoes.TrataStringDocFiscal(destinatario.Cnpj).PadLeft(14, '0'));
-                    
+
                     if (ConfigCTe.TipoAmbiente == ConfigCTe.TipoAmbienteCte.Homologacao)
                         ManipulacaoXml.SetNode(doc, dest, "xNome", "CT-E EMITIDO EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
                     else
                         ManipulacaoXml.SetNode(doc, dest, "xNome", Formatacoes.TrataStringDocFiscal(destinatario.RazaoSocial));
-                    
+
                     XmlElement enderDest = doc.CreateElement("enderDest");
                     ManipulacaoXml.SetNode(doc, enderDest, "xLgr", Formatacoes.TrataStringDocFiscal(destinatario.Endereco));
                     ManipulacaoXml.SetNode(doc, enderDest, "nro", Formatacoes.TrataStringDocFiscal(destinatario.Numero));
@@ -2254,7 +2259,7 @@ namespace Glass.Data.DAL.CTe
                     XmlElement enderDest = doc.CreateElement("enderDest");
                     ManipulacaoXml.SetNode(doc, enderDest, "xLgr", Formatacoes.TrataStringDocFiscal(destinatario.Endereco));
                     ManipulacaoXml.SetNode(doc, enderDest, "nro", Formatacoes.TrataStringDocFiscal(destinatario.Numero));
-                    
+
                     ManipulacaoXml.SetNode(doc, enderDest, "xBairro", Formatacoes.TrataStringDocFiscal(destinatario.Bairro));
                     ManipulacaoXml.SetNode(doc, enderDest, "cMun", cidadeDestinatario.CodUfMunicipio);
                     ManipulacaoXml.SetNode(doc, enderDest, "xMun", Formatacoes.TrataStringDocFiscal(cidadeDestinatario.NomeCidade));
@@ -2273,7 +2278,7 @@ namespace Glass.Data.DAL.CTe
             }
 
             #endregion
-            
+
             #region Valores da Prestação de Serviço
 
             try
@@ -2287,7 +2292,7 @@ namespace Glass.Data.DAL.CTe
                     ManipulacaoXml.SetNode(doc, Comp, "xNome", i.NomeComponente);
                     ManipulacaoXml.SetNode(doc, Comp, "vComp", i.ValorComponente.ToString());
                     vPrest.AppendChild(Comp);
-                }                                               
+                }
                 infCte.AppendChild(vPrest);
             }
             catch (Exception ex)
@@ -2374,182 +2379,218 @@ namespace Glass.Data.DAL.CTe
 
             try
             {
-                XmlElement infCTeNorm = doc.CreateElement("infCTeNorm");
-                XmlElement infCarga = doc.CreateElement("infCarga");
-
-                var objInfoCte = InfoCteDAO.Instance.GetElement(idCte);
-
-                if (objInfoCte != null)
+                if (cte.TipoCte != (int)ConhecimentoTransporte.TipoCteEnum.AnulacaoValores)
                 {
-                    if (!string.IsNullOrEmpty(objInfoCte.ValorCarga.ToString()))
-                        ManipulacaoXml.SetNode(doc, infCarga, "vCarga", Formatacoes.TrataValorDecimal(objInfoCte.ValorCarga, 2));
+                    XmlElement infCTeNorm = doc.CreateElement("infCTeNorm");
+                    XmlElement infCarga = doc.CreateElement("infCarga");
 
-                    if (String.IsNullOrEmpty(objInfoCte.ProdutoPredominante))
-                        throw new Exception("Produto não informado no CTe.");
+                    var objInfoCte = InfoCteDAO.Instance.GetElement(idCte);
 
-                    ManipulacaoXml.SetNode(doc, infCarga, "proPred",
-                        objInfoCte.ProdutoPredominante.Length > 60 ? objInfoCte.ProdutoPredominante.Substring(0, 60) : objInfoCte.ProdutoPredominante);
+                    if (objInfoCte != null)
+                    {
+                        if (!string.IsNullOrEmpty(objInfoCte.ValorCarga.ToString()))
+                            ManipulacaoXml.SetNode(doc, infCarga, "vCarga", Formatacoes.TrataValorDecimal(objInfoCte.ValorCarga, 2));
 
-                    if (!string.IsNullOrEmpty(objInfoCte.OutrasCaract.ToString()))
-                        ManipulacaoXml.SetNode(doc, infCarga, "xOutCat", objInfoCte.OutrasCaract.ToString());
-                }
+                        if (String.IsNullOrEmpty(objInfoCte.ProdutoPredominante))
+                            throw new Exception("Produto não informado no CTe.");
 
-                var objInfoCargaCte = InfoCargaCteDAO.Instance.GetList(idCte);
-                foreach (var i in objInfoCargaCte)
-                {
-                    XmlElement infQ = doc.CreateElement("infQ");
+                        ManipulacaoXml.SetNode(doc, infCarga, "proPred",
+                            objInfoCte.ProdutoPredominante.Length > 60 ? objInfoCte.ProdutoPredominante.Substring(0, 60) : objInfoCte.ProdutoPredominante);
 
-                    ManipulacaoXml.SetNode(doc, infQ, "cUnid", "0" + i.TipoUnidade.ToString());
-                    ManipulacaoXml.SetNode(doc, infQ, "tpMed", i.TipoMedida.ToString());
-
-                    ManipulacaoXml.SetNode(doc, infQ, "qCarga", Formatacoes.TrataValorDecimal((decimal)i.Quantidade, 4));
-
-                    infCarga.AppendChild(infQ);
-                }
-
-                infCTeNorm.AppendChild(infCarga);
-
-                if (!FiscalConfig.ConhecimentoTransporte.ExibirGridNotaFiscal)
-                {
-                    var chaves = new GDA.Sql.Query("IdCte=?idCte")
-                        .Add("?idCte", idCte)
-                        .ToList<Glass.Data.Model.Cte.ChaveAcessoCte>();
-
-                    XmlElement infDoc = doc.CreateElement("infDoc");
-
-                    foreach (var i in chaves)
-                    {                        
-                        XmlElement infNFe = doc.CreateElement("infNFe");
-
-                        ManipulacaoXml.SetNode(doc, infNFe, "chave", i.ChaveAcesso);
-
-                        infDoc.AppendChild(infNFe);                        
+                        if (!string.IsNullOrEmpty(objInfoCte.OutrasCaract.ToString()))
+                            ManipulacaoXml.SetNode(doc, infCarga, "xOutCat", objInfoCte.OutrasCaract.ToString());
                     }
 
-                    infCTeNorm.AppendChild(infDoc);
-                }
-                else
-                {
-                    XmlElement infDoc = doc.CreateElement("infDoc");
-
-                    foreach (var i in NotaFiscalCteDAO.Instance.GetList(cte.IdCte))
+                    var objInfoCargaCte = InfoCargaCteDAO.Instance.GetList(idCte);
+                    foreach (var i in objInfoCargaCte)
                     {
-                        var nota = NotaFiscalDAO.Instance.GetElement(i.IdNf);                        
+                        XmlElement infQ = doc.CreateElement("infQ");
 
-                        if (nota.Modelo == "55")
+                        ManipulacaoXml.SetNode(doc, infQ, "cUnid", "0" + i.TipoUnidade.ToString());
+                        ManipulacaoXml.SetNode(doc, infQ, "tpMed", i.TipoMedida.ToString());
+
+                        ManipulacaoXml.SetNode(doc, infQ, "qCarga", Formatacoes.TrataValorDecimal((decimal)i.Quantidade, 4));
+
+                        infCarga.AppendChild(infQ);
+                    }
+
+                    infCTeNorm.AppendChild(infCarga);
+
+                    if (!FiscalConfig.ConhecimentoTransporte.ExibirGridNotaFiscal)
+                    {
+                        var chaves = ObterChavesAcesso((int)cte.IdCte);
+
+                        XmlElement infDoc = doc.CreateElement("infDoc");
+
+                        foreach (var i in chaves)
                         {
                             XmlElement infNFe = doc.CreateElement("infNFe");
 
-                            ManipulacaoXml.SetNode(doc, infNFe, "chave", nota.ChaveAcesso);
+                            ManipulacaoXml.SetNode(doc, infNFe, "chave", i.ChaveAcesso);
 
                             infDoc.AppendChild(infNFe);
                         }
-                        else
-                        {
-                            XmlElement infNf = doc.CreateElement("infNF");
 
-                            ManipulacaoXml.SetNode(doc, infNf, "mod", "01");
-                            ManipulacaoXml.SetNode(doc, infNf, "serie", nota.Serie);
-                            ManipulacaoXml.SetNode(doc, infNf, "nDoc", nota.NumeroNFe.ToString());
-                            if (!string.IsNullOrEmpty(nota.DataEmissao.ToString()))
-                                ManipulacaoXml.SetNode(doc, infNf, "dEmi", nota.DataEmissao.ToString("yyyy-MM-dd"));
-                            ManipulacaoXml.SetNode(doc, infNf, "vBC", Formatacoes.TrataValorDecimal(nota.BcIcms, 2));
-                            ManipulacaoXml.SetNode(doc, infNf, "vICMS", Formatacoes.TrataValorDecimal(nota.Valoricms, 2));
-                            ManipulacaoXml.SetNode(doc, infNf, "vBCST", Formatacoes.TrataValorDecimal(nota.BcIcmsSt, 2));
-                            ManipulacaoXml.SetNode(doc, infNf, "vST", Formatacoes.TrataValorDecimal(nota.ValorIcmsSt, 2));
-                            ManipulacaoXml.SetNode(doc, infNf, "vProd", Formatacoes.TrataValorDecimal(nota.TotalProd, 2));
-                            ManipulacaoXml.SetNode(doc, infNf, "vNF", Formatacoes.TrataValorDecimal(nota.TotalNota, 2));
-                            ManipulacaoXml.SetNode(doc, infNf, "nCFOP", "1206");
-
-                            infDoc.AppendChild(infNf);
-                        }                        
-                    }
-
-                    if (cte.TipoServico != (int)ConhecimentoTransporte.TipoServicoEnum.RedespachoIntermediario || infDoc.ChildNodes.Count > 0)
                         infCTeNorm.AppendChild(infDoc);
+                    }
+                    else
+                    {
+                        XmlElement infDoc = doc.CreateElement("infDoc");
+
+                        foreach (var i in NotaFiscalCteDAO.Instance.GetList(cte.IdCte))
+                        {
+                            var nota = NotaFiscalDAO.Instance.GetElement(i.IdNf);
+
+                            if (nota.Modelo == "55")
+                            {
+                                XmlElement infNFe = doc.CreateElement("infNFe");
+
+                                ManipulacaoXml.SetNode(doc, infNFe, "chave", nota.ChaveAcesso);
+
+                                infDoc.AppendChild(infNFe);
+                            }
+                            else
+                            {
+                                XmlElement infNf = doc.CreateElement("infNF");
+
+                                ManipulacaoXml.SetNode(doc, infNf, "mod", "01");
+                                ManipulacaoXml.SetNode(doc, infNf, "serie", nota.Serie);
+                                ManipulacaoXml.SetNode(doc, infNf, "nDoc", nota.NumeroNFe.ToString());
+                                if (!string.IsNullOrEmpty(nota.DataEmissao.ToString()))
+                                    ManipulacaoXml.SetNode(doc, infNf, "dEmi", nota.DataEmissao.ToString("yyyy-MM-dd"));
+                                ManipulacaoXml.SetNode(doc, infNf, "vBC", Formatacoes.TrataValorDecimal(nota.BcIcms, 2));
+                                ManipulacaoXml.SetNode(doc, infNf, "vICMS", Formatacoes.TrataValorDecimal(nota.Valoricms, 2));
+                                ManipulacaoXml.SetNode(doc, infNf, "vBCST", Formatacoes.TrataValorDecimal(nota.BcIcmsSt, 2));
+                                ManipulacaoXml.SetNode(doc, infNf, "vST", Formatacoes.TrataValorDecimal(nota.ValorIcmsSt, 2));
+                                ManipulacaoXml.SetNode(doc, infNf, "vProd", Formatacoes.TrataValorDecimal(nota.TotalProd, 2));
+                                ManipulacaoXml.SetNode(doc, infNf, "vNF", Formatacoes.TrataValorDecimal(nota.TotalNota, 2));
+                                ManipulacaoXml.SetNode(doc, infNf, "nCFOP", "1206");
+
+                                infDoc.AppendChild(infNf);
+                            }
+                        }
+
+                        if (cte.TipoServico != (int)ConhecimentoTransporte.TipoServicoEnum.RedespachoIntermediario || infDoc.ChildNodes.Count > 0)
+                            infCTeNorm.AppendChild(infDoc);
+                    }
+
+                    #region Informações do Rodoviário
+
+                    try
+                    {
+                        XmlElement infModal = doc.CreateElement("infModal");
+                        infModal.SetAttribute("versaoModal", ConfigCTe.VersaoModalRod);
+
+                        XmlElement rodo = doc.CreateElement("rodo");
+
+                        var objCteRod = ConhecimentoTransporteRodoviarioDAO.Instance.GetElement(idCte);
+
+                        if (objCteRod != null)
+                        {
+                            if (string.IsNullOrEmpty(loja.RNTRC))
+                                throw new Exception("O campo RNTRC deve ser preenchido no cadastro da loja " + loja.NomeFantasia);
+
+                            ManipulacaoXml.SetNode(doc, rodo, "RNTRC", loja.RNTRC.PadLeft(8, '0'));
+                        }
+
+                        var objOrdemColetaCteRod = OrdemColetaCteRodDAO.Instance.GetOrdensColetaCte(idCte);
+                        foreach (var i in objOrdemColetaCteRod)
+                        {
+                            var transportador = TransportadorDAO.Instance.GetElement(i.IdTransportador);
+
+                            XmlElement occ = doc.CreateElement("occ");
+
+                            if (!string.IsNullOrEmpty(i.Serie))
+                                ManipulacaoXml.SetNode(doc, occ, "serie", i.Serie);
+
+                            ManipulacaoXml.SetNode(doc, occ, "nOcc", i.Numero.ToString());
+                            if (i.DataEmissao != null)
+                                ManipulacaoXml.SetNode(doc, occ, "dEmi", Convert.ToDateTime(i.DataEmissao).ToString("yyyy-MM-dd"));
+
+                            XmlElement emiOcc = doc.CreateElement("emiOcc");
+
+                            ManipulacaoXml.SetNode(doc, emiOcc, "CNPJ", Formatacoes.TrataStringDocFiscal(transportador.CpfCnpj).PadLeft(14, '0'));
+                            ManipulacaoXml.SetNode(doc, emiOcc, "IE", transportador.InscEst);
+                            ManipulacaoXml.SetNode(doc, emiOcc, "UF", transportador.Uf);
+
+                            if (!string.IsNullOrEmpty(transportador.Telefone))
+                                ManipulacaoXml.SetNode(doc, emiOcc, "fone", Formatacoes.TrataStringDocFiscal(transportador.Telefone, true));
+
+                            occ.AppendChild(emiOcc);
+                            rodo.AppendChild(occ);
+                        }
+
+                        var objValePedagioCteRod = ValePedagioCteRodDAO.Instance.GetValesPedagioCte(idCte);
+                        foreach (var i in objValePedagioCteRod)
+                        {
+                            var fornecedor = FornecedorDAO.Instance.GetElement(i.IdFornec);
+
+                            XmlElement valePed = doc.CreateElement("valePed");
+
+                            ManipulacaoXml.SetNode(doc, valePed, "CNPJForn", Formatacoes.TrataStringDocFiscal(fornecedor.CpfCnpj).PadLeft(14, '0'));
+                            ManipulacaoXml.SetNode(doc, valePed, "nCompra", i.NumeroCompra);
+
+                            rodo.AppendChild(valePed);
+                        }
+
+                        var objLacreCteRod = LacreCteRodDAO.Instance.GetLacresByIdCte(idCte);
+                        foreach (var i in objLacreCteRod)
+                        {
+                            XmlElement lacRodo = doc.CreateElement("lacRodo");
+                            ManipulacaoXml.SetNode(doc, lacRodo, "nLacre", i.NumeroLacre);
+
+                            rodo.AppendChild(lacRodo);
+                        }
+
+                        infModal.AppendChild(rodo);
+                        infCTeNorm.AppendChild(infModal);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(
+                            string.Format("Falha ao inserir dados do modal rodoviário no XML. {0}",
+                                ex.Message != null ? ex.Message : string.Empty), ex);
+                    }
+
+                    #endregion
+
+                    if (cte.TipoCte == (int)ConhecimentoTransporte.TipoCteEnum.Substituto)
+                    {
+                        XmlElement infCteSub = doc.CreateElement("infCteSub");
+
+                        var chavesAcesso = ObterChavesAcesso((int)cte.IdCte);
+
+                        ManipulacaoXml.SetNode(doc, infCteSub, "chCte", chavesAcesso.Where(f => f.FinalidadeChaveAcesso == FinalidadeChaveAcesso.CTeOriginal).FirstOrDefault()?.ChaveAcesso);
+
+                        if (chavesAcesso.Where(f => f.FinalidadeChaveAcesso == FinalidadeChaveAcesso.CTeAnulacao)?.Count() > 0)
+                        {
+                            ManipulacaoXml.SetNode(doc, infCteSub, "refCteAnu", chavesAcesso.Where(f => f.FinalidadeChaveAcesso == FinalidadeChaveAcesso.CTeAnulacao).FirstOrDefault()?.ChaveAcesso);
+                        }
+
+                        if (chavesAcesso.Where(f => f.FinalidadeChaveAcesso == FinalidadeChaveAcesso.NFeAnulacao)?.Count() > 0)
+                        {
+                            XmlElement tomaICMS = doc.CreateElement("tomaICMS");
+                            ManipulacaoXml.SetNode(doc, tomaICMS, "refNFe", chavesAcesso.Where(f => f.FinalidadeChaveAcesso == FinalidadeChaveAcesso.NFeAnulacao).FirstOrDefault()?.ChaveAcesso);
+
+                            infCteSub.AppendChild(tomaICMS);
+                        }
+
+                        infCTeNorm.AppendChild(infCteSub);
+                    }
+
+                    infCte.AppendChild(infCTeNorm);
                 }
 
-                #region Informações do Rodoviário
-
-                try
+                if (cte.TipoCte == (int)ConhecimentoTransporte.TipoCteEnum.AnulacaoValores)
                 {
-                    XmlElement infModal = doc.CreateElement("infModal");
-                    infModal.SetAttribute("versaoModal", ConfigCTe.VersaoModalRod);
+                    XmlElement infCteAnu = doc.CreateElement("infCteAnu");
+                    var chavesAcesso = ObterChavesAcesso((int)cte.IdCte);
 
-                    XmlElement rodo = doc.CreateElement("rodo");
+                    ManipulacaoXml.SetNode(doc, infCteAnu, "chCte", chavesAcesso.Where(f => f.FinalidadeChaveAcesso == FinalidadeChaveAcesso.CTeOriginal).FirstOrDefault().ChaveAcesso);
+                    ManipulacaoXml.SetNode(doc, infCteAnu, "dEmi", cte.DataAnulacao?.ToString("yyyy-MM-dd"));
 
-                    var objCteRod = ConhecimentoTransporteRodoviarioDAO.Instance.GetElement(idCte);
-
-                    if (objCteRod != null)
-                    {
-                        if (string.IsNullOrEmpty(loja.RNTRC))
-                            throw new Exception("O campo RNTRC deve ser preenchido no cadastro da loja " + loja.NomeFantasia);
-
-                        ManipulacaoXml.SetNode(doc, rodo, "RNTRC", loja.RNTRC.PadLeft(8, '0'));
-                    }
-
-                    var objOrdemColetaCteRod = OrdemColetaCteRodDAO.Instance.GetOrdensColetaCte(idCte);
-                    foreach (var i in objOrdemColetaCteRod)
-                    {
-                        var transportador = TransportadorDAO.Instance.GetElement(i.IdTransportador);
-
-                        XmlElement occ = doc.CreateElement("occ");
-
-                        if (!string.IsNullOrEmpty(i.Serie))
-                            ManipulacaoXml.SetNode(doc, occ, "serie", i.Serie);
-
-                        ManipulacaoXml.SetNode(doc, occ, "nOcc", i.Numero.ToString());
-                        if(i.DataEmissao != null)
-                            ManipulacaoXml.SetNode(doc, occ, "dEmi", Convert.ToDateTime(i.DataEmissao).ToString("yyyy-MM-dd"));
-                        
-                        XmlElement emiOcc = doc.CreateElement("emiOcc");
-
-                        ManipulacaoXml.SetNode(doc, emiOcc, "CNPJ", Formatacoes.TrataStringDocFiscal(transportador.CpfCnpj).PadLeft(14, '0'));
-                        ManipulacaoXml.SetNode(doc, emiOcc, "IE", transportador.InscEst);
-                        ManipulacaoXml.SetNode(doc, emiOcc, "UF", transportador.Uf);
-
-                        if (!string.IsNullOrEmpty(transportador.Telefone))
-                            ManipulacaoXml.SetNode(doc, emiOcc, "fone", Formatacoes.TrataStringDocFiscal(transportador.Telefone, true));
-
-                        occ.AppendChild(emiOcc);
-                        rodo.AppendChild(occ);
-                    }
-
-                    var objValePedagioCteRod = ValePedagioCteRodDAO.Instance.GetValesPedagioCte(idCte);
-                    foreach (var i in objValePedagioCteRod)
-                    {
-                        var fornecedor = FornecedorDAO.Instance.GetElement(i.IdFornec);
-
-                        XmlElement valePed = doc.CreateElement("valePed");
-
-                        ManipulacaoXml.SetNode(doc, valePed, "CNPJForn", Formatacoes.TrataStringDocFiscal(fornecedor.CpfCnpj).PadLeft(14, '0'));
-                        ManipulacaoXml.SetNode(doc, valePed, "nCompra", i.NumeroCompra);
-
-                        rodo.AppendChild(valePed);
-                    }
-
-                    var objLacreCteRod = LacreCteRodDAO.Instance.GetLacresByIdCte(idCte);
-                    foreach (var i in objLacreCteRod)
-                    {
-                        XmlElement lacRodo = doc.CreateElement("lacRodo");
-                        ManipulacaoXml.SetNode(doc, lacRodo, "nLacre", i.NumeroLacre);
-
-                        rodo.AppendChild(lacRodo);
-                    }
-                    
-                    infModal.AppendChild(rodo);
-                    infCTeNorm.AppendChild(infModal);
+                    infCte.AppendChild(infCteAnu);
                 }
-                catch (Exception ex)
-                {
-                    throw new Exception(
-                        string.Format("Falha ao inserir dados do modal rodoviário no XML. {0}",
-                            ex.Message != null ? ex.Message : string.Empty), ex);
-                }
-
-                #endregion
-
-                infCte.AppendChild(infCTeNorm);
             }
             catch (Exception ex)
             {
@@ -2738,6 +2779,25 @@ namespace Glass.Data.DAL.CTe
 
             // Se o restoDiv for 0 ou 1, o dígito deverá ser 0
             return 11 - (restoDiv == 0 || restoDiv == 1 ? 11 : restoDiv);
+        }
+
+        /// <summary>
+        /// Retorna as chaves de acesso associadas ao conhecimento de transporte.
+        /// </summary>
+        /// <param name="idCte"></param>
+        /// <returns></returns>
+        public IEnumerable<ChaveAcessoCte> ObterChavesAcesso(int idCte)
+        {
+            return new GDA.Sql.Query("IdCte=?idCte")
+                .Add("?idCte", idCte)
+                .ToList<Glass.Data.Model.Cte.ChaveAcessoCte>();
+        }
+
+        public IEnumerable<FinalidadeChaveAcesso> ObterFinalidadeChaveAcesso(int idTipoCte)
+        {
+            return new GDA.Sql.Query("IdTipoCte=?idTipoCte")
+                .Add("?idTipoCte", idTipoCte)
+                .ToList<Glass.Data.Model.FinalidadeChaveAcesso>();
         }
 
         #endregion

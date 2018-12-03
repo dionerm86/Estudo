@@ -38,7 +38,7 @@ namespace Glass.Data.Helper
         /// <returns></returns>
         System.IO.Stream Abrir();
     }
-    
+
     public interface IProjeto
     {
         /// <summary>
@@ -126,7 +126,7 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Peças.
         /// </summary>
-        IEnumerable<IPecaItemProjeto> Pecas { get; }       
+        IEnumerable<IPecaItemProjeto> Pecas { get; }
 
         /// <summary>
         /// Materiais.
@@ -524,7 +524,7 @@ namespace Glass.Data.Helper
                 larguraVaoDireito = idMedidaLarguraVaoDireito > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaLarguraVaoDireito) ?
                     medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idMedidaLarguraVaoDireito).Valor : 0;
             }
-            
+
             #endregion
 
             // Carrega a lista de medidas do modelo de projeto
@@ -587,7 +587,7 @@ namespace Glass.Data.Helper
                 {
                     var espTuboMedInst = medidasItemProjeto.Where(f => f.IdMedidaProjeto == 16).FirstOrDefault() != null ? medidasItemProjeto.Where(f => f.IdMedidaProjeto == 16).FirstOrDefault().Valor : 0;
 
-                    // Se este modelo tiver apenas 3 peças, sempre a última peça deverá ter sua altura subtraída da espessura do tubo, 
+                    // Se este modelo tiver apenas 3 peças, sempre a última peça deverá ter sua altura subtraída da espessura do tubo,
                     // mas se este modelo tiver 4 peças, as duas últimas peças terão suas alturas subtraídas da espessura do tubo
                     if (pecasProjetoModelo.Count >= 3)
                         pecasProjetoModelo[2].Altura -= espTuboMedInst;
@@ -1275,7 +1275,7 @@ namespace Glass.Data.Helper
             Table tbPecaTemp = tbPecaModelo;
             tbPecaTemp.Controls.Clear();
 
-            // Pega a quantidade 
+            // Pega a quantidade
             bool medidasInseridas = MedidaItemProjetoDAO.Instance.ExistsMedida(sessao, itemProjeto.IdItemProjeto);
 
             //Cliente pode ediar com CAD Project
@@ -1522,9 +1522,9 @@ namespace Glass.Data.Helper
                                     // Só pode editar as peças se o pedido estiver conferido
                                     cImb.OnClientClick = @"
                                     var estaConferido = MetodosAjax.EstaConferido(FindControl('hdfIdItemProjeto', 'input').value);
-                                
+
                                     if (estaConferido != null && estaConferido.value == 'false') {
-                                        alert('Confirme o projeto antes de editar as imagens.'); 
+                                        alert('Confirme o projeto antes de editar as imagens.');
                                         return false;
                                     }
 
@@ -3049,7 +3049,7 @@ namespace Glass.Data.Helper
                     nomeFigura = modelo.NomeFiguraAssociada;
             }
 
-            // DEIXAR O INÍCIO COMO ../../ AO INVÉS DE ~/ DÁ ERRO QUANDO ESTÁ NOS CLIENTES, 
+            // DEIXAR O INÍCIO COMO ../../ AO INVÉS DE ~/ DÁ ERRO QUANDO ESTÁ NOS CLIENTES,
             // JÁ EXISTE TRATAMENTO PARA ISTO QUANDO EXECUTA LOCAL
             string imgUrl = "../../Handlers/LoadFiguraAssociada.ashx?tipoDesenho=" + modelo.TipoDesenho +
                 "&path=" + modeloPath + nomeFigura + "&idItemProjeto=" + idItemProjeto +
@@ -3126,7 +3126,7 @@ namespace Glass.Data.Helper
                         case 34: // CPT02, CPT04, CPT06, CPT08, CPT10, CPT12, CPT22, CPT26, CPT30, CPT34, CPT38, CPT42, CPT46, CPT50
                         case 35: // CPT14, CPT16, CPT18, CPT20, CPT46
                         case 36: // CPT23, CPT27, CPT31, CPT35, CPT39, CPT43, CPT47, CPT51
-                        case 37: // CPT24, CPT28, CPT32, CPT36, CPT40, CPT44 
+                        case 37: // CPT24, CPT28, CPT32, CPT36, CPT40, CPT44
                         case 38: // CPT48, CPT52
                         case 39: // CPT53, CPT55, CPT57, CPT59, CPT61, CPT63, CPT65, CPT67, CPT69, CPT71, CPT73, CPT75, CPT77, CPT79
                         case 40: // CPT54, CPT56, CPT58, CPT60, CPT62, CPT64, CPT66, CPT68, CPT70, CPT72
@@ -3151,7 +3151,7 @@ namespace Glass.Data.Helper
                         case 50: // BS01, BS03, BS05
                         case 60: // BS19, BS21
                         case 62: // BS23, BS25
-                        case 64: // BS27, BS29 
+                        case 64: // BS27, BS29
                         case 66: // BS31, BS33
                             lstPeca = PecaItemProjetoDAO.Instance.GetByItemProjeto(sessao, idItemProjeto, modelo.IdProjetoModelo);
                             imgUrl += "&altBasc=" + ((lstPeca[0].Altura / 2) - (lstPeca[0].Altura / 10)); break;
@@ -3437,45 +3437,30 @@ namespace Glass.Data.Helper
         #region CADProject
 
         /// <summary>
-        /// Cria um projeto no CADProject
+        /// Gera o arquivo para ser enviada para o CADProject.
         /// </summary>
-        public static string CriarProjetoCADProject(string projeto, uint idPecaItemProj, string url, bool pcp)
+        /// <param name="sessao">Sessão com o banco de dados.</param>
+        /// <param name="peca">Peça para ao qual será gerado o arquivo.</param>
+        /// <param name="pcp">Identifica se veio do PCP.</param>
+        /// <param name="outputStream">Stream onde será gravado os dados do arquivo.</param>
+        private static void GerarArquivoCadProject(GDASession sessao, PecaItemProjeto peca, bool pcp, Stream outputStream)
         {
-            var urlServicoCadProject = ProjetoConfig.UrlServicoCadProject;
-
-            if (string.IsNullOrEmpty(urlServicoCadProject))
-                throw new Exception("A URL do CADProject não esta cadastrada.");
-            
-            var urlAcessoCadProject = urlServicoCadProject;
-
-            /* Chamado 63272. */
-            if (ProjetoConfig.CadProjectInstaladoNoMesmoLocalSistema)
+            if (outputStream == null)
             {
-                // Recupera o endereço de acesso do servidor do sistema com a porta.
-                // Se for local retorna LocalHost, se não retorna a url utilizada para acesso.
-                var portaCadProject = new Uri(urlAcessoCadProject).Port;
-                var urlUsuario = HttpContext.Current.Request.Url;
-
-                urlAcessoCadProject = string.Format("{0}{1}:{2}", (!string.IsNullOrEmpty(urlUsuario.Scheme) ? string.Format("{0}://", urlUsuario.Scheme) : string.Empty), urlUsuario.Host,
-                    portaCadProject.ToString());
+                throw new ArgumentNullException(nameof(outputStream));
             }
 
-            var peca = PecaItemProjetoDAO.Instance.GetElementExt(null, idPecaItemProj, pcp);
-
-            if (peca == null)
-                throw new Exception("Peça do projeto não encontrada");
-
-            var idArquivoCalcEngine = ArquivoMesaCorteDAO.Instance.ObtemIdArquivoCalcEngine(peca.IdArquivoMesaCorte.Value);
+            var idArquivoCalcEngine = ArquivoMesaCorteDAO.Instance.ObtemIdArquivoCalcEngine(sessao, peca.IdArquivoMesaCorte.GetValueOrDefault());
 
             if (idArquivoCalcEngine <= 0)
-                throw new Exception("Peça não possui arquivo CalcEngine");
+            {
+                throw new InvalidOperationException("Peça não possui arquivo CalcEngine");
+            }
 
             var idArquivoMesaCorte = peca.IdArquivoMesaCorte;
-            var tipoArquivo = peca.TipoArquivoMesaCorte.GetValueOrDefault(0);
-            var caminho = PCPConfig.CaminhoSalvarCadProject(pcp);
-            var caimhoCompleto = caminho + peca.IdProdPed.GetValueOrDefault(0) + ".dxf";
+            var tipoArquivo = (TipoArquivoMesaCorte?)peca.TipoArquivoMesaCorte;
 
-            var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)peca.IdPecaProjMod, true);
+            var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod(sessao, (int)peca.IdPecaProjMod, true);
             var alterouTipoArquivo = false;
 
             if (peca != null && peca.Tipo == 1)
@@ -3484,105 +3469,231 @@ namespace Glass.Data.Helper
 
                 /* Chamado 58078. */
                 if (!int.TryParse(peca.Item, out item))
+                {
                     item = peca.Item[0].ToString().StrParaInt();
+                }
 
-                var pecaProjMod = PecaProjetoModeloDAO.Instance.GetByItem(null, ItemProjetoDAO.Instance.GetIdProjetoModelo(null, peca.IdItemProjeto), item);
+                var pecaProjMod = PecaProjetoModeloDAO.Instance.GetByItem(
+                    sessao,
+                    ItemProjetoDAO.Instance.GetIdProjetoModelo(null, peca.IdItemProjeto), item);
 
                 // Verifica se esta peça possui arquivo de mesa corte, não há associação com o arquivo de mesa de corte vindo do projeto
                 if (pecaProjMod.IdArquivoMesaCorte != null)
                 {
                     idArquivoMesaCorte = pecaProjMod.IdArquivoMesaCorte;
 
-                    if (tipoArquivo == 0)
+                    if (!tipoArquivo.HasValue)
                     {
-                        tipoArquivo = pecaProjMod.TipoArquivo == null ? 0 : (int)pecaProjMod.TipoArquivo;
+                        tipoArquivo = pecaProjMod.TipoArquivo ?? pecaProjMod.TipoArquivo;
                         alterouTipoArquivo = true;
                     }
                 }
 
-                flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)pecaProjMod.IdPecaProjMod, true);
+                flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod(sessao, (int)pecaProjMod.IdPecaProjMod, true);
 
-                if (tipoArquivo == 0 || alterouTipoArquivo)
-                    tipoArquivo = tipoArquivo == (int)TipoArquivoMesaCorte.SAG && flags.Where(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString() || f.Descricao == TipoArquivoMesaCorte.FML.ToString()).Count() > 0 ?
-                    flags.Where(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString() || f.Descricao == TipoArquivoMesaCorte.FML.ToString())
-                    .Select(f => (int)((TipoArquivoMesaCorte)Enum.Parse(typeof(TipoArquivoMesaCorte), f.Descricao, true))).FirstOrDefault() :
-                    tipoArquivo;
+                if ((!tipoArquivo.HasValue || alterouTipoArquivo) && tipoArquivo == TipoArquivoMesaCorte.SAG)
+                {
+                    var flag = flags.FirstOrDefault(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString() || f.Descricao == TipoArquivoMesaCorte.FML.ToString());
+                    TipoArquivoMesaCorte tipoArquivo2;
+
+                    if (Enum.TryParse(flag?.Descricao, true, out tipoArquivo2))
+                    {
+                        tipoArquivo = tipoArquivo2;
+                    }
+                }
             }
 
             // Se não houver associação do arquivo de mesa de corte com o projeto, procura associação no produto
             if (idArquivoMesaCorte <= 0 || idArquivoMesaCorte == null)
             {
-                idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(null, peca.IdProd.GetValueOrDefault(0));
+                idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(sessao, peca.IdProd.GetValueOrDefault(0));
 
                 if (idArquivoMesaCorte > 0)
                 {
-                    var tipoArquivoMesaCorteProduto = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(null, (int)peca.IdProd.GetValueOrDefault(0));
+                    var tipoArquivoMesaCorteProduto = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(sessao, (int)peca.IdProd.GetValueOrDefault(0));
 
-                    tipoArquivo =
-                        tipoArquivoMesaCorteProduto > 0 ? (int)tipoArquivoMesaCorteProduto :
-                        PCPConfig.TipoArquivoMesaPadrao == "DXF" ? (int)TipoArquivoMesaCorte.DXF :
-                        PCPConfig.TipoArquivoMesaPadrao == "FML" ? (int)TipoArquivoMesaCorte.FML :
-                        (int)TipoArquivoMesaCorte.SAG;
+                    if (tipoArquivoMesaCorteProduto.HasValue)
+                    {
+                        tipoArquivo = tipoArquivoMesaCorteProduto;
+                    }
+                    else if (PCPConfig.TipoArquivoMesaPadrao == "DXF")
+                    {
+                        tipoArquivo = TipoArquivoMesaCorte.DXF;
+                    }
+                    else if (PCPConfig.TipoArquivoMesaPadrao == "FML")
+                    {
+                        tipoArquivo = TipoArquivoMesaCorte.FML;
+                    }
+                    else
+                    {
+                        tipoArquivo = TipoArquivoMesaCorte.SAG;
+                    }
                 }
             }
 
-            tipoArquivo = tipoArquivo == 0 && idArquivoMesaCorte.GetValueOrDefault() > 0 ? ArquivoMesaCorteDAO.Instance.ObtemTipoArquivo(null, idArquivoMesaCorte.Value) : tipoArquivo;
-
-            using (var ms = new MemoryStream())
+            if (!tipoArquivo.HasValue && idArquivoMesaCorte.HasValue)
             {
-                string mensagemErro = null;
-                bool? retorno = null;
-                var espessura = ProdutoDAO.Instance.ObtemEspessura((int)peca.IdProd.GetValueOrDefault(0));
+                tipoArquivo = (TipoArquivoMesaCorte)ArquivoMesaCorteDAO.Instance.ObtemTipoArquivo(sessao, idArquivoMesaCorte.Value);
+            }
 
-                List<int> idsBenef = null;
-                uint idProcesso = 0;
-                string descrBenef = null;
+            string mensagemErro = null;
+            bool? retorno = null;
+            var espessura = ProdutoDAO.Instance.ObtemEspessura(sessao, (int)peca.IdProd.GetValueOrDefault(0));
 
-                if (pcp)
+            List<int> idsBenef = null;
+            uint idProcesso = 0;
+            string descrBenef = null;
+
+            if (pcp)
+            {
+                idsBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetByProdutoPedido(sessao, peca.IdProdPed.GetValueOrDefault()).Select(f => (int)f.IdBenefConfig).ToList();
+                idProcesso = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProcesso(sessao, peca.IdProdPed.GetValueOrDefault());
+                descrBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetDescrBenef(sessao, peca.IdProdPed.GetValueOrDefault());
+            }
+            else
+            {
+                idsBenef = ProdutoPedidoBenefDAO.Instance.GetByProdutoPedido(sessao, peca.IdProdPed.GetValueOrDefault()).Select(f => (int)f.IdBenefConfig).ToList();
+                idProcesso = ProdutosPedidoDAO.Instance.ObtemIdProcesso(sessao, peca.IdProdPed.GetValueOrDefault());
+                descrBenef = ProdutoPedidoBenefDAO.Instance.GetDescrBenef(sessao, null, peca.IdProdPed.GetValueOrDefault(), false);
+            }
+
+            var descontoLap = ArquivoMesaCorteDAO.Instance.ObterDescontoLapidacao(sessao, ref peca, idArquivoMesaCorte, (int)peca.IdProd.GetValueOrDefault(0), idsBenef, descrBenef, (int)idProcesso);
+            var codigoArquivo = ArquivoCalcEngineDAO.Instance.ObtemValorCampo<string>(sessao, "nome", "idArquivoCalcEngine=" + idArquivoCalcEngine);
+
+            if (codigoArquivo == null)
+            {
+                throw new InvalidOperationException("Um dos arquivos de mesa está associado à um calc engine inválido.");
+            }
+
+            var config = new ArquivoMesaCorteDAO.ConfiguracoesArqMesa(peca.Largura, espessura, descontoLap, codigoArquivo);
+
+            ArquivoMesaCorteDAO.Instance.GerarArquivoCalcEngine(
+                sessao,
+                idArquivoCalcEngine,
+                descontoLap,
+                (int)tipoArquivo.GetValueOrDefault(),
+                pcp,
+                peca.IdProdPed.GetValueOrDefault(0),
+                peca,
+                peca.Altura,
+                peca.Largura,
+                ref mensagemErro,
+                codigoArquivo,
+                config,
+                espessura,
+                outputStream,
+                flags,
+                ref retorno,
+                true,
+                false,
+                false);
+        }
+
+        /// <summary>
+        /// Gera o arquivo para ser enviada para o CADProject.
+        /// </summary>
+        /// <param name="peca">Peça para ao qual será gerado o arquivo.</param>
+        /// <param name="pcp">Identifica se veio do PCP.</param>
+        /// <param name="outputStream">Stream onde será gravado os dados do arquivo.</param>
+        public static void GerarArquivoCadProject(PecaItemProjeto peca, bool pcp, Stream outputStream)
+        {
+            using (var sessao = new GDASession())
+            {
+                GerarArquivoCadProject(sessao, peca, pcp, outputStream);
+            }
+        }
+
+        /// <summary>
+        /// Cria um projeto no CADProject
+        /// </summary>
+        public static string CriarProjetoCADProject(string projeto, uint idPecaItemProj, string url, bool pcp)
+        {
+            using (var sessao = new GDASession())
+            {
+                var urlServicoCadProject = ProjetoConfig.UrlServicoCadProject;
+
+                if (string.IsNullOrEmpty(urlServicoCadProject))
                 {
-                    idsBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetByProdutoPedido(null, peca.IdProdPed.GetValueOrDefault()).Select(f => (int)f.IdBenefConfig).ToList();
-                    idProcesso = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProcesso(null, peca.IdProdPed.GetValueOrDefault());
-                    descrBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetDescrBenef(null, peca.IdProdPed.GetValueOrDefault());
+                    throw new InvalidOperationException("A URL do CADProject não esta cadastrada.");
                 }
-                else
+
+                var urlAcessoCadProject = urlServicoCadProject;
+
+                /* Chamado 63272. */
+                if (ProjetoConfig.CadProjectInstaladoNoMesmoLocalSistema)
                 {
-                    idsBenef = ProdutoPedidoBenefDAO.Instance.GetByProdutoPedido(peca.IdProdPed.GetValueOrDefault()).Select(f => (int)f.IdBenefConfig).ToList();
-                    idProcesso = ProdutosPedidoDAO.Instance.ObtemIdProcesso(null, peca.IdProdPed.GetValueOrDefault());
-                    descrBenef = ProdutoPedidoBenefDAO.Instance.GetDescrBenef(null, null, peca.IdProdPed.GetValueOrDefault(), false);
+                    // Recupera o endereço de acesso do servidor do sistema com a porta.
+                    // Se for local retorna LocalHost, se não retorna a url utilizada para acesso.
+                    var portaCadProject = new Uri(urlAcessoCadProject).Port;
+                    var urlUsuario = HttpContext.Current.Request.Url;
+
+                    urlAcessoCadProject = string.Format("{0}{1}:{2}", !string.IsNullOrEmpty(urlUsuario.Scheme) ? string.Format("{0}://", urlUsuario.Scheme) : string.Empty, urlUsuario.Host,
+                        portaCadProject.ToString());
                 }
 
-                var descontoLap = ArquivoMesaCorteDAO.Instance.ObterDescontoLapidacao(null, ref peca, idArquivoMesaCorte, (int)peca.IdProd.GetValueOrDefault(0), idsBenef, descrBenef, (int)idProcesso);
-                var codigoArquivo = ArquivoCalcEngineDAO.Instance.ObtemValorCampo<string>("nome", "idArquivoCalcEngine=" + idArquivoCalcEngine);
+                var peca = PecaItemProjetoDAO.Instance.GetElementExt(sessao, idPecaItemProj, pcp);
 
-                if (codigoArquivo == null)
-                    throw new Exception("Um dos arquivos de mesa está associado à um calc engine inválido.");
+                if (peca == null)
+                {
+                    throw new InvalidOperationException("Peça do projeto não encontrada");
+                }
 
-                var config = new ArquivoMesaCorteDAO.ConfiguracoesArqMesa(peca.Largura, espessura, descontoLap, codigoArquivo);
-
-                ArquivoMesaCorteDAO.Instance.GerarArquivoCalcEngine(null, idArquivoCalcEngine, descontoLap, tipoArquivo, pcp, peca.IdProdPed.GetValueOrDefault(0), peca, peca.Altura, peca.Largura,
-                    ref mensagemErro, codigoArquivo, config, espessura, ms, flags, ref retorno, true, false, false);
+                var caminho = PCPConfig.CaminhoSalvarCadProject(pcp);
+                var caimhoCompleto = caminho + peca.IdProdPed.GetValueOrDefault(0) + ".dxf";
 
                 if (!Directory.Exists(caminho))
+                {
                     Directory.CreateDirectory(caminho);
+                }
 
                 if (File.Exists(caimhoCompleto))
-                    File.Delete(caimhoCompleto);
-
-                using (var file = new FileStream(caimhoCompleto, FileMode.Create, FileAccess.Write))
                 {
-                    ms.WriteTo(file);
+                    File.Delete(caimhoCompleto);
                 }
-            }
 
-            var manager = new CADProject.Remote.Client.ExternalProjectManager(new Uri(urlServicoCadProject + "/Services/ExternalProjectService.svc"));
+                try
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        GerarArquivoCadProject(null, peca, pcp, stream);
+                        stream.Flush();
+                        stream.Position = 0;
 
-            using (var content = File.Open(caimhoCompleto, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                var guid = manager.CreateProject(projeto, idPecaItemProj.ToString(), url + "&idPecaItemProj=" + idPecaItemProj, content);
+                        var read = 0;
+                        var buffer = new byte[1024];
 
-                PecaItemProjetoDAO.Instance.AtualizaGUID(idPecaItemProj, guid.ToString());
+                        using (var file = new FileStream(caimhoCompleto, FileMode.Create, FileAccess.Write))
+                        {
+                            while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                file.Write(buffer, 0, read);
+                            }
 
-                return urlAcessoCadProject + "/engineering/project/external/" + guid.ToString();
+                            file.Flush();
+                        }
+                    }
+                }
+                catch
+                {
+                    if (System.IO.Directory.Exists(caimhoCompleto))
+                    {
+                        System.IO.File.Delete(caimhoCompleto);
+                    }
+
+                    throw;
+                }
+
+                var manager = new CADProject.Remote.Client.ExternalProjectManager(
+                    new Uri($"{urlServicoCadProject}/Services/ExternalProjectService.svc"));
+
+                using (var content = File.Open(caimhoCompleto, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    var guid = manager.CreateProject(projeto, idPecaItemProj.ToString(), url + "&idPecaItemProj=" + idPecaItemProj, content);
+
+                    PecaItemProjetoDAO.Instance.AtualizaGUID(idPecaItemProj, guid.ToString());
+
+                    return urlAcessoCadProject + "/engineering/project/external/" + guid.ToString();
+                }
             }
         }
 

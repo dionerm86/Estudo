@@ -1,4 +1,4 @@
-Vue.component('notafiscal-filtros', {
+﻿Vue.component('notafiscal-filtros', {
   mixins: [Mixins.Objetos],
   props: {
     /**
@@ -44,6 +44,7 @@ Vue.component('notafiscal-filtros', {
           lote: null,
           valorNotaFiscalInicio: null,
           valorNotaFiscalFim: null,
+          apenasNotasFiscaisSemAnexo: false,
           ordenacaoFiltro: null,
           agrupar: 0
         },
@@ -79,7 +80,7 @@ Vue.component('notafiscal-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroTiposCfop: function () {
-      return Servicos.Cfops.obterTipos();
+      return Servicos.Cfops.obterTiposCfop();
     },
 
     /**

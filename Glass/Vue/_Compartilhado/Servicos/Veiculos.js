@@ -40,6 +40,14 @@ Servicos.Veiculos = (function(http) {
       }
 
       return http().delete(API + placa);
+    },
+
+    /**
+     * Recupera a lista de veículos para controle.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterFiltro: function () {
+      return http().get(API + 'filtro');
     }
   };
 })(function() {

@@ -16,44 +16,7 @@ namespace Glass.UI.Web
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             Code.Tarefas.Agendador.IniciarCopiaContasPagarReceber();
-
             _dataInicioSistema = DateTime.Now;
-
-            #region CalcEngine
-
-            if (!_configurouCalcEngine)
-            {
-                try
-                {
-                    // Carrega os arquivos de configuração
-                    var diretorioForvet = Glass.Data.Helper.Utils.ArqConfigForvetPath(this.Context);
-
-                    if (System.IO.File.Exists(diretorioForvet + "config.xml") &&
-                        System.IO.File.Exists(diretorioForvet + "machine.xml") &&
-                        System.IO.File.Exists(diretorioForvet + "toolStd.cfg") &&
-                        System.IO.File.Exists(diretorioForvet + "toolExt.cfg"))
-                    {
-                        _configurouCalcEngine = true;
-
-                        var arqConfiguracao = diretorioForvet + "config.xml";
-                        var arqConfiguracaoMaquina = diretorioForvet + "machine.xml";
-                        var arqConfiguracaoFerramentaPadrao = diretorioForvet + "toolStd.cfg";
-                        var arqConfiguracaoFerramentas = diretorioForvet + "toolExt.cfg";
-
-                        // Carrega a configuração para os projetos FML
-                        CalcEngine.Forvet.FmlProject.Configure(arqConfiguracaoMaquina, arqConfiguracao, arqConfiguracaoFerramentaPadrao, arqConfiguracaoFerramentas);
-                    }
-
-                    //Configura o arquivos da Biesse
-                    Data.Helper.ConfiguracaoBiesse.Instancia.Inicializar(Data.Helper.Utils.ArqConfigIntermacPath(Context));
-                }
-                catch
-                {
-                    _configurouCalcEngine = false;
-                }
-            }
-
-            #endregion
         }
 
         protected void Session_Start(object sender, EventArgs e)
@@ -69,7 +32,6 @@ namespace Glass.UI.Web
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
-
         }
 
         protected void Application_AuthenticateRequest(object sender, EventArgs e)

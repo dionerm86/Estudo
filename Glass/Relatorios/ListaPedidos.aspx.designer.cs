@@ -481,6 +481,24 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.DropDownList drpVendAssoc;
         
         /// <summary>
+        /// lblAtendente control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblAtendente;
+        
+        /// <summary>
+        /// drpAtendente control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpAtendente;
+        
+        /// <summary>
         /// lblComplemento control.
         /// </summary>
         /// <remarks>

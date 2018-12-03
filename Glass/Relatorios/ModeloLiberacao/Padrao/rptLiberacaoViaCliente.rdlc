@@ -168,7 +168,7 @@
         <rd:ObjectDataSourceType>Glass.Data.DAL.ChequesDAO, Glass.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
-    <DataSet Name="ResumoCorteComRevenda">
+    <DataSet Name="ResumoCorte">
       <Query>
         <DataSourceName>DummyDataSource</DataSourceName>
         <CommandText />
@@ -5196,7 +5196,7 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>ResumoCorteComRevenda</DataSetName>
+            <DataSetName>ResumoCorte</DataSetName>
             <Top>22.57188cm</Top>
             <Left>0.16627cm</Left>
             <Height>2.24868cm</Height>

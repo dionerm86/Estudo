@@ -21,14 +21,14 @@ namespace Glass.Data.RelDAL
             if ((ajustado || filtro) && !String.IsNullOrEmpty(dataIni) && !String.IsNullOrEmpty(dataFim))
             {
                 string sqlVencNaoPagas = @"
-                    select sum(coalesce(valorVenc,0)) as valor 
-                    from contas_pagar 
-                    where (dataPagto is null or date(dataPagto)>date(?dataFim)) 
+                    select sum(coalesce(valorVenc,0)) as valor
+                    from contas_pagar
+                    where (dataPagto is null or date(dataPagto)>date(?dataFim))
                         and date(dataVenc)>=date(?dataIni) and date(dataVenc)<=date(?dataFim) and idConta=plano_contas" + (filtro ? "1" : "") + @".idConta";
 
                 string sqlVencPassadoPagas = @"
-                    select sum(coalesce(valorPago,0)) as valor 
-                    from contas_pagar 
+                    select sum(coalesce(valorPago,0)) as valor
+                    from contas_pagar
                     where paga=true and date(dataVenc)<date(?dataIni) and date(dataPagto)>=date(?dataIni)
                         and date(dataPagto)<=date(?dataFim) and idConta=plano_contas" + (filtro ? "1" : "") + @".idConta";
 
@@ -97,7 +97,7 @@ namespace Glass.Data.RelDAL
 
                 (SELECT { camposPlanoConta } FROM plano_contas p
                     LEFT JOIN grupo_conta g ON (p.IdGrupo=g.IdGrupo)
-                    LEFT JOIN categoria_conta cat ON (g.IdCategoriaConta=cat.IdCategoriaConta) 
+                    LEFT JOIN categoria_conta cat ON (g.IdCategoriaConta=cat.IdCategoriaConta)
                 WHERE p.IdConta NOT IN
                     (SELECT IdConta FROM ({ sqlSintetico }
                     HAVING (VencPeriodoNaoPagas=0 OR VencPeriodoNaoPagas IS NULL)
@@ -193,13 +193,13 @@ namespace Glass.Data.RelDAL
                 camposContaBanco = "COUNT(*) AS Cont";
             }
 
-            sqlContaBanco = $@"SELECT { camposContaBanco } FROM mov_banco m 
+            sqlContaBanco = $@"SELECT { camposContaBanco } FROM mov_banco m
                     LEFT JOIN funcionario func ON (m.UsuCad=func.IdFunc)
                     LEFT JOIN plano_contas p ON (m.IdConta=p.IdConta)
                     LEFT JOIN grupo_conta g ON (p.IdGrupo=g.IdGrupo)
-                    LEFT JOIN pedido ped ON (m.IdPedido=ped.IdPedido) 
-                    LEFT JOIN categoria_conta cat ON (g.IdCategoriaConta=cat.IdCategoriaConta) 
-                    LEFT JOIN cliente cli ON (m.IdCliente=cli.Id_Cli) 
+                    LEFT JOIN pedido ped ON (m.IdPedido=ped.IdPedido)
+                    LEFT JOIN categoria_conta cat ON (g.IdCategoriaConta=cat.IdCategoriaConta)
+                    LEFT JOIN cliente cli ON (m.IdCliente=cli.Id_Cli)
                     LEFT JOIN fornecedor f ON (m.IdFornec=f.IdFornec)
                 WHERE 1 { filtroGrupos }";
 
@@ -308,7 +308,7 @@ namespace Glass.Data.RelDAL
                     cat.NumSeq AS NumSeqCateg,
                     cat.Tipo AS TipoCategoria,
                     cli.Nome AS NomeCliente,
-                    COALESCE(f.RazaoSocial, f.NomeFantasia) AS NomeFornecedor, 
+                    COALESCE(f.RazaoSocial, f.NomeFantasia) AS NomeFornecedor,
                     CAST(DATE_FORMAT(COALESCE(c.DataMovBanco, c.DataMov), '%Y/%m/%d') AS Date) AS Data,
                     { campoIdsPagto }
                     { campoIdPagto }
@@ -329,14 +329,14 @@ namespace Glass.Data.RelDAL
                 camposCaixaGeral = "COUNT(*) AS Cont";
             }
 
-            sqlCaixaGeral = $@"SELECT { camposCaixaGeral } FROM caixa_geral c 
+            sqlCaixaGeral = $@"SELECT { camposCaixaGeral } FROM caixa_geral c
                     LEFT JOIN plano_contas p ON (c.IdConta=p.IdConta)
                     LEFT JOIN grupo_conta g ON (p.IdGrupo=g.IdGrupo)
                     LEFT JOIN pedido ped ON (c.IdPedido=ped.IdPedido)
-                    LEFT JOIN compra comp ON (c.IdCompra=comp.IdCompra) 
-                    LEFT JOIN categoria_conta cat ON (g.IdCategoriaConta=cat.IdCategoriaConta) 
-                    LEFT JOIN cliente cli ON (c.IdCliente=cli.Id_Cli) 
-                    LEFT JOIN fornecedor f ON (c.IdFornec=f.IdFornec) 
+                    LEFT JOIN compra comp ON (c.IdCompra=comp.IdCompra)
+                    LEFT JOIN categoria_conta cat ON (g.IdCategoriaConta=cat.IdCategoriaConta)
+                    LEFT JOIN cliente cli ON (c.IdCliente=cli.Id_Cli)
+                    LEFT JOIN fornecedor f ON (c.IdFornec=f.IdFornec)
                 WHERE c.IdConta NOT IN ({ UtilsPlanoConta.PlanosContaDesconsiderarCxGeral })
                     { filtroGrupos }";
 
@@ -431,7 +431,7 @@ namespace Glass.Data.RelDAL
                     p.Descricao AS PlanoConta,
                     g.Descricao AS GrupoConta,
                     cat.IdCategoriaConta,
-                    cat.Descricao AS DescrCategoria, 
+                    cat.Descricao AS DescrCategoria,
                     { campoValor }
                     { campoTipoMov }
                     NULL AS DataVenc,
@@ -460,7 +460,7 @@ namespace Glass.Data.RelDAL
                 camposCaixaDiario = "COUNT(*) AS Cont";
             }
 
-            sqlCaixaDiario = $@"SELECT { camposCaixaDiario } FROM caixa_diario c 
+            sqlCaixaDiario = $@"SELECT { camposCaixaDiario } FROM caixa_diario c
                     LEFT JOIN plano_contas p ON (c.IdConta=p.IdConta)
                     LEFT JOIN grupo_conta g ON (p.IdGrupo=g.IdGrupo)
                     LEFT JOIN categoria_conta cat ON (g.IdCategoriaConta=cat.IdCategoriaConta)
@@ -587,14 +587,14 @@ namespace Glass.Data.RelDAL
                 camposContaPaga = "COUNT(*) AS Cont";
             }
 
-            sqlContaPaga = $@"SELECT { camposContaPaga } FROM contas_pagar cp 
+            sqlContaPaga = $@"SELECT { camposContaPaga } FROM contas_pagar cp
                     LEFT JOIN imposto_serv imps ON (cp.IdImpostoServ=imps.IdImpostoServ)
                     LEFT JOIN pagto pag ON (cp.IdPagto=pag.IdPagto)
                     LEFT JOIN plano_contas p ON (cp.IdConta=p.IdConta)
                     LEFT JOIN grupo_conta g ON (p.IdGrupo=g.IdGrupo)
-                    LEFT JOIN compra comp ON (cp.IdCompra=comp.IdCompra) 
-                    LEFT JOIN cheques ch ON (cp.IdChequePagto=ch.IdCheque) 
-                    LEFT JOIN categoria_conta cat ON (g.IdCategoriaConta=cat.IdCategoriaConta) 
+                    LEFT JOIN compra comp ON (cp.IdCompra=comp.IdCompra)
+                    LEFT JOIN cheques ch ON (cp.IdChequePagto=ch.IdCheque)
+                    LEFT JOIN categoria_conta cat ON (g.IdCategoriaConta=cat.IdCategoriaConta)
                     LEFT JOIN fornecedor f ON (cp.IdFornec=f.IdFornec)
                 WHERE cp.Paga=1
                     AND (Renegociada IS NULL OR Renegociada=0 OR cp.ValorPago=cp.ValorVenc)
@@ -704,10 +704,10 @@ namespace Glass.Data.RelDAL
             if (selecionar)
             {
                 campoGeralSintetico = $@"IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria,
-                    CAST(IF(SUM(Valor * IF(TipoMov=1, 1, -1)) < 0, 2, 1) AS SIGNED) AS TipoMov, 
+                    CAST(IF(SUM(Valor * IF(TipoMov=1, 1, -1)) < 0, 2, 1) AS SIGNED) AS TipoMov,
                     CAST(ABS(SUM(Valor * IF(TipoMov=1, 1, -1))) AS DECIMAL(12,2)) AS Valor, IdsPagto{ camposVenc }{ grupoSubtotal }{ campoAgruparMes }";
 
-                campoGeralAnalitico = $@"IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, NomeCliente, NomeFornecedor, TipoMov, 
+                campoGeralAnalitico = $@"IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, NomeCliente, NomeFornecedor, TipoMov,
                     CAST(Valor AS DECIMAL(12,2)) AS Valor, Data, IdCompra, { campoIdPagto }, IdDeposito, IdPedido, IdAcerto, IdLiberarPedido, Obs{ camposVenc }{ grupoSubtotal }";
             }
             else
@@ -792,7 +792,7 @@ namespace Glass.Data.RelDAL
         #endregion
 
         #region Listagem padrão
-        
+
         /// <summary>
         /// Chamado 48448.
         /// Ajusta o valor das movimentações que foram pagas com crédito.
@@ -846,7 +846,7 @@ namespace Glass.Data.RelDAL
                     }
                     else
                         continue;
-                    
+
                     // Calcula o valor da movimentação com base no percentual de crédito de forncedor a ser deduzido.
                     if (detalhado)
                         valorCreditoUtilizado = movimentacao.Valor * idPagtoEPercentualReducaoCredito[idPagto];
@@ -873,7 +873,7 @@ namespace Glass.Data.RelDAL
             #endregion
         }
 
-        public IList<PlanoContas> GetList(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni, 
+        public IList<PlanoContas> GetList(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni,
             string dataFim, int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, int ordenar, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? (ordenar == 1 ? "Data" : "NumSeqCateg, GrupoConta, PlanoConta") : sortExpression;
@@ -887,11 +887,126 @@ namespace Glass.Data.RelDAL
             return movimentacoes;
         }
 
-        public int GetCount(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni, string dataFim, 
+        public int GetCount(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja, string dataIni, string dataFim,
             int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, int ordenar)
         {
-            return objPersistence.ExecuteSqlQueryCount(SqlGeral(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim, 
+            return objPersistence.ExecuteSqlQueryCount(SqlGeral(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja, dataIni, dataFim,
                 tipoMov, tipoConta, ajustado, exibirChequeDevolvido, false, false, true, false, false, true, false), GetParams(dataIni, dataFim));
+        }
+
+        public string SqlDreCompetencia(int? idLoja, string dataIni, string dataFim, int? idCategoriaConta, int? idGrupoConta,
+            uint[] idsPlanoConta, bool detalhado, bool selecionar)
+        {
+
+            var campos = $@"lp.DataLiberacao AS Data, COALESCE(cr.idconta,COALESCE(cr1.IdConta, cr2.IDCONTA), cr3.IDCONTA) AS IdConta,
+                                        p.TOTAL AS Valor, cli.Nome as NomeCliente, NULL as NomeFornecedor, 1 AS TipoMov";
+
+
+            var sql = "Select " + campos + @" From pedido p
+                        INNER JOIN produtos_liberar_pedido plp ON (p.IdPedido = plp.IdPedido)
+                        INNER JOIN liberarpedido lp ON (plp.IDLIBERARPEDIDO = lp.IDLIBERARPEDIDO)
+                        LEFT JOIN contas_receber cr ON (cr.IDLIBERARPEDIDO = lp.IDLIBERARPEDIDO)
+                        LEFT JOIN contas_receber cr1 ON (cr1.IDSINAL = p.IDSINAL)
+                        LEFT JOIN contas_receber cr2 ON (cr2.IDSINAL = p.IDPAGAMENTOANTECIPADO)
+                        LEFT JOIN contas_receber cr3 ON (cr3.IDOBRA	 = p.IDOBRA)
+                        LEFT JOIN cliente cli ON (lp.IdCliente = cli.Id_Cli)
+                    WHERE lp.SITUACAO =" + (int)Model.LiberarPedido.SituacaoLiberarPedido.Liberado + "{0} GROUP BY p.IdPedido {1}";
+
+            var camposUnion = $@" cp.DataCad AS Data, cp.IdConta,
+                                 cp.ValorVenc AS Valor, NULL AS NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, 2 AS TipoMov";
+
+            var unionAll = "UNION ALL Select" + camposUnion + @" FROM contas_pagar cp
+                        LEFT JOIN fornecedor f ON (f.IdFornec = cp.IdFornec)
+                    WHERE 1 {0}";
+
+            var filtro = string.Empty;
+            var filtroUnion = string.Empty;
+
+            if (idLoja > 0)
+            {
+                filtro += $" AND cr.IdLoja={idLoja}";
+                filtroUnion += $" AND cp.IdLoja={idLoja}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(dataIni))
+            {
+                filtro += $" AND lp.DATALIBERACAO >=?dataIni";
+                filtroUnion += $" AND cp.DATACAD >=?dataIni";
+            }
+
+            if (!string.IsNullOrWhiteSpace(dataFim))
+            {
+                filtro += $" AND lp.DATALIBERACAO <=?dataFim";
+                filtroUnion += $" AND cp.DATACAD <=?dataFim";
+            }
+
+            unionAll = string.Format(unionAll, filtroUnion);
+            sql = string.Format(sql, filtro, unionAll);
+
+            var campoValor = detalhado ? "Valor" : "Sum(Valor) AS Valor";
+
+            var selecao = $"gc.Descricao AS GrupoConta, pc.Descricao AS PlanoConta, Data, {campoValor}, NomeCliente, NomeFornecedor, TipoMov";
+
+            var sqlPrincipal = $@"Select {selecao} from ({sql}) temp
+                                LEFT JOIN plano_contas pc ON (pc.IDCONTA = temp.IDCONTA)
+                                LEFT JOIN grupo_conta gc ON (gc.IDGRUPO = pc.IDGRUPO)
+                                LEFT JOIN categoria_conta cc ON (cc.IDCATEGORIACONTA = gc.IDCATEGORIACONTA) WHERE 1";
+
+            var filtroGeral = string.Empty;
+
+            if (idCategoriaConta > 0)
+                filtroGeral += $" AND cc.IdCategoriaConta={idCategoriaConta}";
+
+            if (idGrupoConta > 0)
+                filtroGeral += $" AND gc.IdGrupo={idGrupoConta}";
+
+            if (idsPlanoConta.Any())
+                filtroGeral += $" AND pc.IdConta IN ({string.Join(",", idsPlanoConta)})";
+
+            sqlPrincipal += filtroGeral;
+
+            sqlPrincipal += detalhado ? "" : " GROUP BY temp.IdConta";
+
+            return selecionar ? sqlPrincipal : $"Select COUNT(*) FROM ({sqlPrincipal}) temp2";
+        }
+
+        public IList<PlanoContas> PesquisarDreCompetencia(int? idLoja, string dataIni, string dataFim, int? idCategoriaConta, int? idGrupoConta,
+            uint[] idsPlanoConta, bool detalhado, string sortExpression, int startRow, int pageSize)
+        {
+            return LoadDataWithSortExpression(SqlDreCompetencia(idLoja, dataIni, dataFim, idCategoriaConta, idGrupoConta, idsPlanoConta, detalhado, true),
+                sortExpression, startRow, pageSize, GetParams(dataIni, dataFim)).ToList();
+        }
+
+        public int PesquisarDreCompetenciaCount(int? idLoja, string dataIni, string dataFim, int? idCategoriaConta, int? idGrupoConta, uint[] idsPlanoConta, bool detalhado)
+        {
+            return objPersistence.ExecuteSqlQueryCount(SqlDreCompetencia(idLoja, dataIni, dataFim, idCategoriaConta, idGrupoConta, idsPlanoConta, detalhado, false), GetParams(dataIni, dataFim));
+        }
+
+        public PlanoContas[] PesquisarDreCompetenciaRpt(int? idLoja, string dataIni, string dataFim, int? idCategoriaConta, int? idGrupoConta, uint[] idsPlanoConta, bool detalhado)
+        {
+            List<PlanoContas> lstPlanoConta = objPersistence.LoadData(SqlDreCompetencia(idLoja, dataIni, dataFim, idCategoriaConta, idGrupoConta, idsPlanoConta, detalhado, true), GetParams(dataIni, dataFim)).ToList();
+
+            string criterio = String.Empty;
+
+            if (idGrupoConta > 0)
+                criterio += "Grupo: " + GrupoContaDAO.Instance.ObtemValorCampo<string>("descricao", "idGrupo=" + idGrupoConta) + "    ";
+
+            if (idsPlanoConta.Any())
+            {
+                criterio += "Planos Conta: " +
+                    PlanoContasDAO.Instance.ExecuteScalar<string>("select group_concat(descricao SEPARATOR ', ') from plano_contas where idConta IN (" + string.Join(",", idsPlanoConta) + ")") + "    ";
+            }
+
+            if (idLoja > 0)
+                criterio += "Loja: " + LojaDAO.Instance.GetNome((uint)idLoja) + "    ";
+
+            if (!String.IsNullOrEmpty(dataIni))
+                criterio += "Data Início: " + dataIni + "    ";
+
+            if (!String.IsNullOrEmpty(dataFim))
+                criterio += "Data Fim: " + dataFim + "    ";
+
+            return lstPlanoConta.ToArray();
         }
 
         #endregion
@@ -966,7 +1081,7 @@ namespace Glass.Data.RelDAL
 
             if (idsPlanoConta.Any())
             {
-                criterio += "Planos Conta: " + 
+                criterio += "Planos Conta: " +
                     PlanoContasDAO.Instance.ExecuteScalar<string>("select group_concat(descricao SEPARATOR ', ') from plano_contas where idConta IN (" + string.Join(",", idsPlanoConta) + ")");
             }
 
