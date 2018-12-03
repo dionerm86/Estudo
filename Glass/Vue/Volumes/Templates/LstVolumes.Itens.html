@@ -1,6 +1,6 @@
 ﻿<section>
     <lista-paginada ref="lista" v-bind:funcao-recuperar-itens="buscarVolumes" v-bind:filtro="filtro" v-bind:exibir-totalizador="true"
-		ordenacao="ordenacao" mensagem-lista-vazia="Nenhum volume encontrado." v-on:atualizou-itens="atualizouItens">
+        ordenacao="ordenacao" mensagem-lista-vazia="Nenhum volume encontrado." v-on:atualizou-itens="atualizouItens">
         <template slot="cabecalho">
             <th></th>
             <th>
@@ -49,7 +49,7 @@
             </td>
         </template>
 		<template slot="itemTotalizador" slot-scope="{ item, index }">
-			<td></td>
+            <td></td>
             <td>Totais</td>
             <td v-if="totalizadores">{{ totalizadores.quantidadePecasTotal | decimal }}</td>
             <td v-if="totalizadores">{{ totalizadores.pesoTotal | decimal }}</td>
