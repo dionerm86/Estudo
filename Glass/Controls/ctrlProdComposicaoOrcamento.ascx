@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ctrlProdComposicaoOrcamento.ascx.cs" Inherits="Glass.UI.Web.Controls.ctrlProdComposicaoOrcamento" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ctrlProdComposicaoOrcamento.ascx.cs" Inherits="Glass.UI.Web.Controls.ctrlProdComposicaoOrcamento" %>
 
 <%@ Register Src="ctrlBenef.ascx" TagName="ctrlBenef" TagPrefix="uc4" %>
 <%@ Register Src="../Controls/ctrlDescontoQtde.ascx" TagName="ctrlDescontoQtde" TagPrefix="uc5" %>
@@ -342,7 +342,7 @@ var dadosCalcM2ProdComposicao = {
 };
 
 // Calcula em tempo real a metragem quadrada do produto
-function calcM2ProdComposicao(control) {debugger;
+function calcM2ProdComposicao(control) {
     try {
         var table = buscaTable(control);
         var idProd = FindControl("hdfIdProdutoComposicao", "input", table).value;
