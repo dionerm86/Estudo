@@ -21,14 +21,14 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://www.ikhan.com.br/appskhan/knIntegrador/PedidoService.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://mercado.khan.com.br/appskhan/knIntegrador/PedidoService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="PedidoService.wsdl" MetadataType="Wsdl" ID="80d50ed4-27a4-4f0f-b095-3dddbcb16431" SourceId="1" SourceUrl="http://www.ikhan.com.br/appskhan/knIntegrador/PedidoService.svc?wsdl" />
-    <MetadataFile FileName="PedidoService.xsd" MetadataType="Schema" ID="ecd224a2-a8e6-4d5c-9a5c-4044b3200859" SourceId="1" SourceUrl="http://www.ikhan.com.br/appskhan/knIntegrador/PedidoService.svc?xsd=xsd1" />
-    <MetadataFile FileName="PedidoService1.xsd" MetadataType="Schema" ID="c38fa928-9f75-402f-9ffc-608046b05a7a" SourceId="1" SourceUrl="http://www.ikhan.com.br/appskhan/knIntegrador/PedidoService.svc?xsd=xsd2" />
-    <MetadataFile FileName="PedidoService2.xsd" MetadataType="Schema" ID="56a07842-78fe-4251-a430-24f587a1593d" SourceId="1" SourceUrl="http://www.ikhan.com.br/appskhan/knIntegrador/PedidoService.svc?xsd=xsd0" />
-    <MetadataFile FileName="PedidoService.disco" MetadataType="Disco" ID="1e164abb-40df-41a2-af42-35da5759158d" SourceId="1" SourceUrl="http://www.ikhan.com.br/appskhan/knIntegrador/PedidoService.svc?disco" />
+    <MetadataFile FileName="PedidoService3.xsd" MetadataType="Schema" ID="9b756aa5-2cd4-470a-b925-818af892806c" SourceId="1" SourceUrl="http://mercado.khan.com.br/appskhan/knIntegrador/PedidoService.svc?xsd=xsd0" />
+    <MetadataFile FileName="PedidoService31.xsd" MetadataType="Schema" ID="3d2b5d6a-6dc9-4b2d-8916-a2aede6973d4" SourceId="1" SourceUrl="http://mercado.khan.com.br/appskhan/knIntegrador/PedidoService.svc?xsd=xsd1" />
+    <MetadataFile FileName="PedidoService32.xsd" MetadataType="Schema" ID="ceb2e388-e186-460c-80e1-bfb802778ef1" SourceId="1" SourceUrl="http://mercado.khan.com.br/appskhan/knIntegrador/PedidoService.svc?xsd=xsd2" />
+    <MetadataFile FileName="PedidoService1.disco" MetadataType="Disco" ID="d6c768be-e6cd-45dc-ad62-348e224dabef" SourceId="1" SourceUrl="http://mercado.khan.com.br/appskhan/knIntegrador/PedidoService.svc?disco" />
+    <MetadataFile FileName="PedidoService1.wsdl" MetadataType="Wsdl" ID="d6b6fe9b-4422-4132-9502-baece46d606b" SourceId="1" SourceUrl="http://mercado.khan.com.br/appskhan/knIntegrador/PedidoService.svc?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

@@ -69,5 +69,39 @@ namespace Glass.Integracao.Historico
         /// <returns>True se o item for compatível com o tipo informdo.</returns>
         public bool Compativel<T>() =>
             this.verificadorCompatibilidade == null && this.verificadorCompatibilidade(typeof(T));
+
+        /// <summary>
+        /// Cria um item do histórico com base no esquema.
+        /// </summary>
+        /// <param name="identificadores">Identificadores que representa o item.</param>
+        /// <param name="tipo">Tipo do item que será criado.</param>
+        /// <param name="mensagem">Mensagem associada.</param>
+        /// <returns>Item do histórico.</returns>
+        public Item CriarItemHistorico(IEnumerable<object> identificadores, TipoItemHistorico tipo, string mensagem)
+        {
+            if (identificadores == null)
+            {
+                throw new ArgumentNullException(nameof(identificadores));
+            }
+
+            return new Item(this, tipo, mensagem, identificadores, DateTime.Now);
+        }
+
+        /// <summary>
+        /// Cria um item do histórico para falha com base no esquema.
+        /// </summary>
+        /// <param name="identificadores">Identificadores que representa o item.</param>
+        /// <param name="mensagem">Mensagem.</param>
+        /// <param name="falha">Falha associada.</param>
+        /// <returns>Item do histórico.</returns>
+        public Item CriarItemHistorico(IEnumerable<object> identificadores, string mensagem, Falha falha)
+        {
+            if (identificadores == null)
+            {
+                throw new ArgumentNullException(nameof(identificadores));
+            }
+
+            return new Item(this, mensagem, falha, identificadores, DateTime.Now);
+        }
     }
 }

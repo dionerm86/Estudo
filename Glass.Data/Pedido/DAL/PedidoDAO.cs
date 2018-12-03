@@ -5675,7 +5675,7 @@ namespace Glass.Data.DAL
                     {
                         var mensagemErro = new List<string>();
                         var idCliente = ObtemIdCliente(transaction, (uint)idPedido);
-                        var limiteCliente = ClienteDAO.Instance.ObtemLimite(transaction, idCliente);
+                        var limiteCliente = Data.CalculadoraLimiteCredito.Calculadora.ObterLimite(transaction, (int)idCliente);
                         var debitosCliente = ContasReceberDAO.Instance.GetDebitos(transaction, idCliente, null);
                         var totalPedido = GetTotal(transaction, (uint)idPedido);
 
@@ -7550,13 +7550,14 @@ namespace Glass.Data.DAL
                 // Verifica se a empresa considera pedidos conferidos (todos ou apenas à vista) no limite do cliente
                 if (!consideraPedidoConferido || naoVerificaPedidoAVista)
                 {
+
                     foreach (var idCliente in idsCliente)
                     {
                         var nomeCliente = ClienteDAO.Instance.GetNome(sessao, (uint)idCliente);
                         // Recupera os débitos do cliente
                         var debitos = ContasReceberDAO.Instance.GetDebitos(sessao, (uint)idCliente, null);
                         // Recupera o limite do cliente
-                        var limite = ClienteDAO.Instance.ObtemLimite(sessao, (uint)idCliente);
+                        var limite = Data.CalculadoraLimiteCredito.Calculadora.ObterLimite(sessao, idCliente);
                         // Se a empresa não considera pedidos conferidos no limite, soma o total de todos os pedidos sendo confirmados,
                         // mas caso a empresa apenas não verifique o limite ao finalizar pedido à vista, puxa o total de todos os pedidos
                         // sendo confirmados que forem à vista e que não foi recebido antecipado

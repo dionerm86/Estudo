@@ -469,6 +469,7 @@
     <Content Include="Controls\ctrlProdComposicaoOrcamentoAlterarProcApl.ascx" />
     <Content Include="Controls\ctrlProdComposicaoOrcamento.ascx" />
     <Content Include="Listas\LstCfop.aspx" />
+    <Content Include="Listas\LstIntegradores.aspx" />
     <Content Include="Relatorios\ListaDreCompetencia.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
@@ -6011,6 +6012,13 @@
     </Compile>
     <Compile Include="Listas\LstInstalacao.aspx.designer.cs">
       <DependentUpon>LstInstalacao.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstIntegradores.aspx.cs">
+      <DependentUpon>LstIntegradores.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstIntegradores.aspx.designer.cs">
+      <DependentUpon>LstIntegradores.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstInventarioEstoque.aspx.cs">
       <DependentUpon>LstInventarioEstoque.aspx</DependentUpon>
