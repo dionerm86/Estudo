@@ -1096,7 +1096,11 @@ namespace Glass.Global.Negocios.Componentes
             }
 
             if (retorno)
-                LogAlteracaoDAO.Instance.LogProduto(produto.DataModel, LogAlteracaoDAO.SequenciaObjeto.Novo);
+            {
+                /* O enum define se o produto passado é o valor atual ou novo,
+                o valor da model em memória está desatualizado, portanto o valor deve ser o Atual.*/
+                LogAlteracaoDAO.Instance.LogProduto(produto.DataModel, LogAlteracaoDAO.SequenciaObjeto.Atual);
+            }
 
             return retorno;
         }
