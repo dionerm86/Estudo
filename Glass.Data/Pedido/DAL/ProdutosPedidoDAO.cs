@@ -60,7 +60,7 @@ namespace Glass.Data.DAL
                 mip.idMaterProjMod, mip.IdPecaItemProj, p.idSubgrupoProd, if(p.AtivarAreaMinima=1,
                 Cast(p.AreaMinima as char), '0') as AreaMinima, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso,
                 Coalesce(no.CodInterno, cfop.CodInterno) as CodNaturezaOperacao,
-                Round(0, 2) as AliqICMSProd, p.Cst, ap.Ambiente, ap.Descricao as DescrAmbiente,
+                Round(0, 2) as AliqICMSProd, ap.Ambiente, ap.Descricao as DescrAmbiente,
                 " + sqlProdutoTabela + @" as ValorProdutoTabela, p.custoCompra as custoCompraProduto,
                 (Select Sum(Coalesce(pi.qtdeInstalada, 0)) From produtos_instalacao pi Where pi.idProdPed=pp.idProdPed) as qtdeInstalada" + (usarTabelasAdicionais ?
                 ", ppe.idAmbientePedido as idAmbientePedidoEspelho, cast(" + campoTipoSetorProducao + @" as signed) as TipoSetorProducao,
@@ -2043,7 +2043,7 @@ namespace Glass.Data.DAL
 
             string campos = @"pp.*, p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd, g.descricao as descrGrupoProd,
                 mip.idMaterProjMod, mip.IdPecaItemProj, p.idSubgrupoProd, if(p.AtivarAreaMinima=1,
-                Cast(p.AreaMinima as char), '0') as AreaMinima, Round(0, 2) as AliqICMSProd, p.Cst,
+                Cast(p.AreaMinima as char), '0') as AreaMinima, Round(0, 2) as AliqICMSProd,
                 ap.Ambiente, ap.Descricao as DescrAmbiente, " + sqlProdutoTabela + @" as ValorProdutoTabela, " +
                 isClienteRota.ToString().ToLower() + @" as isClienteRota, ped.OrdemCargaParcial" + (liberarProdutosProntos ? ", cast(" +
                 campoTipoSetorProducao + @" as signed) as TipoSetorProducao, cast(if(ppp.numEtiqueta is not null, 1, null)

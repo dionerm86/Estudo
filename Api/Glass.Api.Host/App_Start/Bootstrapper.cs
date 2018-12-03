@@ -272,6 +272,9 @@ namespace Glass.Api.Host
             Container.GetExportedValue<Colosoft.Query.IRecordKeyFactory>();
             Container.GetExportedValue<Colosoft.Logging.ILogger>();
             Container.GetExportedValue<Colosoft.DataAccess.IQueryDataSourceSelector>();
+
+            Data.Helper.ConfiguracaoBiesse.Instancia.Inicializar(
+                HttpContext.Current?.Server?.MapPath("~") ?? System.IO.Path.GetDirectoryName(typeof(Bootstrapper).Assembly.Location));
         }
 
         #endregion

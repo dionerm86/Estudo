@@ -245,6 +245,8 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
     <Compile Include="Controllers\Parcelas\V1\PatchParcelasController.cs" />
     <Compile Include="Controllers\Parcelas\V1\PostParcelasController.cs" />
+    <Compile Include="Controllers\ImpressoesEtiquetas\V1\ImpressoesEtiquetasController.cs" />
+    <Compile Include="Controllers\ImpressoesEtiquetas\V1\GetImpressoesEtiquetasController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\DeleteFerragensController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\DeleteFabricantesFerragemController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\FabricantesFerragemController.cs" />
@@ -504,6 +506,7 @@
     <Compile Include="Helper\Pedidos\TraducaoOrdenacaoListaPedidosVolumes.cs" />
     <Compile Include="Helper\Parcelas\ConverterCadastroAtualizacaoParaParcelas.cs" />
     <Compile Include="Helper\Carregamentos\TraducaoOrdenacaoListaCarregamentos.cs" />
+    <Compile Include="Helper\ImpressoesEtiquetas\TraducaoOrdenacaoListaImpressoesEtiquetas.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\ConverterCadastroAtualizacaoParaFabricanteFerragem.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\TraducaoOrdenacaoListaFabricantesFerragem.cs" />
     <Compile Include="Helper\Projetos\MedidasProjeto\ConverterCadastroAtualizacaoParaMedidaProjeto.cs" />
@@ -654,6 +657,10 @@
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
     <Compile Include="Models\Genericas\V1\CodigoNomeDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Lista\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\ExecucaoOperacaoIntegracao\DadosExecucaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ConfiguracaoIntegradorDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\EsquemaHistoricoDto.cs" />
@@ -1065,6 +1072,7 @@
     <Content Include="AppSettings.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="biesse.config" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -1134,6 +1142,10 @@
     <ProjectReference Include="..\..\Negocios\Glass.Negocios\Glass.Negocios.csproj">
       <Project>{a607c634-74af-4c32-b0b1-3d72b642b859}</Project>
       <Name>Glass.Negocios</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Projeto\Glass.Projeto\Glass.Projeto.csproj">
+      <Project>{80e41ddf-89b0-4c31-8893-9139cfd8fe0b}</Project>
+      <Name>Glass.Projeto</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Relatorios\Glass.Relatorios\Glass.Relatorios.csproj">
       <Project>{fe3e730f-5b2d-42dc-b491-d16c7f04b96c}</Project>

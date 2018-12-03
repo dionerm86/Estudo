@@ -4457,11 +4457,6 @@ namespace Glass.Data.DAL
 
         #region Gerar arquivo FML
 
-        public PacoteArquivosMesa GerarArquivoFmlPeloPedido(ProdutosPedidoEspelho[] lstProdPedEsp, bool salvarArquivoSeparado)
-        {
-            return GerarArquivoFmlPeloPedido(null, lstProdPedEsp, salvarArquivoSeparado);
-        }
-
         public PacoteArquivosMesa GerarArquivoFmlPeloPedido(GDASession session, ProdutosPedidoEspelho[] lstProdPedEsp, bool salvarArquivoSeparado)
         {
             var lstArqMesa = new List<byte[]>();
@@ -4487,17 +4482,28 @@ namespace Glass.Data.DAL
                     if (tipoProcesso != (int)EtiquetaTipoProcesso.Caixilho && tipoProcesso != (int)EtiquetaTipoProcesso.Instalacao)
                         continue;
 
-                    //Se o produto avulso for de instalação verifica se o mesmo tem arquivo FML.
-                    var idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(session, prodPedEsp.IdProd);
+                    var caminhoArquivoImportado = ArquivoMesaCorteDAO.Instance
+                        .CaminhoSalvarArquivoPedidoImportado(string.Empty, (int)prodPedEsp.IdProdPed, TipoArquivoMesaCorte.Todos);
 
-                    if (idArquivoMesaCorte.GetValueOrDefault() == 0)
-                        continue;
+                    // Caso tenha uma arquivo importado
+                    if (System.IO.File.Exists(caminhoArquivoImportado))
+                    {
+                        gerarFml = true;
+                    }
+                    else
+                    {
+                        //Se o produto avulso for de instalação verifica se o mesmo tem arquivo FML.
+                        var idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(session, prodPedEsp.IdProd);
 
-                    var tipoArquivo = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(session, (int)prodPedEsp.IdProd);
+                        if (idArquivoMesaCorte.GetValueOrDefault() == 0)
+                            continue;
 
-                    gerarFml = !salvarArquivoSeparado || PCPConfig.SalvarArquivoBasicoAoFinalizarPCP ?
-                        tipoArquivo == TipoArquivoMesaCorte.FMLBasico || tipoArquivo == TipoArquivoMesaCorte.FML :
-                        tipoArquivo == TipoArquivoMesaCorte.FML;
+                        var tipoArquivo = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(session, (int)prodPedEsp.IdProd);
+
+                        gerarFml = !salvarArquivoSeparado || PCPConfig.SalvarArquivoBasicoAoFinalizarPCP ?
+                            tipoArquivo == TipoArquivoMesaCorte.FMLBasico || tipoArquivo == TipoArquivoMesaCorte.FML :
+                            tipoArquivo == TipoArquivoMesaCorte.FML;
+                    }
                 }
                 else // Se o item for de projeto
                 {
@@ -4553,7 +4559,7 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(lstEtiquetas))
             {
-                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, false);
+                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.FML, false, false, false);
 
                 if (salvarArquivoSeparado)
                 {
@@ -4602,7 +4608,7 @@ namespace Glass.Data.DAL
 
             if (lstEtiqueta.Count > 0)
             {
-                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, false);
+                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.DXF, false, false, false);
 
                 var caminhoSalvarDxf = PCPConfig.CaminhoSalvarDxf;
 
@@ -4621,9 +4627,11 @@ namespace Glass.Data.DAL
 
                             /* Chamado 16982. */
                             if (!File.Exists(nomeArquivoDxf))
-                                throw new Exception("Algumas marcações não foram salvas no servidor. Verifique se a pasta, " +
+                            {
+                                throw new InvalidOperationException("Algumas marcações não foram salvas no servidor. Verifique se a pasta, " +
                                     "onde as marcações são salvas, está disponível no servidor. Caso esteja, finalize o pedido novamente. " +
                                     "Caminho onde as marcações são salvas no servidor: " + caminhoSalvarDxf);
+                            }
                         }
                     }
                 }
@@ -4644,7 +4652,7 @@ namespace Glass.Data.DAL
 
             if (lstEtiqueta.Count > 0)
             {
-                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, 0, true, false, false);
+                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.DXF, true, false, false);
 
                 var tempPath = Path.GetTempPath();
                 var programsDirectory = PCPConfig.CaminhoSalvarProgramSGlass;
@@ -4724,7 +4732,7 @@ namespace Glass.Data.DAL
 
             if (lstEtiqueta.Count > 0)
             {
-                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, 0, false, true, false);
+                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.DXF, false, true, false);
 
                 // Percorre os arquivos de mesa gerados
                 for (var i = 0; i < lstArqMesa.Count; i++)
@@ -4752,7 +4760,9 @@ namespace Glass.Data.DAL
                                         destino = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(destino), nome + System.IO.Path.GetExtension(destino));
 
                                         if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(destino)))
+                                        {
                                             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(destino));
+                                        }
 
                                         using (var stream = System.IO.File.Create(destino))
                                         {
