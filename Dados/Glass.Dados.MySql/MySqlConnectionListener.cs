@@ -29,11 +29,11 @@
                 cmd.CommandText = string.Format(sql, "tx_isolation");
                 cmd.ExecuteNonQuery();
             }
-            catch { }
-            finally
+            catch
             {
                 cmd.CommandText = string.Format(sql, "transaction_isolation");
                 cmd.ExecuteNonQuery();
             }
         }
+    }
 }
