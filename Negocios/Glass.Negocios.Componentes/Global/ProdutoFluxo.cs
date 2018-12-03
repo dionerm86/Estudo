@@ -1096,7 +1096,7 @@ namespace Glass.Global.Negocios.Componentes
             }
 
             if (retorno)
-                LogAlteracaoDAO.Instance.LogProduto(produto.DataModel, LogAlteracaoDAO.SequenciaObjeto.Novo);
+                LogAlteracaoDAO.Instance.LogProduto(produto.DataModel, LogAlteracaoDAO.SequenciaObjeto.Atual);
 
             return retorno;
         }
