@@ -1,5 +1,6 @@
 using System;
 using System.Web.UI;
+using Glass.Configuracoes;
 
 namespace Glass.UI.Web.Utils
 {
@@ -23,7 +24,7 @@ namespace Glass.UI.Web.Utils
             if (!IsPostBack)
                 txtNome.Focus();
 
-            if(hdfNfe.Value == "1")
+            if(hdfNfe.Value == "1" && !FiscalConfig.NotaFiscalConfig.PermitirEmitirNotaParaClienteBloqueadoOuInativo)
             {
                 hdfSituacaoBusca.Value = ((int)Data.Model.SituacaoCliente.Ativo).ToString();
             }
