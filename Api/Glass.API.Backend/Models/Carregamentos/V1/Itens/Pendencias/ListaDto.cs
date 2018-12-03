@@ -17,7 +17,7 @@ using System.Runtime.Serialization;
 namespace Glass.API.Backend.Models.Carregamentos.V1.Itens.Pendencias
 {
     /// <summary>
-    /// Classe que encapsula os dados das pendencias de carregamentos
+    /// Classe que encapsula os dados das pendências de carregamentos.
     /// </summary>
     [DataContract(Name = "PendenciaCarregamento")]
     public class ListaDto

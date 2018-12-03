@@ -34,12 +34,13 @@
           periodoPrevisaoSaidaFim: null,
           idsRota: [],
           ignorarPedidosVendaTransferencia: false,
-          IdClienteExterno: null,
-          NomeClienteExterno: null,
-          IdsRotaExterna: []
+          idClienteExterno: null,
+          nomeClienteExterno: null,
+          idsRotaExterna: []
         },
-        this.filtro
+        this.filtro,        
       ),
+      lojaAtual: null
     };
   },
 
@@ -70,7 +71,7 @@
      */
     configuracoes: {
       handler: function () {
-        this.filtroAtual.id = GetQueryString('idCarregamento');
+        this.filtroAtual.idCarregamento = GetQueryString('idCarregamento');
         this.filtroAtual.ordenacao = 1;
 
         var vm = this;
@@ -80,6 +81,17 @@
       },
       deep: true
     },
+
+    /**
+     * Observador para a variável 'lojaAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    lojaAtual: {
+      handler: function (atual) {
+        this.filtroAtual.idLoja = atual ? atual.id : null;
+      },
+      deep: true
+    }
   },
 
   template: '#ListaPendenciaCarregamento-Filtro-template'

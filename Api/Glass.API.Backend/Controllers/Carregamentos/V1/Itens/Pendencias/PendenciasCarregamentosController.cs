@@ -6,7 +6,7 @@ using GDA;
 using Glass.Data.DAL;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.Carregamentos.V1
+namespace Glass.API.Backend.Controllers.Carregamentos.V1.Itens.Pendencias
 {
     /// <summary>
     /// Controller de carregamentos pendentes.
@@ -33,7 +33,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1
                 return this.NaoEncontrado("Carregamento não encontrado.");
             }
 
-            return null;
+            return validacao;
         }
     }
 }

@@ -8,6 +8,38 @@ Servicos.Carregamentos = (function(http) {
 
   return {
     /**
+     *Objeto com os serviços para a API de itens.
+     */
+    Itens: {
+      /**
+       *Objeto com os serviços para a API de pendencias de carregamentos.
+       */
+      Pendencias: {
+        /**
+       * Recupera a lista de carregamentos pendentes.
+       * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+        obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+          return http().get(API + 'itens/pendencias', {
+            params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+          });
+        },
+
+        /**
+         * Recupera o objeto com as configurações utilizadas na tela de listagem de carregamentos pendentes.
+         * @returns {Promise} Uma promise com o resultado da busca.
+         */
+        obterConfiguracoesLista: function () {
+          return http().get(API + 'itens/pendencias/configuracoes');
+        },
+      },
+    },
+
+     /**
      * Objeto com os serviços para a API de ordens de carga.
      */
     OrdensCarga: {

@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace Glass.API.Backend.Models.Carregamentos.V1.Itens.Pendencias.Configuracoes
 {
     /// <summary>
-    /// Classe que encapsula as configurações para a tela de listagem de pendencias de carregamentos.
+    /// Classe que encapsula as configurações para a tela de listagem de pendências de carregamentos.
     /// </summary>
     public class ListaDto
     {

@@ -5,11 +5,10 @@
 namespace Glass.API.Backend.Helper.Carregamentos.Itens.Pendencias
 {
     /// <summary>
-    /// Classe que realiza a tradução dos campos de ordenação para a lista de carregamentos.
+    /// Classe que realiza a tradução dos campos de ordenação para a lista de carregamentos pendentes.
     /// </summary>
     internal class TraducaoOrdenacaoListaPendenciasCarregamentos : BaseTraducaoOrdenacao
     {
-
         public TraducaoOrdenacaoListaPendenciasCarregamentos(string ordenacao)
             : base(ordenacao)
         {

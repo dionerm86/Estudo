@@ -15,15 +15,15 @@ using System.Linq;
 using System.Web.Http;
 using WebGlass.Business.OrdemCarga.Fluxo;
 
-namespace Glass.API.Backend.Controllers.Carregamentos.V1
+namespace Glass.API.Backend.Controllers.Carregamentos.V1.Itens.Pendencias
 {
     /// <summary>
-    /// Controller de pendencias de carregamentos.
+    /// Controller de pendências de carregamentos.
     /// </summary>
     public partial class PendenciasCarregamentosController : BaseController
     {
         /// <summary>
-        /// Recupera as configurações usadas pela tela de listagem de pendencias de carregamentos.
+        /// Recupera as configurações usadas pela tela de listagem de pendências de carregamentos.
         /// </summary>
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
@@ -39,10 +39,10 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1
         }
 
         /// <summary>
-        /// Recupera a lista de pendencias de carregamentos.
+        /// Recupera a lista de pendências de carregamentos.
         /// </summary>
-        /// <param name="filtro">Os filtros para a busca dos carregamentos.</param>
-        /// <returns>Uma lista JSON com os dados dos carregamentos.</returns>
+        /// <param name="filtro">Os filtros para a busca dos carregamentos pendentes.</param>
+        /// <returns>Uma lista JSON com os dados dos carregamentos pendentes.</returns>
         [HttpGet]
         [Route("")]
         [SwaggerResponse(200, "Pendências de carregamento sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Carregamentos.V1.Itens.Pendencias.ListaDto>))]

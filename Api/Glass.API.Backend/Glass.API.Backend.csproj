@@ -494,7 +494,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\Carregamentos\ConverterCadastroAtualizacaoParaCarregamento.cs" />
-    <Compile Include="Helper\Carregamentos\Itens\Pendencias\TraducaoOrdenacaoListaPendencisaCarregamentos.cs" />
+    <Compile Include="Helper\Carregamentos\Itens\Pendencias\TraducaoOrdenacaoListaPendenciasCarregamentos.cs" />
     <Compile Include="Helper\Cfops\ConverterCadastroAtualizacaoParaCfop.cs" />
     <Compile Include="Helper\Cfops\NaturezasOperacao\ConverterCadastroAtualizacaoParaNaturezaOperacao.cs" />
     <Compile Include="Helper\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\ConverterCadastroAtualizacaoParaRegraNaturezaOperacao.cs" />

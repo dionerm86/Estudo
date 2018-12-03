@@ -359,7 +359,7 @@ namespace Glass.Data.DAL
 
             sql = string.Format(sql, filtro).Replace("$$$", criterio);
 
-            if (ignorarPedidosVendaTransferencia == true)
+            if (ignorarPedidosVendaTransferencia.HasValue && ignorarPedidosVendaTransferencia.Value)
             {
                 sql = @"SELECT * 
                         FROM (" + sql + @") as tmp

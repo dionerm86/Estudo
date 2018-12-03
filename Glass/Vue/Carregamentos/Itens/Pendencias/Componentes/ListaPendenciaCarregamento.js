@@ -16,9 +16,13 @@
      * @param {string} ordenacao A ordenação que será usada para a recuperação dos itens.
      * @returns {Promise} Uma promise com o resultado da busca dos itens.
      */
-    obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+    obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+      if (!this.configuracoes || !Object.keys(this.configuracoes).length) {
+        return Promise.reject();
+      }
+
       var filtroUsar = this.clonar(filtro || {});
-      return Servicos.PendenciasCarregamentos.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
+      return Servicos.Carregamentos.Itens.Pendencias.obter(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
 
     /**
@@ -42,7 +46,7 @@
     abrirRelatorioCarregamentoPendente: function (item) {
       var url = '../Relatorios/RelBase.aspx?rel=PendenciaCarregamento&idCarregamento=' + item.id + '&idCliente=' + item.cliente.id +
         '&idClienteExterno=' + item.clienteExterno.id + '&nomeClienteExterno=' + item.clienteExterno.nome;
-      this.abrirJanela(600, 800, url, null, true, true);
+      this.abrirJanela(600, 800, url);
     },
 
     /**
@@ -79,14 +83,6 @@
     },
 
     /**
-     * Retorna o número de colunas da lista paginada.
-     * @type {number}
-     */
-    numeroColunasLista: function () {
-      return this.$refs.lista.numeroColunas();
-    },
-
-    /**
      * Atualiza a lista de carregamentos.
      */
     atualizarLista: function () {
@@ -97,10 +93,9 @@
   mounted: function () {
     var vm = this;
 
-    Servicos.PendenciasCarregamentos.obterConfiguracoesLista()
+    Servicos.Carregamentos.Itens.Pendencias.obterConfiguracoesLista()
       .then(function (resposta) {
         vm.configuracoes = resposta.data;
       });
   },
-
 });

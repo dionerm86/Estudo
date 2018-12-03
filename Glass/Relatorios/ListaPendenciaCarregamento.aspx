@@ -9,7 +9,7 @@
     <div id="app">
         <pendencia-carregamento-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></pendencia-carregamento-filtros>
         <section>
-              <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum carregamento pendente encontrado">
+              <lista-paginada ref="lista" :funcao-recuperar-itens="obter" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum carregamento pendente encontrado">
                 <template slot="cabecalho">
                     <th>
                         Carregamento
@@ -27,10 +27,10 @@
                         {{ item.id }}
                     </td>
                     <td v-if="configuracoes.controlarPedidosImportados && item.clienteExterno.id != 0">
-                        {{ item.clienteExterno.id }} - {{ item.clienteExterno.nome}}
+                        {{ item.clienteExterno.id }} - {{ item.clienteExterno.nome }}
                     </td>
                     <td v-else>
-                        {{ item.cliente.id }} - {{ item.cliente.nome}}
+                        {{ item.cliente.id }} - {{ item.cliente.nome }}
                     </td>
                     <td>
                         {{ item.peso }}
