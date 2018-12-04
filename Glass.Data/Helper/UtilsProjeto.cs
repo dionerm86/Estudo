@@ -3436,6 +3436,7 @@ namespace Glass.Data.Helper
 
         #region CADProject
 
+
         /// <summary>
         /// Gera o arquivo para ser enviada para o CADProject.
         /// </summary>
@@ -3443,7 +3444,7 @@ namespace Glass.Data.Helper
         /// <param name="peca">Peça para ao qual será gerado o arquivo.</param>
         /// <param name="pcp">Identifica se veio do PCP.</param>
         /// <param name="outputStream">Stream onde será gravado os dados do arquivo.</param>
-        private static void GerarArquivoCadProject(GDASession sessao, PecaItemProjeto peca, bool pcp, Stream outputStream)
+        public static void GerarArquivoCadProject(GDASession sessao, PecaItemProjeto peca, bool pcp, Stream outputStream)
         {
             if (outputStream == null)
             {
