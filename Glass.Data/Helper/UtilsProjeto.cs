@@ -3641,22 +3641,13 @@ namespace Glass.Data.Helper
                 var caminho = PCPConfig.CaminhoSalvarCadProject(pcp);
                 var caimhoCompleto = caminho + peca.IdProdPed.GetValueOrDefault(0) + ".dxf";
 
-                if (!Directory.Exists(caminho))
+                using (var stream = new MemoryStream())
                 {
-                    Directory.CreateDirectory(caminho);
-                }
+                    GerarArquivoCadProject(null, peca, pcp, stream);
+                    stream.Flush();
 
-                if (File.Exists(caimhoCompleto))
-                {
-                    File.Delete(caimhoCompleto);
-                }
-
-                try
-                {
-                    using (var stream = new MemoryStream())
+                    if (stream.Length > 0)
                     {
-                        GerarArquivoCadProject(null, peca, pcp, stream);
-                        stream.Flush();
                         stream.Position = 0;
 
                         var read = 0;
@@ -3672,15 +3663,10 @@ namespace Glass.Data.Helper
                             file.Flush();
                         }
                     }
-                }
-                catch
-                {
-                    if (System.IO.Directory.Exists(caimhoCompleto))
+                    else if (File.Exists(caimhoCompleto))
                     {
-                        System.IO.File.Delete(caimhoCompleto);
+                        File.Delete(caimhoCompleto);
                     }
-
-                    throw;
                 }
 
                 var manager = new CADProject.Remote.Client.ExternalProjectManager(
@@ -3747,9 +3733,11 @@ namespace Glass.Data.Helper
                     if (File.Exists(caminhoCompletoJpg))
                         File.Delete(caminhoCompletoJpg);
 
+                    ms.Position = 0;
                     using (var file = new FileStream(caminhoCompletoDxf, FileMode.Create, FileAccess.Write))
                     {
                         ms.WriteTo(file);
+                        file.Flush();
                     }
 
                     // Converte os bytes do memory stream preview para texto.
