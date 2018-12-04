@@ -662,6 +662,7 @@ namespace Glass.Data.DAL
                             if (novoProduto == null)
                             {
                                 novoProduto = MetodosExtensao.Clonar(produto);
+                                novoProduto.IdProd = 0;
                                 novoProduto.Altura = Glass.Conversoes.StrParaInt(alturaArray[i]);
                                 novoProduto.Largura = Glass.Conversoes.StrParaInt(larguraArray[i]);
                                 novoProduto.IdGrupoProd = (int)Glass.Data.Model.NomeGrupoProd.Vidro;
