@@ -34,7 +34,7 @@ namespace Glass.Data.RelDAL
                     novo.IdFuncionario = v.IdFuncionario;
                     novo.NomeFuncionario = v.NomeFuncionario;
                     novo.IdClienteComissionado = tipoVendas == 0 ? v.IdCliente : v.IdComissionado;
-                    novo.Nome = tipoVendas == 0 ? Glass.Data.DAL.ClienteDAO.Instance.GetNome(v.IdCliente) : v.NomeComissionado;
+                    novo.Nome = tipoVendas == 0 ? v.NomeCliente : v.NomeComissionado;
                     novo.Total = v.Total;
                     novo.Format = "C";
 
