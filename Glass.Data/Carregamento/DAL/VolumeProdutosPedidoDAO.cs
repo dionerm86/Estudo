@@ -13,7 +13,8 @@ namespace Glass.Data.DAL
 
         private string Sql(string idsVolumes, uint idVolume, uint idProdPed, bool selecionar)
         {
-            string campos = selecionar ? "vpp.*, p.CodInterno, p.Descricao, pp.Altura, pp.Largura, pp.Qtde as QtdeProdPed, pp.idProd, sgp.descricao AS NomeSubGrupoProd" : "COUNT(*)";
+            string campos = selecionar ? @"vpp.*, p.CodInterno, p.Descricao, pp.Altura, pp.Largura, pp.Qtde as QtdeProdPed, pp.idProd, sgp.descricao AS NomeSubGrupoProd,
+                    gp.descricao AS NomeGrupoProd" : "COUNT(*)";
 
             string sql = @"
                 SELECT " + campos + @"
@@ -21,6 +22,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN produtos_pedido pp ON (vpp.idProdPed = pp.idProdPed)
                     LEFT JOIN produto p ON (pp.idProd = p.idProd)
                     LEFT JOIN subgrupo_prod sgp ON (p.IdSubGrupoProd = sgp.IdSubGrupoProd)
+                    LEFT JOIN grupo_prod gp ON (p.IdGrupoProd = gp.IdGrupoProd)
                 WHERE 1";
 
             if (idVolume > 0)

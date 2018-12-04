@@ -7719,17 +7719,20 @@ namespace Glass.Data.DAL
             uint idNfEmissaoNormal = nf.IdNf;
             uint idNf = 0;
 
-            if (FiscalConfig.NotaFiscalConfig.ContingenciaNFe == DataSources.TipoContingenciaNFe.SCAN && nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.Normal)
+            var uf = CidadeDAO.Instance.ObtemValorCampo<string>("NomeUf", "idCidade=" + nf.IdCidade);
+
+            nf.FormaEmissao = (int)ConfigNFe.ObtemTipoContingencia(uf);
+            nf.CodAleatorio = null;
+            nf.NumeroNFe = ProxNumeroNFe(nf.IdLoja.Value, Conversoes.StrParaInt(nf.Serie));
+
+            if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.Normal)
             {
-                var uf = CidadeDAO.Instance.ObtemValorCampo<string>("NomeUf", "idCidade=" + nf.IdCidade);
-
-                nf.FormaEmissao = (int)ConfigNFe.ObtemTipoContingencia(uf);
-                nf.CodAleatorio = null;
-                nf.NumeroNFe = ProxNumeroNFe(nf.IdLoja.Value, Conversoes.StrParaInt(nf.Serie));
-
                 idNf = NotaFiscalDAO.Instance.Insert(nf);
-
-                // Insere os produtos da nota
+            }
+            
+            // Insere os produtos da nota
+            if (idNf > 0)
+            {
                 foreach (ProdutosNf pnf in ProdutosNfDAO.Instance.GetByNf(idNfEmissaoNormal))
                 {
                     pnf.IdNf = idNf;
@@ -9508,6 +9511,13 @@ namespace Glass.Data.DAL
             lock (syncRoot)
             {
                 LimparEmitenteDestinatario(sessao, objInsert);
+
+                if (FiscalConfig.NotaFiscalConfig.ContingenciaNFe == DataSources.TipoContingenciaNFe.SCAN)
+                {
+                    var uf = CidadeDAO.Instance.ObtemValorCampo<string>(sessao, "NomeUf", "idCidade=" + objInsert.IdCidade);
+
+                    objInsert.FormaEmissao = (int)ConfigNFe.ObtemTipoContingencia(uf);
+                }
 
                 // Não permite inserir notas para clientes inativos
                 if (!Configuracoes.FiscalConfig.NotaFiscalConfig.PermitirEmitirNotaParaClienteBloqueadoOuInativo &&

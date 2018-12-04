@@ -5,9 +5,7 @@
 using Colosoft;
 using Glass.Integracao.Historico;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Glass.Integracao.Khan
 {
@@ -19,8 +17,9 @@ namespace Glass.Integracao.Khan
         private readonly Colosoft.Logging.ILogger logger;
         private readonly ConfiguracaoKhan configuracao;
         private readonly string serviceUid = Guid.NewGuid().ToString();
-        private readonly Historico.IProvedorHistorico provedorHistorico;
+        private readonly IProvedorHistorico provedorHistorico;
         private readonly Global.Negocios.IProdutoFluxo produtoFluxo;
+        private bool sincronizandoTodosProdutos;
 
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="MonitorProdutos"/>.
@@ -133,7 +132,7 @@ namespace Glass.Integracao.Khan
                 throw;
             }
 
-            this.provedorHistorico.NotificarIntegracao(HistoricoKhan.Produtos, entidade);
+            this.provedorHistorico.NotificarIntegrado(HistoricoKhan.Produtos, entidade);
         }
 
         /// <summary>
@@ -164,10 +163,52 @@ namespace Glass.Integracao.Khan
 
             if (produto == null)
             {
-                throw new InvalidOperationException($"Não foi encontrado nenhum produto com o identificador {idProd}.");
+                throw new IntegracaoException($"Não foi encontrado nenhum produto com o identificador {idProd}.");
             }
 
             this.EntidadeAtualizada(produto);
+        }
+
+        /// <summary>
+        /// Sincroniza todos os produtos do sistema.
+        /// </summary>
+        internal void SincronizarTodosProdutos()
+        {
+            if (!this.sincronizandoTodosProdutos)
+            {
+                this.sincronizandoTodosProdutos = true;
+
+                try
+                {
+                    var total = this.produtoFluxo.ObterQuantidadeTodosProduto();
+                    var processado = 0;
+                    var progresso = 0;
+                    var produtos = this.produtoFluxo.ObterTodosProdutos();
+
+                    foreach (var produto in produtos)
+                    {
+                        var integrado = this.provedorHistorico.VerificarItensIntegrados(HistoricoKhan.Produtos, new[] { new object[] { produto.IdProd } }).First();
+
+                        if (!integrado)
+                        {
+                            this.EntidadeAtualizada(produto);
+                        }
+
+                        processado++;
+                        var progresso1 = (int)((processado / (double)total) * 100);
+
+                        if (progresso != progresso1 || (processado % 10) == 0)
+                        {
+                            progresso = progresso1;
+                            this.logger.Info($"######## Sincronização produtos ({processado}/{total}) {progresso}%... ########".GetFormatter());
+                        }
+                    }
+                }
+                finally
+                {
+                    this.sincronizandoTodosProdutos = false;
+                }
+            }
         }
 
         /// <summary>

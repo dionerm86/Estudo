@@ -490,22 +490,6 @@ namespace Glass.Data.DAL
                 novo.Etiquetas = string.Join("|", etqs);
             }
 
-            // Soma o ICMS e IPI ao produto da troca, caso o pedido tenha cobrado
-            if (ped.ValorIcms > 0 || ped.ValorIpi > 0)
-            {
-                if (ped.ValorIcms > 0)
-                    novo.Total += prodPed.ValorIcms / (decimal)prodPed.Qtde * (decimal)novo.Qtde;
-
-                if (ped.ValorIpi > 0)
-                    novo.Total += prodPed.ValorIpi / (decimal)prodPed.Qtde * (decimal)novo.Qtde;
-
-                decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(session, ped, novo, novo.Total);
-                if (valorUnitario.HasValue)
-                {
-                    novo.ValorVendido = valorUnitario.Value;
-                }
-            }
-
             novo.IdPedido = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>(session, "idPedido",
                 "idTrocaDevolucao=" + novo.IdTrocaDevolucao);
 
@@ -533,6 +517,22 @@ namespace Glass.Data.DAL
             }
 
             DescontoAcrescimo.Instance.AplicarDescontoQtde(session, ped, novo);
+
+            // Soma o ICMS e IPI ao produto da troca, caso o pedido tenha cobrado
+            if (ped.ValorIcms > 0 || ped.ValorIpi > 0)
+            {
+                if (ped.ValorIcms > 0)
+                    novo.Total += prodPed.ValorIcms / (decimal)prodPed.Qtde * (decimal)novo.Qtde;
+
+                if (ped.ValorIpi > 0)
+                    novo.Total += prodPed.ValorIpi / (decimal)prodPed.Qtde * (decimal)novo.Qtde;
+
+                decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(session, ped, novo, novo.Total);
+                if (valorUnitario.HasValue)
+                {
+                    novo.ValorVendido = valorUnitario.Value;
+                }
+            }
 
             uint retorno = base.Insert(session, novo);
 

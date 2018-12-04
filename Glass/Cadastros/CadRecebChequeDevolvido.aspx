@@ -41,7 +41,7 @@
         // Adiciona item à tabela
         addItem(new Array(numCheque, titular, banco, agencia, conta, valor, dataVenc),
             new Array('Número', 'Titular', 'Banco', 'Agência', 'Conta', 'Valor', 'Vencimento'), 
-            'lstCheque', idCheque, 'hdfIdsCheque', valor, 'lblTotal');
+            'lstCheque', idCheque, 'hdfIdsCheque', valor, 'lblTotal', 'itemRemovido');
 
         // Carrega o cliente do primeiro cheque inserido
         var txtNumCli = FindControl("txtNumCli", "input");
@@ -53,6 +53,10 @@
          
         usarCredito("<%= ctrlFormaPagto1.ClientID %>", "");
         return false;
+    }
+
+    function itemRemovido(linha) {        
+        usarCredito("<%= ctrlFormaPagto1.ClientID %>", "");
     }
 
     // Validações realizadas ao receber valor por cheque devolvido

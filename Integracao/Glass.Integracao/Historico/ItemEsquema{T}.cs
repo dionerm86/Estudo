@@ -9,7 +9,7 @@ using System.Linq;
 namespace Glass.Integracao.Historico
 {
     /// <summary>
-    /// Representa um item do esquema de histório associado do tipo <typeparamref name="T"/>
+    /// Representa um item do esquema de histório associado do tipo <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">Tipo que o item representa.</typeparam>
     public class ItemEsquema<T> : ItemEsquema
@@ -23,7 +23,6 @@ namespace Glass.Integracao.Historico
         /// <param name="nome">Nome do item.</param>
         /// <param name="descricao">Descrição do item.</param>
         /// <param name="identificadores">Identicadores do item.</param>
-        /// <param name="verificadorCompatibilidade">Predicado que defin se o item é compatível com o tipo informado.</param>
         /// <param name="provedorIdentificadores">Provedor dos identificadores associado com tipo <typeparamref name="T"/>.</param>
         public ItemEsquema(
             int id,

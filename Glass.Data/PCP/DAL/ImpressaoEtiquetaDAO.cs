@@ -872,7 +872,7 @@ namespace Glass.Data.DAL
 
                     if (!ignorarSag)
                     {
-                        this.MontaArquivoMesaOptyway(transaction, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, true, (int)TipoArquivoMesaCorte.SAG, false, false, false);
+                        this.MontaArquivoMesaOptyway(transaction, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, true, 0, false, false, false);
                     }
 
                     var versao = PCPConfig.VersaoArquivoOptyway;

@@ -980,7 +980,9 @@ namespace Glass.Data.DAL
                     and coalesce(pnf.qtdImpresso,0)<pnf.qtde and pnf.altura>0 and pnf.largura>0 and pnf.qtde>0  and nf.GerarEtiqueta
                     and ((p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + " and p.tipoMercadoria=" +
                     (int)TipoMercadoria.MateriaPrima + ") or s.tipoSubgrupo=" + (int)TipoSubgrupoProd.PVB + @")
-                    and nf.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Saída;
+                    and nf.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Saída +
+                    " AND IF(nf.TipoDocumento = " + (int)NotaFiscal.TipoDoc.Entrada + "," +
+                        "f.IdCidade IN (SELECT IdCidade FROM cidade WHERE codIbgeCidade='99999'), 1)";
 
             if (idNf > 0)
                 sql += " and pnf.idNf=" + idNf;

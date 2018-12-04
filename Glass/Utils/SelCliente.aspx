@@ -193,13 +193,14 @@
                         <asp:ControlParameter ControlID="txtBairro" Name="bairro" PropertyName="Text" Type="String" />
                         <asp:Parameter Name="telefone" Type="String" />
                         <asp:ControlParameter ControlID="txtCpf" Name="cpfCnpj" PropertyName="Text" Type="String" />
-                        <asp:Parameter Name="situacao" Type="Int32" />
+                        <asp:ControlParameter Name="situacao" ControlID="hdfSituacaoBusca" Type="Int32" />
                         <asp:QueryStringParameter DefaultValue="false" Name="isRota" QueryStringField="rota"
                             Type="Boolean" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <uc1:ctrlLinkQueryString ID="ctrlTipo" runat="server" NameQueryString="tipo" />
                 <asp:HiddenField ID="hdfNfe" runat="server" />
+                <asp:HiddenField ID="hdfSituacaoBusca" runat="server" />
                 <asp:HiddenField ID="hdfChequeDev" runat="server" />
                 <asp:HiddenField ID="hdfDadosCliente" runat="server" />
                 <asp:HiddenField ID="hdfMedicao" runat="server" />

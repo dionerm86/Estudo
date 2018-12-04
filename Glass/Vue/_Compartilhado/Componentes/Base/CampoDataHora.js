@@ -183,5 +183,19 @@ Vue.component('campo-data-hora', {
     }
   },
 
+  watch: {
+    /**
+     * Observador para a propriedade 'dataHora'.
+     * Atualiza as variáveis internas do controle.
+     */
+    dataHora: {
+      handler: function (atual) {
+        this.dataAtual = atual ? this.formataData(atual - Data.offset) : '';
+        this.horaAtual = atual ? this.formataHora(atual - Data.offset) : '';
+      },
+      deep: true
+    }
+  },
+
   template: '#CampoDataHora-template'
 });

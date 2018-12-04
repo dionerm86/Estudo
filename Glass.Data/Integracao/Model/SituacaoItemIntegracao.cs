@@ -18,5 +18,10 @@ namespace Glass.Data.Model
         /// Indica que teve uma falha na integração do item.
         /// </summary>
         Falha = 2,
+
+        /// <summary>
+        /// Indica que o item ainda está sendo integrado.
+        /// </summary>
+        Integrando = 3,
     }
 }

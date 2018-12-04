@@ -1111,6 +1111,8 @@ namespace Glass.Data.DAL
         /// <param name="idPedido"></param>
         public void GeraEspelho(GDATransaction transaction, uint idPedido)
         {
+            var aplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho =
+                (System.Configuration.ConfigurationManager.AppSettings["AplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho"]?.ToLower() ?? "true") == "true";
             var lstImagensPcp = new List<string>();
 
             try
@@ -1194,7 +1196,11 @@ namespace Glass.Data.DAL
                     ValorComissao = ped.ValorComissao,
                     ValorEntrega = ped.ValorEntrega,
                     PercentualRentabilidade = ped.PercentualRentabilidade,
-                    RentabilidadeFinanceira = ped.RentabilidadeFinanceira
+                    RentabilidadeFinanceira = ped.RentabilidadeFinanceira,
+                    Acrescimo = ped.Acrescimo,
+                    TipoAcrescimo = ped.TipoAcrescimo,
+                    Desconto = ped.Desconto,
+                    TipoDesconto = ped.TipoDesconto,
                 };
                 Insert(transaction, pedEsp);
 
@@ -1279,7 +1285,8 @@ namespace Glass.Data.DAL
 
                         ItemProjeto itemProj = ItemProjetoDAO.Instance.GetElement(transaction, novo.IdItemProjeto.Value);
                         ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(transaction, pedEsp, idNovo, itemProj, valorAcrescimoAplicado,
-                            valorDescontoAplicado, ped.PercComissao, false, true, associacaoProdutosPedidoProdutosPedidoEspelho);
+                            valorDescontoAplicado, ped.PercComissao, false, true, associacaoProdutosPedidoProdutosPedidoEspelho,
+                            false, aplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho);
 
                         ambientesItemProjeto.Add(a.IdAmbientePedido);
                     }
@@ -1495,6 +1502,15 @@ namespace Glass.Data.DAL
                     var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(transaction, pedEsp.IdPedido, false, false, true);
                     bool aplicado = AplicarDesconto(transaction, pedEsp, ped.TipoDesconto, ped.Desconto, produtosPedidoEspelho);
                     FinalizarAplicacaoComissaoAcrescimoDesconto(transaction, pedEsp, produtosPedidoEspelho, aplicado);
+                }
+
+                if (!aplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho)
+                {
+                    RemoveComissaoDescontoAcrescimo(
+                      transaction,
+                      GetElement(transaction, pedEsp.IdPedido),
+                      ProdutosPedidoEspelhoDAO.Instance.GetByPedido(transaction, pedEsp.IdPedido, false));
+                    AplicaComissaoDescontoAcrescimo(transaction, pedEsp);
                 }
 
                 // Foi necessário marcar como true porque teve uma empresa que não estava atualizando o total, e o pedido espelho estava ficando

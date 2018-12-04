@@ -63,16 +63,19 @@ namespace Glass.Integracao.Khan
         {
             this.logger.Info("Executando integração dos indicadores financeiros...".GetFormatter());
 
-            var indicadores = this.Client.ConsultarIndicadores(null, null);
-
-            var atualizacoes = indicadores.Select(f => new Rentabilidade.Negocios.AtualizacaoIndicadorFinanceiro
+            if (this.Client != null)
             {
-                Nome = f.CODMOE,
-                Valor = f.VALOR,
-                Data = f.DATA,
-            });
+                var indicadores = this.Client.ConsultarIndicadores(null, null);
 
-            this.rentabilidadeFluxo.AtualizarIndicadores(atualizacoes);
+                var atualizacoes = indicadores.Select(f => new Rentabilidade.Negocios.AtualizacaoIndicadorFinanceiro
+                {
+                    Nome = f.CODMOE,
+                    Valor = f.VALOR,
+                    Data = f.DATA,
+                });
+
+                this.rentabilidadeFluxo.AtualizarIndicadores(atualizacoes);
+            }
         }
 
         /// <summary>

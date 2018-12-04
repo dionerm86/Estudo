@@ -53,9 +53,9 @@ namespace Glass.Global.Negocios
         /// <param name="ordenacao">Ordenação inicial da lista.</param>
         /// <returns></returns>
         IList<Entidades.ProdutoPesquisa> PesquisarProdutos(
-            string codInterno, string descricao, Glass.Situacao? situacao, int? idLoja, int? idFornec, 
+            string codInterno, string descricao, Glass.Situacao? situacao, int? idLoja, int? idFornec,
             string nomeFornecedor, string idGrupo, string idSubgrupo, TipoNegociacaoProduto? tipoNegociacao,
-            bool apenasProdutosEstoqueBaixa, bool agruparEstoqueLoja, decimal? alturaInicio, decimal? alturaFim, 
+            bool apenasProdutosEstoqueBaixa, bool agruparEstoqueLoja, decimal? alturaInicio, decimal? alturaFim,
             decimal? larguraInicio, decimal? larguraFim, string ordenacao);
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Glass.Global.Negocios
             string codInterno, string descricao, Glass.Situacao? situacao, int? idFornec,
             string nomeFornecedor, string idsGrupos, string idsSubgrupos, TipoNegociacaoProduto? tipoNegociacao,
             bool apenasProdutosEstoqueBaixa, string ordenacao);
-       
+
         /// <summary>
         /// Recupera os dados da ficha do produto.
         /// </summary>
@@ -104,7 +104,7 @@ namespace Glass.Global.Negocios
         /// <returns></returns>
         IList<Entidades.FichaProduto> ObtemFichasProdutos(
             int? idFornec, string nomeFornec, int? idGrupoProd, int? idSubgrupoProd, string codInterno, string descricao,
-            TipoNegociacaoProduto tipoNegociacao, Glass.Situacao? situacao, bool apenasProdutosEstoqueBaixa, 
+            TipoNegociacaoProduto tipoNegociacao, Glass.Situacao? situacao, bool apenasProdutosEstoqueBaixa,
             decimal alturaInicio, decimal alturaFim, decimal larguraInicio, decimal larguraFim, string ordenacao);
 
         /// <summary>
@@ -119,6 +119,18 @@ namespace Glass.Global.Negocios
         /// <param name="idProds">Identificadores dos produtos que devem ser recuperados.</param>
         /// <returns></returns>
         IList<Colosoft.IEntityDescriptor> ObtemProdutos(IEnumerable<int> idProds);
+
+        /// <summary>
+        /// Obtém todos os produtos do sistema.
+        /// </summary>
+        /// <returns>Produtos do sistema.</returns>
+        IEnumerable<Entidades.Produto> ObterTodosProdutos();
+
+        /// <summary>
+        /// Obtém a quantidade de todos os produtos do sistem.
+        /// </summary>
+        /// <returns>Quantidade de produtos castradaos no sistema.</returns>
+        int ObterQuantidadeTodosProduto();
 
         /// <summary>
         /// Recupera os dados do produto.
