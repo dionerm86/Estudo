@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
@@ -13,7 +13,7 @@ namespace Glass.Data.DAL
 	{
         //private ProdutosNfDAO() { }
 
-        #region Busca produtos para listagem padr„o
+        #region Busca produtos para listagem padr√£o
 
         private string Sql(uint idNf, bool selecionar)
         {
@@ -49,7 +49,7 @@ namespace Glass.Data.DAL
 
             var lstProd = LoadDataWithSortExpression(Sql(idNf, true), sortExpression, startRow, pageSize, null).ToArray();
 
-            // Verifica se h· algum beneficiamento de bisote ou lapidaÁ„o
+            // Verifica se h√° algum beneficiamento de bisote ou lapida√ß√£o
             if (FiscalConfig.NotaFiscalConfig.AcrescentarLapBisProdutoNota)
                 foreach (ProdutosNf pnf in lstProd)
                 {
@@ -71,7 +71,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a quantidade de produtos relacionados ‡ NF passada
+        /// Retorna a quantidade de produtos relacionados √† NF passada
         /// </summary>
         /// <param name="idNf"></param>
         public int CountInNf(uint idNf)
@@ -115,7 +115,7 @@ namespace Glass.Data.DAL
                 where n.NumeroNFE=" + (numeroNfe == 0 ? -1 : (int)numeroNfe);
 
             if (apenasEntradas)
-                sql += " and n.TipoDocumento<>" + (int)NotaFiscal.TipoDoc.SaÌda;
+                sql += " and n.TipoDocumento<>" + (int)NotaFiscal.TipoDoc.Sa√≠da;
 
             if (apenasVidros)
                 sql += " and p.IdGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro;
@@ -125,10 +125,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca todos os produtos relacionados ‡ NF
+        #region Busca todos os produtos relacionados √† NF
 
         /// <summary>
-        /// Busca todos os produtos relacionados ‡ NF
+        /// Busca todos os produtos relacionados √† NF
         /// </summary>
         /// <param name="idNf"></param>
         /// <returns></returns>
@@ -138,7 +138,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca todos os produtos relacionados ‡ NF
+        /// Busca todos os produtos relacionados √† NF
         /// </summary>
         /// <param name="idNf"></param>
         /// <returns></returns>
@@ -146,7 +146,7 @@ namespace Glass.Data.DAL
         {
             List<ProdutosNf> lstProd = objPersistence.LoadData(sessao, Sql(idNf, true)).ToList();
 
-            // Verifica se h· algum beneficiamento de bisote ou lapidaÁ„o
+            // Verifica se h√° algum beneficiamento de bisote ou lapida√ß√£o
             foreach (ProdutosNf pnf in lstProd)
             {
                 if (ProdutoNfBenefDAO.Instance.PossuiLapidacao(sessao, pnf.IdProdNf))
@@ -184,7 +184,7 @@ namespace Glass.Data.DAL
 
             List<ProdutosNf> lstProd = objPersistence.LoadData(session, sql).ToList();
 
-            // Verifica se h· algum beneficiamento de bisote ou lapidaÁ„o
+            // Verifica se h√° algum beneficiamento de bisote ou lapida√ß√£o
             if (FiscalConfig.NotaFiscalConfig.AcrescentarLapBisProdutoNota)
             {
                 foreach (ProdutosNf pnf in lstProd)
@@ -241,10 +241,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se produto j· foi adicionado
+        #region Verifica se produto j√° foi adicionado
 
         /// <summary>
-        /// Verifica se produto com a altura e largura passadas j· foi adicionado
+        /// Verifica se produto com a altura e largura passadas j√° foi adicionado
         /// </summary>
         /// <param name="idNf"></param>
         /// <param name="idProd"></param>
@@ -260,7 +260,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se produto com a altura e largura passadas j· foi adicionado, n„o sendo o ProdutoNf passado
+        /// Verifica se produto com a altura e largura passadas j√° foi adicionado, n√£o sendo o ProdutoNf passado
         /// </summary>
         /// <param name="idProdPed">Item do pedido</param>
         /// <param name="idPedido"></param>
@@ -301,7 +301,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o total dos produtos da NF para c·lculo do ICMS do simples
+        /// Retorna o total dos produtos da NF para c√°lculo do ICMS do simples
         /// </summary>
         /// <param name="idNf"></param>
         /// <returns></returns>
@@ -318,7 +318,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o total de II da nota passada
+        /// Obt√©m o total de II da nota passada
         /// </summary>
         /// <param name="idNf"></param>
         /// <returns></returns>
@@ -330,7 +330,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o valor de ICMS do produto de nota fiscal informado.
+        /// Obt√©m o valor de ICMS do produto de nota fiscal informado.
         /// </summary>
         public decimal ObterValorIcms(GDASession session, int idProdNf)
         {
@@ -340,7 +340,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o total do produto de nota fiscal informado.
+        /// Obt√©m o total do produto de nota fiscal informado.
         /// </summary>
         public decimal ObterTotal(GDASession session, int idProdNf)
         {
@@ -349,10 +349,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna a ˙ltima BCICMSST/ICMSST utilizada
+        #region Retorna a √∫ltima BCICMSST/ICMSST utilizada
 
         /// <summary>
-        /// Retorna a ˙ltima BCICMSST utilizada no produto passado
+        /// Retorna a √∫ltima BCICMSST utilizada no produto passado
         /// </summary>
         /// <param name="idProdNf"></param>
         /// <returns></returns>
@@ -372,7 +372,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o ˙ltimo valor de ICMS ST utilizado no produto passado
+        /// Retorna o √∫ltimo valor de ICMS ST utilizado no produto passado
         /// </summary>
         /// <param name="idProdNf"></param>
         /// <returns></returns>
@@ -438,7 +438,7 @@ namespace Glass.Data.DAL
         {
             if (produtoNf.IdProdNf <= 0) return;
 
-            // RelaÁ„o das propriedades que devem ser atualizadas
+            // Rela√ß√£o das propriedades que devem ser atualizadas
             var propriedades = new[]
             {
                 //nameof(ProdutosNf.IdNaturezaOperacao),
@@ -502,10 +502,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera todos os produtos em um perÌodo de tempo de todas as notas fiscais
+        #region Recupera todos os produtos em um per√≠odo de tempo de todas as notas fiscais
 
         /// <summary>
-        /// Retorna todos os produtos cadastrados nas notas fiscais em um perÌodo de tempo.
+        /// Retorna todos os produtos cadastrados nas notas fiscais em um per√≠odo de tempo.
         /// </summary>
         /// <param name="idProd"></param>
         /// <param name="inicio"></param>
@@ -536,7 +536,7 @@ namespace Glass.Data.DAL
                 Where idNf=" + idNf + " Group By no.idCfop, pnf.aliqIcms").ToList();
 
             // Motivo da retirada: Mesmo que a nota possuir apenas um produto, retorna esta listagem,
-            // para que o valor da alÌquota do icms n„o fique errado e gere o sintegra incorretamente.
+            // para que o valor da al√≠quota do icms n√£o fique errado e gere o sintegra incorretamente.
             //if (lstProdNf.Length <= 1)
             //    return null;
 
@@ -615,10 +615,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna a quantidade que ser· usada no DANFE
+        #region Retorna a quantidade que ser√° usada no DANFE
 
         /// <summary>
-        /// Retorna a quantidade que ser· usada no DANFE
+        /// Retorna a quantidade que ser√° usada no DANFE
         /// </summary>
         public float ObtemQtdDanfe(ProdutosNf pnf)
         {
@@ -626,7 +626,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a quantidade que ser· usada no DANFE
+        /// Retorna a quantidade que ser√° usada no DANFE
         /// </summary>
         public float ObtemQtdDanfe(GDASession session, ProdutosNf pnf)
         {
@@ -644,7 +644,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a quantidade que ser· usada no DANFE
+        /// Retorna a quantidade que ser√° usada no DANFE
         /// </summary>
         public float ObtemQtdDanfe(uint idProd, float totM2, float qtde, float altura, int largura, bool nfQtdBaixaM2, bool tipoCalcFiscal)
         {
@@ -652,7 +652,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a quantidade que ser· usada no DANFE
+        /// Retorna a quantidade que ser√° usada no DANFE
         /// </summary>
         public float ObtemQtdDanfe(GDASession session, uint idProd, float totM2, float qtde, float altura, int largura, bool nfQtdBaixaM2, bool tipoCalcFiscal)
         {
@@ -672,7 +672,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera informaÁıes dos campos
+        #region Recupera informa√ß√µes dos campos
 
         /// <summary>
         /// Recupera o id da nota fiscal.
@@ -700,7 +700,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm a quantidade que foi dado entrada do produto passado
+        /// Obt√©m a quantidade que foi dado entrada do produto passado
         /// </summary>
         /// <param name="idProdNf"></param>
         /// <returns></returns>
@@ -731,10 +731,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca a posiÁ„o do produto da nota fiscal
+        #region Busca a posi√ß√£o do produto da nota fiscal
 
         /// <summary>
-        /// Busca a posiÁ„o do produto da nota fiscal.
+        /// Busca a posi√ß√£o do produto da nota fiscal.
         /// </summary>
         /// <param name="idNf"></param>
         /// <param name="idProdNf"></param>
@@ -745,7 +745,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca a posiÁ„o do produto da nota fiscal.
+        /// Busca a posi√ß√£o do produto da nota fiscal.
         /// </summary>
         /// <param name="idNf"></param>
         /// <param name="idProdNf"></param>
@@ -780,10 +780,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Salva informaÁ„o adicional
+        #region Salva informa√ß√£o adicional
 
         /// <summary>
-        /// Salva informaÁ„o adicional
+        /// Salva informa√ß√£o adicional
         /// </summary>
         /// <param name="idProdNf"></param>
         /// <param name="infAdic"></param>
@@ -820,7 +820,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca produtos para relatÛrio da lista de notas fiscais por produto
+        #region Busca produtos para relat√≥rio da lista de notas fiscais por produto
 
         public IList<ProdutosNf> GetForRptFiscal(NotaFiscal[] nfs, int ordenar)
         {
@@ -878,7 +878,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca produtos para impress„o de etiquetas
+        #region Busca produtos para impress√£o de etiquetas
 
         private string SqlImpressaoEtiqueta(uint idNf, uint numeroNFe, uint idFornecedor, string descricaoProd,
             string dataEmissaoIni, string dataEmissaoFim, uint idCorVidro, float espessura, float alturaMin, float alturaMax,
@@ -896,7 +896,9 @@ namespace Glass.Data.DAL
                     and coalesce(pnf.qtdImpresso,0)<pnf.qtde and pnf.altura>0 and pnf.largura>0 and pnf.qtde>0  and nf.GerarEtiqueta
                     and ((p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + " and p.tipoMercadoria=" +
                     (int)TipoMercadoria.MateriaPrima + ") or s.tipoSubgrupo=" + (int)TipoSubgrupoProd.PVB + @")
-                    and nf.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.SaÌda;
+                    and nf.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Sa√≠da +
+                    " AND IF(nf.TipoDocumento = " + (int)NotaFiscal.TipoDoc.Entrada + "," +
+                        "f.IdCidade IN (SELECT IdCidade FROM cidade WHERE codIbgeCidade='99999'), 1)";
 
             if (idNf > 0)
                 sql += " and pnf.idNf=" + idNf;
@@ -1001,7 +1003,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza a observaÁ„o da peÁa
+        /// Atualiza a observa√ß√£o da pe√ßa
         /// </summary>
         public void AtualizaObs(GDASession session, uint idProdNf, string obs)
         {
@@ -1012,10 +1014,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna a quantidade de peÁas da nota fiscal
+        #region Retorna a quantidade de pe√ßas da nota fiscal
 
         /// <summary>
-        /// Retorna a quantidade de peÁas da nota fiscal.
+        /// Retorna a quantidade de pe√ßas da nota fiscal.
         /// </summary>
         /// <param name="idNf"></param>
         /// <returns></returns>
@@ -1033,25 +1035,25 @@ namespace Glass.Data.DAL
             if (qtdMateriaPrima > 0)
                 return (int)qtdMateriaPrima;
             else
-                throw new Exception("Esta impress„o n„o possui matÈria-prima.");
+                throw new Exception("Esta impress√£o n√£o possui mat√©ria-prima.");
 
         }
 
         #endregion
 
-        #region Busca o cÛdigo do produto a partir da etiqueta
+        #region Busca o c√≥digo do produto a partir da etiqueta
 
         /// <summary>
-        /// Retorna o id de um produto nota fiscal a partir do n˙mero da etiqueta, sem joins
+        /// Retorna o id de um produto nota fiscal a partir do n√∫mero da etiqueta, sem joins
         /// </summary>
         /// <param name="codEtiqueta"></param>
         /// <returns></returns>
         public uint GetIdByEtiquetaFast(GDASession sessao, string codEtiqueta)
         {
-            // Pega o idPedido pelo cÛdigo da etiqueta
+            // Pega o idPedido pelo c√≥digo da etiqueta
             uint idNf = Glass.Conversoes.StrParaUint(codEtiqueta.Substring(1, codEtiqueta.IndexOf('-') - 1));
 
-            // Pega a posiÁ„o do produto no pedido pelo cÛdigo da etiqueta
+            // Pega a posi√ß√£o do produto no pedido pelo c√≥digo da etiqueta
             int posicao = Glass.Conversoes.StrParaInt(codEtiqueta.Substring(codEtiqueta.IndexOf('-') + 1, codEtiqueta.IndexOf('.') - codEtiqueta.IndexOf('-') - 1));
 
             string sql = @"
@@ -1065,13 +1067,13 @@ namespace Glass.Data.DAL
                        .ToList(); ;
 
             if (lstProd.Count < posicao)
-                throw new Exception("Produto da etiqueta n„o encontrado.");
+                throw new Exception("Produto da etiqueta n√£o encontrado.");
 
             return lstProd[posicao - 1];
         }
 
         /// <summary>
-        /// Retorna o id de um produto nota fiscal a partir do n˙mero da etiqueta
+        /// Retorna o id de um produto nota fiscal a partir do n√∫mero da etiqueta
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="codEtiqueta"></param>
@@ -1099,7 +1101,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o id de um produto nota fiscal a partir do n˙mero da etiqueta
+        /// Retorna o id de um produto nota fiscal a partir do n√∫mero da etiqueta
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="codEtiqueta"></param>
@@ -1110,7 +1112,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna um produto nota fiscal a partir do n˙mero da etiqueta
+        /// Retorna um produto nota fiscal a partir do n√∫mero da etiqueta
         /// </summary>
         public ProdutosNf GetProdNfByEtiqueta(GDASession session, string codEtiqueta)
         {
@@ -1135,7 +1137,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos sobrescritos
+        #region M√©todos sobrescritos
 
         #region Insert
 
@@ -1145,7 +1147,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza o valor da NF ao incluir um produto ‡ mesma
+        /// Atualiza o valor da NF ao incluir um produto √† mesma
         /// </summary>
         public uint InsertComTransacao(ProdutosNf objInsert)
         {
@@ -1172,7 +1174,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza o valor da NF ao incluir um produto ‡ mesma
+        /// Atualiza o valor da NF ao incluir um produto √† mesma
         /// </summary>
         public override uint Insert(ProdutosNf objInsert)
         {
@@ -1191,14 +1193,14 @@ namespace Glass.Data.DAL
 
                 if (ProdutoImpressaoDAO.Instance.NfPossuiPecaImpressa(session, (int)objInsert.IdNf))
                 {
-                    throw new Exception("N„o È possÌvel inserir produtos nesta nota fiscal porque existem etiquetas associadas ‡ ela.");
+                    throw new Exception("N√£o √© poss√≠vel inserir produtos nesta nota fiscal porque existem etiquetas associadas √† ela.");
                 }
 
                 var tipoDocumentoNotaFiscal = NotaFiscalDAO.Instance.GetTipoDocumento(session, objInsert.IdNf);
 
                 if (!NaturezaOperacaoDAO.Instance.ValidarCfop(session, (int)objInsert.IdNaturezaOperacao.GetValueOrDefault(0), tipoDocumentoNotaFiscal))
                 {
-                    throw new Exception("A Natureza de operaÁ„o selecionada n„o pode ser utilizada em notas desse tipo.");
+                    throw new Exception("A Natureza de opera√ß√£o selecionada n√£o pode ser utilizada em notas desse tipo.");
                 }
 
                 uint idCliente = NotaFiscalDAO.Instance.ObtemIdCliente(session, objInsert.IdNf).GetValueOrDefault();
@@ -1228,7 +1230,7 @@ namespace Glass.Data.DAL
 
                 objInsert.TotM = totM2;
 
-                // Chamado 15025: Arredondamento criado para resolver diferenÁa da BC ICMS para o Total Prod
+                // Chamado 15025: Arredondamento criado para resolver diferen√ßa da BC ICMS para o Total Prod
                 objInsert.Total = Math.Round(total, 2);
 
                 // Calcula o peso do produto
@@ -1241,16 +1243,16 @@ namespace Glass.Data.DAL
                     objInsert.Altura,
                     true);
 
-                // Se o NCM n„o tiver sido informado, busca do produto
+                // Se o NCM n√£o tiver sido informado, busca do produto
                 if (string.IsNullOrEmpty(objInsert.Ncm))
                 {
                     var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(session, objInsert.IdNf);
                     objInsert.Ncm = ProdutoDAO.Instance.ObtemNcm(session, (int)objInsert.IdProd, idLoja);
                 }
 
-                // Informa a altura e largura do item nas observaÁıes dos produtos na nota
+                // Informa a altura e largura do item nas observa√ß√µes dos produtos na nota
                 var tipoDoc = NotaFiscalDAO.Instance.GetTipoDocumento(session, objInsert.IdNf);
-                if (string.IsNullOrEmpty(objInsert.InfAdic) && (tipoDoc == (int)NotaFiscal.TipoDoc.SaÌda || tipoDoc == (int)NotaFiscal.TipoDoc.Entrada) &&
+                if (string.IsNullOrEmpty(objInsert.InfAdic) && (tipoDoc == (int)NotaFiscal.TipoDoc.Sa√≠da || tipoDoc == (int)NotaFiscal.TipoDoc.Entrada) &&
                     Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(ProdutoDAO.Instance.ObtemIdGrupoProd(session, (int)objInsert.IdProd)))
                 {
                     if (FiscalConfig.NotaFiscalConfig.ExibirLarguraEAlturaInfAdicProduto)
@@ -1269,13 +1271,13 @@ namespace Glass.Data.DAL
                     objInsert.IdNaturezaOperacao = NotaFiscalDAO.Instance.ObtemIdNaturezaOperacao(session, objInsert.IdNf);
 
                 }
-                // Se o MVA n„o tiver sido informado, busca do produto
+                // Se o MVA n√£o tiver sido informado, busca do produto
                 if (objInsert.Mva == 0)
                 {
                     var idCfop = NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, objInsert.IdNaturezaOperacao.Value);
                     var isCfopDevolucao = CfopDAO.Instance.IsCfopDevolucao(session, idCfop);
 
-                    var saida = (tipoDoc == (int)NotaFiscal.TipoDoc.SaÌda ||
+                    var saida = (tipoDoc == (int)NotaFiscal.TipoDoc.Sa√≠da ||
                         (tipoDoc == (int)NotaFiscal.TipoDoc.Entrada && isCfopDevolucao));
 
                     objInsert.Mva = MvaProdutoUfDAO.Instance.ObterMvaPorProduto(
@@ -1320,8 +1322,8 @@ namespace Glass.Data.DAL
                     NotaFiscalDAO.Instance.AtualizaValorIpiDevolvido(session, objInsert.IdNf, valorIpiDevolvidoProdutos);
                 }
 
-                // Busca observaÁ„o da CFOP do produto e salva nas informaÁıes complementares da nota
-                if (NotaFiscalDAO.Instance.GetTipoDocumento(session, objInsert.IdNf) == (int)NotaFiscal.TipoDoc.SaÌda && objInsert.IdCfop > 0 &&
+                // Busca observa√ß√£o da CFOP do produto e salva nas informa√ß√µes complementares da nota
+                if (NotaFiscalDAO.Instance.GetTipoDocumento(session, objInsert.IdNf) == (int)NotaFiscal.TipoDoc.Sa√≠da && objInsert.IdCfop > 0 &&
                     objInsert.IdCfop != NotaFiscalDAO.Instance.GetIdCfop(session, objInsert.IdNf))
                 {
                     string obsCfop = CfopDAO.Instance.GetObs(session, objInsert.IdCfop.Value);
@@ -1386,10 +1388,10 @@ namespace Glass.Data.DAL
         {
             try
             {
-                // Se esta NF n„o puder ser editada, emite o erro.
+                // Se esta NF n√£o puder ser editada, emite o erro.
                 PodeEditar(session, objUpdate.IdNf);
 
-                // Recuperar possÌveis valores referente ‡ nota de importaÁ„o, para n„o perdÍ-los
+                // Recuperar poss√≠veis valores referente √† nota de importa√ß√£o, para n√£o perd√™-los
                 ProdutosNf prodNfOld = GetElement(session, objUpdate.IdProdNf);
                 /* Chamado 34268. */
                 if (ProdutoImpressaoDAO.Instance.VerificarPossuiImpressao(session, (int)objUpdate.IdProdNf))
@@ -1402,15 +1404,15 @@ namespace Glass.Data.DAL
                         prodNfOld.TotM != objUpdate.TotM ||
                         ((string.IsNullOrEmpty(prodNfOld.Lote) && string.IsNullOrEmpty(objUpdate.Lote)) == true ? false : (prodNfOld.Lote != objUpdate.Lote)) ||
                         prodNfOld.TipoMercadoria != objUpdate.TipoMercadoria)
-                        throw new Exception("N„o È possÌvel alterar a quantidade, altura, largura, " +
-                            "M2, lote ou tipo de mercadoria do produto, pois, existem etiquetas associadas ‡ nota fiscal. " +
-                            "Cancele as etiquetas da nota para conseguir alter·-lo.");
+                        throw new Exception("N√£o √© poss√≠vel alterar a quantidade, altura, largura, " +
+                            "M2, lote ou tipo de mercadoria do produto, pois, existem etiquetas associadas √† nota fiscal. " +
+                            "Cancele as etiquetas da nota para conseguir alter√°-lo.");
                 }
 
                 var tipoDocumentoNotaFiscal = NotaFiscalDAO.Instance.GetTipoDocumento(session, objUpdate.IdNf);
 
                 if (!NaturezaOperacaoDAO.Instance.ValidarCfop((int)objUpdate.IdNaturezaOperacao.GetValueOrDefault(0), tipoDocumentoNotaFiscal))
-                    throw new Exception("A Natureza de operaÁ„o selecionada n„o pode ser utilizada em notas desse tipo.");
+                    throw new Exception("A Natureza de opera√ß√£o selecionada n√£o pode ser utilizada em notas desse tipo.");
 
                 if (objUpdate.Cst != "20" && objUpdate.Cst != "70" && objUpdate.Csosn != "900")
                 {
@@ -1442,7 +1444,7 @@ namespace Glass.Data.DAL
                 objUpdate.TpViaTransp = prodNfOld.TpViaTransp;
                 objUpdate.TpIntermedio = prodNfOld.TpIntermedio;
 
-                // Verifica se a nota n„o est· finalizada (n„o È correÁ„o manual da nota) ou se n„o È de importaÁ„o
+                // Verifica se a nota n√£o est√° finalizada (n√£o √© corre√ß√£o manual da nota) ou se n√£o √© de importa√ß√£o
                 if (!NotaFiscalDAO.Instance.IsFinalizada(session, objUpdate.IdNf) && !NotaFiscalDAO.Instance.IsNotaFiscalImportacao(session, objUpdate.IdNf))
                 {
                     uint idCliente = NotaFiscalDAO.Instance.ObtemIdCliente(session, objUpdate.IdNf).GetValueOrDefault();
@@ -1454,11 +1456,11 @@ namespace Glass.Data.DAL
 
                     objUpdate.TotM = totM2;
 
-                    // Chamado 15025: Arredondamento criado para resolver diferenÁa da BC ICMS para o Total Prod
+                    // Chamado 15025: Arredondamento criado para resolver diferen√ßa da BC ICMS para o Total Prod
                     objUpdate.Total = Math.Round(total, 2);
                     //objUpdate.Total = Math.Round(total,4);
 
-                    // Se o NCM n„o tiver sido informado, busca de produto
+                    // Se o NCM n√£o tiver sido informado, busca de produto
                     if (String.IsNullOrEmpty(objUpdate.Ncm))
                     {
                         var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(objUpdate.IdNf);
@@ -1467,13 +1469,13 @@ namespace Glass.Data.DAL
 
                     var tipoDocumento = NotaFiscalDAO.Instance.GetTipoDocumento(session, objUpdate.IdNf);
 
-                    // Se o MVA n„o tiver sido informado, busca do produto
+                    // Se o MVA n√£o tiver sido informado, busca do produto
                     if (objUpdate.Mva == 0)
                         objUpdate.Mva = MvaProdutoUfDAO.Instance.ObterMvaPorProduto(session, (int)objUpdate.IdProd,
                             NotaFiscalDAO.Instance.ObtemIdLoja(session, objUpdate.IdNf),
                             (int?)NotaFiscalDAO.Instance.ObtemIdFornec(session, objUpdate.IdNf),
                             NotaFiscalDAO.Instance.ObtemIdCliente(session, objUpdate.IdNf),
-                            (tipoDocumento == (int)NotaFiscal.TipoDoc.SaÌda ||
+                            (tipoDocumento == (int)NotaFiscal.TipoDoc.Sa√≠da ||
                             /* Chamado 32984 e 39660. */
                             (tipoDocumento == (int)NotaFiscal.TipoDoc.Entrada &&
                             CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, objUpdate.IdNaturezaOperacao.Value)))));
@@ -1504,8 +1506,8 @@ namespace Glass.Data.DAL
 
                 NotaFiscalDAO.Instance.UpdateTotalNf(session, objUpdate.IdNf);
 
-                // Busca observaÁ„o da CFOP do produto e salva nas informaÁıes complementares da nota
-                if (NotaFiscalDAO.Instance.GetTipoDocumento(session, objUpdate.IdNf) == (int)NotaFiscal.TipoDoc.SaÌda && objUpdate.IdCfop > 0 &&
+                // Busca observa√ß√£o da CFOP do produto e salva nas informa√ß√µes complementares da nota
+                if (NotaFiscalDAO.Instance.GetTipoDocumento(session, objUpdate.IdNf) == (int)NotaFiscal.TipoDoc.Sa√≠da && objUpdate.IdCfop > 0 &&
                     objUpdate.IdCfop != NotaFiscalDAO.Instance.GetIdCfop(session, objUpdate.IdNf))
                 {
                     string obsCfop = CfopDAO.Instance.GetObs(session, objUpdate.IdCfop.Value);
@@ -1566,7 +1568,7 @@ namespace Glass.Data.DAL
 
             var prod = GetElement(sessao, idProdNf);
 
-            // Se esta NF n„o puder ser editada, emite o erro.
+            // Se esta NF n√£o puder ser editada, emite o erro.
 
             PodeEditar(sessao, idNf);
 
@@ -1647,10 +1649,10 @@ namespace Glass.Data.DAL
 
         #region FCI
 
-        #region Calcula o conteudo de importaÁ„o do produto
+        #region Calcula o conteudo de importa√ß√£o do produto
 
         /// <summary>
-        /// Realiza o calculo do conteudo de importaÁ„o de um produto
+        /// Realiza o calculo do conteudo de importa√ß√£o de um produto
         /// </summary>
         /// <param name="idProd"></param>
         /// <param name="periodoApuracao"></param>
@@ -1698,7 +1700,7 @@ namespace Glass.Data.DAL
                 FROM produtos_nf pnf
                     INNER JOIN nota_fiscal nf ON (pnf.idNf = nf.idNf)
                 WHERE nf.situacao IN(" + (int)NotaFiscal.SituacaoEnum.Autorizada + "," + (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros + @")
-                    AND nf.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.SaÌda + @"
+                    AND nf.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Sa√≠da + @"
                     AND pnf.cstOrig<> 0 AND pnf.cstOrig<> 4
                     AND pnf.idProd IN({0})
                     AND MONTH(nf.dataEmissao)={1}
@@ -1738,15 +1740,15 @@ namespace Glass.Data.DAL
                 {
                     #region Busca entradas
 
-                    //Busca as importaÁıes que o produto teve
+                    //Busca as importa√ß√µes que o produto teve
                     var prodsNfImp = objPersistence.LoadData(string.Format(sqlParcelaImportada, pbe.IdProdBaixa, mes, ano)).ToList();
 
-                    //verifica se houve imporaÁ„o no mÍs ou busca nos ultimos meses
+                    //verifica se houve impora√ß√£o no m√™s ou busca nos ultimos meses
                     if (prodsNfImp == null || prodsNfImp.Count == 0)
                     {
                         int count = 0;
 
-                        //Se n„o encontrar vai buscando nos ultimos 24 meses
+                        //Se n√£o encontrar vai buscando nos ultimos 24 meses
                         while (count < 24 && (prodsNfImp == null || prodsNfImp.Count == 0))
                         {
                             if (mes == 1) { mes = 12; ano--; }
@@ -1798,7 +1800,7 @@ namespace Glass.Data.DAL
             {
                 pbes = new List<ProdutoBaixaEstoque>(ProdutoBaixaEstoqueDAO.Instance.GetByProd(idChapa, false));
 
-                //Verifica se È uma chapa de laminado
+                //Verifica se √© uma chapa de laminado
                 if (pbes.Count > 1)
                 {
                     valorParcelaImportada += CalculaValorParcelaImportada(idChapa, periodoApuracao);
@@ -1807,15 +1809,15 @@ namespace Glass.Data.DAL
                 {
                     #region Busca entradas
 
-                    //Busca as importaÁıes que o produto teve
+                    //Busca as importa√ß√µes que o produto teve
                     var prodsNfImp = objPersistence.LoadData(string.Format(sqlParcelaImportada, idChapa, mes, ano)).ToList();
 
-                    //verifica se houve imporaÁ„o no mÍs ou busca nos ultimos meses
+                    //verifica se houve impora√ß√£o no m√™s ou busca nos ultimos meses
                     if (prodsNfImp == null || prodsNfImp.Count == 0)
                     {
                         int count = 0;
 
-                        //Se n„o encontrar vai buscando nos ultimos 24 meses
+                        //Se n√£o encontrar vai buscando nos ultimos 24 meses
                         while (count < 24 && (prodsNfImp == null || prodsNfImp.Count == 0))
                         {
                             if (mes == 1) { mes = 12; ano--; }
@@ -1871,7 +1873,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Realiza o calculo do valor da saÌda interestadual de um produto
+        /// Realiza o calculo do valor da sa√≠da interestadual de um produto
         /// </summary>
         /// <param name="idProd"></param>
         /// <param name="periodoApuracao"></param>
@@ -1905,24 +1907,24 @@ namespace Glass.Data.DAL
                 FROM produtos_nf pnf
                     INNER JOIN nota_fiscal nf ON (pnf.idNf = nf.idNf)
                 WHERE nf.situacao =" + (int)NotaFiscal.SituacaoEnum.Autorizada + @"
-                    AND nf.tipoDocumento=" + (int)NotaFiscal.TipoDoc.SaÌda + @"
+                    AND nf.tipoDocumento=" + (int)NotaFiscal.TipoDoc.Sa√≠da + @"
                     AND pnf.idProd={0}
                     AND MONTH(nf.dataEmissao)={1}
                     AND YEAR(nf.dataEmissao)={2}";
 
             #endregion
 
-            #region buca as saÌdas
+            #region buca as sa√≠das
 
             //Busca as saidas que o produto teve
             var prodsNfSaida = objPersistence.LoadData(string.Format(sqlSaida, idProd, mes, ano)).ToList();
 
-            //verifica se houve imporaÁ„o no mÍs ou busca nos ultimos meses
+            //verifica se houve impora√ß√£o no m√™s ou busca nos ultimos meses
             if (prodsNfSaida == null || prodsNfSaida.Count == 0)
             {
                 int count = 0;
 
-                //Se n„o encontrar vai buscando nos ultimos 24 meses
+                //Se n√£o encontrar vai buscando nos ultimos 24 meses
                 while (prodsNfSaida == null || count < 24)
                 {
                     if (mes == 1) { mes = 12; ano--; }
@@ -1936,7 +1938,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Calculo das saÌdas
+            #region Calculo das sa√≠das
 
             if (prodsNfSaida != null && prodsNfSaida.Count > 0)
             {
@@ -1999,7 +2001,7 @@ namespace Glass.Data.DAL
         public void AtualizaDadosFCIProdutoNf(uint idProdNf, decimal parcelaImportada, decimal saidaInterestadual,
             decimal conteudoImportacao, string numControleFci)
         {
-            // Se esta NF n„o puder ser editada, emite o erro.
+            // Se esta NF n√£o puder ser editada, emite o erro.
             var idNf = ObtemIdNf(idProdNf);
             int situacao = NotaFiscalDAO.Instance.ObtemSituacao(idNf);
             if (situacao != (int)NotaFiscal.SituacaoEnum.Aberta && situacao != (int)NotaFiscal.SituacaoEnum.FalhaEmitir &&
@@ -2093,17 +2095,17 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Valida alteraÁıes no produto_nf
+        #region Valida altera√ß√µes no produto_nf
         /// <summary>
-        /// MÈtodo para verificar se um produto de Nota fiscal pode ser alterado.
+        /// M√©todo para verificar se um produto de Nota fiscal pode ser alterado.
         /// </summary>
-        /// <param name="session">Sess„o do GDA</param>
-        /// <param name="idNf">Id da nota que possuÌ o produto</param>
+        /// <param name="session">Sess√£o do GDA</param>
+        /// <param name="idNf">Id da nota que possu√≠ o produto</param>
         private static void PodeEditar(GDASession session, uint idNf)
         {
             if (!NotaFiscalDAO.Instance.PodeEditar(session, idNf))
             {
-                throw new Exception("Apenas Notas Fiscais nas situaÁıes: Aberta, N„o Emitida e Falha ao emitir podem ser alteradas.");
+                throw new Exception("Apenas Notas Fiscais nas situa√ß√µes: Aberta, N√£o Emitida e Falha ao emitir podem ser alteradas.");
             }
         }
         #endregion
