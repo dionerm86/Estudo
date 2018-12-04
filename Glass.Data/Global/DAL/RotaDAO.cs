@@ -251,12 +251,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera a data da rota por cliente.
         /// </summary>
-        public DateTime? GetDataRota(GDASession session, uint idCli, DateTime dataInicial, bool somarDiasUteisRota, Pedido.TipoPedidoEnum? tipoPedido)
+        public DateTime? GetDataRota(GDASession session, uint idCli, DateTime dataInicial, bool somarDiasUteisRota, Pedido.TipoPedidoEnum? tipoPedido, bool recalculaDataRota = false)
         {
-            Rota rota = GetByCliente(session, idCli);
+            Rota rota = this.GetByCliente(session, idCli);
 
             if (rota == null || (rota.DiasSemana == Model.DiasSemana.Nenhum && rota.NumeroMinimoDiasEntrega == 0))
+            {
                 return null;
+            }
 
             var diasConsiderar = tipoPedido == Pedido.TipoPedidoEnum.Revenda ?
                 PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoRevenda :
@@ -270,10 +272,10 @@ namespace Glass.Data.DAL
                 // A comparação do número de dias percorrido com o número mínimo de dias da rota deve ser "numeroDias++ < rota.NumeroMinimoDiasEntrega",
                 // porque dessa forma caso o último dia da contagem caia no dia da rota, esta data será usada, porém da forma como estava antes,
                 // "numeroDias++ <= rota.NumeroMinimoDiasEntrega", a data usada será a da outra semana.
-                //while (numeroDias++ < rota.NumeroMinimoDiasEntrega || dataInicial.Feriado() ||
+                // while (numeroDias++ < rota.NumeroMinimoDiasEntrega || dataInicial.Feriado() ||
                 /* Chamado 54042. */
                 while ((somarDiasUteisRota ? numeroDias++ < diasConsiderar : false) || dataInicial.Feriado() ||
-                     (rota.DiasSemana != Model.DiasSemana.Nenhum && !TemODia(dataInicial.DayOfWeek, rota.DiasSemana)))
+                     (rota.DiasSemana != Model.DiasSemana.Nenhum && !this.TemODia(dataInicial.DayOfWeek, rota.DiasSemana)))
                 {
                     dataInicial = dataInicial.AddDays(1);
                 }
@@ -282,24 +284,29 @@ namespace Glass.Data.DAL
             else
             {
                 /* Chamado 54042. */
-                if (somarDiasUteisRota)
+                if (somarDiasUteisRota && !recalculaDataRota)
+                {
                     for (var i = 0; i < diasConsiderar; i++)
                     {
                         dataInicial = dataInicial.AddDays(1);
 
                         // Enquanto não for dia útil, continua avançando a data
                         while (!FuncoesData.DiaUtil(dataInicial))
+                        {
                             dataInicial = dataInicial.AddDays(1);
+                        }
                     }
+                }
 
                 // Depois de calcular os dias mínimos da rota, verifica se a data é um dia da rota
-                if (rota.DiasSemana != Model.DiasSemana.Nenhum && !TemODia(dataInicial.DayOfWeek, rota.DiasSemana))
+                if (rota.DiasSemana != Model.DiasSemana.Nenhum && !this.TemODia(dataInicial.DayOfWeek, rota.DiasSemana))
                 {
-                    while (!TemODia(dataInicial.DayOfWeek, rota.DiasSemana) || dataInicial.Feriado())
+                    while (!this.TemODia(dataInicial.DayOfWeek, rota.DiasSemana) || dataInicial.Feriado())
+                    {
                         dataInicial = dataInicial.AddDays(1);
+                    }
                 }
             }
-
 
             return dataInicial;
         }
