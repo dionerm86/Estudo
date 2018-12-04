@@ -477,6 +477,9 @@
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.OrdensCarga.js" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.Filtro.js" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.js" />
+    <Content Include="Vue\Carregamentos\Itens\Pendencias\Componentes\ListaPendenciaCarregamento.Filtro.js" />
+    <Content Include="Vue\Carregamentos\Itens\Pendencias\Componentes\ListaPendenciaCarregamento.js" />
+    <Content Include="Vue\Carregamentos\Itens\Pendencias\Templates\ListaPendenciaCarregamento.Filtro.html" />
     <Content Include="Vue\Carregamentos\Templates\LstCarregamentos.Filtro.html" />
     <Content Include="Vue\Cfops\NaturezasOperacao\Componentes\LstNaturezasOperacao.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.Filtro.js" />

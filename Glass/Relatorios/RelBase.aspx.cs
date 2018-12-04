@@ -3742,7 +3742,7 @@ namespace Glass.UI.Web.Relatorios
                         report.ReportPath = "Relatorios/OrdemCarga/rptListaPendenciaCarregamento.rdlc";
                         var itensPendentesCarregamento = ItemCarregamentoDAO.Instance.GetItensPendentes(Glass.Conversoes.StrParaUint(Request["idCarregamento"]),
                             0, Glass.Conversoes.StrParaUint(Request["idCliente"]), Request["nomeCliente"], Glass.Conversoes.StrParaUint(Request["idLoja"]),
-                            null, null, true, Request["dataSaidaIni"], Request["dataSaidaFim"], Request["rotas"], Request["ignorarPedidoVendaTransferencia"].ToLower() == "true",
+                            null, null, true, Request["dataSaidaIni"], Request["dataSaidaFim"], Request["rotas"], Request["ignorarPedidoVendaTransferencia"] == "true",
                             Request["idClienteExterno"].StrParaUint(), Request["nomeClienteExterno"], Request["codRotasExternas"]);
 
                         report.DataSources.Add(new ReportDataSource("ItemCarregamento", itensPendentesCarregamento));
