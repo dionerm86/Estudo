@@ -1,4 +1,4 @@
-<%@ Page Title="Planilha de Metragem" Language="C#" MasterPageFile="~/Painel.master"
+ï»¿<%@ Page Title="Planilha de Metragem" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="PlanilhaMetragem.aspx.cs" Inherits="Glass.UI.Web.Relatorios.Producao.PlanilhaMetragem" %>
 
 <%@ Register Src="../../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
@@ -24,7 +24,7 @@
 
             if (idImpressao == "") idImpressao = 0;
 
-            openWindow(600, 800, "RelBase.aspx?rel=PlanilhaMetragem&idPedido=" + idPedido + "&idCliente=" + idCliente + "&dataIni=" + dataIni +
+            openWindow(600, 800, "RelBase.aspx?rel=PlanilhaMetragem&idPedido=" + idPedido + "&idCliente=" + idCliente + "&nomeCliente=" + nomeCliente + "&dataIni=" + dataIni +
              "&idSetor=" + setor + "&dataFim=" + dataFim + "&dataIniEnt=" + dataIniEnt + "&dataFimEnt=" + dataFimEnt + "&situacao=" + situacao +
               "&setoresPosteriores=true" + "&idImpressao=" + idImpressao + "&exportarExcel=" + exportarExcel + "&idFunc=" + idFunc +
                "&agruparPecas=" + exibirAgrupadas + "&idsRotas=" + idsRotas + "&idTurno=" + idTurno);
@@ -82,12 +82,12 @@
                 <table>
                     <tr>
                         <td align="left">
-                            <asp:Label ID="Label11" runat="server" ForeColor="#0066FF" Text="Situação"></asp:Label>
+                            <asp:Label ID="Label11" runat="server" ForeColor="#0066FF" Text="SituaÃ§Ã£o"></asp:Label>
                         </td>
                         <td align="left">
                             <asp:DropDownList ID="drpSituacao" runat="server" AutoPostBack="True" OnSelectedIndexChanged="drpSetor_SelectedIndexChanged">
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
-                                <asp:ListItem Value="1">Produção</asp:ListItem>
+                                <asp:ListItem Value="1">ProduÃ§Ã£o</asp:ListItem>
                                 <asp:ListItem Value="2">Perda</asp:ListItem>
                             </asp:DropDownList>
                         </td>
@@ -114,7 +114,7 @@
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td align="left">
-                            <asp:Label ID="lblPeriodoSit" runat="server" ForeColor="#0066FF" Text="Período" Visible="False"></asp:Label>&nbsp;
+                            <asp:Label ID="lblPeriodoSit" runat="server" ForeColor="#0066FF" Text="PerÃ­odo" Visible="False"></asp:Label>&nbsp;
                         </td>
                         <td align="left" nowrap="nowrap">
                             <uc1:ctrlData ID="ctrlDataIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
@@ -127,7 +127,7 @@
                                 OnClick="imgPesq_Click" CausesValidation="False" Visible="false" />
                         </td>
                         <td align="left" nowrap="nowrap">
-                            <asp:Label ID="Label14" runat="server" ForeColor="#0066FF" Text="Período (Entrega)"></asp:Label>
+                            <asp:Label ID="Label14" runat="server" ForeColor="#0066FF" Text="PerÃ­odo (Entrega)"></asp:Label>
                         </td>
                         <td align="left" nowrap="nowrap">
                             <uc1:ctrlData ID="ctrlDataIniEnt" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
@@ -156,7 +156,7 @@
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:Label ID="Label1" runat="server" Text="Funcionário Setor" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label1" runat="server" Text="FuncionÃ¡rio Setor" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpFuncionario" runat="server" AppendDataBoundItems="True"
@@ -165,7 +165,7 @@
                             </asp:DropDownList>
                         </td>
                         <td>
-                            <asp:Label ID="Label17" runat="server" Text="Num. Impressão" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label17" runat="server" Text="Num. ImpressÃ£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:TextBox ID="txtNumImpressao" runat="server" Width="60px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
@@ -175,7 +175,7 @@
                                 ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkAgruparPecas" runat="server" Text="Exibir total de peças agrupadas" />
+                            <asp:CheckBox ID="chkAgruparPecas" runat="server" Text="Exibir total de peÃ§as agrupadas" />
                         </td>
                     </tr>
                 </table>
@@ -194,12 +194,12 @@
                     PageSize="15">
                     <Columns>
                         <asp:BoundField DataField="IdPedido" HeaderText="Pedido" SortExpression="IdPedido" />
-                        <asp:BoundField DataField="NumPeca" HeaderText="Peça N.º" SortExpression="NumPeca" />
+                        <asp:BoundField DataField="NumPeca" HeaderText="PeÃ§a N.Âº" SortExpression="NumPeca" />
                         <asp:BoundField DataField="Cor" HeaderText="Cor" SortExpression="Cor" />
                         <asp:BoundField DataField="Espessura" HeaderText="Espessura" SortExpression="Espessura" />
                         <asp:BoundField DataField="Medidas" HeaderText="Medidas" SortExpression="Medidas" />
-                        <asp:BoundField DataField="TotM2" HeaderText="Área M2" SortExpression="TotM2" />
-                        <asp:BoundField DataField="Obs" HeaderText="Observação" SortExpression="Obs" />
+                        <asp:BoundField DataField="TotM2" HeaderText="Ãrea M2" SortExpression="TotM2" />
+                        <asp:BoundField DataField="Obs" HeaderText="ObservaÃ§Ã£o" SortExpression="Obs" />
                     </Columns>
                     <PagerStyle />
                     <EditRowStyle />
