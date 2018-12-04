@@ -28,11 +28,14 @@ namespace Glass.Data.RelDAL
                 return null;
             }
 
-            var setoresPronto = Utils.GetSetores.Where(f => f.Tipo == TipoSetor.Pronto);
+            var setoresPronto = Utils.GetSetores.Where(f => f.Tipo == TipoSetor.Pronto)?.ToList();
             var setoresCorteLaminado = Utils.GetSetores.Where(f => f.Corte || f.Laminado);
 
             var idsPecasIniciadasNoPeriodo = this.ObterIdsProdutoProducaoIniciadosNoPeriodo(dataInicio, dataFim);
-            var idsPecasConcluidasNoPeriodo = this.ObterIdsProdutoProducaoConcluidosNoPeriodo(dataInicio, dataFim);
+            var idsPecasConcluidasNoPeriodo = this.ObterIdsProdutoProducaoConcluidosNoPeriodo(
+                setoresPronto,
+                dataInicio,
+                dataFim);
             var idsPecasIniciadasNoPeriodoConcluidasNoPeriodo = this.ObterIdsProdutoProducaoIniciadosNoPeriodoConcluidosNoPeriodo(
                 idsPecasIniciadasNoPeriodo,
                 idsPecasConcluidasNoPeriodo);
@@ -43,7 +46,9 @@ namespace Glass.Data.RelDAL
                 idsPecasConcluidasNoPeriodo,
                 idsPecasIniciadasNoPeriodo);
             var idsPecasIniciadasForaPeriodoNaoConcluidasPeriodo = this.ObterIdsProdutoProducaoIniciadosAntesPeriodoNaoConcluidosNoPeriodo(
-                idsPecasIniciadasNoPeriodo, dataFim);
+                setoresPronto,
+                dataInicio,
+                dataFim);
 
             var idsPecasConsultar = new List<int>();
             idsPecasConsultar.AddRange(idsPecasIniciadasNoPeriodoConcluidasNoPeriodo);
@@ -51,9 +56,7 @@ namespace Glass.Data.RelDAL
             idsPecasConsultar.AddRange(idsPecasIniciadasAntesPeriodoConcluidasNoPeriodo);
             idsPecasConsultar.AddRange(idsPecasIniciadasForaPeriodoNaoConcluidasPeriodo);
 
-            var idsProdutoProducaoParaItensProduzidosEFD = this.ObterIdsProdutoProducaoParaItensProduzidosEFD(idLoja, idsPecasConsultar);
-
-            if (!idsProdutoProducaoParaItensProduzidosEFD.Any(f => f > 0))
+            if (!idsPecasConsultar.Any(f => f > 0))
             {
                 return null;
             }
@@ -87,7 +90,7 @@ namespace Glass.Data.RelDAL
                     INNER JOIN (
                         SELECT lp.IdProdPedProducao, lp.DataLeitura, lp.IdSetor, lp.ProntoRoteiro
                         FROM leitura_producao lp
-                        WHERE lp.IdProdPedProducao IN ({string.Join(",", idsProdutoProducaoParaItensProduzidosEFD)})
+                        WHERE lp.IdProdPedProducao IN ({string.Join(",", idsPecasConsultar)})
                             AND (lp.ProntoRoteiro
                             OR lp.IdSetor IN (1{filtroSetoresPronto}{filtroSetoresCorteLaminado}))
                     ) lp ON (lp.IdProdPedProducao = ppp.IdProdPedProducao)
@@ -105,12 +108,16 @@ namespace Glass.Data.RelDAL
                             sp.TipoCalculo AS TipoCalculoSubgrupo,
                             sp.TipoCalculoNf AS TipoCalculoNfSubgrupo
                         FROM produtos_pedido_espelho ppe
+                            INNER JOIN pedido p ON (ppe.IdPedido = p.IdPedido)
                             INNER JOIN produto prod ON (ppe.IdProd = prod.IdProd)
                             INNER JOIN grupo_prod gp ON (prod.IdGrupoProd = gp.IdGrupoProd)
                             INNER JOIN subgrupo_prod sp ON (prod.IdSubgrupoProd = sp.IdSubgrupoProd)
+                        WHERE p.IdLoja = {idLoja}
+                            AND (p.DataPronto IS NULL OR p.DataPronto > ?dataFim)
+                            AND prod.TipoMercadoria IN ({(int)TipoMercadoria.ProdutoEmProcesso}, {(int)TipoMercadoria.ProdutoAcabado})
                     ) ppe ON (ppp.IdProdPed = ppe.IdProdPed)";
 
-            var itens = this.objPersistence.LoadData(sqlDadosProducao).ToList();
+            var itens = this.objPersistence.LoadData(sqlDadosProducao, ObterParametrosConsulta(null, dataFim)).ToList();
             var itensProcessados = new List<Sync.Fiscal.EFD.Entidade.IItemProduzido>();
             var idProdProdutosBaixaEstoqueFiscal = new Dictionary<int, List<ProdutoBaixaEstoqueFiscal>>();
 
@@ -230,14 +237,15 @@ namespace Glass.Data.RelDAL
             return this.ExecuteMultipleScalar<int>(sqlPecasIniciadasNoPeriodo, this.ObterParametrosConsulta(dataInicio, dataFim));
         }
 
-        private List<int> ObterIdsProdutoProducaoConcluidosNoPeriodo(DateTime dataInicio, DateTime dataFim)
+        private List<int> ObterIdsProdutoProducaoConcluidosNoPeriodo(
+            List<Setor> setoresPronto,
+            DateTime dataInicio,
+            DateTime dataFim)
         {
             if (dataInicio == DateTime.MinValue && dataFim == DateTime.MinValue)
             {
                 return new List<int>();
             }
-
-            var setoresPronto = Utils.GetSetores.Where(f => f.Tipo == TipoSetor.Pronto).ToList();
 
             var sqlPecasConcluidasNoPeriodo = $@"SELECT DISTINCT(lp.IdProdPedProducao)
                 FROM leitura_producao lp
@@ -345,50 +353,40 @@ namespace Glass.Data.RelDAL
         }
 
         private List<int> ObterIdsProdutoProducaoIniciadosAntesPeriodoNaoConcluidosNoPeriodo(
-            List<int> idsPecasIniciadasNoPeriodo,
+            List<Setor> setoresPronto,
+            DateTime dataInicio,
             DateTime dataFim)
         {
-            if (!idsPecasIniciadasNoPeriodo.Any(f => f > 0) && dataFim == DateTime.MinValue)
+            var filtroPecasProntas = string.Empty;
+
+            if (setoresPronto?.Any() ?? false)
             {
-                return new List<int>();
+                filtroPecasProntas += $@" AND (lp.IdSetor IN ({string.Join(",", setoresPronto.Select(f => f.IdSetor))})
+                    OR lp.ProntoRoteiro = 1)";
+            }
+            else
+            {
+                filtroPecasProntas += " AND lp.ProntoRoteiro = 1";
             }
 
-            var sqlPecasIniciadasAntesPeriodoNaoConcluidasNoPeriodo = $@"SELECT DISTINCT(ppp.IdProdPedProducao)
-                FROM pedido p
-	                INNER JOIN produtos_pedido_espelho ppe ON (p.IdPedido = ppe.IdPedido)
-	                INNER JOIN produto_pedido_producao ppp ON (ppe.IdProdPed = ppp.IdProdPed)
-                WHERE 1";
-
-            if (dataFim != DateTime.MinValue)
-            {
-                sqlPecasIniciadasAntesPeriodoNaoConcluidasNoPeriodo += " AND (p.DataPronto > ?dataFim OR p.DataPronto IS NULL)";
-            }
-
-            if (idsPecasIniciadasNoPeriodo.Any(f => f > 0))
-            {
-                sqlPecasIniciadasAntesPeriodoNaoConcluidasNoPeriodo += $" AND ppp.IdProdPedProducao NOT IN ({string.Join(",", idsPecasIniciadasNoPeriodo)})";
-            }
-
-            return this.ExecuteMultipleScalar<int>(sqlPecasIniciadasAntesPeriodoNaoConcluidasNoPeriodo, this.ObterParametrosConsulta(null, dataFim));
-        }
-
-        private List<int> ObterIdsProdutoProducaoParaItensProduzidosEFD(int idLoja, List<int> idsProdPedProducao)
-        {
-            if (idLoja == 0 || !idsProdPedProducao.Any(f => f > 0))
-            {
-                return new List<int>();
-            }
-
-            var sqlProdPedProducaoParaItensProduzidosEFD = $@"SELECT DISTINCT(ppp.IdProdPedProducao)
+            var sqlPecasIniciadasAntesPeriodoNaoConcluidasNoPeriodo = $@"SELECT ppp.IdProdPedProducao
                 FROM produto_pedido_producao ppp
-                    INNER JOIN produtos_pedido pp ON (ppp.IdProdPed = pp.IdProdPedEsp)
-                    INNER JOIN produto prod ON (pp.IdProd = prod.IdProd)
-                    INNER JOIN pedido p ON (pp.IdPedido = p.IdPedido)
-                WHERE prod.TipoMercadoria IN ({(int)TipoMercadoria.ProdutoEmProcesso}, {(int)TipoMercadoria.ProdutoAcabado})
-                    AND p.IdLoja = {idLoja}
-                    AND ppp.IdProdPedProducao IN ({string.Join(",", idsProdPedProducao)})";
+	                INNER JOIN (
+		                SELECT lp.IdProdPedProducao
+		                FROM leitura_producao lp
+		                WHERE NOT(lp.DataLeitura <= ?dataFim)
+			                {filtroPecasProntas}
+	                ) peca_pronta ON (ppp.IdProdPedProducao = peca_pronta.IdProdPedProducao)
+	                INNER JOIN (
+		                SELECT lp.IdProdPedProducao
+		                FROM leitura_producao lp
+		                WHERE NOT(lp.DataLeitura < ?dataInicio)
+			                AND lp.IdSetor = 1
+	                ) peca_pendente ON (ppp.IdProdPedProducao = peca_pendente.IdProdPedProducao);";
 
-            return this.ExecuteMultipleScalar<int>(sqlProdPedProducaoParaItensProduzidosEFD);
+            return this.ExecuteMultipleScalar<int>(
+                sqlPecasIniciadasAntesPeriodoNaoConcluidasNoPeriodo,
+                this.ObterParametrosConsulta(dataInicio, dataFim));
         }
 
         private GDAParameter[] ObterParametrosConsulta(DateTime? dataInicio, DateTime? dataFim)
