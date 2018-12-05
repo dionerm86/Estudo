@@ -3436,7 +3436,6 @@ namespace Glass.Data.Helper
 
         #region CADProject
 
-
         /// <summary>
         /// Gera o arquivo para ser enviada para o CADProject.
         /// </summary>
@@ -3455,7 +3454,7 @@ namespace Glass.Data.Helper
 
             if (idArquivoCalcEngine <= 0)
             {
-                throw new InvalidOperationException("Peça não possui arquivo CalcEngine");
+                return;
             }
 
             var idArquivoMesaCorte = peca.IdArquivoMesaCorte;
