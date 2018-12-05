@@ -877,6 +877,17 @@ namespace Glass.Global.Negocios.Componentes
             if (produto.Subgrupo == null || produto.IdSubgrupoProd.GetValueOrDefault() == 0)
                 return new Colosoft.Business.SaveResult(false, "Informe o subgrupo do produto.".GetFormatter());
 
+            // Chamado 13679.
+            // O usuário estava associando matéria prima em um produto associado ao grupo de retalho de produção,
+            // como isso não pode ser feito a matéria prima não era salva e para o usuário aparentemente era um erro.
+            if (produto.BaixasEstoque != null && produto.BaixasEstoque.Count > 0 &&
+                produto.IdSubgrupoProd == (uint)Utils.SubgrupoProduto.RetalhosProducao)
+            {
+                return new Colosoft.Business.SaveResult(
+                    false,
+                    "Não é possível associar matéria prima em produtos associados ao subgrupo Retalhos de Produção.".GetFormatter());
+            }
+
             // Se produto for do tipo mercadoria produto para acabado, obriga a informar os campos matéria prima e produto para baixa
             if (produto.IdGrupoProd == (int)Data.Model.NomeGrupoProd.Vidro && produto.TipoMercadoria == Data.Model.TipoMercadoria.ProdutoAcabado)
             {
