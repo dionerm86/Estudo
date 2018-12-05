@@ -7,7 +7,7 @@ using Glass.API.Backend.Models.Genericas.V1;
 using Newtonsoft.Json;
 using System;
 
-namespace Glass.API.Backend.Models.Funcionarios.Lista
+namespace Glass.API.Backend.Models.Funcionarios.V1.Lista
 {
     /// <summary>
     /// Classe com os itens para o filtro de lista de funcionários.

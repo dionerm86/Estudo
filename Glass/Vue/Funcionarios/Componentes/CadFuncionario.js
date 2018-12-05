@@ -3,6 +3,7 @@
   mixins: [Mixins.Objetos, Mixins.ExecutarTimeout],
 
   data: {
+    idFuncionario: null,
     inserindo: false,
     editando: false,
     funcionario: {},
@@ -12,6 +13,7 @@
     situacaoAtual: {},
     lojaAtual: {},
     estadoCivilAtual: {},
+    fotoFuncionario: null
   },
 
   methods: {
@@ -52,7 +54,7 @@
 
     /**
      * Retorna os dados da imagem do funcionário em uma string base64.
-     * @returns {Promise} Uma Promise com o resultado da busca.
+     * @param {?string} arquivo Os dados do arquivo lido pelo controle, convertido como base64.
      */
     fotoSelecionada: function (arquivo) {
       this.funcionario.documentosEDadosPessoais.foto = arquivo;
@@ -62,8 +64,8 @@
      * Recupera os estados civis para exibição no cadastro ou edição do funcionário.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterEstadosCivil: function () {
-      return Servicos.Funcionarios.obterEstadosCivil();
+    obterEstadosCivis: function () {
+      return Servicos.Comum.obterEstadosCivis();
     },
 
     /**
@@ -75,9 +77,9 @@
     },
 
     /**
- * Recupera os tipos de funcionário para exibição no cadastro ou edição do funcionário.
- * @returns {Promise} Uma Promise com o resultado da busca.
- */
+     * Recupera os tipos de funcionário para exibição no cadastro ou edição do funcionário.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
     obterItensTipofuncionário: function () {
       return Servicos.funcionários.obterTiposfuncionário();
     },
@@ -87,10 +89,22 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensSetor: function () {
-      return Servicos.Producao.Setores.obterParaControle(
-       false,
-       false
-     );
+      return Servicos.Producao.Setores.obterParaControle()
+        .then(function (resposta) {
+          resposta.data.sort(function (a, b) {
+            return a.ordem - b.ordem;
+          });
+          
+          return resposta;
+        });
+    },
+
+    /**
+     * Atualiza a URL da foto do funcionário quando a imagem tiver sido carregada.
+     * @param {?Object} dados Os dados da imagem carregada.
+     */
+    imagemCarregada: function (dados) {
+      this.fotoFuncionario = dados && dados.urlImagem ? this.caminhoRelativo(dados.urlImagem) : null;
     },
 
     /**
@@ -113,12 +127,10 @@
       };
 
       this.estadoCivilAtual = {
-        id: item && item.documentosEDadosPessoais && item.documentosEDadosPessoais.estadoCivil ?
-          item.documentosEDadosPessoais.estadoCivil : null
+        id: item && item.documentosEDadosPessoais ? item.documentosEDadosPessoais.estadoCivil : null
       };
 
       this.funcionario = {
-        id: item && item.id ? item.id : null,
         idTipoFuncionario: item && item.tipoFuncionario ? item.tipoFuncionario.id : null,
         idsSetores: item && item.idsSetores ? item.idsSetores : [],
         nome: item && item.nome ? item.nome : null,
@@ -127,9 +139,6 @@
         numeroPdv: item ? item.numeroPdv : 0,
         idsTiposPedidos: item && item.idsTiposPedidos ? item.idsTiposPedidos : [],
         observacao: item && item.observacao ? item.observacao : null,
-        adminSync: item && item.adminSync ? item.adminSync : false,
-        urlImagem: item && item.urlImagem ? item.urlImagem : null,
-        possuiImagem: item && item.possuiImagem ? item.possuiImagem : false,
         contatos: {
           telefoneResidencial: item && item.contatos ? item.contatos.telefoneResidencial : null,
           telefoneCelular: item && item.contatos ? item.contatos.telefoneCelular : null,
@@ -229,7 +238,7 @@
 
       var vm = this;
 
-      Servicos.Funcionarios.atualizar(this.funcionario.id, funcionarioAtualizar)
+      Servicos.Funcionarios.atualizar(this.idFuncionario, funcionarioAtualizar)
         .then(function (resposta) {
           vm.cancelar();
         })
@@ -257,7 +266,7 @@
       * Abre a tela de troca de senha do funcionário.
       */
     alterarSenha: function () {
-      var url = '../Utils/TrocarSenha.aspx?IdFunc=' + this.funcionario.id;
+      var url = '../Utils/TrocarSenha.aspx?IdFunc=' + this.idFuncionario;
 
       this.abrirJanela(150, 300, url);
     },
@@ -278,14 +287,14 @@
   },
 
   mounted: function () {
-    var id = GetQueryString('idFunc');
+    this.idFuncionario = GetQueryString('idFunc');
     var vm = this;
 
-    Servicos.Funcionarios.obterConfiguracoesDetalhe(id || 0)
+    Servicos.Funcionarios.obterConfiguracoesDetalhe(this.idFuncionario || 0)
       .then(function (resposta) {
         vm.configuracoes = resposta.data;
 
-        if (!id) {
+        if (!this.idFuncionario) {
           vm.inserindo = true;
           vm.iniciarCadastroOuAtualizacao_();
         }
@@ -296,13 +305,12 @@
         }
       });
 
-    if (id) {
-      this.buscarFuncionario(id)
+    if (this.idFuncionario) {
+      this.idFuncionario = parseInt(this.idFuncionario, 10);
+
+      this.buscarFuncionario(this.idFuncionario)
         .then(function () {
           if (!vm.funcionario || !vm.configuracoes.podeCadastrarFuncionario) {
-            vm.redirecionarParaListagem();
-          }
-          else if (vm.funcionario.adminSync && !vm.funcionario.permissoes.adminSync) {
             vm.redirecionarParaListagem();
           }
           else {
@@ -310,16 +318,22 @@
             vm.inserindo = false;
             vm.editando = true;
           }
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Buscar funcionário', erro.mensagem);
+          }
+
+          vm.redirecionarParaListagem();
         });
     }
   },
 
   watch: {
-
     /**
-   * Observador para a variável 'tipoFuncionarioAtual'.
-   * Atualiza o funcionário com o ID do item selecionado.
-   */
+     * Observador para a variável 'tipoFuncionarioAtual'.
+     * Atualiza o funcionário com o ID do item selecionado.
+     */
     tipoFuncionarioAtual: {
       handler: function (atual) {
         this.funcionario.idTipoFuncionario = atual ? atual.id : null;
@@ -328,9 +342,9 @@
     },
 
     /**
-   * Observador para a variável 'situacaoAtual'.
-   * Atualiza o funcionário com o ID do item selecionado.
-   */
+     * Observador para a variável 'situacaoAtual'.
+     * Atualiza o funcionário com o ID do item selecionado.
+     */
     situacaoAtual: {
       handler: function (atual) {
         this.funcionario.situacao = atual ? atual.id : null;
@@ -339,19 +353,20 @@
     },
 
     /**
-   * Observador para a variável 'lojaAtual'.
-   * Atualiza o funcionário com o ID do item selecionado.
-   */
+     * Observador para a variável 'lojaAtual'.
+     * Atualiza o funcionário com o ID do item selecionado.
+     */
     lojaAtual: {
       handler: function (atual) {
         this.funcionario.idLoja = atual ? atual.id : null;
       },
       deep: true
     },
+
     /**
-   * Observador para a variável 'situacaoAtual'.
-   * Atualiza o funcionário com o ID do item selecionado.
-   */
+     * Observador para a variável 'situacaoAtual'.
+     * Atualiza o funcionário com o ID do item selecionado.
+     */
     estadoCivilAtual: {
       handler: function (atual) {
         this.funcionario.documentosEDadosPessoais.estadoCivil = atual ? atual.id : null;

@@ -6,6 +6,7 @@ using Glass.Data.Helper;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using static Glass.Data.Helper.Utils;
 
 namespace Glass.API.Backend.Models.Funcionarios.V1.Configuracoes
 {
@@ -26,7 +27,7 @@ namespace Glass.API.Backend.Models.Funcionarios.V1.Configuracoes
             this.HabilitarControleUsuarios = permissao;
             this.EnviarEmailPedidoConfirmado = Glass.Configuracoes.PCPConfig.EmailSMS.EnviarEmailPedidoConfirmadoVendedor;
             this.PodeCadastrarFuncionario = Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarFuncionario);
-            this.IdsTiposFuncionariosComSetor = new int[] { 196 };
+            this.IdsTiposFuncionariosComSetor = new[] { TipoFuncionario.MarcadorProducao };
         }
 
         /// <summary>
@@ -62,6 +63,6 @@ namespace Glass.API.Backend.Models.Funcionarios.V1.Configuracoes
         /// </summary>
         [DataMember]
         [JsonProperty("idsTiposFuncionariosComSetor")]
-        public IEnumerable<int> IdsTiposFuncionariosComSetor { get; set; }
+        public IEnumerable<TipoFuncionario> IdsTiposFuncionariosComSetor { get; set; }
     }
 }

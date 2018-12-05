@@ -3,11 +3,12 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Funcionarios.V1.CadastroAtualizacao;
-using System;
-using System.Linq;
-using Glass.Global.Negocios.Entidades;
 using Glass.Data.DAL;
+using Glass.Global.Negocios.Entidades;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Glass.API.Backend.Helper.Funcionarios
 {
@@ -81,16 +82,15 @@ namespace Glass.API.Backend.Helper.Funcionarios
             var valorNormalizado = this.cadastro.ObterValorNormalizado(c => c.IdsTiposPedidos, valorDestino);
 
             destino.TipoPedido = valorNormalizado != null
-                ? string.Join(",", valorNormalizado.Select(tipoPedido => tipoPedido))
+                ? string.Join(",", valorNormalizado)
                 : null;
         }
 
         private void ConverterDadosSetores(Funcionario destino)
         {
-            string setores = string.Empty;
             var atualizados = new List<FuncionarioSetor>();
-            var setoresAdicionados = string.Empty;
-            var setoresRemovidos = string.Empty;
+            var setoresAdicionados = new StringBuilder();
+            var setoresRemovidos = new StringBuilder();
 
             if (!this.cadastro.VerificarCampoInformado(c => c.IdsSetores))
             {
@@ -103,14 +103,15 @@ namespace Glass.API.Backend.Helper.Funcionarios
 
                 if (funcionarioSetor == null)
                 {
-                   funcionarioSetor = new FuncionarioSetor
+                    funcionarioSetor = new FuncionarioSetor
                     {
                         IdSetor = idSetor,
                     };
 
-                   destino.FuncionarioSetores.Add(funcionarioSetor);
+                    destino.FuncionarioSetores.Add(funcionarioSetor);
 
-                   setoresAdicionados += SetorDAO.Instance.ObtemDescricaoSetor(funcionarioSetor.IdSetor) + "\n";
+                    var descricaoSetor = SetorDAO.Instance.ObtemDescricaoSetor(idSetor);
+                    setoresAdicionados.Append($"{descricaoSetor}\n");
                 }
 
                 atualizados.Add(funcionarioSetor);
@@ -118,15 +119,23 @@ namespace Glass.API.Backend.Helper.Funcionarios
 
             // Essa ordenação segue a ordem dos setores na tela, portanto, caso uma seja alterada a outra também deverá ser.
             // Recupera os setores que devem ser apagados
-            foreach (var i in destino.FuncionarioSetores.Where(f => !atualizados.Exists(x => f.Equals(x))).OrderBy(f => SetorDAO.Instance.ObtemNumSeq(null, f.IdSetor)).ToArray())
+            var setoresFuncionarioRemovidos = destino.FuncionarioSetores
+                .Where(f => !atualizados.Exists(x => f.Equals(x)))
+                .OrderBy(f => SetorDAO.Instance.ObtemNumSeq(null, f.IdSetor));
+
+            foreach (var i in setoresFuncionarioRemovidos)
             {
-                setoresRemovidos += SetorDAO.Instance.ObtemDescricaoSetor(i.IdSetor) + "\n";
+                var descricaoSetor = SetorDAO.Instance.ObtemDescricaoSetor(i.IdSetor);
+                setoresRemovidos.Append($"{descricaoSetor}\n");
                 destino.FuncionarioSetores.Remove(i);
             }
 
             if (destino.IdFunc > 0)
             {
-                LogAlteracaoDAO.Instance.LogFuncionarioSetor(destino.IdFunc, setoresRemovidos, setoresAdicionados);
+                LogAlteracaoDAO.Instance.LogFuncionarioSetor(
+                    destino.IdFunc,
+                    setoresRemovidos.ToString().TrimEnd('\n'),
+                    setoresAdicionados.ToString().TrimEnd('\n'));
             }
         }
 

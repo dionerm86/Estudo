@@ -2,15 +2,13 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.Configuracoes;
-using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
+using static Glass.Data.Helper.Utils;
 
-namespace Glass.API.Backend.Models.Funcionarios.Configuracoes
+namespace Glass.API.Backend.Models.Funcionarios.V1.Configuracoes
 {
     /// <summary>
     /// Classe que encapsula as configurações para a tela de listagem de funcionários.
@@ -24,7 +22,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Configuracoes
         internal ListaDto()
         {
             this.AlterarFuncionario = Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarFuncionario);
-            this.IdsTiposFuncionariosComSetor = new int[] { 196 };
+            this.IdsTiposFuncionariosComSetor = new[] { TipoFuncionario.MarcadorProducao };
         }
 
         /// <summary>
@@ -39,6 +37,6 @@ namespace Glass.API.Backend.Models.Funcionarios.Configuracoes
         /// </summary>
         [DataMember]
         [JsonProperty("idsTiposFuncionariosComSetor")]
-        public IEnumerable<int> IdsTiposFuncionariosComSetor { get; set; }
+        public IEnumerable<TipoFuncionario> IdsTiposFuncionariosComSetor { get; set; }
     }
 }

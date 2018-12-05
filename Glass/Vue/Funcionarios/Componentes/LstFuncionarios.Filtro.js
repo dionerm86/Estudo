@@ -29,15 +29,15 @@
           nome: null,
           apenasRegistrados: null,
           periodoDataNascimentoInicio: null,
-          periodoDataNascimentoFim: null,
-          refresh_: 0
+          periodoDataNascimentoFim: null
         },
         this.filtro
       ),
       lojaAtual: null,
       situacaoAtual: null,
       tipoFuncionarioAtual: null,
-      setorAtual:null,
+      setorAtual: null,
+      exibirFiltroSetor: false
     };
   },
 
@@ -73,10 +73,14 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroSetor: function () {
-      return Servicos.Producao.Setores.obterParaControle(
-       false,
-       false
-     );
+      return Servicos.Producao.Setores.obterParaControle()
+        .then(function (resposta) {
+          resposta.data.sort(function (a, b) {
+            return a.ordem - b.ordem;
+          });
+
+          return resposta;
+        });
     },
   },
 
@@ -110,6 +114,16 @@
     tipoFuncionarioAtual: {
       handler: function (atual) {
         this.filtroAtual.idTipoFuncionario = atual ? atual.id : null;
+
+        this.exibirFiltroSetor = atual
+          && atual.id
+          && this.configuracoes
+          && this.configuracoes.idsTiposFuncionariosComSetor
+          && this.configuracoes.idsTiposFuncionariosComSetor.indexOf(atual.id) > -1;
+
+        if (!this.exibirFiltroSetor) {
+          this.setorAtual = null;
+        }
       },
       deep: true
     },

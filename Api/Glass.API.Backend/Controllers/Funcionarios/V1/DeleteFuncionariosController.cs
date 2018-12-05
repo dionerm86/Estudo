@@ -45,7 +45,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
 
                     var resultado = funcionarioFluxo.ApagarFuncionario(funcionario);
 
-                    return resultado ? this.Aceito(string.Format("Funcioário {0} excluído com sucesso!", id)) :
+                    return resultado ? this.Aceito(string.Format("Funcionário {0} excluído com sucesso!", id)) :
                         (IHttpActionResult)this.ErroValidacao($"Erro ao excluir o funcionário. {resultado.Message.Format()}");
                 }
                 catch (Exception e)

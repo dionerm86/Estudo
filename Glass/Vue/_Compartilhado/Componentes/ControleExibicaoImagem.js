@@ -62,6 +62,8 @@
             vm.urlImagem = resposta.data ? resposta.data.urlImagem : null;
             vm.svgImagem = resposta.data ? resposta.data.svgImagem : null;
             vm.legenda = resposta.data ? resposta.data.legenda : null;
+
+            vm.$emit('imagem-carregada', resposta.data);
           })
           .catch(function (erro) {
             if (erro && erro.mensagem) {
@@ -83,7 +85,7 @@
           .replace(/\\/g, '!')
 
         this.abrirJanela(600, 800, this.caminhoRelativo('/Utils/ShowFoto.aspx?path=' + urlFormatada));
-      } else {
+      } else if (this.svgImagem) {
         this.abrirJanela(600, 800, this.caminhoRelativo('/Handlers/LoadSvg.ashx?idProdPedEsp=' + this.idItem));
       }
     },
@@ -116,6 +118,14 @@
      * Busca novamente os dados para exibição da imagem.
      */
     idItem: function () {
+      this.buscarDadosImagem();
+    },
+
+    /**
+     * Observador para a propriedade 'tipoItem'.
+     * Busca novamente os dados para exibição da imagem.
+     */
+    tipoItem: function () {
       this.buscarDadosImagem();
     }
   },

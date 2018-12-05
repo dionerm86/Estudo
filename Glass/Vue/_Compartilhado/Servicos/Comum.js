@@ -1,4 +1,4 @@
-var Servicos = Servicos || {};
+﻿var Servicos = Servicos || {};
 
 /**
  * Objeto com os serviços para a API "comum".
@@ -21,6 +21,14 @@ Servicos.Comum = (function(http) {
      */
     obterTiposPessoa: function () {
       return http().get(API + 'tiposPessoa');
+    },
+
+    /**
+     * Recupera a lista de estados civis.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterEstadosCivis: function () {
+      return http().get(API + 'estadosCivis');
     }
   };
 })(function() {

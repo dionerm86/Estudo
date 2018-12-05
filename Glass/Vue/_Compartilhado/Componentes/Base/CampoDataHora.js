@@ -1,11 +1,12 @@
-var Data = Data || {};
+﻿var Data = Data || {};
 
 /**
  * Offset utilizado para os inputs tipo 'date' e 'time'.
  * Necessário para corrigir as horas (os controles tipo 'date' e 'time' consideram hora UTC).
  * @type {number}
  */
-Data.offset = new Date().getTimezoneOffset() * 60000;
+Data.timezoneOffset = new Date().getTimezoneOffset();
+Data.offset = Data.timezoneOffset * 60000;
 
 Vue.component('campo-data-hora', {
   inheritAttrs: false,
@@ -91,7 +92,8 @@ Vue.component('campo-data-hora', {
      * @param {string} hora A hora selecionada no controle.
      */
     atualizarDataHora: function (data, hora) {
-      var dataHoraAtual = new Date(data + ' ' + hora);
+      var dataHoraAtual = new Date((data + ' ' + hora).trim());
+
       if (isNaN(dataHoraAtual.getTime())) {
         dataHoraAtual = null;
       }

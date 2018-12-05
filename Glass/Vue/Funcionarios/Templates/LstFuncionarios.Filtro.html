@@ -12,8 +12,8 @@
         </span>
         <span class="form-group">
             <label>Situacão</label>
-            <lista-selecao-id-valor v-bind:item-selecionado.sync="situacaoAtual" texto-selecionar="Todas" v-bind:funcao-recuperar-itens="obterItensFiltroSituacao"
-                                    v-bind:ordenar="false"></lista-selecao-id-valor>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="situacaoAtual"
+                v-bind:funcao-recuperar-itens="obterItensFiltroSituacao"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -25,14 +25,14 @@
     <div>
         <span class="form-group">
             <label>Tipo de Funcionário</label>
-            <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoFuncionarioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroTiposFuncionario"
-                                    v-bind:ordenar="false"></lista-selecao-id-valor>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoFuncionarioAtual"
+                v-bind:funcao-recuperar-itens="obterItensFiltroTiposFuncionario"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group" v-if="configuracoes && configuracoes.idsTiposFuncionariosComSetor && configuracoes.idsTiposFuncionariosComSetor.indexOf(filtroAtual.idTipoFuncionario) > -1">
+        <span class="form-group" v-if="exibirFiltroSetor">
             <label>Setor</label>
-            <lista-selecao-id-valor v-bind:item-selecionado.sync="setorAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroSetor"
-                                    v-bind:ordenar="false"></lista-selecao-id-valor>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="setorAtual" v-bind:funcao-recuperar-itens="obterItensFiltroSetor"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">

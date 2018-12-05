@@ -17,7 +17,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
     public partial class FuncionariosController : BaseController
     {
         /// <summary>
-        /// Realiza a emissão de um pedido novo.
+        /// Insere um funcionário.
         /// </summary>
         /// <param name="dadosParaCadastro">Os dados necessários para o cadastro do funcionário.</param>
         /// <returns>Um status HTTP que indica se o funcionário foi inserido.</returns>
@@ -39,37 +39,37 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
                 try
                 {
                     var funcionarioFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
-                        .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>();
+                        .Current.GetInstance<Global.Negocios.IFuncionarioFluxo>();
 
                     var funcionario = new ConverterCadastroAtualizacaoParaFuncionario(funcionarioFluxo, dadosParaCadastro)
                         .ConverterParaFuncionario();
 
                     var resultado = funcionarioFluxo.SalvarFuncionario(funcionario);
 
-                    if (resultado)
+                    if (!resultado)
                     {
-                        if (!dadosParaCadastro.VerificarCampoInformado(c => c.DocumentosEDadosPessoais.Foto))
-                        {
-                            return this.Criado(string.Format($"Funcinário {funcionario.IdFunc} inserido com sucesso!"), funcionario.IdFunc);
-                        }
+                        return this.ErroValidacao($"Erro ao inserir o funcionário. {resultado.Message.Format()}");
+                    }
 
-                        byte[] bytes = System.Convert.FromBase64String(dadosParaCadastro.DocumentosEDadosPessoais.Foto);
-
-                        var imagem = new System.IO.MemoryStream(bytes);
-
-                        var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
-                            .Current.GetInstance<Glass.Global.Negocios.Entidades.IFuncionarioRepositorioImagens>();
-
-                        repositorio.SalvarImagem(funcionario.IdFunc, imagem);
-
-                        Microsoft.Practices.ServiceLocation.ServiceLocator
-                                .Current.GetInstance<Global.Negocios.IMenuFluxo>().RemoveMenuFuncMemoria(funcionario.IdFunc);
-
+                    if (!dadosParaCadastro.VerificarCampoInformado(c => c.DocumentosEDadosPessoais.Foto))
+                    {
                         return this.Criado(string.Format($"Funcinário {funcionario.IdFunc} inserido com sucesso!"), funcionario.IdFunc);
                     }
 
-                    return this.ErroValidacao($"Erro ao inserir o funcionário. {resultado.Message.Format()}");
+                    byte[] bytes = Convert.FromBase64String(dadosParaCadastro.DocumentosEDadosPessoais.Foto);
 
+                    using (var imagem = new System.IO.MemoryStream(bytes))
+                    {
+                        var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
+                            .Current.GetInstance<Global.Negocios.Entidades.IFuncionarioRepositorioImagens>();
+
+                        repositorio.SalvarImagem(funcionario.IdFunc, imagem);
+                    }
+
+                    Microsoft.Practices.ServiceLocation.ServiceLocator
+                        .Current.GetInstance<Global.Negocios.IMenuFluxo>().RemoveMenuFuncMemoria(funcionario.IdFunc);
+
+                    return this.Criado(string.Format($"Funcinário {funcionario.IdFunc} inserido com sucesso!"), funcionario.IdFunc);
                 }
                 catch (Exception e)
                 {

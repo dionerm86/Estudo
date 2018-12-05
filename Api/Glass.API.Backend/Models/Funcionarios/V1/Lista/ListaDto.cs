@@ -8,7 +8,7 @@ using Glass.Global.Negocios.Entidades;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Funcionarios.Lista
+namespace Glass.API.Backend.Models.Funcionarios.V1.Lista
 {
     /// <summary>
     /// Classe que encapsula os dados de um funcionário para a tela de listagem.
@@ -31,6 +31,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Lista
                 Rg = funcionario.Rg,
                 Cpf = funcionario.Cpf,
             };
+
             this.Contatos = new ContatosDto
             {
                 TelefoneResidencial = funcionario.TelRes,

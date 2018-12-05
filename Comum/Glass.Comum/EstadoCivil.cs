@@ -9,7 +9,7 @@ namespace Glass
     /// <summary>
     /// Enum que armazena os dados do estado civil.
     /// </summary>
-   public enum EstadoCivil
+    public enum EstadoCivil
     {
         /// <summary>
         /// Estado Civil Casado

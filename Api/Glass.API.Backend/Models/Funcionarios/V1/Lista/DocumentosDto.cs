@@ -5,7 +5,7 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Funcionarios.Lista
+namespace Glass.API.Backend.Models.Funcionarios.V1.Lista
 {
     /// <summary>
     /// Classe que encapsula dados dos documentos do funcionário.

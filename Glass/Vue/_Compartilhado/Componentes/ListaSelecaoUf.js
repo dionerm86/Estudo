@@ -19,7 +19,6 @@
   },
 
   methods: {
-
     /**
      * Busca as UFs e as transforma para uso no controle de lista de seleção múltipla.
      * @returns {Promise} Uma promise com o resultado da busca.
@@ -53,12 +52,11 @@
 
   computed: {
     /**
-     * Propriedade computada que formata as UFs selecionadas para uso no controle de
-     * seleção múltipla e que atualiza a propriedade 'ufs' ao ser alterada.
+     * Propriedade computada que recupera a UF selecionada externamente e atualiza
+     * a propriedade 'ufSelecionada' em caso de alteração.
      * @type {string}
      */
     ufAtual: {
-
       get: function () {
         return this.ufSelecionada;
       },

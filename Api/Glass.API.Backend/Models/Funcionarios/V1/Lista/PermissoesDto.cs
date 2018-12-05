@@ -5,7 +5,7 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Funcionarios.Lista
+namespace Glass.API.Backend.Models.Funcionarios.V1.Lista
 {
     /// <summary>
     /// Classe que encapsula os dados de permissão do funcionário.
@@ -28,7 +28,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Lista
         public bool Apagar { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se o funcionário possui log de alterações..
+        /// Obtém ou define um valor que indica se o funcionário possui log de alterações.
         /// </summary>
         [DataMember]
         [JsonProperty("logAlteracoes")]

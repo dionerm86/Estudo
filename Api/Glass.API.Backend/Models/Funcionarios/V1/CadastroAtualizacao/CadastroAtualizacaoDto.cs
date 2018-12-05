@@ -2,7 +2,8 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Funcionarios.Detalhe;
+using Glass.API.Backend.Models.Funcionarios.V1.Comuns;
+using Glass.API.Backend.Models.Funcionarios.V1.Detalhe;
 using Glass.API.Backend.Models.Genericas.V1.CadastroAtualizacao;
 using Newtonsoft.Json;
 using System.Collections.Generic;

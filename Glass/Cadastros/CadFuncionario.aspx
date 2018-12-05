@@ -1,5 +1,5 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadFuncionario.aspx.cs"
-    Inherits="Glass.UI.Web.Cadastros.CadFuncionario" Title="Cadastro de Funcionário" %>
+ï»¿<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadFuncionario.aspx.cs"
+    Inherits="Glass.UI.Web.Cadastros.CadFuncionario" Title="Cadastro de FuncionÃ¡rio" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <div id="app">
@@ -23,7 +23,7 @@
                 </span>
                 <span class="cabecalho">
                     <label>
-                        Tipo Funcionário
+                        Tipo FuncionÃ¡rio
                     </label>
                 </span>
                 <span>
@@ -44,7 +44,7 @@
                 </span>
                 <span v-if="configuracoes && configuracoes.idsTiposFuncionariosComSetor && configuracoes.idsTiposFuncionariosComSetor.indexOf(tipoFuncionarioAtual.id) > -1">
                     <lista-selecao-multipla v-bind:ids-selecionados.sync="funcionario.idsSetores"
-                    v-bind:funcao-recuperar-itens="obterItensSetor" v-bind:ordenar="false"></lista-selecao-multipla>
+                        v-bind:funcao-recuperar-itens="obterItensSetor" v-bind:ordenar="false"></lista-selecao-multipla>
                 </span>
                 <span class="cabecalho" v-if="configuracoes && configuracoes.idsTiposFuncionariosComSetor && configuracoes.idsTiposFuncionariosComSetor.indexOf(tipoFuncionarioAtual.id) > -1">
                 </span>
@@ -60,7 +60,7 @@
                 </span>
                 <span class="cabecalho">
                     <label>
-                        Função
+                        FunÃ§Ã£o
                     </label>
                 </span>
                 <span>
@@ -68,7 +68,7 @@
                 </span>
                 <span class="cabecalho">
                     <label>
-                        Endereço
+                        EndereÃ§o
                     </label>
                 </span>
                 <span>
@@ -80,7 +80,7 @@
                     </label>
                 </span>
                 <span>
-                    <lista-selecao-id-valor :item-selecionado.sync="estadoCivilAtual" :funcao-recuperar-itens="obterEstadosCivil"></lista-selecao-id-valor>
+                    <lista-selecao-id-valor :item-selecionado.sync="estadoCivilAtual" :funcao-recuperar-itens="obterEstadosCivis"></lista-selecao-id-valor>
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -111,9 +111,9 @@
                         CEP
                     </label>
                 </span>
-                    <span>
-                        <campo-cep v-bind:endereco.sync="funcionario.endereco" v-bind="$attrs"></campo-cep>
-                    </span>
+                <span>
+                    <campo-cep v-bind:endereco.sync="funcionario.endereco" v-bind="$attrs"></campo-cep>
+                </span>
                 <span class="cabecalho">
                     <label>
                         UF
@@ -172,7 +172,7 @@
                 </span>
                 <span class="cabecalho">
                     <label>
-                        Data Saída
+                        Data SaÃ­da
                     </label>
                 </span>
                 <span>
@@ -188,15 +188,15 @@
                 </span>
                 <span class="cabecalho">
                     <label>
-                        Salário
+                        SalÃ¡rio
                     </label>
                 </span>
-                    <span>
-                        <input type="number" step="0.01" min="0" v-model.number="funcionario.documentosEDadosPessoais.salario"/>
-                    </span>
+                <span>
+                    <input type="number" step="0.01" min="0" v-model.number="funcionario.documentosEDadosPessoais.salario"/>
+                </span>
                 <span class="cabecalho">
                     <label>
-                        Situação
+                        SituaÃ§Ã£o
                     </label>
                 </span>
                 <span>
@@ -204,12 +204,12 @@
                 </span>
                 <span class="cabecalho">
                     <label>
-                        Gratificação
+                        GratificaÃ§Ã£o
                     </label>
                 </span>
-                    <span>
-                        <input type="number" step="0.01" min="0" v-model.number="funcionario.documentosEDadosPessoais.gratificacao" />
-                    </span>
+                <span>
+                    <input type="number" step="0.01" min="0" v-model.number="funcionario.documentosEDadosPessoais.gratificacao" />
+                </span>
                 <span class="cabecalho">
                     <label>
                         Num. Carteira Trabalho
@@ -220,7 +220,7 @@
                 </span>
                 <span class="cabecalho">
                     <label>
-                        Aux. Alimentação
+                        Aux. AlimentaÃ§Ã£o
                     </label>
                 </span>
                 <span>
@@ -236,7 +236,7 @@
                 </span>
                 <span class="cabecalho">
                     <label>
-                        Núm. Pis
+                        NÃºm. Pis
                     </label>
                 </span>
                 <span>
@@ -260,9 +260,7 @@
                     </label>
                 </span>
                 <span>
-                    <span>
-                        <input type="checkbox" id="registrado" v-model="funcionario.documentosEDadosPessoais.registrado" />
-                    </span>
+                    <input type="checkbox" id="registrado" v-model="funcionario.documentosEDadosPessoais.registrado" />
                 </span>
                 <span class="cabecalho">
                     <label for="tipo">
@@ -271,33 +269,34 @@
                 </span>
                 <span class="form-group">
                     <lista-selecao-multipla v-bind:ids-selecionados.sync="funcionario.idsTiposPedidos"
-                v-bind:funcao-recuperar-itens="obterItensTipoPedido" v-bind:ordenar="false"></lista-selecao-multipla>
-                </span>
-                <span class="cabecalho">
-                <label>
-                    Núm. Dias Atrasar Pedido
-                </label>
-                </span>
-                <span>
-                    <input type="number" min="0" v-model="funcionario.numeroDiasParaAtrasarPedidos"/>
-                </span>
-                <span class="cabecalho">
-                </span>
-                <span>
-                    <img v-bind:src="funcionario.urlImagem" style="width:140px;height:120px;"></img>
-                </span>
-                <span class="cabecalho">
-                </span>
-                <span>
+                        v-bind:funcao-recuperar-itens="obterItensTipoPedido" v-bind:ordenar="false"></lista-selecao-multipla>
                 </span>
                 <span class="cabecalho">
                     <label>
-                        Foto Funcionário
+                        NÃºm. Dias Atrasar Pedido
                     </label>
                 </span>
                 <span>
-                <span><campo-upload @arquivo-selecionado="fotoSelecionada" tipo-arquivo="image/*"></span>
-                <span><controle-exibicao-imagem :id-item="funcionario.id" tipo-item="Funcionario"></controle-exibicao-imagem></span>
+                    <input type="number" min="0" v-model.number="funcionario.numeroDiasParaAtrasarPedidos"/>
+                </span>
+                <span class="cabecalho">
+                    <label>
+                        Foto FuncionÃ¡rio
+                    </label>
+                </span>
+                <span>
+                    <div v-if="fotoFuncionario">
+                        <img v-bind:src="fotoFuncionario" style="max-width: 140px; max-height: 120px;" />
+                    </div>
+                    <div>
+                        <span>
+                            <campo-upload @arquivo-selecionado="fotoSelecionada" tipo-arquivo="image/*"></campo-upload>
+                        </span>
+                        <span>
+                            <controle-exibicao-imagem :id-item="idFuncionario" tipo-item="Funcionario" @imagem-carregada="imagemCarregada"
+                                v-if="idFuncionario"></controle-exibicao-imagem>
+                        </span>
+                    </div>
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -305,7 +304,7 @@
                     </label>
                 </span>
                 <span>
-                    <input type="number" min="0" v-model="funcionario.numeroPdv" />
+                    <input type="number" min="0" v-model.number="funcionario.numeroPdv" />
                 </span>
                 <span class="cabecalho" v-if="configuracoes && configuracoes.enviarEmailPedidoConfirmado">
                     <label>
@@ -325,7 +324,7 @@
                 </span>
                 <span class="cabecalho" v-if="configuracoes && configuracoes.habilitarControleUsuarios">
                     <label>
-                        Exibir controle de usuários
+                        Exibir controle de usuÃ¡rios
                     </label>
                 </span>
                 <span>
@@ -349,24 +348,24 @@
                 <span class="colspan3">
                     <textarea cols="3" style="margin: 2px 0px; width: 540px; height: 50px;" v-model="funcionario.observacao"></textarea>
                 </span>
-        </div>
             </section>
-        <span class="botoes">
+        </div>
+        <div class="botoes">
             <span>
-            <button @click.prevent="inserirFuncionario" v-if="inserindo">
+                <button @click.prevent="inserirFuncionario" v-if="inserindo">
                     Inserir
-            </button>
-            <button @click.prevent="atualizarFuncionario" v-if="editando">
-                Atualizar
-            </button>
-            <button @click.prevent="alterarSenha" v-if="editando">
-                Alterar Senha
-            </button>
-            <button @click.prevent="cancelar">
-                Cancelar
-            </button>
+                </button>
+                <button @click.prevent="atualizarFuncionario" v-if="editando">
+                    Atualizar
+                </button>
+                <button @click.prevent="alterarSenha" v-if="editando">
+                    Alterar Senha
+                </button>
+                <button @click.prevent="cancelar">
+                    Cancelar
+                </button>
             </span>
-        </span>
+        </div>
     </div>
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>

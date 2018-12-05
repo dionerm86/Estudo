@@ -6,7 +6,7 @@ using Glass.API.Backend.Models.Genericas.V1.CadastroAtualizacao;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Funcionarios.Detalhe
+namespace Glass.API.Backend.Models.Funcionarios.V1.Detalhe
 {
     /// <summary>
     /// Classe que encapsula os dados de entrega do pedido.

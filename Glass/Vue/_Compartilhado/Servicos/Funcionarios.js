@@ -1,4 +1,4 @@
-var Servicos = Servicos || {};
+﻿var Servicos = Servicos || {};
 
 /**
  * Objeto com os serviços para a API de funcionários.
@@ -107,14 +107,6 @@ Servicos.Funcionarios = (function(http) {
     },
 
     /**
-     * Recupera a lista de estados civís.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-    obterEstadosCivil: function () {
-      return http().get(API + 'estadoscivis');
-    },
-
-    /**
      * Recupera a lista de funcionários medidores.
      * @param {!number} idVendedor O identificador do vendedor que será feita a busca.
      * @returns {Promise} Uma promise com o resultado da busca.
@@ -134,6 +126,7 @@ Servicos.Funcionarios = (function(http) {
     obterFinalizacaoPedidos: function () {
       return http().get(API + 'finalizacao');
     },
+
     /**
      * Recupera a lista de funcionários.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de funcionários.
@@ -143,13 +136,8 @@ Servicos.Funcionarios = (function(http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-      filtro = filtro || {};
-      filtro.pagina = pagina;
-      filtro.numeroRegistros = numeroRegistros;
-      filtro.ordenacao = ordenacao;
-
       return http().get(API.substr(0, API.length - 1), {
-        params: filtro
+        params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
       });
     },
 

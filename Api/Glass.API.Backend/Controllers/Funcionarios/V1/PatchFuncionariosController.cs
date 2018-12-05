@@ -14,9 +14,9 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
     public partial class FuncionariosController : BaseController
     {
         /// <summary>
-        /// Atualiza os dados de um funciónário.
+        /// Atualiza os dados de um funcionário.
         /// </summary>
-        /// <param name="id">O identificador do pedido.</param>
+        /// <param name="id">O identificador do funcionário.</param>
         /// <param name="dadosParaAtualizacao">Os dados que serão atualizados no funcionário.</param>
         /// <returns>Um status HTTP que indica se o funcionário foi atualizado.</returns>
         [HttpPatch]
@@ -36,7 +36,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
                 }
 
                 var funcionarioFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
-                        .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>();
+                    .Current.GetInstance<Global.Negocios.IFuncionarioFluxo>();
 
                 var funcionario = funcionarioFluxo.ObtemFuncionario(id);
 
@@ -52,29 +52,28 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
 
                     var resultado = funcionarioFluxo.SalvarFuncionario(funcionario);
 
-                    if (resultado)
+                    if (!resultado)
                     {
-                        if (!dadosParaAtualizacao.VerificarCampoInformado(c => c.DocumentosEDadosPessoais.Foto))
-                        {
-                            return this.Aceito(string.Format($"Funcionário {id} atualizado com sucesso!"));
-                        }
-
-                        byte[] bytes = Convert.FromBase64String(dadosParaAtualizacao.DocumentosEDadosPessoais.Foto);
-
-                        var imagem = new System.IO.MemoryStream(bytes);
-
-                        var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
-                            .Current.GetInstance<Global.Negocios.Entidades.IFuncionarioRepositorioImagens>();
-
-                        repositorio.SalvarImagem(funcionario.IdFunc, imagem);
-
-                        Microsoft.Practices.ServiceLocation.ServiceLocator
-                                .Current.GetInstance<Global.Negocios.IMenuFluxo>().RemoveMenuFuncMemoria(funcionario.IdFunc);
-
-                        return this.Aceito(string.Format($"Funcionário {id} atualizado com sucesso!"));
+                        return this.ErroValidacao($"Erro ao atualizar o funcionário {id}. {resultado.Message.Format()}");
                     }
 
-                    return this.ErroValidacao($"Erro ao atualizar o funcionário {id}. {resultado.Message.Format()}");
+                    if (!string.IsNullOrWhiteSpace(dadosParaAtualizacao.DocumentosEDadosPessoais?.Foto))
+                    {
+                        byte[] bytes = Convert.FromBase64String(dadosParaAtualizacao.DocumentosEDadosPessoais.Foto);
+
+                        using (var imagem = new System.IO.MemoryStream(bytes))
+                        {
+                            var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
+                                .Current.GetInstance<Global.Negocios.Entidades.IFuncionarioRepositorioImagens>();
+
+                            repositorio.SalvarImagem(funcionario.IdFunc, imagem);
+                        }
+
+                        Microsoft.Practices.ServiceLocation.ServiceLocator
+                            .Current.GetInstance<Global.Negocios.IMenuFluxo>().RemoveMenuFuncMemoria(funcionario.IdFunc);
+                    }
+
+                    return this.Aceito(string.Format($"Funcionário {id} atualizado com sucesso!"));
                 }
                 catch (Exception e)
                 {

@@ -1782,7 +1782,6 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaAplicacao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaProcesso.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaProduto.js" />
-    <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaUf.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCep.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCnpj.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCpf.js" />
@@ -1911,7 +1910,6 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoAcrescimoDesconto.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoAltura.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoAreaM2.html" />
-    <Content Include="Vue\_Compartilhado\Templates\CampoBuscaUf.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaCidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaCliente.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaNaturezaOperacao.html" />

@@ -68,6 +68,7 @@
       var filtroReal = this.formatarFiltros_();
       this.abrirJanela(600, 800, "../Relatorios/RelBase.aspx?rel=ListaFuncionarios" + filtroReal);
     },
+
     /**
      * Retornar uma string com os filtros selecionados na tela
      */
@@ -87,15 +88,13 @@
         ? '&' + filtros.join('&')
         : '';
     },
+
     /**
      * Atualiza a lista de funcionários
      */
     atualizarLista: function () {
       this.$refs.lista.atualizar();
     }
-  },
-
-  computed: {
   },
 
   mounted: function () {

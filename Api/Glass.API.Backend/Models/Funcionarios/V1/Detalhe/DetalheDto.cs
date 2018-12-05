@@ -2,15 +2,15 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Models.Funcionarios.V1.Comuns;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
-using Glass.Data.Helper;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Funcionarios.Detalhe
+namespace Glass.API.Backend.Models.Funcionarios.V1.Detalhe
 {
     /// <summary>
     /// Classe que encapsula os dados de um funcionario para a tela de edição.
@@ -24,11 +24,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// <param name="funcionario">A model de funcionario.</param>
         internal DetalheDto(Global.Negocios.Entidades.Funcionario funcionario)
         {
-            this.Id = funcionario.IdFunc;
             this.Nome = funcionario.Nome;
-            this.AdminSync = funcionario.AdminSync;
-            this.UrlImagem = Global.UI.Web.Process.Funcionarios.FuncionarioRepositorioImagens.Instance.ObtemUrl(funcionario.IdFunc).Replace("~", "..");
-            this.PossuiImagem = Glass.Global.UI.Web.Process.Funcionarios.FuncionarioRepositorioImagens.Instance.PossuiImagem(funcionario.IdFunc);
 
             this.TipoFuncionario = new IdNomeDto
             {
@@ -38,7 +34,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
 
             this.IdsSetores = funcionario.Setores.Select(f => f.IdSetor);
 
-            this.Endereco = new Genericas.V1.EnderecoDto
+            this.Endereco = new EnderecoDto
             {
                 Logradouro = funcionario.Endereco,
                 Bairro = funcionario.Bairro,
@@ -97,25 +93,17 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
 
             this.IdsTiposPedidos = funcionario.TipoPedido.Split(',').Select(f => int.Parse(f));
             this.NumeroDiasParaAtrasarPedidos = funcionario.NumDiasAtrasarPedido;
-            this.NumeroPdv = funcionario.NumeroPdv.ToString();
+            this.NumeroPdv = funcionario.NumeroPdv;
 
             this.Permissoes = new PermisoesDto
             {
                 UtilizarChat = funcionario.HabilitarChat,
                 HabilitarControleUsuarios = funcionario.HabilitarControleUsuarios,
                 EnviarEmailPedidoConfirmadoVendedor = funcionario.EnviarEmail,
-                AdminSync = UserInfo.GetUserInfo.IsAdminSync,
             };
 
             this.Observacao = funcionario.Obs;
         }
-
-        /// <summary>
-        /// Obtém ou define o identificador do Funcionário.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("id")]
-        public int Id { get; set; }
 
         /// <summary>
         /// Obtém ou define o nome do funcionário.
@@ -143,7 +131,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// </summary>
         [DataMember]
         [JsonProperty("endereco")]
-        public Genericas.V1.EnderecoDto Endereco { get; set; }
+        public EnderecoDto Endereco { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador da loja.
@@ -199,7 +187,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// </summary>
         [DataMember]
         [JsonProperty("numeroPdv")]
-        public string NumeroPdv { get; set; }
+        public int NumeroPdv { get; set; }
 
         /// <summary>
         /// Obtém ou define as permissões do funcionário.
@@ -214,26 +202,5 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         [DataMember]
         [JsonProperty("observacao")]
         public string Observacao { get; set; }
-
-        /// <summary>
-        /// Obtém ou define um valor que indica se o usuário tem permissão de editar funcionários.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("adminSync")]
-        public bool AdminSync { get; set; }
-
-        /// <summary>
-        /// Obtém ou define a url da imagem do funcionário.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("urlImagem")]
-        public string UrlImagem { get; set; }
-
-        /// <summary>
-        /// Obtém ou define um valor que indica se o usuário tem uma imagem.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("possuiImagem")]
-        public bool PossuiImagem { get; set; }
     }
 }

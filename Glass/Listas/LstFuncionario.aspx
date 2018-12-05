@@ -1,5 +1,6 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstFuncionario.aspx.cs"
-    Inherits="Glass.UI.Web.Listas.LstFuncionario" Title="Funcion·rios" %>
+Ôªø<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstFuncionario.aspx.cs"
+    Inherits="Glass.UI.Web.Listas.LstFuncionario" Title="Funcion√°rios" EnableViewState="false" EnableViewStateMac="false" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
@@ -9,11 +10,11 @@
         <funcionario-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></funcionario-filtros>
         <section>
             <a :href="obterLinkInserirFuncionario()" v-if="configuracoes && configuracoes.alterarFuncionario">
-                Inserir Funcion·rio
+                Inserir Funcion√°rio
             </a>
         </section>
         <section>
-            <lista-paginada ref="lista" :funcao-recuperar-itens="atualizarFuncionarios" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum funcion·rio encontrado">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="atualizarFuncionarios" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum funcion√°rio encontrado">
                 <template slot="cabecalho">
                     <th></th>
                     <th>
@@ -41,7 +42,7 @@
                 </template>
                 <template slot="item" slot-scope="{ item }">
                     <td style="white-space:nowrap">
-                    <a :href="obterLinkEditarFuncionario(item)" title="Editar" v-if="configuracoes && configuracoes.alterarFuncionario && item.permissoes.editar">
+                        <a :href="obterLinkEditarFuncionario(item)" title="Editar" v-if="configuracoes && configuracoes.alterarFuncionario && item.permissoes.editar">
                             <img border="0" src="../Images/EditarGrid.gif">
                         </a>
                         <a href="#" @click.prevent="excluir(item)" title="Excluir" v-if="configuracoes && configuracoes.alterarFuncionario && item.permissoes.apagar">
@@ -72,7 +73,7 @@
             </div>
         </section>
     </div>
-        <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+    <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
             <asp:ScriptReference Path="~/Vue/Funcionarios/Componentes/LstFuncionarios.Filtro.js" />
             <asp:ScriptReference Path="~/Vue/Funcionarios/Componentes/LstFuncionarios.js" />
