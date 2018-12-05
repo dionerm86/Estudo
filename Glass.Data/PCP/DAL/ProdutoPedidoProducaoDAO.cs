@@ -2291,7 +2291,7 @@ namespace Glass.Data.DAL
             if (dataEntregaFim > DateTime.MinValue)
             {
                 var formatoDataEntregaFim = dataEntregaFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy 23:59:59" : "dd/MM/yyyy HH:mm:ss";
-                parametros.Add(new GDAParameter("?dataEntregaFim", dataEntregaFim.Value.ToString(formatoDataEntregaFim)));
+                parametros.Add(new GDAParameter("?dataEntregaFim", dataEntregaFim.Value.ToString(formatoDataEntregaFim).ConverteData()));
             }
 
             if (dataEntregaInicio > DateTime.MinValue)
@@ -2302,7 +2302,7 @@ namespace Glass.Data.DAL
             if (dataFabricaFim > DateTime.MinValue)
             {
                 var formatoDataFabricaFim = dataFabricaFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy 23:59:59" : "dd/MM/yyyy HH:mm:ss";
-                parametros.Add(new GDAParameter("?dataFabricaFim", dataFabricaFim.Value.ToString(formatoDataFabricaFim)));
+                parametros.Add(new GDAParameter("?dataFabricaFim", dataFabricaFim.Value.ToString(formatoDataFabricaFim).ConverteData()));
             }
 
             if (dataFabricaInicio > DateTime.MinValue)
@@ -2313,7 +2313,7 @@ namespace Glass.Data.DAL
             if (dataLeituraFim > DateTime.MinValue)
             {
                 var formatoDataLeituraFim = dataLeituraFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy 23:59:59" : "dd/MM/yyyy HH:mm:ss";
-                parametros.Add(new GDAParameter("?dataLeituraFim", dataLeituraFim.Value.ToString(formatoDataLeituraFim)));
+                parametros.Add(new GDAParameter("?dataLeituraFim", dataLeituraFim.Value.ToString(formatoDataLeituraFim).ConverteData()));
             }
 
             if (dataLeituraInicio > DateTime.MinValue)
