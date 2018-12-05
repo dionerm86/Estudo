@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Colosoft;
@@ -363,13 +363,15 @@ namespace Glass.Global.Negocios.Componentes
                 .LeftJoin<Data.Model.Cidade>("c.IdCidade=cid.IdCidade", "cid")
                 .LeftJoin<Data.Model.FormaPagto>("c.IdFormaPagto=fp.IdFormaPagto", "fp")
                 .LeftJoin<Data.Model.Parcelas>("c.TipoPagto=p.IdParcela", "p")
+                .LeftJoin<Data.Model.TabelaDescontoAcrescimoCliente>("c.IdTabelaDesconto = tdac.IdTabelaDesconto", "tdac")
                 .OrderBy("c.IdCli")
                 .Select(
                     @"c.IdCli, c.Nome, c.NomeFantasia, c.CpfCnpj, c.Endereco, c.Numero, c.Compl, c.Bairro, cid.NomeCidade as Cidade,
                     cid.NomeUf as Uf, c.TelCont, c.TelRes, c.TelCel, c.Situacao, c.Email, c.DtUltCompra, c.Historico,
                     c.TotalComprado, c.Revenda, fp.Descricao As FormaPagamento, p.Descricao As Parcela,
-                    c.DataCad, c.DataAlt, c.IdTabelaDesconto, fCad.Nome as DescrUsuCad, fAlt.Nome as DescrUsuAlt, c.IdFunc, fVend.Nome as NomeFunc,
-                    fAtendente.IdFunc AS IdFuncAtendente, fAtendente.Nome AS NomeAtendente, c.Limite, c.UsoLimite, c.BairroEntrega, c.NumeroEntrega, c.ComplEntrega, c.EnderecoEntrega");
+                    c.DataCad, c.DataAlt, c.IdTabelaDesconto, fCad.Nome as DescrUsuCad, fAlt.Nome as DescrUsuAlt, c.IdFunc, fVend.Nome AS NomeFunc,
+                    fAtendente.IdFunc AS IdFuncAtendente, fAtendente.Nome AS NomeAtendente, c.Limite, c.UsoLimite, c.BairroEntrega, c.NumeroEntrega, c.ComplEntrega,
+                    c.EnderecoEntrega, tdac.Descricao AS DescricaoTabelaDesconto");
 
             DefineFiltrosConsulta(ref consulta, idCliente, nomeOuApelido, cpfCnpj, idLoja, telefone, logradouro, bairro, idCidade, idsTipoCliente,
                 situacao, codigoRota, idVendedor, tiposFiscais, formasPagto, dataCadastroIni, dataCadastroFim, dataSemCompraIni, dataSemCompraFim,

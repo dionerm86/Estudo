@@ -11,6 +11,7 @@ using System.Linq;
 using Glass.Configuracoes;
 using Colosoft;
 using Microsoft.Practices.ServiceLocation;
+using Glass.Global.Negocios;
 
 namespace Glass.UI.Web.Relatorios
 {
@@ -914,7 +915,71 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaClientes":
                     {
-                        reportName = "ListaClientes";
+                        report.ReportPath = Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaClientes{0}.rdlc");
+                        var tiposFiscais = string.IsNullOrEmpty(Request["tipoFiscal"]) ? new TipoFiscalCliente[] { } :
+                            Request["tiposFiscais"].Split(',')
+                                .Select(x => (Data.Model.TipoFiscalCliente)x.StrParaInt())
+                                .ToArray();
+
+                        var formasPagto = string.IsNullOrWhiteSpace(Request["formasPagto"]) ? new int[] { } :
+                            Request["formasPagto"].Split(',')
+                                .Select(x => x.StrParaInt())
+                                .ToArray();
+
+                        var situacao = string.IsNullOrWhiteSpace(Request["situacao"]) ? new int[] { } :
+                            Request["situacao"].Split(',')
+                                .Select(x => x.StrParaInt())
+                                .ToArray();
+
+                        var tiposCliente = string.IsNullOrWhiteSpace(Request["idTipoCliente"]) ? new int[] { } :
+                            Request["idTipoCliente"].Split(',')
+                                .Select(x => x.StrParaInt())
+                                .ToArray();
+                        var apenasSemRota = string.IsNullOrWhiteSpace(Request["apenasSemRota"]) ? false : bool.Parse(Request["apenasSemRota"]);
+
+                        var agruparVend = string.IsNullOrWhiteSpace(Request["agruparVend"]) ? "false" : Request["agruparVend"];
+
+                        var exibirHistorico = string.IsNullOrWhiteSpace(Request["exibirHistorico"]) ? "false" : Request["exibirHistorico"];
+
+                        var clientes = Microsoft.Practices.ServiceLocation.ServiceLocator
+                            .Current.GetInstance<IClienteFluxo>()
+                            .PesquisarClientes(
+                            Request["idCli"].StrParaIntNullable(),
+                            Request["nome"],
+                            Request["CpfCnpj"],
+                            Request["IdLoja"].StrParaIntNullable(),
+                            Request["telefone"],
+                            Request["endereco"],
+                            Request["bairro"],
+                            Request["IdCidade"].StrParaIntNullable(),
+                            tiposCliente,
+                            situacao,
+                            Request["codRota"],
+                            Request["idFunc"].StrParaIntNullable(),
+                            tiposFiscais,
+                            formasPagto,
+                            Request["dataCadIni"].StrParaDate(),
+                            Request["dataCadFim"].StrParaDate(),
+                            Request["dataSemCompraIni"].StrParaDate(),
+                            Request["dataSemCompraFim"].StrParaDate(),
+                            Request["dataInativadoIni"].StrParaDate(),
+                            Request["dataInativadoFim"].StrParaDate(),
+                            Request["dataNascimentoIni"].StrParaDate(),
+                            Request["dataNascimentoFim"].StrParaDate(),
+                            Request["idTabelaDesconto"].StrParaIntNullable(),
+                            apenasSemRota,
+                            Request["limite"].StrParaInt(),
+                            Request["uf"],
+                            Request["tipoPessoa"],
+                            false);
+
+                        // Recupera o critério da pesquisa
+                        lstParam.Add(new ReportParameter("Criterio", clientes.GetSearchParameterDescriptions().Join(" ").Format() ?? ""));
+                        lstParam.Add(new ReportParameter("AgruparVend", agruparVend));
+                        lstParam.Add(new ReportParameter("ExibirHistorico", exibirHistorico));
+                        lstParam.Add(new ReportParameter("ExibirCidade", "true"));
+
+                        report.DataSources.Add(new ReportDataSource("Cliente", clientes));
                         break;
                     }
                 case "ListaSugestaoCliente":
