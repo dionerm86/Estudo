@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
@@ -12,7 +12,7 @@ namespace Glass.Data.DAL
     {
         //private ComissaoDAO() { }
 
-        #region Busca Padr„o
+        #region Busca Padr√£o
 
         private string Sql(uint idComissao, string idsComissoes, Pedido.TipoComissao tipoFunc, uint idFuncComissionado,
             uint idPedido, string dataIni, string dataFim, bool selecionar)
@@ -23,16 +23,16 @@ namespace Glass.Data.DAL
         private string Sql(GDASession session, uint idComissao, string idsComissoes, Pedido.TipoComissao tipoFunc, uint idFuncComissionado,
             uint idPedido, string dataIni, string dataFim, bool selecionar)
         {
-            string campos = selecionar ? @"c.*, f.Nome as NomeFuncionario, com.Nome as NomeComissionado, i.Nome as NomeInstalador, 
+            string campos = selecionar ? @"c.*, f.Nome as NomeFuncionario, com.Nome as NomeComissionado, i.Nome as NomeInstalador,
                 '$$$' as criterio" : "Count(*)";
             string criterio = "";
 
             string sql = @"
-                Select " + campos + @" 
-                From comissao c 
-                    Left Join comissionado com On (c.idComissionado=com.idComissionado) 
-                    Left Join funcionario f On (c.idFunc=f.idFunc) 
-                    Left Join funcionario i On (c.idInstalador=i.idFunc) 
+                Select " + campos + @"
+                From comissao c
+                    Left Join comissionado com On (c.idComissionado=com.idComissionado)
+                    Left Join funcionario f On (c.idFunc=f.idFunc)
+                    Left Join funcionario i On (c.idInstalador=i.idFunc)
                     LEFT JOIN comissao_contas_receber ccr ON (ccr.IdComissao = c.IdComissao)
                 Where ccr.IdComissaoContasReceber IS NULL";
 
@@ -44,7 +44,7 @@ namespace Glass.Data.DAL
             if (tipoFunc == Pedido.TipoComissao.Funcionario)
             {
                 sql += " And c.idFunc is not null";
-                criterio += "Funcion·rios    ";
+                criterio += "Funcion√°rios    ";
             }
             else if (tipoFunc == Pedido.TipoComissao.Comissionado)
             {
@@ -75,7 +75,7 @@ namespace Glass.Data.DAL
                     if (tipoFunc == Pedido.TipoComissao.Funcionario)
                     {
                         sql += " And c.idFunc=" + idFuncComissionado;
-                        criterio += "Funcion·rio: " + FuncionarioDAO.Instance.GetNome(session, idFuncComissionado) + "    ";
+                        criterio += "Funcion√°rio: " + FuncionarioDAO.Instance.GetNome(session, idFuncComissionado) + "    ";
                     }
                     else if (tipoFunc == Pedido.TipoComissao.Comissionado)
                     {
@@ -92,7 +92,7 @@ namespace Glass.Data.DAL
                 if (!String.IsNullOrEmpty(dataIni))
                 {
                     sql += " And c.dataCad>=?dataIni";
-                    criterio = "Data InÌcio: " + dataIni + "    ";
+                    criterio = "Data In√≠cio: " + dataIni + "    ";
                 }
 
                 if (!String.IsNullOrEmpty(dataFim))
@@ -159,7 +159,7 @@ namespace Glass.Data.DAL
         #region Busca por string
 
         /// <summary>
-        /// Retorna uma lista de comissıes de uma string.
+        /// Retorna uma lista de comiss√µes de uma string.
         /// </summary>
         public IList<Comissao> GetByString(string idsComissoes)
         {
@@ -167,7 +167,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna uma lista de comissıes de uma string.
+        /// Retorna uma lista de comiss√µes de uma string.
         /// </summary>
         public IList<Comissao> GetByString(GDASession session, string idsComissoes)
         {
@@ -176,11 +176,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Gera comiss„o
+        #region Gera comiss√£o
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Gera comiss„o para o funcion·rio/comissionado referente aos pedidos passados
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Gera comiss√£o para o funcion√°rio/comissionado referente aos pedidos passados
         /// </summary>
         public decimal GerarComissao(Pedido.TipoComissao tipoComissao, uint idFuncComissionado, string idsPedido, string dataRefIni, string dataRefFim,
             decimal valorCalculadoPagina, string dataContaPagar)
@@ -207,10 +207,10 @@ namespace Glass.Data.DAL
             }
         }
 
-        /// <summary>        
-        /// Gera comiss„o para o funcion·rio/comissionado referente aos pedidos passados
+        /// <summary>
+        /// Gera comiss√£o para o funcion√°rio/comissionado referente aos pedidos passados
         /// </summary>
-        /// <param name="tipoComissao">0-Funcion·rio, 1-Comissionado, 2-Instalador</param>
+        /// <param name="tipoComissao">0-Funcion√°rio, 1-Comissionado, 2-Instalador</param>
         /// <param name="idFuncComissionado">idFunc ou idComissionado</param>
         /// <param name="idsPedido"></param>
         /// <param name="dataRefIni"></param>
@@ -221,15 +221,15 @@ namespace Glass.Data.DAL
         public decimal GerarComissao(GDASession sessao, Pedido.TipoComissao tipoComissao, uint idFuncComissionado, string idsPedido, string dataRefIni, string dataRefFim,
             decimal valorCalculadoPagina, string dataContaPagar)
         {
-            // Apenas administrador, financeiro geral e financeiro pagto podem gerar comissıes
+            // Apenas administrador, financeiro geral e financeiro pagto podem gerar comiss√µes
             if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
-                throw new Exception("VocÍ n„o tem permiss„o para gerar comissıes");
+                throw new Exception("Voc√™ n√£o tem permiss√£o para gerar comiss√µes");
 
             uint idComissao = 0;
             decimal valorComissao = 0;
             decimal percAcrescimo = 1;
 
-            // Calcula o valor a pagar de comiss„o para todos os pedidos selecionados
+            // Calcula o valor a pagar de comiss√£o para todos os pedidos selecionados
             Pedido[] pedidos = PedidoDAO.Instance.GetByString(idsPedido, idFuncComissionado, tipoComissao, dataRefIni, dataRefFim);
 
             if (tipoComissao == Pedido.TipoComissao.Gerente)
@@ -247,16 +247,16 @@ namespace Glass.Data.DAL
                     dataRefIni, dataRefFim, idsPedido), 2);
             }
 
-            // Subtrai os dÈbitos de comiss„o que o funcion·rio possa ter
+            // Subtrai os d√©bitos de comiss√£o que o funcion√°rio possa ter
             KeyValuePair<string, decimal> debitos = DebitoComissaoDAO.Instance.GetDebitos(idFuncComissionado, tipoComissao);
             valorComissao -= debitos.Value;
 
-            // Ajusta o valor calculado ao valor exibido na p·gina de comiss„o, se necess·rio
+            // Ajusta o valor calculado ao valor exibido na p√°gina de comiss√£o, se necess√°rio
             if (valorCalculadoPagina > 0)
                 percAcrescimo = Math.Round(Math.Round(valorComissao, 2) / valorCalculadoPagina);
 
             if (valorComissao <= 0)
-                throw new Exception("Comiss„o para o(os) pedido(os) j· foi gerada, ou os pedidos n„o possuem valores a serem gerados.");
+                throw new Exception("Comiss√£o para o(os) pedido(os) j√° foi gerada, ou os pedidos n√£o possuem valores a serem gerados.");
 
             // Cria uma nova comissao
             Comissao comissao = new Comissao();
@@ -265,7 +265,7 @@ namespace Glass.Data.DAL
             comissao.DataRefFim = DateTime.Parse(dataRefFim);
             comissao.DataCad = DateTime.Now;
 
-            // Define o tipo de funcion·rio para a nova comiss„o
+            // Define o tipo de funcion√°rio para a nova comiss√£o
             switch (tipoComissao)
             {
                 case Pedido.TipoComissao.Funcionario:
@@ -286,12 +286,12 @@ namespace Glass.Data.DAL
             {
                 idComissao = Insert(sessao, comissao);
 
-                // Associa os pedidos 
+                // Associa os pedidos
                 string sqlInsert = String.Empty;
 
                 // Salva o valor pago por pedido
                 foreach (Pedido p in pedidos)
-                {                                       
+                {
                     var valorComissaoPedido = p.ValorComissaoPagar * percAcrescimo;
                     decimal baseCalcRecebido = Convert.ToDecimal(ComissaoPedidoDAO.Instance.GetTotalBaseCalcComissaoPedido(p.IdPedido, (int)tipoComissao, idFuncComissionado));
                     decimal baseCalcAtual = p.ValorBaseCalcComissao - (PedidoConfig.LiberarPedido ? 0 : baseCalcRecebido);
@@ -300,18 +300,18 @@ namespace Glass.Data.DAL
 
                     /* Chamado 58585. */
                     if (valorComissaoPedido <= 0)
-                        throw new Exception("Comiss„o para o(os) pedido(os) j· foi gerada, ou os pedidos n„o possuem valores a serem gerados.");
+                        throw new Exception("Comiss√£o para o(os) pedido(os) j√° foi gerada, ou os pedidos n√£o possuem valores a serem gerados.");
 
                     sqlInsert += "Insert Into comissao_pedido (idPedido, idComissao, valor, basecalccomissao)" +
                         " values (" + p.IdPedido + ", " + idComissao + ", " + valorComissaoPedido.ToString().Replace(',', '.') + ", " + baseCalc + ");";
-                    
+
                     if (tipoComissao == Pedido.TipoComissao.Gerente)
                         p.ValorComissaoGerentePago = decimal.Round(valorComissaoPedido, 2);
                 }
 
                 objPersistence.ExecuteCommand(sessao, sqlInsert);
 
-                // Atualiza a tabela de comiss„o por pedido
+                // Atualiza a tabela de comiss√£o por pedido
                 if(tipoComissao != Pedido.TipoComissao.Gerente)
                     pedidos = PedidoDAO.Instance.GetByString(idsPedido, idFuncComissionado, tipoComissao, dataRefIni, dataRefFim);
 
@@ -321,10 +321,10 @@ namespace Glass.Data.DAL
                 else
                     PedidoComissaoDAO.Instance.Create(sessao, pedidos, tipoComissao);
 
-                // Marca que os dÈbitos foram quitados
+                // Marca que os d√©bitos foram quitados
                 DebitoComissaoDAO.Instance.MarcaComissao(sessao, debitos.Key, idComissao, tipoComissao);
 
-                #region Gera a conta a pagar para a comiss„o
+                #region Gera a conta a pagar para a comiss√£o
 
                 DateTime dataPagar;
                 if (!DateTime.TryParse(dataContaPagar, out dataPagar))
@@ -354,24 +354,24 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retifica comiss„o
+        #region Retifica comiss√£o
 
         /// <summary>
-        /// Retifica comiss„o para o funcion·rio/comissionado referente aos pedidos passados
+        /// Retifica comiss√£o para o funcion√°rio/comissionado referente aos pedidos passados
         /// </summary>
-        /// <param name="tipoComissao">0-Funcion·rio, 1-Comissionado, 2-Instalador</param>
+        /// <param name="tipoComissao">0-Funcion√°rio, 1-Comissionado, 2-Instalador</param>
         /// <param name="idFuncComissionado">idFunc ou idComissionado</param>
-        /// <param name="idsPedidoRetirar">Os ids dos pedidos que ser„o retirados da comiss„o.</param>
+        /// <param name="idsPedidoRetirar">Os ids dos pedidos que ser√£o retirados da comiss√£o.</param>
         public void RetificarComissao(uint idComissao, Pedido.TipoComissao tipoComissao, uint idFuncComissionado, string idsPedidoRetirar,
             decimal valorComissao, string dataContaPagar)
         {
-            // Apenas financeiro pagto podem retificar comissıes
+            // Apenas financeiro pagto podem retificar comiss√µes
             if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
-                throw new Exception("VocÍ n„o tem permiss„o para retificar comissıes");
+                throw new Exception("Voc√™ n√£o tem permiss√£o para retificar comiss√µes");
 
             decimal valorComissaoRetirar = 0;
 
-            // Define os pedidos que ser„o retirados da comiss„o
+            // Define os pedidos que ser√£o retirados da comiss√£o
             List<uint> idPedidoRetirar = new List<uint>();
 
             if (!String.IsNullOrEmpty(idsPedidoRetirar))
@@ -383,25 +383,25 @@ namespace Glass.Data.DAL
                          }
                      )));
 
-            // Busca os pedidos da comiss„o
+            // Busca os pedidos da comiss√£o
             var pedidos = PedidoDAO.Instance.GetPedidosByComissao(idComissao, tipoComissao, idFuncComissionado);
 
-            // Calcula o valor que ser· removido da comiss„o
+            // Calcula o valor que ser√° removido da comiss√£o
             foreach (Pedido p in pedidos)
                 if (idPedidoRetirar.Contains(p.IdPedido))
                 {
                     if (!DebitoComissaoDAO.Instance.VerificaCancelarPedido(idComissao, p.IdPedido, tipoComissao))
-                        throw new Exception("O pedido " + p.IdPedido + " j· foi cancelado e tem um dÈbito de comiss„o j· quitado.");
+                        throw new Exception("O pedido " + p.IdPedido + " j√° foi cancelado e tem um d√©bito de comiss√£o j√° quitado.");
 
                     valorComissaoRetirar += (decimal)p.ValorPagoComissao;
                 }
 
-            // Remove os pedidos da lista de dÈbitos de comiss„o
+            // Remove os pedidos da lista de d√©bitos de comiss√£o
             foreach (Pedido p in pedidos)
                 if (idPedidoRetirar.Contains(p.IdPedido))
                     DebitoComissaoDAO.Instance.CancelaPedido(p.IdPedido, tipoComissao);
 
-            // Recupera as datas de inÌcio e fim da comiss„o paga
+            // Recupera as datas de in√≠cio e fim da comiss√£o paga
             string dataIni = ObtemValorCampo<string>("dataRefIni", "idComissao=" + idComissao);
             string dataFim = ObtemValorCampo<string>("dataRefFim", "idComissao=" + idComissao);
 
@@ -423,14 +423,14 @@ namespace Glass.Data.DAL
             }
             else
             {
-                // Atualiza a tabela de comiss„o por pedido
+                // Atualiza a tabela de comiss√£o por pedido
                 pedidos = PedidoDAO.Instance.GetByString(idsPedidoRetirar, idFuncComissionado, tipoComissao, dataIni, dataFim);
                 PedidoComissaoDAO.Instance.Create(pedidos, tipoComissao);
             }
 
-            #region Gera a conta a pagar para a comiss„o
+            #region Gera a conta a pagar para a comiss√£o
 
-            ContasPagarDAO.Instance.DeleteByComissao(idComissao, "RetificaÁ„o");
+            ContasPagarDAO.Instance.DeleteByComissao(idComissao, "Retifica√ß√£o");
 
             DateTime dataPagar;
             if (!DateTime.TryParse(dataContaPagar, out dataPagar))
@@ -452,7 +452,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos sobrescritos
+        #region M√©todos sobrescritos
 
         private Pedido.TipoComissao GetTipoFunc(uint idComissao)
         {
@@ -470,36 +470,36 @@ namespace Glass.Data.DAL
 
         public override int Delete(Comissao objDelete)
         {
-            // Verifica a conta a pagar gerada por esta comiss„o foi paga
+            // Verifica a conta a pagar gerada por esta comiss√£o foi paga
             if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From contas_pagar Where paga=true And idComissao=" +
                 objDelete.IdComissao) > 0)
-                throw new Exception("Cancele o pagamento da conta gerada por esta comiss„o.");
+                throw new Exception("Cancele o pagamento da conta gerada por esta comiss√£o.");
 
-            // Recupera os IDs dos pedidos dessa comiss„o
+            // Recupera os IDs dos pedidos dessa comiss√£o
             var idsPedidos = ComissaoPedidoDAO.Instance.GetIdsPedidosByComissao(objDelete.IdComissao);
 
-            // Verifica se h· dÈbitos pagos para os pedidos da comiss„o
+            // Verifica se h√° d√©bitos pagos para os pedidos da comiss√£o
             var tipoFunc = GetTipoFunc(objDelete.IdComissao);
             foreach (uint idPedido in idsPedidos)
             {
                 if (!DebitoComissaoDAO.Instance.VerificaCancelarPedido(objDelete.IdComissao, idPedido, tipoFunc))
-                    throw new Exception("O pedido " + idPedido + " j· foi cancelado e tem um dÈbito de comiss„o j· quitado.");
+                    throw new Exception("O pedido " + idPedido + " j√° foi cancelado e tem um d√©bito de comiss√£o j√° quitado.");
             }
 
-            // Concatena os ids em uma string separada por vÌrgula
+            // Concatena os ids em uma string separada por v√≠rgula
             string ids = String.Join(",", Array.ConvertAll<uint, string>(idsPedidos, x => x.ToString()));
 
-            // Apaga a conta a pagar da comiss„o
+            // Apaga a conta a pagar da comiss√£o
             ContasPagarDAO.Instance.DeleteByComissao(objDelete.IdComissao, "Cancelamento");
 
-            // Limpa os dÈbitos de comiss„o
+            // Limpa os d√©bitos de comiss√£o
             DebitoComissaoDAO.Instance.CancelaComissao(objDelete.IdComissao);
 
-            // Remove de pedido comiss„o o valor pago nessa comiss„o
+            // Remove de pedido comiss√£o o valor pago nessa comiss√£o
             if (tipoFunc == Pedido.TipoComissao.Funcionario)
             {
                 foreach (uint idPedido in idsPedidos)
-                {   
+                {
                    var valorPago = ExecuteScalar<decimal>(
                         string.Format("Select valor From comissao_pedido Where idPedido={0} And idComissao={1}", idPedido, objDelete.IdComissao));
 
@@ -507,7 +507,7 @@ namespace Glass.Data.DAL
                         string.Format("Update pedido_comissao Set ValorPago=ValorPago-?valorPago Where idFunc={0} And idPedido={1}",
                         ObtemValorCampo<uint>("IdFunc", "IdComissao=" + objDelete.IdComissao), idPedido), new GDAParameter("?valorPago", valorPago));
                 }
-            }     
+            }
 
             if(tipoFunc == Pedido.TipoComissao.Gerente)
             {
@@ -522,10 +522,10 @@ namespace Glass.Data.DAL
                 }
             }
 
-            // Exclui as associaÁıes dos pedidos com esta comiss„o
+            // Exclui as associa√ß√µes dos pedidos com esta comiss√£o
             ComissaoPedidoDAO.Instance.DeleteByComissao(objDelete.IdComissao);
 
-            // Recalcula as comissıes pagas para os pedidos
+            // Recalcula as comiss√µes pagas para os pedidos
             string dataIni = ObtemValorCampo<string>("dataRefIni", "idComissao=" + objDelete.IdComissao).Split(' ')[0];
             string dataFim = ObtemValorCampo<string>("dataRefFim", "idComissao=" + objDelete.IdComissao).Split(' ')[0];
             PedidoComissaoDAO.Instance.Create(PedidoDAO.Instance.GetByString(ids, 0, Pedido.TipoComissao.Todos, dataIni, dataFim), Pedido.TipoComissao.Todos);
@@ -583,7 +583,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="idFunc"></param>
         /// <param name="idLoja"></param>
@@ -602,7 +602,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="idFunc"></param>
         /// <param name="idLoja"></param>
@@ -617,7 +617,7 @@ namespace Glass.Data.DAL
 
 
         /// <summary>
-        /// Gera a comiss„o das contas recebidas
+        /// Gera a comiss√£o das contas recebidas
         /// </summary>
         /// <param name="idFunc"></param>
         /// <param name="idsContasR"></param>
@@ -635,7 +635,7 @@ namespace Glass.Data.DAL
                 idsContasR = idsContasR.Trim(',');
 
                 if (idFunc == 0)
-                    throw new Exception("O funcion·rio n„o foi informado.");
+                    throw new Exception("O funcion√°rio n√£o foi informado.");
 
                 if (String.IsNullOrEmpty(idsContasR))
                     throw new Exception("Nenhuma conta foi informada.");
@@ -651,12 +651,12 @@ namespace Glass.Data.DAL
                 contasFora.AddRange(ids.Where(f => !contas.Select(x => x.IdContaR).ToList().Contains(f)).Select(f => f).ToList());
 
                 if (contasFora.Count > 0)
-                    throw new Exception("As contas: " + string.Join(",", contasFora.Select(f => f.ToString()).ToArray()) + " n„o est„o na listagem");
+                    throw new Exception("As contas: " + string.Join(",", contasFora.Select(f => f.ToString()).ToArray()) + " n√£o est√£o na listagem");
 
                 var valorComissao = contas.Sum(f => f.ValorComissao);
 
                 if (valorComissao <= 0)
-                    throw new Exception("N„o h· valor para gerar comiss„o.");
+                    throw new Exception("N√£o h√° valor para gerar comiss√£o.");
 
                 try
                 {
@@ -672,7 +672,7 @@ namespace Glass.Data.DAL
 
                     var idComissao = Insert(trans, comissao);
 
-                    #region Gera a conta a pagar para a comiss„o
+                    #region Gera a conta a pagar para a comiss√£o
 
                     DateTime dataPagar;
                     if (!DateTime.TryParse(dataContaPg, out dataPagar))
@@ -692,7 +692,7 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region Vincula as contas marcadas para gerar comiss„o
+                    #region Vincula as contas marcadas para gerar comiss√£o
 
                     foreach (var c in contas)
                     {
@@ -714,14 +714,14 @@ namespace Glass.Data.DAL
                     trans.Rollback();
                     trans.Close();
 
-                    ErroDAO.Instance.InserirFromException("Comiss„o de contas recebidas", ex);
+                    ErroDAO.Instance.InserirFromException("Comiss√£o de contas recebidas", ex);
                     throw ex;
                 }
             }
         }
 
         /// <summary>
-        /// Buscas as comissıes de um vendedor para retificar
+        /// Buscas as comiss√µes de um vendedor para retificar
         /// </summary>
         /// <param name="idFunc"></param>
         /// <returns></returns>
@@ -733,7 +733,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retifica uma comiss„o
+        /// Retifica uma comiss√£o
         /// </summary>
         /// <param name="idComissao"></param>
         /// <param name="idFunc"></param>
@@ -746,23 +746,23 @@ namespace Glass.Data.DAL
             {
                 trans.BeginTransaction();
 
-                // Apenas financeiro pagto pode retificar comissıes
+                // Apenas financeiro pagto pode retificar comiss√µes
                 uint tipoUsuario = UserInfo.GetUserInfo.TipoUsuario;
                 if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
-                    throw new Exception("VocÍ n„o tem permiss„o para retificar comissıes");
+                    throw new Exception("Voc√™ n√£o tem permiss√£o para retificar comiss√µes");
 
                 var contaPagar = ContasPagarDAO.Instance.GetByComissao(trans, idComissao);
                 var comissao = GetElementByPrimaryKey(trans, idComissao);
 
                 if (comissao == null)
-                    throw new Exception("Comiss„o n„o encontrada.");
+                    throw new Exception("Comiss√£o n√£o encontrada.");
 
                 if (contaPagar == null || contaPagar.Paga)
-                    throw new Exception("N„o È possÌvel retificar essa conta, pois ela j· foi paga.");
+                    throw new Exception("N√£o √© poss√≠vel retificar essa conta, pois ela j√° foi paga.");
 
                 try
                 {
-                    //Remove a associaÁ„o das contas
+                    //Remove a associa√ß√£o das contas
                     ComissaoContasReceberDAO.Instance.DeleteByContasRecebidas(trans, idsContasRemover);
 
                     //Verifica a data da conta a pagar
@@ -787,7 +787,7 @@ namespace Glass.Data.DAL
                     trans.Rollback();
                     trans.Close();
 
-                    ErroDAO.Instance.InserirFromException("Retificar comiss„o de contas recebidas", ex);
+                    ErroDAO.Instance.InserirFromException("Retificar comiss√£o de contas recebidas", ex);
                     throw ex;
                 }
             }
@@ -796,10 +796,10 @@ namespace Glass.Data.DAL
 
         public void RemoveComissaoContasRecebidas(Comissao objDelete)
         {
-            // Verifica a conta a pagar gerada por esta comiss„o foi paga
+            // Verifica a conta a pagar gerada por esta comiss√£o foi paga
             if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From contas_pagar Where paga=true And idComissao=" +
                 objDelete.IdComissao) > 0)
-                throw new Exception("Cancele o pagamento da conta gerada por esta comiss„o.");
+                throw new Exception("Cancele o pagamento da conta gerada por esta comiss√£o.");
 
             using (var trans = new GDA.GDATransaction())
             {
@@ -807,13 +807,13 @@ namespace Glass.Data.DAL
                 {
                     trans.BeginTransaction();
 
-                    //remove o vinculo das contas recebidas com a comiss„o
+                    //remove o vinculo das contas recebidas com a comiss√£o
                     ComissaoContasReceberDAO.Instance.DeleteByComissao(trans, objDelete.IdComissao);
 
-                    // Apaga a conta a pagar da comiss„o
+                    // Apaga a conta a pagar da comiss√£o
                     ContasPagarDAO.Instance.DeleteByComissao(trans, objDelete.IdComissao, "Cancelamento");
 
-                    //Apaga a comiss„o
+                    //Apaga a comiss√£o
                     DeleteByPrimaryKey(objDelete.IdComissao);
 
                     trans.Commit();
@@ -824,11 +824,11 @@ namespace Glass.Data.DAL
                     trans.Rollback();
                     trans.Close();
 
-                    ErroDAO.Instance.InserirFromException("Cancelar comiss„o de contas recebidas", ex);
-                    
+                    ErroDAO.Instance.InserirFromException("Cancelar comiss√£o de contas recebidas", ex);
+
                     throw ex;
                 }
-                
+
 
 
             }
@@ -855,7 +855,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Obtem dados da comiss„o
+        #region Obtem dados da comiss√£o
 
         public string ObtemPeriodo(uint idComissao)
         {
@@ -865,7 +865,7 @@ namespace Glass.Data.DAL
             if (dtIni.ToShortDateString() == "01/01/0001" && dtFim.ToShortDateString() == "01/01/0001")
                 return "";
 
-            return dtIni.ToShortDateString() + " ‡ " + dtFim.ToShortDateString();
+            return dtIni.ToShortDateString() + " √† " + dtFim.ToShortDateString();
         }
 
         public string ObtemPeriodoRec(uint idComissao)
@@ -876,9 +876,40 @@ namespace Glass.Data.DAL
             if (dtIni.ToShortDateString() == "01/01/0001" && dtFim.ToShortDateString() == "01/01/0001")
                 return "";
 
-            return dtIni.ToShortDateString() + " ‡ " + dtFim.ToShortDateString();
+            return dtIni.ToShortDateString() + " √† " + dtFim.ToShortDateString();
         }
 
         #endregion
+
+        /// <summary>
+        /// M√©todo que verifica se o controle de comissao por contas recebidas est√° habilitado.
+        /// </summary>
+        /// <returns>Retorna o resultado da compara√ß√£o l√≥gica que verifica se o controle de Comissao por contas recebidas est√° habilitado.</returns>
+        public bool VerificarComissaoContasRecebidas()
+        {
+            return Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas != TipoComissaoContaRec.Desabilitado;
+        }
+
+        /// <summary>
+        /// M√©todo que Obtem o identificador do funcion√°rio para o identificador do pedido verificado.
+        /// </summary>
+        /// <param name="session">Sess√£o do GDA.</param>
+        /// <param name="idPedido">Identificador do Pedido a ser verificado.</param>
+        /// <returns>Retorna um inteiro Identificador do funcion√°rio que dever√° ser vinculado como Funcion√°rio a receber comissao da conta gerada.</returns>
+        internal int? ObtemIdFuncComissaoRec(GDASession session, int idPedido)
+        {
+            if (idPedido == 0)
+            {
+                return null;
+            }
+
+            var idCliente = PedidoDAO.Instance.ObtemIdCliente(
+                session,
+                (uint)idPedido);
+
+            return Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas == TipoComissaoContaRec.VendedorAssociadoPedido
+                ? (int)PedidoDAO.Instance.ObtemIdFunc(session, (uint)idPedido)
+                : (int?)ClienteDAO.Instance.ObtemIdFunc(session, idCliente).GetValueOrDefault();
+        }
     }
 }

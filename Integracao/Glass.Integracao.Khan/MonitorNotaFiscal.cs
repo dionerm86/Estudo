@@ -5,6 +5,7 @@
 using Colosoft;
 using Glass.Integracao.Historico;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,11 +16,26 @@ namespace Glass.Integracao.Khan
     /// </summary>
     internal class MonitorNotaFiscal : MonitorEventos
     {
+        private const int TipoDocumentoInscricaoEstadual = 3;
+        private const int TipoDocumentoNenhum = 0;
+
+        private const int PessoaJuridica = 1;
+        private const int PessoaFisica = 2;
+
+        private const string NotaFiscalEmitida = "4";
+
+        private const string SituacaoIntegracaoPendenteImportacao = "Pendente de Importação";
+        private const string SituacaoIntegracaoPendenteImportacao2 = "Pedente de Importação";
+
         private readonly Colosoft.Logging.ILogger logger;
         private readonly ConfiguracaoKhan configuracao;
         private readonly Historico.IProvedorHistorico provedorHistorico;
-        private readonly string serviceUid = Guid.NewGuid().ToString();
+        private readonly string pedidoServiceUid = Guid.NewGuid().ToString();
+        private readonly string consultasServciceUid = Guid.NewGuid().ToString();
         private readonly System.Text.RegularExpressions.Regex dddRegex = new System.Text.RegularExpressions.Regex("\\((?<ddd>([0-9][0-9]))\\)");
+        private readonly List<Item> itensIntegrando = new List<Item>();
+
+        private DateTime ultimaConsultaItensNaoIntegrados = DateTime.Now.AddDays(-1);
 
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="MonitorNotaFiscal"/>.
@@ -41,11 +57,15 @@ namespace Glass.Integracao.Khan
             this.AdicionarToken<Data.Domain.NotaFiscalGerada>(
                 domainEvents.GetEvent<Data.Domain.NotaFiscalGerada>().Subscribe(this.NotaFiscalGerada));
 
-            Colosoft.Net.ServiceClientsManager.Current.Register(this.serviceUid, this.CriarCliente);
+            Colosoft.Net.ServiceClientsManager.Current.Register(this.pedidoServiceUid, this.CriarPedidoClient);
+            Colosoft.Net.ServiceClientsManager.Current.Register(this.consultasServciceUid, this.CriarConsultasClient);
         }
 
-        private KhanPedidoServiceReference.PedidoServiceClient Client =>
-           Colosoft.Net.ServiceClientsManager.Current.Get<KhanPedidoServiceReference.PedidoServiceClient>(this.serviceUid);
+        private KhanPedidoServiceReference.PedidoServiceClient PedidoClient =>
+           Colosoft.Net.ServiceClientsManager.Current.Get<KhanPedidoServiceReference.PedidoServiceClient>(this.pedidoServiceUid);
+
+        private KhanConsultasServiceReference.ConsultasServiceClient ConsultasClient =>
+            Colosoft.Net.ServiceClientsManager.Current.Get<KhanConsultasServiceReference.ConsultasServiceClient>(this.consultasServciceUid);
 
         private static void PreencherEnderecos(KhanPedidoServiceReference.Pedido pedido, Data.Model.Cliente cliente)
         {
@@ -177,13 +197,13 @@ namespace Glass.Integracao.Khan
                 numpedc = string.Empty,
                 nomcad = cliente.Nome,
                 tipos = "Cliente,",
-                tipodoc1 = cliente.TipoPessoa == "J" ? 1 : 2,
+                tipodoc1 = cliente.TipoPessoa == "J" ? PessoaJuridica : PessoaFisica,
                 numdoc1 = cliente.CpfCnpj,
-                tipodoc2 = cliente.TipoPessoa == "J" ? 3 /** Inscrição Estadual **/ : 0,
+                tipodoc2 = cliente.TipoPessoa == "J" ? TipoDocumentoInscricaoEstadual : TipoDocumentoNenhum,
                 numdoc2 = cliente.TipoPessoa == "J" ? cliente.RgEscinst : null,
                 tippag = ObterTipoPagamentoPedido(notaFiscal.FormaPagto),
                 numpar = parcelas.Count,
-                statusw = "4", // Nota Fiscal Emitida,
+                statusw = NotaFiscalEmitida,
                 numped = 0,
                 seqped = 0,
                 email = cliente.EmailFiscal,
@@ -197,7 +217,7 @@ namespace Glass.Integracao.Khan
                 xml = string.Empty,
                 numnf_origem = string.Empty,
                 numitens = produtosNf.Count,
-                tipes = notaFiscal.TipoDocumento == 2 /** Saída **/ ? "S" : "E",
+                tipes = notaFiscal.TipoDocumento == 2 ? "S" : "E",
                 tipoEnvio = string.Empty,
                 codTipoEnvio = string.Empty,
                 nf_chave = notaFiscal.ChaveAcesso,
@@ -226,12 +246,19 @@ namespace Glass.Integracao.Khan
             return pedido;
         }
 
-        private System.ServiceModel.ICommunicationObject CriarCliente()
+        private System.ServiceModel.ICommunicationObject CriarPedidoClient()
         {
             var serviceAddress = Colosoft.Net.ServicesConfiguration.Current[IntegradorKhan.NomePedidosService];
             var client = new KhanPedidoServiceReference.PedidoServiceClient(serviceAddress.GetBinding(), serviceAddress.GetEndpointAddress());
             client.Endpoint.EndpointBehaviors.Add(new Seguranca.KhanEndpointBehavior(this.configuracao));
+            return client;
+        }
 
+        private System.ServiceModel.ICommunicationObject CriarConsultasClient()
+        {
+            var serviceAddress = Colosoft.Net.ServicesConfiguration.Current[IntegradorKhan.NomeConsultasService];
+            var client = new KhanConsultasServiceReference.ConsultasServiceClient(serviceAddress.GetBinding(), serviceAddress.GetEndpointAddress());
+            client.Endpoint.EndpointBehaviors.Add(new Seguranca.KhanEndpointBehavior(this.configuracao));
             return client;
         }
 
@@ -262,7 +289,7 @@ namespace Glass.Integracao.Khan
 
             try
             {
-                await this.Client.SalvarPedidoAsync(pedido);
+                await this.PedidoClient.SalvarPedidoAsync(pedido);
             }
             catch (Exception ex)
             {
@@ -271,7 +298,12 @@ namespace Glass.Integracao.Khan
                 throw;
             }
 
-            this.provedorHistorico.NotificarIntegracao(HistoricoKhan.NotasFiscais, notaFiscal);
+            var item = this.provedorHistorico.NotificarIntegrando(HistoricoKhan.NotasFiscais, notaFiscal);
+
+            lock (this.itensIntegrando)
+            {
+                this.itensIntegrando.Add(item);
+            }
         }
 
         private Task SincronizarNotaFiscal(int idNf)
@@ -282,10 +314,57 @@ namespace Glass.Integracao.Khan
 
                 if (notaFiscal == null)
                 {
-                    throw new InvalidOperationException($"Não foi encontrada a nota fiscal com o identificador {idNf}.");
+                    throw new IntegracaoException($"Não foi encontrada a nota fiscal com o identificador {idNf}.");
                 }
 
                 return this.SalvarNotaFiscal(sessao, notaFiscal);
+            }
+        }
+
+        private void ApagarIntegracao(int idNf)
+        {
+            var pedido = new KhanPedidoServiceReference.Pedido
+            {
+                Token = this.configuracao.Token,
+                codempresa = this.configuracao.Empresa,
+                numped_int = idNf,
+            };
+
+            var situacao = this.PedidoClient.ExcluirPedido(pedido);
+
+            if (!StringComparer.InvariantCultureIgnoreCase.Equals(situacao?.status_integracao, "Pedido Excluido com sucesso"))
+            {
+                throw new IntegracaoException(situacao?.status_integracao);
+            }
+        }
+
+        private void CarregarItensNaoIntegrados()
+        {
+            if (this.itensIntegrando.Count == 0 &&
+                (DateTime.Now - this.ultimaConsultaItensNaoIntegrados).TotalSeconds > 30)
+            {
+                try
+                {
+                    var itens = this.provedorHistorico.ObterItensNaoIntegrados(HistoricoKhan.NotasFiscais);
+                    this.ultimaConsultaItensNaoIntegrados = DateTime.Now;
+
+                    lock (this.itensIntegrando)
+                    {
+                        foreach (var item in itens)
+                        {
+                            var idNf1 = (int)item.Identificadores.ElementAt(0);
+
+                            if (!this.itensIntegrando.Any(f => (int)f.Identificadores.ElementAt(0) == idNf1))
+                            {
+                                this.itensIntegrando.Add(item);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.logger.Error("Falha ao carrega as notas fiscais que ainda não foram integradas...".GetFormatter(), ex);
+                }
             }
         }
 
@@ -308,13 +387,87 @@ namespace Glass.Integracao.Khan
         }
 
         /// <summary>
+        /// Sincroniza a situação das notas fiscais que estão integrando.
+        /// </summary>
+        public void SincronizarNotasFiscaisIntegrando()
+        {
+            this.CarregarItensNaoIntegrados();
+
+            List<string> idsNf = null;
+
+            lock (this.itensIntegrando)
+            {
+                idsNf = this.itensIntegrando.Select(f => f.Identificadores.First().ToString()).ToList();
+            }
+
+            if (idsNf.Any())
+            {
+                IEnumerable<KhanConsultasServiceReference.PedidoStatus> pedidosStatus = null;
+
+                try
+                {
+                    pedidosStatus = this.ConsultasClient.ConsultarPedidosStatus(idsNf);
+                }
+                catch (Exception ex)
+                {
+                    this.logger.Error("Falha ao consultar a situação dos pedidos.".GetFormatter(), ex);
+                    return;
+                }
+
+                using (var idsNfEnumerator = idsNf.GetEnumerator())
+                using (var pedidosStatusEnumerator = pedidosStatus.GetEnumerator())
+                {
+                    while (idsNfEnumerator.MoveNext() && pedidosStatusEnumerator.MoveNext())
+                    {
+                        var idNf = int.Parse(idsNfEnumerator.Current);
+                        var pedidoStatus = pedidosStatusEnumerator.Current;
+
+                        var statusIntegracao = pedidoStatus.status_integracao?.Trim() ?? string.Empty;
+
+                        if (statusIntegracao.StartsWith("Integrado", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            this.provedorHistorico.NotificarIntegrado(HistoricoKhan.NotasFiscais, new object[] { idNf });
+                        }
+                        else if (statusIntegracao.StartsWith(SituacaoIntegracaoPendenteImportacao2, StringComparison.InvariantCultureIgnoreCase) &&
+                                 statusIntegracao.Length > SituacaoIntegracaoPendenteImportacao.Length)
+                        {
+                            var mensagem = statusIntegracao.Substring(SituacaoIntegracaoPendenteImportacao2.Length).Trim();
+                            if (mensagem.StartsWith(","))
+                            {
+                                mensagem = mensagem.Substring(1).Trim();
+                            }
+
+                            try
+                            {
+                                this.ApagarIntegracao(idNf);
+                            }
+                            catch (Exception ex)
+                            {
+                                this.logger.Error($"Falha ao apagar os dados da integração da nota fiscal (idNf={idNf}).".GetFormatter(), ex);
+                                continue;
+                            }
+
+                            this.provedorHistorico.RegistrarFalha(HistoricoKhan.NotasFiscais, new object[] { idNf }, mensagem, null);
+                            this.logger.Error($"Não foi possível integrar a nota fiscal (idNf={idNf}). {mensagem}".GetFormatter());
+                        }
+                    }
+                }
+
+                lock (this.itensIntegrando)
+                {
+                    this.itensIntegrando.Clear();
+                }
+            }
+        }
+
+        /// <summary>
         /// Libera a instância.
         /// </summary>
         /// <param name="disposing">Identifica se a instância está sendo liberada.</param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            Colosoft.Net.ServiceClientsManager.Current.Remove(this.serviceUid);
+            Colosoft.Net.ServiceClientsManager.Current.Remove(this.pedidoServiceUid);
         }
     }
 }

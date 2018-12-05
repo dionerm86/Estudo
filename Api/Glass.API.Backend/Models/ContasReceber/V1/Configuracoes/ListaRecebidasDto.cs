@@ -22,7 +22,7 @@ namespace Glass.API.Backend.Models.ContasReceber.V1.Configuracoes
         {
             this.UtilizarCnab = FinanceiroConfig.FinanceiroRec.ExibirCnab;
             this.ExibirComissao = FinanceiroConfig.RelatorioContasRecebidas.ExibirComissao;
-            this.ComissaoPorContasRecebida = ComissaoConfig.ComissaoPorContasRecebidas;
+            this.ComissaoPorContasRecebida = ComissaoDAO.Instance.VerificarComissaoContasRecebidas();
             this.FiltrarContasVinculadasPorPadrao = FinanceiroConfig.FiltroContasVinculadasMarcadoPorPadrao;
             this.UsarLiberacaoPedido = PedidoConfig.LiberarPedido;
             this.GerarArquivoGCon = FinanceiroConfig.GerarArquivoGCon;

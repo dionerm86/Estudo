@@ -20,7 +20,7 @@ namespace Glass.API.Backend.Helper.ContasBancarias
         /// Inicia uma nova instância da classe <see cref="ConverterCadastroAtualizacaoParaContaBancaria"/>.
         /// </summary>
         /// <param name="cadastro">O DTO de cadastro, enviado para o endpoint.</param>
-        /// <param name="atual">O turno atual (opcional), para que sejam aproveitados os valores, se necessário.</param>
+        /// <param name="atual">A conta bancária atual (opcional), para que sejam aproveitados os valores, se necessário.</param>
         public ConverterCadastroAtualizacaoParaContaBancaria(
             CadastroAtualizacaoDto cadastro,
             ContaBanco atual = null)

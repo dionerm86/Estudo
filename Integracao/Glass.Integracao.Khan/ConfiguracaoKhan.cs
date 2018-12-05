@@ -23,6 +23,16 @@ namespace Glass.Integracao.Khan
             this.EnderecoBase = System.Configuration.ConfigurationManager.AppSettings["Khan:EnderecoBase"];
             this.Token = System.Configuration.ConfigurationManager.AppSettings["Khan:Token"];
             this.Empresa = System.Configuration.ConfigurationManager.AppSettings["Khan:Empresa"];
+
+            var executarJobs = false;
+            if (bool.TryParse(System.Configuration.ConfigurationManager.AppSettings["Khan:ExecutarJobs"], out executarJobs))
+            {
+                this.ExecutarJobs = executarJobs;
+            }
+            else
+            {
+                this.ExecutarJobs = false;
+            }
         }
 
         /// <summary>
@@ -70,6 +80,22 @@ namespace Glass.Integracao.Khan
             set
             {
                 this[nameof(this.Empresa)] = value;
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se é para executar os jobs da integração.
+        /// </summary>
+        public bool ExecutarJobs
+        {
+            get
+            {
+                return (this[nameof(this.ExecutarJobs)] as bool?).GetValueOrDefault();
+            }
+
+            set
+            {
+                this[nameof(this.ExecutarJobs)] = value;
             }
         }
 

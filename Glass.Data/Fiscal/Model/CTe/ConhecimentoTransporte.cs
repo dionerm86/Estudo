@@ -43,7 +43,7 @@ namespace Glass.Data.Model.Cte
             Subcontratacao,
             Redespacho,
             RedespachoIntermediario
-        }        
+        }
 
         public enum SituacaoEnum
         {
@@ -78,13 +78,13 @@ namespace Glass.Data.Model.Cte
         //[Log("Natureza da Operação", "CodCompleto", typeof(NaturezaOperacaoDAO), "IdNaturezaOperacao", "ObtemElemento", true)]
         [PersistenceProperty("IDNATUREZAOPERACAO")]
         public uint IdNaturezaOperacao { get; set; }
-        
+
         [PersistenceProperty("IDCIDADECTE")]
         public uint IdCidadeCte { get; set; }
 
         [PersistenceProperty("IDCIDADEINICIO")]
         public uint IdCidadeInicio { get; set; }
-       
+
         [PersistenceProperty("IDCIDADEFIM")]
         public uint IdCidadeFim { get; set; }
 
@@ -159,6 +159,12 @@ namespace Glass.Data.Model.Cte
 
         [PersistenceProperty("GerarContasReceber")]
         public bool GerarContasReceber { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a data da declaração de anulação de serviços de transporte efetuada pelo tomador.
+        /// </summary>
+        [PersistenceProperty("DATAANULACAO")]
+        public DateTime? DataAnulacao { get; set; }
 
         #endregion
 

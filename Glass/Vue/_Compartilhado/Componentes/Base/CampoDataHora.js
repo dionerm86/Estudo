@@ -76,6 +76,13 @@ Vue.component('campo-data-hora', {
     }
   },
 
+  data: function() {
+    return {
+      dataAtual: this.dataHora ? this.formataData(this.dataHora - Data.offset) : '',
+      horaAtual: this.dataHora ? this.formataHora(this.dataHora - Data.offset) : ''
+    };
+  },
+
   methods: {
     /**
      * Realiza a atualização da propriedade de data/hora com base nos
@@ -83,7 +90,7 @@ Vue.component('campo-data-hora', {
      * @param {string} data A data selecionada no controle.
      * @param {string} hora A hora selecionada no controle.
      */
-    atualizarDataHora: function(data, hora) {
+    atualizarDataHora: function (data, hora) {
       var dataHoraAtual = new Date(data + ' ' + hora);
       if (isNaN(dataHoraAtual.getTime())) {
         dataHoraAtual = null;
@@ -133,46 +140,32 @@ Vue.component('campo-data-hora', {
 
           return Promise.reject();
         });
+    },
+
+    /**
+     * Altera a data selecionada no controle, após mudança no campo.
+     */
+    alteraData: function () {
+      var vm = this;
+
+      this.validarDataSelecionada(this.dataAtual)
+        .then(function () {
+          vm.atualizarDataHora(vm.dataAtual, vm.horaAtual);
+        })
+        .catch(function () {
+          vm.atualizarDataHora(null, vm.horaAtual);
+        });
+    },
+
+    /**
+     * Altera a hora selecionada no controle, após mudança no campo.
+     */
+    alteraHora: function () {
+      this.atualizarDataHora(this.dataAtual, this.horaAtual);
     }
   },
 
   computed: {
-    /**
-     * Propriedade computada que retorna o valor da data atual para o controle e
-     * que atualiza a propriedade em caso de alteração.
-     * @type {string}
-     */
-    dataAtual: {
-      get: function() {
-        return this.dataHora ? this.formataData(this.dataHora - Data.offset) : '';
-      },
-      set: function (valor) {
-        var vm = this;
-
-        this.validarDataSelecionada(valor)
-          .then(function () {
-            vm.atualizarDataHora(valor, vm.horaAtual);
-          })
-          .catch(function () {
-            vm.atualizarDataHora(null, vm.horaAtual);
-          });
-      }
-    },
-
-    /**
-     * Propriedade computada que retorna o valor da hora atual para o controle
-     * e que atualiza a propriedade em caso de alteração.
-     * @type {string}
-     */
-    horaAtual: {
-      get: function() {
-        return this.dataHora ? this.formataHora(this.dataHora - Data.offset) : '';
-      },
-      set: function(valor) {
-        this.atualizarDataHora(this.dataAtual, valor);
-      }
-    },
-
     /**
      * Propridade computada com o valor da data mínima selecionável para o controle.
      * @type {string}
@@ -187,6 +180,20 @@ Vue.component('campo-data-hora', {
      */
     dataMaximaAtual: function() {
       return this.dataMaxima ? this.formataData(this.dataMaxima - Data.offset) : '';
+    }
+  },
+
+  watch: {
+    /**
+     * Observador para a propriedade 'dataHora'.
+     * Atualiza as variáveis internas do controle.
+     */
+    dataHora: {
+      handler: function (atual) {
+        this.dataAtual = atual ? this.formataData(atual - Data.offset) : '';
+        this.horaAtual = atual ? this.formataHora(atual - Data.offset) : '';
+      },
+      deep: true
     }
   },
 

@@ -1,6 +1,6 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.Patch],
+  mixins: [Mixins.Objetos, Mixins.ExecutarTimeout],
 
   data: {
     dadosOrdenacao_: {

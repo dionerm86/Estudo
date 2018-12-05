@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 
 namespace Glass.Integracao.Historico
 {
@@ -19,10 +20,17 @@ namespace Glass.Integracao.Historico
         /// <param name="itemEsquema">Item do esquema de histórico.</param>
         /// <param name="referencia">Referência do item.</param>
         /// <param name="mensagem">Mensagem.</param>
-        public static void RegistrarInformativo<T>(this IProvedorHistorico provedor, ItemEsquema<T> itemEsquema, T referencia, string mensagem)
+        /// <returns>Item gerado.</returns>
+        public static Item RegistrarInformativo<T>(this IProvedorHistorico provedor, ItemEsquema<T> itemEsquema, T referencia, string mensagem)
         {
+            if (itemEsquema == null)
+            {
+                throw new ArgumentNullException(nameof(itemEsquema));
+            }
+
             var item = itemEsquema.CriarItemHistorico(referencia, TipoItemHistorico.Informativo, mensagem);
             provedor.RegistrarItem(item);
+            return item;
         }
 
         /// <summary>
@@ -34,23 +42,116 @@ namespace Glass.Integracao.Historico
         /// <param name="referencia">Referência do item.</param>
         /// <param name="mensagem">Mensagem.</param>
         /// <param name="falha">Falha associada.</param>
-        public static void RegistrarFalha<T>(this IProvedorHistorico provedor, ItemEsquema<T> itemEsquema, T referencia, string mensagem, Exception falha)
+        /// <returns>Item gerado.</returns>
+        public static Item RegistrarFalha<T>(this IProvedorHistorico provedor, ItemEsquema<T> itemEsquema, T referencia, string mensagem, Exception falha)
         {
-            var item = itemEsquema.CriarItemHistorico(referencia, mensagem, new Falha(falha));
+            if (itemEsquema == null)
+            {
+                throw new ArgumentNullException(nameof(itemEsquema));
+            }
+
+            var item = itemEsquema.CriarItemHistorico(referencia, mensagem, falha != null ? new Falha(falha) : null);
             provedor.RegistrarItem(item);
+            return item;
         }
 
         /// <summary>
-        /// Notifica a integração do item.
+        /// Registra um item de falha.
+        /// </summary>
+        /// <param name="provedor">Provedor do histórico.</param>
+        /// <param name="itemEsquema">Item do esquema de histórico.</param>
+        /// <param name="identificadores">Identificadores que representam o item.</param>
+        /// <param name="mensagem">Mensagem.</param>
+        /// <param name="falha">Falha associada.</param>
+        /// <returns>Item gerado.</returns>
+        public static Item RegistrarFalha(this IProvedorHistorico provedor, ItemEsquema itemEsquema, IEnumerable<object> identificadores, string mensagem, Exception falha)
+        {
+            if (itemEsquema == null)
+            {
+                throw new ArgumentNullException(nameof(itemEsquema));
+            }
+
+            var item = itemEsquema.CriarItemHistorico(identificadores, mensagem, falha != null ? new Falha(falha) : null);
+            provedor.RegistrarItem(item);
+            return item;
+        }
+
+        /// <summary>
+        /// Notifica que o item foi integrado.
         /// </summary>
         /// <typeparam name="T">Tipo da classe que o item representa.</typeparam>
         /// <param name="provedor">Provedor do histórico.</param>
         /// <param name="itemEsquema">Item do esquema de histórico.</param>
         /// <param name="referencia">Referência do item.</param>
-        public static void NotificarIntegracao<T>(this IProvedorHistorico provedor, ItemEsquema<T> itemEsquema, T referencia)
+        /// <returns>Item gerado.</returns>
+        public static Item NotificarIntegrado<T>(this IProvedorHistorico provedor, ItemEsquema<T> itemEsquema, T referencia)
         {
+            if (itemEsquema == null)
+            {
+                throw new ArgumentNullException(nameof(itemEsquema));
+            }
+
             var item = itemEsquema.CriarItemHistorico(referencia, TipoItemHistorico.Integrado, null);
             provedor.RegistrarItem(item);
+            return item;
+        }
+
+        /// <summary>
+        /// Notifica que o item foi integrado.
+        /// </summary>
+        /// <param name="provedor">Provedor do histórico.</param>
+        /// <param name="itemEsquema">Item do esquema de histórico.</param>
+        /// <param name="identificadores">Identificadores que representam o item.</param>
+        /// <returns>Item gerado.</returns>
+        public static Item NotificarIntegrado(this IProvedorHistorico provedor, ItemEsquema itemEsquema, IEnumerable<object> identificadores)
+        {
+            if (itemEsquema == null)
+            {
+                throw new ArgumentNullException(nameof(itemEsquema));
+            }
+
+            var item = itemEsquema.CriarItemHistorico(identificadores, TipoItemHistorico.Integrado, null);
+            provedor.RegistrarItem(item);
+            return item;
+        }
+
+        /// <summary>
+        /// Notifica que o item está sendo integrado.
+        /// </summary>
+        /// <typeparam name="T">Tipo da classe que o item representa.</typeparam>
+        /// <param name="provedor">Provedor do histórico.</param>
+        /// <param name="itemEsquema">Item do esquema de histórico.</param>
+        /// <param name="referencia">Referência do item.</param>
+        /// <returns>Item gerado.</returns>
+        public static Item NotificarIntegrando<T>(this IProvedorHistorico provedor, ItemEsquema<T> itemEsquema, T referencia)
+        {
+            if (itemEsquema == null)
+            {
+                throw new ArgumentNullException(nameof(itemEsquema));
+            }
+
+            var item = itemEsquema.CriarItemHistorico(referencia, TipoItemHistorico.Integrando, null);
+            provedor.RegistrarItem(item);
+            return item;
+        }
+
+        /// <summary>
+        /// Notifica que o item está sendo integrado.
+        /// </summary>
+        /// <param name="provedor">Provedor do histórico.</param>
+        /// <param name="itemEsquema">Item do esquema de histórico.</param>
+        /// <param name="identificadores">Identificadores que representam o item.</param>
+        /// <returns>Item gerado.</returns>
+        public static Item NotificarIntegrando(this IProvedorHistorico provedor, ItemEsquema itemEsquema, IEnumerable<object> identificadores)
+        {
+            if (itemEsquema == null)
+            {
+                throw new ArgumentNullException(nameof(itemEsquema));
+            }
+
+            var item = itemEsquema.CriarItemHistorico(identificadores, TipoItemHistorico.Integrando, null);
+            provedor.RegistrarItem(item);
+            return item;
         }
     }
 }

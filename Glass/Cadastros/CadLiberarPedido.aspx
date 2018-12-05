@@ -1,4 +1,4 @@
-<%@ Page Title="Liberar Pedidos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+﻿<%@ Page Title="Liberar Pedidos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     EnableEventValidation="false" CodeBehind="CadLiberarPedido.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadLiberarPedido" %>
 
 <%@ Register Src="../Controls/ctrlFormaPagto.ascx" TagName="ctrlFormaPagto" TagPrefix="uc1" %>
@@ -878,8 +878,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Obs Lib." SortExpression="ObsLiberacao">
                             <ItemTemplate>
-                                <asp:Label ID="Label1" runat="server" Text='<%# Bind("ObsLiberacao") %>'></asp:Label>
-                                <asp:Label ID="Label4" runat="server" Text='<%# Bind("ObsLiberacaoCliente") %>'></asp:Label>
+                                <asp:Label ID="Label4" runat="server" Text='<%# Bind("ObservacaoLiberacaoClientePedido") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField>
@@ -1160,7 +1159,7 @@
                                     <td>
                                         <uc1:ctrlFormaPagto ID="ctrlFormaPagto1" runat="server" CalcularTroco="False" ParentID="tbAVista"
                                             TipoModel="Pedido" FuncaoQueryStringCheques="queryStringCheques" OnInit="ctrlFormaPagto1_Init"
-                                            OnLoad="ctrlFormasPagto_Load" ExibirDataRecebimento="False" 
+                                            OnLoad="ctrlFormasPagto_Load" ExibirDataRecebimento="False"
                                             ExibirJuros="False" CallbackGerarCredito="callbackGerarCredito" ExibirRecebParcial="True"
                                             PermitirValorPagarNegativo="true" />
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Glass.Data.Model;
 using GDA;
@@ -594,7 +594,7 @@ namespace Glass.Data.DAL
                                 conta.IdCliente = troca.IdCliente;
                                 conta.NumParc = 1;
                                 conta.NumParcMax = 1;
-                                conta.IdFuncComissaoRec = conta.IdCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(conta.IdCliente) : null;
+                                conta.IdFuncComissaoRec = ComissaoDAO.Instance.ObtemIdFuncComissaoRec(transaction, (int)troca.IdPedido);
 
                                 idContaGerada = ContasReceberDAO.Instance.Insert(transaction, conta);
                             }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="/3ktDsN0hvtfdHx7PuCDmOOdWy0=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="rOcMr2BLJvIozdL53M5P0acgrSs=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="basicHttpBinding" name="BasicHttpBinding_IPedidoService">
       <properties>
@@ -112,10 +112,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="BasicHttpBinding_IPedidoService" contract="KhanPedidoServiceReference.IPedidoService" bindingType="basicHttpBinding" address="http://www.ikhan.com.br/appskhan/knIntegrador/PedidoService.svc" bindingConfiguration="BasicHttpBinding_IPedidoService">
+    <endpoint name="BasicHttpBinding_IPedidoService" contract="KhanPedidoServiceReference.IPedidoService" bindingType="basicHttpBinding" address="http://mercado.khan.com.br/appskhan/knIntegrador/PedidoService.svc" bindingConfiguration="BasicHttpBinding_IPedidoService">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>http://www.ikhan.com.br/appskhan/knIntegrador/PedidoService.svc</serializedValue>
+          <serializedValue>http://mercado.khan.com.br/appskhan/knIntegrador/PedidoService.svc</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

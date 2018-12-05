@@ -11,6 +11,22 @@
     <script type="text/javascript">
 
         function setNf(idNf, numNf) {
+            if ("<%= Request["origem"] %>" == "mdfe") {
+                var retorno = SelNotaFiscalAutorizada.VerificarDisponibilidadeNfeCidadeDescargaMdfe(idNf);
+
+                if (retorno.error != null) {
+                    alert(retorno.error.description);
+                    return;
+                }
+
+                var resultado = retorno.value.split('|');
+
+                if (resultado[0] == "Erro") {
+                    alert(resultado[1]);
+                    return false;
+                }
+            }
+
             // idControle utilizado para saber à qual cidade descarga será associado a NFe no cadastro de MDFe
             var idControle = "<%= Request["IdControle"] %>";
             if (idControle != "") {
@@ -43,7 +59,7 @@
                             <asp:Label ID="Label5" runat="server" Text="CPF/CNPJ Fornecedor" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td nowrap="nowrap">
-                            <asp:TextBox ID="txtCNPJFornecedor" runat="server" Width="170px" 
+                            <asp:TextBox ID="txtCNPJFornecedor" runat="server" Width="170px"
                             onkeypress="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
                         </td>
                         <td>
@@ -199,6 +215,7 @@
                         <asp:ControlParameter ControlID="txtValorInicial" Name="valorInicial" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtValorFinal" Name="valorFinal" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtCnpjFornecedor" Name="cnpjFornecedor" PropertyName="Text" Type="String" />
+                        <asp:Parameter Name="apenasNotasFiscaisSemAnexo" Type="Boolean" />
                         <asp:Parameter  Name="lote" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>

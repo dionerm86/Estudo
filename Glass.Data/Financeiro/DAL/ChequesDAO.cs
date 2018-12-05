@@ -2640,8 +2640,8 @@ namespace Glass.Data.DAL
             var descontoTotalRateado = 0M;
             var jurosRateado = (decimal)Math.Round(acertoCheque.Juros / cheques.Length, 2);
             decimal valorAcumulado = acertoCheque.TotalPago.GetValueOrDefault() - (decimal)acertoCheque.Juros;
-            var chequesValidar = new Dictionary<Cheques, bool>();
-            decimal valorRestanteConsiderar = 0;
+            var chequesValidar = new Dictionary<int, bool>();
+
             // Rateia o desconto nos cheques, rateia o valor de juros e salva o valor recebido de cada cheque.
             foreach (var cheque in cheques)
             {
@@ -2649,24 +2649,18 @@ namespace Glass.Data.DAL
                 descontoTotalRateado += cheque.DescontoReceb;
                 cheque.JurosReceb += jurosRateado;
 
-                valorRestanteConsiderar = cheque.ValorRestante > jurosRateado
-                    ? cheque.ValorRestante - jurosRateado :
-                    cheque.ValorRestante;
+                var valorReceber = valorAcumulado > cheque.ValorRestante ? cheque.ValorRestante : valorAcumulado;
 
-                var valorReceber = valorAcumulado > valorRestanteConsiderar
-                    ? valorRestanteConsiderar
-                    : valorAcumulado;
-
-                cheque.ValorReceb += valorReceber + jurosRateado;
+                cheque.ValorReceb += valorReceber;
                 valorAcumulado -= valorReceber;
 
-                if (cheque.ValorReceb < cheque.JurosReceb - cheque.DescontoReceb)
+                if (cheque.JurosReceb == 0 && cheque.ValorReceb + cheque.DescontoReceb == 0)
                 {
-                    chequesValidar.Add(cheque, false);
+                    chequesValidar.Add((int)cheque.IdCheque, false);
                 }
                 else
                 {
-                    chequesValidar.Add(cheque, true);
+                    chequesValidar.Add((int)cheque.IdCheque, true);
                 }
             }
 
@@ -2781,23 +2775,28 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Valida a pré quitação do cheque devolvido.
+        /// Método que valida os valores calculados, e os dados dos cheques para a quitação.
         /// </summary>
+        /// <param name="session">Sessão do GDA.</param>
+        /// <param name="acertoCheque">Acerto de cheques que será validado.</param>
+        /// <param name="idsCartaoNaoIdentificado">Coleção dos identificadores dos cartões não identificados utilizados no acerto. </param>
+        /// <param name="chequesValidar">Dicionário que contem os Identificadores dos cheques e se eles são válidos.</param>
+        /// <param name="idsContaBanco">Coleção dos identificadores das contas bancárias utilizadas para fazer o acerto.</param>
+        /// <param name="idsFormaPagamento">Coleção dos identificadores das formas de pagamento utizadas no acerto.</param>
+        /// <param name="valoresRecebimento">Coleção dos valores recebidos no acerto.</param>
         public void ValidarQuitacaoChequeDevolvido(
             GDASession session,
             AcertoCheque acertoCheque,
             IEnumerable<int> idsCartaoNaoIdentificado,
-            Dictionary<Cheques, bool> chequesValidar,
+            Dictionary<int, bool> chequesValidar,
             IEnumerable<int> idsContaBanco,
             IEnumerable<int> idsFormaPagamento,
             IEnumerable<decimal> valoresRecebimento)
         {
             #region Declaração de variáveis
 
-            var usuarioLogado = UserInfo.GetUserInfo;
-            var cheques = chequesValidar.Select(c => c.Key);
-            var chequesInconsistentes = chequesValidar
-                .Where(c => !c.Value).Select(c => c.Key);
+            var cheques = this.GetByPks(session, string.Join(", ", chequesValidar.Select(c => c.Key)));
+            var chequesInconsistentes = cheques.Where(p => chequesValidar.Contains(new KeyValuePair<int, bool>((int)p.IdCheque, false)));
 
             var idsClienteVinculado = ClienteVinculoDAO.Instance.GetIdsVinculados(session, acertoCheque.IdCliente.GetValueOrDefault());
 
@@ -2887,7 +2886,7 @@ namespace Glass.Data.DAL
                     ? "em"
                     : "i";
 
-                var valorRestante = cheques.Sum(c => c.Valor) - acertoCheque.TotalPago - acertoCheque.Desconto + (decimal)acertoCheque.Juros;
+                var valorRestante = cheques.Sum(c => c.Valor) - acertoCheque.TotalPago - acertoCheque.Desconto;
 
                 var numCheques = string.Join(",", chequesInconsistentes.Select(c => c.Num));
 

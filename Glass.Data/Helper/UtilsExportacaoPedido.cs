@@ -154,74 +154,16 @@ namespace Glass.Data.Helper
 
                                     #region Arquivo de mesa
 
-                                    uint? idArquivoMesaCorte = null;
-
-                                    var tiposArquivo = new List<KeyValuePair<bool, TipoArquivoMesaCorte>>();
-
-                                    if (ppe?.IdMaterItemProj.GetValueOrDefault() > 0)
+                                    if (ppe.IdMaterItemProj.GetValueOrDefault() > 0)
                                     {
                                         var pecaItemProjeto =
                                             PecaItemProjetoDAO.Instance.GetByMaterial(ppe.IdMaterItemProj.Value);
 
-                                        if (pecaItemProjeto != null && pecaItemProjeto.Item != null)
+                                        // Se o material não estiver associado à uma peça, não há associação com o arquivo de mesa de corte vindo do projeto
+                                        if (pecaItemProjeto != null && pecaItemProjeto.Item != null && pecaItemProjeto.Tipo == 1 /** Instalação **/)
                                         {
-                                            // Se o material não estiver associado à uma peça, não há associação com o arquivo de mesa de corte vindo do projeto
-                                            if (pecaItemProjeto != null && pecaItemProjeto.Tipo == 1)
-                                            {
-                                                int item;
-
-                                                /* Chamado 58078. */
-                                                if (!int.TryParse(pecaItemProjeto.Item, out item))
-                                                    item = pecaItemProjeto.Item[0].ToString().StrParaInt();
-
-                                                var pecaProjMod = PecaProjetoModeloDAO.Instance.GetByItem(ItemProjetoDAO.Instance.GetIdProjetoModelo(pecaItemProjeto.IdItemProjeto), item);
-
-                                                if (pecaProjMod.TipoArquivo.HasValue)
-                                                    tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, pecaProjMod.TipoArquivo.Value));
-
-                                                var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)pecaProjMod.IdPecaProjMod, true);
-
-                                                if (flags != null)
-                                                {
-                                                    if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.DXF)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString()))
-                                                        tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.DXF));
-
-                                                    if (Configuracoes.PCPConfig.EmpresaGeraArquivoSGlass && !tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(true, TipoArquivoMesaCorte.DXF)) &&
-                                                        flags.Any(f => f.Descricao.ToLower() == "sglass"))
-                                                        tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(true, TipoArquivoMesaCorte.DXF));
-
-                                                    if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.FML)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString()))
-                                                        tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.FML));
-
-                                                    if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.SAG)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.SAG.ToString()))
-                                                        tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.SAG));
-                                                }
-                                            }
+                                            GerarArquivoMesaCorte(pp, pecaItemProjeto);
                                         }
-                                    }
-
-                                    foreach (var tipoArquivo in tiposArquivo)
-                                    {
-                                        var dadosArquivoMesaCorte = new ArquivoMesaCorte();
-                                        dadosArquivoMesaCorte.IdProdPed = (int)pp.IdProdPed;
-
-                                        using (var ms = new MemoryStream())
-                                        {
-                                            var tipoArq = (int)tipoArquivo.Value;
-                                            ArquivoMesaCorteDAO.Instance.GetArquivoMesaCorte(null, pp.IdPedido, pp.IdProdPedEsp.Value, null, ref idArquivoMesaCorte,
-                                                tipoArquivo.Value == TipoArquivoMesaCorte.SAG, ms, ref tipoArq, tipoArquivo.Key, false);
-
-                                            if (idArquivoMesaCorte.GetValueOrDefault() > 0 && ms != null && ms.ToArray().Length > 0)
-                                            {
-                                                dadosArquivoMesaCorte.TipoArquivo = tipoArquivo.Value;
-                                                // Arquivo SGlass
-                                                dadosArquivoMesaCorte.paraSGlass = tipoArquivo.Key;
-                                                dadosArquivoMesaCorte.Arquivo = ms.ToArray();
-                                            }
-                                        }
-
-                                        if (dadosArquivoMesaCorte.Arquivo != null && dadosArquivoMesaCorte.Arquivo.Count() > 0)
-                                            ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
                                     }
 
                                     #endregion
@@ -280,73 +222,19 @@ namespace Glass.Data.Helper
 
                                 #region Arquivo de mesa
 
-                                uint? idArquivoMesaCorte = null;
-
-                                var tiposArquivo = new List<KeyValuePair<bool, TipoArquivoMesaCorte>>();
-
                                 if (ppe.IdMaterItemProj.GetValueOrDefault() > 0)
                                 {
                                     var pecaItemProjeto = PecaItemProjetoDAO.Instance.GetByMaterial(ppe.IdMaterItemProj.Value);
 
-                                    if (pecaItemProjeto != null && pecaItemProjeto.Item != null)
+                                    var idArquivoCalcEngine = ArquivoMesaCorteDAO.Instance.ObtemIdArquivoCalcEngine(pecaItemProjeto.IdArquivoMesaCorte.GetValueOrDefault());
+
+                                    // Se o material não estiver associado à uma peça, não há associação com o arquivo de mesa de corte vindo do projeto
+                                    if (pecaItemProjeto != null &&
+                                        pecaItemProjeto.Item != null &&
+                                        pecaItemProjeto.Tipo == 1 /** Instalação **/)
                                     {
-                                        // Se o material não estiver associado à uma peça, não há associação com o arquivo de mesa de corte vindo do projeto
-                                        if (pecaItemProjeto != null && pecaItemProjeto.Tipo == 1)
-                                        {
-                                            int item;
-
-                                            /* Chamado 58078. */
-                                            if (!int.TryParse(pecaItemProjeto.Item, out item))
-                                                item = pecaItemProjeto.Item[0].ToString().StrParaInt();
-
-                                            var pecaProjMod = PecaProjetoModeloDAO.Instance.GetByItem(ItemProjetoDAO.Instance.GetIdProjetoModelo(pecaItemProjeto.IdItemProjeto), item);
-
-                                            if (pecaProjMod.TipoArquivo.HasValue)
-                                                tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, pecaProjMod.TipoArquivo.Value));
-
-                                            var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)pecaProjMod.IdPecaProjMod, true);
-
-                                            if (flags != null)
-                                            {
-                                                if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.DXF)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString()))
-                                                    tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.DXF));
-
-                                                if (Configuracoes.PCPConfig.EmpresaGeraArquivoSGlass && !tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(true, TipoArquivoMesaCorte.DXF)) &&
-                                                    flags.Any(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString()))
-                                                    tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(true, TipoArquivoMesaCorte.DXF));
-
-                                                if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.FML)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString()))
-                                                    tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.FML));
-
-                                                if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.SAG)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.SAG.ToString()))
-                                                    tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.SAG));
-                                            }
-                                        }
+                                        this.GerarArquivoMesaCorte(pp, pecaItemProjeto);
                                     }
-                                }
-
-                                foreach (var tipoArquivo in tiposArquivo)
-                                {
-                                    var dadosArquivoMesaCorte = new ArquivoMesaCorte();
-                                    dadosArquivoMesaCorte.IdProdPed = (int)pp.IdProdPed;
-
-                                    using (var ms = new MemoryStream())
-                                    {
-                                        var tipoArq = (int)tipoArquivo.Value;
-                                        ArquivoMesaCorteDAO.Instance.GetArquivoMesaCorte(null, pp.IdPedido, pp.IdProdPedEsp.Value, null, ref idArquivoMesaCorte,
-                                            tipoArquivo.Value == TipoArquivoMesaCorte.SAG, ms, ref tipoArq, tipoArquivo.Key, false);
-
-                                        if (idArquivoMesaCorte.GetValueOrDefault() > 0 && ms != null && ms.ToArray().Length > 0)
-                                        {
-                                            dadosArquivoMesaCorte.TipoArquivo = tipoArquivo.Value;
-                                            // Arquivo SGlass
-                                            dadosArquivoMesaCorte.paraSGlass = tipoArquivo.Key;
-                                            dadosArquivoMesaCorte.Arquivo = ms.ToArray();
-                                        }
-                                    }
-
-                                    if (dadosArquivoMesaCorte.Arquivo != null && dadosArquivoMesaCorte.Arquivo.Count() > 0)
-                                        ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
                                 }
 
                                 #endregion
@@ -356,6 +244,57 @@ namespace Glass.Data.Helper
                 }
 
                 FigurasProdutosPedido = fig.ToArray();
+            }
+
+            private void GerarArquivoMesaCorte(ProdutosPedido pp, PecaItemProjeto pecaItemProjeto)
+            {
+                using (var sessao = new GDASession())
+                {
+                    if (PecaItemProjetoDAO.Instance.DeveGerarArquivoSag(sessao, pecaItemProjeto))
+                    {
+                        uint? idArquivoMesaCorte = null;
+                        int tipoArquivo = (int)TipoArquivoMesaCorte.SAG;
+
+                        using (var outputStream = new MemoryStream())
+                        {
+                            ArquivoMesaCorteDAO.Instance.GetArquivoMesaCorte(
+                                sessao,
+                                pp.IdPedido,
+                                pp.IdProdPedEsp.Value,
+                                null,
+                                ref idArquivoMesaCorte,
+                                true,
+                                outputStream,
+                                ref tipoArquivo,
+                                false,
+                                false,
+                                false);
+
+                            if (outputStream.Length > 0)
+                            {
+                                var dadosArquivoMesaCorte = new ArquivoMesaCorte();
+                                dadosArquivoMesaCorte.IdProdPed = (int)pp.IdProdPed;
+                                dadosArquivoMesaCorte.TipoArquivo = TipoArquivoMesaCorte.SAG;
+                                dadosArquivoMesaCorte.Arquivo = outputStream.ToArray();
+                                this.ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
+                            }
+                        }
+                    }
+
+                    using (var outputStream = new MemoryStream())
+                    {
+                        UtilsProjeto.GerarArquivoCadProject(pecaItemProjeto, true, outputStream);
+
+                        if (outputStream.Length > 0)
+                        {
+                            var dadosArquivoMesaCorte = new ArquivoMesaCorte();
+                            dadosArquivoMesaCorte.IdProdPed = (int)pp.IdProdPed;
+                            dadosArquivoMesaCorte.TipoArquivo = TipoArquivoMesaCorte.Todos;
+                            dadosArquivoMesaCorte.Arquivo = outputStream.ToArray();
+                            this.ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
+                        }
+                    }
+                }
             }
 
             #endregion

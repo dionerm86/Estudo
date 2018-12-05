@@ -2,7 +2,6 @@
     Inherits="Glass.UI.Web.Listas.LstSinaisRecebidos" Title="Sinais Recebidos" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
             "~/Vue/Sinais/Templates/LstSinais.Filtro.html")
@@ -35,7 +34,7 @@
                         Valor
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('dataCadastro')">Data Rec.</a>
+                        <a href="#" @click.prevent="ordenar('dataCadastro')">Data Cad.</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('situacao')">Situação</a>

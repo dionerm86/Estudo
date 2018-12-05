@@ -188,9 +188,12 @@ namespace Glass.Data.Helper.Calculos
         private decimal? CalcularValor(GDASession sessao, IProdutoCalculo produto, decimal baseCalculo,
             bool compra, bool nf, int alturaBeneficiamento, int larguraBeneficiamento)
         {
-            var calcularMultiploDe5 = true;
+            var calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2;
+
             if (produto.Container is Pedido)
+            {
                 calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2 && !produto.Container.IsPedidoProducaoCorte;
+            }
 
             var estrategia = ValorUnitarioStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
 

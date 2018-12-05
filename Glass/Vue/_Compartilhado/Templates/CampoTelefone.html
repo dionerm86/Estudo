@@ -1,0 +1,5 @@
+﻿<span style="white-space: nowrap">
+    <campo-com-mascara ref="campo" v-bind:valor.sync="telefoneAtual"
+        v-bind:mascara="['(', /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]"
+        v-bind="$attrs" style="width: 95px"></campo-com-mascara>
+</span>

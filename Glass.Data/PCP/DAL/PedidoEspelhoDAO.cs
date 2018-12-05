@@ -1111,6 +1111,8 @@ namespace Glass.Data.DAL
         /// <param name="idPedido"></param>
         public void GeraEspelho(GDATransaction transaction, uint idPedido)
         {
+            var aplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho =
+                (System.Configuration.ConfigurationManager.AppSettings["AplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho"]?.ToLower() ?? "true") == "true";
             var lstImagensPcp = new List<string>();
 
             try
@@ -1194,7 +1196,11 @@ namespace Glass.Data.DAL
                     ValorComissao = ped.ValorComissao,
                     ValorEntrega = ped.ValorEntrega,
                     PercentualRentabilidade = ped.PercentualRentabilidade,
-                    RentabilidadeFinanceira = ped.RentabilidadeFinanceira
+                    RentabilidadeFinanceira = ped.RentabilidadeFinanceira,
+                    Acrescimo = ped.Acrescimo,
+                    TipoAcrescimo = ped.TipoAcrescimo,
+                    Desconto = ped.Desconto,
+                    TipoDesconto = ped.TipoDesconto,
                 };
                 Insert(transaction, pedEsp);
 
@@ -1279,7 +1285,8 @@ namespace Glass.Data.DAL
 
                         ItemProjeto itemProj = ItemProjetoDAO.Instance.GetElement(transaction, novo.IdItemProjeto.Value);
                         ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(transaction, pedEsp, idNovo, itemProj, valorAcrescimoAplicado,
-                            valorDescontoAplicado, ped.PercComissao, false, true, associacaoProdutosPedidoProdutosPedidoEspelho);
+                            valorDescontoAplicado, ped.PercComissao, false, true, associacaoProdutosPedidoProdutosPedidoEspelho,
+                            false, aplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho);
 
                         ambientesItemProjeto.Add(a.IdAmbientePedido);
                     }
@@ -1385,6 +1392,8 @@ namespace Glass.Data.DAL
                     pe.PedidoMaoObra = isMaoDeObra;
 
                     uint idProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.InsertBase(transaction, pe, pedEsp);
+
+                    LogAlteracaoDAO.Instance.CopiarLogImagemProdPed(transaction, (int)p.IdProdPed, (int)idProdPedEsp);
 
                     // Salva os registro da rentabilidade
                     foreach (var registro in ProdutoPedidoRentabilidadeDAO.Instance.ObterPorProdutoPedido(transaction, p.IdProdPed))
@@ -1493,6 +1502,15 @@ namespace Glass.Data.DAL
                     var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(transaction, pedEsp.IdPedido, false, false, true);
                     bool aplicado = AplicarDesconto(transaction, pedEsp, ped.TipoDesconto, ped.Desconto, produtosPedidoEspelho);
                     FinalizarAplicacaoComissaoAcrescimoDesconto(transaction, pedEsp, produtosPedidoEspelho, aplicado);
+                }
+
+                if (!aplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho)
+                {
+                    RemoveComissaoDescontoAcrescimo(
+                      transaction,
+                      GetElement(transaction, pedEsp.IdPedido),
+                      ProdutosPedidoEspelhoDAO.Instance.GetByPedido(transaction, pedEsp.IdPedido, false));
+                    AplicaComissaoDescontoAcrescimo(transaction, pedEsp);
                 }
 
                 // Foi necessário marcar como true porque teve uma empresa que não estava atualizando o total, e o pedido espelho estava ficando
@@ -2818,6 +2836,12 @@ namespace Glass.Data.DAL
             if (PedidoDAO.Instance.TemVolume(session, idPedido))
                 throw new Exception("O pedido PCP não pode ser reaberto, pois, possui volume gerado. Cancele o volume para reabrir o pedido PCP.");
 
+            // Se o pedido estiver exportado o mesmo não pode ser reaberto sem que se cancele a exportação.
+            if (PedidoExportacaoDAO.Instance.VerificarPossuiExportacao((int)idPedido))
+            {
+                throw new InvalidOperationException("O pedido PCP não pode ser reaberto, o pedido em questão foi exportado. Cancele a exportação para reabrir o pedido PCP.");
+            }
+
             /* Chamado 33285. */
             if (objPersistence.ExecuteSqlQueryCount(session,
                 string.Format(@"SELECT COUNT(*) FROM produtos_pedido_espelho WHERE QtdImpresso>0 AND IdPedido={0};",
@@ -3073,17 +3097,29 @@ namespace Glass.Data.DAL
 
         #region Altera situação do pedido
 
+        /// <summary>
+        /// Método que altera a situação do Pedido Espelho.
+        /// </summary>
+        /// <param name="session">Sessão do GDA.</param>
+        /// <param name="idPedido">Identificador do Pedido Espelho.</param>
+        /// <param name="situacao">Situacao para qual o pedido será alterado.</param>
+        /// <returns>Retorna um inteiro ínformando o sucesso da execução dos comandos.</returns>
         public int AlteraSituacao(GDASession session, uint idPedido, PedidoEspelho.SituacaoPedido situacao)
         {
-            string sql = "Update pedido_espelho Set Situacao=" + (int)situacao;
+            var situacaoAtual = this.ObtemSituacao(session, idPedido);
+            string sql = $"UPDATE pedido_espelho SET Situacao = {(int)situacao}";
 
-            if (situacao == PedidoEspelho.SituacaoPedido.Finalizado)
-                sql += ", dataConf=now()";
+            if (situacao == PedidoEspelho.SituacaoPedido.Finalizado && situacaoAtual != PedidoEspelho.SituacaoPedido.Impresso)
+            {
+                sql += ", DataConf = NOW()";
+            }
 
             if (situacao == PedidoEspelho.SituacaoPedido.Aberto)
-                sql += ", situacaoCnc=0, dataProjetoCnc=null, usuProjetoCnc=null";
+            {
+                sql += ", SituacaoCnc = 0, DataProjetoCnc = NULL, UsuProjetoCnc = NULL";
+            }
 
-            return objPersistence.ExecuteCommand(session, sql + " Where idPedido=" + idPedido);
+            return this.objPersistence.ExecuteCommand(session, $"{sql} WHERE IdPedido={idPedido}");
         }
 
         public int AlteraSituacao(GDASession session, List<uint> lstIdPedido, PedidoEspelho.SituacaoPedido situacao)
@@ -3849,11 +3885,14 @@ namespace Glass.Data.DAL
             {
                 // Clona as peças
                 uint idPecaItemProjOld = pip.IdPecaItemProj;
+                uint idLogOld = pip.IdLog;
 
-                pip.Beneficiamentos = pip.Beneficiamentos;
                 pip.IdPecaItemProj = 0;
                 pip.IdItemProjeto = idItemProjetoPedEsp;
                 uint idPecaItemProj = PecaItemProjetoDAO.Instance.Insert(sessao, pip);
+                var novaPecaItemProj = PecaItemProjetoDAO.Instance.GetElement(sessao, idPecaItemProj);
+
+                LogAlteracaoDAO.Instance.CopiarLogAlteracaoImagemProducao(sessao, (int)idLogOld, (int)novaPecaItemProj.IdLog);
 
                 foreach (FiguraPecaItemProjeto fig in FiguraPecaItemProjetoDAO.Instance.GetForClone(sessao, idPecaItemProjOld))
                 {
@@ -4434,11 +4473,6 @@ namespace Glass.Data.DAL
 
         #region Gerar arquivo FML
 
-        public PacoteArquivosMesa GerarArquivoFmlPeloPedido(ProdutosPedidoEspelho[] lstProdPedEsp, bool salvarArquivoSeparado)
-        {
-            return GerarArquivoFmlPeloPedido(null, lstProdPedEsp, salvarArquivoSeparado);
-        }
-
         public PacoteArquivosMesa GerarArquivoFmlPeloPedido(GDASession session, ProdutosPedidoEspelho[] lstProdPedEsp, bool salvarArquivoSeparado)
         {
             var lstArqMesa = new List<byte[]>();
@@ -4464,17 +4498,28 @@ namespace Glass.Data.DAL
                     if (tipoProcesso != (int)EtiquetaTipoProcesso.Caixilho && tipoProcesso != (int)EtiquetaTipoProcesso.Instalacao)
                         continue;
 
-                    //Se o produto avulso for de instalação verifica se o mesmo tem arquivo FML.
-                    var idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(session, prodPedEsp.IdProd);
+                    var caminhoArquivoImportado = ArquivoMesaCorteDAO.Instance
+                        .CaminhoSalvarArquivoPedidoImportado(string.Empty, (int)prodPedEsp.IdProdPed, TipoArquivoMesaCorte.Todos);
 
-                    if (idArquivoMesaCorte.GetValueOrDefault() == 0)
-                        continue;
+                    // Caso tenha uma arquivo importado
+                    if (System.IO.File.Exists(caminhoArquivoImportado))
+                    {
+                        gerarFml = true;
+                    }
+                    else
+                    {
+                        //Se o produto avulso for de instalação verifica se o mesmo tem arquivo FML.
+                        var idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(session, prodPedEsp.IdProd);
 
-                    var tipoArquivo = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(session, (int)prodPedEsp.IdProd);
+                        if (idArquivoMesaCorte.GetValueOrDefault() == 0)
+                            continue;
 
-                    gerarFml = !salvarArquivoSeparado || PCPConfig.SalvarArquivoBasicoAoFinalizarPCP ?
-                        tipoArquivo == TipoArquivoMesaCorte.FMLBasico || tipoArquivo == TipoArquivoMesaCorte.FML :
-                        tipoArquivo == TipoArquivoMesaCorte.FML;
+                        var tipoArquivo = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(session, (int)prodPedEsp.IdProd);
+
+                        gerarFml = !salvarArquivoSeparado || PCPConfig.SalvarArquivoBasicoAoFinalizarPCP ?
+                            tipoArquivo == TipoArquivoMesaCorte.FMLBasico || tipoArquivo == TipoArquivoMesaCorte.FML :
+                            tipoArquivo == TipoArquivoMesaCorte.FML;
+                    }
                 }
                 else // Se o item for de projeto
                 {
@@ -4530,7 +4575,7 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(lstEtiquetas))
             {
-                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, false);
+                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.FML, false, false, false);
 
                 if (salvarArquivoSeparado)
                 {
@@ -4579,7 +4624,7 @@ namespace Glass.Data.DAL
 
             if (lstEtiqueta.Count > 0)
             {
-                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, false);
+                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.DXF, false, false, false);
 
                 var caminhoSalvarDxf = PCPConfig.CaminhoSalvarDxf;
 
@@ -4598,9 +4643,11 @@ namespace Glass.Data.DAL
 
                             /* Chamado 16982. */
                             if (!File.Exists(nomeArquivoDxf))
-                                throw new Exception("Algumas marcações não foram salvas no servidor. Verifique se a pasta, " +
+                            {
+                                throw new InvalidOperationException("Algumas marcações não foram salvas no servidor. Verifique se a pasta, " +
                                     "onde as marcações são salvas, está disponível no servidor. Caso esteja, finalize o pedido novamente. " +
                                     "Caminho onde as marcações são salvas no servidor: " + caminhoSalvarDxf);
+                            }
                         }
                     }
                 }
@@ -4621,7 +4668,7 @@ namespace Glass.Data.DAL
 
             if (lstEtiqueta.Count > 0)
             {
-                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, 0, true, false, false);
+                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.DXF, true, false, false);
 
                 var tempPath = Path.GetTempPath();
                 var programsDirectory = PCPConfig.CaminhoSalvarProgramSGlass;
@@ -4701,7 +4748,7 @@ namespace Glass.Data.DAL
 
             if (lstEtiqueta.Count > 0)
             {
-                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, 0, false, true, false);
+                ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.DXF, false, true, false);
 
                 // Percorre os arquivos de mesa gerados
                 for (var i = 0; i < lstArqMesa.Count; i++)
@@ -4729,7 +4776,9 @@ namespace Glass.Data.DAL
                                         destino = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(destino), nome + System.IO.Path.GetExtension(destino));
 
                                         if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(destino)))
+                                        {
                                             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(destino));
+                                        }
 
                                         using (var stream = System.IO.File.Create(destino))
                                         {

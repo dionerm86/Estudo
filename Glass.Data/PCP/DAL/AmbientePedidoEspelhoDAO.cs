@@ -17,14 +17,14 @@ namespace Glass.Data.DAL
         {
             string campos = selecionar ? @"a.*, p.codOtimizacao, p.codInterno, ip.obs as obsProj, ea.codInterno as codAplicacao,
                 cast(sum(pp.total+coalesce(pp.valorBenef,0)) as decimal(12,2)) as totalProdutos,
-                cast(sum(coalesce(pp.valorAcrescimoProd,0)) as decimal(12,2)) as valorAcrescimo, 
-                cast(sum(coalesce(pp.valorDescontoProd,0)) as decimal(12,2)) as valorDesconto, 
+                cast(sum(coalesce(pp.valorAcrescimoProd,0)) as decimal(12,2)) as valorAcrescimo,
+                cast(sum(coalesce(pp.valorDescontoProd,0)) as decimal(12,2)) as valorDesconto,
                 ep.codInterno as codProcesso" : "a.idAmbientePedido";
 
-            string sql = "Select " + campos + @" From ambiente_pedido_espelho a 
-                Left Join produtos_pedido_espelho pp On (pp.idAmbientePedido=a.idAmbientePedido) 
-                Left Join produto p On (a.idProd=p.idProd) 
-                Left Join item_projeto ip On (a.iditemProjeto=ip.idItemProjeto) 
+            string sql = "Select " + campos + @" From ambiente_pedido_espelho a
+                Left Join produtos_pedido_espelho pp On (pp.idAmbientePedido=a.idAmbientePedido)
+                Left Join produto p On (a.idProd=p.idProd)
+                Left Join item_projeto ip On (a.iditemProjeto=ip.idItemProjeto)
                 Left Join etiqueta_aplicacao ea On (a.idAplicacao=ea.idAplicacao)
                 Left Join etiqueta_processo ep On (a.idProcesso=ep.idProcesso)
                 Where pp.IdProdPedParent IS NULL ";
@@ -179,7 +179,7 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
         }
 
-        public IList<AmbientePedidoEspelho> GetForEtiquetas(uint idPedido, uint idProcesso, uint idAplicacao, 
+        public IList<AmbientePedidoEspelho> GetForEtiquetas(uint idPedido, uint idProcesso, uint idAplicacao,
             uint idCorVidro, float espessura, uint idSubgrupoProd, float alturaMin, float alturaMax, int larguraMin, int larguraMax)
         {
             string sql = Sql(idPedido, null, 0, 0, 0, null, true, false, false);
@@ -269,6 +269,31 @@ namespace Glass.Data.DAL
 
             string sql = "select coalesce(qtde, 1) from ambiente_pedido_espelho where idAmbientePedido=" + idAmbientePedido;
             return ExecuteScalar<int>(sessao, sql);
+        }
+
+        public uint InsertComTransacao(AmbientePedidoEspelho objInsert)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var retorno = Insert(transaction, objInsert);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    throw;
+                }
+            }
         }
 
         #region CompraPcp
@@ -611,7 +636,7 @@ namespace Glass.Data.DAL
         {
             return ObtemValorCampo<uint>(session, "idPedido", "idAmbientePedido=" + idAmbientePedido);
         }
-        
+
         /// <summary>
         /// Obtém o tipo de acréscimo do ambiente.
         /// </summary>
@@ -676,7 +701,7 @@ namespace Glass.Data.DAL
                     select sum(totalBruto) as valor
                     from produtos_pedido_espelho
                     where {0}
-                    union all select sum(valor - valorAcrescimo - valorAcrescimoProd - 
+                    union all select sum(valor - valorAcrescimo - valorAcrescimoProd -
                         valorComissao + valorDesconto + valorDescontoProd) as valor
                     from produto_pedido_espelho_benef
                     where idProdPed in (select * from (
@@ -716,7 +741,7 @@ namespace Glass.Data.DAL
             }
             else
             {
-                // Marca os produtos como invisível (Não deve ser excluído, pois desta forma a peça não seria localizada nem como cancelada 
+                // Marca os produtos como invisível (Não deve ser excluído, pois desta forma a peça não seria localizada nem como cancelada
                 // na produção). Atualiza o total do pedido (dentro do Update)
                 foreach (ProdutosPedidoEspelho p in ProdutosPedidoEspelhoDAO.Instance.GetByAmbienteFast(sessao, 0, idAmbientePedido))
                 {
@@ -804,7 +829,7 @@ namespace Glass.Data.DAL
             if (alterarDesconto)
             {
                 RemoverDesconto(sessao, pedidoEspelho, objUpdate.IdAmbientePedido, produtosPedidoEspelho);
-                AplicarDesconto(sessao, pedidoEspelho, objUpdate.IdAmbientePedido, objUpdate.TipoDesconto, objUpdate.Desconto, produtosPedidoEspelho);    
+                AplicarDesconto(sessao, pedidoEspelho, objUpdate.IdAmbientePedido, objUpdate.TipoDesconto, objUpdate.Desconto, produtosPedidoEspelho);
             }
 
             FinalizarAplicacaoAcrescimoDesconto(sessao, pedidoEspelho, produtosPedidoEspelho, alterarAcrescimo || alterarDesconto);

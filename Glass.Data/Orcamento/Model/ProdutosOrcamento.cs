@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Helper;
@@ -211,7 +211,7 @@ namespace Glass.Data.Model
         public decimal BcCofins { get; set; }
 
         /// <summary>
-        /// AlÌquota CONFINS
+        /// Al√≠quota CONFINS
         /// </summary>
         [PersistenceProperty("ALIQCOFINS")]
         public float AliqCofins { get; set; }
@@ -235,7 +235,7 @@ namespace Glass.Data.Model
         public decimal ValorIcmsDesonerado { get; set; }
 
         /// <summary>
-        /// Percentual de crÈdito base calculo ICMS
+        /// Percentual de cr√©dito base calculo ICMS
         /// </summary>
         [PersistenceProperty("PERCREDBCICMS")]
         public float PercRedBcIcms { get; set; }
@@ -247,7 +247,7 @@ namespace Glass.Data.Model
         public decimal BcIcmsSt { get; set; }
 
         /// <summary>
-        /// AlÌquota ICMSST
+        /// Al√≠quota ICMSST
         /// </summary>
         [PersistenceProperty("ALIQICMSST")]
         public float AliqIcmsSt { get; set; }
@@ -259,7 +259,7 @@ namespace Glass.Data.Model
         public decimal ValorIcmsSt { get; set; }
 
         /// <summary>
-        /// Percentual de crÈdito base calculo ICMSST
+        /// Percentual de cr√©dito base calculo ICMSST
         /// </summary>
         [PersistenceProperty("PERCREDBCICMSST")]
         public decimal PercRedBcIcmsSt { get; set; }
@@ -313,13 +313,13 @@ namespace Glass.Data.Model
         public float Mva { get; set; }
 
         /// <summary>
-        /// CÛdigo do valor fiscal de ICMS do produto do pedido
+        /// C√≥digo do valor fiscal de ICMS do produto do pedido
         /// </summary>
         [PersistenceProperty("CODVALORFISCAL")]
         public int? CodValorFiscal { get; set; }
 
         /// <summary>
-        /// CÛd de subistituiÁ„o tributaria do IPI
+        /// C√≥d de subistitui√ß√£o tributaria do IPI
         /// </summary>
         [PersistenceProperty("CSTIPI")]
         public Sync.Fiscal.Enumeracao.Cst.CstIpi? CstIpi { get; set; }
@@ -454,13 +454,21 @@ namespace Glass.Data.Model
         [PersistenceProperty("ProjetoEsquadria", DirectionParameter.InputOptional)]
         public bool? ProjetoEsquadria { get; set; }
 
+        [XmlIgnore]
+        [PersistenceProperty("NOMESUBGRUPOPROD", DirectionParameter.InputOptional)]
+        public string NomeSubGrupoProd { get; set; }
+
+        [XmlIgnore]
+        [PersistenceProperty("NOMEGRUPOPRODUTO", DirectionParameter.InputOptional)]
+        public string NomeGrupoProduto { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte
 
-        #region MÈtodos internos est·ticos
+        #region M√©todos internos est√°ticos
 
-        #region Produto orÁamento
+        #region Produto or√ßamento
 
         internal static decimal GetTotalSemDesconto(ProdutosOrcamento p)
         {
@@ -497,7 +505,7 @@ namespace Glass.Data.Model
 
         #endregion
 
-        #region Produto ambiente orÁamento
+        #region Produto ambiente or√ßamento
 
         internal static decimal ObterValorDescontoAmbiente(ProdutosOrcamento produtoAmbiente)
         {
@@ -509,14 +517,14 @@ namespace Glass.Data.Model
         #endregion
 
         /// <summary>
-        /// Identificador do processo das peÁas filhas
-        /// que È informado na insers„o do produto no pedido
+        /// Identificador do processo das pe√ßas filhas
+        /// que √© informado na insers√£o do produto no pedido
         /// </summary>
         public int? IdProcessoFilhas { get; set; }
 
         /// <summary>
-        /// Identificador do processo das peÁas filhas
-        /// que È informado na insers„o do produto no pedido
+        /// Identificador do processo das pe√ßas filhas
+        /// que √© informado na insers√£o do produto no pedido
         /// </summary>
         public int? IdAplicacaoFilhas { get; set; }
 
@@ -526,7 +534,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (IdGrupoProd != (uint)NomeGrupoProd.AlumÌnio)
+                if (IdGrupoProd != (uint)NomeGrupoProd.Alum√≠nio)
                 {
                     return Altura.ToString();
                 }
@@ -561,7 +569,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                // Se o produto for composiÁ„o e tipo subgrupo Vidro Laminado ou a forma de pagamento for Obra.
+                // Se o produto for composi√ß√£o e tipo subgrupo Vidro Laminado ou a forma de pagamento for Obra.
                 if (IdProdOrcamentoParent > 0 && ProdutosOrcamentoDAO.Instance.VerificarProdutoLaminado(null, IdProdOrcamentoParent.Value))
                 {
                     return false;
@@ -702,10 +710,10 @@ namespace Glass.Data.Model
         public string DadosProdutos { get; set; }
 
         /// <summary>
-        /// ObtÈm um valor que indica se o produto È um ambiente de orÁamento.
+        /// Obt√©m um valor que indica se o produto √© um ambiente de or√ßamento.
         /// </summary>
         /// <param name="session">session.</param>
-        /// <returns>True: o produto È um ambiente; False: o produto n„o È um ambiente;</returns>
+        /// <returns>True: o produto √© um ambiente; False: o produto n√£o √© um ambiente;</returns>
         public bool TemItensProdutoSession(GDASession session)
         {
             if (NumChild == null)

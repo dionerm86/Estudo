@@ -140,6 +140,10 @@
     <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -148,6 +152,10 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
@@ -205,9 +213,24 @@
     <Compile Include="Controllers\Aplicacoes\V1\PostAplicacoesController.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\CarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\Itens\Pendencias\GetPendenciasCarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\Itens\Pendencias\PendenciasCarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\PostCarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\DeleteCarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\GetCarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\OrdensCargaComCarregamentoController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\GetOrdensCargaComCarregamentoController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\DeleteOrdensCargaComCarregamentoController.cs" />
     <Compile Include="Controllers\Cfops\V1\DeleteCfopsController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\DeleteNaturezasOperacaoController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\GetNaturezasOperacaoComCfopController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\GetNaturezasOperacaoController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\NaturezasOperacaoComCfopController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\NaturezasOperacaoController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\PatchNaturezasOperacaoController.cs" />
+    <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\PostNaturezasOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\GetRegrasNaturezaOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\PatchRegrasNaturezaOperacaoController.cs" />
     <Compile Include="Controllers\Cfops\V1\NaturezasOperacao\Regras\PostRegrasNaturezaOperacaoController.cs" />
@@ -222,6 +245,10 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Parcelas\V1\PatchParcelasController.cs" />
+    <Compile Include="Controllers\Parcelas\V1\PostParcelasController.cs" />
+    <Compile Include="Controllers\ImpressoesEtiquetas\V1\ImpressoesEtiquetasController.cs" />
+    <Compile Include="Controllers\ImpressoesEtiquetas\V1\GetImpressoesEtiquetasController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\DeleteFerragensController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\DeleteFabricantesFerragemController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\FabricantesFerragemController.cs" />
@@ -248,6 +275,11 @@
     <Compile Include="Controllers\Projetos\V1\ProjetosController.cs" />
     <Compile Include="Controllers\Projetos\V1\DeleteProjetosController.cs" />
     <Compile Include="Controllers\Projetos\V1\GetProjetosController.cs" />
+    <Compile Include="Controllers\Contabilistas\DeleteContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\GetContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\PatchContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\ContabilistasController.cs" />
+    <Compile Include="Controllers\Contabilistas\PostContabilistasController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\FornecedoresController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\DeleteFornecedoresController.cs" />
     <Compile Include="Controllers\Fornecedores\V1\GetFornecedoresController.cs" />
@@ -273,6 +305,7 @@
     <Compile Include="Controllers\PlanosConta\V1\GruposConta\PostGruposContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\PatchPlanosContaController.cs" />
     <Compile Include="Controllers\PlanosConta\V1\PostPlanosContaController.cs" />
+    <Compile Include="Controllers\Parcelas\V1\DeleteParcelasController.cs" />
     <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
     <Compile Include="Controllers\Producao\V1\Roteiros\ClassificacoesRoteiro\DeleteClassificacoesRoteiroController.cs" />
     <Compile Include="Controllers\Producao\V1\Roteiros\ClassificacoesRoteiro\GetClassificacoesRoteiroController.cs" />
@@ -455,17 +488,28 @@
     <Compile Include="Controllers\Transportadores\V1\DeleteTransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\TransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\GetTransportadoresController.cs" />
+    <Compile Include="Controllers\Volumes\V1\DeleteVolumesController.cs" />
+    <Compile Include="Controllers\Volumes\V1\GetVolumesController.cs" />
+    <Compile Include="Controllers\Volumes\V1\VolumesController.cs" />
     <Compile Include="Controllers\_Compartilhado\Comum\V1\ComumController.cs" />
     <Compile Include="Controllers\_Compartilhado\Comum\V1\GetComumController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Carregamentos\ConverterCadastroAtualizacaoParaCarregamento.cs" />
+    <Compile Include="Helper\Carregamentos\Itens\Pendencias\TraducaoOrdenacaoListaPendenciasCarregamentos.cs" />
     <Compile Include="Helper\Cfops\ConverterCadastroAtualizacaoParaCfop.cs" />
+    <Compile Include="Helper\Cfops\NaturezasOperacao\ConverterCadastroAtualizacaoParaNaturezaOperacao.cs" />
     <Compile Include="Helper\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\ConverterCadastroAtualizacaoParaRegraNaturezaOperacao.cs" />
     <Compile Include="Helper\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\TraducaoOrdenacaoListaRegrasNaturezaOperacao.cs" />
+    <Compile Include="Helper\Cfops\NaturezasOperacao\TraducaoOrdenacaoListaNaturezasOperacao.cs" />
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Pedidos\TraducaoOrdenacaoListaPedidosVolumes.cs" />
+    <Compile Include="Helper\Parcelas\ConverterCadastroAtualizacaoParaParcelas.cs" />
+    <Compile Include="Helper\Carregamentos\TraducaoOrdenacaoListaCarregamentos.cs" />
+    <Compile Include="Helper\ImpressoesEtiquetas\TraducaoOrdenacaoListaImpressoesEtiquetas.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\ConverterCadastroAtualizacaoParaFabricanteFerragem.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\TraducaoOrdenacaoListaFabricantesFerragem.cs" />
     <Compile Include="Helper\Projetos\MedidasProjeto\ConverterCadastroAtualizacaoParaMedidaProjeto.cs" />
@@ -473,6 +517,8 @@
     <Compile Include="Helper\Projetos\Ferragens\TraducaoOrdenacaoListaFerragens.cs" />
     <Compile Include="Helper\Projetos\ModelosProjeto\TraducaoOrdenacaoListaModelosProjeto.cs" />
     <Compile Include="Helper\Projetos\TraducaoOrdenacaoListaProjetos.cs" />
+    <Compile Include="Helper\Contabilistas\ConverterCadastroAtualizacaoParaContabilista.cs" />
+    <Compile Include="Helper\Contabilistas\TraducaoOrdenacaoListaContabilistas.cs" />
     <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
     <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
@@ -483,6 +529,7 @@
     <Compile Include="Helper\PlanosConta\GruposConta\ConverterCadastroAtualizacaoParaGrupoConta.cs" />
     <Compile Include="Helper\PlanosConta\GruposConta\TraducaoOrdenacaoListaGruposConta.cs" />
     <Compile Include="Helper\Producao\Roteiros\ClassificacoesRoteiro\TraducaoOrdenacaoListaClassificacoesRoteiro.cs" />
+    <Compile Include="Helper\Parcelas\TraducaoOrdenacaoListaParcelas.cs" />
     <Compile Include="Helper\Producao\Setores\ConverterCadastroAtualizacaoParaSetor.cs" />
     <Compile Include="Helper\Producao\Setores\TraducaoOrdenacaoListaSetores.cs" />
     <Compile Include="Helper\Producao\TiposPerda\ConverterCadastroAtualizacaoParaTipoPerda.cs" />
@@ -572,12 +619,34 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Itens\Pendencias\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Itens\Pendencias\FiltroDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Itens\Pendencias\ListaDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Lista\DadosFaturamentoDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\OrdensCarga\Carregamento\QuantitativoDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\OrdensCarga\Carregamento\ListaDto.cs" />
+    <Compile Include="Helper\Volumes\TraducaoOrdenacaoListaVolumes.cs" />
     <Compile Include="Models\Cfops\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Cfops\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Cfops\V1\Filtro\CfopDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Cfops\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\DadosPisCofinsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\DadosIpiDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\CadastroAtualizacao\DadosIcmsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\DadosIcmsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\DadosIpiDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\DadosPisCofinsDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\ListaDto.cs" />
+    <Compile Include="Models\Cfops\V1\NaturezasOperacao\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Cfops\V1\NaturezasOperacao\RegrasNaturezaOperacao\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Cfops\V1\NaturezasOperacao\RegrasNaturezaOperacao\CadastroAtualizacao\CancelamentoDto.cs" />
     <Compile Include="Models\Cfops\V1\NaturezasOperacao\RegrasNaturezaOperacao\CadastroAtualizacao\NaturezasOperacaoDto.cs" />
@@ -593,6 +662,11 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Genericas\V1\CodigoNomeDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Lista\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\ExecucaoOperacaoIntegracao\DadosExecucaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ConfiguracaoIntegradorDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\EsquemaHistoricoDto.cs" />
@@ -607,6 +681,23 @@
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ParametroOperacaoIntegracaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Logger\ItemLoggerIntegracaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Logger\LoggerIntegracaoDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\CidadeDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\EnderecoDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\DadosContatoDto.cs" />
+    <Compile Include="Models\Contabilistas\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Contabilistas\Lista\DadosContatoDto.cs" />
+    <Compile Include="Models\Contabilistas\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Contabilistas\Lista\ListaDto.cs" />
+    <Compile Include="Models\Parcelas\V1\Configurações\CadastroDto.cs" />
+    <Compile Include="Models\Parcelas\V1\Configurações\TipoPagamento.cs" />
+    <Compile Include="Models\Parcelas\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Parcelas\V1\Detalhe\DetalheDto.cs" />
+    <Compile Include="Models\Pedidos\V1\Configuracoes\ListaVolumesDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ListaVolumes\PedidoExternoDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ListaVolumes\DadosVolumeDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ListaVolumes\FiltroDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ListaVolumes\ListaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\ListaVolumes\PermissoesDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\GruposConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CategoriasConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
@@ -621,6 +712,9 @@
     <Compile Include="Models\PlanosConta\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\ListaDto.cs" />
+    <Compile Include="Models\Parcelas\V1\Configurações\ListaDto.cs" />
+    <Compile Include="Models\Parcelas\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Parcelas\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ContasBancarias\V1\CadastroAtualizacao\DadosBancoDto.cs" />
     <Compile Include="Models\ContasBancarias\V1\CadastroAtualizacao\CnabDto.cs" />
@@ -970,6 +1064,9 @@
     <Compile Include="Models\Produtos\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Produtos\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Volumes\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Volumes\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Volumes\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Negociacoes\JsonContentNegotiator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -981,6 +1078,7 @@
     <Content Include="AppSettings.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="biesse.config" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -997,7 +1095,6 @@
     <Folder Include="Models\Produtos\CoresFerragem\Lista\" />
     <Folder Include="Models\Produtos\CoresVidro\CadastroAtualizacao\" />
     <Folder Include="Models\Produtos\CoresVidro\Lista\" />
-    <Folder Include="Models\Sinais\Lista\" />
     <Folder Include="Models\Transportadores\Configuracoes\" />
     <Folder Include="Models\Transportadores\Lista\" />
     <Folder Include="Models\Veiculos\Configuracoes\" />
@@ -1051,6 +1148,10 @@
     <ProjectReference Include="..\..\Negocios\Glass.Negocios\Glass.Negocios.csproj">
       <Project>{a607c634-74af-4c32-b0b1-3d72b642b859}</Project>
       <Name>Glass.Negocios</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Projeto\Glass.Projeto\Glass.Projeto.csproj">
+      <Project>{80e41ddf-89b0-4c31-8893-9139cfd8fe0b}</Project>
+      <Name>Glass.Projeto</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Relatorios\Glass.Relatorios\Glass.Relatorios.csproj">
       <Project>{fe3e730f-5b2d-42dc-b491-d16c7f04b96c}</Project>

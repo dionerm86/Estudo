@@ -548,6 +548,84 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<bool>("redondo", "idPecaItemProj=" + idPecaItemProj);
         }
 
+        /// <summary>
+        /// Verifica se deve gerar arquivo SAG para a peça informada.
+        /// </summary>
+        /// <param name="sessao">Sessão com banco de dados que será usada.</param>
+        /// <param name="peca">Peça que será verificada.</param>
+        /// <returns>True caso seja necessário gerar um arquivo sag para a peça.</returns>
+        public bool DeveGerarArquivoSag(GDASession sessao, PecaItemProjeto peca)
+        {
+            var tipoArquivo = (TipoArquivoMesaCorte?)peca.TipoArquivoMesaCorte;
+
+            var idArquivoMesaCorte = peca.IdArquivoMesaCorte;
+            var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod(sessao, (int)peca.IdPecaProjMod, true)
+                .Select(f => f.Descricao)
+                .ToList();
+
+            if (peca != null && peca.Tipo == 1)
+            {
+                int item;
+
+                /* Chamado 58078. */
+                if (!int.TryParse(peca.Item, out item))
+                {
+                    item = peca.Item[0].ToString().StrParaInt();
+                }
+
+                var pecaProjMod = PecaProjetoModeloDAO.Instance.GetByItem(
+                    sessao,
+                    ItemProjetoDAO.Instance.GetIdProjetoModelo(null, peca.IdItemProjeto), item);
+
+                // Verifica se esta peça possui arquivo de mesa corte, não há associação com o arquivo de mesa de corte vindo do projeto
+                if (pecaProjMod.IdArquivoMesaCorte != null)
+                {
+                    idArquivoMesaCorte = pecaProjMod.IdArquivoMesaCorte;
+
+                    if (!tipoArquivo.HasValue)
+                    {
+                        tipoArquivo = pecaProjMod.TipoArquivo ?? pecaProjMod.TipoArquivo;
+                    }
+                }
+
+                flags.AddRange(FlagArqMesaDAO.Instance.ObtemPorPecaProjMod(sessao, (int)pecaProjMod.IdPecaProjMod, true).Select(f => f.Descricao));
+            }
+
+            if ((!tipoArquivo.HasValue || tipoArquivo != TipoArquivoMesaCorte.SAG) &&
+                flags.Contains(TipoArquivoMesaCorte.SAG.ToString(), StringComparer.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            // Se não houver associação do arquivo de mesa de corte com o projeto, procura associação no produto
+            if (idArquivoMesaCorte <= 0 || idArquivoMesaCorte == null)
+            {
+                idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(sessao, peca.IdProd.GetValueOrDefault(0));
+
+                if (idArquivoMesaCorte > 0)
+                {
+                    var tipoArquivoMesaCorteProduto = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(sessao, (int)peca.IdProd.GetValueOrDefault(0));
+
+                    if (tipoArquivoMesaCorteProduto.HasValue)
+                    {
+                        tipoArquivo = tipoArquivoMesaCorteProduto;
+                    }
+                    else if (PCPConfig.TipoArquivoMesaPadrao != "DXF" && 
+                             PCPConfig.TipoArquivoMesaPadrao != "FML")
+                    {
+                        tipoArquivo = TipoArquivoMesaCorte.SAG;
+                    }
+                }
+            }
+
+            if (!tipoArquivo.HasValue && idArquivoMesaCorte.HasValue)
+            {
+                tipoArquivo = (TipoArquivoMesaCorte)ArquivoMesaCorteDAO.Instance.ObtemTipoArquivo(sessao, idArquivoMesaCorte.Value);
+            }
+
+            return tipoArquivo == TipoArquivoMesaCorte.SAG;
+        }
+
         #region Verifica se peça possui associação com alguma figura
 
         public bool PossuiFiguraAssociada(uint idPecaItemProj)

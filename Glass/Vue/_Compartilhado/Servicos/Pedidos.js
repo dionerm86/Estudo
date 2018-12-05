@@ -215,6 +215,20 @@ Servicos.Pedidos = (function (http) {
     },
 
     /**
+     * Recupera a lista de pedidos para tela de volumes.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de pedidos.
+     * @param {number} pagina O número da página de resultados a ser exibida.
+     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+     * @param {string} ordenacao A ordenação para o resultado.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterListaVolumes: function (filtro, pagina, numeroRegistros, ordenacao) {
+      return http().get(API + 'volumes', {
+        params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+      });
+    },
+
+    /**
      * Recupera os detalhes de um pedido.
      * @param {!number} idPedido O identificador do pedido que será retornado.
      * @returns {Promise} Uma promise com o resultado da busca.
@@ -379,6 +393,14 @@ Servicos.Pedidos = (function (http) {
     },
 
     /**
+     * Recupera o objeto com as configurações utilizadas na tela de listagem de volumes.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterConfiguracoesListaVolumes: function () {
+      return http().get(API + 'volumes/configuracoes');
+    },
+
+    /**
      * Recupera a lista de funcionários vendedores, incluindo o vendedor já selecionado no pedido (se estiver editanto).
      * @returns {Promise} Uma promise com o resultado da busca.
      */
@@ -494,6 +516,14 @@ Servicos.Pedidos = (function (http) {
           dataBase
         }
       });
+    },
+
+    /**
+     * Retorna os itens para o controle de situações de pedido referente ao volume.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterSituacoesVolume: function () {
+      return http().get(API + 'volumes/situacoes');
     },
 
     /**

@@ -1075,6 +1075,10 @@
 
           this.clientePermiteAlterarLoja = !atual.idLoja;
           this.pedido.deveTransferir = !this.clientePermiteAlterarLoja;
+
+          if (atual.observacaoLiberacao) {
+            this.pedido.observacaoLiberacao = atual.observacaoLiberacao;
+          }
         }
       },
       deep: true
