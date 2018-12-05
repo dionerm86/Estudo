@@ -87,7 +87,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                         .Add("?descricao", string.Format("%{0}%", descricao.Replace('%', ' ')));
 
             return consulta.ToVirtualResult<Entidades.CfopPesquisa>();
-                
+
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace Glass.Fiscal.Negocios.Componentes
         {
             cfop.Require("cfop").NotNull();
 
-            if (!cfop.ExistsInStorage && 
+            if (!cfop.ExistsInStorage &&
                 SourceContext.Instance.CreateQuery()
                     .From<Data.Model.Cfop>()
                     .Where("CodInterno=?codInterno")
@@ -171,7 +171,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                     .ExistsResult())
                 return new Colosoft.Business.SaveResult(false, "Este CFOP já foi cadastrado.".GetFormatter());
 
-            // Se o código do CFOP estiver sendo alterado, não permite realizar esta alteração 
+            // Se o código do CFOP estiver sendo alterado, não permite realizar esta alteração
             // se este CFOP já estiver sendo usado por alguma nota fiscal
             if (cfop.ExistsInStorage &&
                 cfop.ChangedProperties.Any(f => f == "CodInterno") &&
@@ -196,7 +196,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                     return resultado;
 
                 return session.Execute(false).ToSaveResult();
-            }                    
+            }
         }
 
         /// <summary>
@@ -359,7 +359,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                         .From<Data.Model.NotaFiscal>()
                         .Where("IdNaturezaOperacao=?id")
                         .Add("?id", naturezaOperacao.IdNaturezaOperacao)
-                        .Count(), 
+                        .Count(),
                             (sender, query, result) =>
                             {
                                 if (result.Select(f => f.GetInt32(0)).FirstOrDefault() > 0)
@@ -384,11 +384,27 @@ namespace Glass.Fiscal.Negocios.Componentes
                             {
                                 if (result.Select(f => f.GetInt32(0)).FirstOrDefault() > 0)
                                     resultado.Add("Ela é utilizada em pelo menos um conhecimento de transporte.".GetFormatter());
+                            })
+                .Add(SourceContext.Instance.CreateQuery()
+                        .From<Data.Model.RegraNaturezaOperacao>()
+                        .Where(@"IdNaturezaOperacaoRevStInter = ?id OR
+                                 IdNaturezaOperacaoProdStIntra = ?id OR
+                                 IdNaturezaOperacaoProdStInter = ?id OR
+                                 IdNaturezaOperacaoRevInter = ?id OR
+                                 IdNaturezaOperacaoProdInter = ?id OR
+                                 IdNaturezaOperacaoRevIntra = ?id OR
+                                 IdNaturezaOperacaoRevStIntra = ?id OR
+                                 IdNaturezaOperacaoProdIntra = ?id; ")
+                        .Add("?id", naturezaOperacao.IdNaturezaOperacao)
+                        .Count(),
+                            (sender, query, result) =>
+                            {
+                                if (result.Select(f => f.GetInt32(0)).FirstOrDefault() > 0)
+                                    resultado.Add("Ela é utilizada em pelo menos uma regra de natureza de operação.".GetFormatter());
                             });
 
             consultas.Execute();
-
-            return resultado.ToArray();           
+            return resultado.ToArray();
         }
 
         /// <summary>
@@ -480,7 +496,7 @@ namespace Glass.Fiscal.Negocios.Componentes
 
                 return session.Execute(false).ToSaveResult();
             }
-        }    
+        }
 
         /// <summary>
         /// Apaga os dados da natureza de operação.
@@ -558,8 +574,8 @@ namespace Glass.Fiscal.Negocios.Componentes
                     @"rno.IdRegraNaturezaOperacao, rno.IdLoja, rno.IdTipoCliente, rno.Espessura,
                       l.NomeFantasia AS NomeFantasiaLoja, l.RazaoSocial AS RazaoSocialLoja, tc.Descricao AS DescricaoTipoCliente,
                       gp.Descricao AS DescricaoGrupoProduto, sgp.Descricao AS DescricaoSubgrupoProduto, rno.UfDest,
-                      cv.Descricao AS DescricaoCorVidro, cf.Descricao AS DescricaoCorFerragem, ca.Descricao AS DescricaoCorAluminio, 
-                      rno.IdGrupoProd, rno.IdSubgrupoProd, rno.IdCorVidro, rno.IdCorFerragem, rno.IdCorAluminio, 
+                      cv.Descricao AS DescricaoCorVidro, cf.Descricao AS DescricaoCorFerragem, ca.Descricao AS DescricaoCorAluminio,
+                      rno.IdGrupoProd, rno.IdSubgrupoProd, rno.IdCorVidro, rno.IdCorFerragem, rno.IdCorAluminio,
                       rno.IdNaturezaOperacaoProdIntra, rno.IdNaturezaOperacaoRevIntra, rno.IdNaturezaOperacaoProdInter, rno.IdNaturezaOperacaoRevInter,
                       rno.IdNaturezaOperacaoProdStIntra, rno.IdNaturezaOperacaoRevStIntra, rno.IdNaturezaOperacaoProdStInter, rno.IdNaturezaOperacaoRevStInter,
                       ISNULL(nopi.CodInterno, cfpi.CodInterno) AS DescricaoNaturezaOperacaoProducaoIntra,
@@ -598,13 +614,13 @@ namespace Glass.Fiscal.Negocios.Componentes
                 clausula.And("rno.Espessura=?espessura").Add("?espessura", espessura);
 
             if (idNaturezaOperacao > 0)
-                clausula.And(@"(rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao OR 
-                                rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao OR
-                                rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao OR 
+                clausula.And(@"(rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao OR
                                 rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao OR
                                 rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao OR
                                 rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao OR
-                                rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao OR 
+                                rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao OR
+                                rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao OR
+                                rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao OR
                                 rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao)")
                         .Add("?idNaturezaOperacao", idNaturezaOperacao);
 

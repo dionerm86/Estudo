@@ -34,8 +34,6 @@ function showConsultaProducao(repeating) {
         iFrame.style.display = "inline";
 
         iFrame.contentWindow.location = "../Producao/LstProducao.aspx?producao=1&popup=true";
-        iFrame.style.width = "100%";
-        iFrame.style.height = "100%";
     }
 
     // Reajusta tamanho do iframe

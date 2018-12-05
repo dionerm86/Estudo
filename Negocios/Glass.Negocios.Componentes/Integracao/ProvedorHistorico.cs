@@ -97,7 +97,7 @@ namespace Glass.Integracao.Negocios.Componentes
             var itemIntegracao = SourceContext.Instance.Create<Entidades.ItemIntegracao>();
             itemIntegracao.IdEsquemaHistorico = item.ItemEsquema.Esquema.Id;
             itemIntegracao.IdItemEsquemaHistorico = item.ItemEsquema.Id;
-            itemIntegracao.Situacao = Data.Model.SituacaoItemIntegracao.Integrado;
+            itemIntegracao.Situacao = Data.Model.SituacaoItemIntegracao.Integrando;
             itemIntegracao.UltimaAtualizacao = DateTime.Now;
 
             var index = 0;
@@ -164,8 +164,19 @@ namespace Glass.Integracao.Negocios.Componentes
         {
             var itemIntegracao = this.ObterItemIntegracao(item) ?? this.CriarItemIntegracao(item);
 
-            itemIntegracao.Situacao = item.Tipo == TipoItemHistorico.Falha ?
-                Data.Model.SituacaoItemIntegracao.Falha : Data.Model.SituacaoItemIntegracao.Integrado;
+            switch (item.Tipo)
+            {
+                case TipoItemHistorico.Falha:
+                    itemIntegracao.Situacao = Data.Model.SituacaoItemIntegracao.Falha;
+                    break;
+                case TipoItemHistorico.Integrando:
+                    itemIntegracao.Situacao = Data.Model.SituacaoItemIntegracao.Integrando;
+                    break;
+                case TipoItemHistorico.Integrado:
+                    itemIntegracao.Situacao = Data.Model.SituacaoItemIntegracao.Integrado;
+                    break;
+            }
+
             itemIntegracao.UltimaAtualizacao = DateTime.Now;
 
             var evento = this.CriarEvento(item);
@@ -281,6 +292,157 @@ namespace Glass.Integracao.Negocios.Componentes
                     ItemEsquema = itemEsquema,
                     ItensIntegracao = itensIntegracao,
                 });
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<Item> ObterItensNaoIntegrados(ItemEsquema itemEsquema)
+        {
+            var consulta = SourceContext.Instance.CreateQuery()
+               .From<Data.Model.EventoItemIntegracao>("ev")
+               .InnerJoin<Data.Model.ItemIntegracao>("ev.IdItemIntegracao=i.IdItemIntegracao", "i")
+               .LeftJoin<Data.Model.FalhaIntegracao>("ev.IdEventoItemIntegracao=f.IdEventoItemIntegracao", "f")
+               .Where(@"i.IdEsquemaHistorico=?idEsquemaHistorico AND i.IdItemEsquemaHistorico=?idItemEsquemaHistorico AND
+                        i.Situacao=?situacao AND ev.Tipo=?eventoIntegrando")
+               .Add("?idEsquemaHistorico", itemEsquema.Esquema.Id)
+               .Add("?idItemEsquemaHistorico", itemEsquema.Id)
+               .Add("?situacao", Data.Model.SituacaoItemIntegracao.Integrando)
+               .Add("?eventoIntegrando", Data.Model.TipoEventoItemIntegracao.Integrando)
+               .Select(@"i.IdInteiro1, i.IdInteiro2, i.IdTextual, ev.Tipo, ev.Mensagem, ev.Data,
+                          f.Tipo AS TipoFalha, f.Mensagem AS MensagemFalha, f.PilhaChamada AS PilhaChamadaFalha")
+               .OrderBy("Data DESC");
+
+            return consulta
+                .Execute<ItemInfo>()
+                .Select(f => f.CriarItem(itemEsquema));
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<bool> VerificarItensIntegrados(ItemEsquema itemEsquema, IEnumerable<IEnumerable<object>> itensIdentificadores)
+        {
+            var consulta = SourceContext.Instance.CreateQuery()
+                .From<Data.Model.ItemIntegracao>("i")
+                .Where("i.IdEsquemaHistorico=?idEsquemaHistorico AND i.IdItemEsquemaHistorico=?idItemEsquemaHistorico")
+                .Add("?idEsquemaHistorico", itemEsquema.Esquema.Id)
+                .Add("?idItemEsquemaHistorico", itemEsquema.Id)
+                .Select(@"i.IdInteiro1, i.IdInteiro2, i.IdTextual, i.Situacao");
+
+            var index = 0;
+
+            foreach (var identificadores in itensIdentificadores)
+            {
+                using (var enumeradorIdentificadoresEsquema = itemEsquema.Identificadores.GetEnumerator())
+                using (var enumeradorIdentificadores = identificadores.GetEnumerator())
+                {
+                    while (enumeradorIdentificadoresEsquema.MoveNext() && enumeradorIdentificadores.MoveNext())
+                    {
+                        var identificadorEsquema = enumeradorIdentificadoresEsquema.Current;
+                        var identificador = enumeradorIdentificadores.Current;
+
+                        if (identificador == null || (identificador as string) == string.Empty)
+                        {
+                            continue;
+                        }
+
+                        if (identificadorEsquema.Tipo == typeof(int) || identificadorEsquema.Tipo == typeof(uint))
+                        {
+                            switch (index)
+                            {
+                                case 0:
+                                    consulta
+                                        .WhereClause
+                                        .And("i.IdInteiro1=?idInteiro1")
+                                        .Add("?idInteiro1", Convert.ToInt32(identificador, System.Globalization.CultureInfo.InvariantCulture));
+                                    break;
+                                case 1:
+                                    consulta
+                                        .WhereClause
+                                        .And("i.IdInteiro2=?idInteiro2")
+                                        .Add("?idInteiro2", Convert.ToInt32(identificador, System.Globalization.CultureInfo.InvariantCulture));
+                                    break;
+                                default:
+                                    throw new InvalidOperationException("A quantidade de identificador é maior que a suportada.");
+                            }
+                        }
+                        else
+                        {
+                            var valor = identificador;
+                            var convertible = valor as IConvertible;
+                            if (convertible != null)
+                            {
+                                valor = convertible.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            }
+
+                            consulta
+                                .Where("i.IdTextual=?idTextual")
+                                .Add("?idTextual", valor?.ToString());
+                        }
+                    }
+                }
+            }
+
+            var situacoes = consulta
+                .Execute()
+                .Select(f => new
+                {
+                    IdInteiro1 = f.GetInt32("IdInteiro1"),
+                    IdInteiro2 = f.GetInt32("IdInteiro2"),
+                    IdTextual = f.GetString("IdTextual") ?? string.Empty,
+                    Situacao = (Data.Model.SituacaoItemIntegracao)f.GetInt32("Situacao"),
+                })
+                .ToList();
+
+            foreach (var identificadores in itensIdentificadores)
+            {
+                var idInteiro1 = 0;
+                var idInteiro2 = 0;
+                string idTextual = null;
+
+                using (var enumeradorIdentificadoresEsquema = itemEsquema.Identificadores.GetEnumerator())
+                using (var enumeradorIdentificadores = identificadores.GetEnumerator())
+                {
+                    while (enumeradorIdentificadoresEsquema.MoveNext() && enumeradorIdentificadores.MoveNext())
+                    {
+                        var identificadorEsquema = enumeradorIdentificadoresEsquema.Current;
+                        var identificador = enumeradorIdentificadores.Current;
+
+                        if (identificador == null || (identificador as string) == string.Empty)
+                        {
+                            continue;
+                        }
+
+                        if (identificadorEsquema.Tipo == typeof(int) || identificadorEsquema.Tipo == typeof(uint))
+                        {
+                            switch (index)
+                            {
+                                case 0:
+                                    idInteiro1 = Convert.ToInt32(identificador, System.Globalization.CultureInfo.InvariantCulture);
+                                    break;
+                                case 1:
+                                    idInteiro2 = Convert.ToInt32(identificador, System.Globalization.CultureInfo.InvariantCulture);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            var valor = identificador;
+                            var convertible = valor as IConvertible;
+                            if (convertible != null)
+                            {
+                                valor = convertible.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            }
+
+                            idTextual = valor?.ToString();
+                        }
+                    }
+                }
+
+                var situacao = situacoes.FirstOrDefault(f =>
+                    f.IdInteiro1 == idInteiro1 &&
+                    f.IdInteiro2 == idInteiro2 &&
+                    (f.IdTextual ?? string.Empty) == (idTextual ?? string.Empty))?.Situacao ?? Data.Model.SituacaoItemIntegracao.Integrando;
+
+                yield return situacao == Data.Model.SituacaoItemIntegracao.Integrado;
+            }
         }
 
         private class ItemInfo

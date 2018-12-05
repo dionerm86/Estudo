@@ -250,6 +250,9 @@ namespace Glass.UI.Web.Process
             this.Container.GetExportedValue<Colosoft.DataAccess.IQueryDataSourceSelector>();
 
             this.InicializarIntegradores();
+
+            Data.Helper.ConfiguracaoBiesse.Instancia.Inicializar(
+                HttpContext.Current?.Server?.MapPath("~") ?? System.IO.Path.GetDirectoryName(typeof(BaseBootstrapper).Assembly.Location));
         }
 
         /// <summary>

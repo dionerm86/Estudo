@@ -3,6 +3,7 @@ using System.Linq;
 using Colosoft;
 using Glass.Configuracoes;
 using Glass.Global.Negocios.Entidades;
+using Glass.Data.DAL;
 
 namespace Glass.Global.Negocios.Componentes
 {
@@ -66,7 +67,7 @@ namespace Glass.Global.Negocios.Componentes
 
                 // Define quais menus não deverão ser buscados de acordo com configurações internas do sistema
                 var idsMenuNaoBuscar = string.Empty;
-                
+
                 if (!MenuConfig.ExibirCompraCaixa)
                     idsMenuNaoBuscar += "149,";
 
@@ -102,10 +103,15 @@ namespace Glass.Global.Negocios.Componentes
 
                 idsMenuNaoBuscar += ObterIdsMenuComConfigDesabilitada(idLoja);
 
+                if (ComissaoDAO.Instance.VerificarComissaoContasRecebidas() && idsMenuNaoBuscar.Split(',').Contains("317"))
+                {
+                    idsMenuNaoBuscar = idsMenuNaoBuscar.Replace(",317,", ",").Replace(",318,", ",").Replace(",319,", ",").Replace(",320,", ",");
+                }
+
                 // Busca os menus de acordo com as configurações da empresa
                 var retorno = SourceContext.Instance.CreateQuery()
                     .From<Data.Model.Menu>("m")
-                    .Where(string.Format("m.IdMenu Not In ({0})", idsMenuNaoBuscar));
+                    .Where(string.Format("m.IdMenu Not In ({0})", idsMenuNaoBuscar.TrimEnd(',')));
 
                 // Se for sistema lite, esconde menus que não devem aparecer
                 if (Geral.SistemaLite)
@@ -158,8 +164,8 @@ namespace Glass.Global.Negocios.Componentes
 
             if (string.IsNullOrEmpty(idsMenuNaoBuscar))
                 idsMenuNaoBuscar = "0";
-            
-            return idsMenuNaoBuscar.TrimEnd(',');
+
+            return idsMenuNaoBuscar;
         }
 
         /// <summary>
@@ -170,7 +176,7 @@ namespace Glass.Global.Negocios.Componentes
         public IEnumerable<Entidades.Menu> ObterMenusPorFuncionario(Entidades.Funcionario funcionario)
         {
             _dicMenuFunc= _dicMenuFunc == null ? new Dictionary<int, IEnumerable<Menu>>() : _dicMenuFunc;
-            
+
             // Carrega os menus do funcionário, caso o mesmo não esteja no dicionário
             if (!_dicMenuFunc.ContainsKey(funcionario.IdFunc))
             {

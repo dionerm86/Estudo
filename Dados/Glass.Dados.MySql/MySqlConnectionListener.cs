@@ -19,23 +19,21 @@
         /// <param name="connection">connection.</param>
         public override void NotifyConnectionOpened(System.Data.IDbConnection connection)
         {
-            // Executa o comando para altera o nível de isolamento das consultas.
             var cmd = connection.CreateCommand();
-            var nomeParametroTipoTransacao = string.Empty;
 
-            if (System.Configuration.ConfigurationManager.AppSettings["UsarNovaVersaoMySql"]?.ToLower() == "true")
-            {
-                nomeParametroTipoTransacao = "transaction_isolation";
-            }
-            else
-            {
-                nomeParametroTipoTransacao = "tx_isolation";
-            }
-
-            // Possibilita consultas sujas e desabilita as verificações de chaves estrangeiras.
-            cmd.CommandText = $@"SET SESSION {nomeParametroTipoTransacao} = 'READ-UNCOMMITTED';
+            var sql = @"SET SESSION {0} = 'READ-UNCOMMITTED';
                 SET SESSION foreign_key_checks = 0;";
-            cmd.ExecuteNonQuery();
+
+            try
+            {
+                cmd.CommandText = string.Format(sql, "tx_isolation");
+                cmd.ExecuteNonQuery();
+            }
+            catch
+            {
+                cmd.CommandText = string.Format(sql, "transaction_isolation");
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }

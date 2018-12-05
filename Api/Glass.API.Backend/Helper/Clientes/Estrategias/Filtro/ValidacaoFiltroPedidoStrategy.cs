@@ -113,8 +113,9 @@ namespace Glass.API.Backend.Helper.Clientes.Estrategias.Filtro
 
         private IHttpActionResult ValidarLimiteFinanceiroCliente(GDASession sessao, Cliente cliente)
         {
-            var limiteDisponivel = cliente.Limite - ContasReceberDAO.Instance.GetDebitos(sessao, (uint)cliente.IdCli, null);
-            var temLimite = cliente.Limite == 0 || limiteDisponivel > 0;
+            var limiteCliente = Data.CalculadoraLimiteCredito.Calculadora.ObterLimite(sessao, cliente);
+            var limiteDisponivel = limiteCliente - ContasReceberDAO.Instance.GetDebitos(sessao, (uint)cliente.IdCli, null);
+            var temLimite = limiteCliente == 0 || limiteDisponivel > 0;
 
             if (FinanceiroConfig.BloquearEmissaoPedidoLimiteExcedido && !temLimite && FinanceiroConfig.PerguntarVendedorFinalizacaoFinanceiro)
             {

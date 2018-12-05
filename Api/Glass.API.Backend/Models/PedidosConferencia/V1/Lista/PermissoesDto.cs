@@ -116,7 +116,7 @@ namespace Glass.API.Backend.Models.PedidosConferencia.V1.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("podeGerarArquivo")]
-        public bool PodeGerarArquivo { get; set; }
+        public bool PodeGerarArquivo { get; set; } = true;
 
         /// <summary>
         /// Obtém ou define um valor que indica se o pedido importado pode gerar arquivo.

@@ -680,7 +680,9 @@ namespace Glass.Data.RelDAL
         internal string ConcatenaEspAltLargNumEtiqueta(Etiqueta etiq)
         {
             if (etiq.BarCodeData == null)
+            {
                 etiq.BarCodeData = etiq.NumEtiqueta;
+            }
 
             var possuiFml = false;
             var possuiDxf = false;
@@ -689,20 +691,22 @@ namespace Glass.Data.RelDAL
 
             if (PCPConfig.EmpresaGeraArquivoFml)
                 possuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(null, etiq.IdProdPedEsp, etiq.NumEtiqueta, true, true);
+
             if (PCPConfig.EmpresaGeraArquivoDxf)
                 possuiDxf = ProdutosPedidoEspelhoDAO.Instance.PossuiDxf(null, etiq.IdProdPedEsp, etiq.NumEtiqueta);
+
             if (PCPConfig.EmpresaGeraArquivoSGlass)
                 possuiSGlass = ProdutosPedidoEspelhoDAO.Instance.PossuiSGlass(null, etiq.IdProdPedEsp, etiq.NumEtiqueta);
+
             if (PCPConfig.EmpresaGeraArquivoIntermac)
                 possuiIntermac = ProdutosPedidoEspelhoDAO.Instance.PossuiIntermac(null, (int)etiq.IdProdPedEsp, etiq.NumEtiqueta);
 
-            if (PCPConfig.ConcatenarEspAltLargAoNumEtiqueta &&
-                //Chamado 76946 (Deve ser inserido no codigo de barras da etiqueta a altura/largura/espessura da peça apenas se possuir FML/DXF/SGLASS/Intermac)
-                (possuiFml || possuiDxf || possuiSGlass || possuiIntermac) &&
-                etiq.BarCodeData != null &&
-                etiq.BarCodeData[0].ToString().ToUpper() != "C" &&
-                etiq.BarCodeData[0].ToString().ToUpper() != "R" &&
-                etiq.BarCodeData[0].ToString().ToUpper() != "N")
+            if ((PCPConfig.ConcatenarEspAltLargAoNumEtiqueta
+                || (PCPConfig.ConcatenarEspAltLargFmlDxfSGlassIntermac && (possuiFml || possuiDxf || possuiIntermac)))
+                && etiq.BarCodeData != null
+                && etiq.BarCodeData[0].ToString().ToUpper() != "C"
+                && etiq.BarCodeData[0].ToString().ToUpper() != "R"
+                && etiq.BarCodeData[0].ToString().ToUpper() != "N")
             {
                 etiq.BarCodeData = (etiq.Espessura.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0') +
                     (Glass.Conversoes.StrParaInt(etiq.Altura) > Glass.Conversoes.StrParaInt(etiq.Largura) ?
@@ -1288,7 +1292,7 @@ namespace Glass.Data.RelDAL
 
                     if (pecaProjMod == null)
                     {
-                        var idProduto = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, prodImp.IdProdPed.Value);
+                        var idProduto = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, prodImp.IdProdPed.GetValueOrDefault());
                         etiqueta.Flags = string.Join(",", FlagArqMesaDAO.Instance.ObtemPorProduto(session, (int)idProduto, false)?.Select(f => f.Descricao));
                     }
                     else
@@ -1298,22 +1302,22 @@ namespace Glass.Data.RelDAL
 
                     if (PCPConfig.EmpresaGeraArquivoFml)
                     {
-                        etiqueta.PossuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(session, prodImp.IdProdPed.Value, etiqueta.NumEtiqueta, true);
+                        etiqueta.PossuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(session, prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta, true);
                     }
 
                     if (PCPConfig.EmpresaGeraArquivoDxf)
                     {
-                        etiqueta.PossuiDxf = ProdutosPedidoEspelhoDAO.Instance.PossuiDxf(session, prodImp.IdProdPed.Value, etiqueta.NumEtiqueta);
+                        etiqueta.PossuiDxf = ProdutosPedidoEspelhoDAO.Instance.PossuiDxf(session, prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta);
                     }
 
                     if (PCPConfig.EmpresaGeraArquivoSGlass)
                     {
-                        etiqueta.PossuiSGlass = ProdutosPedidoEspelhoDAO.Instance.PossuiSGlass(session, prodImp.IdProdPed.Value, etiqueta.NumEtiqueta);
+                        etiqueta.PossuiSGlass = ProdutosPedidoEspelhoDAO.Instance.PossuiSGlass(session, prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta);
                     }
 
                     if (PCPConfig.EmpresaGeraArquivoIntermac)
                     {
-                        etiqueta.PossuiIntermac = ProdutosPedidoEspelhoDAO.Instance.PossuiIntermac(session, (int)prodImp.IdProdPed.Value, etiqueta.NumEtiqueta);
+                        etiqueta.PossuiIntermac = ProdutosPedidoEspelhoDAO.Instance.PossuiIntermac(session, (int)prodImp.IdProdPed.GetValueOrDefault(), etiqueta.NumEtiqueta);
                     }
                 }
             }
@@ -1465,16 +1469,29 @@ namespace Glass.Data.RelDAL
                     if (tipoProcesso != (int)EtiquetaTipoProcesso.Caixilho && tipoProcesso != (int)EtiquetaTipoProcesso.Instalacao)
                         continue;
 
-                    //Se o produto avulso for de instalação verifica se o mesmo tem arquivo DXF.
-                    var idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(session, prodPedEsp.IdProd);
+                    var caminhoArquivoImportado = ArquivoMesaCorteDAO.Instance
+                        .CaminhoSalvarArquivoPedidoImportado(string.Empty, (int)prodPedEsp.IdProdPed, TipoArquivoMesaCorte.Todos);
 
-                    if (idArquivoMesaCorte.GetValueOrDefault() == 0)
-                        continue;
-
-                    var tipoArquivo = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(session, (int)prodPedEsp.IdProd);
-
-                    if (tipoArquivo == TipoArquivoMesaCorte.DXF)
+                    // Caso tenha uma arquivo importado
+                    if (System.IO.File.Exists(caminhoArquivoImportado))
+                    {
                         gerar = true;
+                    }
+                    else
+                    {
+                        //Se o produto avulso for de instalação verifica se o mesmo tem arquivo DXF.
+                        var idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(session, prodPedEsp.IdProd);
+
+                        if (idArquivoMesaCorte.GetValueOrDefault() == 0)
+                            continue;
+
+                        var tipoArquivo = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(session, (int)prodPedEsp.IdProd);
+
+                        if (tipoArquivo == TipoArquivoMesaCorte.DXF)
+                        {
+                            gerar = true;
+                        }
+                    }
                 }
                 else // Se o item for de projeto
                 {
@@ -1522,8 +1539,6 @@ namespace Glass.Data.RelDAL
                         });
                     }
                 }
-
-                gerar = false;
             }
 
             return lstEtiqueta;

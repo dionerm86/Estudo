@@ -53,14 +53,16 @@ namespace WebGlass.Business.Produto.Ajax
                 }
                 else
                 {
-                    string infoEstoque = !Glass.Configuracoes.Geral.NaoVendeVidro() ? String.Empty :
+                    string infoEstoque = !Glass.Configuracoes.Geral.NaoVendeVidro() ? string.Empty :
                         " (Disp. Estoque: " + ProdutoLojaDAO.Instance.GetEstoque(null, Glass.Conversoes.StrParaUint(idLoja), (uint)prod.IdProd, null, false, false, false) +
                         " Estoque Mín.: " + ProdutoLojaDAO.Instance.GetEstoqueMin(Glass.Conversoes.StrParaUint(idLoja), (uint)prod.IdProd) + ")";
 
                     decimal precoForn = ProdutoFornecedorDAO.Instance.GetCustoCompra(Glass.Conversoes.StrParaInt(idFornec), prod.IdProd);
                     decimal custoCompra = precoForn > 0 ? precoForn : prod.Custofabbase > 0 ? prod.Custofabbase : prod.CustoCompra;
 
-                    var tipoCalculoSubGrupo = SubgrupoProdDAO.Instance.ObtemTipoCalculo(null, prod.IdSubgrupoProd.GetValueOrDefault(), false).GetValueOrDefault();
+                    var tipoCalculoSubGrupo = CompraConfig.UsarTipoCalculoNfParaCompra
+                        ? SubgrupoProdDAO.Instance.ObtemTipoCalculo(null, prod.IdSubgrupoProd.GetValueOrDefault(), true).GetValueOrDefault()
+                        : SubgrupoProdDAO.Instance.ObtemTipoCalculo(null, prod.IdSubgrupoProd.GetValueOrDefault(), false).GetValueOrDefault();
 
                     return "Prod|" +
                            infoEstoque + "|" +

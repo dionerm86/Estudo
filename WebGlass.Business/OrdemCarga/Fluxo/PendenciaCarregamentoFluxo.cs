@@ -20,7 +20,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// <param name="rotas"></param>
         /// <returns></returns>
         public List<Entidade.ListagemPendenciaCarregamento> GetListagemPendenciaCarregamento(uint idCarregamento, uint idCli,
-            string nomeCli, uint idLoja, string dtSaidaIni, string dtSaidaFim, string rotas, bool ignorarPedidosVendaTransferencia,
+            string nomeCli, uint idLoja, string dtSaidaIni, string dtSaidaFim, string rotas, bool? ignorarPedidosVendaTransferencia,
             uint idCliExterno, string nomeCliExterno, string idsRotasExternas, 
             string sortExpression, int startRow, int pageSize)
         {
@@ -48,7 +48,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         }
 
         public int GetListagemPendenciaCarregamentoCount(uint idCarregamento, uint idCli,
-            string nomeCli, uint idLoja, string dtSaidaIni, string dtSaidaFim, string rotas, bool ignorarPedidosVendaTransferencia,
+            string nomeCli, uint idLoja, string dtSaidaIni, string dtSaidaFim, string rotas, bool? ignorarPedidosVendaTransferencia,
             uint idCliExterno, string nomeCliExterno, string idsRotasExternas)
         {
             return ItemCarregamentoDAO.Instance.GetItensPendentesStr(idCarregamento, 0, idCli, nomeCli, idLoja, null, null,

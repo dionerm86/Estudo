@@ -5925,7 +5925,7 @@ namespace Glass.Data.DAL
         private string SqlPorSituacao(uint idNf, uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente,
             int tipoFiscal, uint idFornec, string nomeFornec, string codRota, string situacao, int tipoDoc, string dataIni, string dataFim,
             string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf,
-            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, string valorInicial, string valorFinal,
+            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, bool? apenasNotasFiscaisSemAnexo, string valorInicial, string valorFinal,
             string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
             string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor,
@@ -5952,7 +5952,6 @@ namespace Glass.Data.DAL
                     Left Join transportador t On (n.idTransportador=t.idTransportador)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
-                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Left Join (
                         select pnf.idNf
                         from movimentacao_bem_ativo_imob mbai
@@ -5972,7 +5971,6 @@ namespace Glass.Data.DAL
                     Left Join transportador t On (n.idTransportador=t.idTransportador)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
-                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
 
             NotaFiscal temp = new NotaFiscal();
@@ -6261,6 +6259,12 @@ namespace Glass.Data.DAL
                 criterio += "Lote: " + lote + "    ";
             }
 
+            if (apenasNotasFiscaisSemAnexo == true)
+            {
+                sql += " And (Select Count(*) = 0 From fotos_nota_fiscal Where fotos_nota_fiscal.IdNf = n.IdNf)";
+                criterio += " Nota Fiscal Sem Anexo";
+            }
+
             if (!String.IsNullOrEmpty(valorInicial))
             {
                 sql += " And n.TotalNota >= " + valorInicial.Replace(",", ".");
@@ -6317,14 +6321,14 @@ namespace Glass.Data.DAL
         public IList<NotaFiscal> GetListPorSituacao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote,
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, bool? apenasNotasFiscaisSemAnexo,
             int ordenar, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "n.idNf desc" : sortExpression;
 
             return LoadDataWithSortExpression(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
+                infCompl, codInternoProd, descrProd, lote, apenasNotasFiscaisSemAnexo , valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
                 valorInicial, valorFinal, cnpjFornecedor, lote));
         }
@@ -6332,11 +6336,11 @@ namespace Glass.Data.DAL
         public int GetCountPorSituacao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, int ordenar)
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, bool? apenasNotasFiscaisSemAnexo, int ordenar)
         {
             return objPersistence.ExecuteSqlQueryCount(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec,
                 codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
-                formaEmissao, infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
+                formaEmissao, infCompl, codInternoProd, descrProd, lote, apenasNotasFiscaisSemAnexo , valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, cnpjFornecedor, lote));
         }
@@ -6344,11 +6348,11 @@ namespace Glass.Data.DAL
         public List<uint> GetListPorSituacaoAjax(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string lote)
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string lote, bool? apenasNotasFiscaisSemAnexo)
         {
             return objPersistence.LoadResult(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, null, 0, false, false, true),
+                infCompl, codInternoProd, descrProd, lote, apenasNotasFiscaisSemAnexo, valorInicial, valorFinal, null, 0, false, false, true),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, null, null))
                 .Select(f => f.GetUInt32(0))
@@ -6363,7 +6367,7 @@ namespace Glass.Data.DAL
             int tipoFiscal, uint idFornec, string nomeFornec, string codRota, string situacao, int tipoDoc, string dataIni, string dataFim,
             string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf,
             int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, string valorInicial, string valorFinal,
-            string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
+            string cnpjFornecedor, bool? apenasNotasFiscaisSemAnexo, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
             string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor,
                 " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, '$$$' as Criterio,
@@ -6696,6 +6700,12 @@ namespace Glass.Data.DAL
                 sql += " And n.TotalNota <= " + valorFinal.Replace(",", ".");
             }
 
+            if (apenasNotasFiscaisSemAnexo == true)
+            {
+                sql += " And (Select Count(*) = 0 From fotos_nota_fiscal Where n.IdNf = fotos_nota_fiscal.IdNf)";
+                criterio += " Nota Fiscal Sem Anexo";
+            }
+
             switch (ordenar)
             {
                 case 1:
@@ -6728,14 +6738,14 @@ namespace Glass.Data.DAL
         public IList<NotaFiscal> GetListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote,
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, bool? apenasNotasFiscaisSemAnexo,
             int ordenar, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "n.idNf desc" : sortExpression;
 
             return LoadDataWithSortExpression(SqlListaPadrao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
+                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, apenasNotasFiscaisSemAnexo, ordenar, false, false, true), sortExpression, startRow, pageSize,
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
                 valorInicial, valorFinal, cnpjFornecedor, lote));
         }
@@ -6743,11 +6753,11 @@ namespace Glass.Data.DAL
         public int GetCountListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, int ordenar)
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, bool? apenasNotasFiscaisSemAnexo, int ordenar)
         {
             return objPersistence.ExecuteSqlQueryCount(SqlListaPadrao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec,
                 codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
-                formaEmissao, infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
+                formaEmissao, infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, apenasNotasFiscaisSemAnexo, ordenar, false, false, false),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, cnpjFornecedor, lote));
         }
@@ -6836,7 +6846,6 @@ namespace Glass.Data.DAL
                 Left Join transportador t On (n.idTransportador=t.idTransportador)
                 Left Join funcionario func On (n.usuCad=func.idFunc)
                 Left Join plano_contas pc on (n.idConta=pc.idConta)
-                Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                 Left Join (
                     select pnf.idNf
                     from movimentacao_bem_ativo_imob mbai
@@ -7710,17 +7719,20 @@ namespace Glass.Data.DAL
             uint idNfEmissaoNormal = nf.IdNf;
             uint idNf = 0;
 
-            if (FiscalConfig.NotaFiscalConfig.ContingenciaNFe == DataSources.TipoContingenciaNFe.SCAN && nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.Normal)
+            var uf = CidadeDAO.Instance.ObtemValorCampo<string>("NomeUf", "idCidade=" + nf.IdCidade);
+
+            nf.FormaEmissao = (int)ConfigNFe.ObtemTipoContingencia(uf);
+            nf.CodAleatorio = null;
+            nf.NumeroNFe = ProxNumeroNFe(nf.IdLoja.Value, Conversoes.StrParaInt(nf.Serie));
+
+            if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.Normal)
             {
-                var uf = CidadeDAO.Instance.ObtemValorCampo<string>("NomeUf", "idCidade=" + nf.IdCidade);
-
-                nf.FormaEmissao = (int)ConfigNFe.ObtemTipoContingencia(uf);
-                nf.CodAleatorio = null;
-                nf.NumeroNFe = ProxNumeroNFe(nf.IdLoja.Value, Conversoes.StrParaInt(nf.Serie));
-
                 idNf = NotaFiscalDAO.Instance.Insert(nf);
-
-                // Insere os produtos da nota
+            }
+            
+            // Insere os produtos da nota
+            if (idNf > 0)
+            {
                 foreach (ProdutosNf pnf in ProdutosNfDAO.Instance.GetByNf(idNfEmissaoNormal))
                 {
                     pnf.IdNf = idNf;
@@ -9500,6 +9512,13 @@ namespace Glass.Data.DAL
             {
                 LimparEmitenteDestinatario(sessao, objInsert);
 
+                if (FiscalConfig.NotaFiscalConfig.ContingenciaNFe == DataSources.TipoContingenciaNFe.SCAN)
+                {
+                    var uf = CidadeDAO.Instance.ObtemValorCampo<string>(sessao, "NomeUf", "idCidade=" + objInsert.IdCidade);
+
+                    objInsert.FormaEmissao = (int)ConfigNFe.ObtemTipoContingencia(uf);
+                }
+
                 // Não permite inserir notas para clientes inativos
                 if (!Configuracoes.FiscalConfig.NotaFiscalConfig.PermitirEmitirNotaParaClienteBloqueadoOuInativo &&
                     objInsert.IdCliente > 0 && ClienteDAO.Instance.GetSituacao(sessao, objInsert.IdCliente.Value) != (int)SituacaoCliente.Ativo)
@@ -9966,7 +9985,7 @@ namespace Glass.Data.DAL
         public List<NotaFiscal> ObtemAutorizadasFinalizadas()
         {
             string sql = SqlPorSituacao(0, 0, 0, null, 0, 0, null, 0, 0, null, null, "2,13", 0, null, null, null, null, null, null, 0, null, 0, 0, 0,
-                null, null, null, null, null, null, null, 0, false, false, true);
+                null, null, null, null, false, null, null, null, 0, false, false, true);
             return objPersistence.LoadData(sql).ToList();
         }
 
@@ -10385,8 +10404,8 @@ namespace Glass.Data.DAL
             /// <WS>?p=<chave_acesso>|<versao_qrcode>|<tipo_ambiente>|<identificador_csc>|<codigo_hash>
             /// <WS>?p=<chave_acesso>|<versao_qrcode>|<tipo_ambiente>|<dia_data_emissao>|<valor_total_nfce>|<digVal>|<identificador_csc>|<codigo_hash>
 
-            var offline = nfe.Situacao == (int)SituacaoEnum.ContingenciaOffline
-                ? $"|{DateTime.Now.Day.ToString().PadLeft(2, '0')}|{nfe.TotalNota.ToString().Replace(",", ".")}|{digestValue}"
+            var offline = nfe.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaNFCe
+                ? $"|{DateTime.Now.Day.ToString().PadLeft(2, '0')}|{Math.Round(nfe.TotalNota,2).ToString().Replace(",", ".")}|{digValHex}"
                 : string.Empty;
 
             link = $@"{chaveAcesso}|2|{nfe.TipoAmbiente}{offline}|{Conversoes.StrParaInt(idCsc)}";

@@ -235,6 +235,31 @@ namespace Glass.Data.DAL
                 .ToList();
         }
 
+        public uint InsertComTransacao(AmbientePedido objInsert)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var retorno = Insert(transaction, objInsert);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    throw;
+                }
+            }
+        }
+
         #region Retorna o IdAmbiente a partir do item projeto
 
         /// <summary>

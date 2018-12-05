@@ -2291,7 +2291,7 @@ namespace Glass.Data.DAL
             if (dataEntregaFim > DateTime.MinValue)
             {
                 var formatoDataEntregaFim = dataEntregaFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy 23:59:59" : "dd/MM/yyyy HH:mm:ss";
-                parametros.Add(new GDAParameter("?dataEntregaFim", dataEntregaFim.Value.ToString(formatoDataEntregaFim)));
+                parametros.Add(new GDAParameter("?dataEntregaFim", dataEntregaFim.Value.ToString(formatoDataEntregaFim).ConverteData()));
             }
 
             if (dataEntregaInicio > DateTime.MinValue)
@@ -2302,7 +2302,7 @@ namespace Glass.Data.DAL
             if (dataFabricaFim > DateTime.MinValue)
             {
                 var formatoDataFabricaFim = dataFabricaFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy 23:59:59" : "dd/MM/yyyy HH:mm:ss";
-                parametros.Add(new GDAParameter("?dataFabricaFim", dataFabricaFim.Value.ToString(formatoDataFabricaFim)));
+                parametros.Add(new GDAParameter("?dataFabricaFim", dataFabricaFim.Value.ToString(formatoDataFabricaFim).ConverteData()));
             }
 
             if (dataFabricaInicio > DateTime.MinValue)
@@ -2313,7 +2313,7 @@ namespace Glass.Data.DAL
             if (dataLeituraFim > DateTime.MinValue)
             {
                 var formatoDataLeituraFim = dataLeituraFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy 23:59:59" : "dd/MM/yyyy HH:mm:ss";
-                parametros.Add(new GDAParameter("?dataLeituraFim", dataLeituraFim.Value.ToString(formatoDataLeituraFim)));
+                parametros.Add(new GDAParameter("?dataLeituraFim", dataLeituraFim.Value.ToString(formatoDataLeituraFim).ConverteData()));
             }
 
             if (dataLeituraInicio > DateTime.MinValue)
@@ -4941,15 +4941,35 @@ namespace Glass.Data.DAL
             // uma vez que a sua posição teria mudado em virtude do produto removido do pedido.
             var prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(sessao, null, ObtemIdProdPed(idProdPedProducao), true);
 
-            var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
+            var calcularMultiploDe5 = prodPedEsp.TipoCalc == (int)TipoCalculoGrupoProd.M2;
+
+            var m2Calc = Global.CalculosFluxo.ArredondaM2(
+                sessao,
+                prodPedEsp.Largura,
+                (int)prodPedEsp.Altura,
+                1,
+                0,
+                prodPedEsp.Redondo,
+                prodPedEsp.Espessura,
+                calcularMultiploDe5);
 
             var areaMinimaProd = ProdutoDAO.Instance.ObtemAreaMinima(sessao, (int)prodPedEsp.IdProd);
 
             var idCliente = PedidoDAO.Instance.ObtemIdCliente(sessao, idPedido);
 
-            var m2CalcAreaMinima = Glass.Global.CalculosFluxo.CalcM2Calculo(sessao, idCliente, (int)prodPedEsp.Altura, prodPedEsp.Largura,
-                1, (int)prodPedEsp.IdProd, prodPedEsp.Redondo, prodPedEsp.Beneficiamentos.CountAreaMinimaSession(sessao), areaMinimaProd, false,
-                prodPedEsp.Espessura, true);
+            var m2CalcAreaMinima = Glass.Global.CalculosFluxo.CalcM2Calculo(
+                sessao,
+                idCliente,
+                (int)prodPedEsp.Altura,
+                prodPedEsp.Largura,
+                1,
+                (int)prodPedEsp.IdProd,
+                prodPedEsp.Redondo,
+                prodPedEsp.Beneficiamentos.CountAreaMinimaSession(sessao),
+                areaMinimaProd,
+                false,
+                prodPedEsp.Espessura,
+                calcularMultiploDe5);
 
             var m2 = new List<int> { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto }
                 .Contains(GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd));
@@ -5345,11 +5365,11 @@ namespace Glass.Data.DAL
             string sp = subtipoPerdaRepos > 0 ? $", idSubtipoPerdaRepos={subtipoPerdaRepos}" : string.Empty;
 
             objPersistence.ExecuteCommand(transaction, $@"
-                        UPDATE produto_pedido_producao 
+                        UPDATE produto_pedido_producao
                         SET idPedidoExpedicao=NULL, pecaReposta=TRUE, tipoPerdaRepos= {tipoPerdaRepos} {sp}
                         , obs=?obs, dataRepos=?dataPerda, situacao={(int)ProdutoPedidoProducao.SituacaoEnum.Producao}
                         , idSetor=1, situacaoProducao={(int)SituacaoProdutoProducao.Pendente }, idSetorRepos={idSetorRepos}
-                        , idFuncRepos={idFuncPerda}, dadosReposicaoPeca=?dadosReposicao 
+                        , idFuncRepos={idFuncPerda}, dadosReposicaoPeca=?dadosReposicao
                         WHERE idProdPedProducao={idProdPedProducao}",
                         new GDAParameter("?obs", obs),
                         new GDAParameter("?dadosReposicao", dadosReposicao),
@@ -5878,8 +5898,8 @@ namespace Glass.Data.DAL
             }
 
 
-            string sql = $@"SELECT COUNT(*) FROM produto_pedido_producao ppp    
-                INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed) 
+            string sql = $@"SELECT COUNT(*) FROM produto_pedido_producao ppp
+                INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed)
                 WHERE ppp.idPedidoExpedicao={idPedido} {filtro}";
 
             var retorno = objPersistence.ExecuteSqlQueryCount(sessao, sql);
