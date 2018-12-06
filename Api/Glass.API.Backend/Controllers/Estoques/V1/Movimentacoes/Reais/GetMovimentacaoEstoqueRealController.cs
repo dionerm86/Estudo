@@ -6,6 +6,7 @@ using GDA;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
+using Glass.Data.Model;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,20 +43,36 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Reais
                     filtro.CodigoProduto,
                     filtro.DescricaoProduto,
                     filtro.CodigoOtimizacao,
-                    filtro.PeriodoMovimentacaoInicio.Value.ToShortDateString(),
-                    filtro.PeriodoMovimentacaoFim.Value.ToShortDateString(),
+                    filtro.PeriodoMovimentacaoInicio?.ToShortDateString(),
+                    filtro.PeriodoMovimentacaoFim?.ToShortDateString(),
                     filtro.TipoMovimentacao ?? 0,
-                    (int)filtro.SituacaoProduto,
+                    (int)(filtro.SituacaoProduto ?? 0),
                     filtro.IdsGrupoProduto != null && filtro.IdsGrupoProduto.Any() ? string.Join(",", filtro.IdsGrupoProduto) : null,
                     filtro.IdsSubgrupoProduto != null && filtro.IdsSubgrupoProduto.Any() ? string.Join(",", filtro.IdsSubgrupoProduto) : null,
-                    (uint)filtro.IdCorVidro,
-                    (uint)filtro.IdCorFerragem,
-                    (uint)filtro.IdCorAluminio,
+                    (uint)(filtro.IdCorVidro ?? 0),
+                    (uint)(filtro.IdCorFerragem ?? 0),
+                    (uint)(filtro.IdCorAluminio ?? 0),
                     filtro.NaoBuscarProdutosComEstoqueZerado ?? false,
                     filtro.ApenasLancamentosManuais ?? false);
 
                 return this.Lista(
                     movimentacoesEstoqueReal.Select(o => new Models.Estoques.V1.Movimentacoes.Reais.ListaDto(o)));
+            }
+        }
+
+        /// <summary>
+        /// Recupera o código da tabela MovEstoque.
+        /// </summary>
+        /// <returns>Número inteiro com o código da tabela de cancelamento MovEstoque.</returns>
+        [HttpGet]
+        [Route("codigoTabela")]
+        [SwaggerResponse(200, "Código da tabela de cancelamento encontrado", Type = typeof(int))]
+        [SwaggerResponse(204, "Código da tabela de cancelamento não encontrado")]
+        public IHttpActionResult ObterCodigoTabelaCancelamento()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                return this.Item((int)LogCancelamento.TabelaCancelamento.MovEstoque);
             }
         }
     }

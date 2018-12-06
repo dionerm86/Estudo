@@ -1,4 +1,4 @@
-var Servicos = Servicos || {};
+﻿var Servicos = Servicos || {};
 
 /**
  * Objeto com os serviços para a API de estoques.
@@ -7,6 +7,40 @@ Servicos.Estoques = (function(http) {
   const API = '/api/v1/estoques/';
 
   return {
+    Movimentacoes: {
+      Reais: {
+        /**
+        * Recupera a lista de movimentações do estoques real.
+        * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
+        * @param {number} pagina O número da página de resultados a ser exibida.
+        * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+        * @param {string} ordenacao A ordenação para o resultado.
+        * @returns {Promise} Uma promise com o resultado da busca.
+        */
+        obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+          return http().get(API + 'movimentacoes/reais', {
+            params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+          });
+        },
+
+        excluir: function (idMovimentacao) {
+            if (!idMovimentacao) {
+                throw new Error('Movimentação é obrigatória.');
+            }
+
+            return http().delete(API + 'movimentacoes/reais/' + idMovimentacao);
+        },
+
+        obterCodigoTabela: function () {
+          return http().get(API + 'movimentacoes/reais/codigoTabela');
+        },
+
+        inserir: function (movimentacao) {
+          return http().post(API + 'movimentacoes/reais/' + movimentacao)
+        },
+      }
+    },
+
     /**
      * Recupera a lista de estoques de produto.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.

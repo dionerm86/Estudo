@@ -39,9 +39,9 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Reais
                         return validacao;
                     }
 
-                    var carregamento = MovEstoqueDAO.Instance.GetElementByPrimaryKey(id);
+                    var movimentacao = MovEstoqueDAO.Instance.GetElementByPrimaryKey(id);
 
-                    MovEstoqueDAO.Instance.Delete(carregamento);
+                    MovEstoqueDAO.Instance.Delete(movimentacao);
 
                     return this.Aceito($"Movimentação excluída.");
                 }

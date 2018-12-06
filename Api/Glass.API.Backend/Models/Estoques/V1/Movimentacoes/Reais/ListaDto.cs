@@ -26,7 +26,12 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais
         {
             this.Id = (int)movimentacaoEstoqueReal.IdMovEstoque;
             this.Referencia = movimentacaoEstoqueReal.Referencia;
-            this.Produto = movimentacaoEstoqueReal.DescrProduto;
+            this.Produto = new IdNomeDto
+            {
+                Id = (int)movimentacaoEstoqueReal.IdProd,
+                Nome = movimentacaoEstoqueReal.DescrProduto,
+            };
+
             this.Fornecedor = movimentacaoEstoqueReal.NomeFornec;
             this.Funcionario = movimentacaoEstoqueReal.NomeFunc;
             this.Datas = new DataCadastroMovimentacaoDto
@@ -51,6 +56,8 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais
                 Excluir = movimentacaoEstoqueReal.DeleteVisible,
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.MovEstoque, movimentacaoEstoqueReal.IdMovEstoque, null),
             };
+
+            this.CorLinha = this.ObterCorLinha();
         }
 
         /// <summary>
@@ -68,11 +75,11 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais
         public string Referencia { get; set; }
 
         /// <summary>
-        /// Obtém ou define o produto movimentado.
+        /// Obtém ou define o produto associado a movimentação.
         /// </summary>
         [DataMember]
         [JsonProperty("produto")]
-        public string Produto { get; set; }
+        public IdNomeDto Produto { get; set; }
 
         /// <summary>
         /// Obtém ou define o fornecedor do produto movimentado.
@@ -115,5 +122,17 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais
         [DataMember]
         [JsonProperty("permissoes")]
         public PermissoesDto Permissoes { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a cor da fonte (baseado no tipo de movimentação).
+        /// </summary>
+        [DataMember]
+        [JsonProperty("corLinha")]
+        public string CorLinha { get; set; }
+
+        private string ObterCorLinha()
+        {
+            return this.DadosEstoque.TipoMovimentacao.ToUpper() == "S" ? "red" : "black";
+        }
     }
 }

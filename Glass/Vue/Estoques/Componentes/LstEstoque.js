@@ -1,4 +1,4 @@
-const app = new Vue({
+﻿const app = new Vue({
   el: '#app',
   mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('id', 'desc')],
 
@@ -205,7 +205,7 @@ const app = new Vue({
       this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
       this.incluirFiltroComLista(filtros, 'codProd', this.filtro.codigoInternoProduto);
       this.incluirFiltroComLista(filtros, 'descr', this.filtro.descricaoProduto);
-      this.incluirFiltroComLista(filtros, 'idGrupo', this.filtro.idGrupoProduto);
+      this.incluirFiltroComLista(filtros, 'idGrupo', this.filtro.idsGrupoProduto);
       this.incluirFiltroComLista(filtros, 'idsSubgrupoProduto', this.filtro.idsSubgrupoProduto);
       this.incluirFiltroComLista(filtros, 'apenasEstoqueFiscal', this.filtro.apenasComEstoque);
       this.incluirFiltroComLista(filtros, 'apenasPosseTerceiros', this.filtro.apenasPosseTerceiros);

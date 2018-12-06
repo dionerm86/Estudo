@@ -483,6 +483,9 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.Filtro.js" />
+    <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.js" />
+    <Content Include="Vue\Estoques\Movimentacoes\Reais\Templates\ListaMovimentacoesEstoqueReal.Filtro.html" />
     <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
@@ -6099,7 +6102,6 @@
     </Compile>
     <Compile Include="Listas\LstMovEstoque.aspx.cs">
       <DependentUpon>LstMovEstoque.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Listas\LstMovEstoque.aspx.designer.cs">
       <DependentUpon>LstMovEstoque.aspx</DependentUpon>

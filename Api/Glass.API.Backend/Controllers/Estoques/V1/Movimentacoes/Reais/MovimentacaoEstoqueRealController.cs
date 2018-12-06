@@ -32,7 +32,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Reais
         {
             var validacao = this.ValidarIdMovimentacaoEstoqueReal(idMovimentacaoEstoqueReal);
 
-            if (validacao == null && !ProdutoDAO.Instance.Exists(sessao, idMovimentacaoEstoqueReal))
+            if (validacao == null && !MovEstoqueDAO.Instance.Exists(sessao, idMovimentacaoEstoqueReal))
             {
                 return this.NaoEncontrado("Movimentação não encontrada.");
             }

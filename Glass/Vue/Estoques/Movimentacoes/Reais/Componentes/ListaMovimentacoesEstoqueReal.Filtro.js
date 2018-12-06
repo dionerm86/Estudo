@@ -1,4 +1,4 @@
-﻿Vue.component('estoque-filtros', {
+﻿Vue.component('movimentacoesestoquereal-filtros', {
   mixins: [Mixins.Objetos],
   props: {
     /**
@@ -10,65 +10,41 @@
       twoWay: true,
       validator: Mixins.Validacao.validarObjeto
     },
-
-    /**
-     * Objeto com as configurações da tela de estoques de produto.
-     * @type {!Object}
-     */
-    configuracoes: {
-      required: true,
-      twoWay: false,
-      validator: Mixins.Validacao.validarObjeto
-    }
   },
 
-  data: function() {
+  data: function () {
     return {
       filtroAtual: this.merge(
         {
           idLoja: null,
-          codigoInternoProduto: null,
+          codigoProduto: null,
           descricaoProduto: null,
-          idGrupoProduto: null,
-          idsSubgrupoProduto: null,
-          apenasComEstoque: null,
-          apenasPosseTerceiros: null,
-          apenasProdutosProjeto: null,
+          periodoMovimentacaoInicio: null,
+          periodoMovimentacaoFim: null,
+          tipoMovimentacao: null,
+          situacaoProduto: null,
+          idsGrupoProduto: [],
+          idsSubgrupoProduto: [],
+          codigoOtimizacao: null,
           idCorVidro: null,
           idCorFerragem: null,
           idCorAluminio: null,
-          situacao: null,
-          estoqueFiscal: null,
-          aguardandoSaidaEstoque: null,
+          apenasLancamentosManuais: false,
+          naoBuscarProdutosComEstoqueZerado: false,
+          usarValorFiscalDoProdutoNoInventario: false,
           ordenacaoFiltro: null
         },
         this.filtro
       ),
       lojaAtual: null,
-      grupoProdutoAtual: null,
+      tipoCor: null,
       corVidroAtual: null,
       corFerragemAtual: null,
-      corAluminioAtual: null
+      corAluminioAtual: null,
     };
   },
 
   computed: {
-    /**
-     * Propriedade computada que indica se deverão ser exibidos dados fiscais
-     */
-    exibirEstoqueFiscal: function () {
-      return GetQueryString('fiscal') == '1';
-    },
-
-    /**
-     * Propriedade computada que indica se o filtro "Aguardando saída estoque" será exibido
-     */
-    exibirFiltroAguardandoSaidaEstoque: function () {
-      return !this.exibirEstoqueFiscal
-        && (!this.configuracoes.usarLiberacaoPedido || !this.configuracoes.marcarSaidaEstoqueAoLiberarPedido)
-        && (this.configuracoes.usarLiberacaoPedido || !this.configuracoes.marcarSaidaEstoqueAutomaticaAoConfirmar);
-    },
-
     /**
      * Propriedade computada que retorna o filtro de subgrupos de produto.
      * @type {filtroSubgruposProduto}
@@ -76,24 +52,18 @@
      * @typedef filtroSubgruposProduto
      * @property {?number} idGrupoProduto O ID do grupo de produto.
      */
-    filtroSubgruposProduto: function() {
+    filtroSubgruposProduto: function () {
       return {
-        idGrupoProduto: (this.filtroAtual || {}).idGrupoProduto || 0
+        idGrupoProduto: (this.filtroAtual || {}).idsGrupoProduto || 0
       };
     }
-  },
-
-  mounted: function () {
-    this.filtroAtual.situacao = 1;
-    this.filtroAtual.ordenacaoFiltro = 1;
-    this.filtroAtual.estoqueFiscal = this.exibirEstoqueFiscal;
   },
 
   methods: {
     /**
      * Atualiza o filtro com os dados selecionados na tela.
      */
-    filtrar: function() {
+    filtrar: function () {
       var novoFiltro = this.clonar(this.filtroAtual);
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
@@ -104,7 +74,7 @@
      * Retorna os itens para o controle de grupos de produto.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterItensFiltroGruposProduto: function() {
+    obterItensFiltroGruposProduto: function () {
       return Servicos.Produtos.Grupos.obterParaControle();
     },
 
@@ -112,8 +82,16 @@
      * Retorna os itens para o controle de subgrupos de produto.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterItensFiltroSubgruposProduto: function (filtro) {
-      return Servicos.Produtos.Subgrupos.obterParaControle((filtro || {}).idGrupoProduto);
+    obterItensFiltroSubgruposProduto: function () {
+      var idsGrupoProduto = (this.filtroAtual || {}).idsGrupoProduto;
+
+      if (idsGrupoProduto.length == 0) {
+        return;
+      }
+
+      for (var i = 0; i < idsGrupoProduto.length; i++) {
+        return Servicos.Produtos.Subgrupos.obterParaControle(idsGrupoProduto[i]);
+      }
     },
 
     /**
@@ -143,28 +121,11 @@
 
   watch: {
     /**
-     * Observador para a propriedade 'configuracoes'.
-     * Atualiza o filtro com a loja atual do usuário.
-     */
-    configuracoes: {
-      handler: function (atual) {
-        this.lojaAtual = atual ? this.clonar(atual.lojaUsuario) : null;
-
-        var vm = this;
-
-        this.$nextTick(function () {
-          vm.filtrar();
-        });
-      },
-      deep: true
-    },
-
-    /**
      * Observador para a variável 'lojaAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */
     lojaAtual: {
-      handler: function(atual) {
+      handler: function (atual) {
         this.filtroAtual.idLoja = atual ? atual.id : null;
       },
       deep: true
@@ -176,8 +137,19 @@
      */
     grupoProdutoAtual: {
       handler: function (atual) {
-        this.filtroAtual.idGrupoProduto = atual ? atual.id : null;
+        this.filtroAtual.idsGrupoProduto = atual ? atual.id : null;
         this.filtroAtual.idsSubgrupoProduto = null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'subgrupoProdutoAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    subgrupoProdutoAtual: {
+      handler: function (atual) {
+        this.filtroAtual.idsSubgrupoProduto = atual ? atual.id : null;
       },
       deep: true
     },
@@ -216,5 +188,5 @@
     }
   },
 
-  template: '#LstEstoque-Filtro-template'
+  template: '#ListaMovimentacoesEstoqueReal-Filtro-template'
 });
