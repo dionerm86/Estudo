@@ -23,72 +23,72 @@ namespace Glass.UI.Web.Cadastros
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
             Ajax.Utility.RegisterTypeForAjax(typeof(RecalcularOrcamento));
 
-            grdProdutosAmbienteOrcamento.Columns[6].Visible = OrcamentoConfig.NegociarParcialmente;
+            this.grdProdutosAmbienteOrcamento.Columns[6].Visible = OrcamentoConfig.NegociarParcialmente;
 
-            if (!IsPostBack && Request["idOrca"] != null && dtvOrcamento.CurrentMode != DetailsViewMode.ReadOnly)
+            if (!this.IsPostBack && this.Request["idOrca"] != null && this.dtvOrcamento.CurrentMode != DetailsViewMode.ReadOnly)
             {
-                hdfIdOrcamento.Value = Request["idOrca"];
-                dtvOrcamento.ChangeMode(DetailsViewMode.ReadOnly);
-                dtvOrcamento.DataBind();
+                this.hdfIdOrcamento.Value = this.Request["idOrca"];
+                this.dtvOrcamento.ChangeMode(DetailsViewMode.ReadOnly);
+                this.dtvOrcamento.DataBind();
 
-                var orcamento = dtvOrcamento.DataItem as Data.Model.Orcamento;
+                var orcamento = this.dtvOrcamento.DataItem as Data.Model.Orcamento;
 
-                if (Request["atualizar"] == "1")
+                if (this.Request["atualizar"] == "true")
                 {
-                    var tipoEntrega = OrcamentoDAO.Instance.ObtemTipoEntrega(Conversoes.StrParaUint(hdfIdOrca.Value));
-                    var idCliente = OrcamentoDAO.Instance.ObtemIdCliente(Conversoes.StrParaUint(hdfIdOrca.Value));
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "callback", $"recalcular({hdfIdOrca.Value}, false, {tipoEntrega}, {idCliente});", true);
+                    var tipoEntrega = OrcamentoDAO.Instance.ObterTipoEntrega(null, Conversoes.StrParaInt(this.hdfIdOrcamento.Value));
+                    var idCliente = OrcamentoDAO.Instance.ObterIdCliente(null, Conversoes.StrParaInt(this.hdfIdOrcamento.Value));
+                    this.Page.ClientScript.RegisterStartupScript(this.GetType(), "callback", $"recalcular({this.hdfIdOrcamento.Value}, false, {tipoEntrega}, {idCliente});", true);
                 }
 
                 // Se o usuário não tiver permissão para editar este orçamento, retorna para listagem de orçamentos
-                if (((HiddenField)dtvOrcamento.FindControl("hdfEditVisible"))?.Value?.ToLower() == "false" || !orcamento.EditVisible)
+                if (((HiddenField)this.dtvOrcamento.FindControl("hdfEditVisible"))?.Value?.ToLower() == "false" || !orcamento.EditVisible)
                 {
-                    RedirecionarListagemOrcamento();
+                    this.RedirecionarListagemOrcamento();
                 }
 
-                if (!string.IsNullOrWhiteSpace(hdfIdOrcamento.Value) && !string.IsNullOrEmpty(Request["relatorio"]))
+                if (!string.IsNullOrWhiteSpace(this.hdfIdOrcamento.Value) && !string.IsNullOrEmpty(this.Request["relatorio"]))
                 {
-                    switch (Request["relatorio"])
+                    switch (this.Request["relatorio"])
                     {
                         case "1":
-                            Page.ClientScript.RegisterStartupScript(GetType(), "Relatorio", $"openRpt('{ hdfIdOrcamento.Value }');\n", true);
+                            this.Page.ClientScript.RegisterStartupScript(this.GetType(), "Relatorio", $"openRpt('{this.hdfIdOrcamento.Value}');\n", true);
                             break;
 
                         case "2":
-                            Page.ClientScript.RegisterStartupScript(GetType(), "Relatorio", $"openRptMemoria('{ hdfIdOrcamento.Value }');\n", true);
+                            this.Page.ClientScript.RegisterStartupScript(this.GetType(), "Relatorio", $"openRptMemoria('{this.hdfIdOrcamento.Value}');\n", true);
                             break;
                     }
                 }
             }
-            else if (!IsPostBack)
+            else if (!this.IsPostBack)
             {
-                if (dtvOrcamento.CurrentMode == DetailsViewMode.Insert)
+                if (this.dtvOrcamento.CurrentMode == DetailsViewMode.Insert)
                 {
-                    if (((TextBox)dtvOrcamento.FindControl("txtPrazoEntregaIns")).Text == string.Empty)
+                    if (((TextBox)this.dtvOrcamento.FindControl("txtPrazoEntregaIns")).Text == string.Empty)
                     {
-                        ((TextBox)dtvOrcamento.FindControl("txtPrazoEntregaIns")).Text = OrcamentoConfig.DadosOrcamento.PrazoEntregaOrcamento;
+                        ((TextBox)this.dtvOrcamento.FindControl("txtPrazoEntregaIns")).Text = OrcamentoConfig.DadosOrcamento.PrazoEntregaOrcamento;
                     }
 
-                    if (((TextBox)dtvOrcamento.FindControl("txtValidadeIns")).Text == string.Empty)
+                    if (((TextBox)this.dtvOrcamento.FindControl("txtValidadeIns")).Text == string.Empty)
                     {
-                        ((TextBox)dtvOrcamento.FindControl("txtValidadeIns")).Text = OrcamentoConfig.DadosOrcamento.ValidadeOrcamento;
+                        ((TextBox)this.dtvOrcamento.FindControl("txtValidadeIns")).Text = OrcamentoConfig.DadosOrcamento.ValidadeOrcamento;
                     }
 
-                    if (((TextBox)dtvOrcamento.FindControl("txtFormaPagtoIns")).Text == string.Empty)
+                    if (((TextBox)this.dtvOrcamento.FindControl("txtFormaPagtoIns")).Text == string.Empty)
                     {
-                        ((TextBox)dtvOrcamento.FindControl("txtFormaPagtoIns")).Text = OrcamentoConfig.DadosOrcamento.FormaPagtoOrcamento;
+                        ((TextBox)this.dtvOrcamento.FindControl("txtFormaPagtoIns")).Text = OrcamentoConfig.DadosOrcamento.FormaPagtoOrcamento;
                     }
 
-                    ((DropDownList)dtvOrcamento.FindControl("drpFuncionario")).SelectedValue = UserInfo.GetUserInfo.CodUser.ToString();
-                    ((DropDownList)dtvOrcamento.FindControl("drpTipoOrcamento")).SelectedValue = OrcamentoConfig.TelaCadastro.TipoOrcamentoPadrao == null ? "0" : ((int)OrcamentoConfig.TelaCadastro.TipoOrcamentoPadrao).ToString();
+                    ((DropDownList)this.dtvOrcamento.FindControl("drpFuncionario")).SelectedValue = UserInfo.GetUserInfo.CodUser.ToString();
+                    ((DropDownList)this.dtvOrcamento.FindControl("drpTipoOrcamento")).SelectedValue = OrcamentoConfig.TelaCadastro.TipoOrcamentoPadrao == null ? "0" : ((int)OrcamentoConfig.TelaCadastro.TipoOrcamentoPadrao).ToString();
                 }
             }
 
-            hdfComissaoVisible.Value = PedidoConfig.Comissao.ComissaoPedido.ToString().ToLower();
-            grdProdutosAmbienteOrcamento.Visible = dtvOrcamento.CurrentMode == DetailsViewMode.ReadOnly;
+            this.hdfComissaoVisible.Value = PedidoConfig.Comissao.ComissaoPedido.ToString().ToLower();
+            this.grdProdutosAmbienteOrcamento.Visible = this.dtvOrcamento.CurrentMode == DetailsViewMode.ReadOnly;
 
-            grdProdutosAmbienteOrcamento.Columns[4].Visible = OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento;
-            grdProdutosAmbienteOrcamento.Columns[5].Visible = OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento;
+            this.grdProdutosAmbienteOrcamento.Columns[4].Visible = OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento;
+            this.grdProdutosAmbienteOrcamento.Columns[5].Visible = OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento;
         }
 
         protected void lnkGerarPedidoAgrupado_Load(object sender, EventArgs e)
