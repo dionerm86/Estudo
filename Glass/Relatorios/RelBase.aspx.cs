@@ -3983,7 +3983,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "EtqCavalete":
                     {
-                        report.ReportPath = "Relatorios/ModeloEtiquetaCavalete/rptEtiquetaCavalete.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/ModeloEtiquetaCavalete/rptEtiquetaCavalete{0}.rdlc");
 
                         var idCavalete = Request["idCavalete"].StrParaInt();
 
@@ -3991,7 +3991,9 @@ namespace Glass.UI.Web.Relatorios
                             .ObterCavalete(idCavalete);
 
                         if (cavalete == null)
+                        {
                             throw new Exception("O cavalete não foi encontrado.");
+                        }
 
                         report.DataSources.Add(new ReportDataSource("Cavalete", new List<PCP.Negocios.Entidades.Cavalete>() { cavalete }));
 
