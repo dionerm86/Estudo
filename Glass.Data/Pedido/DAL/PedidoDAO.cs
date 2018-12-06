@@ -6046,7 +6046,7 @@ namespace Glass.Data.DAL
                         throw new Exception(retorno);
 
                     float qtdProd = 0;
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd, false);
 
                     // É necessário refazer o loop nos produtos do pedido para que caso tenha sido inserido o mesmo produto 2 ou mais vezes,
                     // seja somada a quantidade total inserida no pedido
@@ -6835,7 +6835,7 @@ namespace Glass.Data.DAL
                             foreach (var prod in lstProd)
                             {
                                 var qtdProd = 0F;
-                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(trans, (int)prod.IdProd);
+                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(trans, (int)prod.IdProd, false);
 
                                 // É necessário refazer o loop nos produtos do pedido para que caso tenha sido inserido o mesmo produto 2 ou mais vezes,
                                 // seja somada a quantidade total inserida no pedido
@@ -7238,9 +7238,9 @@ namespace Glass.Data.DAL
 
                             foreach (var p in lstProdPed)
                             {
-                                var m2 = new List<int> { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto }.Contains(GrupoProdDAO.Instance.TipoCalculo(trans, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd));
+                                var m2 = new List<int> { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto }.Contains(GrupoProdDAO.Instance.TipoCalculo(trans, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false));
 
-                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(trans, (int)p.IdProd);
+                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(trans, (int)p.IdProd, false);
                                 var qtdSaida = p.Qtde - p.QtdSaida;
 
                                 if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
@@ -7672,7 +7672,7 @@ namespace Glass.Data.DAL
 
                         float qtdProd = 0;
 
-                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)idProd);
+                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)idProd, false);
 
                         if (tipoCalc == (int)TipoCalculoGrupoProd.M2 || tipoCalc == (int)TipoCalculoGrupoProd.M2Direto)
                         {
@@ -7985,7 +7985,7 @@ namespace Glass.Data.DAL
                             foreach (var pp in ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido))
                             {
                                 var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)pp.IdGrupoProd,
-                                    (int)pp.IdSubgrupoProd);
+                                    (int)pp.IdSubgrupoProd, false);
                                 var m2 = tipoCalc == (int)TipoCalculoGrupoProd.M2 ||
                                     tipoCalc == (int)TipoCalculoGrupoProd.M2Direto;
 
@@ -8353,7 +8353,7 @@ namespace Glass.Data.DAL
                         var totM = ProdutosPedidoDAO.Instance.ObtemTotM(session, prodPed.IdProdPed);
                         var qtde = ProdutosPedidoDAO.Instance.ObtemQtde(session, prodPed.IdProdPed);
 
-                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(session, (int)idProd);
+                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(session, (int)idProd, false);
                         var m2 = tipoCalc == (int)TipoCalculoGrupoProd.M2 ||
                             tipoCalc == (int)TipoCalculoGrupoProd.M2Direto;
 
@@ -8633,7 +8633,7 @@ namespace Glass.Data.DAL
                     foreach (var p in ProdutosPedidoDAO.Instance.GetByPedidoLite(session, idPedido))
                     {
                         var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session,
-                            (int)p.IdProd);
+                            (int)p.IdProd, false);
 
                         var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
 
@@ -8784,16 +8784,16 @@ namespace Glass.Data.DAL
 
                                 bool m2 =
                                     Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session,
-                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) ==
+                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) ==
                                     (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
                                     Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session,
-                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) ==
+                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) ==
                                     (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
                                 Single m2Saida = Glass.Global.CalculosFluxo.ArredondaM2(session, (int)p.Largura,
                                     (int)p.Altura, qtdBaixa, (int)p.IdProd, p.Redondo, 0,
                                     Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session,
-                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) !=
+                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) !=
                                     (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto);
 
                                 float areaMinimaProd = ProdutoDAO.Instance.ObtemAreaMinima(session,
@@ -8807,7 +8807,7 @@ namespace Glass.Data.DAL
                                     p.Beneficiamentos.CountAreaMinimaSession(session), areaMinimaProd, false,
                                     p.Espessura, true);
 
-                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdProd);
+                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdProd, false);
                                 var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
 
                                 MovEstoqueDAO.Instance.BaixaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdBaixa), (decimal)(m2 ? m2CalcAreaMinima : 0), false, null, null, null);
@@ -8825,7 +8825,7 @@ namespace Glass.Data.DAL
                             foreach (var p in lstProdPed)
                             {
                                 var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session,
-                                    (int)p.IdProd);
+                                    (int)p.IdProd, false);
 
                                 var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
 
@@ -13793,7 +13793,7 @@ namespace Glass.Data.DAL
 
                             foreach (var prodPed in ProdutosPedidoDAO.Instance.GetByPedido(session, ped.IdPedido))
                             {
-                                var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(session, (int)prodPed.IdProd);
+                                var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(session, (int)prodPed.IdProd, false);
                                 var m2 = tipoCalc == (int)TipoCalculoGrupoProd.M2 || tipoCalc == (int)TipoCalculoGrupoProd.M2Direto;
                                 var qtdEstornoEstoque = prodPed.Qtde;
 

@@ -183,7 +183,7 @@ namespace Glass.Data.EFD
 
         public Sync.Fiscal.EFD.Entidade.IProdutoLoja ObtemProdutoLoja(int codigoProduto, int codigoLoja)
         {
-            return ProdutoLojaDAO.Instance.GetElement((uint)codigoLoja, (uint)codigoProduto, true) ?? new Model.ProdutoLoja();
+            return ProdutoLojaDAO.Instance.ObterParaEfd(null, codigoLoja, codigoProduto) ?? new Model.ProdutoLoja();
         }
 
         public IEnumerable<Sync.Fiscal.EFD.Entidade.IAjusteBeneficioIncentivoApuracao> ObtemAjustesBeneficiosIncentivosApuracao(Sync.Fiscal.EFD.Configuracao.TipoImpostoEnum tipoImposto, DateTime inicio, DateTime fim, string uf)

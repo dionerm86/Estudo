@@ -1656,8 +1656,8 @@ namespace Glass.UI.Web.Relatorios
                                     lstProdPed[i].Qtde = dicProdutos[lstProdPed[i].IdProdPed];
                                     lstProdPed[i].QtdeSomada = dicProdutos[lstProdPed[i].IdProdPed];
 
-                                    var totM2 = Glass.Global.CalculosFluxo.ArredondaM2(lstProdPed[i].Largura, Convert.ToInt32(lstProdPed[i].Altura),
-                                        Convert.ToSingle(lstProdPed[i].QtdeSomada), (int)lstProdPed[i].IdProd, lstProdPed[i].Redondo);
+                                    var totM2 = Glass.Global.CalculosFluxo.ArredondaM2(null, lstProdPed[i].Largura, Convert.ToInt32(lstProdPed[i].Altura),
+                                        Convert.ToSingle(lstProdPed[i].QtdeSomada), (int)lstProdPed[i].IdProd, lstProdPed[i].Redondo, 0, true);
 
                                     lstProdPed[i].TotMSomada = totM2;
                                     lstProdPed[i].TotM = totM2;
@@ -2540,7 +2540,7 @@ namespace Glass.UI.Web.Relatorios
                                         mov[i].QtdeSaldoRealFiscal = movComparativo[j].QtdeSaldo;
                                         // Recupera o id do subgrupo do produto.
                                         var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)mov[i].IdProd);
-                                        int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo((int)mov[i].IdProd);
+                                        int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(null, (int)mov[i].IdProd, false);
 
                                         // Caso o tipo de cálculo do produto for por barra de alumínio o campo complemento qtd deve ser preenchido.
                                         if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||

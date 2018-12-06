@@ -1172,6 +1172,7 @@
     <Compile Include="RelModel\Dipj.cs" />
     <Compile Include="RelModel\FaturamentoCarregamento.cs" />
     <Compile Include="RelModel\GraficoDataEntrega.cs" />
+    <Compile Include="RelModel\InsumoConsumidoEFD.cs" />
     <Compile Include="RelModel\ItemProduzidoEFD.cs" />
     <Compile Include="RelModel\MDFe.cs" />
     <Compile Include="RelModel\MovEstoquesLog.cs" />

@@ -202,7 +202,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_totM == null)
-                    _totM = Glass.Global.CalculosFluxo.ArredondaM2(Largura, Altura, 1, IdProd, false, 0, false);
+                    _totM = Glass.Global.CalculosFluxo.ArredondaM2(null, Largura, Altura, 1F, IdProd, false, 0, false);
 
                 return _totM.GetValueOrDefault();
             }

@@ -52,7 +52,7 @@ namespace Glass.Data.DAL
                 (int)Glass.Data.Model.TipoCalculoGrupoProd.QtdM2 
             };
 
-            int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)obj.IdProd);
+            int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)obj.IdProd, false);
             obj.TotM = !tipoCalcM2.Contains(tipoCalc) ? 0 :
                 Glass.Conversoes.StrParaFloat(MetodosAjax.CalcM2Compra(obj.IdProd.ToString(), tipoCalc.ToString(), 
                 obj.Altura.ToString(), obj.Largura.ToString(), obj.Qtde.ToString()));

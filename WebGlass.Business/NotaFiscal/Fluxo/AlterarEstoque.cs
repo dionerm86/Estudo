@@ -49,7 +49,7 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                                 throw new Exception("Operação cancelada. O produto " + d.DescricaoProduto + " teve uma entrada maior do que sua quantidade.");
                             else
                             {
-                                int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodNf.IdProd);
+                                int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodNf.IdProd, false);
 
                                 // Se a empresa trabalha com venda de alumínio no metro e se produto for alumínio, 
                                 // coloca o metro linear baixado no campo m²
@@ -60,7 +60,7 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                                 }
                                 // Se produto for calculado por m², dá baixa somente no m² da qtde de peças que foram dado baixa
                                 else if (tipoCalc == (int)TipoCalculoGrupoProd.M2 || tipoCalc == (int)TipoCalculoGrupoProd.M2Direto)
-                                    prodNf.TotM = Glass.Global.CalculosFluxo.ArredondaM2(transaction, prodNf.Largura, (int)prodNf.Altura, d.QtdeAumentar, (int)prodNf.IdProd, false);
+                                    prodNf.TotM = Glass.Global.CalculosFluxo.ArredondaM2(transaction, prodNf.Largura, (int)prodNf.Altura, d.QtdeAumentar, (int)prodNf.IdProd, false, 0, true);
 
                                 prodNf.QtdMarcadaEntrada = d.QtdeAumentar;
 
@@ -84,7 +84,7 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                             // Marca quantos produtos do pedido foi marcado como saída
                             ProdutosNfDAO.Instance.MarcarEntrada(transaction, p.IdProdNf, p.QtdMarcadaEntrada, idEntradaEstoque);
 
-                            int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdProd);
+                            int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdProd, false);
                             float qtdCredito = p.QtdMarcadaEntrada;
 
                             if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||

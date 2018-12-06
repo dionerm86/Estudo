@@ -76,7 +76,7 @@ namespace WebGlass.Business.Compra.Fluxo
                                 throw new Exception("Operação cancelada. O produto " + d.DescricaoProduto + " teve uma entrada maior do que sua quantidade.");
                             else
                             {
-                                int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodCompra.IdProd);
+                                int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodCompra.IdProd, false);
                                 bool m2 = tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
                                 // Se a empresa trabalha com venda de alumínio no metro e se produto for alumínio, 
@@ -107,7 +107,7 @@ namespace WebGlass.Business.Compra.Fluxo
                             // Marca quantos produtos do pedido foi marcado como saída
                             ProdutosCompraDAO.Instance.MarcarEntrada(transaction, p.IdProdCompra, p.QtdMarcadaEntrada, idEntradaEstoque);
 
-                            int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdProd);
+                            int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdProd, false);
                             float qtdCredito = p.QtdMarcadaEntrada;
 
                             if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||

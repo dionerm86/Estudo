@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using GDA;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
@@ -15,7 +15,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDPRODIMPRESSAO", PersistenceParameterType.IdentityKey)]
         public int IdProdImpressao { get; set; }
 
-        [Log(TipoLog.Cancelamento, "Impressão")]
+        [Log(TipoLog.Cancelamento, "ImpressÃ£o")]
         [PersistenceProperty("IDIMPRESSAO")]
         public uint? IdImpressao { get; set; }
 
@@ -39,7 +39,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDNF")]
         public uint? IdNf { get; set; }
 
-        [Log(TipoLog.Cancelamento, "Posição produto")]
+        [Log(TipoLog.Cancelamento, "PosiÃ§Ã£o produto")]
         [PersistenceProperty("POSICAOPROD")]
         public int PosicaoProd { get; set; }
 
@@ -55,11 +55,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("PLANOCORTE")]
         public string PlanoCorte { get; set; }
 
-        [Log(TipoLog.Cancelamento, "Posição Arquivo Otimização")]
+        [Log(TipoLog.Cancelamento, "PosiÃ§Ã£o Arquivo OtimizaÃ§Ã£o")]
         [PersistenceProperty("POSICAOARQOTIMIZ")]
         public int PosicaoArqOtimiz { get; set; }
 
-        [Log(TipoLog.Cancelamento, "Número Sequência")]
+        [Log(TipoLog.Cancelamento, "NÃºmero SequÃªncia")]
         [PersistenceProperty("NUMSEQ")]
         public int NumSeq { get; set; }
 
@@ -70,7 +70,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("CANCELADO")]
         public bool Cancelado { get; set; }
 
-        [Log(TipoLog.Cancelamento, "Retalho Produção", "NumeroEtiqueta", typeof(RetalhoProducaoDAO), "IdRetalhoProducao", "Obter", true)]
+        [Log(TipoLog.Cancelamento, "Retalho ProduÃ§Ã£o", "NumeroEtiqueta", typeof(RetalhoProducaoDAO), "IdRetalhoProducao", "Obter", true)]
         [PersistenceProperty("IDRETALHOPRODUCAO")]
         [PersistenceForeignKey(typeof(RetalhoProducao), nameof(RetalhoProducao.IdRetalhoProducao))]
         public int? IdRetalhoProducao { get; set; }
@@ -112,7 +112,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("CodAplicacao", DirectionParameter.InputOptional)]
         public string CodAplicacao { get; set; }
 
-        [Log(TipoLog.Atualizacao, "Observação")]
+        [Log(TipoLog.Atualizacao, "ObservaÃ§Ã£o")]
         [PersistenceProperty("Obs", DirectionParameter.InputOptional)]
         public string Obs { get; set; }
 
@@ -167,12 +167,12 @@ namespace Glass.Data.Model
 
         public float TotM2
         {
-            get { return Glass.Global.CalculosFluxo.ArredondaM2((int)Largura, (int)Altura, (int)Qtde, (int)IdProd, false); }
+            get { return Glass.Global.CalculosFluxo.ArredondaM2(null, (int)Largura, (int)Altura, (float)Qtde, (int)IdProd, false, 0, true); }
         }
 
         public string TituloDataEntrega
         {
-            get { return "Data Entrega" + (TipoData == (long)DataSources.TipoDataEtiquetaEnum.Fábrica ? " Fábrica" : ""); }
+            get { return "Data Entrega" + (TipoData == (long)DataSources.TipoDataEtiquetaEnum.FÃ¡brica ? " FÃ¡brica" : ""); }
         }
 
         public string DataEntregaExibicao

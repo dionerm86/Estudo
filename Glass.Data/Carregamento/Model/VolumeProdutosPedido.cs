@@ -59,7 +59,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdProd);
+                return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)IdProd, false);
             }
         }
 
