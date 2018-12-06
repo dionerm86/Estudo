@@ -11,7 +11,7 @@ namespace Glass.Global.Negocios.Componentes
     /// <summary>
     /// Implementação do fluxo de produtos.
     /// </summary>
-    public class ProdutoFluxo : IProdutoFluxo, 
+    public class ProdutoFluxo : IProdutoFluxo,
         Entidades.IProdutoBeneficiamentosRepositorio,
         Entidades.IValidadorProduto,
         Entidades.IValidadorCorAluminio,
@@ -71,7 +71,7 @@ namespace Glass.Global.Negocios.Componentes
         {
             if (!Glass.Configuracoes.Geral.UsarBeneficiamentosTodosOsGrupos)
                 return (int)Glass.Data.Model.NomeGrupoProd.Vidro == idGrupoProd;
-            
+
             else
                 return true;
         }
@@ -82,7 +82,7 @@ namespace Glass.Global.Negocios.Componentes
         public IList<Entidades.ProdutoPesquisa> PesquisarProdutos(
             string codInterno, string descricao, Glass.Situacao? situacao, int? idLoja, int? idFornec, string nomeFornecedor,
             string idGrupo, string idSubgrupo, TipoNegociacaoProduto? tipoNegociacao,
-            bool apenasProdutosEstoqueBaixa, bool agruparEstoqueLoja, 
+            bool apenasProdutosEstoqueBaixa, bool agruparEstoqueLoja,
             decimal? alturaInicio, decimal? alturaFim, decimal? larguraInicio, decimal? larguraFim, string ordenacao)
         {
             var consulta = SourceContext.Instance.CreateQuery()
@@ -92,8 +92,8 @@ namespace Glass.Global.Negocios.Componentes
                 .LeftJoin<Data.Model.Funcionario>("p.UsuAlt=falt.IdFunc", "falt")
                 .LeftJoin<Data.Model.Funcionario>("p.Usucad=fcad.IdFunc", "fcad")
                 .Select(
-                    @"p.IdProd, ISNULL(sg.TipoCalculo, gp.TipoCalculo) AS TipoCalculo, 
-                      p.IdGrupoProd, p.IdSubgrupoProd, p.CodInterno, p.Descricao, 
+                    @"p.IdProd, ISNULL(sg.TipoCalculo, gp.TipoCalculo) AS TipoCalculo,
+                      p.IdGrupoProd, p.IdSubgrupoProd, p.CodInterno, p.Descricao,
                       CONCAT(gp.Descricao, ' ', ISNULL(sg.Descricao, '')) AS TipoProduto,
                       gp.Descricao AS Grupo, sg.Descricao AS Subgrupo,
                       p.Altura, p.Largura, p.Custofabbase, p.CustoCompra, p.ValorAtacado,
@@ -236,9 +236,9 @@ namespace Glass.Global.Negocios.Componentes
                             .Add("?compra", false)
                             .AddDescription("Produtos de venda");
                         break;
-            
+
                     case TipoNegociacaoProduto.Compra:
-            
+
                         consulta.WhereClause
                             .And("p.Compra=?compra")
                             .Add("?compra", true)
@@ -295,8 +295,8 @@ namespace Glass.Global.Negocios.Componentes
                 .InnerJoin<Data.Model.GrupoProd>("p.IdGrupoProd=gp.IdGrupoProd", "gp")
                 .LeftJoin<Data.Model.SubgrupoProd>("p.IdSubgrupoProd=sg.IdSubgrupoProd", "sg")
                 .Select(
-                    @"p.IdProd, ISNULL(sg.TipoCalculo, gp.TipoCalculo) AS TipoCalculo, 
-                      p.IdGrupoProd, p.IdSubgrupoProd, p.CodInterno, p.Descricao, 
+                    @"p.IdProd, ISNULL(sg.TipoCalculo, gp.TipoCalculo) AS TipoCalculo,
+                      p.IdGrupoProd, p.IdSubgrupoProd, p.CodInterno, p.Descricao,
                       p.Altura, p.Largura, p.Custofabbase, p.CustoCompra, p.ValorAtacado,
                       p.ValorBalcao, p.ValorObra, p.ValorReposicao, p.ValorMinimo")
                 .OrderBy(string.IsNullOrEmpty(ordenacao) ? "CodInterno" : ordenacao);
@@ -414,7 +414,7 @@ namespace Glass.Global.Negocios.Componentes
             while (count > 0)
             {
                 var take = count < 100 ? count : 100;
-                
+
                 // Recupera o filtro dos identificadores do produto
                 var identificadores = string.Format("IdProd IN ({0})",
                             string.Join(",",
@@ -427,7 +427,7 @@ namespace Glass.Global.Negocios.Componentes
                 consultas.Add<Data.Model.MvaProdutoUf>(
                     SourceContext.Instance.CreateQuery()
                         .From<Data.Model.MvaProdutoUf>()
-                        .Where(identificadores), 
+                        .Where(identificadores),
                           (sender, q, result) =>
                           {
                               mvas.AddRange(result);
@@ -470,7 +470,7 @@ namespace Glass.Global.Negocios.Componentes
                             }
 
                             return text.AppendFormat("MVA Original: {0} MVA Simples: {1}", mva.MvaOriginal, mva.MvaSimples).ToString();
-                            
+
                         })
                         .ToArray());
 
@@ -529,17 +529,17 @@ namespace Glass.Global.Negocios.Componentes
                     @"p.IdProd, p.CodInterno, p.Descricao, ISNULL(f.Nomefantasia, f.Razaosocial) AS NomeFornecedor,
                       p.Altura, p.Largura, pcc.Descricao AS PlanoContaContabil, g.Descricao AS Grupo, sg.Descricao AS Subgrupo,
                       p.Situacao, p.TipoMercadoria, p.AreaMinima, cv.Descricao AS Cor, p.Espessura,
-                      p.Peso, p.Forma, p.ValorFiscal, p.ValorObra, p.ValorAtacado, p.ValorBalcao, 
+                      p.Peso, p.Forma, p.ValorFiscal, p.ValorObra, p.ValorAtacado, p.ValorBalcao,
                       p.ValorReposicao, p.ValorTransferencia,
                       p.Custofabbase, p.CustoCompra, p.AliqIPI, p.Cst, p.Csosn, p.CstIpi,
                       p.Ncm, p.GTINProduto, p.GTINUnidTrib, gp.IdGeneroProduto, gp.Descricao AS GeneroProduto,
                       um.Codigo AS Unidade, umt.Codigo AS UnidadeTrib, p.AtivarAreaMinima,
                       pbef.IdProd AS IdProdBaixaEstoqueFiscal,
-                      pbef.CodInterno AS CodInternoBaixaEstoqueFiscal, 
+                      pbef.CodInterno AS CodInternoBaixaEstoqueFiscal,
                       pbef.Descricao AS DescricaoBaixaEstoqueFiscal,
                       ?pbeQtde AS QtdeBaixaEstoque")
                 .Where("p.IdProd=?id")
-                .Add("?pbeQtde", 
+                .Add("?pbeQtde",
                     SourceContext.Instance.CreateQuery()
                         .From<Data.Model.ProdutoBaixaEstoque>()
                         .Count()
@@ -572,7 +572,7 @@ namespace Glass.Global.Negocios.Componentes
         /// <returns></returns>
         public IList<Entidades.FichaProduto> ObtemFichasProdutos(
             int? idFornec, string nomeFornec, int? idGrupoProd, int? idSubgrupoProd, string codInterno, string descricao,
-            TipoNegociacaoProduto tipoNegociacao, Glass.Situacao? situacao, bool apenasProdutosEstoqueBaixa, 
+            TipoNegociacaoProduto tipoNegociacao, Glass.Situacao? situacao, bool apenasProdutosEstoqueBaixa,
             decimal alturaInicio, decimal alturaFim, decimal larguraInicio, decimal larguraFim, string ordenacao)
         {
             var consulta = SourceContext.Instance.CreateQuery()
@@ -595,13 +595,13 @@ namespace Glass.Global.Negocios.Componentes
                    @" p.IdProd, p.CodInterno, p.Descricao, ISNULL(f.Nomefantasia, f.Razaosocial) AS NomeFornecedor,
                       p.Altura, p.Largura, pcc.Descricao AS PlanoContaContabil, g.Descricao AS Grupo, sg.Descricao AS Subgrupo,
                       p.Situacao, p.TipoMercadoria, p.AreaMinima, cv.Descricao AS Cor, p.Espessura,
-                      p.Peso, p.Forma, p.ValorFiscal, p.ValorObra, p.ValorAtacado, p.ValorBalcao, 
+                      p.Peso, p.Forma, p.ValorFiscal, p.ValorObra, p.ValorAtacado, p.ValorBalcao,
                       p.ValorReposicao, p.ValorTransferencia,
                       p.Custofabbase, p.CustoCompra, p.AliqIPI, p.Cst, p.Csosn, p.CstIpi,
                       p.Ncm, p.GTINProduto, p.GTINUnidTrib, gp.IdGeneroProduto, gp.Descricao AS GeneroProduto,
                       um.Codigo AS Unidade, umt.Codigo AS UnidadeTrib, p.AtivarAreaMinima,
                       pbe.IdProd AS IdProdBaixaEstoqueFiscal,
-                      pbe.CodInterno AS CodInternoBaixaEstoqueFiscal, 
+                      pbe.CodInterno AS CodInternoBaixaEstoqueFiscal,
                       pbe.Descricao AS DescricaoBaixaEstoqueFiscal,
                       ?pbeQtde AS QtdeBaixaEstoque")
                 .Add("?pbeQtde",
@@ -629,7 +629,7 @@ namespace Glass.Global.Negocios.Componentes
                     .And("p.IdGrupoProd=?idGrupoProd")
                     .Add("?idGrupoProd", idGrupoProd)
                     .AddDescription(() =>
-                        string.Format("Grupo: {0}", 
+                        string.Format("Grupo: {0}",
                             SourceContext.Instance.CreateQuery()
                                 .From<Data.Model.GrupoProd>()
                                 .Select<Data.Model.GrupoProd>(f => f.Descricao)
@@ -644,7 +644,7 @@ namespace Glass.Global.Negocios.Componentes
                     .And("p.IdSubgrupoProd=?idSubgrupoProd")
                     .Add("?idSubgrupoProd", idGrupoProd)
                     .AddDescription(() =>
-                        string.Format("Subgrupo: {0}", 
+                        string.Format("Subgrupo: {0}",
                             SourceContext.Instance.CreateQuery()
                                 .From<Data.Model.SubgrupoProd>()
                                 .Select<Data.Model.SubgrupoProd>(f => f.Descricao)
@@ -670,12 +670,12 @@ namespace Glass.Global.Negocios.Componentes
                 whereClause
                     .And("(p.Compra=0 OR p.Compra is null)")
                     .AddDescription("Produtos de venda   ");
-            
+
             else if (tipoNegociacao == TipoNegociacaoProduto.Compra)
                 whereClause
                     .And("p.Compra=1")
                     .AddDescription("Produtos de compra   ");
-            
+
             else
                 whereClause.AddDescription("Produtos de compra e venda    ");
 
@@ -688,7 +688,7 @@ namespace Glass.Global.Negocios.Componentes
             if (apenasProdutosEstoqueBaixa)
             {
                 whereClause.And("p.IdProd IN  (?baixaEstoque)")
-                    .Add("?baixaEstoque", 
+                    .Add("?baixaEstoque",
                         SourceContext.Instance.CreateQuery()
                             .From<Data.Model.ProdutoBaixaEstoque>()
                             .Where("IdProdBaixa > 0")
@@ -702,7 +702,7 @@ namespace Glass.Global.Negocios.Componentes
                 whereClause
                     .And("p.Altura >= ?alturaInicio")
                     .Add("?alturaInicio", alturaInicio);
-                
+
                 if (alturaFim > 0)
                     whereClause
                         .And("p.Altura <= ?alturaFim")
@@ -716,7 +716,7 @@ namespace Glass.Global.Negocios.Componentes
                 whereClause
                     .And("p.Largura >= ?larguraInicio")
                     .Add("?larguraInicio", larguraInicio);
-                
+
                 if (alturaFim > 0)
                     whereClause
                         .And("p.Largura <= ?larguraFim")
@@ -728,7 +728,7 @@ namespace Glass.Global.Negocios.Componentes
             var resultado = consulta.Execute<Entidades.FichaProduto>().ToList();
             CompletaDados(resultado);
 
-            return resultado;               
+            return resultado;
         }
 
         /// <summary>
@@ -759,6 +759,31 @@ namespace Glass.Global.Negocios.Componentes
                 .Where(string.Format("IdProd IN ({0})", ids))
                 .ProcessResultDescriptor<Entidades.Produto>()
                 .ToList();
+        }
+
+        /// <summary>
+        /// Obtém todos os produtos do sistema.
+        /// </summary>
+        /// <returns>Produtos do sistema.</returns>
+        public IEnumerable<Entidades.Produto> ObterTodosProdutos()
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.Produto>()
+                .ProcessLazyResult<Entidades.Produto>();
+        }
+
+        /// <summary>
+        /// Obtém a quantidade de todos os produtos do sistem.
+        /// </summary>
+        /// <returns>Quantidade de produtos castradaos no sistema.</returns>
+        public int ObterQuantidadeTodosProduto()
+        {
+            return SourceContext.Instance.CreateQuery()
+               .From<Data.Model.Produto>()
+               .Count()
+               .Execute()
+               .Select(f => f.GetInt32(0))
+               .First();
         }
 
         /// <summary>
@@ -851,6 +876,17 @@ namespace Glass.Global.Negocios.Componentes
             /* Chamado 52522. */
             if (produto.Subgrupo == null || produto.IdSubgrupoProd.GetValueOrDefault() == 0)
                 return new Colosoft.Business.SaveResult(false, "Informe o subgrupo do produto.".GetFormatter());
+
+            // Chamado 13679.
+            // O usuário estava associando matéria prima em um produto associado ao grupo de retalho de produção,
+            // como isso não pode ser feito a matéria prima não era salva e para o usuário aparentemente era um erro.
+            if (produto.BaixasEstoque != null && produto.BaixasEstoque.Count > 0 &&
+                produto.IdSubgrupoProd == (uint)Utils.SubgrupoProduto.RetalhosProducao)
+            {
+                return new Colosoft.Business.SaveResult(
+                    false,
+                    "Não é possível associar matéria prima em produtos associados ao subgrupo Retalhos de Produção.".GetFormatter());
+            }
 
             // Se produto for do tipo mercadoria produto para acabado, obriga a informar os campos matéria prima e produto para baixa
             if (produto.IdGrupoProd == (int)Data.Model.NomeGrupoProd.Vidro && produto.TipoMercadoria == Data.Model.TipoMercadoria.ProdutoAcabado)
@@ -1071,7 +1107,11 @@ namespace Glass.Global.Negocios.Componentes
             }
 
             if (retorno)
-                LogAlteracaoDAO.Instance.LogProduto(produto.DataModel, LogAlteracaoDAO.SequenciaObjeto.Novo);
+            {
+                /* O enum define se o produto passado é o valor atual ou novo,
+                o valor da model em memória está desatualizado, portanto o valor deve ser o Atual.*/
+                LogAlteracaoDAO.Instance.LogProduto(produto.DataModel, LogAlteracaoDAO.SequenciaObjeto.Atual);
+            }
 
             return retorno;
         }
@@ -1328,7 +1368,7 @@ namespace Glass.Global.Negocios.Componentes
                 consulta.WhereClause
                     .And("IdProd <> ?idProd")
                     .Add("?idProd", produto.IdProd);
-            
+
             if (consulta.ExistsResult())
                 return new IMessageFormattable[]
                 {
@@ -1376,7 +1416,7 @@ namespace Glass.Global.Negocios.Componentes
             var tratarResultado = new Func<string, Colosoft.Query.QueryCallBack>(mensagem =>
                (sender, query, result) =>
                    {
-                       if (result.Select(f => f.GetInt32(0)).FirstOrDefault() > 0 && 
+                       if (result.Select(f => f.GetInt32(0)).FirstOrDefault() > 0 &&
                            !mensagens.Contains(mensagem))
                            mensagens.Add(mensagem);
                    });
@@ -1443,7 +1483,7 @@ namespace Glass.Global.Negocios.Componentes
                 // Verifica se o produto possui fornecedores associados.
                 .Add(criarConsulta(typeof(Data.Model.ProdutoFornecedor)),
                     tratarResultado("Este produto não pode ser excluído pois existem fornecedores relacionados ao mesmo."));
-                 
+
             consultas.Execute();
 
             return mensagens.Select(f => f.GetFormatter()).ToArray();

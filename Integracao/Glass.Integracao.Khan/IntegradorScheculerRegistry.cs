@@ -16,29 +16,40 @@ namespace Glass.Integracao.Khan
     /// </summary>
     internal class IntegradorScheculerRegistry : FluentScheduler.Registry
     {
-        private readonly Jobs.MonitorIndicadoresFinanceirosJob indicadoresFinanceirosJob;
-
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="IntegradorScheculerRegistry"/>.
         /// </summary>
         /// <param name="integrador">Integrador que será configurador.</param>
         public IntegradorScheculerRegistry(IntegradorKhan integrador)
         {
-            this.indicadoresFinanceirosJob = new Jobs.MonitorIndicadoresFinanceirosJob(integrador.MonitorIndicadoresFinanceiros, integrador.Logger);
-            this.indicadoresFinanceirosJob.Schedule = this.Schedule(this.indicadoresFinanceirosJob)
+            var indicadoresFinanceirosJob = new Jobs.MonitorIndicadoresFinanceirosJob(integrador.MonitorIndicadoresFinanceiros, integrador.Logger);
+            indicadoresFinanceirosJob.Schedule = this.Schedule(indicadoresFinanceirosJob)
                 .WithName("KhanMonitorIndicadoresFinanceiros");
-            this.indicadoresFinanceirosJob.Schedule.NonReentrant().ToRunNow().AndEvery(5).Minutes();
+            indicadoresFinanceirosJob.Schedule.NonReentrant().ToRunNow().AndEvery(5).Minutes();
+
+            var notaFiscalJob = new Jobs.MonitorNotaFiscalJob(integrador.MonitorNotaFiscal, integrador.Logger);
+            notaFiscalJob.Schedule = this.Schedule(notaFiscalJob)
+                .WithName("KhanMonitorNotaFiscal");
+            notaFiscalJob.Schedule.NonReentrant().ToRunNow().AndEvery(15).Seconds();
+
+            var sincronizarTodosProdutosJob = new Jobs.SinronizadorTodosProdutosJob(integrador.MonitorProdutos, integrador.Logger);
+            var monitorCondicoesPagamento = new Jobs.MonitorCondicoesPagamentoJob(integrador.MonitorCondicoesPagamento, integrador.Logger);
+            monitorCondicoesPagamento.Schedule = this.Schedule(notaFiscalJob)
+                .WithName("KhanMonitorCondicoesPagamento");
+            notaFiscalJob.Schedule.NonReentrant().ToRunNow().AndEvery(5).Minutes();
+
+            this.Jobs = new IJobIntegracao[]
+            {
+                indicadoresFinanceirosJob,
+                notaFiscalJob,
+                sincronizarTodosProdutosJob,
+                monitorCondicoesPagamento,
+            };
         }
 
         /// <summary>
         /// Obtém os jobs.
         /// </summary>
-        public IEnumerable<IJobIntegracao> Jobs
-        {
-            get
-            {
-                yield return this.indicadoresFinanceirosJob;
-            }
-        }
+        public IEnumerable<IJobIntegracao> Jobs { get; }
     }
 }

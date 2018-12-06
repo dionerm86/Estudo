@@ -105,10 +105,10 @@ namespace Glass.UI.Web.Utils
 
                     case Sync.Utils.CodigoBanco.CaixaEconomicaFederal:
                         if (dados.Instrucao1 > 0)
-                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoCaixa(dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0));
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoCaixa(dados.Instrucao1, 0, 0, 0, 0, 0, 0, 0, 0));
 
                         if (dados.Instrucao2 > 0)
-                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoCaixa(dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0));
+                            boletos.Instrucoes.Add(new Sync.Utils.Boleto.Instrucoes.InstrucaoCaixa(dados.Instrucao2, 0, 0, 0, 0, 0, 0, 0, 0));
 
                         break;
 

@@ -53,6 +53,7 @@ namespace Glass.Integracao
         /// <summary>
         /// Força a execução do job.
         /// </summary>
-        void Executar();
+        /// <returns>Tarefa.</returns>
+        Task Executar();
     }
 }

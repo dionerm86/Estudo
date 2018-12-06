@@ -92,6 +92,10 @@ namespace Glass.Data.DAL
                         return true;
                     }
                 }
+                else if (tipoArquivo == (int)TipoArquivoMesaCorte.SAG)
+                {
+                    return false;
+                }
             }
 
             var pecaItemProjeto = new PecaItemProjeto();
@@ -12581,29 +12585,41 @@ namespace Glass.Data.DAL
             //Verifica se tem arquivo dxf salvo editado anteriormente.
             if (File.Exists(caminhoDxf))
             {
-                var dxfDocument = CalcEngine.Dxf.DxfDocument.Load(caminhoDxf);
-                var novoPacote = CalcEngine.Dxf.DxfProject.Import(dxfDocument);
-                //novoPacote.Save("d:/novoPacote.package");
+                CalcEngine.Dxf.DxfDocument dxfDocument = null;
 
-                /* Chamado 23500. */
-                //Variáveis Compilador
-                PreencheVariaveisCompilador(pecaItemProjeto, variaveisCalcEngine, descontoLap, tipoArquivo);
+                using (var stream = System.IO.File.OpenRead(caminhoDxf))
+                {
+                    if (stream.Length > 0)
+                    {
+                        dxfDocument = CalcEngine.Dxf.DxfDocument.Load(stream);
+                    }
+                }
 
-                //Variáveis Calc Engine
-                PreencheVariaveisCalcEngine(session, tipoArquivo, pecaItemProjeto, altura, largura, mensagemErro, codigoArquivo, config, variaveisCalcEngine, arquivoCeVar, acrescimoSag);
+                if (dxfDocument != null)
+                {
+                    var novoPacote = CalcEngine.Dxf.DxfProject.Import(dxfDocument);
+                    //novoPacote.Save("d:/novoPacote.package");
 
-                /* Chamados 54424 e 54913. */
-                if (flags != null && (flags.Any(f => !string.IsNullOrWhiteSpace(f.Descricao) && f.Descricao.ToLower().Contains("rotateangle")) ||
-                    flags.Any(f => !string.IsNullOrWhiteSpace(f.Descricao) && f.Descricao.ToLower().Contains("mirror"))))
-                    foreach (var flag in flags.Where(f => !string.IsNullOrWhiteSpace(f.Descricao) && (f.Descricao.ToLower().Contains("rotateangle") ||
-                        f.Descricao.ToLower().Contains("mirror"))).ToList())
-                        flags.Remove(flag);
+                    /* Chamado 23500. */
+                    //Variáveis Compilador
+                    PreencheVariaveisCompilador(pecaItemProjeto, variaveisCalcEngine, descontoLap, tipoArquivo);
 
-                // Salva a marcação da peça conforme o tipo do arquivo.
-                retorno = SalvarArquivoCalcEngine(idProdPed, espessura, novoPacote, variaveisCalcEngine, arquivo, tipoArquivo, descontoLap, flags, forCadProject, forSGlass, forIntermac);
+                    //Variáveis Calc Engine
+                    PreencheVariaveisCalcEngine(session, tipoArquivo, pecaItemProjeto, altura, largura, mensagemErro, codigoArquivo, config, variaveisCalcEngine, arquivoCeVar, acrescimoSag);
 
-                if (retorno != null)
-                    return;
+                    /* Chamados 54424 e 54913. */
+                    if (flags != null && (flags.Any(f => !string.IsNullOrWhiteSpace(f.Descricao) && f.Descricao.ToLower().Contains("rotateangle")) ||
+                        flags.Any(f => !string.IsNullOrWhiteSpace(f.Descricao) && f.Descricao.ToLower().Contains("mirror"))))
+                        foreach (var flag in flags.Where(f => !string.IsNullOrWhiteSpace(f.Descricao) && (f.Descricao.ToLower().Contains("rotateangle") ||
+                            f.Descricao.ToLower().Contains("mirror"))).ToList())
+                            flags.Remove(flag);
+
+                    // Salva a marcação da peça conforme o tipo do arquivo.
+                    retorno = SalvarArquivoCalcEngine(idProdPed, espessura, novoPacote, variaveisCalcEngine, arquivo, tipoArquivo, descontoLap, flags, forCadProject, forSGlass, forIntermac);
+
+                    if (retorno != null)
+                        return;
+                }
             }
 
             var caminhoPackage = Utils.GetArquivoCalcEnginePath + codigoArquivo + ".calcpackage";

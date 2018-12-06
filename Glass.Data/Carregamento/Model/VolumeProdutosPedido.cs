@@ -43,6 +43,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("NOMESUBGRUPOPROD", DirectionParameter.InputOptional)]
         public string NomeSubGrupoProd { get; set; }
 
+        [PersistenceProperty("NOMEGRUPOPROD", DirectionParameter.InputOptional)]
+        public string NomeGrupoProd { get; set; }
+
         #endregion
 
         #region Prodiedades de Suporte

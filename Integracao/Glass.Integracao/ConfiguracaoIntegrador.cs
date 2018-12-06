@@ -28,16 +28,6 @@ namespace Glass.Integracao
         public IEnumerable<string> NomesParametro => this.parametros.Keys;
 
         /// <summary>
-        /// Verfica se a configuração é somente leitura.
-        /// </summary>
-        /// <param name="nome">Nome da configuração.</param>
-        /// <returns>True se a configuração for somente leitura.</returns>
-        public virtual bool VerificarSomenteLeitura(string nome)
-        {
-            return false;
-        }
-
-        /// <summary>
         /// Obtém ou define o parâmetro associado com o nome informado.
         /// </summary>
         /// <param name="nome">Nome do parâmetro.</param>
@@ -53,6 +43,16 @@ namespace Glass.Integracao
             {
                 this.parametros[nome] = value;
             }
+        }
+
+        /// <summary>
+        /// Verfica se a configuração é somente leitura.
+        /// </summary>
+        /// <param name="nome">Nome da configuração.</param>
+        /// <returns>True se a configuração for somente leitura.</returns>
+        public virtual bool VerificarSomenteLeitura(string nome)
+        {
+            return false;
         }
 
         /// <summary>

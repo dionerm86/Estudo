@@ -64,13 +64,21 @@ namespace Glass.API.Backend.Controllers.Integracao.V1.Integradores
                 return this.NaoEncontrado($"Não foi possível encontrar o job '{job}'.");
             }
 
-            try
+
+            if (job1.Situacao != Glass.Integracao.SituacaoJobIntegracao.Executando)
             {
-                job1.Executar();
+                try
+                {
+                    job1.Executar();
+                }
+                catch (Exception ex)
+                {
+                    return this.ErroInternoServidor("Ocorreu um problema na execução do job.", ex);
+                }
             }
-            catch (Exception ex)
+            else
             {
-                return this.ErroInternoServidor("Ocorreu um problema na execução do job.", ex);
+                return this.ErroInternoServidor("O job já está em execução.");
             }
 
             return this.Ok();

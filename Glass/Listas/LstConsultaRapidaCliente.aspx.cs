@@ -86,12 +86,16 @@ namespace Glass.UI.Web.Listas
 
             #region Dados Financeiros
 
-            lblFinancLimPadrao.Text = cli.Limite.ToString("C");
+            var limiteCliente = Data.CalculadoraLimiteCredito.Calculadora.ObterLimite(null, cli);
+
+            lblFinancLimPadrao.Text = limiteCliente.ToString("C");
             lblPagarAntesProducao.Text = cli.PagamentoAntesProducao ? "Sim" : "Não";
             lblTabelaDescontoAcrescimo.Text = cli.TabelaDescontoAcrescimo;
 
-            if (cli.Limite > 0)
-                lblFinancLimDisp.Text = (cli.Limite - ContasReceberDAO.Instance.GetDebitos((uint)cli.IdCli, null)).ToString("C");
+            if (limiteCliente > 0)
+            {
+                lblFinancLimDisp.Text = (limiteCliente - ContasReceberDAO.Instance.GetDebitos((uint)cli.IdCli, null)).ToString("C");
+            }
 
             lblFinancPagtoPadrao.Text = FormaPagtoDAO.Instance.GetDescricao((uint)cli.IdFormaPagto.GetValueOrDefault(0));
 

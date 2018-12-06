@@ -15,7 +15,7 @@
                         <button class="btn try-out__btn cancel" type="button" v-if="testando" @click.prevent="cancelarTeste()">Cancelar</button>
                     </div>
                 </div>
-                <div class="table-container">
+                <div class="table-container" v-if="parametros != null && parametros.length > 0">
                     <table class="parametros">
                         <thead>
                             <tr>

@@ -3898,15 +3898,15 @@ namespace Glass.Data.DAL
             string dataIniEntrega, string dataFimEntrega, bool isSinal, bool forList, out bool temFiltro, out string filtroAdicional)
         {
             var sql = this.SqlSinaisRecebidos(
-                idCliente, 
-                0, 
-                0, 
-                null, 
-                null, 
-                false, 
-                !isSinal, 
-                true, 
-                out temFiltro, 
+                idCliente,
+                0,
+                0,
+                null,
+                null,
+                false,
+                !isSinal,
+                true,
+                out temFiltro,
                 out filtroAdicional);
 
             if (sql.Contains(" ORDER BY"))
@@ -3927,14 +3927,14 @@ namespace Glass.Data.DAL
             if (idCliente == 0 && !string.IsNullOrEmpty(nomeCliente))
             {
                 var ids = ClienteDAO.Instance.GetIds(
-                    null, 
-                    nomeCliente, 
-                    null, 
-                    0, 
-                    null, 
-                    null, 
-                    null, 
-                    null, 
+                    null,
+                    nomeCliente,
+                    null,
+                    0,
+                    null,
+                    null,
+                    null,
+                    null,
                     0);
 
                 filtroAdicional += $" AND p.IdCli IN ({ids})";
@@ -3954,7 +3954,7 @@ namespace Glass.Data.DAL
             {
                 filtroAdicional += $" AND p.IdPedido NOT IN ({idsPedidosRem.TrimEnd(',')})";
             }
-                
+
             if (!isSinal)
             {
                 filtroAdicional += " AND p.Total > p.ValorEntrada";
@@ -4317,7 +4317,7 @@ namespace Glass.Data.DAL
 
             var retorno = "";
             foreach (var i in itens)
-                if (!lstPedidosRem.Contains(i.ToString()) && !ObtemOrdemCargaParcial(null,i))
+                if (!lstPedidosRem.Contains(i.ToString()) && !ObtemOrdemCargaParcial(null, i))
                     retorno += "," + i;
 
             return retorno.Length > 0 ? retorno.Substring(1) : "0";
@@ -4526,7 +4526,7 @@ namespace Glass.Data.DAL
             string filtroAdicional;
 
             var sql = Sql(idPedido, 0, null, null, 0, idCliente, nomeCliente, 0, null, 0, null, null, null, null, null,
-                vendas, maoDeObra, maoDeObraEspecial, producao, null, null, null,null, null, 0, false, true, 0, 0, 0, 0, 0, null,
+                vendas, maoDeObra, maoDeObraEspecial, producao, null, null, null, null, null, 0, false, true, 0, 0, 0, 0, 0, null,
                 0, 0, 0, null, true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
 
             sql += " and p.DataEntrega>=?inicio And p.DataEntrega<=?fim and p.Situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + @"
@@ -4673,7 +4673,7 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrWhiteSpace(codRota))
             {
-                sql += " AND r.codInterno = ?codRota";
+                sql += @" And c.id_Cli IN (Select idCliente From rota_cliente Where idRota=?codRota)";
             }
 
             if (!string.IsNullOrWhiteSpace(codRotaExterna))
@@ -4751,7 +4751,7 @@ namespace Glass.Data.DAL
             if (string.IsNullOrEmpty(sortExpression))
                 sql += " ORDER BY idPedido DESC";
 
-            var pedidos = LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize,
+            var pedidos = objPersistence.LoadDataWithSortExpression(sql, new InfoSortExpression(sortExpression), new InfoPaging(startRow, pageSize),
                 GetParametersVolume(dataEntIni, dataEntFim, dataLibIni, dataLibFim, codRota, idsRotasExternas)).ToArray();
 
             return pedidos;
@@ -5675,7 +5675,7 @@ namespace Glass.Data.DAL
                     {
                         var mensagemErro = new List<string>();
                         var idCliente = ObtemIdCliente(transaction, (uint)idPedido);
-                        var limiteCliente = ClienteDAO.Instance.ObtemLimite(transaction, idCliente);
+                        var limiteCliente = Data.CalculadoraLimiteCredito.Calculadora.ObterLimite(transaction, (int)idCliente);
                         var debitosCliente = ContasReceberDAO.Instance.GetDebitos(transaction, idCliente, null);
                         var totalPedido = GetTotal(transaction, (uint)idPedido);
 
@@ -6534,7 +6534,7 @@ namespace Glass.Data.DAL
                     {
                         try
                         {
-                            ConfirmarLiberacaoPedido(session, new List<int> { (int)idPedido } , true);
+                            ConfirmarLiberacaoPedido(session, new List<int> { (int)idPedido }, true);
                         }
                         catch (ValidacaoPedidoFinanceiroException f)
                         {
@@ -7550,13 +7550,14 @@ namespace Glass.Data.DAL
                 // Verifica se a empresa considera pedidos conferidos (todos ou apenas à vista) no limite do cliente
                 if (!consideraPedidoConferido || naoVerificaPedidoAVista)
                 {
+
                     foreach (var idCliente in idsCliente)
                     {
                         var nomeCliente = ClienteDAO.Instance.GetNome(sessao, (uint)idCliente);
                         // Recupera os débitos do cliente
                         var debitos = ContasReceberDAO.Instance.GetDebitos(sessao, (uint)idCliente, null);
                         // Recupera o limite do cliente
-                        var limite = ClienteDAO.Instance.ObtemLimite(sessao, (uint)idCliente);
+                        var limite = Data.CalculadoraLimiteCredito.Calculadora.ObterLimite(sessao, idCliente);
                         // Se a empresa não considera pedidos conferidos no limite, soma o total de todos os pedidos sendo confirmados,
                         // mas caso a empresa apenas não verifique o limite ao finalizar pedido à vista, puxa o total de todos os pedidos
                         // sendo confirmados que forem à vista e que não foi recebido antecipado
@@ -13009,12 +13010,16 @@ namespace Glass.Data.DAL
             {
                 /* Chamado 47744. */
                 if (UserInfo.GetUserInfo == null || (UserInfo.GetUserInfo.CodUser == 0 && UserInfo.GetUserInfo.IdCliente == 0))
+                {
                     throw new Exception("Não foi possível recuperar o login do usuário.");
+                }
 
                 if (dataBase == null || dataBase.Value.Ticks == 0)
+                {
                     dataBase = DateTime.Now;
+                }
 
-                tipoPedido = tipoPedido != null ? tipoPedido : idPedido > 0 ? (int?)GetTipoPedido(session, idPedido.Value) : null;
+                tipoPedido = tipoPedido != null ? tipoPedido : idPedido > 0 ? (int?)this.GetTipoPedido(session, idPedido.Value) : null;
 
                 DateTime? dataRota = RotaDAO.Instance.GetDataRota(session, idCli, dataBase.Value.Date, (Pedido.TipoPedidoEnum)tipoPedido);
 
@@ -13031,7 +13036,8 @@ namespace Glass.Data.DAL
                 {
                     var existeTipo = PedidoConfig.DiasMinimosEntregaTipo.ContainsKey((Pedido.TipoEntregaPedido)tipoEntrega.Value);
 
-                    numeroDiasUteisMinimoConfig = Math.Max(numeroDiasUteisMinimoConfig,
+                    numeroDiasUteisMinimoConfig = Math.Max(
+                        numeroDiasUteisMinimoConfig,
                         existeTipo ? PedidoConfig.DiasMinimosEntregaTipo[(Pedido.TipoEntregaPedido)tipoEntrega.Value] : 0);
                 }
 
@@ -13052,7 +13058,10 @@ namespace Glass.Data.DAL
                         var idsProcessoAmbientePedido = AmbientePedidoDAO.Instance.ObterIdsProcessoByPedido(session, idPedido.Value);
 
                         foreach (var ap in idsProcessoAmbientePedido)
+                        {
                             diasDataEntregaProcesso = Math.Max(diasDataEntregaProcesso, EtiquetaProcessoDAO.Instance.ObterNumeroDiasUteisDataEntrega(session, (uint)ap));
+                        }
+
                         // Considera a data maior entre a data das configurações e da data do processo.
                         numeroDiasSomar = Math.Max(numeroDiasSomar, diasDataEntregaProcesso);
                     }
@@ -13073,23 +13082,29 @@ namespace Glass.Data.DAL
                     numeroDiasSomar = Math.Max(numeroDiasSomar, diasDataEntregaAplicacao);
                     numeroDiasSomar = Math.Max(numeroDiasSomar, diasDataEntregaProcesso);
 
-
                     // Subgrupo produto.
                     Dictionary<uint, KeyValuePair<int?, int?>> subgrupos = new Dictionary<uint, KeyValuePair<int?, int?>>();
                     foreach (ProdutosPedido pp in produtosPedido)
+                    {
                         if (pp.IdSubgrupoProd > 0 && !subgrupos.ContainsKey(pp.IdSubgrupoProd))
                         {
                             subgrupos.Add(pp.IdSubgrupoProd, new KeyValuePair<int?, int?>(
                                 SubgrupoProdDAO.Instance.ObtemValorCampo<int?>(session, "numeroDiasMinimoEntrega", "idSubgrupoProd=" + pp.IdSubgrupoProd),
-                                SubgrupoProdDAO.Instance.ObtemValorCampo<int?>(session, "diaSemanaEntrega", "idSubgrupoProd=" + pp.IdSubgrupoProd)
-                            ));
+                                SubgrupoProdDAO.Instance.ObtemValorCampo<int?>(session, "diaSemanaEntrega", "idSubgrupoProd=" + pp.IdSubgrupoProd)));
                         }
+                    }
 
                     uint idSubgrupoMaiorPrazo = 0;
                     foreach (uint key in subgrupos.Keys)
+                    {
                         if (subgrupos[key].Key > 0 || subgrupos[key].Value != null)
+                        {
                             if (idSubgrupoMaiorPrazo == 0 || subgrupos[key].Key > subgrupos[idSubgrupoMaiorPrazo].Key)
+                            {
                                 idSubgrupoMaiorPrazo = key;
+                            }
+                        }
+                    }
 
                     if (idSubgrupoMaiorPrazo > 0)
                     {
@@ -13113,7 +13128,9 @@ namespace Glass.Data.DAL
                 {
                     dataFastDelivery = dataFastDelivery.AddDays(1);
                     while (!dataFastDelivery.DiaUtil())
+                    {
                         dataFastDelivery = dataFastDelivery.AddDays(1);
+                    }
 
                     j++;
                 }
@@ -13122,7 +13139,9 @@ namespace Glass.Data.DAL
                 {
                     dataFastDelivery = dataFastDelivery.AddDays(1);
                     while (!dataFastDelivery.DiaUtil())
+                    {
                         dataFastDelivery = dataFastDelivery.AddDays(1);
+                    }
                 }
 
                 var m2Pedido = idPedido > 0 ? ProdutosPedidoDAO.Instance.GetTotalM2ByPedido(session, idPedido.Value) : 0;
@@ -13133,7 +13152,9 @@ namespace Glass.Data.DAL
                     // Se a metragem do pedido for maior que o total diário do fast delivery e se o pedido for importado, apenas não calcula a data do fast delivery
                     // chamado (67439)
                     if (m2Pedido < PedidoConfig.Pedido_FastDelivery.M2MaximoFastDelivery && !IsPedidoImportado(session, idPedido.Value))
+                    {
                         dataFastDelivery = ProdutosPedidoDAO.Instance.GetFastDeliveryDay(session, idPedido.Value, dataFastDelivery, m2Pedido, false).GetValueOrDefault(dataFastDelivery);
+                    }
                 }
 
                 if (numeroDiasSomar > 0 && (!pedidoRevendaNaEntrega || dataRota == null))
@@ -13144,7 +13165,9 @@ namespace Glass.Data.DAL
                     {
                         dataEntregaMinima = dataEntregaMinima.AddDays(1);
                         while (!dataEntregaMinima.DiaUtil())
+                        {
                             dataEntregaMinima = dataEntregaMinima.AddDays(1);
+                        }
 
                         i++;
                     }
@@ -13152,11 +13175,17 @@ namespace Glass.Data.DAL
                     if (diaSemanaEntrega != null)
                     {
                         while ((int)dataEntregaMinima.DayOfWeek != diaSemanaEntrega.Value)
+                        {
                             dataEntregaMinima = dataEntregaMinima.AddDays(1);
+                        }
 
                         if (diaSemanaEntrega != (int)DayOfWeek.Saturday && diaSemanaEntrega != (int)DayOfWeek.Sunday)
+                        {
                             while (!dataEntregaMinima.DiaUtil())
+                            {
                                 dataEntregaMinima = dataEntregaMinima.AddDays(7);
+                            }
+                        }
                     }
                 }
 
@@ -13171,7 +13200,9 @@ namespace Glass.Data.DAL
                         (idPedido > 0 && (tipoEntrega ?? ObtemTipoEntrega(session, idPedido.Value)) != (int)Pedido.TipoEntregaPedido.Balcao)))
                     {
                         if (dataRota < dataEntregaMinima)
-                            dataRota = RotaDAO.Instance.GetDataRota(session, idCli, dataEntregaMinima, !considerouDiasUteisSubgrupo, (Pedido.TipoPedidoEnum)tipoPedido);
+                        {
+                            dataRota = RotaDAO.Instance.GetDataRota(session, idCli, dataEntregaMinima, !considerouDiasUteisSubgrupo, (Pedido.TipoPedidoEnum)tipoPedido, true);
+                        }
 
                         valido = dataRota.Value.Date == dataEntregaMinima.Date;
 
@@ -13187,8 +13218,12 @@ namespace Glass.Data.DAL
                 desabilitarCampo = false;
                 dataEntregaMinima = dataBase ?? DateTime.Now;
                 dataFastDelivery = dataEntregaMinima;
+
                 if (!throwException)
+                {
                     return false;
+                }
+
                 throw;
             }
         }

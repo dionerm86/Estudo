@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="ada1618b-4d5c-4bed-96bc-817a7e7a400a" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>true</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.Generic.List`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>false</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://mercado.khan.com.br/appskhan/knIntegrador/ConsultasService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="ConsultasService.disco" MetadataType="Disco" ID="7056c321-f7d6-4e2b-8b1c-8be74439224d" SourceId="1" SourceUrl="http://mercado.khan.com.br/appskhan/knIntegrador/ConsultasService.svc?disco" />
+    <MetadataFile FileName="ConsultasService.xsd" MetadataType="Schema" ID="c83e6624-aba8-4b93-ac07-343245cd2ade" SourceId="1" SourceUrl="http://mercado.khan.com.br/appskhan/knIntegrador/ConsultasService.svc?xsd=xsd3" />
+    <MetadataFile FileName="ConsultasService1.xsd" MetadataType="Schema" ID="95134d52-73e7-4870-a326-e8dccd167ad6" SourceId="1" SourceUrl="http://mercado.khan.com.br/appskhan/knIntegrador/ConsultasService.svc?xsd=xsd2" />
+    <MetadataFile FileName="ConsultasService2.xsd" MetadataType="Schema" ID="227840f9-1ca9-489c-abb8-9b4d86d5c76b" SourceId="1" SourceUrl="http://mercado.khan.com.br/appskhan/knIntegrador/ConsultasService.svc?xsd=xsd1" />
+    <MetadataFile FileName="ConsultasService3.xsd" MetadataType="Schema" ID="0ae3e452-5b8a-4ede-be17-617f70f6b891" SourceId="1" SourceUrl="http://mercado.khan.com.br/appskhan/knIntegrador/ConsultasService.svc?xsd=xsd0" />
+    <MetadataFile FileName="ConsultasService.wsdl" MetadataType="Wsdl" ID="45d334c9-db23-4c68-afc5-819274da2b2c" SourceId="1" SourceUrl="http://mercado.khan.com.br/appskhan/knIntegrador/ConsultasService.svc?wsdl" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

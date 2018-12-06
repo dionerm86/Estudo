@@ -59,6 +59,5 @@ namespace Glass.Integracao
         /// Obtém a pilha de chamada.
         /// </summary>
         public string PilhaChamada { get; }
-
     }
 }

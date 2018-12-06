@@ -119,11 +119,23 @@ namespace Glass.Data.Model
             MaoDeObraEspecial
         }
 
-        public enum SituacaoVolumeEnum : int
+        public enum SituacaoVolumeEnum
         {
+            /// <summary>
+            /// Pedido sem volume.
+            /// </summary>
+            [Description("Sem volume")]
             SemVolume = 1,
+
+            /// <summary>
+            /// Volume pendente.
+            /// </summary>
             Pendente,
-            Finalizado
+
+            /// <summary>
+            /// Volume finalizado.
+            /// </summary>
+            Finalizado,
         }
 
         #endregion

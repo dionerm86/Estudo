@@ -270,9 +270,9 @@ namespace Glass.UI.Web.Cadastros
 
                 var numeroMdfeAssociadoNfe = NFeCidadeDescargaMDFeDAO.Instance.ObterNumeroMdfeAssociadoNfe(null, chaveAcesso);
 
-                if (numeroMdfeAssociadoNfe > 0)
+                if (!string.IsNullOrWhiteSpace(numeroMdfeAssociadoNfe))
                 {
-                    return $"Erro|Nota fiscal já inclusa no MDFe {numeroMdfeAssociadoNfe}.";
+                    return $"Erro|Nota fiscal já inclusa no(s) MDFe('s) {numeroMdfeAssociadoNfe}.";
                 }
 
                 var nfeCidadeDescarga = new NFeCidadeDescargaMDFe();

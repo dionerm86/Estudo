@@ -4526,7 +4526,7 @@ Year(CDate(Fields!DataDocumento.Value)).ToString()</Value>
         </Field>
         <Field Name="CodValorFiscal">
           <DataField>CodValorFiscal</DataField>
-          <rd:TypeName>System.UInt64</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="BaseCalculo">
           <DataField>BaseCalculo</DataField>
