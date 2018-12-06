@@ -329,6 +329,29 @@
     }
   },
 
+  computed: {
+    exibirHabilitarChat: function () {
+      return this.configuracoes && this.configuracoes.habilitarChat;
+    },
+
+    exibirControleUsuarios: function () {
+      return this.configuracoes && this.configuracoes.habilitarControleUsuarios;
+    },
+
+    exibirPedidoConfirmado: function () {
+      return this.configuracoes && this.configuracoes.enviarEmailPedidoConfirmado;
+    },
+
+    exibirAjusteLayout: function () {
+      var colunas = [this.exibirHabilitarChat, this.exibirControleUsuarios, this.exibirPedidoConfirmado]
+        .reduce(function (agregador, item) {
+          return agregador + (item ? 1 : 0);
+        }, 0);
+
+      return colunas % 2 !== 0;
+    }
+  },
+
   watch: {
     /**
      * Observador para a variável 'tipoFuncionarioAtual'.

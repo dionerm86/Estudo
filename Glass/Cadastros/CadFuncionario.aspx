@@ -28,6 +28,13 @@
                 </span>
                 <span>
                     <lista-selecao-id-valor :item-selecionado.sync="tipoFuncionarioAtual" :funcao-recuperar-itens="obterTiposFuncionario" required></lista-selecao-id-valor>
+                    <span v-if="configuracoes && configuracoes.idsTiposFuncionariosComSetor && configuracoes.idsTiposFuncionariosComSetor.indexOf(tipoFuncionarioAtual.id) > -1">
+                        <label>
+                            Setores
+                        </label>
+                        <lista-selecao-multipla v-bind:ids-selecionados.sync="funcionario.idsSetores"
+                            v-bind:funcao-recuperar-itens="obterItensSetor" v-bind:ordenar="false"></lista-selecao-multipla>
+                    </span>
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -36,19 +43,6 @@
                 </span>
                 <span>
                     <campo-cpf v-bind:cpf.sync="funcionario.documentosEDadosPessoais.cpf" required></campo-cpf>
-                </span>
-                <span class="cabecalho" v-if="configuracoes && configuracoes.idsTiposFuncionariosComSetor && configuracoes.idsTiposFuncionariosComSetor.indexOf(tipoFuncionarioAtual.id) > -1">
-                    <label for="tipo">
-                        Setores
-                    </label>
-                </span>
-                <span v-if="configuracoes && configuracoes.idsTiposFuncionariosComSetor && configuracoes.idsTiposFuncionariosComSetor.indexOf(tipoFuncionarioAtual.id) > -1">
-                    <lista-selecao-multipla v-bind:ids-selecionados.sync="funcionario.idsSetores"
-                        v-bind:funcao-recuperar-itens="obterItensSetor" v-bind:ordenar="false"></lista-selecao-multipla>
-                </span>
-                <span class="cabecalho" v-if="configuracoes && configuracoes.idsTiposFuncionariosComSetor && configuracoes.idsTiposFuncionariosComSetor.indexOf(tipoFuncionarioAtual.id) > -1">
-                </span>
-                <span v-if="configuracoes && configuracoes.idsTiposFuncionariosComSetor && configuracoes.idsTiposFuncionariosComSetor.indexOf(tipoFuncionarioAtual.id) > -1">
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -242,18 +236,20 @@
                 <span>
                     <input type="text" v-model="funcionario.documentosEDadosPessoais.numeroPis"/>
                 </span>
-                <span class="cabecalho" v-if="inserindo">
-                    <label>
-                        Senha
-                    </label>
-                </span>
-                <span v-if="inserindo">
-                    <input type="text" v-model="funcionario.acesso.senha"/>
-                </span>
-                <span class="cabecalho" v-if="inserindo">
-                </span>
-                <span v-if="inserindo">
-                </span>
+                <template v-if="inserindo">
+                    <span class="cabecalho">
+                        <label>
+                            Senha
+                        </label>
+                    </span>
+                    <span>
+                        <input type="text" v-model="funcionario.acesso.senha"/>
+                    </span>
+                </template>
+                <template v-else>
+                    <span class="cabecalho"></span>
+                    <span></span>
+                </template>
                 <span class="cabecalho">
                     <label>
                         Resgistrado
@@ -306,47 +302,47 @@
                 <span>
                     <input type="number" min="0" v-model.number="funcionario.numeroPdv" />
                 </span>
-                <span class="cabecalho" v-if="configuracoes && configuracoes.enviarEmailPedidoConfirmado">
-                    <label>
-                        Enviar Email Pedido Confirmado Vendedor
-                    </label>
-                </span>
-                <span v-if="configuracoes && configuracoes.enviarEmailPedidoConfirmado">
-                     <input type="checkbox" id="enviarEmailPedidoConfirmado" v-model="funcionario.permissoes.enviarEmailPedidoConfirmadoVendedor" />
-                </span>
-                <span class="cabecalho" v-if="configuracoes && configuracoes.habilitarChat">
-                    <label>
-                        Habilitar Chat WebGlass
-                    </label>
-                </span>
-                <span v-if="configuracoes && configuracoes.habilitarChat">
-                     <input type="checkbox" id="utilizarChat" v-model="funcionario.permissoes.utilizarChat" />
-                </span>
-                <span class="cabecalho" v-if="configuracoes && configuracoes.habilitarControleUsuarios">
-                    <label>
-                        Exibir controle de usuários
-                    </label>
-                </span>
-                <span>
-                    <span v-if="configuracoes && configuracoes.habilitarControleUsuarios">
-                        <input type="checkbox" id="habilitarControleUsuarios" v-model="funcionario.permissoes.habilitarControleUsuarios" />
+                <template v-if="exibirPedidoConfirmado">
+                    <span class="cabecalho">
+                        <label>
+                            Enviar Email Pedido Confirmado Vendedor
+                        </label>
                     </span>
-                </span>
-                <span v-if="configuracoes && configuracoes.enviarEmailPedidoConfirmado">
-                </span>
-                <span>
-                </span>
-                <span>
-                </span>
-                <span>
-                </span>
+                    <span>
+                        <input type="checkbox" v-model="funcionario.permissoes.enviarEmailPedidoConfirmadoVendedor" />
+                    </span>
+                </template>
+                <template v-if="exibirHabilitarChat">
+                    <span class="cabecalho">
+                        <label>
+                            Habilitar Chat WebGlass
+                        </label>
+                    </span>
+                    <span>
+                         <input type="checkbox"v-model="funcionario.permissoes.utilizarChat" />
+                    </span>
+                </template>
+                <template v-if="exibirControleUsuarios">
+                    <span class="cabecalho">
+                        <label>
+                            Exibir controle de usuários
+                        </label>
+                    </span>
+                    <span>
+                        <input type="checkbox" v-model="funcionario.permissoes.habilitarControleUsuarios" />
+                    </span>
+                </template>
+                <template v-if="exibirAjusteLayout">
+                    <span></span>
+                    <span></span>
+                </template>
                 <span class="cabecalho">
                     <label>
                         Obs
                     </label>
                 </span>
                 <span class="colspan3">
-                    <textarea cols="3" style="margin: 2px 0px; width: 540px; height: 50px;" v-model="funcionario.observacao"></textarea>
+                    <textarea rows="3" style="width: 100%" v-model="funcionario.observacao"></textarea>
                 </span>
             </section>
         </div>

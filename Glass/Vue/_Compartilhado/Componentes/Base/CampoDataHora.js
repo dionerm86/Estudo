@@ -5,10 +5,10 @@
  * Necessário para corrigir as horas (os controles tipo 'date' e 'time' consideram hora UTC).
  * @type {number}
  */
-Data.timezoneOffset = new Date().getTimezoneOffset();
-Data.offset = Data.timezoneOffset * 60000;
+Data.offset = new Date().getTimezoneOffset() * 60000;
 
 Vue.component('campo-data-hora', {
+  mixins: [Mixins.ExecutarTimeout],
   inheritAttrs: false,
   props: {
     /**
@@ -92,15 +92,17 @@ Vue.component('campo-data-hora', {
      * @param {string} hora A hora selecionada no controle.
      */
     atualizarDataHora: function (data, hora) {
-      var dataHoraAtual = new Date((data + ' ' + hora).trim());
+      this.executarTimeout('atualizarDataHora', function () {
+        var dataHoraAtual = new Date((data + ' ' + hora).trim());
 
-      if (isNaN(dataHoraAtual.getTime())) {
-        dataHoraAtual = null;
-      }
+        if (isNaN(dataHoraAtual.getTime())) {
+          dataHoraAtual = null;
+        }
 
-      if (dataHoraAtual !== this.dataHora) {
-        this.$emit('update:dataHora', dataHoraAtual);
-      }
+        if (dataHoraAtual !== this.dataHora) {
+          this.$emit('update:dataHora', dataHoraAtual);
+        }
+      }, 300);
     },
 
     /**
@@ -109,7 +111,9 @@ Vue.component('campo-data-hora', {
      * @returns {string} A data no formato ISO.
      */
     formataData: function(data) {
-      return new Date(data).toISOString().split('T')[0];
+      return new Date(data)
+        .toISOString()
+        .split('T')[0];
     },
 
     /**
@@ -182,6 +186,20 @@ Vue.component('campo-data-hora', {
      */
     dataMaximaAtual: function() {
       return this.dataMaxima ? this.formataData(this.dataMaxima - Data.offset) : '';
+    }
+  },
+
+  watch: {
+    /**
+     * Observador para a propriedade 'dataHora'.
+     * Atualiza as variáveis internas com os dados da propriedade.
+     */
+    dataHora: {
+      handler: function () {
+        this.dataAtual = this.dataHora ? this.formataData(this.dataHora - Data.offset) : '';
+        this.horaAtual = this.dataHora ? this.formataHora(this.dataHora - Data.offset) : '';
+      },
+      deep: true
     }
   },
 
