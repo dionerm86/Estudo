@@ -14,8 +14,8 @@
 
   methods: {
     /**
-     * Recupera a imagem passada e transforma-a em uma string base64.
-     * @returns {Promise} Uma Promise com o resultado da busca.
+     * Recupera o arquivo selecionado e transforma-o em uma string base64.
+     * Depois, dispara o evento do controle informando o arquivo convertido.
      */
     arquivoSelecionado: function () {
       var vm = this;
