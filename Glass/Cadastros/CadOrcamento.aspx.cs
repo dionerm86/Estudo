@@ -35,9 +35,9 @@ namespace Glass.UI.Web.Cadastros
 
                 if (Request["atualizar"] == "1")
                 {
-                    OrcamentoDAO.Instance.UpdateComTransacao(orcamento);
-                    Response.Redirect(Request.Url.ToString().Replace("&atualizar=1", string.Empty));
-                    return;
+                    var tipoEntrega = OrcamentoDAO.Instance.ObtemTipoEntrega(Conversoes.StrParaUint(hdfIdOrca.Value));
+                    var idCliente = OrcamentoDAO.Instance.ObtemIdCliente(Conversoes.StrParaUint(hdfIdOrca.Value));
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "callback", $"recalcular({hdfIdOrca.Value}, false, {tipoEntrega}, {idCliente});", true);
                 }
 
                 // Se o usuário não tiver permissão para editar este orçamento, retorna para listagem de orçamentos
