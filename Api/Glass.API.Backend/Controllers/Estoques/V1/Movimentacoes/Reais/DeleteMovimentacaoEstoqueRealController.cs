@@ -19,7 +19,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Reais
         /// <summary>
         /// Exclui um carregamento.
         /// </summary>
-        /// <param name="id">O identificador do carregamento que será excluído.</param>
+        /// <param name="id">O identificador da movimentação do estoque real que será excluída.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpDelete]
         [Route("{id:int}")]

@@ -70,5 +70,27 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais.CadastroAtual
             get { return this.ObterValor(c => c.Observacao); }
             set { this.AdicionarValor(c => c.Observacao, value); }
         }
+
+        /// <summary>
+        /// Obtém ou define o produto associado a movimentação.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idProduto")]
+        public uint IdProduto
+        {
+            get { return this.ObterValor(c => c.IdProduto); }
+            set { this.AdicionarValor(c => c.IdProduto, value); }
+        }
+
+        /// <summary>
+        /// Obtém ou define a loja em que será realizada a movimentação.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idLoja")]
+        public uint IdLoja
+        {
+            get { return this.ObterValor(c => c.IdLoja); }
+            set { this.AdicionarValor(c => c.IdLoja, value); }
+        }
     }
 }

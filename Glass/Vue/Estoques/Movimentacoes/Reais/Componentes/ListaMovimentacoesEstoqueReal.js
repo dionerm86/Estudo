@@ -8,7 +8,8 @@
     movimentacao: {},
     corlinha: null,
     codigoTabela: null,
-    exibirInclusao: false
+    exibirInclusao: false,
+    listaNaoVazia: false
   },
 
   methods: {
@@ -25,6 +26,9 @@
       return Servicos.Estoques.Movimentacoes.Reais.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
 
+   /**
+    * Exibe um popup com a tela de log de alterações da movimentação.
+    */
     abrirLogPopup: function (id, tabela, campo) {
       this.abrirJanela(500, 700, '../Utils/ShowLogAlteracao.aspx?tabela=' + tabela + '&id=' + id + '&campo=' + campo);
     },
@@ -33,7 +37,7 @@
      * Exibe a tela log de cancelamento do extrato de estoque.     
      */
     abrirLogCancelamento: function () {
-      this.abrirJanela(600, 800, '../Utils/ShowLogCancelamento.aspx?tabela=' + this.codigoTabela.request.response);        
+      this.abrirJanela(600, 800, '../Utils/ShowLogCancelamento.aspx?tabela=' + codigoTabela);        
     },
 
     /**
@@ -141,30 +145,16 @@
     /**
      * Função executada para criação dos objetos necessários para edição ou cadastro de movimentação.     
      */
-    iniciarCadastro_: function (movimentacao) {      
+    iniciarCadastro_: function (movimentacao) {
+      item = this.$refs.lista.itens[0];
       this.movimentacao = {
-        id: null,
-        referencia: null,
-        produto: null,
-        fornecedor: null,
-        funcionario: null,
-        datas: {
-          cadastro: null,
-          movimentacao: null
-        },
-        dadosEstoque: {
-          tipoMovimentacao: null,
-          unidade: null,
-          quantidade: null,
-          saldoQuantidade: null,
-          valor: null,
-          saldoValor: null
-        },
-        observacao: null,
-        permissoes: {
-          excluir: true,
-          logAlteracoes: null
-        }
+        idProduto: item.produto.id,
+        idLoja: this.filtro.idLoja,
+        dataCadastro: null,
+        quantidade: null,
+        valor: null,
+        tipoMovimentacao: null,
+        observacao: null
       };
     },
 
@@ -204,22 +194,16 @@
 
       return form.checkValidity();
     },
-  },
 
-  computed: {
-
+    atualizouItens: function (numeroItens) {
+      this.listaNaoVazia = numeroItens > 0;
+    },
   },
 
   mounted: function () {
-    var vm = this;
-
     Servicos.Estoques.Movimentacoes.Reais.obterCodigoTabela()
-      .then(function (resposta) {
-        vm.codigoTabela = resposta;
-      });
-  },
-
-  watch: {
-
+    .then(function (resposta) {
+      this.codigoTabela = resposta.request.response;
+    });
   }
 });

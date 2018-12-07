@@ -8,7 +8,7 @@
         <span class="form-group">
             <label>Tipo</label>
             <select v-model="filtroAtual.tipoMovimentacao">
-                <option Value="0" selected>Todas</option>
+                <option Value="0">Todas</option>
                 <option Value="1">Entradas</option>
                 <option Value="2">Saídas</option>
             </select>
@@ -52,7 +52,7 @@
         <span class="form-group">
             <label>Subgrupo</label>
             <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.idsSubgrupoProduto" texto-selecionar="Selecione o Subgrupo" v-bind:funcao-recuperar-itens="obterItensFiltroSubgruposProduto"
-                                    v-bind:ordenar="false"></lista-selecao-multipla>
+                                    v-bind:ordenar="false" v-bind:filtro-recuperar-itens="filtroSubgrupos"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">

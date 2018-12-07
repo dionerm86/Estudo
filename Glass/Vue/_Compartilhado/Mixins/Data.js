@@ -6,6 +6,6 @@ Mixins.Data = {
       var data = new Date(dataBase);
       data.setDate(data.getDate() + dias);
       return data;
-    }
-  }
+    },
+  },
 }

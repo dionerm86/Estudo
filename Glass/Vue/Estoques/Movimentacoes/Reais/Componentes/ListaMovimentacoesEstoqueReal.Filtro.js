@@ -1,12 +1,18 @@
 ﻿Vue.component('movimentacoesestoquereal-filtros', {
-  mixins: [Mixins.Objetos],
+  mixins: [Mixins.Data, Mixins.Objetos],
   props: {
     /**
-     * Filtros selecionados para a lista de estoques de produto.
+     * Filtros selecionados para a lista de movimentações do estoque real.
      * @type {Object}
      */
     filtro: {
       required: true,
+      twoWay: true,
+      validator: Mixins.Validacao.validarObjeto
+    },
+
+    configuracoes: {
+      required: false,
       twoWay: true,
       validator: Mixins.Validacao.validarObjeto
     },
@@ -47,14 +53,14 @@
   computed: {
     /**
      * Propriedade computada que retorna o filtro de subgrupos de produto.
-     * @type {filtroSubgruposProduto}
+     * @type {filtroSubgrupos}
      *
-     * @typedef filtroSubgruposProduto
-     * @property {?number} idGrupoProduto O ID do grupo de produto.
+     * @typedef filtroSubgrupos
+     * @property {?number} idsGrupoProduto O ID do grupo de produto.
      */
-    filtroSubgruposProduto: function () {
+    filtroSubgrupos: function () {
       return {
-        idGrupoProduto: (this.filtroAtual || {}).idsGrupoProduto || 0
+        idsGrupoProduto: (this.filtroAtual || {}).idsGrupoProduto || []
       };
     }
   },
@@ -82,16 +88,9 @@
      * Retorna os itens para o controle de subgrupos de produto.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterItensFiltroSubgruposProduto: function () {
-      var idsGrupoProduto = (this.filtroAtual || {}).idsGrupoProduto;
-
-      if (idsGrupoProduto.length == 0) {
-        return;
-      }
-
-      for (var i = 0; i < idsGrupoProduto.length; i++) {
-        return Servicos.Produtos.Subgrupos.obterParaControle(idsGrupoProduto[i]);
-      }
+    obterItensFiltroSubgruposProduto: function (filtro) {
+      var idsGrupoProduto = (filtro || {}).idsGrupoProduto || [];
+      return Servicos.Produtos.Subgrupos.obterVariosParaControle(idsGrupoProduto);
     },
 
     /**
@@ -120,6 +119,7 @@
   },
 
   watch: {
+
     /**
      * Observador para a variável 'lojaAtual'.
      * Atualiza o filtro com o ID do item selecionado.
@@ -127,29 +127,6 @@
     lojaAtual: {
       handler: function (atual) {
         this.filtroAtual.idLoja = atual ? atual.id : null;
-      },
-      deep: true
-    },
-
-    /**
-     * Observador para a variável 'grupoProdutoAtual'.
-     * Atualiza o filtro com o ID do item selecionado.
-     */
-    grupoProdutoAtual: {
-      handler: function (atual) {
-        this.filtroAtual.idsGrupoProduto = atual ? atual.id : null;
-        this.filtroAtual.idsSubgrupoProduto = null;
-      },
-      deep: true
-    },
-
-    /**
-     * Observador para a variável 'subgrupoProdutoAtual'.
-     * Atualiza o filtro com o ID do item selecionado.
-     */
-    subgrupoProdutoAtual: {
-      handler: function (atual) {
-        this.filtroAtual.idsSubgrupoProduto = atual ? atual.id : null;
       },
       deep: true
     },
@@ -185,7 +162,13 @@
         this.filtroAtual.idCorAluminio = atual ? atual.id : null;
       },
       deep: true
-    }
+    },
+  },
+  
+  mounted: function () {
+    var dataAtual = new Date();
+    this.filtroAtual.periodoMovimentacaoInicio = this.adicionarDias(dataAtual, -15);
+    this.filtroAtual.periodoMovimentacaoFim = dataAtual;
   },
 
   template: '#ListaMovimentacoesEstoqueReal-Filtro-template'

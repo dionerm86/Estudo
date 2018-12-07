@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais
 {
     /// <summary>
-    /// Classe que encapsula os dados de permissão do estoque.
+    /// Classe que encapsula os dados de permissão do estoque real.
     /// </summary>
     [DataContract(Name = "Permissoes")]
     public class PermissoesDto

@@ -9,7 +9,7 @@ Servicos.Estoques = (function(http) {
   return {
     Movimentacoes: {
       Reais: {
-        /**
+       /**
         * Recupera a lista de movimentações do estoques real.
         * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
         * @param {number} pagina O número da página de resultados a ser exibida.
@@ -23,6 +23,11 @@ Servicos.Estoques = (function(http) {
           });
         },
 
+       /**
+        * Exclui uma movimentação do estoque real.
+        * @param {number} identificador da movimentação.
+        * @returns {Promise} Uma promise com o resultado da exclusão.
+        */
         excluir: function (idMovimentacao) {
             if (!idMovimentacao) {
                 throw new Error('Movimentação é obrigatória.');
@@ -31,10 +36,19 @@ Servicos.Estoques = (function(http) {
             return http().delete(API + 'movimentacoes/reais/' + idMovimentacao);
         },
 
+       /**
+        * Obtém o código da tabela para exibição do log de movimentações.
+        * @returns {Promise} Uma promise com o resultado da busca.
+        */
         obterCodigoTabela: function () {
           return http().get(API + 'movimentacoes/reais/codigoTabela');
         },
 
+       /**
+        * Insere uma nova movimentação do estoque real.
+        * @param {?Object} objeto com os dados necessários para cadastro de uma nova movimentação.
+        * @returns {Promise} Uma promise com o resultado da inserção.
+        */
         inserir: function (movimentacao) {
           return http().post(API + 'movimentacoes/reais/' + movimentacao)
         },

@@ -18,8 +18,8 @@ namespace Glass.Data.DAL
             string campos = selecionar ? "*" : "count(*)";
             string filtroProducao = paraPedidoProducao && ("," + idGrupoProd + ",").Contains("," + (uint)Glass.Data.Model.NomeGrupoProd.Vidro + ",") ? " and produtosEstoque=1" : "";
             string filtroPedidoInterno = paraPedidoInterno ? " and s.idSubgrupoProd in (select s.idSubgrupoProd from produto where compra=true)" : "";
-            
-            return "Select " + campos + " From subgrupo_prod Where IdGrupoProd in (" + idGrupoProd  + ")" + filtroProducao + filtroPedidoInterno + " ORDER BY Descricao";
+
+            return "Select " + campos + " From subgrupo_prod Where IdGrupoProd in (" + idGrupoProd + ")" + filtroProducao + filtroPedidoInterno + " ORDER BY Descricao";
         }
 
         public string SqlTabelaCliente(int idGrupoProd, int idCli, bool selecionar)
@@ -99,7 +99,7 @@ namespace Glass.Data.DAL
         {
             return GetForFilter(idGrupo.ToString(), false, false);
         }
-        
+
         public SubgrupoProd[] GetForFilter(string idGrupos)
         {
             return GetForFilter(idGrupos, false, false);

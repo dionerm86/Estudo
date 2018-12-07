@@ -8,7 +8,7 @@
     <div id="app">
         <movimentacoesestoquereal-filtros :filtro.sync="filtro"></movimentacoesestoquereal-filtros>
         <section>
-            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum estoque de produto encontrado." :exibir-inclusao="true">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum estoque de produto encontrado." :exibir-inclusao="listaNaoVazia" @atualizou-itens="atualizouItens">
                 <template slot="cabecalho">
                     <th></th>
                     <th>Cód. Mov.</th>
@@ -33,13 +33,13 @@
                         </a>
                     </td>
                     <td v-bind:style="{ color: item.corLinha }">
-                        {{ item.produto.id }}
+                        {{ item.id }}
                     </td>
                     <td v-bind:style="{ color: item.corLinha }">
                         {{ item.referencia }}
                     </td>
                     <td v-bind:style="{ color: item.corLinha }">
-                        {{ item.produto }}
+                        {{ item.produto.nome }}
                     </td>
                     <td v-bind:style="{ color: item.corLinha }">
                         {{ item.fornecedor }}
@@ -79,7 +79,6 @@
                         <a href="#" v-on:click.prevent="abrirLogPopup(item.id, 'MovEstoque', '')" v-if="item.permissoes.logAlteracoes" title="Log de Alterações">
                             <img src="../Images/log_edit.jpg" />
                         </a>
-                        <input display="hidden" :value="item.idProduto">
                     </td>
                 </template>
                 <template slot="itemIncluir">
@@ -95,22 +94,22 @@
                         </button>
                     </td>
                     <td colspan="5"></td>
-                    <td>
-                        <campo-data-hora :data-hora.sync="movimentacao.datas.cadastro" :exibir-horas="true" v-if="inserindo"></campo-data-hora>
+                    <td style="white-space: nowrap">
+                        <campo-data-hora :data-hora.sync="movimentacao.dataCadastro" :exibir-horas="true" v-if="inserindo"></campo-data-hora>
                     </td>
                     <td>
-                        <input type="number" v-model="movimentacao.dadosEstoque.quantidade" min="0" style="width: 40px" v-if="inserindo" />
+                        <input type="number" v-model="movimentacao.quantidade" min="0" step="0.01" style="width: 40px" v-if="inserindo" />
                     </td>
                     <td colspan="2"></td>
                     <td>
-                        <select v-model="movimentacao.dadosEstoque.tipoMovimentacao" v-if="inserindo">
+                        <select v-model="movimentacao.tipoMovimentacao" v-if="inserindo">
                             <option value=""></option>
                             <option value="E">E</option>
                             <option value="S">S</option>
                         </select>
                     </td>
                     <td>
-                        <input type="number" v-model="movimentacao.dadosEstoque.valor" min="0" step="0.01" style="width: 50px" v-if="inserindo" />
+                        <input type="number" v-model="movimentacao.valor" min="0" step="0.01" style="width: 50px" v-if="inserindo" />
                     </td>
                     <td></td>                    
                     <td>
