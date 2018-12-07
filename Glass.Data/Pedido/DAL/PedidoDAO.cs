@@ -3532,7 +3532,16 @@ namespace Glass.Data.DAL
                     sql += " and p.dataCad<=?dtFimSit";
 
                 if (idVendedor != "0")
-                    sql += " and " + (agruparFunc == 0 ? "p" : "c") + ".idFunc=" + idVendedor;
+                {
+                    if (agruparFunc != 2)
+                    {
+                        sql += $" and {(agruparFunc == 0 ? "p" : "c")}.idFunc = {idVendedor}";
+                    }
+                    else
+                    {
+                        sql += $" and p.IdComissionado = {idVendedor}";
+                    }
+                }
 
                 if (idVendedor == "0" && agruparFunc == 1)
                 {
