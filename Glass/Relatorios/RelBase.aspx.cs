@@ -11,6 +11,7 @@ using System.Linq;
 using Glass.Configuracoes;
 using Colosoft;
 using Microsoft.Practices.ServiceLocation;
+using Glass.Global.Negocios;
 
 namespace Glass.UI.Web.Relatorios
 {
@@ -914,7 +915,71 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaClientes":
                     {
-                        reportName = "ListaClientes";
+                        report.ReportPath = Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaClientes{0}.rdlc");
+                        var tiposFiscais = string.IsNullOrEmpty(Request["tipoFiscal"]) ? new TipoFiscalCliente[] { } :
+                            Request["tiposFiscais"].Split(',')
+                                .Select(x => (Data.Model.TipoFiscalCliente)x.StrParaInt())
+                                .ToArray();
+
+                        var formasPagto = string.IsNullOrWhiteSpace(Request["formasPagto"]) ? new int[] { } :
+                            Request["formasPagto"].Split(',')
+                                .Select(x => x.StrParaInt())
+                                .ToArray();
+
+                        var situacao = string.IsNullOrWhiteSpace(Request["situacao"]) ? new int[] { } :
+                            Request["situacao"].Split(',')
+                                .Select(x => x.StrParaInt())
+                                .ToArray();
+
+                        var tiposCliente = string.IsNullOrWhiteSpace(Request["idTipoCliente"]) ? new int[] { } :
+                            Request["idTipoCliente"].Split(',')
+                                .Select(x => x.StrParaInt())
+                                .ToArray();
+                        var apenasSemRota = string.IsNullOrWhiteSpace(Request["apenasSemRota"]) ? false : bool.Parse(Request["apenasSemRota"]);
+
+                        var agruparVend = string.IsNullOrWhiteSpace(Request["agruparVend"]) ? "false" : Request["agruparVend"];
+
+                        var exibirHistorico = string.IsNullOrWhiteSpace(Request["exibirHistorico"]) ? "false" : Request["exibirHistorico"];
+
+                        var clientes = Microsoft.Practices.ServiceLocation.ServiceLocator
+                            .Current.GetInstance<IClienteFluxo>()
+                            .PesquisarClientes(
+                            Request["idCli"].StrParaIntNullable(),
+                            Request["nome"],
+                            Request["CpfCnpj"],
+                            Request["IdLoja"].StrParaIntNullable(),
+                            Request["telefone"],
+                            Request["endereco"],
+                            Request["bairro"],
+                            Request["IdCidade"].StrParaIntNullable(),
+                            tiposCliente,
+                            situacao,
+                            Request["codRota"],
+                            Request["idFunc"].StrParaIntNullable(),
+                            tiposFiscais,
+                            formasPagto,
+                            Request["dataCadIni"].StrParaDate(),
+                            Request["dataCadFim"].StrParaDate(),
+                            Request["dataSemCompraIni"].StrParaDate(),
+                            Request["dataSemCompraFim"].StrParaDate(),
+                            Request["dataInativadoIni"].StrParaDate(),
+                            Request["dataInativadoFim"].StrParaDate(),
+                            Request["dataNascimentoIni"].StrParaDate(),
+                            Request["dataNascimentoFim"].StrParaDate(),
+                            Request["idTabelaDesconto"].StrParaIntNullable(),
+                            apenasSemRota,
+                            Request["limite"].StrParaInt(),
+                            Request["uf"],
+                            Request["tipoPessoa"],
+                            false);
+
+                        // Recupera o critério da pesquisa
+                        lstParam.Add(new ReportParameter("Criterio", clientes.GetSearchParameterDescriptions().Join(" ").Format() ?? ""));
+                        lstParam.Add(new ReportParameter("AgruparVend", agruparVend));
+                        lstParam.Add(new ReportParameter("ExibirHistorico", exibirHistorico));
+                        lstParam.Add(new ReportParameter("ExibirCidade", "true"));
+
+                        report.DataSources.Add(new ReportDataSource("Cliente", clientes));
                         break;
                     }
                 case "ListaSugestaoCliente":
@@ -942,7 +1007,8 @@ namespace Glass.UI.Web.Relatorios
                         //>>nome do vendedor não está chegando correto, ver o que é
                         var clVendedor = clCons.IdFunc == null ? "" : FuncionarioDAO.Instance.GetNome((uint)clCons.IdFunc);
                         //dados financeiros
-                        var financLimDisp = clCons.Limite > 0 ? (clCons.Limite - ContasReceberDAO.Instance.GetDebitos((uint)clCons.IdCli, null)).ToString("C") : "";
+                        var limiteCliente = Data.CalculadoraLimiteCredito.Calculadora.ObterLimite(null, clCons);
+                        var financLimDisp = limiteCliente > 0 ? (limiteCliente - ContasReceberDAO.Instance.GetDebitos((uint)clCons.IdCli, null)).ToString("C") : "";
                         var financPagtoPadrao = FormaPagtoDAO.Instance.GetDescricao((uint)clCons.IdFormaPagto.GetValueOrDefault(0)) ?? "";
                         var parc = ParcelasDAO.Instance.GetPadraoCliente((uint)clCons.IdCli);
                         var financParcPadrao = parc != null ? parc.DescrCompleta : String.Empty;
@@ -1590,8 +1656,8 @@ namespace Glass.UI.Web.Relatorios
                                     lstProdPed[i].Qtde = dicProdutos[lstProdPed[i].IdProdPed];
                                     lstProdPed[i].QtdeSomada = dicProdutos[lstProdPed[i].IdProdPed];
 
-                                    var totM2 = Glass.Global.CalculosFluxo.ArredondaM2(lstProdPed[i].Largura, Convert.ToInt32(lstProdPed[i].Altura),
-                                        Convert.ToSingle(lstProdPed[i].QtdeSomada), (int)lstProdPed[i].IdProd, lstProdPed[i].Redondo);
+                                    var totM2 = Glass.Global.CalculosFluxo.ArredondaM2(null, lstProdPed[i].Largura, Convert.ToInt32(lstProdPed[i].Altura),
+                                        Convert.ToSingle(lstProdPed[i].QtdeSomada), (int)lstProdPed[i].IdProd, lstProdPed[i].Redondo, 0, true);
 
                                     lstProdPed[i].TotMSomada = totM2;
                                     lstProdPed[i].TotM = totM2;
@@ -2474,7 +2540,7 @@ namespace Glass.UI.Web.Relatorios
                                         mov[i].QtdeSaldoRealFiscal = movComparativo[j].QtdeSaldo;
                                         // Recupera o id do subgrupo do produto.
                                         var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)mov[i].IdProd);
-                                        int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo((int)mov[i].IdProd);
+                                        int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(null, (int)mov[i].IdProd, false);
 
                                         // Caso o tipo de cálculo do produto for por barra de alumínio o campo complemento qtd deve ser preenchido.
                                         if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
@@ -3741,7 +3807,7 @@ namespace Glass.UI.Web.Relatorios
                         report.ReportPath = "Relatorios/OrdemCarga/rptListaPendenciaCarregamento.rdlc";
                         var itensPendentesCarregamento = ItemCarregamentoDAO.Instance.GetItensPendentes(Glass.Conversoes.StrParaUint(Request["idCarregamento"]),
                             0, Glass.Conversoes.StrParaUint(Request["idCliente"]), Request["nomeCliente"], Glass.Conversoes.StrParaUint(Request["idLoja"]),
-                            null, null, true, Request["dataSaidaIni"], Request["dataSaidaFim"], Request["rotas"], Request["ignorarPedidoVendaTransferencia"].ToLower() == "true",
+                            null, null, true, Request["dataSaidaIni"], Request["dataSaidaFim"], Request["rotas"], Request["ignorarPedidoVendaTransferencia"] == "true",
                             Request["idClienteExterno"].StrParaUint(), Request["nomeClienteExterno"], Request["codRotasExternas"]);
 
                         report.DataSources.Add(new ReportDataSource("ItemCarregamento", itensPendentesCarregamento));
@@ -3917,7 +3983,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "EtqCavalete":
                     {
-                        report.ReportPath = "Relatorios/ModeloEtiquetaCavalete/rptEtiquetaCavalete.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/ModeloEtiquetaCavalete/rptEtiquetaCavalete{0}.rdlc");
 
                         var idCavalete = Request["idCavalete"].StrParaInt();
 
@@ -3925,7 +3991,9 @@ namespace Glass.UI.Web.Relatorios
                             .ObterCavalete(idCavalete);
 
                         if (cavalete == null)
+                        {
                             throw new Exception("O cavalete não foi encontrado.");
+                        }
 
                         report.DataSources.Add(new ReportDataSource("Cavalete", new List<PCP.Negocios.Entidades.Cavalete>() { cavalete }));
 

@@ -400,7 +400,7 @@ namespace Glass.Data.DAL
                 prodPed.TotM2Calc = prodPed.TotM2Calc > 0 ? (prodPed.TotM2Calc / prodPed.Qtde) * (float)qtde : prodPed.TotM;
 
                 prodPed.Qtde = (float)qtde;
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)prodPed.IdProd);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)prodPed.IdProd, false);
 
                 if (tipoCalc == (uint)TipoCalculoGrupoProd.Qtd || tipoCalc == (uint)TipoCalculoGrupoProd.QtdM2 || tipoCalc == (uint)TipoCalculoGrupoProd.QtdDecimal)
                     prodPed.Total = (decimal)prodPed.Qtde * prodPed.ValorVendido;
@@ -490,22 +490,6 @@ namespace Glass.Data.DAL
                 novo.Etiquetas = string.Join("|", etqs);
             }
 
-            // Soma o ICMS e IPI ao produto da troca, caso o pedido tenha cobrado
-            if (ped.ValorIcms > 0 || ped.ValorIpi > 0)
-            {
-                if (ped.ValorIcms > 0)
-                    novo.Total += prodPed.ValorIcms / (decimal)prodPed.Qtde * (decimal)novo.Qtde;
-
-                if (ped.ValorIpi > 0)
-                    novo.Total += prodPed.ValorIpi / (decimal)prodPed.Qtde * (decimal)novo.Qtde;
-
-                decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(session, ped, novo, novo.Total);
-                if (valorUnitario.HasValue)
-                {
-                    novo.ValorVendido = valorUnitario.Value;
-                }
-            }
-
             novo.IdPedido = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>(session, "idPedido",
                 "idTrocaDevolucao=" + novo.IdTrocaDevolucao);
 
@@ -515,7 +499,7 @@ namespace Glass.Data.DAL
 
                 if (percDesc > 0)
                 {
-                    int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)novo.IdProd);
+                    int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)novo.IdProd, false);
 
                     novo.Total -= (novo.Total + novo.ValorBenef) * (decimal)percDesc;
 
@@ -533,6 +517,22 @@ namespace Glass.Data.DAL
             }
 
             DescontoAcrescimo.Instance.AplicarDescontoQtde(session, ped, novo);
+
+            // Soma o ICMS e IPI ao produto da troca, caso o pedido tenha cobrado
+            if (ped.ValorIcms > 0 || ped.ValorIpi > 0)
+            {
+                if (ped.ValorIcms > 0)
+                    novo.Total += prodPed.ValorIcms / (decimal)prodPed.Qtde * (decimal)novo.Qtde;
+
+                if (ped.ValorIpi > 0)
+                    novo.Total += prodPed.ValorIpi / (decimal)prodPed.Qtde * (decimal)novo.Qtde;
+
+                decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(session, ped, novo, novo.Total);
+                if (valorUnitario.HasValue)
+                {
+                    novo.ValorVendido = valorUnitario.Value;
+                }
+            }
 
             uint retorno = base.Insert(session, novo);
 
@@ -594,7 +594,7 @@ namespace Glass.Data.DAL
                 uint idCliente = TrocaDevolucaoDAO.Instance.ObtemIdCliente(session, objInsert.IdTrocaDevolucao);
                 decimal custo = objInsert.CustoProd, total = objInsert.Total;
                 float altura = objInsert.Altura, totM2 = objInsert.TotM, totM2Calc = objInsert.TotM2Calc;
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objInsert.IdProd);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objInsert.IdProd, false);
 
                 objInsert.IdPedido = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>(session, "idPedido",
                     "idTrocaDevolucao=" + objInsert.IdTrocaDevolucao);

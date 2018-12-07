@@ -1,0 +1,51 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label for="id">Carregamento</label>
+            <input id="id" type="number" v-model.number="filtroAtual.idCarregamento" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idCliente">Cliente</label>
+            <input id="idCliente" type="number" v-model.number="filtroAtual.idCliente" style="width: 50px" />
+            <input id="nomeCliente" type="text" v-model.number="filtroAtual.nomeCliente" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Loja</label>
+            <lista-selecao-lojas v-bind:loja.sync="lojaAtual" v-bind:ativas="true"></lista-selecao-lojas>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Período (Saída)</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoPrevisaoSaidaInicio" v-bind:data-hora-final.sync="filtroAtual.periodoPrevisaoSaidaFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Rota</label>
+            <lista-selecao-multipla v-bind:funcao-recuperar-itens="obterItensFiltroRotas" v-bind:ids-selecionados.sync="filtroAtual.idsRota"></lista-selecao-multipla>                                    
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group" v-if="configuracoes.controlarPedidosImportados">
+            <label for="idClienteExterno">Cliente Externo</label>
+            <input id="idClienteExterno" type="number" v-model.number="filtroAtual.idClienteExterno" style="width: 50px" />
+            <input id="nomeClienteExterno" type="text" v-model.number="filtroAtual.nomeClienteExterno" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group" v-if="configuracoes.controlarPedidosImportados">
+            <label>Rota Externa</label>
+            <lista-selecao-multipla v-bind:funcao-recuperar-itens="obterItensFiltroRotas" v-bind:ids-selecionados.sync="filtroAtual.idsRotaExterna"></lista-selecao-multipla>                                    
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group" v-if="configuracoes.usarOpcaoDeveTransferir">
+            <input id="ignorarPedidosVendaTransferencia" type="checkbox" v-model="filtroAtual.ignorarPedidosVendaTransferencia" />
+            <label for="ignorarPedidosVendaTransferencia">Ignorar pedidos de venda com transferência</label>
+        </span>
+    </div>
+</section>

@@ -52,15 +52,17 @@
       <HintPath>..\packages\CADProject.Remote.Client.1.0.3\lib\net40\CADProject.Remote.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine, Version=2.1.18324.4, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.2.1.18324.004-final\lib\net452\CalcEngine.dll</HintPath>
+    <Reference Include="CalcEngine, Version=2.1.18333.4, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.2.1.18333.004-final\lib\net452\CalcEngine.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Drawing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=480c19f8f9d8709d, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Drawing.1.7.2.232\lib\net35\CalcEngine.Drawing.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Dxf, Version=2.1.18324.4, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Dxf.2.1.18324.004-final\lib\net452\CalcEngine.Dxf.dll</HintPath>
+    <Reference Include="CalcEngine.Dxf, Version=2.1.18333.4, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Dxf.2.1.18333.004-final\lib\net452\CalcEngine.Dxf.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Text, Version=1.5.0.0, Culture=neutral, PublicKeyToken=34659d78168384a4, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Text.1.7.2.232\lib\net35\CalcEngine.Text.dll</HintPath>
@@ -444,6 +446,8 @@
     <Compile Include="Financeiro\Model\ComissaoContasReceber.cs" />
     <Compile Include="Financeiro\Model\PedidosCompra.cs" />
     <Compile Include="Financeiro\Model\QuitacaoParcelaCartao.cs" />
+    <Compile Include="Financeiro\CalculadoraLimiteCredito.cs" />
+    <Compile Include="Financeiro\ProvedorLimiteCreditoPadrao.cs" />
     <Compile Include="Fiscal\DAL\CargaTributariaMediaMTDAO.cs" />
     <Compile Include="Fiscal\DAL\CestDAO.cs" />
     <Compile Include="Fiscal\DAL\CondutoresDAO.cs" />
@@ -537,6 +541,7 @@
     <Compile Include="Global\DAL\TipoInstalacaoDAO.cs" />
     <Compile Include="Global\DAL\TipoEntregaDAO.cs" />
     <Compile Include="Domain\EventoComSessaoArgs.cs" />
+    <Compile Include="Financeiro\IProvedorLimiteCredito.cs" />
     <Compile Include="Global\Model\AvaliacaoAtendimento.cs" />
     <Compile Include="Global\Model\DeviceApp.cs" />
     <Compile Include="Global\Model\FlagArqMesaProduto.cs" />
@@ -1167,6 +1172,7 @@
     <Compile Include="RelModel\Dipj.cs" />
     <Compile Include="RelModel\FaturamentoCarregamento.cs" />
     <Compile Include="RelModel\GraficoDataEntrega.cs" />
+    <Compile Include="RelModel\InsumoConsumidoEFD.cs" />
     <Compile Include="RelModel\ItemProduzidoEFD.cs" />
     <Compile Include="RelModel\MDFe.cs" />
     <Compile Include="RelModel\MovEstoquesLog.cs" />

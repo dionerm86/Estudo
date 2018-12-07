@@ -12,9 +12,9 @@ function callbackSelecao(beneficiamento, controle, beneficiamentosControle, pref
         var altura = parseInt(document.getElementById(prefixoControle + prefixoCampos + "_drpAltura").value, 10);
         var largura = parseInt(document.getElementById(prefixoControle + prefixoCampos + "_drpLargura").value, 10);
         var valor = parseFloat(controle.value) > 0 ? "2" : "0";
-        if ((altura > 0 || largura > 0) && !(altura == 2 && largura == 2 && valor == "0"))
+        if (((altura > 0 || largura > 0) && !(altura == 2 && largura == 2 && valor == "0")) || prefixoControle == "ctl00_ctl00_Pagina_Conteudo_ctrlBenef1_")
             return;
-        
+
         document.getElementById(prefixoControle + prefixoCampos + "_drpAltura").value = valor;
         document.getElementById(prefixoControle + prefixoCampos + "_drpLargura").value = valor;
     }

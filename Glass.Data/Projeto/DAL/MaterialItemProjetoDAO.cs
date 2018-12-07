@@ -502,10 +502,11 @@ namespace Glass.Data.DAL
             {
                 var pecaItemProjeto = pecasItemProjeto.FirstOrDefault(f => f.IdPecaProjMod == pecasProjetoModelo[i].IdPecaProjMod);
 
-                var prod = ProdutoDAO.Instance.GetByIdProd(sessao, pecaItemProjeto.IdProd.GetValueOrDefault());
-
-                if (prod == null && !pecaItemProjeto.IdProd.HasValue && pecaItemProjeto.IdProd.Value > 0)
-                    throw new Exception("A peça de vidro está associada a um produto inativo. Informe outro produto, calcule as medidas e confirme o projeto.");
+                /* Chamado 63058. */
+                if (pecaItemProjeto == null || pecaItemProjeto.IdProd.GetValueOrDefault(0) == 0)
+                {
+                    continue;
+                }
 
                 // Verifica se há fórmula para calcular a qtd de peças
                 var qtdPeca = !string.IsNullOrEmpty(pecasProjetoModelo[i].CalculoQtde) && !itemProjeto.MedidaExata ?
@@ -516,11 +517,14 @@ namespace Glass.Data.DAL
                 var larguraPeca = pecaItemProjeto.Largura;
 
                 if (qtdPeca <= 0 || (alturaPeca == 0 && larguraPeca == 0))
+                {
                     continue;
+                }
 
-                /* Chamado 63058. */
-                if (!pecaItemProjeto?.IdProd.HasValue ?? false || pecaItemProjeto.IdProd.Value == 0)
-                    continue;
+                var prod = ProdutoDAO.Instance.GetByIdProd(sessao, pecaItemProjeto.IdProd.GetValueOrDefault());
+
+                if (prod == null && pecaItemProjeto.IdProd.GetValueOrDefault(0) > 0)
+                    throw new Exception("A peça de vidro está associada a um produto inativo. Informe outro produto, calcule as medidas e confirme o projeto.");
 
                 var incrementoAltura = 0;
                 var incrementoLargura = 0;

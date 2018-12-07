@@ -119,11 +119,23 @@ namespace Glass.Data.Model
             MaoDeObraEspecial
         }
 
-        public enum SituacaoVolumeEnum : int
+        public enum SituacaoVolumeEnum
         {
+            /// <summary>
+            /// Pedido sem volume.
+            /// </summary>
+            [Description("Sem volume")]
             SemVolume = 1,
+
+            /// <summary>
+            /// Volume pendente.
+            /// </summary>
             Pendente,
-            Finalizado
+
+            /// <summary>
+            /// Volume finalizado.
+            /// </summary>
+            Finalizado,
         }
 
         #endregion
@@ -157,7 +169,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDCLI")]
         public uint IdCli { get; set; }
 
-        [Log(TipoLog.Cancelamento, "Comissionado", "Nome", typeof(ComissionadoDAO))]
+        [Log(TipoLog.Ambos, "Comissionado", "Nome", typeof(ComissionadoDAO))]
         [PersistenceProperty("IDCOMISSIONADO")]
         public uint? IdComissionado { get; set; }
 
@@ -1622,8 +1634,26 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal TotalParaComissaoProdutoInstalado { get; set; }
 
+        private int numDias;
+        /// <summary>
+        /// Número de dias de pedidos (Relatórios de lucratividade).
+        /// </summary>
         [XmlIgnore]
-        public int NumDias { get; set; }
+        public int NumDias
+        {
+            get
+            {
+                if (numDias == 0)
+                {
+                    return 1;
+                }
+                return numDias;
+            }
+            set
+            {
+                numDias = value;
+            }
+        }
 
         [XmlIgnore]
         public bool VendidoFuncionario

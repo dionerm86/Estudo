@@ -38,7 +38,7 @@ namespace Glass.Data.Helper
         /// <returns></returns>
         System.IO.Stream Abrir();
     }
-    
+
     public interface IProjeto
     {
         /// <summary>
@@ -126,7 +126,7 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Peças.
         /// </summary>
-        IEnumerable<IPecaItemProjeto> Pecas { get; }       
+        IEnumerable<IPecaItemProjeto> Pecas { get; }
 
         /// <summary>
         /// Materiais.
@@ -524,7 +524,7 @@ namespace Glass.Data.Helper
                 larguraVaoDireito = idMedidaLarguraVaoDireito > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaLarguraVaoDireito) ?
                     medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idMedidaLarguraVaoDireito).Valor : 0;
             }
-            
+
             #endregion
 
             // Carrega a lista de medidas do modelo de projeto
@@ -587,7 +587,7 @@ namespace Glass.Data.Helper
                 {
                     var espTuboMedInst = medidasItemProjeto.Where(f => f.IdMedidaProjeto == 16).FirstOrDefault() != null ? medidasItemProjeto.Where(f => f.IdMedidaProjeto == 16).FirstOrDefault().Valor : 0;
 
-                    // Se este modelo tiver apenas 3 peças, sempre a última peça deverá ter sua altura subtraída da espessura do tubo, 
+                    // Se este modelo tiver apenas 3 peças, sempre a última peça deverá ter sua altura subtraída da espessura do tubo,
                     // mas se este modelo tiver 4 peças, as duas últimas peças terão suas alturas subtraídas da espessura do tubo
                     if (pecasProjetoModelo.Count >= 3)
                         pecasProjetoModelo[2].Altura -= espTuboMedInst;
@@ -1275,7 +1275,7 @@ namespace Glass.Data.Helper
             Table tbPecaTemp = tbPecaModelo;
             tbPecaTemp.Controls.Clear();
 
-            // Pega a quantidade 
+            // Pega a quantidade
             bool medidasInseridas = MedidaItemProjetoDAO.Instance.ExistsMedida(sessao, itemProjeto.IdItemProjeto);
 
             //Cliente pode ediar com CAD Project
@@ -1522,9 +1522,9 @@ namespace Glass.Data.Helper
                                     // Só pode editar as peças se o pedido estiver conferido
                                     cImb.OnClientClick = @"
                                     var estaConferido = MetodosAjax.EstaConferido(FindControl('hdfIdItemProjeto', 'input').value);
-                                
+
                                     if (estaConferido != null && estaConferido.value == 'false') {
-                                        alert('Confirme o projeto antes de editar as imagens.'); 
+                                        alert('Confirme o projeto antes de editar as imagens.');
                                         return false;
                                     }
 
@@ -1995,7 +1995,7 @@ namespace Glass.Data.Helper
                 float alturaCalc = material.Altura;
                 decimal total = material.Total;
                 decimal custo = material.Custo;
-                CalculosFluxo.CalcTamanhoAluminio(sessao, (int)material.IdProd, ref alturaCalc, Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)material.IdProd), 1, material.Valor,
+                CalculosFluxo.CalcTamanhoAluminio(sessao, (int)material.IdProd, ref alturaCalc, Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)material.IdProd, false), 1, material.Valor,
                     material.Qtde, ref total, ref custo);
 
                 material.AlturaCalc = alturaCalc;
@@ -3049,7 +3049,7 @@ namespace Glass.Data.Helper
                     nomeFigura = modelo.NomeFiguraAssociada;
             }
 
-            // DEIXAR O INÍCIO COMO ../../ AO INVÉS DE ~/ DÁ ERRO QUANDO ESTÁ NOS CLIENTES, 
+            // DEIXAR O INÍCIO COMO ../../ AO INVÉS DE ~/ DÁ ERRO QUANDO ESTÁ NOS CLIENTES,
             // JÁ EXISTE TRATAMENTO PARA ISTO QUANDO EXECUTA LOCAL
             string imgUrl = "../../Handlers/LoadFiguraAssociada.ashx?tipoDesenho=" + modelo.TipoDesenho +
                 "&path=" + modeloPath + nomeFigura + "&idItemProjeto=" + idItemProjeto +
@@ -3126,7 +3126,7 @@ namespace Glass.Data.Helper
                         case 34: // CPT02, CPT04, CPT06, CPT08, CPT10, CPT12, CPT22, CPT26, CPT30, CPT34, CPT38, CPT42, CPT46, CPT50
                         case 35: // CPT14, CPT16, CPT18, CPT20, CPT46
                         case 36: // CPT23, CPT27, CPT31, CPT35, CPT39, CPT43, CPT47, CPT51
-                        case 37: // CPT24, CPT28, CPT32, CPT36, CPT40, CPT44 
+                        case 37: // CPT24, CPT28, CPT32, CPT36, CPT40, CPT44
                         case 38: // CPT48, CPT52
                         case 39: // CPT53, CPT55, CPT57, CPT59, CPT61, CPT63, CPT65, CPT67, CPT69, CPT71, CPT73, CPT75, CPT77, CPT79
                         case 40: // CPT54, CPT56, CPT58, CPT60, CPT62, CPT64, CPT66, CPT68, CPT70, CPT72
@@ -3151,7 +3151,7 @@ namespace Glass.Data.Helper
                         case 50: // BS01, BS03, BS05
                         case 60: // BS19, BS21
                         case 62: // BS23, BS25
-                        case 64: // BS27, BS29 
+                        case 64: // BS27, BS29
                         case 66: // BS31, BS33
                             lstPeca = PecaItemProjetoDAO.Instance.GetByItemProjeto(sessao, idItemProjeto, modelo.IdProjetoModelo);
                             imgUrl += "&altBasc=" + ((lstPeca[0].Altura / 2) - (lstPeca[0].Altura / 10)); break;
@@ -3294,7 +3294,7 @@ namespace Glass.Data.Helper
 
                 // Caso o projeto possua altura e largura de vão, a área dele deve ser calculada com base nessas duas medidas, somente.
                 if (larguraVao > 0 && alturaVao > 0)
-                    return CalculosFluxo.ArredondaM2(sessao, larguraVao, alturaVao, qtdVao, 0, false);
+                    return CalculosFluxo.ArredondaM2(sessao, larguraVao, alturaVao, qtdVao, 0, false, 0, true);
 
                 #region Recupera o ID das medidas de vão do sistema
 
@@ -3348,11 +3348,11 @@ namespace Glass.Data.Helper
                 #endregion
 
                 // A área do vão será calculada com base na soma de todas as medidas de vão.
-                totM2 = CalculosFluxo.ArredondaM2(sessao, larguraVaoEsquerdo, alturaVao, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, larguraVaoCentral, alturaVao, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, larguraVaoDireito, alturaVao, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, larguraVaoDireitoSuperior, alturaVaoDireitoSuperior, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, larguraVaoEsquerdoSuperior, alturaVaoEsquerdoSuperior, qtdVao, 0, false);
+                totM2 = CalculosFluxo.ArredondaM2(sessao, larguraVaoEsquerdo, alturaVao, qtdVao, 0, false, 0, true) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoCentral, alturaVao, qtdVao, 0, false, 0, true) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoDireito, alturaVao, qtdVao, 0, false, 0, true) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoDireitoSuperior, alturaVaoDireitoSuperior, qtdVao, 0, false, 0, true) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoEsquerdoSuperior, alturaVaoEsquerdoSuperior, qtdVao, 0, false, 0, true);
             }
 
             return totM2;
@@ -3389,7 +3389,7 @@ namespace Glass.Data.Helper
             foreach (PecaItemProjeto pip in lstPeca)
             {
                 numPecas += pip.Qtde;
-                areaTotal += Glass.Global.CalculosFluxo.ArredondaM2(sessao, pip.Largura, pip.Altura, pip.Qtde, 0, false);
+                areaTotal += Glass.Global.CalculosFluxo.ArredondaM2(sessao, pip.Largura, pip.Altura, pip.Qtde, 0, false, 0, true);
             }
 
             // Obtém a espessura das peças
@@ -3413,7 +3413,7 @@ namespace Glass.Data.Helper
             if (itemProjeto.Qtde == 0) itemProjeto.Qtde = 1;
 
             float areaVao = (!itemProjeto.MedidaExata ? (itemProjeto.M2Vao / itemProjeto.Qtde) : lstPeca.Count > 0 ?
-                Glass.Global.CalculosFluxo.ArredondaM2(sessao, lstPeca[0].Largura, lstPeca[0].Altura, lstPeca[0].Qtde, 0, lstPeca[0].Redondo) : 0);
+                Glass.Global.CalculosFluxo.ArredondaM2(sessao, lstPeca[0].Largura, lstPeca[0].Altura, lstPeca[0].Qtde, 0, lstPeca[0].Redondo, 0, true) : 0);
 
             if (ProjetoConfig.TelaCadastroAvulso.AreaTotalItemProjetoAreaPecas)
                 areaVao = areaTotal;
@@ -3443,18 +3443,18 @@ namespace Glass.Data.Helper
         /// <param name="peca">Peça para ao qual será gerado o arquivo.</param>
         /// <param name="pcp">Identifica se veio do PCP.</param>
         /// <param name="outputStream">Stream onde será gravado os dados do arquivo.</param>
-        private static void GerarArquivoCadProject(GDASession sessao, PecaItemProjeto peca, bool pcp, Stream outputStream)
+        public static void GerarArquivoCadProject(GDASession sessao, PecaItemProjeto peca, bool pcp, Stream outputStream)
         {
             if (outputStream == null)
             {
                 throw new ArgumentNullException(nameof(outputStream));
             }
 
-            var idArquivoCalcEngine = ArquivoMesaCorteDAO.Instance.ObtemIdArquivoCalcEngine(sessao, peca.IdArquivoMesaCorte.Value);
+            var idArquivoCalcEngine = ArquivoMesaCorteDAO.Instance.ObtemIdArquivoCalcEngine(sessao, peca.IdArquivoMesaCorte.GetValueOrDefault());
 
             if (idArquivoCalcEngine <= 0)
             {
-                throw new InvalidOperationException("Peça não possui arquivo CalcEngine");
+                return;
             }
 
             var idArquivoMesaCorte = peca.IdArquivoMesaCorte;
@@ -3641,22 +3641,13 @@ namespace Glass.Data.Helper
                 var caminho = PCPConfig.CaminhoSalvarCadProject(pcp);
                 var caimhoCompleto = caminho + peca.IdProdPed.GetValueOrDefault(0) + ".dxf";
 
-                if (!Directory.Exists(caminho))
+                using (var stream = new MemoryStream())
                 {
-                    Directory.CreateDirectory(caminho);
-                }
+                    GerarArquivoCadProject(null, peca, pcp, stream);
+                    stream.Flush();
 
-                if (File.Exists(caimhoCompleto))
-                {
-                    File.Delete(caimhoCompleto);
-                }
-
-                try
-                {
-                    using (var stream = new MemoryStream())
+                    if (stream.Length > 0)
                     {
-                        GerarArquivoCadProject(null, peca, pcp, stream);
-                        stream.Flush();
                         stream.Position = 0;
 
                         var read = 0;
@@ -3672,15 +3663,10 @@ namespace Glass.Data.Helper
                             file.Flush();
                         }
                     }
-                }
-                catch
-                {
-                    if (System.IO.Directory.Exists(caimhoCompleto))
+                    else if (File.Exists(caimhoCompleto))
                     {
-                        System.IO.File.Delete(caimhoCompleto);
+                        File.Delete(caimhoCompleto);
                     }
-
-                    throw;
                 }
 
                 var manager = new CADProject.Remote.Client.ExternalProjectManager(
@@ -3747,9 +3733,11 @@ namespace Glass.Data.Helper
                     if (File.Exists(caminhoCompletoJpg))
                         File.Delete(caminhoCompletoJpg);
 
+                    ms.Position = 0;
                     using (var file = new FileStream(caminhoCompletoDxf, FileMode.Create, FileAccess.Write))
                     {
                         ms.WriteTo(file);
+                        file.Flush();
                     }
 
                     // Converte os bytes do memory stream preview para texto.

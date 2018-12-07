@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Web.UI;
@@ -18,7 +18,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
         private string url;
 
-        // Define se as medidas das peÁas poder„o ser alteradas
+        // Define se as medidas das pe√ßas poder√£o ser alteradas
         protected bool AlterarMedidasPecas()
         {
             return Request["pcp"] != null;
@@ -67,13 +67,13 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     hdfIdItemProjeto.Value = AmbientePedidoEspelhoDAO.Instance.ObtemItemProjeto(Glass.Conversoes.StrParaUint(Request["idAmbientePedidoEspelho"])).ToString();
                 else if (parceiro && !Configuracoes.ProjetoConfig.TelaCadastroParceiros.ExibirCorAluminioFerragemWebGlassParceiros)
                 {
-                    // Abre a seleÁ„o de modelo de projeto para WebglassParceiros
+                    // Abre a sele√ß√£o de modelo de projeto para WebglassParceiros
                     ClientScript.RegisterStartupScript(typeof(string), "SelModelo", "novoModelo(true);", true);
                     buscarReposicao = false;
                 }
                 else
                 {
-                    // Abre a seleÁ„o de modelo de projeto
+                    // Abre a sele√ß√£o de modelo de projeto
                     ClientScript.RegisterStartupScript(typeof(string), "SelModelo", "novoModelo();", true);
                     buscarReposicao = false;
                 }
@@ -82,10 +82,10 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 hdfIsReposicao.Value = (buscarReposicao && (itemProjeto != null ? itemProjeto.Reposicao : false)).ToString().ToLower();
 
-                // SÛ exibe a coluna "Obs." para projetos em pedidos espelho
+                // S√≥ exibe a coluna "Obs." para projetos em pedidos espelho
                 grdMaterialProjeto.Columns[12].Visible = !String.IsNullOrEmpty(hdfIdAmbientePedidoEspelho.Value);
 
-                //Se for lite n„o exibe processo e aplicaÁ„o
+                //Se for lite n√£o exibe processo e aplica√ß√£o
                 if (Glass.Configuracoes.Geral.SistemaLite)
                 {
                     grdMaterialProjeto.Columns[8].Visible = false;
@@ -122,11 +122,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
         protected void grdMaterialProjeto_PreRender(object sender, EventArgs e)
         {
             if (hdfIdItemProjeto == null)
-                throw new Exception("Falha ao carregar informaÁıes, abra a p·gina de projetos novamente.");
+                throw new Exception("Falha ao carregar informa√ß√µes, abra a p√°gina de projetos novamente.");
             string idItemProjeto = hdfIdItemProjeto.Value;
-            if (idItemProjeto == null) throw new Exception("Falha ao carregar informaÁıes, abra a p·gina de projetos novamente.");
+            if (idItemProjeto == null) throw new Exception("Falha ao carregar informa√ß√µes, abra a p√°gina de projetos novamente.");
 
-            // Se n„o houver nenhum produto cadastrado no pedido (e no ambiente passado)
+            // Se n√£o houver nenhum produto cadastrado no pedido (e no ambiente passado)
             if (!String.IsNullOrEmpty(idItemProjeto) && MaterialItemProjetoDAO.Instance.GetCountReal(Glass.Conversoes.StrParaUint(idItemProjeto)) == 0)
                 grdMaterialProjeto.Rows[0].Visible = false;
             else if (String.IsNullOrEmpty(idItemProjeto))
@@ -158,8 +158,8 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     url = url.Substring(0, start) + idAmbientePedido + url.Substring(url.IndexOf("&", start, StringComparison.Ordinal));
                 }
 
-                // SÛ redireciona a p·gina se o chamado for feito de um bot„o
-                // (O par‚metro sender ser· passado como null ao confirmar o projeto pela primeira vez)
+                // S√≥ redireciona a p√°gina se o chamado for feito de um bot√£o
+                // (O par√¢metro sender ser√° passado como null ao confirmar o projeto pela primeira vez)
                 if (sender != null)
                     Response.Redirect(url);
             }
@@ -182,7 +182,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             }
             else
             {
-                // Verifica se o valor do hiddenfield que contem o id do projeto sendo editado acaba de ser excluÌdo
+                // Verifica se o valor do hiddenfield que contem o id do projeto sendo editado acaba de ser exclu√≠do
                 if (!String.IsNullOrEmpty(hdfIdItemProjeto.Value) && !ItemProjetoDAO.Instance.Exists(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value)))
                     LimpaCalculo();
             }
@@ -261,7 +261,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             else
             {
                 CalculaTotalItemProj();
-                Glass.MensagemAlerta.ShowMsg("Confirme o projeto para aplicar esta alteraÁ„o.", Page);
+                Glass.MensagemAlerta.ShowMsg("Confirme o projeto para aplicar esta altera√ß√£o.", Page);
             }
         }
 
@@ -272,7 +272,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         /// <summary>
         /// Monta o modelo selecionado na tela
         /// </summary>
-        /// <param name="edit">Identifica se o item_projeto est· sendo editado (J· foi informado valores)</param>
+        /// <param name="edit">Identifica se o item_projeto est√° sendo editado (J√° foi informado valores)</param>
         protected void MontaModelo(bool edit)
         {
             // Pega o item que acaba de ser inserido
@@ -291,19 +291,19 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
             #endregion
 
-            // Monta tabela com Medidas da ¡rea de InstalaÁ„o
-            // Se o cÛdigo do modelo for OTR01, n„o monta tabela de medidas
+            // Monta tabela com Medidas da √Årea de Instala√ß√£o
+            // Se o c√≥digo do modelo for OTR01, n√£o monta tabela de medidas
             if (modelo.Codigo != "OTR01")
                 UtilsProjeto.CreateTableMedInst(ref tbMedInst, itemProj, modelo, Request["pcp"] != null);
 
             try
             {
-                // Se o cÛdigo do modelo for OTR01, n„o monta tabela de peÁas
+                // Se o c√≥digo do modelo for OTR01, n√£o monta tabela de pe√ßas
                 if (modelo.Codigo != "OTR01")
                 {
-                    if (edit) // Monta a tabela de peÁas com as medidas j· existentes
+                    if (edit) // Monta a tabela de pe√ßas com as medidas j√° existentes
                         UtilsProjeto.CreateTablePecasItemProjeto(ref tbPecaModelo, itemProj.IdItemProjeto, itemProj, AlterarMedidasPecas(), Request["visualizar"] == "1", Request["Parceiro"] == "true");
-                    else // Monta a tabela de peÁas com valores padrıes
+                    else // Monta a tabela de pe√ßas com valores padr√µes
                         UtilsProjeto.CreateTablePecasModelo(ref tbPecaModelo, null, itemProj, AlterarMedidasPecas(), Request["visualizar"] == "1", Request["Parceiro"] == "true");
                 }
             }
@@ -322,7 +322,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 txtAmbiente.Text = PedidoDAO.Instance.ObtemPedCli(null, Glass.Conversoes.StrParaUint(!String.IsNullOrEmpty(hdfIdPedidoOriginal.Value) ?
                     hdfIdPedidoOriginal.Value : hdfIdPedidoEspelho.Value));
 
-            // Define se o projeto est· sendo visualizado apÛs confirmado
+            // Define se o projeto est√° sendo visualizado ap√≥s confirmado
             bool readOnly = Request["pcp"] == "1" && Request["visualizar"] == "1";
 
             bool alterarFigura = readOnly && itemProj.IdPedidoEspelho > 0;
@@ -332,13 +332,13 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 alterarFigura = alt != null && bool.Parse(alt.Value);
             }
 
-            // Mostra tabela para inserir kit se o projeto n„o for c·lculo de vidro apenas, o modelo do item_projeto for do grupo
-            // Correr com Kit e n„o houver nenhum produto do grupo Kit cadastrado nos materiais deste itemProjeto
+            // Mostra tabela para inserir kit se o projeto n√£o for c√°lculo de vidro apenas, o modelo do item_projeto for do grupo
+            // Correr com Kit e n√£o houver nenhum produto do grupo Kit cadastrado nos materiais deste itemProjeto
             tbInsKit.Visible = !itemProj.ApenasVidros && !readOnly && (modelo.IdGrupoModelo == (uint)UtilsProjeto.GrupoModelo.CorrerComKit08mm ||
                 modelo.IdGrupoModelo == (uint)UtilsProjeto.GrupoModelo.CorrerComKit10mm ||
                 MaterialProjetoModeloDAO.Instance.RequerKit(itemProj.IdItemProjeto)) && !MaterialItemProjetoDAO.Instance.ExistsKit(itemProj.IdItemProjeto);
 
-            // Mostra tabela para inserir tubo se n„o tiver o produto Tubo nos materiais, se o projeto n„o for c·lculo apenas de vidro e
+            // Mostra tabela para inserir tubo se n√£o tiver o produto Tubo nos materiais, se o projeto n√£o for c√°lculo apenas de vidro e
             // o modelo utilizado neste projeto requerer tubo
             tbInsTubo.Visible = !itemProj.ApenasVidros && !readOnly && MaterialProjetoModeloDAO.Instance.RequerTubo(itemProj.IdItemProjeto) &&
                 !MaterialItemProjetoDAO.Instance.ExistsTubo(itemProj.IdItemProjeto);
@@ -362,7 +362,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             ctrlCorItemProjeto2.Visible = !parceiro? !readOnly && visib :
                 Configuracoes.ProjetoConfig.TelaCadastroParceiros.EsconderCamposAlteraCorItemProjeto ? false : !readOnly && visib;
 
-            // Se for visualizaÁ„o, esconde botıes de c·lculo e trocar o bot„o fechar por voltar
+            // Se for visualiza√ß√£o, esconde bot√µes de c√°lculo e trocar o bot√£o fechar por voltar
             if (readOnly)
             {
                 btnCalcMed.Visible = false;
@@ -393,8 +393,8 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
             CalculaTotalItemProj();
 
-            // Deve realizar o bind na grdMaterialProjeto apenas se n„o for postback, sen„o
-            // ao inserir um novo material ‡ m„o, os valores s„o apagados.
+            // Deve realizar o bind na grdMaterialProjeto apenas se n√£o for postback, sen√£o
+            // ao inserir um novo material √† m√£o, os valores s√£o apagados.
             if (!IsPostBack)
             {
                 grdMaterialProjeto.DataBind();
@@ -434,7 +434,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             {
                 ProdutoObra prod = ProdutoObraDAO.Instance.GetByCodInterno(idObra.Value, codInterno);
                 if (prod == null)
-                    return "Erro;Esse produto n„o est· cadastrado no pagamento antecipado.";
+                    return "Erro;Esse produto n√£o est√° cadastrado no pagamento antecipado.";
 
                 float tamanhoProdutos = ProdutosPedidoDAO.Instance.TotalMedidasObra(idObra.Value, codInterno, null);
                 float tamanhoProduto = float.Parse(totM2Produto.Replace(".", ","));
@@ -463,7 +463,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             }
             else
             {
-                // Recupera o valor mÌnimo do produto
+                // Recupera o valor m√≠nimo do produto
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 return ProdutoDAO.Instance.GetValorMinimo(ProdutoDAO.Instance.ObtemIdProd(codInterno), tipoEntr, idCli, revenda == "true",
@@ -518,7 +518,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 var coresVidroPossives = ProjetoModeloDAO.Instance.ObtemIdsCorVidro(idProjetoModelo.StrParaUint());
 
                 if (coresVidroPossives != null && !coresVidroPossives.Split(',').Contains(idCorVidro))
-                    return "Erro;O projeto n„o pode ser duplicado pois a cor do vidro do mesmo n„o est· mais disponÌvel.";
+                    return "Erro;O projeto n√£o pode ser duplicado pois a cor do vidro do mesmo n√£o est√° mais dispon√≠vel.";
 
                 #region Inserir novo item projeto
 
@@ -529,7 +529,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 #endregion
 
                 if (itemProj == null || itemProj.IdItemProjeto == 0)
-                    return "Erro;Falha ao inserir item no projeto. InserÁ„o retornou 0.";
+                    return "Erro;Falha ao inserir item no projeto. Inser√ß√£o retornou 0.";
 
                 if (idPedido > 0 && (idAmbientePedido == null || idAmbientePedido == 0))
                     return "ok;" + itemProj.IdItemProjeto + ";hdfIdAmbientePedido;" + AmbientePedidoDAO.Instance.ObtemIdAmbiente(itemProj.IdItemProjeto);
@@ -558,7 +558,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 Cliente cli = ClienteDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idCli));
 
                 if (cli == null || cli.IdCli == 0)
-                    return "Erro;Cliente n„o encontrado.";
+                    return "Erro;Cliente n√£o encontrado.";
                 else if (cli.Situacao == (int)SituacaoCliente.Inativo)
                     return "Erro;Cliente inativo. Motivo: " + cli.Obs;
                 else if (cli.Situacao == (int)SituacaoCliente.Cancelado)
@@ -570,12 +570,12 @@ namespace Glass.UI.Web.Cadastros.Projeto
             }
             catch
             {
-                return "Erro;Cliente n„o encontrado.";
+                return "Erro;Cliente n√£o encontrado.";
             }
         }
 
         /// <summary>
-        /// Retorna o CÛdigo/DescriÁ„o do produto
+        /// Retorna o C√≥digo/Descri√ß√£o do produto
         /// </summary>
         [Ajax.AjaxMethod()]
         public string GetProduto(string idPedido, string idOrcamento, string codInterno, string tipoEntrega, string revenda, string idCliente)
@@ -583,7 +583,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno);
 
             if (prod == null)
-                return "Erro;N„o existe produto com o cÛdigo informado.";
+                return "Erro;N√£o existe produto com o c√≥digo informado.";
             else if (prod.Compra)
                 return "Erro;Produto utilizado apenas na compra.";
             else if (prod.Situacao == Glass.Situacao.Inativo)
@@ -601,7 +601,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                         var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(null, prod.IdSubgrupoProd.Value);
 
                         if (idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == idLoja))
-                            return "Erro;Esse produto n„o pode ser utilizado, pois, as lojas do seu subgrupo s„o diferentes da loja do pedido/projeto.";
+                            return "Erro;Esse produto n√£o pode ser utilizado, pois, as lojas do seu subgrupo s√£o diferentes da loja do pedido/projeto.";
                     }
                 }
 
@@ -610,18 +610,18 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 if (!String.IsNullOrEmpty(idPedido) && idPedido != "0")
                 {
-                    pedidoReposicao = PedidoDAO.Instance.ObtemTipoVenda(null, Glass.Conversoes.StrParaUint(idPedido)) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.ReposiÁ„o;
+                    pedidoReposicao = PedidoDAO.Instance.ObtemTipoVenda(null, Glass.Conversoes.StrParaUint(idPedido)) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposi√ß√£o;
                     isPedidoMaoObraEspecial = PedidoDAO.Instance.GetTipoPedido(null, Glass.Conversoes.StrParaUint(idPedido)) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial;
                 }
 
                 if (isPedidoMaoObraEspecial)
                 {
                     if (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro || SubgrupoProdDAO.Instance.IsSubgrupoProducao(prod.IdGrupoProd, prod.IdSubgrupoProd))
-                        return "Erro;Apenas produtos do grupo 'Vidro', e que n„o s„o marcados como 'Produtos para Estoque', podem ser utilizados nesse pedido.";
+                        return "Erro;Apenas produtos do grupo 'Vidro', e que n√£o s√£o marcados como 'Produtos para Estoque', podem ser utilizados nesse pedido.";
                 }
 
                 if (UserInfo.GetUserInfo.IsCliente && SubgrupoProdDAO.Instance.ObterBloquearEcommerce(null, prod.IdSubgrupoProd.Value))
-                    return "Erro;Este produto n„o pode ser selecionado na plataforma e-commerce. Entre em contato com a empresa para mais informaÁıes";
+                    return "Erro;Este produto n√£o pode ser selecionado na plataforma e-commerce. Entre em contato com a empresa para mais informa√ß√µes";
 
                 string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
 
@@ -646,7 +646,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     Glass.Data.DAL.GrupoProdDAO.Instance.IsAluminio(prod.IdGrupoProd).ToString().ToLower() + ";" +
                     (prod.AtivarAreaMinima ? prod.AreaMinima.ToString(CultureInfo.InvariantCulture).Replace(',', '.') : "0");
 
-                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
+                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
                 retorno += ";" + prod.Espessura;
                 retorno += ";" + prod.Altura;
                 retorno += ";" + prod.Largura;
@@ -662,11 +662,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
             Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno);
 
             if (prod == null)
-                return "Erro;N„o existe produto com o cÛdigo informado.";
+                return "Erro;N√£o existe produto com o c√≥digo informado.";
             else if (prod.Situacao == Glass.Situacao.Inativo)
                 return "Erro;Produto inativo." + (!String.IsNullOrEmpty(prod.Obs) ? " Obs: " + prod.Obs : "");
             else if (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
-                return "Erro;Produto n„o È vidro.";
+                return "Erro;Produto n√£o √© vidro.";
 
             /* Chamado 47194. */
             if (prod.IdSubgrupoProd > 0 && (idOrcamento.StrParaIntNullable() > 0 || idPedido.StrParaIntNullable() > 0))
@@ -679,7 +679,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(null, prod.IdSubgrupoProd.Value);
 
                     if (idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == idLoja))
-                        return "Erro;Esse produto n„o pode ser utilizado, pois, as lojas do seu subgrupo s„o diferentes da loja do pedido/projeto.";
+                        return "Erro;Esse produto n√£o pode ser utilizado, pois, as lojas do seu subgrupo s√£o diferentes da loja do pedido/projeto.";
                 }
             }
 
@@ -687,7 +687,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         }
 
         /// <summary>
-        /// Verifica se o item projeto est· conferido
+        /// Verifica se o item projeto est√° conferido
         /// </summary>
         [Ajax.AjaxMethod()]
         public string EstaConferido(string idItemProjeto)
@@ -696,7 +696,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         }
 
         /// <summary>
-        /// Verifica se o item projeto est· conferido
+        /// Verifica se o item projeto est√° conferido
         /// </summary>
         [Ajax.AjaxMethod()]
         public string PecaPossuiMaterial(string idPecaItemProj)
@@ -713,7 +713,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             try
             {
                 if (String.IsNullOrEmpty(idItemProjeto) || Conversoes.StrParaInt(idItemProjeto) == 0)
-                    return "Erro;O projeto n„o foi informado. Feche a tela e entre novamente";
+                    return "Erro;O projeto n√£o foi informado. Feche a tela e entre novamente";
 
                 ItemProjetoDAO.Instance.AtualizaObs(Glass.Conversoes.StrParaUint(idItemProjeto), obs);
 
@@ -721,7 +721,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             }
             catch (Exception ex)
             {
-                return "Erro;" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao salvar observaÁ„o.", ex);
+                return "Erro;" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao salvar observa√ß√£o.", ex);
             }
         }
 
@@ -746,7 +746,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             {
                 var cor = CorVidroDAO.Instance.GetNome(null, (uint)idCor.Value);
                 var projeto = ProjetoModeloDAO.Instance.ObtemCodigo(null, idProjetoModelo);
-                throw new Exception(string.Format("N„o È possivel utilizar a cor: {0} no projeto {1}, pois ela n„o esta vinculada ao mesmo.", cor, projeto));
+                throw new Exception(string.Format("N√£o √© possivel utilizar a cor: {0} no projeto {1}, pois ela n√£o esta vinculada ao mesmo.", cor, projeto));
             }
 
         }
@@ -774,7 +774,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             string idAplicacaoStr = ((HiddenField)grdMaterialProjeto.FooterRow.FindControl("hdfIdAplicacao")).Value;
             string espessura = ((TextBox)grdMaterialProjeto.FooterRow.FindControl("txtEspessura")).Text;
 
-            // Cria uma inst‚ncia do ProdutosPedido
+            // Cria uma inst√¢ncia do ProdutosPedido
             MaterialItemProjeto materItem = new MaterialItemProjeto();
             materItem.IdItemProjeto = idItemProj;
             materItem.Qtde = Glass.Conversoes.StrParaInt(((TextBox)grdMaterialProjeto.FooterRow.FindControl("txtQtdeIns")).Text);
@@ -804,17 +804,17 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 {
                     if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
                             (materItem.Altura < tamanhoMinimoBisote || materItem.Largura < tamanhoMinimoBisote))
-                        retorno += $"A altura ou largura minima para peÁas com bisotÍ È de {tamanhoMinimoBisote}mm.";
+                        retorno += $"A altura ou largura minima para pe√ßas com bisot√™ √© de {tamanhoMinimoBisote}mm.";
 
                     if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
                         (materItem.Altura < tamanhoMinimoLapidacao || materItem.Largura < tamanhoMinimoLapidacao))
-                        retorno += $"A altura ou largura minima para peÁas com lapidaÁ„o È de {tamanhoMinimoLapidacao}mm.";
+                        retorno += $"A altura ou largura minima para pe√ßas com lapida√ß√£o √© de {tamanhoMinimoLapidacao}mm.";
                 }
             }
 
             if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)materItem.IdProd)).IsVidroTemperado &&
                     materItem.Altura < tamanhoMinimoTemperado && materItem.Largura < tamanhoMinimoTemperado)
-                retorno += $"A altura ou largura minima para peÁas com tÍmpera È de {tamanhoMinimoTemperado}mm.";
+                retorno += $"A altura ou largura minima para pe√ßas com t√™mpera √© de {tamanhoMinimoTemperado}mm.";
 
             if (!string.IsNullOrWhiteSpace(retorno))
             {
@@ -874,11 +874,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
             //Chamado 54871
             idItemProjeto = idItemProj;
 
-            // Este bloqueio deve ser mantido para que as medidas calculadas n„o fiquem diferentes das imagens editadas.
-            // Caso o projeto j· tenha sido editado, o usu·rio poder· somente confirm·-lo.
+            // Este bloqueio deve ser mantido para que as medidas calculadas n√£o fiquem diferentes das imagens editadas.
+            // Caso o projeto j√° tenha sido editado, o usu√°rio poder√° somente confirm√°-lo.
             if (!itemProjeto.MedidaExata && PecaItemProjetoDAO.Instance.ObtemEditarImagemProjeto(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value)))
             {
-                Glass.MensagemAlerta.ShowMsg("Medidas n„o podem ser calculadas uma vez que houve ediÁ„o manual de alguma imagem do projeto", Page);
+                Glass.MensagemAlerta.ShowMsg("Medidas n√£o podem ser calculadas uma vez que houve edi√ß√£o manual de alguma imagem do projeto", Page);
                 return;
             }
 
@@ -915,8 +915,8 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
             #region Verifica/Insere Tubo e Kit
 
-            // Se o projeto n„o for c·lculo de vidro apenas, o modelo do item_projeto for do grupo Correr com Kit InstalaÁ„o e
-            // n„o houver nenhum produto do grupo Kit cadastrado nos materiais deste itemProjeto, obriga a cadastrar um produto do grupo Kit
+            // Se o projeto n√£o for c√°lculo de vidro apenas, o modelo do item_projeto for do grupo Correr com Kit Instala√ß√£o e
+            // n√£o houver nenhum produto do grupo Kit cadastrado nos materiais deste itemProjeto, obriga a cadastrar um produto do grupo Kit
             if (!ItemProjetoDAO.Instance.ApenasVidros(idItemProjeto) && (idGrupoModelo == (uint)UtilsProjeto.GrupoModelo.CorrerComKit08mm ||
                 idGrupoModelo == (uint)UtilsProjeto.GrupoModelo.CorrerComKit10mm ||
                 MaterialProjetoModeloDAO.Instance.RequerKit(idItemProjeto)) && !MaterialItemProjetoDAO.Instance.ExistsKit(idItemProjeto))
@@ -931,10 +931,10 @@ namespace Glass.UI.Web.Cadastros.Projeto
                         return;
                     }
 
-                    // Verifica se o valor do kit est· acima do valor mÌnimo
+                    // Verifica se o valor do kit est√° acima do valor m√≠nimo
                     if (!String.IsNullOrEmpty(hdfKitValMin.Value) && Single.Parse(hdfKitValMin.Value) > Single.Parse(txtValorKit.Text))
                     {
-                        Glass.MensagemAlerta.ShowMsg("O valor do kit est· abaixo do valor mÌnimo.", Page);
+                        Glass.MensagemAlerta.ShowMsg("O valor do kit est√° abaixo do valor m√≠nimo.", Page);
                         return;
                     }
 
@@ -977,7 +977,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             else
                 tbInsKit.Visible = false;
 
-            // Verifica se foi cadastrado o produto Tubo nos materiais, se o projeto n„o for c·lculo apenas de vidro e
+            // Verifica se foi cadastrado o produto Tubo nos materiais, se o projeto n√£o for c√°lculo apenas de vidro e
             // o modelo utilizado neste projeto requerer tubo
             if (!ItemProjetoDAO.Instance.ApenasVidros(idItemProjeto) && MaterialProjetoModeloDAO.Instance.RequerTubo(idItemProjeto) &&
                 !MaterialItemProjetoDAO.Instance.ExistsTubo(idItemProjeto))
@@ -992,10 +992,10 @@ namespace Glass.UI.Web.Cadastros.Projeto
                         return;
                     }
 
-                    // Verifica se o valor do tubo est· acima do valor mÌnimo
+                    // Verifica se o valor do tubo est√° acima do valor m√≠nimo
                     if (!String.IsNullOrEmpty(hdfTuboValMin.Value) && Single.Parse(hdfTuboValMin.Value) > Single.Parse(txtValorTubo.Text))
                     {
-                        Glass.MensagemAlerta.ShowMsg("O valor do tubo est· abaixo do valor mÌnimo.", Page);
+                        Glass.MensagemAlerta.ShowMsg("O valor do tubo est√° abaixo do valor m√≠nimo.", Page);
                         return;
                     }
 
@@ -1048,13 +1048,13 @@ namespace Glass.UI.Web.Cadastros.Projeto
             try
             {
                 /* Chamado 50798.
-                 * Caso as medidas do projeto sejam calculadas, todas as ediÁıes devem ser desfeitas, mesmo que nenhuma medida tenha sido alterada. */
+                 * Caso as medidas do projeto sejam calculadas, todas as edi√ß√µes devem ser desfeitas, mesmo que nenhuma medida tenha sido alterada. */
                 if (itemProjeto.IdPedido > 0)
                     ProdutosPedidoDAO.Instance.AtualizarEdicaoImagemPecaArquivoMarcacao(null, (int)itemProjeto.IdItemProjeto);
                 else if (itemProjeto.IdPedidoEspelho > 0)
                     ProdutosPedidoEspelhoDAO.Instance.AtualizarEdicaoImagemPecaArquivoMarcacao(null, (int)itemProjeto.IdItemProjeto);
 
-                // Verifica se as peÁas foram alteradas
+                // Verifica se as pe√ßas foram alteradas
                 HiddenField hdfPecasAlteradas = (HiddenField)tbPecaModelo.FindControl("hdfPecasAlteradas");
                 HiddenField hdfMedidasAlteradas = (HiddenField)tbPecaModelo.FindControl("hdfMedidasAlteradas");
                 var pecasAlteradas = hdfPecasAlteradas != null && bool.Parse(hdfPecasAlteradas.Value);
@@ -1070,16 +1070,16 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 var modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(itemProjeto.IdProjetoModelo);
 
-                // Calcula as medidas das peÁas, retornando lista
+                // Calcula as medidas das pe√ßas, retornando lista
                 var lstPecaModelo = UtilsProjeto.CalcularMedidasPecasComBaseNaTelaComTransacao(modelo, itemProjeto, tbMedInst, tbPecaModelo, true, AlterarMedidasPecas(), false, out retornoValidacao);
 
-                // Insere PeÁas na tabela peca_item_projeto
+                // Insere Pe√ßas na tabela peca_item_projeto
                 PecaItemProjetoDAO.Instance.InsertFromPecaModelo(itemProjeto, ref lstPecaModelo);
 
-                // Insere as peÁas de vidro apenas se todas as PeÁa Projeto Modelo tiver idProd
+                // Insere as pe√ßas de vidro apenas se todas as Pe√ßa Projeto Modelo tiver idProd
                 var inserirPecasVidro = !lstPecaModelo.Any(f => f.IdProd == 0);
                 if (inserirPecasVidro)
-                    // Insere PeÁas na tabela material_item_projeto
+                    // Insere Pe√ßas na tabela material_item_projeto
                     MaterialItemProjetoDAO.Instance.InserePecasVidro(idObra, idCliente, tipoEntrega, itemProjeto, modelo, lstPecaModelo);
 
                 // Atualiza qtds dos materiais apenas
@@ -1105,7 +1105,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 #endregion
 
-                // Monta tabela de peÁas
+                // Monta tabela de pe√ßas
                 UtilsProjeto.CreateTablePecasItemProjeto(ref tbPecaModelo, itemProjeto.IdItemProjeto, itemProjeto, AlterarMedidasPecas(), Request["visualizar"] == "1", Request["Parceiro"] == "true");
 
                 // Mostra o total deste item e do projeto
@@ -1137,11 +1137,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
         protected void btnConfCalc_Load(object sender, EventArgs e)
         {
             if (Request["idPedido"] != null && PedidoDAO.Instance.IsGeradoParceiro(null, Glass.Conversoes.StrParaUint(Request["idPedido"])))
-                btnConfCalc.OnClientClick = "if (!confirm('AS MEDIDAS CALCULADAS NESSE PROJETO S√O DE SUA RESPONSABILIDADE.\\nDESEJA CONFIRMAR AS MEDIDAS?')) return false";
+                btnConfCalc.OnClientClick = "if (!confirm('AS MEDIDAS CALCULADAS NESSE PROJETO S√ÉO DE SUA RESPONSABILIDADE.\\nDESEJA CONFIRMAR AS MEDIDAS?')) return false";
         }
 
         /// <summary>
-        /// Confirma c·lculo
+        /// Confirma c√°lculo
         /// </summary>
         protected void btnConfCalc_Click(object sender, EventArgs e)
         {
@@ -1160,7 +1160,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     return;
 
                 var imagemEditada = PecaItemProjetoDAO.Instance.ObtemEditarImagemProjeto(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value));
-                string msgImagemEditada = imagemEditada ? ", este projeto possui imagens editadas, devido a isso alteraÁıes de medidas n„o ser„o aplicadas ‡s mesmas. CONFIRA NOVAMENTE AS IMAGENS DAS PE«AS DESTE PROJETO." : "";
+                string msgImagemEditada = imagemEditada ? ", este projeto possui imagens editadas, devido a isso altera√ß√µes de medidas n√£o ser√£o aplicadas √†s mesmas. CONFIRA NOVAMENTE AS IMAGENS DAS PE√áAS DESTE PROJETO." : "";
 
                 ClientScript.RegisterClientScriptBlock(typeof(string), "Ok", "window.opener.refreshPage(); alert('Medidas confirmadas" + msgImagemEditada + "');" + redireciona, true);
             }
@@ -1172,7 +1172,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         }
 
         /// <summary>
-        /// O retorno do mÈtodo indica se o item foi inserido ou n„o (atualizado).
+        /// O retorno do m√©todo indica se o item foi inserido ou n√£o (atualizado).
         /// </summary>
         /// <returns></returns>
         protected bool ConfirmaProjeto()
@@ -1211,11 +1211,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 // Busca o item_projeto sendo calculado
                 var itemProjeto = ItemProjetoDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value));
 
-                // Esta funÁ„o n„o funciona corretamente, pois caso a pessoa queira mudar as medidas das peÁas direto nas peÁas no PCP n„o funciona
+                // Esta fun√ß√£o n√£o funciona corretamente, pois caso a pessoa queira mudar as medidas das pe√ßas direto nas pe√ßas no PCP n√£o funciona
                 if (PedidoConfig.LiberarPedido && !itemProjeto.Conferido && !itemProjeto.MedidaExata)
                     btnCalcMed_Click(btnCalcMed, EventArgs.Empty);
 
-                // Verifica se as peÁas foram alteradas
+                // Verifica se as pe√ßas foram alteradas
                 HiddenField hdfPecasAlteradas = (HiddenField)tbPecaModelo.FindControl("hdfPecasAlteradas");
                 HiddenField hdfMedidasAlteradas = (HiddenField)tbPecaModelo.FindControl("hdfMedidasAlteradas");
                 var pecasAlteradas = hdfPecasAlteradas != null && bool.Parse(hdfPecasAlteradas.Value);
@@ -1245,8 +1245,8 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     hdfMedidasAlteradas.Value = "false";
 
                 // Recarrega a tela no caso do cadastro do item
-                // No orÁamento n„o È necess·rio verificar se o item foi inserido,
-                // j· que o anterior È apagado do banco e o novo È sempre inserido
+                // No or√ßamento n√£o √© necess√°rio verificar se o item foi inserido,
+                // j√° que o anterior √© apagado do banco e o novo √© sempre inserido
                 if ((idOrcamento.GetValueOrDefault() > 0) ||
                     (idPedido.GetValueOrDefault() > 0 && idAmbientePedido.GetValueOrDefault() == 0) ||
                     (idPedidoEsp.GetValueOrDefault() > 0 && idAmbientePedidoEsp.GetValueOrDefault() == 0))
@@ -1266,7 +1266,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     IdAmbientePedido: {idAmbientePedido}
                     IdAmbientePedidoEsp: {idAmbientePedidoEsp}", ex);
 
-                // Marca que c·lculo de projeto n„o foi conferido
+                // Marca que c√°lculo de projeto n√£o foi conferido
                 if (idPedido.GetValueOrDefault() > 0 || idPedidoEsp.GetValueOrDefault() > 0)
                     ItemProjetoDAO.Instance.CalculoNaoConferido(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value));
 
@@ -1322,7 +1322,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 // Verifica se o itemProjeto existe
                 if (!ItemProjetoDAO.Instance.Exists(idItemProjeto))
                 {
-                    Glass.MensagemAlerta.ShowMsg("Este projeto j· foi excluÌdo.", Page);
+                    Glass.MensagemAlerta.ShowMsg("Este projeto j√° foi exclu√≠do.", Page);
                     return;
                 }
 
@@ -1345,7 +1345,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         #region Atualiza o ambiente para modelo "Outros"
 
         /// <summary>
-        /// Confirmar somente o projeto de cÛdigo OTR01. O bot„o fica visÌvel somente para este projeto.
+        /// Confirmar somente o projeto de c√≥digo OTR01. O bot√£o fica vis√≠vel somente para este projeto.
         /// </summary>
         protected void btnConfAmbiente_Click(object sender, EventArgs e)
         {
@@ -1404,7 +1404,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(null, idPedidoEsp.Value, idAmbientePedidoEsp, itemProjeto, true);
                 }
 
-                // Marca que c·lculo de projeto foi conferido
+                // Marca que c√°lculo de projeto foi conferido
                 if (idPedido > 0 || idPedidoEsp > 0)
                     ItemProjetoDAO.Instance.CalculoConferido(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value));
 
@@ -1412,7 +1412,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             }
             catch (Exception ex)
             {
-                // Marca que c·lculo de projeto n„o foi conferido
+                // Marca que c√°lculo de projeto n√£o foi conferido
                 if (idPedido > 0 || idPedidoEsp > 0)
                     ItemProjetoDAO.Instance.CalculoNaoConferido(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value));
 
@@ -1423,10 +1423,10 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
         #endregion
 
-        #region Limpa C·lculos
+        #region Limpa C√°lculos
 
         /// <summary>
-        /// Limpa informaÁıes relacionadas ao c·lculo de projeto atual
+        /// Limpa informa√ß√µes relacionadas ao c√°lculo de projeto atual
         /// </summary>
         protected void LimpaCalculo()
         {
@@ -1466,7 +1466,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         {
             uint idItemProj = Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value);
             lblSubtotal.Text = ItemProjetoDAO.Instance.GetTotalItemProjeto(idItemProj).ToString("C");
-            lblM2Vao.Text = ItemProjetoDAO.Instance.GetM2VaoItemProjeto(idItemProj).ToString(CultureInfo.InvariantCulture) + "m≤";
+            lblM2Vao.Text = ItemProjetoDAO.Instance.GetM2VaoItemProjeto(idItemProj).ToString(CultureInfo.InvariantCulture) + "m¬≤";
         }
 
         #endregion
@@ -1633,7 +1633,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
         protected void dtvImagem_DataBound(object sender, EventArgs e)
         {
-            // Atualiza o bot„o de imprimir, preenchendo com o idItemProjeto e alterando sua visibilidade
+            // Atualiza o bot√£o de imprimir, preenchendo com o idItemProjeto e alterando sua visibilidade
             if (dtvImagem.FindControl("btnImprimir") != null)
             {
                 ((Button)dtvImagem.FindControl("btnImprimir")).OnClientClick = "openWindow(600, 800, '../../Relatorios/Projeto/RelBase.aspx?rel=imagemProjeto&idOrcamento=" + Request["idOrcamento"] +
@@ -1652,7 +1652,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         {
             var idPedido = Request["idPedido"].StrParaUint();
 
-            if (idPedido > 0 && PedidoDAO.Instance.ObtemTipoVenda(null, idPedido) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.ReposiÁ„o)
+            if (idPedido > 0 && PedidoDAO.Instance.ObtemTipoVenda(null, idPedido) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposi√ß√£o)
             {
                 return "true";
             }

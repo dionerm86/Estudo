@@ -34,7 +34,7 @@
                         Valor
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('dataCadastro')">Data Rec.</a>
+                        <a href="#" @click.prevent="ordenar('dataCadastro')">Data Cad.</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('situacao')">Situação</a>

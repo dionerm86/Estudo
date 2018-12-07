@@ -1,4 +1,5 @@
-﻿<%@ Page Title="Cadastro de Orçamento" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadOrcamento.aspx.cs"
+﻿
+<%@ Page Title="Cadastro de Orçamento" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadOrcamento.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.CadOrcamento" %>
 
 <%@ Register Src="../Controls/ctrlTextBoxFloat.ascx" TagName="ctrlTextBoxFloat" TagPrefix="uc1" %>

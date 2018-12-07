@@ -20,9 +20,15 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/ExpBalcao.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
+<style>
+    .fullSize {
+        height:100%;
+        width:100%;
+    }
+</style>
 </head>
 <body>
-    <form id="form1" runat="server">
+    <form id="form1" runat="server" class="fullSize">
         <div class="boxTitulo">
             <div class="boxAzul">
                 <div>
@@ -551,7 +557,7 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, uti
         </div>
         <div id="divModuloSistema" style="display: none;">
             <div class="boxModuloSistema">
-                <iframe runat="server" id="frameModuloSistema" frameBorder="0" style="display: none; width:100%; height:100%" />
+                <iframe runat="server" id="frameModuloSistema" frameBorder="0" style="display: none;" class="fullSize"/>
             </div>
         </div>
         <div style="display: none;">

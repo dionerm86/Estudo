@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.Model;
@@ -140,7 +140,7 @@ namespace Glass.Data.DAL
 
             sqlItemRevenda += " GROUP BY ic.idItemCarregamento";
 
-            string filtro = "";
+            string filtro = string.Empty;
 
             if (idCarregamento > 0)
                 filtro += " AND ic.idCarregamento=" + idCarregamento;
@@ -201,7 +201,7 @@ namespace Glass.Data.DAL
 
         private string SqlItensPendentes(uint idCarregamento, uint idPedido, uint idCli, string nomeCli, uint idLoja,
             bool? volume, bool? itemRevenda, bool agruparProdutos, string dtSaidaIni, string dtSaidaFim, string rotas,
-            bool ignorarPedidosVendaTransferencia, uint idCliExterno, string nomeCliExterno, string codRotasExternas)
+            bool? ignorarPedidosVendaTransferencia, uint idCliExterno, string nomeCliExterno, string codRotasExternas)
         {
             var nomeClienteBD = OrdemCargaConfig.ExibirRazaoSocialCliente ?
                 "Coalesce(c.nome, c.nomeFantasia)" : "Coalesce(c.nomeFantasia, c.nome)";
@@ -270,7 +270,7 @@ namespace Glass.Data.DAL
                 GROUP BY "
                          + (agruparProdutos ? "car.idCarregamento, p.idProd, pp.Altura, pp.Largura, ic.IdPedido" : "ic.idItemCarregamento");
 
-            string sql = "";
+            string sql = string.Empty;
 
             if (volume.HasValue && volume.Value)
                 sql += sqlvolume;
@@ -282,7 +282,7 @@ namespace Glass.Data.DAL
                 sql += sqlvolume + " UNION ALL " + sqlItemVenda + " UNION ALL " + sqlItemRevenda + "";
 
             string filtro = " AND ic.carregado = FALSE";
-            string criterio = "";
+            string criterio = string.Empty;
 
             if (idCarregamento > 0)
             {
@@ -357,9 +357,9 @@ namespace Glass.Data.DAL
                 criterio += "Rota Externo: " + codRotasExternas + "   ";
             }
 
-            sql =  string.Format(sql, filtro).Replace("$$$", criterio);
+            sql = string.Format(sql, filtro).Replace("$$$", criterio);
 
-            if (ignorarPedidosVendaTransferencia)
+            if (ignorarPedidosVendaTransferencia.HasValue && ignorarPedidosVendaTransferencia.Value)
             {
                 sql = @"SELECT * 
                         FROM (" + sql + @") as tmp
@@ -377,7 +377,7 @@ namespace Glass.Data.DAL
                                                         tmp2.idCarregamentoTmp2 = tmp.idCarregamento AND
                                                         tmp2.idVolumeTmp2 = tmp.idVolume)
                         WHERE IF(tmp.deveTransferir, COALESCE(tmp1.tipoOrdemCargaTmp1," + (int)OrdemCarga.TipoOCEnum.Transferencia +") = " + (int)OrdemCarga.TipoOCEnum.Transferencia + @"
-                                AND COALESCE(tmp2.tipoOrdemCargaTmp2," + (int)OrdemCarga.TipoOCEnum.Transferencia +") = " + (int)OrdemCarga.TipoOCEnum.Transferencia + ", true)";
+                                AND COALESCE(tmp2.tipoOrdemCargaTmp2," + (int)OrdemCarga.TipoOCEnum.Transferencia + ") = " + (int)OrdemCarga.TipoOCEnum.Transferencia + ", true)";
             }
 
             return sql;
@@ -629,7 +629,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public List<string> GetItensPendentesStr(uint idCarregamento, uint idPedido, uint idCli, string nomeCli, uint idLoja,
             bool? volume, bool? itemRevenda, bool agruparProdutos, string dtSaidaIni, string dtSaidaFim, string rotas,
-            bool ignorarPedidosVendaTransferencia, uint idCliExterno, string nomeCliExterno, string idsRotasExternas)
+            bool? ignorarPedidosVendaTransferencia, uint idCliExterno, string nomeCliExterno, string idsRotasExternas)
         {
             var sql = SqlItensPendentes(idCarregamento, idPedido, idCli, nomeCli, idLoja, volume, itemRevenda,
                 agruparProdutos, dtSaidaIni, dtSaidaFim, rotas, ignorarPedidosVendaTransferencia, idCliExterno, nomeCliExterno, idsRotasExternas);

@@ -1163,7 +1163,7 @@ namespace Glass.Data.DAL
 
             string sql = SqlVendasProd(idCliente, nomeCliente, codRota, idLoja, idsGrupos, idsSubgrupo, codInterno, descrProd, tipoBuscaMP, dtIni, dtFim,
                 dtIniPed, dtFimPed, dtIniEnt, dtFimEnt, situacao, situacaoProd, null, tipoVendaPedido, idFunc, idFuncCliente, tipoFastDelivery, idPedido,
-                tipoDesconto, agruparCliente, agruparPedido, false, agruparLiberacao, agruparAmbiente, buscarNotaFiscal, idLiberacao, idFuncLiberacao, 
+                tipoDesconto, agruparCliente, agruparPedido, false, agruparLiberacao, agruparAmbiente, buscarNotaFiscal, idLiberacao, idFuncLiberacao,
                 liberacaoNf, ref lstParam, null, false, idFuncPedido);
 
             return objPersistence.ExecuteSqlQueryCount(sql, lstParam != null ? lstParam.ToArray() : null);
@@ -4616,6 +4616,15 @@ namespace Glass.Data.DAL
                     ProdutoBenefDAO.Instance.Insert(session, pb);
 
             objInsert.RefreshBeneficiamentos();
+
+            // Chamado 13679.
+            // O usuário estava associando matéria prima em um produto associado ao grupo de retalho de produção,
+            // como isso não pode ser feito a matéria prima não era salva e para o usuário aparentemente era um erro.
+            if (objInsert.DadosBaixaEstoque != null && objInsert.DadosBaixaEstoque.Count > 0 &&
+                objInsert.IdSubgrupoProd == (uint)Utils.SubgrupoProduto.RetalhosProducao)
+            {
+                throw new Exception("Não é possível associar matéria prima em produtos associados ao subgrupo Retalhos de Produção.");
+            }
 
             // Reinsere produtos para baixa
             objInsert.DadosBaixaEstoque = objInsert.DadosBaixaEstoque;

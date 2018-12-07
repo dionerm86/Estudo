@@ -434,7 +434,7 @@ namespace Glass.Data.RelDAL
 
                         for (var i = 0; i < itens.Length; i++)
                         {
-                            var qtde = GrupoProdDAO.Instance.TipoCalculo(session, (int)itens[i].IdProd) == (int)TipoCalculoGrupoProd.Qtd ?
+                            var qtde = GrupoProdDAO.Instance.TipoCalculo(session, (int)itens[i].IdProd, false) == (int)TipoCalculoGrupoProd.Qtd ?
                                 itens[i].Qtde + " " : "";
 
                             itens[i].BenefEtiqueta = true;

@@ -26,10 +26,25 @@ namespace Glass.Data.Model
 
         #region Enumeradores
 
+        /// <summary>
+        /// Situação do volume.
+        /// </summary>
         public enum SituacaoVolume
         {
+            /// <summary>
+            /// Volume aberto.
+            /// </summary>
             Aberto = 1,
-            Fechado
+
+            /// <summary>
+            /// Volume fechado.
+            /// </summary>
+            Fechado,
+
+            /// <summary>
+            /// Volume carregado.
+            /// </summary>
+            Carregado,
         }
 
         #endregion

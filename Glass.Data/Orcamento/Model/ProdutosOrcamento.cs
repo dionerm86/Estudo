@@ -458,6 +458,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("NOMESUBGRUPOPROD", DirectionParameter.InputOptional)]
         public string NomeSubGrupoProd { get; set; }
 
+        [XmlIgnore]
+        [PersistenceProperty("NOMEGRUPOPRODUTO", DirectionParameter.InputOptional)]
+        public string NomeGrupoProduto { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte
@@ -641,7 +645,7 @@ namespace Glass.Data.Model
             {
                 if (IdProduto > 0 && IdGrupoProd > 0 && _tipoCalc == 0)
                 {
-                    _tipoCalc = GrupoProdDAO.Instance.TipoCalculo(IdGrupoProd.Value, IdSubgrupoProd.Value);
+                    _tipoCalc = GrupoProdDAO.Instance.TipoCalculo(null, IdGrupoProd.Value, IdSubgrupoProd.Value, false);
                 }
 
                 return _tipoCalc;
@@ -785,7 +789,7 @@ namespace Glass.Data.Model
             get 
             { 
                 return IdProduto.GetValueOrDefault() == 0 || Qtde.GetValueOrDefault() == 0 ? 0 :
-                    Glass.Global.CalculosFluxo.CalcM2Calculo(IdCliente.GetValueOrDefault(), (int)Altura, Largura, Qtde.Value, (int)IdProduto.Value, Redondo, Beneficiamentos.CountAreaMinima, ProdutoDAO.Instance.ObtemAreaMinima((int?)IdProduto), false, 0, true); 
+                    Glass.Global.CalculosFluxo.CalcM2Calculo(null, IdCliente.GetValueOrDefault(), (int)Altura, Largura, Qtde.Value, (int)IdProduto.Value, Redondo, Beneficiamentos.CountAreaMinima, ProdutoDAO.Instance.ObtemAreaMinima((int?)IdProduto), false, 0, true); 
             }
         }
 

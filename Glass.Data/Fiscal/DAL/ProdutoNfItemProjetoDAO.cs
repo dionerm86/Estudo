@@ -88,7 +88,7 @@ namespace Glass.Data.DAL
                             pecasItemProjeto.ForEach(x => largura += x.Largura);
                         }
 
-                        ip.M2Vao = Glass.Global.CalculosFluxo.ArredondaM2(largura, altura, ip.Qtde, 0, false);
+                        ip.M2Vao = Glass.Global.CalculosFluxo.ArredondaM2(null, largura, altura, (float)ip.Qtde, 0, false, 0, true);
 
                         #region Corrige as medidas do projeto
 

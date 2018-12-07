@@ -2562,14 +2562,15 @@ namespace Glass.Data.DAL
             var valorAcrescimoAplicado = ObtemValorCampo<decimal>(sessao, sqlAcrescimo, where);
             var valorDescontoAplicado = ObtemValorCampo<decimal>(sessao, sqlDesconto, where);
 
-            return InsereAtualizaProdProj(sessao, pedidoEspelho, idAmbientePedidoEsp, itemProj, valorAcrescimoAplicado, valorDescontoAplicado, pedidoEspelho.PercComissao, true, medidasAlteradas, null);
+            return InsereAtualizaProdProj(sessao, pedidoEspelho, idAmbientePedidoEsp, itemProj, valorAcrescimoAplicado, valorDescontoAplicado, pedidoEspelho.PercComissao, true, medidasAlteradas, null, false, true);
         }
 
         /// <summary>
         /// Insere/Atualiza Produto de Projeto
         /// </summary>
         public uint InsereAtualizaProdProj(GDASession sessao, PedidoEspelho pedidoEspelho, uint? idAmbientePedidoEsp, ItemProjeto itemProj, decimal valorAcrescimoAplicado, decimal valorDescontoAplicado,
-            float percComissao, bool atualizaReserva, bool medidasAlteradas, Dictionary<int, int> associacaoProdutosPedidoProdutosPedidoEspelho, bool forcarAtualizacaoImagemMarcacaoPeca = false)
+            float percComissao, bool atualizaReserva, bool medidasAlteradas, Dictionary<int, int> associacaoProdutosPedidoProdutosPedidoEspelho, bool forcarAtualizacaoImagemMarcacaoPeca,
+            bool aplicarComissaoDescontoAcrescimo)
         {
             try
             {
@@ -2724,19 +2725,33 @@ namespace Glass.Data.DAL
 
                 ProdutosPedidoEspelho[] prodProj = prod.ToArray();
 
-                // Aplica acréscimo, desconto e comissão
-                if (valorAcrescimoAplicado > 0)
-                    AplicaAcrescimoProdProj(sessao, pedidoEspelho, valorAcrescimoAplicado, prodProj);
+                if (aplicarComissaoDescontoAcrescimo)
+                {
+                    // Aplica acréscimo, desconto e comissão.
+                    if (valorAcrescimoAplicado > 0)
+                    {
+                        AplicaAcrescimoProdProj(sessao, pedidoEspelho, valorAcrescimoAplicado, prodProj);
+                    }
 
-                if (valorDescontoAplicado > 0)
-                    AplicaDescontoProdProj(sessao, pedidoEspelho, valorDescontoAplicado, prodProj);
+                    if (valorDescontoAplicado > 0)
+                    {
+                        AplicaDescontoProdProj(sessao, pedidoEspelho, valorDescontoAplicado, prodProj);
+                    }
 
-                if (percComissao > 0)
-                    AplicaComissaoProdProj(sessao, pedidoEspelho, percComissao, prodProj);
+                    if (percComissao > 0)
+                    {
+                        AplicaComissaoProdProj(sessao, pedidoEspelho, percComissao, prodProj);
+                    }
+                }
 
-                // Atualiza os produtos
+                // Atualiza os produtos.
                 foreach (var p in prodProj)
-                    if (valorAcrescimoAplicado > 0 || valorDescontoAplicado > 0 || (percComissao > 0 && PedidoConfig.Comissao.ComissaoAlteraValor))
+                {
+                    if (aplicarComissaoDescontoAcrescimo
+                          && (valorAcrescimoAplicado > 0
+                          || valorDescontoAplicado > 0
+                          || (percComissao > 0
+                          && PedidoConfig.Comissao.ComissaoAlteraValor)))
                     {
                         UpdateCompleto(sessao, pedidoEspelho, p, false, atualizaReserva);
                     }
@@ -2744,6 +2759,7 @@ namespace Glass.Data.DAL
                     {
                         CriarClone(sessao, pedidoEspelho, p, atualizaReserva, false);
                     }
+                }
 
                 #endregion
 
@@ -3606,7 +3622,7 @@ namespace Glass.Data.DAL
                         foreach (var produtoChapaCorte in produtosChapaCorte)
                         {
                             // Recupera o tipo de calculo do produto do pedido
-                            var tipoCalculo = DAL.GrupoProdDAO.Instance.TipoCalculo(produtoPedido.IdGrupoProd, produtoPedido.IdSubgrupoProd);
+                            var tipoCalculo = DAL.GrupoProdDAO.Instance.TipoCalculo(null, produtoPedido.IdGrupoProd, produtoPedido.IdSubgrupoProd, false);
 
                             var valorCusto = CalculosFluxo.CalcularValorCusto(sessao,
                                 tipoCalculo,
@@ -3892,7 +3908,7 @@ namespace Glass.Data.DAL
             clone.RentabilidadeFinanceira = prodPedEsp.RentabilidadeFinanceira;
 
             // Calcula o custo do produto
-            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdProd);
+            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdProd, false);
             clone.CustoProd = CalculosFluxo.CalcTotaisItemProdFast(sessao, tipoCalculo, clone.Altura, clone.Largura, clone.Qtde,
                 clone.TotM, ProdutoDAO.Instance.ObtemCustoCompra(sessao, (int)clone.IdProd), clone.AlturaBenef.GetValueOrDefault(2),
                 clone.LarguraBenef.GetValueOrDefault(2));

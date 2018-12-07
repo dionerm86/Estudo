@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -27,11 +27,11 @@ namespace Glass.UI.Web.Utils
         }
 
         /// <summary>
-        /// Verifica se a nota fiscal selecionada pode ser incluÌda no MDFe.
+        /// Verifica se a nota fiscal selecionada pode ser inclu√≠da no MDFe.
         /// </summary>
         /// <param name="idNfe">Identificador da nota a ser validada.</param>
-        /// <returns>Resposta da validaÁ„o com erro ou  ok.</returns>
-        [Ajax.AjaxMethod()]
+        /// <returns>Resposta da valida√ß√£o com erro ou  ok.</returns>
+        [Ajax.AjaxMethod]
         public string VerificarDisponibilidadeNfeCidadeDescargaMdfe(string idNfe)
         {
             var chaveAcesso = Data.DAL.NotaFiscalDAO.Instance.ObtemChaveAcesso(idNfe.StrParaUint());
@@ -43,12 +43,12 @@ namespace Glass.UI.Web.Utils
 
             var numeroMdfeAssociadoNfe = Data.DAL.NFeCidadeDescargaMDFeDAO.Instance.ObterNumeroMdfeAssociadoNfe(null, chaveAcesso);
 
-            if (numeroMdfeAssociadoNfe > 0)
+            if (!string.IsNullOrWhiteSpace(numeroMdfeAssociadoNfe))
             {
-                return $"Erro|Nota fiscal j· inclusa no MDFe {numeroMdfeAssociadoNfe}.";
+                return $"Erro|Nota fiscal j√° inclusa no MDFe {numeroMdfeAssociadoNfe}.";
             }
 
-            return "ok|Nota v·lida";
+            return "ok|Nota v√°lida";
         }
     }
 }

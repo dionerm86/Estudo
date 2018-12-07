@@ -176,6 +176,9 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
         private string serieField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string status_integracaoField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string statuswField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -871,6 +874,19 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
                 if ((object.ReferenceEquals(this.serieField, value) != true)) {
                     this.serieField = value;
                     this.RaisePropertyChanged("serie");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal string status_integracao {
+            get {
+                return this.status_integracaoField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.status_integracaoField, value) != true)) {
+                    this.status_integracaoField = value;
+                    this.RaisePropertyChanged("status_integracao");
                 }
             }
         }
@@ -1684,6 +1700,192 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PedidoStatus", Namespace="http://schemas.datacontract.org/2004/07/KnIntegracao.Services")]
+    [System.SerializableAttribute()]
+    internal partial class PedidoStatus : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime datpedField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int numpedField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private long numped_intField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int seqpedField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int seqped_intField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string status_integracaoField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal System.DateTime datped {
+            get {
+                return this.datpedField;
+            }
+            set {
+                if ((this.datpedField.Equals(value) != true)) {
+                    this.datpedField = value;
+                    this.RaisePropertyChanged("datped");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int numped {
+            get {
+                return this.numpedField;
+            }
+            set {
+                if ((this.numpedField.Equals(value) != true)) {
+                    this.numpedField = value;
+                    this.RaisePropertyChanged("numped");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal long numped_int {
+            get {
+                return this.numped_intField;
+            }
+            set {
+                if ((this.numped_intField.Equals(value) != true)) {
+                    this.numped_intField = value;
+                    this.RaisePropertyChanged("numped_int");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int seqped {
+            get {
+                return this.seqpedField;
+            }
+            set {
+                if ((this.seqpedField.Equals(value) != true)) {
+                    this.seqpedField = value;
+                    this.RaisePropertyChanged("seqped");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int seqped_int {
+            get {
+                return this.seqped_intField;
+            }
+            set {
+                if ((this.seqped_intField.Equals(value) != true)) {
+                    this.seqped_intField = value;
+                    this.RaisePropertyChanged("seqped_int");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal string status_integracao {
+            get {
+                return this.status_integracaoField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.status_integracaoField, value) != true)) {
+                    this.status_integracaoField = value;
+                    this.RaisePropertyChanged("status_integracao");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CondicaoPagtos", Namespace="http://schemas.datacontract.org/2004/07/KnIntegracao.Services")]
+    [System.SerializableAttribute()]
+    internal partial class CondicaoPagtos : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string CODCPGTOField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NOMCPGTOField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal string CODCPGTO {
+            get {
+                return this.CODCPGTOField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.CODCPGTOField, value) != true)) {
+                    this.CODCPGTOField = value;
+                    this.RaisePropertyChanged("CODCPGTO");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal string NOMCPGTO {
+            get {
+                return this.NOMCPGTOField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NOMCPGTOField, value) != true)) {
+                    this.NOMCPGTOField = value;
+                    this.RaisePropertyChanged("NOMCPGTO");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="KhanPedidoServiceReference.IPedidoService")]
     internal interface IPedidoService {
@@ -1699,6 +1901,18 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IPedidoService/ConsultarPedido", ReplyAction="http://tempuri.org/IPedidoService/ConsultarPedidoResponse")]
         System.Threading.Tasks.Task<Glass.Integracao.Khan.KhanPedidoServiceReference.Pedido> ConsultarPedidoAsync(Glass.Integracao.Khan.KhanPedidoServiceReference.Pedido pedido);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IPedidoService/ExcluirPedido", ReplyAction="http://tempuri.org/IPedidoService/ExcluirPedidoResponse")]
+        Glass.Integracao.Khan.KhanPedidoServiceReference.PedidoStatus ExcluirPedido(Glass.Integracao.Khan.KhanPedidoServiceReference.Pedido pedido);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IPedidoService/ExcluirPedido", ReplyAction="http://tempuri.org/IPedidoService/ExcluirPedidoResponse")]
+        System.Threading.Tasks.Task<Glass.Integracao.Khan.KhanPedidoServiceReference.PedidoStatus> ExcluirPedidoAsync(Glass.Integracao.Khan.KhanPedidoServiceReference.Pedido pedido);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IPedidoService/ListarCondicoesPagto", ReplyAction="http://tempuri.org/IPedidoService/ListarCondicoesPagtoResponse")]
+        System.Collections.Generic.List<Glass.Integracao.Khan.KhanPedidoServiceReference.CondicaoPagtos> ListarCondicoesPagto();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IPedidoService/ListarCondicoesPagto", ReplyAction="http://tempuri.org/IPedidoService/ListarCondicoesPagtoResponse")]
+        System.Threading.Tasks.Task<System.Collections.Generic.List<Glass.Integracao.Khan.KhanPedidoServiceReference.CondicaoPagtos>> ListarCondicoesPagtoAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -1742,6 +1956,22 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
         
         public System.Threading.Tasks.Task<Glass.Integracao.Khan.KhanPedidoServiceReference.Pedido> ConsultarPedidoAsync(Glass.Integracao.Khan.KhanPedidoServiceReference.Pedido pedido) {
             return base.Channel.ConsultarPedidoAsync(pedido);
+        }
+        
+        public Glass.Integracao.Khan.KhanPedidoServiceReference.PedidoStatus ExcluirPedido(Glass.Integracao.Khan.KhanPedidoServiceReference.Pedido pedido) {
+            return base.Channel.ExcluirPedido(pedido);
+        }
+        
+        public System.Threading.Tasks.Task<Glass.Integracao.Khan.KhanPedidoServiceReference.PedidoStatus> ExcluirPedidoAsync(Glass.Integracao.Khan.KhanPedidoServiceReference.Pedido pedido) {
+            return base.Channel.ExcluirPedidoAsync(pedido);
+        }
+        
+        public System.Collections.Generic.List<Glass.Integracao.Khan.KhanPedidoServiceReference.CondicaoPagtos> ListarCondicoesPagto() {
+            return base.Channel.ListarCondicoesPagto();
+        }
+        
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<Glass.Integracao.Khan.KhanPedidoServiceReference.CondicaoPagtos>> ListarCondicoesPagtoAsync() {
+            return base.Channel.ListarCondicoesPagtoAsync();
         }
     }
 }

@@ -1111,6 +1111,8 @@ namespace Glass.Data.DAL
         /// <param name="idPedido"></param>
         public void GeraEspelho(GDATransaction transaction, uint idPedido)
         {
+            var aplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho =
+                (System.Configuration.ConfigurationManager.AppSettings["AplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho"]?.ToLower() ?? "true") == "true";
             var lstImagensPcp = new List<string>();
 
             try
@@ -1194,7 +1196,11 @@ namespace Glass.Data.DAL
                     ValorComissao = ped.ValorComissao,
                     ValorEntrega = ped.ValorEntrega,
                     PercentualRentabilidade = ped.PercentualRentabilidade,
-                    RentabilidadeFinanceira = ped.RentabilidadeFinanceira
+                    RentabilidadeFinanceira = ped.RentabilidadeFinanceira,
+                    Acrescimo = ped.Acrescimo,
+                    TipoAcrescimo = ped.TipoAcrescimo,
+                    Desconto = ped.Desconto,
+                    TipoDesconto = ped.TipoDesconto,
                 };
                 Insert(transaction, pedEsp);
 
@@ -1279,7 +1285,8 @@ namespace Glass.Data.DAL
 
                         ItemProjeto itemProj = ItemProjetoDAO.Instance.GetElement(transaction, novo.IdItemProjeto.Value);
                         ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(transaction, pedEsp, idNovo, itemProj, valorAcrescimoAplicado,
-                            valorDescontoAplicado, ped.PercComissao, false, true, associacaoProdutosPedidoProdutosPedidoEspelho);
+                            valorDescontoAplicado, ped.PercComissao, false, true, associacaoProdutosPedidoProdutosPedidoEspelho,
+                            false, aplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho);
 
                         ambientesItemProjeto.Add(a.IdAmbientePedido);
                     }
@@ -1338,7 +1345,7 @@ namespace Glass.Data.DAL
                     pe.Largura = pipLargura > 0 ? pipLargura.Value : mipLargura > 0 ? mipLargura.Value : p.Largura;
 
                     pe.TotM = pipAltura > 0 && pipLargura > 0
-                        ? Glass.Global.CalculosFluxo.ArredondaM2(transaction, pipLargura.Value, pipAltura.Value, pe.Qtde, (int)pe.IdProd, pe.Redondo)
+                        ? Glass.Global.CalculosFluxo.ArredondaM2(transaction, pipLargura.Value, pipAltura.Value, pe.Qtde, (int)pe.IdProd, pe.Redondo, 0, true)
                         : mipTotM > 0
                             ? mipTotM.Value
                             : p.TotM;
@@ -1495,6 +1502,15 @@ namespace Glass.Data.DAL
                     var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(transaction, pedEsp.IdPedido, false, false, true);
                     bool aplicado = AplicarDesconto(transaction, pedEsp, ped.TipoDesconto, ped.Desconto, produtosPedidoEspelho);
                     FinalizarAplicacaoComissaoAcrescimoDesconto(transaction, pedEsp, produtosPedidoEspelho, aplicado);
+                }
+
+                if (!aplicarComissaoDescontoAcrescimoPorProdutoAoGerarEspelho)
+                {
+                    RemoveComissaoDescontoAcrescimo(
+                      transaction,
+                      GetElement(transaction, pedEsp.IdPedido),
+                      ProdutosPedidoEspelhoDAO.Instance.GetByPedido(transaction, pedEsp.IdPedido, false));
+                    AplicaComissaoDescontoAcrescimo(transaction, pedEsp);
                 }
 
                 // Foi necessário marcar como true porque teve uma empresa que não estava atualizando o total, e o pedido espelho estava ficando
@@ -2338,7 +2354,7 @@ namespace Glass.Data.DAL
                                 "IdAmbientePedido=" + prod.IdAmbientePedido.Value) + " está vazio, exclua-o.");
                 }
 
-                var tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd);
+                var tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd, false);
 
                 // Verifica se o processo e a aplicação foram informados
                 if (obrigaInformarProcApl && Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro((int)prod.IdGrupoProd) &&
@@ -2379,7 +2395,7 @@ namespace Glass.Data.DAL
 
                 foreach (var produtoPedido in ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false))
                 {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoPedido.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoPedido.IdProd, false);
 
                     var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
                                 tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
@@ -2699,7 +2715,7 @@ namespace Glass.Data.DAL
 
                     if (prodOrca.IdProduto != null)
                     {
-                        prodOrca.TipoCalculoUsado = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodOrca.IdProduto.Value);
+                        prodOrca.TipoCalculoUsado = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodOrca.IdProduto.Value, false);
                         prodOrca.Custo = mip.Custo;
                         prodOrca.Espessura = mip.Espessura;
 
@@ -2956,7 +2972,7 @@ namespace Glass.Data.DAL
                 // Insere na reserva peças do pedido original
                 foreach (var ppe in ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false))
                 {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd, false);
 
                     var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
                                 tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
@@ -2985,7 +3001,7 @@ namespace Glass.Data.DAL
                 // Remove da reserva peças da conferência
                 foreach (var ppe in ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false))
                 {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd, false);
 
                     var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
                                 tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
@@ -3291,7 +3307,7 @@ namespace Glass.Data.DAL
 
                 foreach (var ppe in ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false))
                 {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd, false);
 
                     var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
                                 tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;

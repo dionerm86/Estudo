@@ -28,5 +28,11 @@ namespace Glass.API.Backend.Models.Imagens.V1.Exibicao
         /// </summary>
         [Description("Peça de produção")]
         PecaProducao,
+
+        /// <summary>
+        /// Dados para exibição de imagens de peças de produção.
+        /// </summary>
+        [Description("Funcionário")]
+        Funcionario,
     }
 }

@@ -128,10 +128,19 @@ namespace Glass.UI.Web.Utils {
         /// Modificar a declaração do campo de movimento do arquivo de designer para o arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdfNfe;
-        
+
         /// <summary>
-        /// Controle hdfChequeDev.
+        
+        /// hdfSituacaoBusca control.
         /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdfSituacaoBusca;
+
+        /// <summary>
+        /// Controle hdfChequeDev.        /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Modificar a declaração do campo de movimento do arquivo de designer para o arquivo code-behind.

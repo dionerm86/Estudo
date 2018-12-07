@@ -21,10 +21,11 @@ namespace WebGlass.Business.Cliente.Ajax
 
                 if (cli == null || cli.IdCli == 0)
                     return "Erro;Cliente não encontrado.";
-                
-                var limiteDisponivel = (cli.Limite - ContasReceberDAO.Instance.GetDebitos((uint)cli.IdCli, null));
-                var temLimite = cli.Limite == 0 || limiteDisponivel > 0;
-                
+
+                var limite = Glass.Data.CalculadoraLimiteCredito.Calculadora.ObterLimite(null, cli);
+                var limiteDisponivel = (limite - ContasReceberDAO.Instance.GetDebitos((uint)cli.IdCli, null));
+                var temLimite = limite == 0 || limiteDisponivel > 0;
+
                 if (cli.Situacao == (int)Glass.Data.Model.SituacaoCliente.Inativo)
                     return "Erro;Cliente inativo. Motivo: " + cli.Obs;
 
@@ -77,7 +78,7 @@ namespace WebGlass.Business.Cliente.Ajax
                     {
                         idVendedor = (int)UserInfo.GetUserInfo.CodUser;
                     }
-                    
+
 
                     return "Ok;" + cli.Nome + ";" + cli.Revenda.ToString().ToLower() + ";" + obs[1] + ";" + dataRotaStr + ";" +
                         empresaEntregaRota + ";" + cli.PagamentoAntesProducao.ToString().ToLower() + ";" + cli.PercSinalMinimo + ";" +

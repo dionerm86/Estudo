@@ -3267,20 +3267,20 @@ namespace Glass.Data.DAL
 
             var sql = $@"SELECT Id_cli
                 FROM cliente
-                WHERE REPLACE(REPLACE(REPLACE(c.Cpf_Cnpj, '.', ''), '-', ''), '/', '') NOT IN ({ string.Join(",", cnpjsLoja.Select(f => $"'{ f.Replace(".", "").Replace("-", "").Replace("/", "") }'").ToList()) })
+                WHERE REPLACE(REPLACE(REPLACE(Cpf_Cnpj, '.', ''), '-', ''), '/', '') NOT IN ({string.Join(",", cnpjsLoja.Select(f => $"'{f.Replace(".", "").Replace("-", "").Replace("/", "")}'").ToList())})
                     AND LOWER(Nome) <> 'consumidor final'
                     AND DataLimiteCad IS NOT NULL
                     AND Date(DataLimiteCad) < CURDATE()
-                    AND Situacao={ (int)SituacaoCliente.Ativo }";
+                    AND Situacao={(int)SituacaoCliente.Ativo}";
 
-            var ids = ExecuteMultipleScalar<int>(sql);
+            var ids = this.ExecuteMultipleScalar<int>(sql);
 
             var idsCliente = string.Join(",", ids.Select(f => f.ToString()));
 
             if (!string.IsNullOrWhiteSpace(idsCliente))
             {
                 var motivoBloqueio = "Data limite do cadastro vencida.";
-                AtualizaSituacaoComTransacao(SituacaoCliente.Inativo, idsCliente, motivoBloqueio);
+                this.AtualizaSituacaoComTransacao(SituacaoCliente.Inativo, idsCliente, motivoBloqueio);
             }
         }
 
