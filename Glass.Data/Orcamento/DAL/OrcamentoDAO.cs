@@ -2664,47 +2664,18 @@ namespace Glass.Data.DAL
                 if (objUpdate.DataCad.Hour == 0)
                     objUpdate.DataCad.AddHours(orcaAntigo.DataCad.Hour).AddMinutes(orcaAntigo.DataCad.Minute);
 
-                #region Atualiza os valores do orçamento
 
-                /* Chamado 58815. */
-                if (objUpdate.IdCliente != orcaAntigo.IdCliente || objUpdate.TipoEntrega != orcaAntigo.TipoEntrega ||
-                    objUpdate.Acrescimo != orcaAntigo.Acrescimo || objUpdate.TipoAcrescimo != orcaAntigo.TipoAcrescimo ||
-                    objUpdate.Desconto != orcaAntigo.Desconto || objUpdate.TipoDesconto != orcaAntigo.TipoDesconto ||
-                    objUpdate.IdComissionado != orcaAntigo.IdComissionado || objUpdate.PercComissao != orcaAntigo.PercComissao ||
-                    objUpdate.TipoOrcamento != orcaAntigo.TipoOrcamento ||
-                    (orcaCobrouAreaMinima && (!TipoClienteDAO.Instance.CobrarAreaMinima(session, objUpdate.IdCliente.GetValueOrDefault()) ||
-                    !TipoClienteDAO.Instance.CobrarAreaMinima(session, orcaAntigo.IdCliente.GetValueOrDefault()))))
-                {
-                    Dictionary<uint, KeyValuePair<KeyValuePair<int, decimal>, KeyValuePair<int, decimal>>> dadosProd;
-
-                    int tipoDesconto, tipoAcrescimo;
-                    decimal desconto, acrescimo;
-                    float percComissao;
-                    int? idComissionado;
-
-                    RecalcularOrcamento(session, objUpdate, objUpdate.TipoEntrega, (int?)objUpdate.IdCliente, out tipoDesconto,
-                        out desconto, out tipoAcrescimo, out acrescimo, out idComissionado, out percComissao, out dadosProd);
-
-                    string dadosAmbientes = ObterDadosOrcamentoRecalcular(tipoDesconto, desconto, tipoAcrescimo, acrescimo,
-                        idComissionado, percComissao, dadosProd).Split(';')[7];
-
-                    FinalizarRecalcular(session, objUpdate, tipoDesconto, desconto, tipoAcrescimo, acrescimo, (int?)idComissionado,
-                        percComissao, dadosAmbientes, false);
-
-                    /* Chamado 61744. */
-                    if (objUpdate.Desconto > 0 && (objUpdate.Desconto != orcaAntigo.Desconto || objUpdate.TipoDesconto != orcaAntigo.TipoDesconto))
-                        objPersistence.ExecuteCommand(session, string.Format("UPDATE orcamento SET IdFuncDesc=?idFuncDesc, DataDesc=?dataDesconto WHERE IdOrcamento={0}", objUpdate.IdOrcamento),
-                            new GDAParameter("?idFuncDesc", UserInfo.GetUserInfo.CodUser), new GDAParameter("?dataDesconto", DateTime.Now));
-                }
+                if (objUpdate.Desconto > 0 && (objUpdate.Desconto != orcaAntigo.Desconto || objUpdate.TipoDesconto != orcaAntigo.TipoDesconto))
+                    objPersistence.ExecuteCommand(session, string.Format("UPDATE orcamento SET IdFuncDesc=?idFuncDesc, DataDesc=?dataDesconto WHERE IdOrcamento={0}", objUpdate.IdOrcamento),
+                        new GDAParameter("?idFuncDesc", UserInfo.GetUserInfo.CodUser), new GDAParameter("?dataDesconto", DateTime.Now));
+                
 
                 base.Update(session, objUpdate);
 
                 if (VerificarPossuiPedidoGerado(session, (int)objUpdate.IdOrcamento) && orcaAntigo.Situacao == (int)Orcamento.SituacaoOrcamento.Negociado)
                     throw new Exception("Nenhuma alteração pode ser efetuada caso o orçamento possua um pedido gerado.");
 
-                UpdateTotaisOrcamento(session, objUpdate, true, orcaAntigo.Desconto != objUpdate.Desconto || orcaAntigo.TipoDesconto != objUpdate.TipoDesconto);
-
-                #endregion
+                base.Update(session, objUpdate);
 
                 LogAlteracaoDAO.Instance.LogOrcamento(session, orcaAntigo, GetElement(session, objUpdate.IdOrcamento), LogAlteracaoDAO.SequenciaObjeto.Atual);
 
