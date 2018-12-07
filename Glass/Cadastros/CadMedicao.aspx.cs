@@ -35,12 +35,12 @@ namespace Glass.UI.Web.Cadastros
             dtvMedicao.Fields[20].Visible = false;
             dtvMedicao.Fields[21].Visible = false;
         }
-    
+
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
             Response.Redirect("../Listas/LstMedicao.aspx");
         }
-    
+
         protected void odsMedicao_Inserted(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)
@@ -49,9 +49,11 @@ namespace Glass.UI.Web.Cadastros
                 e.ExceptionHandled = true;
             }
             else
-                Response.Redirect("../Listas/LstMedicao.aspx?idMedicao=" + e.ReturnValue);
+            {
+                Response.Redirect("../Listas/LstMedicao.aspx");
+            }
         }
-    
+
         protected void odsMedicao_Updated(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)
@@ -62,7 +64,7 @@ namespace Glass.UI.Web.Cadastros
             else
                 Response.Redirect("../Listas/LstMedicao.aspx");
         }
-    
+
         #region Métodos Ajax
     
         [Ajax.AjaxMethod]
