@@ -28,7 +28,7 @@ namespace Glass.API.Backend.Models.Clientes.V1.Lista
         public bool CadastrarDescontoTabela { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se o pedido possui log de alterações.
+        /// Obtém ou define um valor que indica se o cliente possui log de alterações.
         /// </summary>
         [DataMember]
         [JsonProperty("logAlteracoes")]

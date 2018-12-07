@@ -4,7 +4,6 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;
@@ -39,12 +38,15 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
 
                 try
                 {
-                    sessao.BeginTransaction();
+                    var clienteFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
+                        .Current.GetInstance<Glass.Global.Negocios.IClienteFluxo>();
 
-                    ClienteDAO.Instance.DeleteByPrimaryKey(sessao, (uint)id);
-                    sessao.Commit();
+                    var cliente = clienteFluxo.ObtemCliente(id);
 
-                    return this.Aceito(string.Format("Cliente {0} excluído com sucesso!", id));
+                    var resultado = clienteFluxo.ApagarCliente(cliente);
+
+                    return resultado ? this.Aceito(string.Format("Cliente {0} excluído com sucesso!", id)) :
+                        (IHttpActionResult)this.ErroValidacao($"Erro ao excluir o cliente. {resultado.Message.Format()}");
                 }
                 catch (Exception e)
                 {

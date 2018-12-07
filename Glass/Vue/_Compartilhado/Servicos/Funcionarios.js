@@ -1,4 +1,4 @@
-var Servicos = Servicos || {};
+﻿var Servicos = Servicos || {};
 
 /**
  * Objeto com os serviços para a API de funcionários.
@@ -125,6 +125,98 @@ Servicos.Funcionarios = (function(http) {
      */
     obterFinalizacaoPedidos: function () {
       return http().get(API + 'finalizacao');
+    },
+
+    /**
+     * Recupera a lista de funcionários.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de funcionários.
+     * @param {number} pagina O número da página de resultados a ser exibida.
+     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+     * @param {string} ordenacao A ordenação para o resultado.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+      return http().get(API.substr(0, API.length - 1), {
+        params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+      });
+    },
+
+    /**
+     * Recupera o objeto com as configurações utilizadas na tela de listagem de funcionários.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterConfiguracoesLista: function () {
+      return http().get(API + 'configuracoes');
+    },
+
+    /**
+     * Retorna os itens para o controle de tipos fiscal de cliente.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterTiposFuncionario: function () {
+      return http().get(API + 'tiposFuncionario');
+    },
+
+    /**
+     * Recupera os detalhes de um pedido.
+     * @param {!number} idPedido O identificador do pedido que será retornado.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterFuncionario: function (idFuncionario) {
+      if (!idFuncionario) {
+        throw new Error('Funcionário é obrigatório.');
+      }
+
+      return http().get(API + idFuncionario);
+    },
+
+    /**
+     * Recupera o objeto com as configurações utilizadas na tela de listagem de pedidos.
+     * @param {number} idPedido O identificador do pedido que está sendo editado (se houver).
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterConfiguracoesDetalhe: function (idFuncionario) {
+      return http().get(API + (idFuncionario || 0) + '/configuracoes');
+    },
+
+    /**
+     * Remove um cliente.
+     * @param {!number} idFuncionario O identificador do funcionário que será excluído.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    excluir: function (idFuncionario) {
+      if (!idFuncionario) {
+        throw new Error('Funcionário é obrigatório.');
+      }
+
+      return http().delete(API + idFuncionario);
+    },
+
+    /**
+     * Insere um pedido.
+     * @param {!number} pedido Os dados do pedido que será inserido.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    inserir: function (funcionario) {
+      return http().post(API.substr(0, API.length - 1), funcionario);
+    },
+
+    /**
+     * Altera os dados de um pedido.
+     * @param {!number} idPedido O identificador do pedido que será usado para busca do produto.
+     * @param {!Object} pedido O objeto com os dados do pedido a serem alterados.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    atualizar: function (idFuncionario, funcionario) {
+      if (!idFuncionario) {
+        throw new Error('Funcionário é obrigatório.');
+      }
+
+      if (!funcionario || funcionario === {}) {
+        return Promise.resolve();
+      }
+
+      return http().patch(API + idFuncionario, funcionario);
     }
   };
 })(function() {

@@ -152,6 +152,7 @@
     <Compile Include="ConsultaCep.cs" />
     <Compile Include="DBUtils.cs" />
     <Compile Include="Diretorios.cs" />
+    <Compile Include="EstadoCivil.cs" />
     <Compile Include="FilaOperacao.cs" />
     <Compile Include="Formatacoes.cs">
       <SubType>Code</SubType>
