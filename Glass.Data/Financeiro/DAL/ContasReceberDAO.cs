@@ -9306,7 +9306,7 @@ namespace Glass.Data.DAL
 
             if (!atualRecebida && objUpdate.Recebida && (objUpdate.UsuRec == null || objUpdate.ValorRec == 0))
             {
-                throw new InvalidOperationException("Não é possível efetuar um recebimento sem um usuário referenciado.");
+                throw new InvalidOperationException("Não é possível efetuar um recebimento sem um usuário referenciado ou valor zerado.");
             }
 
             if (atualRecebida && !objUpdate.Recebida)
