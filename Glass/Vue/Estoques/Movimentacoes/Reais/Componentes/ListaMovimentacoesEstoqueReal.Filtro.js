@@ -169,6 +169,7 @@
     var dataAtual = new Date();
     this.filtroAtual.periodoMovimentacaoInicio = this.adicionarDias(dataAtual, -15);
     this.filtroAtual.periodoMovimentacaoFim = dataAtual;
+    this.filtrar()
   },
 
   template: '#ListaMovimentacoesEstoqueReal-Filtro-template'

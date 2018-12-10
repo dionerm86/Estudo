@@ -34,7 +34,7 @@
     },
 
     /**
-     * Exibe a tela log de cancelamento do extrato de estoque.     
+     * Exibe a tela log de cancelamento do extrato de estoque.
      */
     abrirLogCancelamento: function () {
       this.abrirJanela(600, 800, '../Utils/ShowLogCancelamento.aspx?tabela=' + codigoTabela);        
@@ -45,6 +45,10 @@
      * @param {Object} item O pedido que será exibido.
      */
     abrirRelatorio: function (exportarExcel) {
+      if (Object.keys(this.filtro).length === 0 || !this.filtro.idLoja) {
+        return this.exibirMensagem("É necessário informar a loja e um produto antes de gerar o relatório de movimentação.")
+      }
+
       this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=ExtratoEstoque' + this.formatarFiltros_() + "&exportarExcel=" + exportarExcel);
     },
 
@@ -53,7 +57,7 @@
      * @param {Object} item O pedido que será exibido.
      */
     abrirRelatorioMovimentacao: function (exportarExcel) {
-      if (Object.keys(this.filtro).length === 0) {
+      if (Object.keys(this.filtro).length === 0 || !this.filtro.codigoProduto) {
         return this.exibirMensagem("É necessário informar um produto antes de gerar o relatório de movimentação.")
       }
 
@@ -65,7 +69,7 @@
      * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
      */
     abrirRelatorioInventario: function (exportarExcel) {
-      if (Object.keys(this.filtro).length === 0) {
+      if (Object.keys(this.filtro).length === 0 || !this.filtro.codigoProduto) {
         return this.exibirMensagem("É necessário informar um produto antes de gerar o relatório de inventário.")
       }
 
@@ -111,7 +115,8 @@
 
       Servicos.Estoques.Movimentacoes.Reais.excluir(Movimentacao.id)
         .then(function (resposta) {
-          vm.atualizarLista();
+          vm.exibirMensagem(resposta.data.mensagem);
+          vm.$emit('update:filtro', vm.filtro);
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
@@ -150,7 +155,7 @@
       this.movimentacao = {
         idProduto: item.produto.id,
         idLoja: this.filtro.idLoja,
-        dataCadastro: null,
+        dataMovimentacao: null,
         quantidade: null,
         valor: null,
         tipoMovimentacao: null,
@@ -167,7 +172,7 @@
         return;
       }
 
-      var vm = this;
+      var vm = this;      
 
       Servicos.Estoques.Movimentacoes.Reais.inserir(this.movimentacao)
         .then(function (resposta) {

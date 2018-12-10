@@ -50,7 +50,7 @@ Servicos.Estoques = (function(http) {
         * @returns {Promise} Uma promise com o resultado da inserção.
         */
         inserir: function (movimentacao) {
-          return http().post(API + 'movimentacoes/reais/' + movimentacao)
+          return http().post(API + 'movimentacoes/reais/', movimentacao)
         },
       }
     },

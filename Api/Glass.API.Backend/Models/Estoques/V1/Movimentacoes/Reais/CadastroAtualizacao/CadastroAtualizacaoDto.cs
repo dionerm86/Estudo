@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Genericas.V1.CadastroAtualizacao;
+using Glass.Data.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -53,11 +54,11 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais.CadastroAtual
         /// Obtém ou define o valor total da movimentação.
         /// </summary>
         [DataMember]
-        [JsonProperty("valorTotal")]
-        public decimal ValorTotal
+        [JsonProperty("valor")]
+        public decimal Valor
         {
-            get { return this.ObterValor(c => c.ValorTotal); }
-            set { this.AdicionarValor(c => c.ValorTotal, value); }
+            get { return this.ObterValor(c => c.Valor); }
+            set { this.AdicionarValor(c => c.Valor, value); }
         }
 
         /// <summary>

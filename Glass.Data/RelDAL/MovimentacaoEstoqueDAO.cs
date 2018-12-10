@@ -321,7 +321,7 @@ namespace Glass.Data.RelDAL
 
                 compl.Tabela,
                 compl.Campo,
-                idsProd, idLoja, (cliente && idCliente > 0 ? " AND idCliente=" + idCliente : ""));
+                string.Join(",", idsProd), idLoja, (cliente && idCliente > 0 ? " AND idCliente=" + idCliente : ""));
 
             sql.Append(" union all select ");
             sql.Append(selecionar ? @"null as idMovEstoque, idProd, cast(0 as decimal(12,2)) as qtde, 
@@ -330,7 +330,7 @@ namespace Glass.Data.RelDAL
 
             sql.AppendFormat(@"
                 from produto
-                where idProd in ({0})", idsProd);
+                where idProd in ({0})", string.Join(",", idsProd));
 
             sql.AppendFormat(@"
                 ) as temp

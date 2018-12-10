@@ -95,17 +95,17 @@
                     </td>
                     <td colspan="5"></td>
                     <td style="white-space: nowrap">
-                        <campo-data-hora :data-hora.sync="movimentacao.dataCadastro" :exibir-horas="true" v-if="inserindo"></campo-data-hora>
+                        <campo-data-hora :data-hora.sync="movimentacao.dataMovimentacao" :exibir-horas="true" v-if="inserindo"></campo-data-hora>
                     </td>
                     <td>
                         <input type="number" v-model="movimentacao.quantidade" min="0" step="0.01" style="width: 40px" v-if="inserindo" />
                     </td>
                     <td colspan="2"></td>
                     <td>
-                        <select v-model="movimentacao.tipoMovimentacao" v-if="inserindo">
+                        <select v-model.number="movimentacao.tipoMovimentacao" v-if="inserindo">
                             <option value=""></option>
-                            <option value="E">E</option>
-                            <option value="S">S</option>
+                            <option value="1">E</option>
+                            <option value="2">S</option>
                         </select>
                     </td>
                     <td>
