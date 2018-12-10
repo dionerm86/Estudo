@@ -8,11 +8,13 @@
   <xs:element name="ArrayOfParceiros" nillable="true" type="tns:ArrayOfParceiros" />
   <xs:complexType name="Parceiros">
     <xs:sequence>
+      <xs:element minOccurs="0" name="AVISAR" type="xs:boolean" />
       <xs:element minOccurs="0" name="BLOQUEAR" type="xs:boolean" />
       <xs:element minOccurs="0" name="Codsit" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="LimCred" type="xs:decimal" />
       <xs:element minOccurs="0" name="NomeTipoDoc1" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Nomsit" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SITMEN" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="baifat" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="cepfat" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="cidfat" nillable="true" type="xs:string" />

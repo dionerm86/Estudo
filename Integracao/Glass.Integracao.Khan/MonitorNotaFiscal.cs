@@ -424,7 +424,7 @@ namespace Glass.Integracao.Khan
 
                         var statusIntegracao = pedidoStatus.status_integracao?.Trim() ?? string.Empty;
 
-                        if (statusIntegracao.StartsWith("Integrado", StringComparison.InvariantCultureIgnoreCase))
+                        if (statusIntegracao.StartsWith("Importado", StringComparison.InvariantCultureIgnoreCase))
                         {
                             this.provedorHistorico.NotificarIntegrado(HistoricoKhan.NotasFiscais, new object[] { idNf });
                         }

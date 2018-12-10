@@ -116,6 +116,7 @@
     <Compile Include="MonitorProdutos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProvedorLimiteCredito.cs" />
+    <Compile Include="ProvedorSituacaoCliente.cs" />
     <Compile Include="Seguranca\KhanClientMessageInspector.cs" />
     <Compile Include="Seguranca\KhanEndpointBehavior.cs" />
     <Compile Include="Service References\KhanConsultasServiceReference\Reference.cs">
