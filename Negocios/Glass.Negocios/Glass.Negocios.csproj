@@ -107,7 +107,6 @@
   <ItemGroup>
     <Compile Include="Estoque\IMovChapaFluxo.cs" />
     <Compile Include="Estoque\IMovInternaEstoqueFiscalFluxo.cs" />
-    <Compile Include="Estoque\IProvedorBaixaEstoque.cs" />
     <Compile Include="Financeiro\IArquivoCartaoNaoIdentificadoFluxo.cs" />
     <Compile Include="Financeiro\ICartaoNaoIdentificadoFluxo.cs" />
     <Compile Include="Financeiro\ICartoesFluxo.cs" />

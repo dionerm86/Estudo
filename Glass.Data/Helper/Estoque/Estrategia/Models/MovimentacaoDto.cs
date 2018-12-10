@@ -153,14 +153,23 @@ namespace Glass.Data.Helper.Estoque.Estrategia.Models
         public bool BaixarMesmoProdutoSemMateriaPrima { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica 
+        /// Obtém ou define a data da movimentação no estoque.
         /// </summary>
         public DateTime DataMov { get; set; }
 
+        /// <summary>
+        /// Obtém ou define um valor que indica se deverá alterar também o estoque do produto base do produto informado.
+        /// </summary>
         public bool AlterarProdBase { get; set; }
 
+        /// <summary>
+        /// Obtém ou define o usuário que está realizando a movimentação no estoque.
+        /// </summary>
         public LoginUsuario Usuario { get; set; }
 
+        /// <summary>
+        /// Obtém ou define a observação da movimentação.
+        /// </summary>
         public string Observacao { get; set; }
     }
 }

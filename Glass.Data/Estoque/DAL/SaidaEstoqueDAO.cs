@@ -200,78 +200,10 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
-                        var saida = GetElementByPrimaryKey(transaction, idSaidaEstoque);
+                        MovEstoqueDAO.Instance.CreditaEstoqueCancelamentoSaidaEstoque(
+                            transaction,
+                            GetElementByPrimaryKey(transaction, idSaidaEstoque));
 
-                        if (!saida.PodeCancelar)
-                            throw new Exception("Não é possível cancelar essa saída de estoque.");
-
-                        MarcaEstorno(transaction, saida.IdPedido, saida.IdLiberarPedido, saida.IdVolume);
-
-                        var produtos = ProdutoSaidaEstoqueDAO.Instance.GetForRpt(transaction, idSaidaEstoque);
-
-                        var idsProdQtde = new Dictionary<int, float>();
-                        var lstIdsPedidos = new List<uint>();
-
-                        var tipoCalcMLAL = new List<int>
-                        {
-                            (int) TipoCalculoGrupoProd.MLAL0,
-                            (int) TipoCalculoGrupoProd.MLAL05,
-                            (int) TipoCalculoGrupoProd.MLAL1,
-                            (int) TipoCalculoGrupoProd.MLAL6,
-                            (int) TipoCalculoGrupoProd.ML
-                        };
-
-                        foreach (var prod in produtos)
-                        {
-                            var prodPed = ProdutosPedidoDAO.Instance.GetElementFluxoLite(transaction, prod.IdProdPed);
-                            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdGrupoProd,
-                                (int?)prodPed.IdSubgrupoProd, false);
-
-                            if (!lstIdsPedidos.Contains(prodPed.IdPedido))
-                                lstIdsPedidos.Add(prodPed.IdPedido);
-
-                            var qtdSaidaEstoque = prod.QtdeSaida;
-                            if (tipoCalcMLAL.Contains(tipoCalculo))
-                                qtdSaidaEstoque *= prodPed.Altura;
-
-                            // Marca a entrada dos produtos no pedido
-                            ProdutosPedidoDAO.Instance.MarcarSaida(transaction, prod.IdProdPed, -prod.QtdeSaida, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
-
-                            // Faz a movimentação de estorno no estoque
-                            if (saida.IdPedido > 0)
-                            {
-                                var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(transaction, (int)prodPed.IdProd);
-
-                                MovEstoqueDAO.Instance.CreditaEstoquePedido(transaction, prodPed.IdProd, saida.IdLoja, saida.IdPedido.Value, prodPed.IdProdPed, (decimal)qtdSaidaEstoque,
-                                    tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado, null, null);
-                            }
-                            else if (saida.IdLiberarPedido > 0)
-                            {
-                                MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(transaction, prodPed.IdProd, saida.IdLoja,
-                                    saida.IdLiberarPedido.Value, prodPed.IdPedido,
-                                    ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(transaction, saida.IdLiberarPedido.Value,
-                                        prodPed.IdProdPed), (decimal)qtdSaidaEstoque);
-                            }
-
-                            if (!PedidoDAO.Instance.IsProducao(transaction, prodPed.IdPedido))
-                            {
-                                if (!idsProdQtde.ContainsKey((int)prodPed.IdProd))
-                                    idsProdQtde.Add((int)prodPed.IdProd, qtdSaidaEstoque);
-                                else
-                                    idsProdQtde[(int)prodPed.IdProd] += qtdSaidaEstoque;
-                            }
-                        }
-
-                        if (!PedidoConfig.LiberarPedido)
-                            ProdutoLojaDAO.Instance.ColocarReserva(transaction, (int)saida.IdLoja, idsProdQtde, (int)idSaidaEstoque, null,
-                                null, null, null, null, null, "SaidaEstoqueDAO - Cancelar");
-                        else
-                            ProdutoLojaDAO.Instance.ColocarLiberacao(transaction, (int)saida.IdLoja, idsProdQtde, (int)idSaidaEstoque, null,
-                                null, null, null, null, null, "SaidaEstoqueDAO - Cancelar");
-
-                        foreach (var idPedido in lstIdsPedidos)
-                            PedidoDAO.Instance.AtualizaSituacaoProducao(transaction, idPedido, null, DateTime.Now);
-                        
                         transaction.Commit();
                         transaction.Close();
                     }
@@ -279,7 +211,7 @@ namespace Glass.Data.DAL
                     {
                         transaction.Rollback();
                         transaction.Close();
-                        throw ex;
+                        throw;
                     }
                 }
             }

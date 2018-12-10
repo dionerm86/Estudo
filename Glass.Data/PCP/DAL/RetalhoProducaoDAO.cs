@@ -896,8 +896,7 @@ namespace Glass.Data.DAL
         public override uint Insert(GDASession session, RetalhoProducao objInsert)
         {
             uint id = base.Insert(session, objInsert);
-            var idLoja = objInsert.Usuario != null ? objInsert.Usuario.IdLoja : UserInfo.GetUserInfo.IdLoja;
-            MovEstoqueDAO.Instance.CreditaEstoqueRetalho(session, (uint)objInsert.IdProd, idLoja, id, 1, objInsert.Usuario);
+            MovEstoqueDAO.Instance.CreditaEstoqueRetalho(session, objInsert.IdProd, (int)id, objInsert.Usuario);
 
             return id;
         }
@@ -982,8 +981,7 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand(session, "update retalho_producao set situacao=" + (int)SituacaoRetalhoProducao.Cancelado +
                 " where idRetalhoProducao=" + idRetalhoProducao);
 
-            if (retalho.Situacao == SituacaoRetalhoProducao.Disponivel)
-                MovEstoqueDAO.Instance.BaixaEstoqueRetalho(session, (uint)retalho.IdProd, UserInfo.GetUserInfo.IdLoja, idRetalhoProducao, 1);
+            MovEstoqueDAO.Instance.BaixaEstoqueRetalho(session, retalho);
 
             LogCancelamentoDAO.Instance.LogRetalhoProducao(session, idFunc, retalho, "Cancelamento do retalho " +
                 retalho.NumeroEtiqueta + " - " + motivo, manual);
@@ -1029,8 +1027,7 @@ namespace Glass.Data.DAL
 
                         objPersistence.ExecuteCommand(transaction, "update retalho_producao set situacao=" + (int)SituacaoRetalhoProducao.Perda + " where idRetalhoProducao=" + idRetalhoProducao);
 
-                        if (retalho.Situacao == SituacaoRetalhoProducao.Disponivel)
-                            MovEstoqueDAO.Instance.BaixaEstoqueRetalho(transaction, (uint)retalho.IdProd, UserInfo.GetUserInfo.IdLoja, idRetalhoProducao, 1);
+                        MovEstoqueDAO.Instance.BaixaEstoqueRetalho(transaction, retalho);
 
                         LogCancelamentoDAO.Instance.LogRetalhoProducao(transaction, idFunc, retalho, "Perda do retalho " + retalho.NumeroEtiqueta + " - " + motivo, true);
 

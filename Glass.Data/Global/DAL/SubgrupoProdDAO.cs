@@ -395,33 +395,34 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         internal string SqlSubgrupoRevenda(string idGrupo, string idSubgrupo)
         {
-            bool usarJoin = String.IsNullOrEmpty(idGrupo) && String.IsNullOrEmpty(idSubgrupo);
-            string campos = (usarJoin ?
-                "s1.idGrupoProd, s1.idSubgrupoProd" :
-                "count(*) as contagem");
+            bool usarJoin = string.IsNullOrEmpty(idGrupo) && string.IsNullOrEmpty(idSubgrupo);
+            string campos = usarJoin
+                ? "s1.idGrupoProd, s1.idSubgrupoProd"
+                : "COUNT(*) AS contagem";
 
-            string sql = @"
-                select {0}
-                from subgrupo_prod s1
-                   inner join grupo_prod g1 on (s1.idGrupoProd=g1.idGrupoProd)
-                where (s1.idGrupoProd not in ({1},{2})
-                   or (coalesce(s1.tipoCalculo, g1.tipoCalculo, {3})={3}
-                   and s1.produtosEstoque=true))";
+            string sql = $@"
+                SELECT {campos}
+                FROM subgrupo_prod s1
+                   INNER JOIN grupo_prod g1 ON (s1.idGrupoProd=g1.idGrupoProd)
+                WHERE (s1.idGrupoProd NOT IN ({(int)NomeGrupoProd.Vidro},{(int)NomeGrupoProd.MaoDeObra})
+                   OR (coalesce(s1.tipoCalculo, g1.tipoCalculo, {(int)TipoCalculoGrupoProd.Qtd})={(int)TipoCalculoGrupoProd.Qtd} AND s1.produtosEstoque=true))";
 
-            if (!String.IsNullOrEmpty(idGrupo))
+            if (!string.IsNullOrEmpty(idGrupo))
+            {
                 sql += " and s1.idGrupoProd=" + idGrupo;
+            }
 
-            if (!String.IsNullOrEmpty(idSubgrupo))
+            if (!string.IsNullOrEmpty(idSubgrupo))
+            {
                 sql += " and s1.idSubgrupoProd=" + idSubgrupo;
+            }
 
             if (usarJoin)
+            {
                 sql += " group by s1.idGrupoProd, s1.idSubgrupoProd";
+            }
 
-            return String.Format(sql,
-                campos,
-                (int)Glass.Data.Model.NomeGrupoProd.Vidro,
-                (int)Glass.Data.Model.NomeGrupoProd.MaoDeObra,
-                (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd);
+            return sql;
         }
 
         public bool IsSubgrupoProducao(GDASession sessao, int idGrupo, int? idSubgrupo)

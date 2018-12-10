@@ -1131,30 +1131,6 @@ namespace Glass.UI.Web.Utils
             if (id > 0)
                 MovEstoqueDAO.Instance.AtualizaSaldo(null, id);
         }
-
-        public void GeraMovimentacoes(NotaFiscal nf)
-        {
-            // Credita o estoque real
-            if (nf.GerarEstoqueReal && !EstoqueConfig.EntradaEstoqueManual)
-            {
-                var lstProdNf = ProdutosNfDAO.Instance.GetByNf(nf.IdNf);
-
-                foreach (ProdutosNf p in lstProdNf)
-                {
-                    if (p.QtdeEntradaRestante <= 0)
-                        continue;
-
-                    bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                        Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-
-                    MovEstoqueDAO.Instance.CreditaEstoqueNotaFiscal(null, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
-                        (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
-
-                    objPersistence.ExecuteCommand("update produtos_nf set qtdeEntrada=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p, false).ToString().Replace(",", ".") +
-                        " where idProdNf=" + p.IdProdNf);
-                }
-            }
-        }
     }
 
     public sealed class tempProdutoPedidoProducaoDAO : tempBaseDAO<tempProdutoPedidoProducaoDAO.Model, tempProdutoPedidoProducaoDAO>
@@ -5442,33 +5418,6 @@ namespace Glass.UI.Web.Utils
                 tempMovEstoqueDAO.Instance.ApagarMovimentacoes(item);
         }
 
-        protected void btnGerarEstoqueRealNotas_Click(object sender, EventArgs e)
-        {
-            string log = "";
-
-            var notas = NotaFiscalDAO.Instance.GetAll();
-            var numeros = txtGerarEstoqueRealNotas.Text.Replace(" ", "").
-                TrimEnd(',').Split(',').Select(x => Glass.Conversoes.StrParaUint(x));
-
-            foreach (var n in numeros)
-            {
-                try
-                {
-                    var nota = notas.Where(x => x.NumeroNFe == n && x.TipoDocumento >= 3).FirstOrDefault();
-                    if (nota == null)
-                        continue;
-
-                    tempMovEstoqueDAO.Instance.GeraMovimentacoes(nota);
-                }
-                catch (Exception ex)
-                {
-                    log += "• " + ex.Message + "\n";
-                }
-            }
-
-            txtLogGerarEstoqueRealNotas.Text = log;
-        }
-
         protected void btnSepararValores_Click(object sender, EventArgs e)
         {
             string log = "";
@@ -5898,64 +5847,6 @@ namespace Glass.UI.Web.Utils
             tempProdutoPedidoProducaoDAO.Instance.AtualizaSetor(idProdPedProducao, idSetor);
         }
 
-        public sealed class AjusteEstoqueNFe : BaseDAO<NotaFiscal, AjusteEstoqueNFe>
-        {
-            public void AtualizaEstoque(uint idNf)
-            {
-                // Busca produtos da nota
-                ProdutosNf[] lstProd = ProdutosNfDAO.Instance.GetByNf(idNf);
-                NotaFiscal nf = NotaFiscalDAO.Instance.GetElement(idNf);
-
-                // Se for entrada e ainda não tiver dado entrada no estoque, credita estoque fiscal
-                if (nf.TipoDocumento == 1)
-                {
-                    if (nf.EntrouEstoque == false)
-                    {
-                        foreach (ProdutosNf p in lstProd)
-                            MovEstoqueFiscalDAO.Instance.CreditaEstoqueNotaFiscal(null, p.IdProd, nf.IdLoja.Value,
-                                p.IdCfop > 0 ? p.IdCfop.Value : nf.IdCfop.Value, p.IdNf, p.IdProdNf,
-                                (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p, true), false, false);
-
-                        objPersistence.ExecuteCommand("Update nota_fiscal Set entrouEstoque=true Where idNf=" + nf.IdNf);
-                    }
-                }
-                // Se for saída e ainda não tiver dado saída no estoque, baixa estoque fiscal
-                else if (nf.TipoDocumento == 2)
-                {
-                    if (nf.SaiuEstoque == false)
-                    {
-                        foreach (ProdutosNf p in lstProd)
-                        {
-                            MovEstoqueFiscalDAO.Instance.BaixaEstoqueNotaFiscal(null, p.IdProd, nf.IdLoja.Value,
-                                p.IdCfop > 0 ? p.IdCfop.Value : nf.IdCfop.Value, p.IdNf, p.IdProdNf,
-                                (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p, true), false);
-
-                            // Altera o estoque real dos produtos
-                            if (nf.GerarEstoqueReal)
-                            {
-                                bool m2 = GrupoProdDAO.Instance.TipoCalculo(null, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)TipoCalculoGrupoProd.M2 ||
-                                    GrupoProdDAO.Instance.TipoCalculo(null, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)TipoCalculoGrupoProd.M2Direto;
-
-                                MovEstoqueDAO.Instance.BaixaEstoqueNotaFiscal(null, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
-                                    (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p, false));
-
-                                objPersistence.ExecuteCommand("Update produtos_nf Set qtdeSaida=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p, false).ToString().Replace(",", ".") +
-                                    " Where idProdNf=" + p.IdProdNf);
-                            }
-                        }
-
-                        objPersistence.ExecuteCommand("Update nota_fiscal Set saiuEstoque=true Where idNf=" + nf.IdNf);
-                    }
-                }
-            }
-        }
-
-        public void btnAlterarEstoque_Click(object sender, EventArgs e)
-        {
-            // Busca produtos da nota
-            AjusteEstoqueNFe.Instance.AtualizaEstoque(Conversoes.StrParaUint(txtIdNf.Text));
-        }
-
         protected void btnAtualizaItensRevendaCarregamento_Click(object sender, EventArgs e)
         {
             var log = "";
@@ -6191,49 +6082,6 @@ namespace Glass.UI.Web.Utils
             tempContasReceberDAO.Instance.Apagar(string.Join(",", contasApagar.Select(f => f.ToString()).ToArray()));
 
             txtLogApagarContas.Text = log;
-        }
-
-        protected void btnEstoquePosicaoMateriaPrima_Click(object sender, EventArgs e)
-        {
-            var log = "";
-
-            var posicao = Glass.Data.RelDAL.PosicaoMateriaPrimaDAO.Instance.GetPosMateriaPrima(null, null, null, null, null, null, null, false);
-
-            posicao = posicao.Where(f => f.Chapas.Count > 0 || f.TotM2Estoque > 0).ToList();
-
-            var prodsEstoque = new Dictionary<int, decimal>();
-
-            foreach (var p in posicao)
-            {
-                foreach (var c in p.Chapas)
-                {
-                    if (!prodsEstoque.ContainsKey(c.IdProdBase))
-                        prodsEstoque.Add(c.IdProdBase, c.TotalM2Chapa);
-                    else
-                        prodsEstoque[c.IdProdBase] = prodsEstoque[c.IdProdBase] + c.TotalM2Chapa;
-                }
-            }
-
-            foreach (var prod in prodsEstoque)
-            {
-                try
-                {
-                    var saldo = MovEstoqueDAO.Instance.ObtemSaldoQtdeMov(null, null, (uint)prod.Key, 1, null, false);
-                    var qtdeAlterar = saldo - prod.Value;
-
-                    if (qtdeAlterar > 0)
-                        MovEstoqueDAO.Instance.BaixaEstoqueManualComTransacao((uint)prod.Key, 1, qtdeAlterar, null, DateTime.Now, "Ajuste de acordo com Posição de Matéria-Prima");
-                    else if (qtdeAlterar < 0)
-                        MovEstoqueDAO.Instance.CreditaEstoqueManualComTransacao((uint)prod.Key, 1, Math.Abs(qtdeAlterar), null, DateTime.Now, "Ajuste de acordo com Posição de Matéria-Prima");
-
-                }
-                catch (Exception ex)
-                {
-                    log += "• " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "");
-                }
-            }
-
-            txtLogEstoquePosicaoMateriaPrima.Text = log;
         }
 
         protected void btnCriarPagtoContasRecebidas_Click(object sender, EventArgs e)

@@ -1,8 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
+﻿using GDA;
+using Glass.Configuracoes;
 using Glass.Data.Helper;
-using GDA;
+using Glass.Data.Helper.Estoque;
+using Glass.Data.Helper.Estoque.Estrategia.Models;
+using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Glass.Data.DAL
@@ -369,228 +372,1529 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Métodos privados controle estoque
+
+        private decimal CalcularQuantidadeEstoque(TipoCalculoGrupoProd tipoCalculo, float quantidadeMovimentacao, float quantidadeProduto, float metroQuadrado, float altura)
+        {
+            var calculaMetroQuadrado = tipoCalculo == TipoCalculoGrupoProd.M2 || tipoCalculo == TipoCalculoGrupoProd.M2Direto;
+
+            if (tipoCalculo == TipoCalculoGrupoProd.MLAL0
+                || tipoCalculo == TipoCalculoGrupoProd.MLAL05
+                || tipoCalculo == TipoCalculoGrupoProd.MLAL1
+                || tipoCalculo == TipoCalculoGrupoProd.MLAL6
+                || tipoCalculo == TipoCalculoGrupoProd.ML)
+            {
+                quantidadeMovimentacao *= altura;
+            }
+
+            return (decimal)(calculaMetroQuadrado ? (metroQuadrado / quantidadeProduto) * quantidadeMovimentacao : quantidadeMovimentacao);
+        }
+
+        private bool VerificarAlterarMateriaPrima(GDASession sessao, int idGrupoProduto, int idSubgrupoProduto, TipoCalculoGrupoProd tipoCalculo, Pedido.TipoPedidoEnum tipoPedido, int idProduto)
+        {
+            var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupoPorSubgrupo(sessao, idSubgrupoProduto);
+
+            return GrupoProdDAO.Instance.IsVidro(idGrupoProduto)
+                && tipoCalculo != TipoCalculoGrupoProd.Qtd
+                && tipoSubgrupo != TipoSubgrupoProd.ChapasVidro
+                && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado
+                && (tipoPedido != Pedido.TipoPedidoEnum.Producao || !ProdutoDAO.Instance.IsProdutoProducao(sessao, idProduto));
+        }
+
+        private int ObterIdLojaTrocaDevolucao(GDASession sessao, int idTrocaDevolucao, int idProd)
+        {
+            var idPedido = TrocaDevolucaoDAO.Instance.ObterIdPedido(sessao, idTrocaDevolucao);
+            var idLoja = Geral.ConsiderarLojaClientePedidoFluxoSistema && idPedido > 0
+                ? (int)PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedido)
+                : (int)UserInfo.GetUserInfo.IdLoja;
+
+            var etiquetasTrocadas = ChapaTrocadaDevolvidaDAO.Instance.BuscarEtiquetasJaEntreguesPelaTrocaDevolucao(sessao, idTrocaDevolucao)
+                .Split(',')
+                .Where(f => !string.IsNullOrWhiteSpace(f.ToString()))
+                .ToList();
+
+            foreach (var etiqueta in etiquetasTrocadas)
+            {
+                var idProdNf = ProdutoImpressaoDAO.Instance.ObtemIdProdNf(sessao, etiqueta, ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal);
+                var idProdEtiqueta = ProdutosNfDAO.Instance.GetIdProdByEtiqueta(sessao, etiqueta);
+                if (idProdEtiqueta == idProd && idProdNf > 0)
+                {
+                    idLoja = (int)NotaFiscalDAO.Instance.ObtemIdLoja(sessao, ProdutosNfDAO.Instance.ObtemIdNf(sessao, idProdNf));
+                }
+            }
+
+            return idLoja;
+        }
+
+        private int ObterIdLojaProdutoPedidoProducao(GDASession sessao, int idProdutoPedidoProducao, int idPedido, int idProduto)
+        {
+            var idLoja = Geral.ConsiderarLojaClientePedidoFluxoSistema && idPedido > 0
+                ? (int)PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedido)
+                : (int)UserInfo.GetUserInfo.IdLoja;
+
+            var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, idProduto);
+
+            if (tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado)
+            {
+                return idLoja;
+            }
+
+            var numEtiqueta = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<string>(sessao, "NumEtiqueta", $"IdProdPedProducao={idProdutoPedidoProducao}");
+            var idProdImpressaoPeca = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(sessao, numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
+            var idProdImpressaoChapa = ChapaCortePecaDAO.Instance.ObtemIdProdImpressaoChapa(sessao, (int)idProdImpressaoPeca);
+            var idNotaFiscal = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, (uint)idProdImpressaoChapa) ?? 0;
+
+            if (idNotaFiscal > 0)
+            {
+                idLoja = (int)NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNotaFiscal);
+            }
+
+            return idLoja;
+        }
+
+        private int ObterIdLojaPeloIdProdImpressaoChapa(GDASession sessao, int idPedido, int idProduto, int idProdutoImpressaoChapa)
+        {
+            var idLoja = Geral.ConsiderarLojaClientePedidoFluxoSistema && idPedido > 0
+                ? (int)PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedido)
+                : (int)UserInfo.GetUserInfo.IdLoja;
+
+            var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, idProduto);
+
+            if (tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado)
+            {
+                return idLoja;
+            }
+
+            var idNotaFiscal = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, (uint)idProdutoImpressaoChapa) ?? 0;
+
+            if (idNotaFiscal > 0)
+            {
+                idLoja = (int)NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNotaFiscal);
+            }
+
+            return idLoja;
+        }
+
+        #endregion
+
         #region Baixa Estoque
 
-        public void BaixaEstoquePedido(GDASession sessao, uint idProd, uint idLoja, uint idPedido, uint idProdPed, decimal qtdeBaixa, decimal qtdeBaixaAreaMinima, bool alterarMateriaPrima,
-            string observacao, uint? idVolume, uint? idProdImpressaoChapa)
+        public void BaixaEstoqueConfirmacaoPedido(GDASession sessao, uint idPedido, IEnumerable<ProdutosPedido> produtosPedido)
         {
-            var totalProdPed = GetTotalProdPed(sessao, (int)idProdPed);
-            var pedidoProducao = PedidoDAO.Instance.IsProducao(sessao, idPedido);
-            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, idPedido);
-
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, idPedido, null, null, null, null, null, null, idProdPed, null, null, null, null, null, null, null, null, null,
-                idVolume, null, idProdImpressaoChapa, false, qtdeBaixa, totalProdPed, alterarMateriaPrima, !pedidoProducao, true, DateTime.Now, true, null, observacao);
-
-            if (tipoPedido == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
+            if (!FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar)
             {
-                var idClientePedido = PedidoDAO.Instance.GetIdCliente(sessao, idPedido);
-                MovEstoqueClienteDAO.Instance.BaixaEstoquePedido(sessao, idClientePedido, idProd, idLoja, idPedido, idProdPed, qtdeBaixa, qtdeBaixaAreaMinima);
+                return;
             }
-        }
 
-        public void BaixaEstoqueCompra(GDASession sessao, uint idProd, uint idLoja, uint idCompra, uint idProdCompra, decimal qtdeBaixa)
-        {
-            var totalProdCompra = GetTotalProdCompra(sessao, (int)idProdCompra);
-
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, idCompra, null, null, null, null, null, null, idProdCompra, null, null, null, null, null, null, null, null,
-                null, null, null, false, qtdeBaixa, totalProdCompra, true, false, true, DateTime.Now, true, null, null);
-        }
-
-        public void BaixaEstoqueLiberacao(GDASession sessao, uint idProd, uint idLoja, uint idLiberarPedido, uint idPedido, uint idProdLiberarPedido, decimal qtdeBaixa, decimal qtdeBaixaAreaMinima)
-        {
-            var totalProdLiberarPedido = GetTotalProdLiberarPedido(sessao, (int)idProdLiberarPedido);
             var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, idPedido);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
+            var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, idLoja, idPedido, null, null, false);
 
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, idPedido, null, idLiberarPedido, null, null, null, null, null, null, idProdLiberarPedido, null, null, null, null,
-                null, null, null, null, null, null, false, qtdeBaixa, totalProdLiberarPedido, true, false, true, DateTime.Now, true, null, null);
-
-            if (tipoPedido == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
+            foreach (var item in produtosPedido)
             {
-                var idClientePedido = PedidoDAO.Instance.GetIdCliente(sessao, idPedido);
-                MovEstoqueClienteDAO.Instance.BaixaEstoqueLiberacao(sessao, idClientePedido, idProd, idLoja, idLiberarPedido, idPedido, idProdLiberarPedido, qtdeBaixa, qtdeBaixaAreaMinima);
-            }
-        }
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
+                var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, item.Qtde - item.QtdSaida, item.Qtde, item.TotM, item.Altura);
 
-        public void BaixaEstoqueTrocaDevolucao(GDASession session, uint idProd, uint idLoja, uint idTrocaDevolucao, uint? idProdTrocaDev, uint? idProdTrocado, decimal qtdeBaixa)
-        {
-            var totalProdTrocaDevolucao = GetTotalProdTrocaDevolucao(session, (int?)idProdTrocaDev, (int?)idProdTrocado);
-
-            MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, idTrocaDevolucao, null, null, null, null, null, idProdTrocaDev, idProdTrocado, null, null,
-                null, null, null, null, null, null, false, qtdeBaixa, totalProdTrocaDevolucao, true, false, true, DateTime.Now, true, null, null);
-        }
-
-        public void BaixaEstoqueNotaFiscal(GDASession session, uint idProd, uint idLoja, uint idNf, uint idProdNf, decimal qtdeBaixa)
-        {
-            var totalProdNf = ProdutosNfDAO.Instance.ObterTotal(session, (int)idProdNf);
-
-            MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, idNf, null, null, null, null, null, null,
-                idProdNf, null, null, null, null, null, null, null, false, qtdeBaixa, totalProdNf, true, false, true, DateTime.Now, true, null, null);
-        }
-
-        public void BaixaEstoquePedidoInterno(GDASession session, uint idProd, uint idLoja, uint idPedidoInterno, uint idProdPedInterno, decimal qtdeBaixa)
-        {
-            var totalProdPedInterno = GetTotalProdPedInterno(session, (int)idProd, (int)idProdPedInterno);
-
-            MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, idPedidoInterno, null, null, null, null, null, null, idProdPedInterno, null,
-                null, null, null, null, null, false, qtdeBaixa, totalProdPedInterno, true, false, true, DateTime.Now, true, null, null);
-        }
-
-        public void BaixaEstoqueManualComTransacao(uint idProd, uint idLoja, decimal qtdeBaixa, decimal? valor, DateTime dataMov, string observacao)
-        {
-            using (var transaction = new GDATransaction())
-            {
-                try
+                if ((decimal)item.Qtde <= (decimal)item.QtdSaida)
                 {
-                    transaction.BeginTransaction();
-
-                    BaixaEstoqueManual(transaction, idProd, idLoja, qtdeBaixa, valor, dataMov, observacao);
-
-                    transaction.Commit();
-                    transaction.Close();
+                    throw new InvalidOperationException($"Operação cancelada. O produto {item.DescrProduto} teve uma saída maior do que sua quantidade.");
                 }
-                catch
+
+                if (quantidadeBaixa > 0)
                 {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
+                    ProdutosPedidoDAO.Instance.MarcarSaida(
+                        sessao,
+                        item.IdProdPed,
+                        item.Qtde - item.QtdSaida,
+                        idSaidaEstoque,
+                        System.Reflection.MethodBase.GetCurrentMethod().Name,
+                        string.Empty,
+                        saidaConfirmacao: true);
+
+                    new EstoqueStrategyFactory()
+                        .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                        .Baixar(sessao, new MovimentacaoDto
+                        {
+                            IdProd = item.IdProd,
+                            IdLoja = idLoja,
+                            TipoMov = MovEstoque.TipoMovEnum.Saida,
+                            IdPedido = idPedido,
+                            IdProdPed = item.IdProdPed,
+                            LancManual = false,
+                            QtdeMov = quantidadeBaixa,
+                            Total = GetTotalProdPed(sessao, (int)item.IdProdPed),
+                            AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)item.IdProd),
+                            BaixarMesmoProdutoSemMateriaPrima = true,
+                            DataMov = DateTime.Now,
+                            AlterarProdBase = true,
+                        });
+                }
+            }
+
+            if (tipoPedido != Pedido.TipoPedidoEnum.Producao && !FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar)
+            {
+                ProdutoLojaDAO.Instance.RecalcularReserva(sessao, (int)idLoja, produtosPedido.Select(f => (int)f.IdProd).Distinct());
+            }
+        }
+
+        public void BaixaEstoqueChapa(GDASession sessao, int idProdPed, uint? idProdImpressaoChapa)
+        {
+            var produtoPedido = ProdutosPedidoDAO.Instance.GetElementFluxoLite(sessao, (uint)idProdPed);
+
+            if (produtoPedido.Qtde <= produtoPedido.QtdSaida)
+            {
+                throw new InvalidOperationException($"Operação cancelada. O produto {produtoPedido.DescrProduto} teve uma saída maior do que sua quantidade.");
+            }
+
+            var idLoja = ObterIdLojaPeloIdProdImpressaoChapa(sessao, (int)produtoPedido.IdPedido, (int)produtoPedido.IdProd, (int)idProdImpressaoChapa);
+
+            var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, (uint)idLoja, produtoPedido.IdPedido, null, null, false);
+
+            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedido.IdProdPed, 1, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = produtoPedido.IdProd,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdPedido = produtoPedido.IdPedido,
+                    IdProdPed = produtoPedido.IdProdPed,
+                    IdProdImpressaoChapa = idProdImpressaoChapa,
+                    QtdeMov = 1,
+                    Total = GetTotalProdPed(sessao, (int)produtoPedido.IdProdPed),
+                    DataMov = DateTime.Now,
+                    AlterarProdBase = true,
+                });
+        }
+
+        public void BaixaEstoqueCorteChapa(GDASession sessao, uint idProdPedProducao, int idProdImpressaoChapa)
+        {
+            uint? idProd = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, (uint)idProdImpressaoChapa);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = idProd.Value,
+                    IdLoja = (uint)ObterIdLojaPeloIdProdImpressaoChapa(sessao, 0, (int)idProd.Value, idProdImpressaoChapa),
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdProdPedProducao = idProdPedProducao,
+                    QtdeMov = 1,
+                    Total = GetTotalProdPedProducao(sessao, (int)idProdPedProducao),
+                    DataMov = DateTime.Now,
+                });
+        }
+
+        public void BaixaEstoqueVolume(GDASession sessao, uint idPedido, IEnumerable<VolumeProdutosPedido> volumes)
+        {
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
+            var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, idLoja, idPedido, null, null, false);
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, idPedido);
+
+            foreach (var item in volumes)
+            {
+                var produtoPedido = ProdutosPedidoDAO.Instance.GetElementFluxoLite(sessao, item.IdProdPed);
+
+                if ((decimal)item.Qtde > ((decimal)produtoPedido.Qtde - (decimal)produtoPedido.QtdSaida))
+                {
+                    throw new InvalidOperationException($"Operação cancelada. O produto {produtoPedido.DescrProduto} teve uma saída maior do que sua quantidade.");
+                }
+
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, false);
+                var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, item.Qtde, produtoPedido.Qtde, produtoPedido.TotM, produtoPedido.Altura);
+
+                ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedido.IdProdPed, item.Qtde, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Baixar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = produtoPedido.IdProd,
+                        IdLoja = idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Saida,
+                        IdPedido = produtoPedido.IdPedido,
+                        IdProdPed = produtoPedido.IdProdPed,
+                        IdVolume = item.IdVolume,
+                        QtdeMov = quantidadeBaixa,
+                        Total = GetTotalProdPed(sessao, (int)produtoPedido.IdProdPed),
+                        AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)produtoPedido.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+            }
+
+            PedidoDAO.Instance.MarcaPedidoEntregue(sessao, idPedido);
+
+            if (tipoPedido != Pedido.TipoPedidoEnum.Producao)
+            {
+                var idsProduto = volumes.Select(f => (int)f.IdProd).Distinct();
+
+                ProdutoLojaDAO.Instance.RecalcularReserva(sessao, (int)idLoja, idsProduto);
+                ProdutoLojaDAO.Instance.RecalcularLiberacao(sessao, (int)idLoja, idsProduto);
+            }
+        }
+
+        public void BaixaEstoqueManual(GDASession sessao, int idLoja, int idPedido, IEnumerable<KeyValuePair<int, float>> produtosPedido, string observacao)
+        {
+            var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, (uint)idLoja, (uint)idPedido, null, null, true);
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido);
+            var idsProduto = new List<int>();
+
+            foreach (var item in produtosPedido)
+            {
+                var produtoPedido = ProdutosPedidoDAO.Instance.GetElement((uint)item.Key);
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, false);
+                var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, item.Value, produtoPedido.Qtde, produtoPedido.TotM, produtoPedido.Altura);
+
+                ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedido.IdProdPed, item.Value, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Baixar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = produtoPedido.IdProd,
+                        IdLoja = (uint)idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Saida,
+                        IdPedido = produtoPedido.IdPedido,
+                        IdProdPed = produtoPedido.IdProdPed,
+                        QtdeMov = quantidadeBaixa,
+                        LancManual = true,
+                        Total = GetTotalProdPed(sessao, (int)produtoPedido.IdProdPed),
+                        AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)produtoPedido.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                        Observacao = observacao,
+                    });
+
+                idsProduto.Add((int)produtoPedido.IdProd);
+            }
+
+            PedidoDAO.Instance.MarcaPedidoEntregue(sessao, (uint)idPedido);
+
+            if (tipoPedido != Pedido.TipoPedidoEnum.Producao)
+            {
+                ProdutoLojaDAO.Instance.RecalcularReserva(sessao, idLoja, idsProduto.Distinct());
+                ProdutoLojaDAO.Instance.RecalcularLiberacao(sessao, idLoja, idsProduto.Distinct());
+            }
+        }
+
+        public void BaixaEstoqueCancelamentoCompra(GDASession sessao, int idCompra, IEnumerable<ProdutosCompra> produtosCompra)
+        {
+            foreach (var item in produtosCompra)
+            {
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
+                var metroQuadrado = Global.CalculosFluxo.ArredondaM2Compra(item.Largura, (int)item.Altura, (int)item.QtdeEntrada);
+                var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, item.QtdeEntrada, item.Qtde, metroQuadrado, item.Altura);
+
+                if (quantidadeBaixa > 0)
+                {
+                    var idLoja = ObterIdLojaPeloIdCompra(sessao, idCompra).GetValueOrDefault((int)UserInfo.GetUserInfo.IdLoja);
+
+                    new EstoqueStrategyFactory()
+                        .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                        .Baixar(sessao, new MovimentacaoDto
+                        {
+                            IdProd = item.IdProd,
+                            IdLoja = (uint)idLoja,
+                            TipoMov = MovEstoque.TipoMovEnum.Saida,
+                            IdCompra = (uint)idCompra,
+                            IdProdCompra = item.IdProdCompra,
+                            QtdeMov = quantidadeBaixa,
+                            Total = GetTotalProdCompra(sessao, (int)item.IdProdCompra),
+                            AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                            BaixarMesmoProdutoSemMateriaPrima = true,
+                            DataMov = DateTime.Now,
+                            AlterarProdBase = true,
+                        });
+                }
+
+                objPersistence.ExecuteCommand(sessao, "update produtos_compra set qtdeEntrada=0 where idProdCompra=" + item.IdProdCompra);
+            }
+
+            objPersistence.ExecuteCommand(sessao, "update compra set estoqueBaixado=false where idCompra=" + idCompra);
+        }
+
+        public void BaixaEstoqueCancelamentoEntradaEstoqueCompra(GDASession sessao, int idLoja, int idCompra, int idEntradaEstoque, IEnumerable<ProdutoEntradaEstoque> produtosEntradaEstoque)
+        {
+            foreach (var item in produtosEntradaEstoque)
+            {
+                var produtoCompra = ProdutosCompraDAO.Instance.GetElementByPrimaryKey(sessao, item.IdProdCompra.Value);
+
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoCompra.IdGrupoProd, (int)produtoCompra.IdSubgrupoProd, false);
+                var metroQuadrado = Global.CalculosFluxo.ArredondaM2Compra(produtoCompra.Largura, (int)produtoCompra.Altura, (int)item.QtdeEntrada);
+                var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, item.QtdeEntrada, produtoCompra.Qtde, metroQuadrado, produtoCompra.Altura);
+
+                ProdutosCompraDAO.Instance.MarcarEntrada(sessao, item.IdProdCompra.Value, -item.QtdeEntrada, (uint)idEntradaEstoque);
+
+                if (quantidadeBaixa > 0)
+                {
+                    new EstoqueStrategyFactory()
+                        .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                        .Baixar(sessao, new MovimentacaoDto
+                        {
+                            IdProd = produtoCompra.IdProd,
+                            IdLoja = (uint)idLoja,
+                            TipoMov = MovEstoque.TipoMovEnum.Saida,
+                            IdCompra = (uint)idCompra,
+                            IdProdCompra = item.IdProdCompra,
+                            QtdeMov = quantidadeBaixa,
+                            Total = GetTotalProdCompra(sessao, (int)item.IdProdCompra),
+                            AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)produtoCompra.IdProd),
+                            BaixarMesmoProdutoSemMateriaPrima = true,
+                            DataMov = DateTime.Now,
+                            AlterarProdBase = true,
+                        });
+                }
+            }
+        }
+
+        public void BaixaEstoqueCancelamentoEntradaEstoqueNotaFiscal(GDASession sessao, int idLoja, int idNotaFiscal, int idEntradaEstoque, IEnumerable<ProdutoEntradaEstoque> produtosEntradaEstoque)
+        {
+            foreach (var item in produtosEntradaEstoque)
+            {
+                var produtoNotaFiscal = ProdutosNfDAO.Instance.GetElementByPrimaryKey(sessao, item.IdProdNf.Value);
+
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoNotaFiscal.IdGrupoProd, (int)produtoNotaFiscal.IdSubgrupoProd, false);
+                var metroQuadrado = Global.CalculosFluxo.ArredondaM2Compra(produtoNotaFiscal.Largura, (int)produtoNotaFiscal.Altura, (int)item.QtdeEntrada);
+                var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, item.QtdeEntrada, produtoNotaFiscal.Qtde, metroQuadrado, produtoNotaFiscal.Altura);
+
+                ProdutosNfDAO.Instance.MarcarEntrada(sessao, item.IdProdNf.Value, -item.QtdeEntrada, (uint)idEntradaEstoque);
+
+                if (quantidadeBaixa > 0)
+                {
+                    new EstoqueStrategyFactory()
+                        .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                        .Baixar(sessao, new MovimentacaoDto
+                        {
+                            IdProd = produtoNotaFiscal.IdProd,
+                            IdLoja = (uint)idLoja,
+                            TipoMov = MovEstoque.TipoMovEnum.Saida,
+                            IdNf = (uint)idNotaFiscal,
+                            IdProdNf = produtoNotaFiscal.IdProdNf,
+                            QtdeMov = quantidadeBaixa,
+                            Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)produtoNotaFiscal.IdProdNf),
+                            AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)produtoNotaFiscal.IdProd),
+                            BaixarMesmoProdutoSemMateriaPrima = true,
+                            DataMov = DateTime.Now,
+                            AlterarProdBase = true,
+                        });
+                }
+            }
+        }
+
+        public void BaixaEstoqueLiberacao(GDASession sessao, uint idLiberarPedido, uint idCliente, IEnumerable<KeyValuePair<int, float>> produtosPedido)
+        {
+            var idsProdutoReservaLiberacao = new Dictionary<int, List<int>>();
+
+            foreach (var item in produtosPedido)
+            {
+                var produtoPedido = ProdutosPedidoDAO.Instance.GetElementFluxoLite(sessao, (uint)item.Key);
+                var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(sessao, produtoPedido.IdPedido);
+                var idLoja = idLojaPedido > 0 ? idLojaPedido : UserInfo.GetUserInfo.IdLoja;
+
+                var saidaNaoVidro = Liberacao.Estoque.SaidaEstoqueAoLiberarPedido && (!GrupoProdDAO.Instance.IsVidro((int)produtoPedido.IdGrupoProd) || !PCPConfig.ControlarProducao);
+                var saidaBox = Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)produtoPedido.IdGrupoProd) && SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)produtoPedido.IdGrupoProd, (int?)produtoPedido.IdSubgrupoProd);
+                var subGrupoVolume = OrdemCargaConfig.UsarControleOrdemCarga && SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(sessao, produtoPedido.IdGrupoProd, produtoPedido.IdSubgrupoProd);
+                var entregaBalcao = PedidoDAO.Instance.ObtemTipoEntrega(sessao, produtoPedido.IdPedido) == (int)Pedido.TipoEntregaPedido.Balcao;
+                var naoVolume = OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega ? entregaBalcao || !subGrupoVolume : !subGrupoVolume;
+                var pedidoGerarProducaoParaCorte = PedidoDAO.Instance.GerarPedidoProducaoCorte(sessao, produtoPedido.IdPedido);
+                var pedidoPossuiVolumeExpedido = false;
+
+                foreach (var volume in VolumeDAO.Instance.ObterPeloPedido(sessao, (int)produtoPedido.IdPedido))
+                {
+                    if (VolumeDAO.Instance.TemExpedicao(sessao, volume.IdVolume))
+                    {
+                        pedidoPossuiVolumeExpedido = true;
+                        break;
+                    }
+                }
+
+                if (!idsProdutoReservaLiberacao.ContainsKey((int)idLoja))
+                {
+                    idsProdutoReservaLiberacao.Add((int)idLoja, new List<int> { (int)produtoPedido.IdProd });
+                }
+                else if (!idsProdutoReservaLiberacao[(int)idLoja].Contains((int)produtoPedido.IdProd))
+                {
+                    idsProdutoReservaLiberacao[(int)idLoja].Add((int)produtoPedido.IdProd);
+                }
+
+                if (pedidoPossuiVolumeExpedido || pedidoGerarProducaoParaCorte || !naoVolume || (!saidaNaoVidro && !saidaBox))
+                {
+                    continue;
+                }
+
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedido.IdGrupoProd, (int?)produtoPedido.IdSubgrupoProd, false);
+                var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, produtoPedido.Largura, (int)produtoPedido.Altura, item.Value, 0, produtoPedido.Redondo, 0, tipoCalculo != TipoCalculoGrupoProd.M2Direto);
+                var qtdeBaixa = CalcularQuantidadeEstoque(tipoCalculo, item.Value, produtoPedido.Qtde, m2Calc, produtoPedido.Altura);
+
+                // Marca quantos produtos do pedido foi marcado como saída, se o pedido não tiver que transferir
+                var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, idLoja, null, idLiberarPedido, null, false);
+                ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedido.IdProdPed, item.Value, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+
+                var idProdutoLiberarPedido = ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(sessao, idLiberarPedido, produtoPedido.IdProdPed);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Baixar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = produtoPedido.IdProd,
+                        IdLoja = idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Saida,
+                        IdPedido = produtoPedido.IdPedido,
+                        IdLiberarPedido = idLiberarPedido,
+                        IdProdLiberarPedido = idProdutoLiberarPedido,
+                        QtdeMov = qtdeBaixa,
+                        Total = GetTotalProdLiberarPedido(sessao, (int)idProdutoLiberarPedido),
+                        AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)produtoPedido.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+            }
+
+            foreach (var idLoja in idsProdutoReservaLiberacao.Keys)
+            {
+                if (idsProdutoReservaLiberacao[idLoja].Count > 0)
+                {
+                    ProdutoLojaDAO.Instance.RecalcularReserva(sessao, idLoja, idsProdutoReservaLiberacao[idLoja]);
+                    ProdutoLojaDAO.Instance.RecalcularLiberacao(sessao, idLoja, idsProdutoReservaLiberacao[idLoja]);
+                }
+            }
+        }
+
+        public void BaixaEstoqueProdutoDevolvidoTrocaDevolucao(GDASession sessao, int idTrocaDevolucao, IEnumerable<ProdutoTrocaDevolucao> produtosDevolvidos)
+        {
+            foreach (var item in produtosDevolvidos.Where(f => f.AlterarEstoque))
+            {
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int?)item.IdSubgrupoProd, false);
+                var qtdeBaixa = CalcularQuantidadeEstoque(tipoCalculo, item.Qtde, item.Qtde, item.TotM, item.Altura);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Baixar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = (uint)ObterIdLojaTrocaDevolucao(sessao, idTrocaDevolucao, (int)item.IdProd),
+                        TipoMov = MovEstoque.TipoMovEnum.Saida,
+                        IdTrocaDevolucao = item.IdTrocaDevolucao,
+                        IdProdTrocaDev = item.IdProdTrocaDev,
+                        QtdeMov = qtdeBaixa,
+                        Total = GetTotalProdTrocaDevolucao(sessao, (int?)item.IdProdTrocaDev, null),
+                        AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+            }
+        }
+
+        public void BaixaEstoqueProdutoTrocadoTrocaDevolucao(GDASession sessao, int idTrocaDevolucao, IEnumerable<ProdutoTrocado> produtosTrocados)
+        {
+            foreach (var item in produtosTrocados)
+            {
+                var idLoja = (uint)ObterIdLojaTrocaDevolucao(sessao, idTrocaDevolucao, (int)item.IdProd);
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int?)item.IdSubgrupoProd, false);
+                var qtdeBaixa = CalcularQuantidadeEstoque(tipoCalculo, item.Qtde, item.Qtde, item.TotM, item.Altura);
+
+                if (item.ComDefeito)
+                {
+                    ProdutoLojaDAO.Instance.BaixaDefeito(sessao, item.IdProd, idLoja, (float)qtdeBaixa);
+                }
+                else if (item.AlterarEstoque)
+                {
+                    new EstoqueStrategyFactory()
+                        .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                        .Baixar(sessao, new MovimentacaoDto
+                        {
+                            IdProd = item.IdProd,
+                            IdLoja = idLoja,
+                            TipoMov = MovEstoque.TipoMovEnum.Saida,
+                            IdTrocaDevolucao = item.IdTrocaDevolucao,
+                            IdProdTrocado = item.IdProdTrocado,
+                            QtdeMov = qtdeBaixa,
+                            Total = GetTotalProdTrocaDevolucao(sessao, null, (int?)item.IdProdTrocado),
+                            AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                            BaixarMesmoProdutoSemMateriaPrima = true,
+                            DataMov = DateTime.Now,
+                            AlterarProdBase = true,
+                        });
+                }
+            }
+        }
+
+        public void BaixaEstoqueRealNotaFiscal(GDASession sessao, NotaFiscal notaFiscal, IEnumerable<ProdutosNf> produtosNotaFiscal)
+        {
+            if (notaFiscal.SaiuEstoque || !notaFiscal.GerarEstoqueReal)
+            {
+                return;
+            }
+
+            foreach (var item in produtosNotaFiscal)
+            {
+                var quantidadeBaixa = (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(sessao, item.IdProd, item.TotM, item.Qtde, item.Altura, item.Largura, false, false);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Baixar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = notaFiscal.IdLoja.Value,
+                        TipoMov = MovEstoque.TipoMovEnum.Saida,
+                        IdNf = item.IdNf,
+                        IdProdNf = item.IdProdNf,
+                        QtdeMov = quantidadeBaixa,
+                        Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)item.IdProdNf),
+                        AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+
+                objPersistence.ExecuteCommand(sessao, $"UPDATE produtos_nf SET qtdeSaida={ProdutosNfDAO.Instance.ObtemQtdDanfe(sessao, item, false).ToString().Replace(",", ".")} Where idProdNf={item.IdProdNf}");
+            }
+        }
+
+        public void BaixaEstoquePedidoInterno(GDASession sessao, int idLoja, Dictionary<int, float> saidasProduto, IEnumerable<ProdutoPedidoInterno> produtosPedidoInterno)
+        {
+            foreach (var item in produtosPedidoInterno)
+            {
+                saidasProduto[(int)item.IdProdPedInterno] = Math.Min(saidasProduto[(int)item.IdProdPedInterno], item.QtdeConfirmar);
+
+                if (saidasProduto[(int)item.IdProdPedInterno] <= 0)
+                {
+                    continue;
+                }
+
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int?)item.IdSubgrupoProd, false);
+
+                var quantidadeBaixa = CalcularQuantidadeEstoque(
+                    tipoCalculo,
+                    item.ConfirmarQtde ? saidasProduto[(int)item.IdProdPedInterno] : 1,
+                    item.Qtde,
+                    item.TotM,
+                    item.Altura);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Baixar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = (uint)idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Saida,
+                        IdPedidoInterno = item.IdPedidoInterno,
+                        IdProdPedInterno = item.IdProdPedInterno,
+                        QtdeMov = quantidadeBaixa,
+                        Total = GetTotalProdPedInterno(sessao, (int)item.IdProd, (int)item.IdProdPedInterno),
+                        AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+
+                objPersistence.ExecuteCommand(sessao, "UPDATE produto_pedido_interno SET qtdeConfirmada=COALESCE(qtdeConfirmada,0)+?qtde WHERE idProdPedInterno=" + item.IdProdPedInterno,
+                    new GDAParameter("?qtde", saidasProduto[(int)item.IdProdPedInterno]));
+
+                var idCentroCusto = PedidoInternoDAO.Instance.ObtemIdCentroCusto(sessao, (int)item.IdPedidoInterno);
+
+                if (FiscalConfig.UsarControleCentroCusto && CentroCustoDAO.Instance.GetCountReal(sessao) > 0 && idCentroCusto.GetValueOrDefault(0) > 0)
+                {
+                    CentroCustoAssociadoDAO.Instance.Insert(sessao, new CentroCustoAssociado()
+                    {
+                        IdCentroCusto = idCentroCusto.Value,
+                        IdPedidoInterno = (int)item.IdPedidoInterno,
+                        IdConta = MovEstoqueCentroCustoDAO.Instance.ObtemUltimoIdConta(sessao, idLoja, (int)item.IdProd).GetValueOrDefault(),
+                        Valor = quantidadeBaixa * MovEstoqueCentroCustoDAO.Instance.ObtemValorUnitarioProd(sessao, idLoja, (int)item.IdProd)
+                    });
+
+                    MovEstoqueCentroCustoDAO.Instance.BaixaEstoquePedidoInterno(sessao, (int)item.IdPedidoInterno, (int)item.IdProd, idLoja, quantidadeBaixa);
                 }
             }
         }
 
         public void BaixaEstoqueManual(GDASession sessao, uint idProd, uint idLoja, decimal qtdeBaixa, decimal? valor, DateTime dataMov, string observacao)
         {
-            var totalEstoqueManual = GetTotalEstoqueManual(sessao, (int)idProd, qtdeBaixa);
-
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null, true, qtdeBaixa, valor.GetValueOrDefault(totalEstoqueManual), false, false, true, dataMov, true, null, observacao);
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = idProd,
+                    IdLoja = idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    LancManual = true,
+                    QtdeMov = qtdeBaixa,
+                    Total = valor.GetValueOrDefault(GetTotalEstoqueManual(sessao, (int)idProd, qtdeBaixa)),
+                    DataMov = dataMov,
+                    AlterarProdBase = true,
+                    Observacao = observacao,
+                });
         }
 
-        public void BaixaEstoqueProducao(GDASession sessao, uint idProd, uint idLoja, uint idProdPedProducao, decimal qtdeBaixa, decimal qtdeBaixaAreaMinima, bool alterarMateriaPrima,
-            bool baixarMesmoProdutoSemMateriaPrima, bool baixarEstoqueCliente)
+        public void BaixaEstoquePedidoProducao(GDASession sessao, IEnumerable<int> idsProdutoPedidoProducao)
         {
-            var totalProdPedProducao = GetTotalProdPedProducao(sessao, (int)idProdPedProducao);
-            var idPedido = ProdutoPedidoProducaoDAO.Instance.ObtemIdPedido(sessao, idProdPedProducao);
-            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, idPedido);
-
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, idProdPedProducao, null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, false, qtdeBaixa, totalProdPedProducao, alterarMateriaPrima, alterarMateriaPrima, baixarMesmoProdutoSemMateriaPrima, DateTime.Now, false, null, null);
-
-            if (baixarEstoqueCliente && tipoPedido == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
+            foreach (var item in ProdutoPedidoProducaoDAO.Instance.ObterParaBaixaEstoqueProducao(sessao, idsProdutoPedidoProducao).Where(f => f.IdProdPed > 0))
             {
-                var idClientePedido = PedidoDAO.Instance.ObtemIdCliente(sessao, idPedido);
-                MovEstoqueClienteDAO.Instance.BaixaEstoqueProducao(sessao, idClientePedido, idProd, idLoja, idProdPedProducao, qtdeBaixa, qtdeBaixaAreaMinima);
+                var passouSetorLaminado = !ProdutoPedidoProducaoDAO.Instance.PecaPassouSetorLaminado(sessao, (int)item.IdProdPedProducao);
+                var produtoPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(sessao, null, item.IdProdPed, true);
+                var m2Calc = produtoPedidoEspelho.TotM2Calc / produtoPedidoEspelho.Qtde;
+
+                var idLoja = ObterIdLojaProdutoPedidoProducao(
+                    sessao,
+                    (int)item.IdProdPedProducao,
+                    (int)produtoPedidoEspelho.IdPedido,
+                    (int)produtoPedidoEspelho.IdProd);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Baixar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = produtoPedidoEspelho.IdProd,
+                        IdLoja = (uint)idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Saida,
+                        IdProdPedProducao = item.IdProdPedProducao,
+                        QtdeMov = 1,
+                        Total = GetTotalProdPedProducao(sessao, (int)item.IdProdPedProducao),
+                        DataMov = DateTime.Now,
+                    });
+
+                CreditaEstoqueProducao(sessao, (int)produtoPedidoEspelho.IdProd, idLoja, (int)item.IdProdPedProducao, (decimal)(m2Calc > 0 && passouSetorLaminado ? m2Calc : 1));
+
+                // Marca que este produto entrou em estoque
+                objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET EntrouEstoque = 0 WHERE IdProdPedProducao = {item.IdProdPedProducao}");
             }
         }
 
-        public void BaixaEstoqueRetalho(GDASession sessao, uint idProd, uint idLoja, uint idRetalhoProducao, decimal qtdeBaixa)
+        public void BaixaEstoquePedidoProducaoPerda(GDASession sessao, int idProdutoPedidoProducao, Pedido.TipoPedidoEnum tipoPedido, uint idFuncionario)
         {
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, null, null, null, null, null, null, null, null, idRetalhoProducao, null, null,
-                null, null, null, false, qtdeBaixa, 0, true, false, true, DateTime.Now, false, null, null);
+            if (tipoPedido != Pedido.TipoPedidoEnum.Producao
+                || !ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
+            {
+                return;
+            }
+
+            var produtoPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetElementByPrimaryKey(
+                sessao,
+                ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(sessao, (uint)idProdutoPedidoProducao));
+
+            var idLoja = ObterIdLojaProdutoPedidoProducao(
+                sessao,
+                idProdutoPedidoProducao,
+                (int)produtoPedidoEspelho.IdPedido,
+                (int)produtoPedidoEspelho.IdProd);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = 1,
+                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                    BaixarMesmoProdutoSemMateriaPrima = true,
+                    DataMov = DateTime.Now,
+                });
+
+            // Credita a matéria-prima do box
+            CreditaEstoqueProducao(sessao, (int)produtoPedidoEspelho.IdProd, idLoja, idProdutoPedidoProducao, (decimal)(produtoPedidoEspelho.TotM2Calc / produtoPedidoEspelho.Qtde));
+
+            // Marca que este produto entrou em estoque
+            objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET entrouEstoque=true WHERE idProdPedProducao={idProdutoPedidoProducao}");
         }
 
-        public void BaixaEstoquePerdaChapa(GDASession sessao, uint idProd, uint idProdNf, uint idLoja, uint idPerdaChapaVidro)
+        public void BaixaEstoqueVoltarPecaProducao(GDASession sessao, int idProdutoPedidoProducao, int idPedido, Pedido.TipoPedidoEnum tipoPedido, Setor setorAtual, Setor setorNovo)
         {
-            var totalProdNf = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)idProdNf);
+            if (tipoPedido != Pedido.TipoPedidoEnum.Producao
+                || !setorAtual.EntradaEstoque
+                || setorNovo.EntradaEstoque)
+            {
+                return;
+            }
 
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, idPerdaChapaVidro, null,
-                null, null, null, false, 1, totalProdNf, false, false, false, DateTime.Now, true, null, null);
+            var idProdutoPedido = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(sessao, (uint)idProdutoPedidoProducao);
+            var pecaPassouSetorLaminado = ProdutoPedidoProducaoDAO.Instance.PecaPassouSetorLaminado(sessao, idProdutoPedidoProducao);
+            var produtoPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(sessao, null, idProdutoPedido, true);
+            float m2Calc = produtoPedidoEspelho.TotM / produtoPedidoEspelho.Qtde;
+
+            var idLoja = ObterIdLojaProdutoPedidoProducao(
+                sessao,
+                idProdutoPedidoProducao,
+                idPedido,
+                (int)produtoPedidoEspelho.IdProd);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = 1,
+                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                    DataMov = DateTime.Now,
+                });
+
+            CreditaEstoqueProducao(sessao, (int)produtoPedidoEspelho.IdProd, idLoja, idProdutoPedidoProducao, (decimal)(m2Calc > 0 && !pecaPassouSetorLaminado ? m2Calc : 1));
+
+            // Marca que este produto entrou em estoque
+            objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET entrouEstoque=false WHERE idProdPedProducao={idProdutoPedidoProducao}");
         }
 
-        public void BaixaEstoqueInventario(GDASession sessao, uint idProd, uint idLoja, uint idInventarioEstoque, decimal qtdeBaixa)
+        public void BaixaEstoqueEntregaExpedicao(GDASession sessao, int idProdutoPedidoProducao, int idPedido, int? idProdutoPedidoRevenda, ProdutosPedido produtoPedido, ProdutosPedidoEspelho produtoPedidoEspelho)
         {
-            var totalEstoqueManual = GetTotalEstoqueManual(sessao, (int)idProd, qtdeBaixa);
+            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd, false);
+            var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, 1, produtoPedidoEspelho.Qtde, produtoPedidoEspelho.TotM, produtoPedidoEspelho.Altura);
+            var idLoja = ObterIdLojaProdutoPedidoProducao(
+                sessao,
+                idProdutoPedidoProducao,
+                idPedido,
+                (int)produtoPedidoEspelho.IdProd);
 
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                idInventarioEstoque, null, true, qtdeBaixa, totalEstoqueManual, false, false, true, DateTime.Now, false, null, null);
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = quantidadeBaixa,
+                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                    AlterarMateriaPrima = !SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd),
+                    BaixarMesmoProdutoSemMateriaPrima = true,
+                    DataMov = DateTime.Now,
+                });
+
+            var codigoEtiqueta = ProdutoPedidoProducaoDAO.Instance.ObtemEtiqueta(sessao, (uint)idProdutoPedidoProducao);
+
+            // Marca saída desta peça no ProdutosPedido do pedido de PRODUÇÃO
+            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedido.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, codigoEtiqueta);
+
+            // Marca saída desta peça no ProdutosPedido do pedido de REVENDA desde que o pedido produção não seja para corte.
+            if (idProdutoPedidoRevenda > 0 && !PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, (uint)idPedido))
+            {
+                ProdutosPedidoDAO.Instance.MarcarSaida(sessao, (uint)idProdutoPedidoRevenda.Value, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, codigoEtiqueta);
+            }
+        }
+
+        public void BaixaEstoquePecaRepostaPedidoProducao(GDASession sessao, Pedido.TipoPedidoEnum tipoPedido, int idProdutoPedidoProducao, ProdutosPedidoEspelho produtoPedidoEspelho)
+        {
+            if (tipoPedido != Pedido.TipoPedidoEnum.Producao
+                || !ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
+            {
+                return;
+            }
+
+            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd, false);
+            var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, 1, produtoPedidoEspelho.Qtde, produtoPedidoEspelho.TotM, produtoPedidoEspelho.Altura);
+
+            var idLoja = ObterIdLojaProdutoPedidoProducao(
+                sessao,
+                idProdutoPedidoProducao,
+                (int)produtoPedidoEspelho.IdPedido,
+                (int)produtoPedidoEspelho.IdProd);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = quantidadeBaixa,
+                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                    DataMov = DateTime.Now,
+                });
+
+            // Só baixa apenas se a peça possuir produto para baixa associado
+            CreditaEstoqueProducao(sessao, (int)produtoPedidoEspelho.IdProd, idLoja, idProdutoPedidoProducao, quantidadeBaixa);
+
+            // Marca que este produto não entrou em estoque
+            objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET entrouEstoque = FALSE WHERE idProdPedProducao = {idProdutoPedidoProducao}");
+        }
+
+        public void BaixaEstoqueVoltarPecaProducaoRetalho(GDASession sessao, int idProdutoPedidoProducao, IEnumerable<RetalhoProducao> retalhos)
+        {
+            var idPedido = ProdutoPedidoProducaoDAO.Instance.ObtemIdPedido(sessao, (uint)idProdutoPedidoProducao);
+
+
+            foreach (var item in retalhos)
+            {
+                var idLoja = ObterIdLojaProdutoPedidoProducao(
+                    sessao,
+                    idProdutoPedidoProducao,
+                    (int)idPedido,
+                    item.IdProd);
+
+                RetalhoProducaoDAO.Instance.AlteraSituacao(sessao, (uint)item.IdRetalhoProducao, SituacaoRetalhoProducao.Cancelado);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Baixar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = (uint)item.IdProd,
+                        IdLoja = (uint)idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Saida,
+                        IdProdPedProducao = item.IdProdPedProducaoOrig.GetValueOrDefault(),
+                        QtdeMov = 1,
+                        Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                        DataMov = DateTime.Now,
+                    });
+            }
+        }
+
+        public void BaixaEstoqueMateriaPrimaPedidoProducao(GDASession sessao, int idProd, int idPedido, int idProdutoPedidoProducao, decimal quantidadeBaixa, Setor setor)
+        {
+            if (!setor.EntradaEstoque
+                || !PedidoDAO.Instance.IsProducao(sessao, (uint)idPedido)
+                || ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
+            {
+                return;
+            }
+
+            var idLoja = ObterIdLojaProdutoPedidoProducao(
+                sessao,
+                idProdutoPedidoProducao,
+                idPedido,
+                idProd);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = (uint)idProd,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = quantidadeBaixa,
+                    Total = GetTotalProdPedProducao(sessao, (int)idProdutoPedidoProducao),
+                    AlterarMateriaPrima = true,
+                    DataMov = DateTime.Now,
+                });
+        }
+
+        public void BaixaEstoqueProducao(GDASession sessao, int idProduto, int idPedido, int idProdutoPedidoProducao, decimal quantidadeBaixa)
+        {
+            var idLoja = ObterIdLojaProdutoPedidoProducao(
+                sessao,
+                idProdutoPedidoProducao,
+                idPedido,
+                idProduto);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = (uint)idProduto,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = quantidadeBaixa,
+                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                    AlterarMateriaPrima = true,
+                    DataMov = DateTime.Now,
+                });
+        }
+
+        public void BaixaEstoqueChapaRetalho(GDASession sessao, uint idRetalhoProducao, bool chapaPossuiLeitura)
+        {
+            if (chapaPossuiLeitura)
+            {
+                return;
+            }
+
+            var idProduto = RetalhoProducaoDAO.Instance.ObtemValorCampo<uint>(sessao, "IdProd", $"IdRetalhoProducao={idRetalhoProducao}");
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = idProduto,
+                    IdLoja = UserInfo.GetUserInfo.IdLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdRetalhoProducao = idRetalhoProducao,
+                    QtdeMov = 1,
+                    AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)idProduto),
+                    BaixarMesmoProdutoSemMateriaPrima = true,
+                    DataMov = DateTime.Now,
+                });
+        }
+
+        public void BaixaEstoqueRetalho(GDASession sessao, RetalhoProducao retalho)
+        {
+            if (retalho.Situacao != SituacaoRetalhoProducao.Disponivel)
+            {
+                return;
+            }
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = (uint)retalho.IdProd,
+                    IdLoja = UserInfo.GetUserInfo.IdLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdRetalhoProducao = (uint)retalho.IdRetalhoProducao,
+                    QtdeMov = 1,
+                    AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)retalho.IdProd),
+                    BaixarMesmoProdutoSemMateriaPrima = true,
+                    DataMov = DateTime.Now,
+                });
+        }
+
+        public void BaixaEstoquePerdaChapa(GDASession sessao, PerdaChapaVidro perdaChapaVidro)
+        {
+            var idNotaFiscal = ProdutosNfDAO.Instance.ObtemIdNf(sessao, perdaChapaVidro.IdProdNf.Value);
+
+            if (idNotaFiscal == 0)
+            {
+                throw new InvalidOperationException("Não foi possível recuperar a nota fiscal.");
+            }
+
+            var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNotaFiscal);
+
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("Não foi possível recuperar a loja da nota fiscal.");
+            }
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = perdaChapaVidro.IdProd,
+                    IdLoja = idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdPerdaChapaVidro = perdaChapaVidro.IdPerdaChapaVidro,
+                    QtdeMov = 1,
+                    Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)perdaChapaVidro.IdProdNf.GetValueOrDefault()),
+                    DataMov = DateTime.Now,
+                    AlterarProdBase = true,
+                });
+        }
+
+        public void BaixaEstoqueInventario(GDASession sessao, uint idLoja, IEnumerable<ProdutoInventarioEstoque> produtosInventarioEstoque)
+        {
+            foreach (var item in produtosInventarioEstoque)
+            {
+                var quantidadeBaixa = (decimal)(item.QtdeIni - item.QtdeFim.GetValueOrDefault());
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Baixar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Saida,
+                        IdInventarioEstoque = item.IdInventarioEstoque,
+                        LancManual = true,
+                        QtdeMov = quantidadeBaixa,
+                        Total = GetTotalEstoqueManual(sessao, (int)item.IdProd, quantidadeBaixa),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                    });
+            }
         }
 
         #endregion
 
         #region Credita Estoque
 
-        public void CreditaEstoquePedido(GDASession session, uint idProd, uint idLoja, uint idPedido, uint idProdPed, decimal qtdeEntrada, bool alterarMateriaPrima, uint? idVolume, uint? idProdImpressaoChapa)
+        public void CreditaEstoqueCancelamentoSaidaEstoque(GDASession sessao, SaidaEstoque saidaEstoque)
         {
-            var totalProdPed = GetTotalProdPed(session, (int)idProdPed);
-            var pedidoProducao = PedidoDAO.Instance.IsProducao(session, idPedido);
-            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(session, idPedido);
-
-            MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, idPedido, null, null, null, null, null, null, idProdPed, null, null, null, null, null, null, null, null, null,
-                idVolume, null, idProdImpressaoChapa, false, qtdeEntrada, totalProdPed, alterarMateriaPrima, !pedidoProducao, true, DateTime.Now, true, null, null);
-
-            if (tipoPedido == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
+            if (!saidaEstoque.PodeCancelar)
             {
-                var idClientePedido = PedidoDAO.Instance.GetIdCliente(session, idPedido);
-                MovEstoqueClienteDAO.Instance.CreditaEstoquePedido(session, idClientePedido, idProd, idLoja, idPedido, idProdPed, qtdeEntrada);
+                throw new InvalidOperationException("Não é possível cancelar essa saída de estoque.");
             }
+
+            SaidaEstoqueDAO.Instance.MarcaEstorno(sessao, saidaEstoque.IdPedido, saidaEstoque.IdLiberarPedido, saidaEstoque.IdVolume);
+
+            var produtosSaidaEstoque = ProdutoSaidaEstoqueDAO.Instance.GetForRpt(sessao, saidaEstoque.IdSaidaEstoque);
+            var idsProduto = new List<int>();
+            var idsPedido = new List<int>();
+
+            foreach (var item in produtosSaidaEstoque)
+            {
+                var produtoPedido = ProdutosPedidoDAO.Instance.GetElementFluxoLite(sessao, item.IdProdPed);
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedido.IdGrupoProd, (int?)produtoPedido.IdSubgrupoProd, false);
+                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, produtoPedido.IdPedido);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.QtdeSaida, produtoPedido.Qtde, produtoPedido.TotM, produtoPedido.Altura);
+
+                var idProdutoLiberarPedido = saidaEstoque.IdLiberarPedido > 0
+                    ? (int?)ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(sessao, saidaEstoque.IdLiberarPedido.Value, produtoPedido.IdProdPed)
+                    : null;
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Creditar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = produtoPedido.IdProd,
+                        IdLoja = saidaEstoque.IdLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                        IdPedido = saidaEstoque.IdPedido,
+                        IdLiberarPedido = saidaEstoque.IdLiberarPedido,
+                        IdProdLiberarPedido = (uint?)idProdutoLiberarPedido,
+                        IdProdPed = produtoPedido.IdProdPed,
+                        QtdeMov = quantidadeEntrada,
+                        Total = GetTotalProdPed(sessao, (int)produtoPedido.IdProdPed),
+                        AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)produtoPedido.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+
+                ProdutosPedidoDAO.Instance.MarcarSaida(sessao, item.IdProdPed, -item.QtdeSaida, saidaEstoque.IdSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+
+                if (!idsProduto.Contains((int)produtoPedido.IdProd))
+                {
+                    idsProduto.Add((int)produtoPedido.IdProd);
+                }
+
+                if (!idsPedido.Contains((int)produtoPedido.IdPedido))
+                {
+                    idsPedido.Add((int)produtoPedido.IdPedido);
+                }
+            }
+
+            foreach (var id in idsPedido)
+            {
+                PedidoDAO.Instance.AtualizaSituacaoProducao(sessao, (uint)id, null, DateTime.Now);
+            }
+
+            ProdutoLojaDAO.Instance.RecalcularReserva(sessao, (int)saidaEstoque.IdLoja, idsProduto);
+            ProdutoLojaDAO.Instance.RecalcularLiberacao(sessao, (int)saidaEstoque.IdLoja, idsProduto);
+
         }
 
-        public void CreditaEstoqueCompra(GDASession sessao, uint idProd, uint idLoja, uint idCompra, uint idProdCompra, decimal qtdeEntrada)
+        public void CreditaEstoqueCancelamentoPedido(GDASession sessao, uint idLoja, uint idPedido, IEnumerable<ProdutosPedido> produtosPedido)
         {
-            var totalProdCompra = GetTotalProdCompra(sessao, (int)idProdCompra);
-
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, idCompra, null, null, null, null, null, null, idProdCompra, null, null, null, null, null, null, null, null,
-                null, null, null, false, qtdeEntrada, totalProdCompra, true, false, true, DateTime.Now, true, null, null);
-        }
-
-        public void CreditaEstoqueLiberacao(GDASession sessao, uint idProd, uint idLoja, uint idLiberarPedido, uint idPedido, uint idProdLiberarPedido, decimal qtdeEntrada)
-        {
-            var totalProdLiberarPedido = GetTotalProdLiberarPedido(sessao, (int)idProdLiberarPedido);
             var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, idPedido);
 
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, idPedido, null, idLiberarPedido, null, null, null, null, null, null, idProdLiberarPedido, null, null, null, null,
-                null, null, null, null, null, null, false, qtdeEntrada, totalProdLiberarPedido, true, false, true, DateTime.Now, true, null, null);
-
-            if (tipoPedido == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
+            foreach (var item in produtosPedido.Where(f => f.QtdSaida > 0))
             {
-                var idClientePedido = PedidoDAO.Instance.GetIdCliente(sessao, idPedido);
-                MovEstoqueClienteDAO.Instance.CreditaEstoqueLiberacao(sessao, idClientePedido, idProd, idLoja, idLiberarPedido, idPedido, idProdLiberarPedido, qtdeEntrada);
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.QtdSaida, item.Qtde, item.TotM, item.Altura);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Creditar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                        IdPedido = idPedido,
+                        IdProdPed = item.IdProdPed,
+                        QtdeMov = quantidadeEntrada,
+                        Total = GetTotalProdPed(sessao, (int)item.IdProdPed),
+                        AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+            }
+
+            if (tipoPedido != Pedido.TipoPedidoEnum.Producao)
+            {
+                var idsProduto = produtosPedido.Select(f => (int)f.IdProd).Distinct();
+                ProdutoLojaDAO.Instance.RecalcularLiberacao(sessao, (int)idLoja, idsProduto);
+                ProdutoLojaDAO.Instance.RecalcularReserva(sessao, (int)idLoja, idsProduto);
             }
         }
 
-        public void CreditaEstoqueTrocaDevolucao(GDASession session, uint idProd, uint idLoja, uint idTrocaDevolucao, uint? idProdTrocaDev, uint? idProdTrocado, decimal qtdeEntrada)
+        public void CreditaEstoqueEstornoVolume(GDASession sessao, int idPedido, int idVolume, IEnumerable<VolumeProdutosPedido> volumes)
         {
-            var totalProdTrocaDevolucao = GetTotalProdTrocaDevolucao(session, (int?)idProdTrocaDev, (int?)idProdTrocado);
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedido);
 
-            MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, idTrocaDevolucao, null, null, null, null, null, idProdTrocaDev, idProdTrocado, null,
-                null, null, null, null, null, null, null, false, qtdeEntrada, totalProdTrocaDevolucao, true, false, true, DateTime.Now, true, null, null);
+            SaidaEstoqueDAO.Instance.MarcaEstorno(sessao, (uint)idPedido, null, (uint?)idVolume);
+
+            foreach (var item in volumes)
+            {
+                var produtoPedido = ProdutosPedidoDAO.Instance.GetElementFluxoLite(sessao, item.IdProdPed);
+
+                if (item.Qtde > produtoPedido.QtdSaida)
+                {
+                    throw new InvalidOperationException($"Operação cancelada. O produto {produtoPedido.DescrProduto} está tendo um estono maior do que a quantidade que já joi dado saída.");
+                }
+
+                ProdutosPedidoDAO.Instance.EstornoSaida(sessao, item.IdProdPed, item.Qtde, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, false);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.Qtde, item.Qtde, produtoPedido.TotM, produtoPedido.Altura);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Creditar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                        IdPedido = (uint)idPedido,
+                        IdProdPed = item.IdProdPed,
+                        IdVolume = (uint)idVolume,
+                        QtdeMov = quantidadeEntrada,
+                        Total = GetTotalProdPed(sessao, (int)item.IdProdPed),
+                        AlterarMateriaPrima = tipoPedido != Pedido.TipoPedidoEnum.Producao || !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+            }
+
+            PedidoDAO.Instance.AtualizaSituacaoProducao(sessao, (uint)idPedido, null, DateTime.Now);
+
+            if (tipoPedido != Pedido.TipoPedidoEnum.Producao)
+            {
+                var idsProduto = volumes.Select(f => (int)f.IdProd).Distinct();
+                ProdutoLojaDAO.Instance.RecalcularReserva(sessao, (int)idLoja, idsProduto);
+                ProdutoLojaDAO.Instance.RecalcularLiberacao(sessao, (int)idLoja, idsProduto);
+            }
         }
 
-        public void CreditaEstoqueNotaFiscal(GDASession sessao, uint idProd, uint idLoja, uint idNf, uint idProdNf, decimal qtdeEntrada)
+        public void CreditaEstoqueEstornoCarregamentoExpedicaoChapa(GDASession sessao, int idPedido, int? idProdImpressaoChapa, IEnumerable<ProdutosPedido> produtosPedido)
+        {
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedido);
+            var idNotaFiscal = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, (uint)idProdImpressaoChapa);
+            if (idNotaFiscal > 0)
+            {
+                idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, (uint)idNotaFiscal);
+            }
+
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido);
+
+            SaidaEstoqueDAO.Instance.MarcaEstorno(sessao, (uint)idPedido, null, null);
+
+            foreach (var item in produtosPedido.Where(f => f.QtdMarcadaSaida > 0))
+            {
+                if (item.QtdMarcadaSaida > item.QtdSaida)
+                {
+                    throw new InvalidOperationException($"Operação cancelada. O produto {item.DescrProduto} está tendo um estono maior do que a quantidade que já joi dado saída.");
+                }
+
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.QtdMarcadaSaida, item.Qtde, item.TotM, item.Altura);
+
+                ProdutosPedidoDAO.Instance.EstornoSaida(sessao, item.IdProdPed, item.QtdMarcadaSaida, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Creditar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                        IdPedido = (uint)idPedido,
+                        IdProdPed = item.IdProdPed,
+                        IdProdImpressaoChapa = (uint)idProdImpressaoChapa,
+                        QtdeMov = quantidadeEntrada,
+                        Total = GetTotalProdPed(sessao, (int)item.IdProdPed),
+                        AlterarMateriaPrima = tipoPedido != Pedido.TipoPedidoEnum.Producao || !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+            }
+
+            PedidoDAO.Instance.AtualizaSituacaoProducao(sessao, (uint)idPedido, null, DateTime.Now);
+
+            if (tipoPedido != Pedido.TipoPedidoEnum.Producao)
+            {
+                var idsProduto = produtosPedido.Select(f => (int)f.IdProd).Distinct();
+                ProdutoLojaDAO.Instance.RecalcularReserva(sessao, (int)idLoja, idsProduto);
+                ProdutoLojaDAO.Instance.RecalcularLiberacao(sessao, (int)idLoja, idsProduto);
+            }
+        }
+
+        public void CreditaEstoqueCompra(GDASession sessao, Compra compra)
+        {
+            if (EstoqueConfig.EntradaEstoqueManual || compra.EstoqueBaixado)
+            {
+                return;
+            }
+
+            var produtosCompra = ProdutosCompraDAO.Instance.GetByCompra(sessao, compra.IdCompra)
+                .Where(f => f.QtdeEntrada > 0);
+
+            foreach (var item in produtosCompra)
+            {
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.Qtde - item.QtdeEntrada, item.Qtde, item.TotM, item.Altura);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Creditar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = compra.IdLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                        IdCompra = item.IdCompra,
+                        IdProdCompra = item.IdProdCompra,
+                        QtdeMov = quantidadeEntrada,
+                        Total = GetTotalProdCompra(sessao, (int)item.IdProdCompra),
+                        AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+
+                objPersistence.ExecuteCommand(sessao, $"UPDATE produtos_compra SET qtdeEntrada={item.Qtde.ToString().Replace(",", ".")} WHERE idProdCompra={item.IdProdCompra}");
+            }
+
+            objPersistence.ExecuteCommand(sessao, "UPDATE compra SET EstoqueBaixado=true WHERE idCompra=" + compra.IdCompra);
+        }
+
+        public void CreditaEstoqueManualCompra(GDASession sessao, uint idLoja, uint idCompra, IEnumerable<ProdutosCompra> produtosCompra)
+        {
+            var idEntradaEstoque = EntradaEstoqueDAO.Instance.GetNewEntradaEstoque(sessao, idLoja, idCompra, null, true, (int)UserInfo.GetUserInfo.CodUser);
+
+            foreach (var item in produtosCompra.Where(f => f.QtdMarcadaEntrada > 0))
+            {
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.QtdMarcadaEntrada, item.Qtde, item.TotM, item.Altura);
+
+                ProdutosCompraDAO.Instance.MarcarEntrada(sessao, item.IdProdCompra, item.QtdMarcadaEntrada, idEntradaEstoque);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Creditar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                        IdCompra = idCompra,
+                        IdProdCompra = item.IdProdCompra,
+                        QtdeMov = quantidadeEntrada,
+                        Total = GetTotalProdCompra(sessao, (int)item.IdProdCompra),
+                        AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+            }
+
+            CompraDAO.Instance.MarcaEstoqueBaixado(sessao, idCompra);
+        }
+
+        public void CreditaEstoqueLiberacao(GDASession sessao, uint idLiberarPedido, IEnumerable<ProdutosLiberarPedido> produtosLiberarPedido)
+        {
+            var saidaEstoque = SaidaEstoqueDAO.Instance.GetByLiberacao(sessao, idLiberarPedido);
+            var produtosSaidaEstoque = saidaEstoque != null ? ProdutoSaidaEstoqueDAO.Instance.GetForRpt(sessao, saidaEstoque.IdSaidaEstoque).ToArray() : null;
+            var idsProdutoReservaLiberacao = new Dictionary<int, List<int>>();
+
+            foreach (var item in produtosLiberarPedido)
+            {
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, item.IdPedido);
+
+                var subGrupoVolume = SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(sessao, item.IdGrupoProd, item.IdSubgrupoProd.GetValueOrDefault());
+                var entregaBalcao = PedidoDAO.Instance.ObtemTipoEntrega(sessao, item.IdPedido) == (uint)Pedido.TipoEntregaPedido.Balcao;
+                var naoVolume = OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega ? entregaBalcao || !subGrupoVolume : !subGrupoVolume;
+                var produtoVidro = GrupoProdDAO.Instance.IsVidro((int)item.IdGrupoProd);
+                var saidaNaoVidro = Liberacao.Estoque.SaidaEstoqueAoLiberarPedido && (!produtoVidro || !PCPConfig.ControlarProducao);
+                var saidaBox = Liberacao.Estoque.SaidaEstoqueBoxLiberar && produtoVidro && SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)item.IdGrupoProd, (int?)item.IdSubgrupoProd);
+                var pedidoGerarProducaoParaCorte = PedidoDAO.Instance.GerarPedidoProducaoCorte(sessao, item.IdPedido);
+                var pedidoPossuiVolumeExpedido = false;
+
+                foreach (var volume in VolumeDAO.Instance.ObterPeloPedido(sessao, (int)item.IdPedido))
+                {
+                    if (VolumeDAO.Instance.TemExpedicao(sessao, volume.IdVolume))
+                    {
+                        pedidoPossuiVolumeExpedido = true;
+                        break;
+                    }
+                }
+
+                if (!idsProdutoReservaLiberacao.ContainsKey((int)idLoja))
+                {
+                    idsProdutoReservaLiberacao.Add((int)idLoja, new List<int> { (int)item.IdProd });
+                }
+                else if (!idsProdutoReservaLiberacao[(int)idLoja].Contains((int)item.IdProd))
+                {
+                    idsProdutoReservaLiberacao[(int)idLoja].Add((int)item.IdProd);
+                }
+
+                if (pedidoPossuiVolumeExpedido || pedidoGerarProducaoParaCorte || !naoVolume || (!saidaNaoVidro && !saidaBox))
+                {
+                    continue;
+                }
+
+                var produtoSaidaEstoque = produtosSaidaEstoque.Any()
+                    ? produtosSaidaEstoque.FirstOrDefault(f => f.IdProdPed == item.IdProdPed)
+                    : null;
+
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdProd, false);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, produtoSaidaEstoque?.QtdeSaida ?? item.Qtde, item.Qtde, (float)item.TotM2, item.Altura);
+
+                ProdutosPedidoDAO.Instance.MarcarSaida(sessao, item.IdProdPed, -(float)quantidadeEntrada, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Creditar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                        IdPedido = item.IdPedido,
+                        IdLiberarPedido = idLiberarPedido,
+                        IdProdLiberarPedido = item.IdProdLiberarPedido,
+                        QtdeMov = quantidadeEntrada,
+                        Total = GetTotalProdLiberarPedido(sessao, (int)item.IdProdLiberarPedido),
+                        AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+            }
+
+            foreach (var idLoja in idsProdutoReservaLiberacao.Keys)
+            {
+                if (idsProdutoReservaLiberacao[idLoja].Count > 0)
+                {
+                    ProdutoLojaDAO.Instance.RecalcularReserva(sessao, idLoja, idsProdutoReservaLiberacao[idLoja]);
+                    ProdutoLojaDAO.Instance.RecalcularLiberacao(sessao, idLoja, idsProdutoReservaLiberacao[idLoja]);
+                }
+            }
+        }
+
+        public void CreditaEstoqueProdutoDevolvidoTrocaDevolucao(GDASession sessao, int idTrocaDevolucao, IEnumerable<ProdutoTrocaDevolucao> produtosTrocaDevolucao)
+        {
+            foreach (var item in produtosTrocaDevolucao.Where(f => f.AlterarEstoque))
+            {
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.Qtde, item.Qtde, item.TotM, item.Altura);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Creditar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = (uint)ObterIdLojaTrocaDevolucao(sessao, idTrocaDevolucao, (int)item.IdProd),
+                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                        IdTrocaDevolucao = item.IdTrocaDevolucao,
+                        IdProdTrocaDev = item.IdProdTrocaDev,
+                        QtdeMov = quantidadeEntrada,
+                        Total = GetTotalProdTrocaDevolucao(sessao, (int?)item.IdProdTrocaDev, null),
+                        AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = DateTime.Now,
+                        AlterarProdBase = true,
+                    });
+            }
+        }
+
+        public void CreditaEstoqueProdutoTrocadoTrocaDevolucao(GDASession sessao, int idTrocaDevolucao, IEnumerable<ProdutoTrocado> produtosTrocados)
+        {
+            foreach (var item in produtosTrocados)
+            {
+                var idLoja = (uint)ObterIdLojaTrocaDevolucao(sessao, idTrocaDevolucao, (int)item.IdProd);
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.Qtde, item.Qtde, item.TotM, item.Altura);
+
+                if (item.ComDefeito)
+                {
+                    ProdutoLojaDAO.Instance.CreditaDefeito(sessao, item.IdProd, idLoja, (float)quantidadeEntrada);
+                }
+                else if (item.AlterarEstoque)
+                {
+                    new EstoqueStrategyFactory()
+                        .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                        .Creditar(sessao, new MovimentacaoDto
+                        {
+                            IdProd = item.IdProd,
+                            IdLoja = (uint)ObterIdLojaTrocaDevolucao(sessao, idTrocaDevolucao, (int)item.IdProd),
+                            TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                            IdTrocaDevolucao = item.IdTrocaDevolucao,
+                            IdProdTrocado = item.IdProdTrocado,
+                            QtdeMov = quantidadeEntrada,
+                            Total = GetTotalProdTrocaDevolucao(sessao, null, (int?)item.IdProdTrocado),
+                            AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                            BaixarMesmoProdutoSemMateriaPrima = true,
+                            DataMov = DateTime.Now,
+                            AlterarProdBase = true,
+                        });
+                }
+            }
+        }
+
+        public void CreditaEstoqueNotaFiscalManual(GDASession sessao, int idNotaFiscal, int idLoja, IEnumerable<ProdutosNf> produtosNotaFiscal)
         {
             var dataMov = DateTime.Now;
-            var tipoDoc = (NotaFiscal.TipoDoc)NotaFiscalDAO.Instance.GetTipoDocumento(sessao, idNf);
+            var tipoDoc = (NotaFiscal.TipoDoc)NotaFiscalDAO.Instance.GetTipoDocumento(sessao, (uint)idNotaFiscal);
 
-            /* Chamado 17610. */
             if (tipoDoc != NotaFiscal.TipoDoc.Saída)
             {
-                dataMov = NotaFiscalDAO.Instance.ObtemDataEntradaSaida(sessao, idNf).GetValueOrDefault(dataMov);
+                dataMov = NotaFiscalDAO.Instance.ObtemDataEntradaSaida(sessao, (uint)idNotaFiscal).GetValueOrDefault(dataMov);
             }
 
-            var totalProdNf = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)idProdNf);
+            var numeroNFe = NotaFiscalDAO.Instance.ObtemNumerosNFePeloIdNf(sessao, idNotaFiscal.ToString()).StrParaUint();
+            var idEntradaEstoque = EntradaEstoqueDAO.Instance.GetNewEntradaEstoque(sessao, (uint)idLoja, null, numeroNFe, true,
+                (int)UserInfo.GetUserInfo.CodUser);
 
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, idNf, null, null, null, null, null, null, idProdNf, null, null, null, null, null,
-                null, null, false, qtdeEntrada, totalProdNf, true, false, true, dataMov, true, null, null);
+            foreach (var item in produtosNotaFiscal.Where(f => f.QtdMarcadaEntrada > 0))
+            {
+                var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.QtdMarcadaEntrada, item.Qtde, item.TotM, item.Altura);
+
+                ProdutosNfDAO.Instance.MarcarEntrada(sessao, item.IdProdNf, item.QtdMarcadaEntrada, idEntradaEstoque);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Creditar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = (uint)idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                        IdNf = item.IdNf,
+                        IdProdNf = item.IdProdNf,
+                        QtdeMov = quantidadeEntrada,
+                        Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)item.IdProdNf),
+                        AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = dataMov,
+                        AlterarProdBase = true,
+                    });
+            }
         }
 
-        public void CreditaEstoqueManualComTransacao(uint idProd, uint idLoja, decimal qtdeEntrada, decimal? valor, DateTime dataMov, string observacao)
+        public void CreditaEstoqueNotaFiscal(GDASession sessao, NotaFiscal notaFiscal, IEnumerable<ProdutosNf> produtosNotaFiscal)
         {
-            using (var transaction = new GDATransaction())
+            if (!notaFiscal.GerarEstoqueReal)
             {
-                try
-                {
-                    transaction.BeginTransaction();
+                return;
+            }
 
-                    CreditaEstoqueManual(transaction, idProd, idLoja, qtdeEntrada, valor, dataMov, observacao);
+            var dataMov = DateTime.Now;
 
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
+            if (notaFiscal.TipoDocumento != (int)NotaFiscal.TipoDoc.Saída)
+            {
+                dataMov = notaFiscal.DataSaidaEnt.GetValueOrDefault(dataMov);
+            }
+
+            foreach (var item in produtosNotaFiscal)
+            {
+                var quantidadeEntrada = (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(sessao, item.IdProd, item.TotM, item.Qtde, item.Altura, item.Largura, false, false);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Creditar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = notaFiscal.IdLoja.Value,
+                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                        IdNf = item.IdNf,
+                        IdProdNf = item.IdProdNf,
+                        QtdeMov = quantidadeEntrada,
+                        Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)item.IdProdNf),
+                        AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                        BaixarMesmoProdutoSemMateriaPrima = true,
+                        DataMov = dataMov,
+                        AlterarProdBase = true,
+                    });
             }
         }
 
@@ -598,285 +1902,268 @@ namespace Glass.Data.DAL
         {
             var totalEstoqueManual = GetTotalEstoqueManual(sessao, (int)idProd, qtdeEntrada);
 
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, true, qtdeEntrada, valor.GetValueOrDefault(totalEstoqueManual), false, false, true, dataMov, true, null, observacao);
-        }
-
-        public void CreditaEstoqueProducao(GDASession sessao, uint idProd, uint idLoja, uint idProdPedProducao, decimal qtdeEntrada, bool alterarMateriaPrima, bool creditarEstoqueCliente)
-        {
-            var totalProdPedProducao = GetTotalProdPedProducao(sessao, (int)idProdPedProducao);
-
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, idProdPedProducao, null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, false, qtdeEntrada, totalProdPedProducao, alterarMateriaPrima, alterarMateriaPrima, true, DateTime.Now, false, null, null);
-
-            if (creditarEstoqueCliente)
-            {
-                var idPedido = ProdutoPedidoProducaoDAO.Instance.ObtemIdPedido(sessao, idProdPedProducao);
-                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, idPedido);
-
-                if (tipoPedido == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Creditar(sessao, new MovimentacaoDto
                 {
-                    var idClientePedido = PedidoDAO.Instance.ObtemIdCliente(sessao, idPedido);
-                    MovEstoqueClienteDAO.Instance.CreditaEstoqueProducao(sessao, idClientePedido, idProd, idLoja, idProdPedProducao, qtdeEntrada);
-                }
-            }
+                    IdProd = idProd,
+                    IdLoja = idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                    LancManual = true,
+                    QtdeMov = qtdeEntrada,
+                    Total = valor.GetValueOrDefault(totalEstoqueManual),
+                    DataMov = dataMov,
+                    AlterarProdBase = true,
+                    Observacao = observacao,
+                });
         }
 
-        public void CreditaEstoqueRetalho(GDASession session, uint idProd, uint idLoja, uint idRetalhoProducao, decimal qtdeEntrada, LoginUsuario usuario)
+        public void CreditaEstoquePedidoProducao(GDASession sessao, int idPedido, int idProdutoPedidoProducao, ProdutosPedidoEspelho produtoPedidoEspelho, Setor setor)
         {
-            MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, null, null, null, null, null, null, null, null, null, idRetalhoProducao, null,
-                null, null, null, null, false, qtdeEntrada, 0, true, false, true, DateTime.Now, false, usuario, null);
-        }
-
-        public void CreditaEstoquePerdaChapa(GDASession session, uint idProd, uint idProdNf, uint idLoja, uint idPerdaChapaVidro)
-        {
-            var totalProdNf = ProdutosNfDAO.Instance.ObterTotal(session, (int)idProdNf);
-
-            MovimentaEstoque(session, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, idPerdaChapaVidro,
-                null, null, null, null, false, 1, totalProdNf, false, false, false, DateTime.Now, true, null, null);
-        }
-
-        public void CreditaEstoqueInventario(GDASession sessao, uint idProd, uint idLoja, uint idInventarioEstoque, decimal qtdeEntrada)
-        {
-            var totalEstoqueManual = GetTotalEstoqueManual(sessao, (int)idProd, qtdeEntrada);
-
-            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                idInventarioEstoque, null, true, qtdeEntrada, totalEstoqueManual, false, false, true, DateTime.Now, false, null, null);
-        }
-
-        #endregion
-
-        #region Verifica se o estoque deve ser alterado
-
-        /// <summary>
-        /// Verifica se o estoque deve ser alterado
-        /// </summary>
-        public bool AlteraEstoque(GDASession sessao, uint idProd)
-        {
-            var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, (int)idProd);
-            var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, (int)idProd);
-
-            // Altera o estoque somente se estiver marcado para alterar no cadastro de subgrupo
-            if (GrupoProdDAO.Instance.NaoAlterarEstoque(sessao, idGrupoProd, idSubgrupoProd))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        #endregion
-
-        #region Movimenta Estoque
-
-        /// <summary>
-        /// Dá baixa no estoque no produto da loja passados.
-        /// </summary>
-        private void MovimentaEstoque(GDASession sessao, uint idProd, uint idLoja, MovEstoque.TipoMovEnum tipoMov, uint? idPedido, uint? idCompra, uint? idLiberarPedido, uint? idProdPedProducao,
-            uint? idTrocaDevolucao, uint? idNf, uint? idPedidoInterno, uint? idProdPed, uint? idProdCompra, uint? idProdLiberarPedido, uint? idProdTrocaDev, uint? idProdTrocado, uint? idProdNf,
-            uint? idProdPedInterno, uint? idRetalhoProducao, uint? idPerdaChapaVidro, uint? idCarregamento, uint? idVolume, uint? idInventarioEstoque, uint? idProdImpressaoChapa, bool lancManual,
-            decimal qtdeMov, decimal total, bool alterarMateriaPrima, bool alterarMateriaPrimaProdutoProducao, bool baixarMesmoProdutoSemMateriaPrima, DateTime dataMov, bool alterarProdBase,
-            LoginUsuario usuario, string observacao)
-        {
-            usuario = usuario != null ? usuario : UserInfo.GetUserInfo;
-
-            if (!AlteraEstoque(sessao, idProd) && !lancManual)
+            if (!setor.EntradaEstoque
+                || !PedidoDAO.Instance.IsProducao(sessao, (uint)idPedido)
+                || ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
             {
                 return;
             }
 
-            idLoja = (uint)NotaFiscalDAO.Instance.ObterIdLojaParaMovEstoque(sessao, idLoja, idProd, idProdImpressaoChapa, idNf, idProdPedProducao, idTrocaDevolucao);
+            var idLoja = ObterIdLojaProdutoPedidoProducao(
+                sessao,
+                idProdutoPedidoProducao,
+                idPedido,
+                (int)produtoPedidoEspelho.IdProd);
 
-            uint idMovEstoque = 0;
-
-            try
-            {
-                ProdutoBaixaEstoque[] pbe;
-
-                if (alterarMateriaPrima && (alterarMateriaPrimaProdutoProducao || !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)idProd)))
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Creditar(sessao, new MovimentacaoDto
                 {
-                    pbe = ProdutoBaixaEstoqueDAO.Instance.GetByProd(sessao, idProd, baixarMesmoProdutoSemMateriaPrima);
-                }
-                else
-                {
-                    pbe = new ProdutoBaixaEstoque[] {
-                        new ProdutoBaixaEstoque{
-                            IdProd = (int)idProd,
-                            IdProdBaixa = (int)idProd,
-                            Qtde = 1
-                        }
-                    };
-                }
+                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = 1,
+                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                    DataMov = DateTime.Now,
+                });
 
-                foreach (var p in pbe)
-                {
-                    var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)idProd);
+            var quantidadeBaixaMateriaPrima = produtoPedidoEspelho.TotM / produtoPedidoEspelho.Qtde;
+            BaixaEstoqueMateriaPrimaPedidoProducao(
+                sessao,
+                (int)produtoPedidoEspelho.IdProd,
+                idPedido,
+                idProdutoPedidoProducao,
+                (decimal)(quantidadeBaixaMateriaPrima > 0 && !ProdutoPedidoProducaoDAO.Instance.PecaPassouSetorLaminado(sessao, idProdutoPedidoProducao) ? quantidadeBaixaMateriaPrima : 1),
+                setor);
 
-                    //Se não for lançamento manual, não for mov. de produção e o produto for chapa de vidro mov. a matéria-prima
-                    if (!lancManual && (tipoSubgrupo == TipoSubgrupoProd.ChapasVidro || tipoSubgrupo == TipoSubgrupoProd.ChapasVidroLaminado) && alterarProdBase)
-                    {
-                        var m2Chapa = ProdutoDAO.Instance.ObtemM2Chapa(sessao, p.IdProdBaixa);
-                        var idProdBase = ProdutoDAO.Instance.ObterProdutoBase(sessao, p.IdProdBaixa);
-
-                        if (idProdBase == p.IdProdBaixa)
-                        {
-                            throw new Exception("O produto base não pode ser o próprio produto.");
-                        }
-
-                        if (idProdBase.HasValue)
-                        {
-                            MovimentaEstoque(sessao, (uint)idProdBase.Value, idLoja, tipoMov, idPedido, idCompra, idLiberarPedido, idProdPedProducao,
-                                idTrocaDevolucao, idNf, idPedidoInterno, idProdPed, idProdCompra, idProdLiberarPedido, idProdTrocaDev,
-                                idProdTrocado, idProdNf, idProdPedInterno, idRetalhoProducao, idPerdaChapaVidro, idCarregamento, idVolume,
-                                idInventarioEstoque, idProdImpressaoChapa, lancManual, qtdeMov * m2Chapa, total, alterarMateriaPrima, alterarMateriaPrimaProdutoProducao,
-                                true, dataMov, alterarProdBase, usuario, observacao);
-                        }
-                    }
-
-                    var qtde = qtdeMov * (decimal)p.Qtde;
-                    decimal saldoQtdeAnterior = 0, saldoValorAnterior = 0, saldoQtdeValidar = 0;
-
-                    //Verifica se idloja = 0, caso for tenta recuperar a loja do Funcionario que está realizando a operação.
-                    if (idLoja == 0 && usuario?.IdLoja > 0)
-                    {
-                        idLoja = usuario.IdLoja;
-                    }
-
-                    // Registra a alteração do estoque
-                    MovEstoque movEstoque = new MovEstoque();
-                    movEstoque.IdProd = (uint)p.IdProdBaixa;
-                    movEstoque.IdLoja = idLoja;
-
-                    /* Chamado 44947. */
-                    if (Configuracoes.Geral.ConsiderarLojaClientePedidoFluxoSistema && (idPedido > 0 || idTrocaDevolucao > 0))
-                    {
-                        var idPedidoMov = idPedido > 0 ? (int)idPedido : TrocaDevolucaoDAO.Instance.ObterIdPedido(sessao, (int)idTrocaDevolucao);
-                        var apenasTransferencia = PedidoDAO.Instance.ObterApenasTransferencia(sessao, (int)idPedidoMov);
-
-                        if (!apenasTransferencia && idPedidoMov > 0)
-                        {
-                            movEstoque.IdLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedidoMov);
-                        }
-                    }
-
-                    ValidarMovimentarEstoque(sessao, p.IdProdBaixa, (int)movEstoque.IdLoja, dataMov, tipoMov, qtde, ref saldoQtdeAnterior, ref saldoValorAnterior, ref saldoQtdeValidar);
-
-                    movEstoque.IdFunc = usuario?.CodUser ?? 0;
-                    movEstoque.IdPedido = idPedido;
-                    movEstoque.IdCompra = idCompra;
-                    movEstoque.IdLiberarPedido = idLiberarPedido;
-                    movEstoque.IdProdPedProducao = idProdPedProducao;
-                    movEstoque.IdTrocaDevolucao = idTrocaDevolucao;
-                    movEstoque.IdNf = idNf;
-                    movEstoque.IdPedidoInterno = idPedidoInterno;
-                    movEstoque.IdProdPed = idProdPed;
-                    movEstoque.IdProdCompra = idProdCompra;
-                    movEstoque.IdProdLiberarPedido = idProdLiberarPedido;
-                    movEstoque.IdProdTrocaDev = idProdTrocaDev;
-                    movEstoque.IdProdTrocado = idProdTrocado;
-                    movEstoque.IdProdNf = idProdNf;
-                    movEstoque.IdProdPedInterno = idProdPedInterno;
-                    movEstoque.IdRetalhoProducao = idRetalhoProducao;
-                    movEstoque.IdPerdaChapaVidro = idPerdaChapaVidro;
-                    movEstoque.IdCarregamento = idCarregamento;
-                    movEstoque.IdVolume = idVolume;
-                    movEstoque.IdInventarioEstoque = idInventarioEstoque;
-                    movEstoque.IdProdImpressaoChapa = idProdImpressaoChapa;
-                    movEstoque.LancManual = lancManual;
-                    movEstoque.TipoMov = (int)tipoMov;
-                    movEstoque.DataMov = dataMov.AddSeconds(1); // Criado para evitar problemas ao recalcular o saldo
-                    movEstoque.QtdeMov = qtde;
-                    movEstoque.Obs = observacao;
-                    movEstoque.SaldoQtdeMov = Math.Round(saldoQtdeAnterior + (tipoMov == MovEstoque.TipoMovEnum.Entrada ? qtde : -qtde), Configuracoes.Geral.NumeroCasasDecimaisTotM);
-
-                    if (dataMov.Date != DateTime.Now.Date)
-                    {
-                        movEstoque.DataCad = DateTime.Now;
-                    }
-
-                    if (movEstoque.SaldoQtdeMov < 0)
-                    {
-                        movEstoque.ValorMov = 0;
-                        movEstoque.SaldoValorMov = 0;
-                    }
-                    else if (tipoMov == MovEstoque.TipoMovEnum.Entrada)
-                    {
-                        var perc = tipoMov == MovEstoque.TipoMovEnum.Entrada && qtdeMov > movEstoque.SaldoQtdeMov ? qtdeMov / (movEstoque.SaldoQtdeMov > 0 ? movEstoque.SaldoQtdeMov : 1) : 1;
-
-                        movEstoque.ValorMov = Math.Abs(total);
-                        movEstoque.SaldoValorMov = saldoValorAnterior + (movEstoque.ValorMov * perc);
-                    }
-                    else
-                    {
-                        var valorUnit = saldoValorAnterior / (saldoQtdeAnterior > 0 ? saldoQtdeAnterior : 1);
-
-                        movEstoque.ValorMov = Math.Abs(valorUnit * qtde);
-                        movEstoque.SaldoValorMov = saldoValorAnterior - (valorUnit * qtde);
-                    }
-
-                    movEstoque.IdMovEstoque = Insert(sessao, movEstoque);
-
-                    idMovEstoque = movEstoque.IdMovEstoque;
-
-                    AtualizaSaldo(sessao, movEstoque.IdMovEstoque);
-                    ProdutoLojaDAO.Instance.AtualizarProdutoLoja(sessao, (int)movEstoque.IdProd, (int)movEstoque.IdLoja);
-
-                    // Atualiza o total de m2 dos boxes
-                    var m2 = ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)p.IdProdBaixa) ? ProdutoDAO.Instance.ObtemM2BoxPadrao(sessao, (int)p.IdProdBaixa) : 0;
-
-                    if (m2 > 0)
-                    {
-                        ProdutoLojaDAO.Instance.AtualizarTotalM2(sessao, (int)p.IdProdBaixa, (int)idLoja, m2);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ErroDAO.Instance.InserirFromException($"MovEstoque - IdMovEstoque:{idMovEstoque}' IdProd:{idProd}' IdLoja:{idLoja}", ex);
-                throw ex;
-            }
+            objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET entrouEstoque=true WHERE idProdPedProducao={idProdutoPedidoProducao}");
         }
 
-        public void ValidarMovimentarEstoque(GDASession session, int idProd, int idLoja, DateTime dataMovimentacao, MovEstoque.TipoMovEnum tipoMovimentacao, decimal quantidade,
-            bool recuperarProdutoBaixaEstoque)
+        public void CreditaEstoqueVoltarPecaProducao(GDASession sessao, int idProduto, int idProdutoPedidoProducao, ProdutosPedidoEspelho produtoPedidoEspelho)
         {
-            decimal saldoQtdeAnterior = 0, saldoValorAnterior = 0, saldoQtdeValidar = 0;
+            var idLoja = ObterIdLojaProdutoPedidoProducao(
+                sessao,
+                idProdutoPedidoProducao,
+                (int)produtoPedidoEspelho.IdPedido,
+                (int)produtoPedidoEspelho.IdProd);
 
-            ValidarMovimentarEstoque(session, idProd, idLoja, dataMovimentacao, tipoMovimentacao, quantidade,
-                ref saldoQtdeAnterior, ref saldoValorAnterior, ref saldoQtdeValidar, recuperarProdutoBaixaEstoque);
+            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd, false);
+            var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, 1, 1, produtoPedidoEspelho.TotM, produtoPedidoEspelho.Altura);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Creditar(sessao, new MovimentacaoDto
+                {
+                    IdProd = (uint)idProduto,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = quantidadeEntrada,
+                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                    AlterarMateriaPrima = !SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd),
+                    BaixarMesmoProdutoSemMateriaPrima = true,
+                    DataMov = DateTime.Now,
+                });
+
+            var idProdutoPedido = ProdutosPedidoDAO.Instance.ObterIdProdPed(sessao, (int)produtoPedidoEspelho.IdProdPed);
+            var codigoEtiqueta = ProdutoPedidoProducaoDAO.Instance.ObtemEtiqueta(sessao, (uint)idProdutoPedidoProducao);
+            if (idProdutoPedido.GetValueOrDefault() == 0)
+            {
+                throw new InvalidOperationException($"Não foi possível recuperar o produto do pedido. Etiqueta: {codigoEtiqueta}.");
+            }
+
+            ProdutosPedidoDAO.Instance.EstornoSaida(sessao, (uint)idProdutoPedido, 1, System.Reflection.MethodBase.GetCurrentMethod().Name, codigoEtiqueta);
         }
 
-        public void ValidarMovimentarEstoque(GDASession session, int idProd, int idLoja, DateTime dataMovimentacao, MovEstoque.TipoMovEnum tipoMovimentacao, decimal quantidade,
-            ref decimal saldoQtdeAnterior, ref decimal saldoValorAnterior, ref decimal saldoQtdeValidar)
+        public void CreditaEstoqueChapaVoltarPecaProducao(GDASession sessao, int idPedido, int idProdutoPedidoProducao, int idProdutoImpressaoChapa)
         {
-            ValidarMovimentarEstoque(session, idProd, idLoja, dataMovimentacao, tipoMovimentacao, quantidade, ref saldoQtdeAnterior, ref saldoValorAnterior, ref saldoQtdeValidar, false);
+            var idProduto = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, (uint)idProdutoImpressaoChapa);
+
+            if (idProduto.GetValueOrDefault() == 0)
+            {
+                return;
+            }
+
+            var idLoja = Geral.ConsiderarLojaClientePedidoFluxoSistema && idPedido > 0
+                ? PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedido)
+                : UserInfo.GetUserInfo.IdLoja;
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Creditar(sessao, new MovimentacaoDto
+                {
+                    IdProd = idProduto.GetValueOrDefault(),
+                    IdLoja = (uint)ObterIdLojaPeloIdProdImpressaoChapa(sessao, idPedido, (int)idProduto, idProdutoImpressaoChapa),
+                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = 1,
+                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                    DataMov = DateTime.Now,
+                });
         }
+
+        public void CreditaEstoqueVoltarPecaPedidoProducao(GDASession sessao, int idPedido, int idProdutoPedidoProducao)
+        {
+            if (PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido) != Pedido.TipoPedidoEnum.Producao
+                || !ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
+            {
+                return;
+            }
+
+            var produtoPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(
+                sessao,
+                null,
+                ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(sessao, (uint)idProdutoPedidoProducao),
+                true);
+
+            var idLoja = ObterIdLojaProdutoPedidoProducao(
+                sessao,
+                idProdutoPedidoProducao,
+                idPedido,
+                (int)produtoPedidoEspelho.IdProd);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Creditar(sessao, new MovimentacaoDto
+                {
+                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = 1,
+                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                    DataMov = DateTime.Now,
+                });
+
+            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd, false);
+            var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, 1, produtoPedidoEspelho.Qtde, produtoPedidoEspelho.TotM, produtoPedidoEspelho.Altura);
+            BaixaEstoqueProducao(sessao, (int)produtoPedidoEspelho.IdProd, idPedido, idProdutoPedidoProducao, quantidadeBaixa);
+
+            objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET entrouEstoque=true WHERE idProdPedProducao={idProdutoPedidoProducao}");
+        }
+
+        public void CreditaEstoqueProducao(GDASession sessao, int idProduto, int idLoja, int idProdutoPedidoProducao, decimal quantidadeEntrada)
+        {
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Creditar(sessao, new MovimentacaoDto
+                {
+                    IdProd = (uint)idProduto,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = quantidadeEntrada,
+                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                    AlterarMateriaPrima = true,
+                    BaixarMesmoProdutoSemMateriaPrima = true,
+                    DataMov = DateTime.Now,
+                });
+        }
+
+        public void CreditaEstoqueRetalho(GDASession sessao, int idProd, int idRetalhoProducao, LoginUsuario usuario)
+        {
+            var idLoja = usuario != null
+                ? usuario.IdLoja
+                : UserInfo.GetUserInfo.IdLoja;
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Creditar(sessao, new MovimentacaoDto
+                {
+                    IdProd = (uint)idProd,
+                    IdLoja = idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                    IdRetalhoProducao = (uint)idRetalhoProducao,
+                    QtdeMov = 1,
+                    AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, idProd),
+                    BaixarMesmoProdutoSemMateriaPrima = true,
+                    DataMov = DateTime.Now,
+                    Usuario = usuario,
+                });
+        }
+
+        public void CreditaEstoquePerdaChapa(GDASession sessao, uint idProd, uint idProdNf, uint idLoja, uint idPerdaChapaVidro)
+        {
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Creditar(sessao, new MovimentacaoDto
+                {
+                    IdProd = idProd,
+                    IdLoja = idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                    IdPerdaChapaVidro = idPerdaChapaVidro,
+                    QtdeMov = 1,
+                    Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)idProdNf),
+                    DataMov = DateTime.Now,
+                    AlterarProdBase = true,
+                });
+        }
+
+        public void CreditaEstoqueInventario(GDASession sessao, uint idLoja, IEnumerable<ProdutoInventarioEstoque> produtosInventarioEstoque)
+        {
+            foreach (var item in produtosInventarioEstoque)
+            {
+                var quantidadeEntrada = (decimal)(item.QtdeFim.GetValueOrDefault() - item.QtdeIni);
+
+                new EstoqueStrategyFactory()
+                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                    .Creditar(sessao, new MovimentacaoDto
+                    {
+                        IdProd = item.IdProd,
+                        IdLoja = idLoja,
+                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                        IdInventarioEstoque = item.IdInventarioEstoque,
+                        LancManual = true,
+                        QtdeMov = quantidadeEntrada,
+                        Total = this.GetTotalEstoqueManual(sessao, (int)item.IdProd, quantidadeEntrada),
+                        DataMov = DateTime.Now,
+                    });
+            }
+        }
+
+        #endregion
+
+        #region Validar estoque
 
         public void ValidarMovimentarEstoque(GDASession session, int idProd, int idLoja, DateTime dataMovimentacao, MovEstoque.TipoMovEnum tipoMovimentacao, decimal quantidade,
             ref decimal saldoQtdeAnterior, ref decimal saldoValorAnterior, ref decimal saldoQtdeValidar, bool recuperarProdutoBaixaEstoque)
         {
             ProdutoBaixaEstoque[] produtosBaixaEstoque = null;
 
-            //Verifica se o idloja = 0 se for recupera a loja do usuario.
-            if (idLoja == 0 && UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdLoja > 0)
-            {
-                idLoja = (int)UserInfo.GetUserInfo.IdLoja;
-            }
-
-            // A baixa do produto será recuperada na validação feita ao emitir a nota fiscal.
             if (recuperarProdutoBaixaEstoque)
             {
                 produtosBaixaEstoque = ProdutoBaixaEstoqueDAO.Instance.GetByProd(session, (uint)idProd, true);
             }
-            // No procedimento de movimentação de estoque este método será chamado com os dados da baixa.
             else
             {
-                produtosBaixaEstoque = new ProdutoBaixaEstoque[] {
-                        new ProdutoBaixaEstoque
-                        {
-                            IdProd = idProd, IdProdBaixa = idProd, Qtde = (float)quantidade
-                        }
-                    };
+                produtosBaixaEstoque = new ProdutoBaixaEstoque[]
+                {
+                    new ProdutoBaixaEstoque
+                    {
+                        IdProd = idProd,
+                        IdProdBaixa = idProd,
+                        Qtde = (float)quantidade,
+                    },
+                };
             }
 
             foreach (var produtoBaixaEstoque in produtosBaixaEstoque)
@@ -894,24 +2181,22 @@ namespace Glass.Data.DAL
                 saldoQtdeValidar = ObtemSaldoQtdeMov(session, null, (uint)produtoBaixaEstoque.IdProdBaixa, (uint)idLoja, dataMovimentacao, false);
 
                 // Verifica se, ao registrar a movimentação, o saldo em estoque do produto ficará negativo.
-                if (tipoMovimentacao == MovEstoque.TipoMovEnum.Saida)
+                if (tipoMovimentacao == MovEstoque.TipoMovEnum.Saida
+                    && ((saldoQtdeAnterior - quantidade) < 0 || (saldoQtdeValidar - quantidade) < 0))
                 {
-                    if ((saldoQtdeAnterior - quantidade) < 0 || (saldoQtdeValidar - quantidade) < 0)
+                    var idGrupoProdBaixa = ProdutoDAO.Instance.ObtemIdGrupoProd(session, produtoBaixaEstoque.IdProdBaixa);
+                    var idSubgrupoProdBaixa = ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, produtoBaixaEstoque.IdProdBaixa);
+
+                    // Verifica se o subgrupo ou o grupo do produto estão marcados para bloquear estoque.
+                    if (GrupoProdDAO.Instance.BloquearEstoque(session, idGrupoProdBaixa, idSubgrupoProdBaixa))
                     {
-                        var idGrupoProdBaixa = ProdutoDAO.Instance.ObtemIdGrupoProd(session, produtoBaixaEstoque.IdProdBaixa);
-                        var idSubgrupoProdBaixa = ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, produtoBaixaEstoque.IdProdBaixa);
+                        var descricaoGrupo = GrupoProdDAO.Instance.GetDescricao(session, idGrupoProdBaixa);
+                        var descricaoSubgrupo = SubgrupoProdDAO.Instance.GetDescricao(session, idSubgrupoProdBaixa > 0 ? idSubgrupoProdBaixa.Value : 0);
+                        var codInternoProduto = ProdutoDAO.Instance.GetCodInterno(session, produtoBaixaEstoque.IdProdBaixa);
+                        var descricaoProduto = ProdutoDAO.Instance.GetDescrProduto(session, produtoBaixaEstoque.IdProdBaixa);
 
-                        // Verifica se o subgrupo ou o grupo do produto estão marcados para bloquear estoque.
-                        if (GrupoProdDAO.Instance.BloquearEstoque(session, idGrupoProdBaixa, idSubgrupoProdBaixa))
-                        {
-                            var descricaoGrupo = GrupoProdDAO.Instance.GetDescricao(session, idGrupoProdBaixa);
-                            var descricaoSubgrupo = SubgrupoProdDAO.Instance.GetDescricao(session, idSubgrupoProdBaixa > 0 ? idSubgrupoProdBaixa.Value : 0);
-                            var codInternoProduto = ProdutoDAO.Instance.GetCodInterno(session, produtoBaixaEstoque.IdProdBaixa);
-                            var descricaoProduto = ProdutoDAO.Instance.GetDescrProduto(session, produtoBaixaEstoque.IdProdBaixa);
-
-                            throw new Exception(MensagemAlerta.FormatErrorMsg($@"O Grupo: { descricaoGrupo } ou o Subgrupo: { descricaoSubgrupo } do produto { codInternoProduto } -
-                                { descricaoProduto } está marcado para bloquear estoque, portanto, o estoque (Disponível) não pode ser negativo (verificar o extrato de estoque deste produto).", null));
-                        }
+                        throw new Exception(MensagemAlerta.FormatErrorMsg($@"O Grupo: { descricaoGrupo } ou o Subgrupo: { descricaoSubgrupo } do produto { codInternoProduto } -
+                            { descricaoProduto } está marcado para bloquear estoque, portanto, o estoque (Disponível) não pode ser negativo (verificar o extrato de estoque deste produto).", null));
                     }
                 }
             }
@@ -1108,7 +2393,9 @@ namespace Glass.Data.DAL
             foreach (var produtoNotaFiscal in ProdutosNfDAO.Instance.GetByNf(sessao, idNf))
             {
                 var quantidade = ProdutosNfDAO.Instance.ObtemQtdDanfe(sessao, produtoNotaFiscal.IdProd, produtoNotaFiscal.TotM, produtoNotaFiscal.Qtde, produtoNotaFiscal.Altura, produtoNotaFiscal.Largura, false, false);
-                ValidarMovimentarEstoque(sessao, (int)produtoNotaFiscal.IdProd, (int)idLoja, DateTime.Now, MovEstoque.TipoMovEnum.Saida, (decimal)quantidade, true);
+
+                decimal saldoQtdeAnterior = 0, saldoValorAnterior = 0, saldoQtdeValidar = 0;
+                ValidarMovimentarEstoque(sessao, (int)produtoNotaFiscal.IdProd, (int)idLoja, DateTime.Now, MovEstoque.TipoMovEnum.Saida, (decimal)quantidade, ref saldoQtdeAnterior, ref saldoValorAnterior, ref saldoQtdeValidar, true);
             }
 
             foreach (var movEstoque in ExecuteMultipleScalar<uint>(sessao, $"SELECT IdMovEstoque FROM mov_estoque WHERE IdNf={ idNf }"))
@@ -1148,7 +2435,7 @@ namespace Glass.Data.DAL
         {
             if (idCompra == 0)
             {
-                return 0;
+                return null;
             }
 
             return ObtemValorCampo<int?>(session, "IdLoja", $"IdCompra={ idCompra } LIMIT 1");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Glass.Data.Model;
 using Glass.Data.Helper;
 using GDA;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -170,50 +171,27 @@ namespace Glass.Data.DAL
                         MarcaEstorno(transaction, entrada.IdCompra, entrada.NumeroNFe);
 
                         var produtos = ProdutoEntradaEstoqueDAO.Instance.GetForRpt(transaction, idEntradaEstoque);
-
-                        var tipoCalcM2 = new List<int> { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto };
-                        var tipoCalcMLAL = new List<int> { (int)TipoCalculoGrupoProd.MLAL0, (int)TipoCalculoGrupoProd.MLAL05,
-                        (int)TipoCalculoGrupoProd.MLAL1, (int)TipoCalculoGrupoProd.MLAL6, (int)TipoCalculoGrupoProd.ML };
-
-                        foreach (var prod in produtos)
-                        {
-                            var prodCompra = prod.IdProdCompra > 0 ? ProdutosCompraDAO.Instance.GetElementByPrimaryKey(transaction, prod.IdProdCompra.Value) : null;
-                            var prodNf = prod.IdProdNf > 0 ? ProdutosNfDAO.Instance.GetElementByPrimaryKey(transaction, prod.IdProdNf.Value) : null;
-
-                            int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, prodCompra != null ? (int)prodCompra.IdProd : (int)prodNf.IdProd, false);
-
-                            // Remove a peça da reserva e a coloca na liberação
-                            float m2Calc = prodCompra != null ?
-                                Global.CalculosFluxo.ArredondaM2(transaction, prodCompra.Largura, (int)prodCompra.Altura, prod.QtdeEntrada, 0, prodCompra.Redondo, 0,
-                                tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto) :
-                                Global.CalculosFluxo.ArredondaM2(transaction, prodNf.Largura, (int)prodNf.Altura, prod.QtdeEntrada, 0, false, 0,
-                                tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto);
-
-                            bool m2 = tipoCalcM2.Contains(tipoCalculo);
-
-                            float qtdEntradaEstoque = prod.QtdeEntrada;
-                            if (tipoCalcMLAL.Contains(tipoCalculo))
-                                qtdEntradaEstoque *= prodCompra != null ? prodCompra.Altura : prodNf.Altura;
-
-                            // Faz a movimentação de estorno no estoque
-                            if (entrada.IdCompra > 0)
-                            {
-                                ProdutosCompraDAO.Instance.MarcarEntrada(transaction, prod.IdProdCompra.Value, -prod.QtdeEntrada, idEntradaEstoque);
-
-                                MovEstoqueDAO.Instance.BaixaEstoqueCompra(transaction, prodCompra.IdProd, entrada.IdLoja, prodCompra.IdCompra,
-                                    prodCompra.IdProdCompra, (decimal)qtdEntradaEstoque);
-                            }
-                            else if (entrada.NumeroNFe > 0)
-                            {
-                                ProdutosNfDAO.Instance.MarcarEntrada(transaction, prod.IdProdNf.Value, -prod.QtdeEntrada, idEntradaEstoque);
-
-                                MovEstoqueDAO.Instance.BaixaEstoqueNotaFiscal(transaction, prodNf.IdProd, entrada.IdLoja, prodNf.IdNf,
-                                    prodNf.IdProdNf, (decimal)qtdEntradaEstoque);
-                            }
-                        }
-
+                        
+                        // Faz a movimentação de estorno no estoque
                         if (entrada.IdCompra > 0)
+                        {
+                            MovEstoqueDAO.Instance.BaixaEstoqueCancelamentoEntradaEstoqueCompra(
+                                transaction,
+                                (int)entrada.IdLoja,
+                                (int)entrada.IdCompra,
+                                (int)entrada.IdEntradaEstoque,
+                                produtos.Where(f => f.IdProdCompra > 0));
+
                             CompraDAO.Instance.DesmarcarEstoqueBaixado(transaction, entrada.IdCompra.Value);
+                        }
+                        else if (entrada.NumeroNFe > 0)
+                        {
+                            MovEstoqueDAO.Instance.BaixaEstoqueCancelamentoEntradaEstoqueNotaFiscal(transaction,
+                                (int)entrada.IdLoja,
+                                (int)entrada.IdCompra,
+                                (int)entrada.IdEntradaEstoque,
+                                produtos.Where(f => f.IdProdNf > 0));
+                        }
 
                         transaction.Commit();
                         transaction.Close();
@@ -223,7 +201,7 @@ namespace Glass.Data.DAL
                         transaction.Rollback();
                         transaction.Close();
                         ErroDAO.Instance.InserirFromException("CancelarEntradaEstoque", ex, idEntradaEstoque);
-                        throw ex;
+                        throw;
                     }
                 }
             }

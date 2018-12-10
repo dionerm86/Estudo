@@ -3216,28 +3216,10 @@ namespace Glass.Data.DAL
 
                         #endregion
 
-                        #region Atualiza o estoque
-
-                        // Tira produtos da reserva ou estorna se já tiver dado baixa
-                        var m2Saida = prodPed.TotM / prodPed.Qtde * qtdeRemover;
-                        var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdProd, false);
-                        var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 || tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-
-                        var qtdSaida = qtdeRemover;
-
-                        if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                            tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6)
-                        {
-                            qtdSaida *= prodPed.Altura;
-                        }
-
-                        //ProdutoLojaDAO.Instance.CreditaEstoque(prodPed.IdProd, ped.IdLoja, qtdSaida, m2 ? m2Saida : 0);
                         if (!PedidoDAO.Instance.IsProducao(transaction, prodPed.IdPedido))
-                            ProdutoLojaDAO.Instance.TirarReserva(transaction, (int)ped.IdLoja,
-                                new Dictionary<int, float> { { (int)prodPed.IdProd, m2 ? m2Saida : qtdSaida } }, null, null, null, null,
-                                null, null, (int)prodPed.IdProdPed, "ProdutosPedidoDAO - RemoverProdutoDescontoAdmin");
-
-                        #endregion
+                        {
+                            ProdutoLojaDAO.Instance.RecalcularReserva(transaction, (int)ped.IdLoja, new List<int> { (int)prodPed.IdProd });
+                        }
 
                         // Atualiza os valores dos pedidos (original e PCP)
                         PedidoDAO.Instance.UpdateDesconto(transaction, ped, false);
@@ -3261,7 +3243,7 @@ namespace Glass.Data.DAL
 
                         ErroDAO.Instance.InserirFromException("RemoverProdutoDescontoAdmin - IdProdPed: " + idProdPed, ex);
 
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -3390,28 +3372,10 @@ namespace Glass.Data.DAL
 
                         #endregion
 
-                        #region Atualiza o estoque
-
-                        // Tira produtos da reserva ou estorna se já tiver dado baixa
-                        var m2Entrada = prodPed.TotM / (prodPed.Qtde > 0 ? prodPed.Qtde : 1) * qtdeRestaurar;
-                        var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdProd, false);
-                        var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 || tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-
-                        var qtdEntrada = qtdeRestaurar;
-
-                        if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                            tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6)
-                        {
-                            qtdEntrada *= prodPed.Altura;
-                        }
-
-                        //ProdutoLojaDAO.Instance.BaixaEstoque(prodPed.IdProd, ped.IdLoja, qtdEntrada, m2 ? m2Entrada : 0);
                         if (!ped.Producao)
-                            ProdutoLojaDAO.Instance.ColocarReserva(transaction, (int)ped.IdLoja,
-                                new Dictionary<int, float> { { (int)prodPed.IdProd, m2 ? m2Entrada : qtdEntrada } }, null, null, null,
-                                null, null, null, (int)prodPed.IdProdPed, "PrdutosPedidoDAO - RestaurarProdutoDescontoAdmin");
-
-                        #endregion
+                        {
+                            ProdutoLojaDAO.Instance.RecalcularReserva(transaction, (int)ped.IdLoja, new List<int> { (int)prodPed.IdProd });
+                        }
 
                         // Atualiza os valores dos pedidos (original e PCP)
                         PedidoDAO.Instance.UpdateDesconto(transaction, ped, false);

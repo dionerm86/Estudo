@@ -586,10 +586,13 @@ namespace Glass.UI.Web.Cadastros
                     !CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(notaFiscal.IdNaturezaOperacao.Value)))
                 {
                     foreach (var produtoNotaFiscal in ProdutosNfDAO.Instance.GetByNf(notaFiscal.IdNf))
+                    {
+                        decimal saldoQtdeAnterior = 0, saldoValorAnterior = 0, saldoQtdeValidar = 0;
                         MovEstoqueDAO.Instance.ValidarMovimentarEstoque(null, (int)produtoNotaFiscal.IdProd, (int)notaFiscal.IdLoja, DateTime.Now,
                             MovEstoque.TipoMovEnum.Saida,
                             (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(null, produtoNotaFiscal.IdProd, produtoNotaFiscal.TotM,
-                                produtoNotaFiscal.Qtde, produtoNotaFiscal.Altura, produtoNotaFiscal.Largura, false, false), true);
+                                produtoNotaFiscal.Qtde, produtoNotaFiscal.Altura, produtoNotaFiscal.Largura, false, false), ref saldoQtdeAnterior, ref saldoValorAnterior, ref saldoQtdeValidar, true);
+                    }
                 }
 
                 //var prodsNf = ProdutosNfDAO.Instance.GetByNf(Glass.Conversoes.StrParaUint(Request["idNf"]));

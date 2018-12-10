@@ -456,48 +456,97 @@ namespace Glass.UI.Web.Cadastros.Producao
 
                 if (!isPerda)
                 {
-                    if (Data.Helper.Utils.ObtemSetor(idSetor.StrParaUint()).Tipo == TipoSetor.Entregue &&
-                        (ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(numEtiqueta) ==
-                         ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal ||
-                         ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(numEtiqueta) ==
-                         ProdutoImpressaoDAO.TipoEtiqueta.Retalho))
-                        descrProd =
-                            ProdutoPedidoProducaoDAO.Instance.MarcaExpedicaoChapaRetalhoRevendaComTransacao(
-                                numEtiqueta, pedidoNovo.GetValueOrDefault(), idSetor.StrParaUint());
-                    else if (Data.Helper.Utils.ObtemSetor(idSetor.StrParaUint()).Tipo ==
-                             TipoSetor.Entregue &&
-                             numEtiqueta.ToUpper()[0] == 'V')
-                        descrProd =
-                            WebGlass.Business.OrdemCarga.Fluxo.VolumeFluxo.Instance.MarcaExpedicaoVolumeComTransacao(
-                                numEtiqueta, 0, false);
+                    if (Data.Helper.Utils.ObtemSetor(idSetor.StrParaUint()).Tipo == TipoSetor.Entregue
+                        && (ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(numEtiqueta) == ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal
+                            || ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(numEtiqueta) == ProdutoImpressaoDAO.TipoEtiqueta.Retalho))
+                    {
+                        descrProd = ProdutoPedidoProducaoDAO.Instance.MarcaExpedicaoChapaRetalhoRevendaComTransacao(
+                            numEtiqueta,
+                            pedidoNovo.GetValueOrDefault(),
+                            idSetor.StrParaUint());
+                    }
+                    else if (Data.Helper.Utils.ObtemSetor(idSetor.StrParaUint()).Tipo == TipoSetor.Entregue
+                        && numEtiqueta.ToUpper()[0] == 'V')
+                    {
+                        descrProd = WebGlass.Business.OrdemCarga.Fluxo.VolumeFluxo.Instance.MarcaExpedicaoVolumeComTransacao(
+                            numEtiqueta,
+                            0,
+                            false);
+                    }
                     else if (numEtiqueta.ToUpper()[0] == 'P')
-                        descrProd =
-                            ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(
-                                idFuncStr.StrParaUint(), numChapa, numEtiqueta,
-                                idSetor.StrParaUint(), false,
-                                false, null, null, null, pedidoNovo, idRota.StrParaUint(),
-                                etiquetasMp, null, false, etiquetaCavalete, idFornada.StrParaInt());
+                    {
+                        descrProd = ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(
+                            idFuncStr.StrParaUint(),
+                            numChapa,
+                            numEtiqueta,
+                            idSetor.StrParaUint(),
+                            false,
+                            false,
+                            null,
+                            null,
+                            null,
+                            pedidoNovo,
+                            idRota.StrParaUint(),
+                            etiquetasMp,
+                            null,
+                            false,
+                            etiquetaCavalete,
+                            idFornada.StrParaInt());
+                    }
                     else
-                        descrProd =
-                            ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(
-                                idFuncStr.StrParaUint(), numChapa, numEtiqueta,
-                                idSetor.StrParaUint(), false,
-                                false, null, null, null, pedidoNovo, idRota.StrParaUint(),
-                                etiquetasMp, null, false, etiquetaCavalete, idFornada.StrParaInt());
+                    {
+                        descrProd = ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(
+                            idFuncStr.StrParaUint(),
+                            numChapa,
+                            numEtiqueta,
+                            idSetor.StrParaUint(),
+                            false,
+                            false,
+                            null,
+                            null,
+                            null,
+                            pedidoNovo,
+                            idRota.StrParaUint(),
+                            etiquetasMp,
+                            null,
+                            false,
+                            etiquetaCavalete,
+                            idFornada.StrParaInt());
+                    }
                 }
                 else if (ProducaoConfig.TipoControleReposicao != DataSources.TipoReposicaoEnum.Peca)
-                    descrProd =
-                        ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(
-                            idFuncStr.StrParaUint(), numChapa, numEtiqueta,
-                            idSetor.StrParaUint(), true,
-                            false, tipoPerdaStr.StrParaUint(),
-                            subtipoPerdaStr.StrParaUintNullable(), obs, null, 0, null, null, false, etiquetaCavalete, idFornada.StrParaInt());
-                else
-                    descrProd = ProdutoPedidoProducaoDAO.Instance.MarcarPecaRepostaComTransacao(numChapa, numEtiqueta,
+                {
+                    descrProd = ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(
+                        idFuncStr.StrParaUint(),
+                        numChapa,
+                        numEtiqueta,
                         idSetor.StrParaUint(),
-                        UserInfo.GetUserInfo.CodUser, DateTime.Now, tipoPerdaStr.StrParaUint(),
+                        true,
+                        false,
+                        tipoPerdaStr.StrParaUint(),
                         subtipoPerdaStr.StrParaUintNullable(),
-                        obs, perdaDefinitiva);
+                        obs,
+                        null,
+                        0,
+                        null,
+                        null,
+                        false,
+                        etiquetaCavalete,
+                        idFornada.StrParaInt());
+                }
+                else
+                {
+                    descrProd = ProdutoPedidoProducaoDAO.Instance.MarcarPecaRepostaComTransacao(
+                        numChapa,
+                        numEtiqueta,
+                        idSetor.StrParaUint(),
+                        UserInfo.GetUserInfo.CodUser,
+                        DateTime.Now,
+                        tipoPerdaStr.StrParaUint(),
+                        subtipoPerdaStr.StrParaUintNullable(),
+                        obs,
+                        perdaDefinitiva);
+                }
 
                 //Insere retalho se tiver sido preechido
                 bool hasRetalho = !string.IsNullOrEmpty(altura) && !string.IsNullOrEmpty(largura) && !string.IsNullOrEmpty(quantidade);
@@ -1047,6 +1096,5 @@ namespace Glass.UI.Web.Cadastros.Producao
         {
 
         }
-
     }
 }

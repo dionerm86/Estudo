@@ -685,25 +685,6 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:TextBox ID="txtGerarEstoqueRealNotas" runat="server"></asp:TextBox>
-                </td>
-                <td class="style1">
-                    <asp:Button ID="btnGerarEstoqueRealNotas" runat="server" Text="Gerar movimentações estoque notas"
-                        OnClick="btnGerarEstoqueRealNotas_Click" />
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <asp:TextBox ID="txtLogGerarEstoqueRealNotas" runat="server" Height="100px" Width="600px"
-                        TextMode="MultiLine"></asp:TextBox>
-                </td>
-            </tr>
-        </table>
-        <br />
-        <br />
-        <table cellspacing="5" cellpadding="5">
-            <tr>
-                <td class="style1">
                     Num. Nota Fiscal
                     <asp:TextBox ID="txtNumNf" runat="server"></asp:TextBox>
                 </td>
@@ -811,25 +792,6 @@
         </table>
         <table cellspacing="5" cellpadding="5">
             <tr>
-                <td>
-                    <asp:Label ID="lbl2" runat="server" 
-                        Text="Id NF dar saída/entrada estoque (Autorizadas na Sefaz em outro PC)"></asp:Label>
-                    <asp:TextBox ID="txtIdNf" runat="server"></asp:TextBox>
-                </td>
-                <td>
-                    <asp:Button ID="btnAlterarEstoque" runat="server" Text="Alterar Estoque" 
-                        OnClick="btnAlterarEstoque_Click" />
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    &nbsp;</td>
-            </tr>
-        </table>
-        <br />
-        <br />
-        <table cellspacing="5" cellpadding="5">
-            <tr>
                 <td class="style1">
                     <asp:Button ID="btnAtualizaItensRevendaCarregamento" runat="server" 
                         Text="Atualizar itens revenda carregamento" 
@@ -885,22 +847,6 @@
             <tr>
                 <td>
                     <asp:TextBox ID="txtLogEstoqueInicialCliente" runat="server" Height="100px" Width="600px"
-                        TextMode="MultiLine"></asp:TextBox>
-                </td>
-            </tr>
-        </table>
-        <br />
-        <br />
-        <table cellspacing="5" cellpadding="5">
-            <tr>
-                <td class="style1">
-                    <asp:Button ID="btnEstoquePosicaoMateriaPrima" runat="server" 
-                        Text="Ajustar estoque com posição da materia-prima" OnClick="btnEstoquePosicaoMateriaPrima_Click"   />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <asp:TextBox ID="txtLogEstoquePosicaoMateriaPrima" runat="server" Height="100px" Width="600px"
                         TextMode="MultiLine"></asp:TextBox>
                 </td>
             </tr>

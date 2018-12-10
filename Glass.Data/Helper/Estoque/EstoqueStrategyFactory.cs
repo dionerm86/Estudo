@@ -19,14 +19,14 @@ namespace Glass.Data.Helper.Estoque
         /// <returns>Estratégia de controle de estoque.</returns>
         public IEstoqueStrategy RecuperaEstrategia(Cenario cenario)
         {
-            IEstoqueStrategy estrategia = null;
             switch (cenario)
             {
-                case Cenario.ConfirmacaoPedido:
-                    return new ConfirmacaoPedidoStrategy();
-            }
+                case Cenario.Generica:
+                    return new GenericaStrategy();
 
-            return estrategia ?? new SemAlteracaoStrategy();
+                default:
+                    return null;
+            }
         }
     }
 }

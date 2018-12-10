@@ -988,8 +988,10 @@ namespace Glass.Data.DAL
             if (!FinanceiroConfig.Compra.UsarControleFinalizacaoCompra || situacao == Compra.SituacaoEnum.AguardandoEntrega || situacao == Compra.SituacaoEnum.EmAndamento)
             {
                 // Se o estoque já não tiver sido baixado pelo almoxarifado e se a empresa não dá baixa manual, baixa
-                if (!compra.EstoqueBaixado && !EstoqueConfig.EntradaEstoqueManual)
-                    CreditarEstoqueCompra(session, compra);
+                if (!compra.EstoqueBaixado)
+                {
+                    MovEstoqueDAO.Instance.CreditaEstoqueCompra(session, compra);
+                }
 
                 objPersistence.ExecuteCommand(session, "update compra set dataFinalizada=now(), idFuncFinal=" +
                     UserInfo.GetUserInfo.CodUser + " where idCompra=" + idCompra);
@@ -1336,54 +1338,6 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Creditar Estoque Compra
-
-        /// <summary>
-        /// Credita no estoque os produtos desta compra
-        /// </summary>
-        /// <param name="compra"></param>
-        public void CreditarEstoqueCompra(GDASession sessao, Compra compra)
-        {
-            try
-            {
-                var lstProdCompra = ProdutosCompraDAO.Instance.GetByCompra(sessao, compra.IdCompra);
-
-                foreach (ProdutosCompra p in lstProdCompra)
-                {
-                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd, false);
-
-                    bool m2 = tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-
-                    float qtdEntrada = p.Qtde - p.QtdeEntrada;
-
-                    if (qtdEntrada > 0)
-                    {
-                        if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
-                            tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6 ||
-                            tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML)
-                        {
-                            qtdEntrada = p.Qtde * p.Altura;
-                            p.TotM = 0;
-                        }
-
-                        MovEstoqueDAO.Instance.CreditaEstoqueCompra(sessao, p.IdProd, compra.IdLoja, compra.IdCompra, p.IdProdCompra, 
-                            (decimal)(m2 ? (p.TotM / p.Qtde) * qtdEntrada : qtdEntrada));
-
-                        objPersistence.ExecuteCommand(sessao, "update produtos_compra set qtdeEntrada=" + p.Qtde.ToString().Replace(",", ".") +
-                            " where idProdCompra=" + p.IdProdCompra);
-                    }
-                }
-
-                objPersistence.ExecuteCommand(sessao, "Update compra Set EstoqueBaixado=true Where idCompra=" + compra.IdCompra);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao creditar estoque.", ex));
-            }
-        }
-
-        #endregion
-
         #region Cancelar/reabrir Compra
 
         /// <summary>
@@ -1454,40 +1408,10 @@ namespace Glass.Data.DAL
 
                     try
                     {
-                        var lstProdCompra = ProdutosCompraDAO.Instance.GetByCompra(transaction, idCompra);
-
-                        foreach (ProdutosCompra p in lstProdCompra)
-                        {
-                            p.TotM = Glass.Global.CalculosFluxo.ArredondaM2Compra(p.Largura, (int)p.Altura, (int)p.QtdeEntrada);
-
-                            int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdProd, false);
-                            var m2 = tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-                            decimal qtdBaixa = (decimal)p.QtdeEntrada;
-
-                            if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
-                                tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6 ||
-                                tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML)
-                            {
-                                qtdBaixa *= (decimal)p.Altura;
-                                p.TotM = 0;
-                            }
-
-                            if (qtdBaixa > 0)
-                            {
-                                var idLoja = (uint?)MovEstoqueDAO.Instance.ObterIdLojaPeloIdCompra(transaction, (int)idCompra);
-
-                                if (idLoja.GetValueOrDefault() == 0)
-                                {
-                                    idLoja = UserInfo.GetUserInfo.IdLoja;
-                                }
-
-                                MovEstoqueDAO.Instance.BaixaEstoqueCompra(transaction, p.IdProd, idLoja.Value, compra.IdCompra, p.IdProdCompra, (m2 ? (decimal)p.TotM : qtdBaixa));
-                            }
-
-                            objPersistence.ExecuteCommand(transaction, "update produtos_compra set qtdeEntrada=0 where idProdCompra=" + p.IdProdCompra);
-                        }
-
-                        objPersistence.ExecuteCommand(transaction, "update compra set estoqueBaixado=false where idCompra=" + idCompra);
+                        MovEstoqueDAO.Instance.BaixaEstoqueCancelamentoCompra(
+                            transaction,
+                            (int)idCompra,
+                            ProdutosCompraDAO.Instance.GetByCompra(transaction, idCompra));
                     }
                     catch (Exception ex)
                     {

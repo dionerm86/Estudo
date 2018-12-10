@@ -714,8 +714,7 @@ namespace Glass.Data.DAL
 
             #region Atualização de estoque
 
-            // Atualiza o estoque dos produtos antes da finalização da pré liberação, para evitar que outra liberação seja feita com os mesmos produtos e ocorra bloqueio de estoque ao finalizar as liberações.
-            AtualizaEstoque(session, liberarPedido.IdLiberarPedido, (uint)idCliente, string.Join(",", idsPedido), idsProdutoPedido.Select(f => (uint)f).ToArray(), quantidadesLiberar.ToArray(), tipoAcrescimo);
+            AtualizaEstoque(session, liberarPedido.IdLiberarPedido, (uint)idCliente, idsProdutoPedido.Select(f => (uint)f).ToArray(), quantidadesLiberar.ToArray());
 
             #endregion
 
@@ -1411,11 +1410,8 @@ namespace Glass.Data.DAL
                     idLiberarPedido, (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)SituacaoProdutoProducao.Entregue)) > 0;
             // Recupera os dados da saída de estoque da liberação e seus produtos
             var saidaEstoque = SaidaEstoqueDAO.Instance.GetByLiberacao(session, (uint)idLiberarPedido);
-            var produtosSaidaEstoque = saidaEstoque != null ? ProdutoSaidaEstoqueDAO.Instance.GetForRpt(session, saidaEstoque.IdSaidaEstoque).ToArray() : null;
-            // Recupera os produtos da liberação
             var produtosLiberarPedido = ProdutosLiberarPedidoDAO.Instance.GetByLiberarPedido(session, (uint)idLiberarPedido, false);
-            var idsProdQtdeReserva = new Dictionary<int, Dictionary<int, float>>();
-            var idsProdQtdeLiberacao = new Dictionary<int, Dictionary<int, float>>();
+            var idsProdutoReservaLiberacao = new Dictionary<int, List<int>>();
 
             #endregion
 
@@ -1522,138 +1518,7 @@ namespace Glass.Data.DAL
 
             #region Atualização da reserva/liberação dos produtos liberados
 
-            #region Cálculo da reserva/liberação de cada produto
-
-            foreach (var produtoLiberarPedido in produtosLiberarPedido)
-            {
-                #region Declaração de variáveis
-
-                var idLojaEstoque = (int)PedidoDAO.Instance.ObtemIdLoja(session, produtoLiberarPedido.IdPedido);
-                // Tenta achar o produto da saída de estoque referente ao produto da liberação.
-                var produtoSaidaEstoque = saidaEstoque == null || produtosSaidaEstoque == null || produtosSaidaEstoque.Length == 0 ? null :
-                    Array.Find(produtosSaidaEstoque, find => find.IdProdPed == produtoLiberarPedido.IdProdPed);
-                var quantidadeEstorno = produtoSaidaEstoque != null ? (int)produtoSaidaEstoque.QtdeSaida : produtoLiberarPedido.Qtde;
-                // Verifica o tipo de cálculo do produto.
-                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoLiberarPedido.IdProd, false);
-                // Verifica o tipo de cálculo do produto.
-                var m2Calc = Global.CalculosFluxo.ArredondaM2(session, produtoLiberarPedido.LarguraProd, (int)produtoLiberarPedido.AlturaProd, quantidadeEstorno, 0, produtoLiberarPedido.Redondo, 0,
-                    tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto);
-                var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 || tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-                var qtdEstornoEstoque = quantidadeEstorno;
-                var transferencia = PedidoDAO.Instance.ObtemDeveTransferir(session, produtoLiberarPedido.IdPedido);
-                var subGrupoVolume = SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(session, produtoLiberarPedido.IdGrupoProd, produtoLiberarPedido.IdSubgrupoProd.GetValueOrDefault());
-                var entregaBalcao = PedidoDAO.Instance.ObtemTipoEntrega(session, produtoLiberarPedido.IdPedido) == (int)Pedido.TipoEntregaPedido.Balcao;
-                var volumeApenasDePedidosEntrega = OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega;
-                var naoVolume = volumeApenasDePedidosEntrega ? entregaBalcao || !subGrupoVolume : !subGrupoVolume;
-                var pedidoGerarProducaoParaCorte = PedidoDAO.Instance.GerarPedidoProducaoCorte(session, produtoLiberarPedido.IdPedido);
-                var pedidoPossuiVolumeExpedido = false;
-                float altura = 0;
-
-                #endregion
-
-                if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 ||
-                    tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6 || tipoCalculo == (int)TipoCalculoGrupoProd.ML)
-                {
-                    altura = ProdutosPedidoDAO.Instance.ObtemValorCampo<float>(session, "Altura", string.Format("IdProdPed={0}", produtoLiberarPedido.IdProdPed));
-                    qtdEstornoEstoque = quantidadeEstorno * altura;
-                }
-
-                /* Chamado 54238.
-                 * Caso o volume tenha sido expedido, o estoque e a reserva/liberação não podem ser alterados, pois, a baixa já ocorreu na expedição dele. */
-                foreach (var volume in VolumeDAO.Instance.ObterPeloPedido(session, (int)produtoLiberarPedido.IdPedido))
-                {
-                    if (VolumeDAO.Instance.TemExpedicao(session, volume.IdVolume))
-                    {
-                        pedidoPossuiVolumeExpedido = true;
-                        break;
-                    }
-                }
-
-                if (!pedidoGerarProducaoParaCorte && !pedidoPossuiVolumeExpedido)
-                {
-                    if ((((Liberacao.Estoque.SaidaEstoqueAoLiberarPedido && (!GrupoProdDAO.Instance.IsVidro((int)produtoLiberarPedido.IdGrupoProd) || !PCPConfig.ControlarProducao)) ||
-                        (Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)produtoLiberarPedido.IdGrupoProd) &&
-                        SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)produtoLiberarPedido.IdGrupoProd, (int?)produtoLiberarPedido.IdSubgrupoProd))) && naoVolume) || transferencia)
-                    {
-                        // Estorna a saída dada neste produto, se o pedido não tiver que transferir
-                        if (!transferencia)
-                        {
-                            ProdutosPedidoDAO.Instance.MarcarSaida(session, produtoLiberarPedido.IdProdPed, quantidadeEstorno * -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
-                        }
-
-                        // Credita o estoque
-                        MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(session, produtoLiberarPedido.IdProd, (uint)idLojaEstoque, (uint)idLiberarPedido, produtoLiberarPedido.IdPedido,
-                            produtoLiberarPedido.IdProdLiberarPedido, (decimal)(m2 ? m2Calc : qtdEstornoEstoque));
-                    }
-                    else
-                    {
-                        #region Salva dados para alterar o campo LIBERACAO do produto loja
-
-                        // Salva o produto e a quantidade dele que deve entrar da coluna LIBERACAO.
-                        if (!idsProdQtdeLiberacao.ContainsKey(idLojaEstoque))
-                        {
-                            idsProdQtdeLiberacao.Add(idLojaEstoque, new Dictionary<int, float> { { (int)produtoLiberarPedido.IdProd, m2 ? m2Calc : qtdEstornoEstoque } });
-                        }
-                        else if (!idsProdQtdeLiberacao[idLojaEstoque].ContainsKey((int)produtoLiberarPedido.IdProd))
-                        {
-                            idsProdQtdeLiberacao[idLojaEstoque].Add((int)produtoLiberarPedido.IdProd, m2 ? m2Calc : qtdEstornoEstoque);
-                        }
-                        else
-                        {
-                            idsProdQtdeLiberacao[idLojaEstoque][(int)produtoLiberarPedido.IdProd] += m2 ? m2Calc : qtdEstornoEstoque;
-                        }
-
-                        #endregion
-                    }
-
-                    #region Salva dados para alterar o campo RESERVA do produto loja
-
-                    // Salva o produto e a quantidade dele que deve sair da coluna RESERVA.
-                    if (!idsProdQtdeReserva.ContainsKey(idLojaEstoque))
-                    {
-                        idsProdQtdeReserva.Add(idLojaEstoque, new Dictionary<int, float> { { (int)produtoLiberarPedido.IdProd, m2 ? m2Calc : qtdEstornoEstoque } });
-                    }
-                    else if (!idsProdQtdeReserva[idLojaEstoque].ContainsKey((int)produtoLiberarPedido.IdProd))
-                    {
-                        idsProdQtdeReserva[idLojaEstoque].Add((int)produtoLiberarPedido.IdProd, m2 ? m2Calc : qtdEstornoEstoque);
-                    }
-                    else
-                    {
-                        idsProdQtdeReserva[idLojaEstoque][(int)produtoLiberarPedido.IdProd] += m2 ? m2Calc : qtdEstornoEstoque;
-                    }
-
-                    #endregion
-                }
-            }
-
-            #endregion
-
-            #region Atualização dos totais de reserva/liberação dos produtos
-
-            if (produtosLiberarPedido != null && produtosLiberarPedido.Length > 0)
-            {
-                // Ajusta o campo RESERVA do produto loja.
-                foreach (var idLojaReserva in idsProdQtdeReserva.Keys)
-                {
-                    if (idsProdQtdeReserva[idLojaReserva].Count > 0)
-                    {
-                        ProdutoLojaDAO.Instance.ColocarReserva(session, idLojaReserva, idsProdQtdeReserva[idLojaReserva], null, (int)idLiberarPedido, null, null, null, null, null,
-                            "LiberarPedidoDAO - CancelarLiberacao");
-                    }
-                }
-
-                // Ajusta o campo LIBERACAO do produto loja.
-                foreach (var idLojaLiberacao in idsProdQtdeLiberacao.Keys)
-                {
-                    if (idsProdQtdeLiberacao[idLojaLiberacao].Count > 0)
-                    {
-                        ProdutoLojaDAO.Instance.TirarLiberacao(session, idLojaLiberacao, idsProdQtdeLiberacao[idLojaLiberacao], null, (int)idLiberarPedido, null, null, null, null, null,
-                            "LiberarPedidoDAO - CancelarLiberacao");
-                    }
-                }
-            }
-
-            #endregion
+            MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(session, (uint)idLiberarPedido, produtosLiberarPedido);
 
             #endregion
 
@@ -2371,7 +2236,7 @@ namespace Glass.Data.DAL
 
             #region Atualiza o estoque
 
-            AtualizaEstoque(session, idLiberarPedido, idCliente, idsPedido, idsProdutosPedido, qtdeLiberar, tipoAcrescimo);
+            AtualizaEstoque(session, idLiberarPedido, idCliente, idsProdutosPedido, qtdeLiberar);
 
             #endregion
 
@@ -2631,8 +2496,8 @@ namespace Glass.Data.DAL
                     #endregion
 
                     #region Atualiza o estoque
-
-                    AtualizaEstoque(transaction, idLiberarPedido, idCliente, idsPedido, idsProdutosPedido, qtdeLiberar, 0);
+                    
+                    AtualizaEstoque(transaction, idLiberarPedido, idCliente, idsProdutosPedido, qtdeLiberar);
 
                     #endregion
 
@@ -2841,7 +2706,7 @@ namespace Glass.Data.DAL
 
                     #region Atualiza o estoque
 
-                    AtualizaEstoque(transaction, idLiberarPedido, idCliente, idsPedido, idsProdutosPedido, qtdeLiberar, 0);
+                    AtualizaEstoque(transaction, idLiberarPedido, idCliente, idsProdutosPedido, qtdeLiberar);
 
                     #endregion
 
@@ -2933,119 +2798,16 @@ namespace Glass.Data.DAL
 
         #region Atualiza estoque
 
-        private void AtualizaEstoque(GDASession sessao, uint idLiberarPedido, uint idCliente, string idsPedido, uint[] idsProdutosPedido, float[] qtdeLiberar,
-            int tipoAcrescimo)
+        private void AtualizaEstoque(GDASession sessao, uint idLiberarPedido, uint idCliente, uint[] idsProdutosPedido, float[] qtdeLiberar)
         {
-            var idsProdQtdeReserva = new Dictionary<int, Dictionary<int, float>>();
-            var idsProdQtdeLiberacao = new Dictionary<int, Dictionary<int, float>>();
+            var produtosPedido = new List<KeyValuePair<int, float>>();
 
             for (var i = 0; i < idsProdutosPedido.Length; i++)
             {
-                var prodPed = ProdutosPedidoDAO.Instance.GetElementFluxoLite(sessao, idsProdutosPedido[i]);
-                var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(sessao, prodPed.IdPedido);
-                var idLoja = idLojaPedido > 0 ? idLojaPedido : UserInfo.GetUserInfo.IdLoja;
-                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPed.IdProd, false);
-
-                // Remove a peça da reserva e a coloca na liberação
-                var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, prodPed.Largura, (int)prodPed.Altura, qtdeLiberar[i], 0, prodPed.Redondo, 0,
-                    tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto);
-
-                var areaMinimaProd = ProdutoDAO.Instance.ObtemAreaMinima(sessao, (int)prodPed.IdProd);
-
-                var m2CalcAreaMinima = Global.CalculosFluxo.CalcM2Calculo(sessao, idCliente, (int)prodPed.Altura, prodPed.Largura,
-                    qtdeLiberar[i], (int)prodPed.IdProd, prodPed.Redondo, prodPed.Beneficiamentos.CountAreaMinimaSession(sessao), areaMinimaProd, false,
-                    prodPed.Espessura, true);
-
-                var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 || tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-                var qtdSaidaEstoque = qtdeLiberar[i];
-
-                if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                    tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6 ||
-                    tipoCalculo == (int)TipoCalculoGrupoProd.ML)
-                    qtdSaidaEstoque *= prodPed.Altura;
-
-                //Verifica se o pedido que esta sendo liberado deve ser tranferido.
-                var transferencia = PedidoDAO.Instance.ObtemDeveTransferir(sessao, prodPed.IdPedido);
-
-                var saidaNaoVidro = Liberacao.Estoque.SaidaEstoqueAoLiberarPedido && (!GrupoProdDAO.Instance.IsVidro((int)prodPed.IdGrupoProd) || !PCPConfig.ControlarProducao);
-                var saidaBox = Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)prodPed.IdGrupoProd) && SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)prodPed.IdGrupoProd, (int?)prodPed.IdSubgrupoProd);
-
-                var subGrupoVolume = !OrdemCargaConfig.UsarControleOrdemCarga ? false : SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(sessao, prodPed.IdGrupoProd, prodPed.IdSubgrupoProd);
-
-                var entregaBalcao = PedidoDAO.Instance.ObtemTipoEntrega(sessao, prodPed.IdPedido) == (int)Pedido.TipoEntregaPedido.Balcao;
-                var volumeApenasDePedidosEntrega = OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega;
-
-                var naoVolume = volumeApenasDePedidosEntrega ? entregaBalcao || !subGrupoVolume : !subGrupoVolume;
-                /* Chamado 54054. */
-                var pedidoGerarProducaoParaCorte = PedidoDAO.Instance.GerarPedidoProducaoCorte(sessao, prodPed.IdPedido);
-                var pedidoPossuiVolumeExpedido = false;
-
-                /* Chamado 54238.
-                 * Caso o volume tenha sido expedido, o estoque e a reserva/liberação não podem ser alterados, pois, a baixa já ocorreu na expedição dele. */
-                foreach (var volume in VolumeDAO.Instance.ObterPeloPedido(sessao, (int)prodPed.IdPedido))
-                    if (VolumeDAO.Instance.TemExpedicao(sessao, volume.IdVolume))
-                    {
-                        pedidoPossuiVolumeExpedido = true;
-                        break;
-                    }
-
-                /* Chamado 64689. */
-                if (!pedidoPossuiVolumeExpedido && !pedidoGerarProducaoParaCorte)
-                {
-                    if (((saidaNaoVidro || saidaBox) && naoVolume) || transferencia)
-                    {
-                        // Marca quantos produtos do pedido foi marcado como saída, se o pedido não tiver que transferir
-                        if (!transferencia)
-                        {
-                            var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, idLoja, null, idLiberarPedido, null, false);
-
-                            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, qtdeLiberar[i], idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
-                        }
-
-                        MovEstoqueDAO.Instance.BaixaEstoqueLiberacao(sessao, prodPed.IdProd, idLoja, idLiberarPedido,
-                            prodPed.IdPedido, ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(sessao, idLiberarPedido,
-                            prodPed.IdProdPed), m2 ? (decimal)m2Calc : (decimal)qtdSaidaEstoque, m2 ? (decimal)m2CalcAreaMinima : 0);
-                    }
-                    else
-                    {
-                        #region Salva dados para alterar o campo LIBERACAO do produto loja
-
-                        // Salva o produto e a quantidade dele que deve entrar da coluna LIBERACAO.
-                        if (!idsProdQtdeLiberacao.ContainsKey((int)idLoja))
-                            idsProdQtdeLiberacao.Add((int)idLoja, new Dictionary<int, float> { { (int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque } });
-                        else if (!idsProdQtdeLiberacao[(int)idLoja].ContainsKey((int)prodPed.IdProd))
-                            idsProdQtdeLiberacao[(int)idLoja].Add((int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque);
-                        else
-                            idsProdQtdeLiberacao[(int)idLoja][(int)prodPed.IdProd] += m2 ? m2Calc : qtdSaidaEstoque;
-
-                        #endregion
-                    }
-
-                    #region Salva dados para alterar o campo RESERVA do produto loja
-
-                    // Salva o produto e a quantidade dele que deve sair da coluna RESERVA.
-                    if (!idsProdQtdeReserva.ContainsKey((int)idLoja))
-                        idsProdQtdeReserva.Add((int)idLoja, new Dictionary<int, float> { { (int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque } });
-                    else if (!idsProdQtdeReserva[(int)idLoja].ContainsKey((int)prodPed.IdProd))
-                        idsProdQtdeReserva[(int)idLoja].Add((int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque);
-                    else
-                        idsProdQtdeReserva[(int)idLoja][(int)prodPed.IdProd] += m2 ? m2Calc : qtdSaidaEstoque;
-
-                    #endregion
-                }
+                produtosPedido.Add(new KeyValuePair<int, float>((int)idsProdutosPedido[i], qtdeLiberar[i]));
             }
 
-            // Ajusta o campo RESERVA do produto loja.
-            foreach (var idLojaReserva in idsProdQtdeReserva.Keys)
-                if (idsProdQtdeReserva[idLojaReserva].Count > 0)
-                    ProdutoLojaDAO.Instance.TirarReserva(sessao, idLojaReserva, idsProdQtdeReserva[idLojaReserva], null,
-                        (int)idLiberarPedido, null, null, null, null, null, "LiberarPedidoDAO - AtualizaEstoque");
-
-            // Ajusta o campo LIBERACAO do produto loja.
-            foreach (var idLojaLiberacao in idsProdQtdeLiberacao.Keys)
-                if (idsProdQtdeLiberacao[idLojaLiberacao].Count > 0)
-                    ProdutoLojaDAO.Instance.ColocarLiberacao(sessao, idLojaLiberacao, idsProdQtdeLiberacao[idLojaLiberacao], null,
-                        (int)idLiberarPedido, null, null, null, null, null, "LiberarPedidoDAO - AtualizaEstoque");
+            MovEstoqueDAO.Instance.BaixaEstoqueLiberacao(sessao, idLiberarPedido, idCliente, produtosPedido);
         }
 
         #endregion
@@ -3311,126 +3073,10 @@ namespace Glass.Data.DAL
 
             #region Volta peça para a reserva e tira da liberação
 
-            // Recupera os dados da saída de estoque da liberação e seus produtos
-            var saida = SaidaEstoqueDAO.Instance.GetByLiberacao(session, idLiberarPedido);
-            var lstProdSaida = saida != null ? ProdutoSaidaEstoqueDAO.Instance.GetForRpt(session, saida.IdSaidaEstoque).ToArray() : null;
-
-            // Recupera os produtos da liberação
-            var lstProd = ProdutosLiberarPedidoDAO.Instance.GetByLiberarPedido(session, idLiberarPedido, false);
-            var idsProdQtdeReserva = new Dictionary<int, Dictionary<int, float>>();
-            var idsProdQtdeLiberacao = new Dictionary<int, Dictionary<int, float>>();
-
-            foreach (var prod in lstProd)
-            {
-                var idLoja = (int)PedidoDAO.Instance.ObtemIdLoja(session, prod.IdPedido);
-
-                // Tenta achar o produto da saída de estoque referente ao produto da liberação
-                var pse = saida == null || lstProdSaida == null || lstProdSaida.Length == 0 ? null :
-                    Array.Find(lstProdSaida, find => find.IdProdPed == prod.IdProdPed);
-
-                var qtdEstorno = pse != null ? (int)pse.QtdeSaida : prod.Qtde;
-
-                // Verifica o tipo de cálculo do produto
-                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd, false);
-
-                // Verifica o tipo de cálculo do produto
-                var m2Calc = Global.CalculosFluxo.ArredondaM2(session, prod.LarguraProd,
-                    (int)prod.AlturaProd, qtdEstorno, 0, prod.Redondo, 0,
-                    tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto);
-
-                var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
-                          tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-
-                var qtdEstornoEstoque = qtdEstorno;
-
-                if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 ||
-                    tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                    tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 ||
-                    tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6 ||
-                    tipoCalculo == (int)TipoCalculoGrupoProd.ML)
-                {
-                    var altura = ProdutosPedidoDAO.Instance.ObtemValorCampo<float>(session, "altura",
-                        "idProdPed=" + prod.IdProdPed);
-                    qtdEstornoEstoque = qtdEstorno * altura;
-                }
-
-                var transferencia = PedidoDAO.Instance.ObtemDeveTransferir(session, prod.IdPedido);
-                var subGrupoVolume = SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(session, prod.IdGrupoProd, prod.IdSubgrupoProd.GetValueOrDefault());
-                var entregaBalcao = PedidoDAO.Instance.ObtemTipoEntrega(session, prod.IdPedido) == (int)Pedido.TipoEntregaPedido.Balcao;
-                var volumeApenasDePedidosEntrega = OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega;
-
-                /* Chamado 24240. */
-                var naoVolume = volumeApenasDePedidosEntrega ? entregaBalcao || !subGrupoVolume : !subGrupoVolume;
-                /* Chamado 54054. */
-                var pedidoGerarProducaoParaCorte = PedidoDAO.Instance.GerarPedidoProducaoCorte(session, prod.IdPedido);
-                var pedidoPossuiVolumeExpedido = false;
-
-                /* Chamado 54238.
-                 * Caso o volume tenha sido expedido, o estoque e a reserva/liberação não podem ser alterados, pois, a baixa já ocorreu na expedição dele. */
-                foreach (var volume in VolumeDAO.Instance.ObterPeloPedido(session, (int)prod.IdPedido))
-                    if (VolumeDAO.Instance.TemExpedicao(session, volume.IdVolume))
-                    {
-                        pedidoPossuiVolumeExpedido = true;
-                        break;
-                    }
-
-                if (!pedidoGerarProducaoParaCorte && !pedidoPossuiVolumeExpedido)
-                {
-                    if ((((Liberacao.Estoque.SaidaEstoqueAoLiberarPedido && (!GrupoProdDAO.Instance.IsVidro((int)prod.IdGrupoProd) ||
-                        !PCPConfig.ControlarProducao)) || (Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)prod.IdGrupoProd) &&
-                        SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)prod.IdGrupoProd, (int?)prod.IdSubgrupoProd))) && naoVolume) || transferencia)
-                    {
-                        // Estorna a saída dada neste produto, se o pedido não tiver que transferir
-                        if (!transferencia)
-                            ProdutosPedidoDAO.Instance.MarcarSaida(session, prod.IdProdPed, qtdEstorno * -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
-
-                        // Credita o estoque
-                        MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(session, prod.IdProd, (uint)idLoja, idLiberarPedido, prod.IdPedido,
-                            prod.IdProdLiberarPedido, (decimal)(m2 ? m2Calc : qtdEstornoEstoque));
-                    }
-                    else
-                    {
-                        #region Salva dados para alterar o campo LIBERACAO do produto loja
-
-                        // Salva o produto e a quantidade dele que deve entrar da coluna LIBERACAO.
-                        if (!idsProdQtdeLiberacao.ContainsKey(idLoja))
-                            idsProdQtdeLiberacao.Add(idLoja, new Dictionary<int, float> { { (int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque } });
-                        else if (!idsProdQtdeLiberacao[idLoja].ContainsKey((int)prod.IdProd))
-                            idsProdQtdeLiberacao[idLoja].Add((int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque);
-                        else
-                            idsProdQtdeLiberacao[idLoja][(int)prod.IdProd] += m2 ? m2Calc : qtdEstornoEstoque;
-
-                        #endregion
-                    }
-
-                    #region Salva dados para alterar o campo RESERVA do produto loja
-
-                        // Salva o produto e a quantidade dele que deve sair da coluna RESERVA.
-                        if (!idsProdQtdeReserva.ContainsKey(idLoja))
-                            idsProdQtdeReserva.Add(idLoja, new Dictionary<int, float> { { (int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque } });
-                        else if (!idsProdQtdeReserva[idLoja].ContainsKey((int)prod.IdProd))
-                            idsProdQtdeReserva[idLoja].Add((int)prod.IdProd, m2 ? m2Calc : qtdEstornoEstoque);
-                        else
-                            idsProdQtdeReserva[idLoja][(int)prod.IdProd] += m2 ? m2Calc : qtdEstornoEstoque;
-
-                        #endregion
-                }
-            }
-
-            if (lstProd != null && lstProd.Length > 0)
-            {
-                // Ajusta o campo RESERVA do produto loja.
-                foreach (var idLojaReserva in idsProdQtdeReserva.Keys)
-                    if (idsProdQtdeReserva[idLojaReserva].Count > 0)
-                        ProdutoLojaDAO.Instance.ColocarReserva(session, idLojaReserva, idsProdQtdeReserva[idLojaReserva], null,
-                            (int)idLiberarPedido, null, null, null, null, null, "LiberarPedidoDAO - CancelarLiberacao");
-
-                // Ajusta o campo LIBERACAO do produto loja.
-                foreach (var idLojaLiberacao in idsProdQtdeLiberacao.Keys)
-                    if (idsProdQtdeLiberacao[idLojaLiberacao].Count > 0)
-                        ProdutoLojaDAO.Instance.TirarLiberacao(session, idLojaLiberacao, idsProdQtdeLiberacao[idLojaLiberacao], null,
-                            (int)idLiberarPedido, null, null, null, null, null, "LiberarPedidoDAO - CancelarLiberacao");
-            }
+            MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(
+                session,
+                idLiberarPedido,
+                ProdutosLiberarPedidoDAO.Instance.GetByLiberarPedido(session, idLiberarPedido, false));
 
             #endregion
 

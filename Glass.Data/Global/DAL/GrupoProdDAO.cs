@@ -236,11 +236,7 @@ namespace Glass.Data.DAL
         /// <param name="idSubgrupo">idSubgrupo.</param>
         /// <param name="nf">nf.</param>
         /// <returns>Retorna o tipo de cálculo que será aplicado no produto.</returns>
-        public int TipoCalculo(
-            GDASession session,
-            int idGrupo,
-            int? idSubgrupo,
-            bool nf)
+        public int TipoCalculo(GDASession session, int idGrupo, int? idSubgrupo, bool nf)
         {
             try
             {
@@ -328,28 +324,37 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Verifica se o estoque será alterado para o produto.
+        /// Verifica se o produto está configurado para alterar estoque.
         /// </summary>
-        /// <param name="idGrupo"></param>
-        /// <param name="idSubgrupo"></param>
-        public bool NaoAlterarEstoque(int idGrupo, int? idSubgrupo)
+        /// <param name="sessao">Sessão do banco de dados.</param>
+        /// <param name="idProduto">O identificador do produto.</param>
+        /// <returns>Valor booleano indicando se o produto altera estoque.</returns>
+        public bool AlterarEstoque(GDASession sessao, int idProduto)
         {
-            return NaoAlterarEstoque(null, idGrupo, idSubgrupo);
+            var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, idProduto);
+            var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, idProduto);
+
+            return AlterarEstoque(sessao, idGrupoProd, idSubgrupoProd);
         }
 
         /// <summary>
         /// Verifica se o estoque será alterado para o produto.
         /// </summary>
-        /// <param name="idGrupo"></param>
-        /// <param name="idSubgrupo"></param>
-        public bool NaoAlterarEstoque(GDASession sessao, int idGrupo, int? idSubgrupo)
+        /// <param name="sessao">Sessão do banco de dados.</param>
+        /// <param name="idGrupo">O identificador do grupo de produto.</param>
+        /// <param name="idSubgrupo">O identificador do subgrupo de produto.</param>
+        /// <returns>Valor booleano indicando se o grupo/subgrupo alterar estoque.</returns>
+        public bool AlterarEstoque(GDASession sessao, int idGrupo, int? idSubgrupo)
         {
             if (idSubgrupo > 0)
-                return SubgrupoProdDAO.Instance.ObtemNaoAlterarEstoque(sessao, idSubgrupo.Value);
+            {
+                return !SubgrupoProdDAO.Instance.ObtemNaoAlterarEstoque(sessao, idSubgrupo.Value);
+            }
 
             if (idGrupo > 0)
-                return GrupoProdDAO.Instance.ObtemNaoAlterarEstoque(sessao, idGrupo);
+            {
+                return !this.ObtemNaoAlterarEstoque(sessao, idGrupo);
+            }
 
             return false;
         }

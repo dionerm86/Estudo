@@ -6,33 +6,43 @@
     public enum Cenario
     {
         /// <summary>
-        /// Confirmação de pedido
+        /// Estratégia.
+        /// </summary>
+        Generica,
+
+        /// <summary>
+        /// Confirmação de pedido.
         /// </summary>
         ConfirmacaoPedido,
 
         /// <summary>
-        /// Cancelamento de pedido
+        /// Cancelamento de pedido.
         /// </summary>
         CancelamentoPedido,
 
         /// <summary>
-        /// Liberação de pedido
+        /// Liberação de pedido.
         /// </summary>
         LiberacaoPedido,
 
         /// <summary>
-        /// Cancelamento de liberação de pedido
+        /// Cancelamento de liberação de pedido.
         /// </summary>
         CancelamentoLiberacaoPedido,
 
         /// <summary>
-        /// Troca/Devolução
+        /// Troca/Devolução.
         /// </summary>
         TrocaDevolucao,
 
         /// <summary>
-        /// Cancelamento Troca/Devolução
+        /// Cancelamento Troca/Devolução.
         /// </summary>
         CancelamentoTrocaDevolucao,
+
+        /// <summary>
+        /// Emissão de nota fiscal.
+        /// </summary>
+        EmissaoNotaFiscal,
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using GDA;
+using Glass.Data.DAL;
+using Glass.Data.Helper;
+using Glass.Estoque.Negocios.Entidades;
+using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Glass.Data.Helper;
-using Glass.Data.Model;
-using Glass.Data.DAL;
-using Glass.Estoque.Negocios.Entidades;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -67,51 +67,66 @@ namespace Glass.UI.Web.Cadastros
     
         protected void btnMarcarSaida_Click(object sender, EventArgs e)
         {
-            if (txtNumPedido.Text == String.Empty || grdProdutos.Rows.Count <= 0)
+            if (txtNumPedido.Text == string.Empty || grdProdutos.Rows.Count <= 0)
+            {
                 return;
-    
+            }
+
             try
             {
                 if (UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.AuxAlmoxarifado &&
                     !Config.PossuiPermissao(Config.FuncaoMenuEstoque.ControleEstoque))
                 {
-                    Glass.MensagemAlerta.ShowMsg("Você não tem permissão para marcar saída de produtos.", Page);
+                    MensagemAlerta.ShowMsg("Você não tem permissão para marcar saída de produtos.", Page);
                     return;
                 }
 
-                // Chamado 69935
-                uint idPedido = Glass.Conversoes.StrParaUint(txtNumPedido.Text);
-                Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(null, idPedido);
-                if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Confirmado)
+                var idPedido = txtNumPedido.Text.StrParaUint();
+                Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(null, idPedido);
+
+                if (situacao != Data.Model.Pedido.SituacaoPedido.Confirmado)
                 {
-                    Glass.MensagemAlerta.ShowMsg(string.Format("Este pedido ainda não foi {0}.",
+                    MensagemAlerta.ShowMsg(string.Format("Este pedido ainda não foi {0}.",
                         Configuracoes.PedidoConfig.LiberarPedido ? "liberado" : "confirmado"), Page);
+
                     tbSaida.Visible = false;
                     return;
                 }
 
-                var lstProdPed = new List<DetalhesBaixaEstoque>();
-    
+                var lstProdPed = new List<KeyValuePair<int, float>>();
+
                 foreach (GridViewRow r in grdProdutos.Rows)
                 {
-                    string qtdSaidaInformadaString = ((TextBox)r.FindControl("txtQtdSaida")).Text;
+                    var qtdSaidaInformada = ((TextBox)r.FindControl("txtQtdSaida")).Text.StrParaFloat();
 
-                    var dadosProduto = new DetalhesBaixaEstoque()
+                    if (qtdSaidaInformada == 0)
                     {
-                        IdProdPed = Glass.Conversoes.StrParaInt(((HiddenField)r.FindControl("hdfIdProdPed")).Value),
-                        Qtde = String.IsNullOrEmpty(qtdSaidaInformadaString) ? 0 : float.Parse(qtdSaidaInformadaString),
-                        DescricaoBaixa = ((HiddenField)r.FindControl("hdfDescr")).Value.Replace("'", "").Replace("\"", "")
-                    };
-    
-                    // Se a quantidade de saída for 0, continua no próximo item
-                    if (dadosProduto.Qtde == 0)
                         continue;
-    
+                    }
+
+                    var dadosProduto = new KeyValuePair<int, float>(
+                        ((HiddenField)r.FindControl("hdfIdProdPed")).Value.StrParaInt(),
+                        qtdSaidaInformada);
+
                     lstProdPed.Add(dadosProduto);
                 }
-    
-                WebGlass.Business.Pedido.Fluxo.AlterarEstoque.Instance.BaixarEstoqueComTransacao
-                    (drpLoja.SelectedValue.StrParaUint(), lstProdPed, null, null, true, txtObservacao.Text);
+
+                using (var transacao = new GDATransaction())
+                {
+                    try
+                    {
+                        MovEstoqueDAO.Instance.BaixaEstoqueManual(transacao, drpLoja.SelectedValue.StrParaInt(), (int)idPedido, lstProdPed, txtObservacao.Text);
+
+                        transacao.Commit();
+                        transacao.Close();
+                    }
+                    catch
+                    {
+                        transacao.Rollback();
+                        transacao.Close();
+                        throw;
+                    }
+                }
 
                 txtObservacao.Text = null;
                 Glass.MensagemAlerta.ShowMsg("Saída de produtos efetuada com sucesso.", Page);
@@ -130,27 +145,39 @@ namespace Glass.UI.Web.Cadastros
         {
             tbSaida.Visible = false;
             grdProdutosProd.DataBind();
-    
+
             tbSaidaProd.Visible = grdProdutosProd.Rows.Count > 0;
             drpLoja.AutoPostBack = tbSaidaProd.Visible;
         }
-    
+
         protected void btnMarcarProd_Click(object sender, EventArgs e)
         {
             uint idLoja = Glass.Conversoes.StrParaUint(drpLoja.SelectedValue);
-    
-            foreach (GridViewRow r in grdProdutosProd.Rows)
+
+            using (var transacao = new GDATransaction())
             {
-                var idProd = Glass.Conversoes.StrParaInt(((HiddenField)r.FindControl("hdfIdProd")).Value);
-                float qtde = Glass.Conversoes.StrParaFloat(((TextBox)r.FindControl("txtQtdSaida")).Text);
-    
-                if (idProd == 0 || qtde == 0)
-                    continue;
-    
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, idProd, false);
-                bool m2 = tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-    
-                MovEstoqueDAO.Instance.BaixaEstoqueManualComTransacao((uint)idProd, idLoja, (decimal)qtde, null, DateTime.Now, txtObservacao.Text);
+                try
+                {
+                    transacao.BeginTransaction();
+
+                    foreach (GridViewRow r in grdProdutosProd.Rows)
+                    {
+                        var idProd = Glass.Conversoes.StrParaInt(((HiddenField)r.FindControl("hdfIdProd")).Value);
+                        float qtde = Glass.Conversoes.StrParaFloat(((TextBox)r.FindControl("txtQtdSaida")).Text);
+
+                        if (idProd == 0 || qtde == 0)
+                            continue;
+
+                        MovEstoqueDAO.Instance.BaixaEstoqueManual(transacao, (uint)idProd, idLoja, (decimal)qtde, null, DateTime.Now, txtObservacao.Text);
+                    }
+
+                    transacao.Commit();
+                }
+                catch
+                {
+                    transacao.Rollback();
+                    throw;
+                }
             }
 
             txtObservacao.Text = null;

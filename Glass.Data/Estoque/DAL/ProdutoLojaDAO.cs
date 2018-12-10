@@ -563,83 +563,35 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Atualiza reserva/liberação
-
-        #region Credita estoque reserva
-
+        
         /// <summary>
-        /// Credita a quantidade em reserva do produto na loja informada.
+        /// Recalcula a quantidade em reserva.
         /// </summary>
-        public void ColocarReserva(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
-            int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
+        /// <param name="sessao"></param>
+        /// <param name="idLoja"></param>
+        /// <param name="idsProdQtde"></param>
+        public void RecalcularReserva(GDASession sessao, int idLoja, IEnumerable<int> idsProdQtde)
         {
-            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
-            {
-                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                    idPedido, idsPedido, idProdPed, classeMetodo, false, true);
-            }
+            AtualizaReservaLiberacao(sessao, idLoja, idsProdQtde, false);
         }
 
-        #endregion
-
-        #region Baixa estoque reserva
-
         /// <summary>
-        /// Baixa a quantidade em reserva do produto na loja informada.
+        /// Recalcula a quantidade em liberação.
         /// </summary>
-        public void TirarReserva(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
-            int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
+        /// <param name="sessao"></param>
+        /// <param name="idLoja"></param>
+        /// <param name="idsProdQtde"></param>
+        public void RecalcularLiberacao(GDASession sessao, int idLoja, IEnumerable<int> idsProdQtde)
         {
-            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
-            {
-                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                    idPedido, idsPedido, idProdPed, classeMetodo, false, false);
-            }
+            AtualizaReservaLiberacao(sessao, idLoja, idsProdQtde, true);
         }
-
-        #endregion
-
-        #region Credita estoque liberação
-
-        /// <summary>
-        /// Credita a quantidade em liberação do produto na loja informada.
-        /// </summary>
-        public void ColocarLiberacao(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
-            int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
-        {
-            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
-            {
-                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                    idPedido, idsPedido, idProdPed, classeMetodo, true, true);
-            }
-        }
-
-        #endregion
-
-        #region Baixa estoque liberação
-
-        /// <summary>
-        /// Baixa a quantidade em liberação do produto na loja informada.
-        /// </summary>
-        public void TirarLiberacao(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
-            int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
-        {
-            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
-            {
-                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                    idPedido, idsPedido, idProdPed, classeMetodo, true, false);
-            }
-        }
-
-        #endregion
 
         static volatile object _atualizarReservaLiberacaoLock = new object();
 
         /// <summary>
         /// Credita/Baixa a quantidade do produto na loja informada.
         /// </summary>
-        private void AtualizaReservaLiberacao(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque,
-            int? idLiberarPedido, int? idPedidoEspelho, int? idProdPedProducao, int? idPedidoParam, string idsPedido, int? idProdPedParam,
-            string classeMetodo, bool atualizarLiberacao, bool creditar)
+        private void AtualizaReservaLiberacao(GDASession sessao, int idLoja, IEnumerable<int> idsProdQtde, bool atualizarLiberacao)
         {
             lock (_atualizarReservaLiberacaoLock)
             {
@@ -649,7 +601,7 @@ namespace Glass.Data.DAL
                 };
 
                 // Controla reserva/liberação apenas de produtos calculados por QTD e QTD Decimal
-                var idsProd = idsProdQtde.Keys
+                var idsProd = idsProdQtde
                     .Distinct()
                     .Where(f => lstTipoCalculo.Contains(GrupoProdDAO.Instance.TipoCalculo(sessao, f, false)))
                     .ToList();
@@ -881,15 +833,27 @@ namespace Glass.Data.DAL
             {
                 decimal qtdMov = possuiMovReal ? (decimal)(objUpdate.QtdEstoque - atual.QtdEstoque) : (decimal)objUpdate.QtdEstoque;
 
-                MovEstoqueDAO.Instance.CreditaEstoqueManual(sessao, (uint)objUpdate.IdProd, (uint)objUpdate.IdLoja,
-                    qtdMov, null, DateTime.Now, null);
+                MovEstoqueDAO.Instance.CreditaEstoqueManual(
+                    sessao,
+                    (uint)objUpdate.IdProd,
+                    (uint)objUpdate.IdLoja,
+                    qtdMov,
+                    null,
+                    DateTime.Now,
+                    null);
             }
             else if (Math.Round(objUpdate.QtdEstoque, 2) < Math.Round(atual.QtdEstoque, 2))
             {
                 decimal qtdMov = possuiMovReal ? (decimal)(atual.QtdEstoque - objUpdate.QtdEstoque) : (decimal)objUpdate.QtdEstoque;
 
-                MovEstoqueDAO.Instance.BaixaEstoqueManual(sessao, (uint)objUpdate.IdProd, (uint)objUpdate.IdLoja,
-                    qtdMov, null, DateTime.Now, null);
+                MovEstoqueDAO.Instance.BaixaEstoqueManual(
+                    sessao,
+                    (uint)objUpdate.IdProd,
+                    (uint)objUpdate.IdLoja,
+                    qtdMov,
+                    null,
+                    DateTime.Now,
+                    null);
             }
 
             // Se a quantidade alterada for maior que a quantidade atual, gera uma movimentação de estoque creditando o estoque,

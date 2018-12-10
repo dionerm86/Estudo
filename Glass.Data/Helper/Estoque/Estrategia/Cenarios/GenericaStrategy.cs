@@ -7,7 +7,7 @@ namespace Glass.Data.Helper.Estoque.Estrategia.Cenarios
     /// <summary>
     /// Estratégia de controle de estoque para confirmação de pedido.
     /// </summary>
-    internal class ConfirmacaoPedidoStrategy : BaseStrategy
+    internal class GenericaStrategy : BaseStrategy
     {
     }
 }

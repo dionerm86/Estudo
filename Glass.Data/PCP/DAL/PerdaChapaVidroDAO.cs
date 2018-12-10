@@ -306,19 +306,8 @@ namespace Glass.Data.DAL
 
             pcv = GetPerdaChapaVidro(sessao, idPerdaChapaVidro);
 
-            var idNf = ProdutosNfDAO.Instance.ObtemIdNf(sessao, pcv.IdProdNf.Value);
+            MovEstoqueDAO.Instance.BaixaEstoquePerdaChapa(sessao, pcv);
 
-            if (idNf == 0)
-                throw new Exception("Não foi possível recuperar a nota fiscal.");
-
-            var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf);
-
-            if (idLoja == 0)
-                throw new Exception("Não foi possível recuperar a loja da nota fiscal.");
-
-            MovEstoqueDAO.Instance.BaixaEstoquePerdaChapa(sessao, Convert.ToUInt32(pcv.IdProd), pcv.IdProdNf.Value, idLoja, idPerdaChapaVidro);
-
-            //Movimenta o estoque da materia-prima
             MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaPerdaChapaVidro(sessao, (int)pcv.IdProd, (int)pcv.IdProdNf.Value, (int)idPerdaChapaVidro);
 
             return pcv;

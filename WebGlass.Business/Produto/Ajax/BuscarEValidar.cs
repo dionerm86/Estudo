@@ -860,7 +860,7 @@ namespace WebGlass.Business.Produto.Ajax
                 if (prod == null)
                     throw new Exception("Produto não encontrado.");
 
-                if (ProdutoDAO.Instance.IsProdutoProducao(prod.IdProd))
+                if (ProdutoDAO.Instance.IsProdutoProducao(null, prod.IdProd))
                     throw new Exception("Produto de produção não pode ser associado a este produto.");
 
                 return "Ok;" + prod.IdProd + ";" + prod.Descricao;
