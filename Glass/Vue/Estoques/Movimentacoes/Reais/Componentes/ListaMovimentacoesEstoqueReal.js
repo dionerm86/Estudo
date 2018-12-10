@@ -129,7 +129,7 @@
      * Força a atualização da listagem, com base no filtro atual.
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     },
 
     /**
@@ -150,8 +150,9 @@
     /**
      * Função executada para criação dos objetos necessários para edição ou cadastro de movimentação.     
      */
-    iniciarCadastro_: function (movimentacao) {
-      item = this.$refs.lista.itens[0];
+    iniciarCadastro_: function () {
+      var item = this.$refs.lista.itens[0];
+
       this.movimentacao = {
         idProduto: item.produto.id,
         idLoja: this.filtro.idLoja,

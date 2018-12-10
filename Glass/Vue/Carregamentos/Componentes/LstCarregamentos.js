@@ -288,7 +288,7 @@
      * Atualiza a lista de carregamentos.
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     },
 
     /**

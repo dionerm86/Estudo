@@ -1,4 +1,4 @@
-const app = new Vue({
+﻿const app = new Vue({
   el: '#app',
   mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('id', 'asc')],
 
@@ -88,7 +88,7 @@ const app = new Vue({
      * Atualiza a lista
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     }
   },
 
