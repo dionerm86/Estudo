@@ -395,5 +395,20 @@ namespace Glass
         }
 
         #endregion
+
+        /// <summary>
+        /// Obtém somente caracteres númericos do texto informado.
+        /// </summary>
+        /// <param name="texto">Texto que será formatado.</param>
+        /// <returns>Texto formatado com somente caracteres numéricos.</returns>
+        public static string SomenteNumero(this string texto)
+        {
+            if (!string.IsNullOrEmpty(texto))
+            {
+                return new string(texto.Where(char.IsNumber).ToArray());
+            }
+
+            return texto;
+        }
     }
 }

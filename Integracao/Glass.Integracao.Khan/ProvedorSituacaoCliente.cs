@@ -47,7 +47,7 @@ namespace Glass.Integracao.Khan
         /// <inheritdoc />
         public bool VerificarBloqueio(GDA.GDASession sessao, Data.Model.Cliente cliente, out IEnumerable<string> motivos)
         {
-            var args = new List<string> { cliente.CpfCnpj };
+            var args = new List<string> { cliente.CpfCnpj.SomenteNumero() };
             IEnumerable<KhanParceirosServiceReference.Parceiros> parceiros;
 
             try
@@ -65,11 +65,11 @@ namespace Glass.Integracao.Khan
             {
                 if (parceiro.AVISAR)
                 {
-                    motivos = new string[] { parceiro.SITMEN };
+                    motivos = new string[] { $"Khan: {parceiro.SITMEN}" };
                 }
                 else
                 {
-                    motivos = new string[] { parceiro.Nomsit };
+                    motivos = new string[] { $"Khan: {parceiro.Nomsit}" };
                 }
 
                 return true;

@@ -198,7 +198,7 @@ namespace Glass.Integracao.Khan
                 nomcad = cliente.Nome,
                 tipos = "Cliente,",
                 tipodoc1 = cliente.TipoPessoa == "J" ? PessoaJuridica : PessoaFisica,
-                numdoc1 = cliente.CpfCnpj,
+                numdoc1 = cliente.CpfCnpj.SomenteNumero(),
                 tipodoc2 = cliente.TipoPessoa == "J" ? TipoDocumentoInscricaoEstadual : TipoDocumentoNenhum,
                 numdoc2 = cliente.TipoPessoa == "J" ? cliente.RgEscinst : null,
                 tippag = ObterTipoPagamentoPedido(notaFiscal.FormaPagto),
