@@ -1,4 +1,4 @@
-﻿// <copyright file="DeleteProjetosController.cs" company="Sync Softwares">
+﻿// <copyright file="DeleteGrupoMedidaProjetoController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -9,28 +9,28 @@ using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.Projetos.V1
+namespace Glass.API.Backend.Controllers.Projetos.V1.Medidas.Grupos
 {
     /// <summary>
-    /// Controller de projetos.
+    /// Controller de Grupos de medida de projeto.
     /// </summary>
-    public partial class ProjetosController : BaseController
+    public partial class GrupoMedidaProjetoController : BaseController
     {
         /// <summary>
-        /// Exclui um projeto.
+        /// Exclui um grupo de medida de projeto.
         /// </summary>
-        /// <param name="id">O identificador do projeto que será excluído.</param>
+        /// <param name="id">O identificador do grupo de medida de projeto que será excluído.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpDelete]
         [Route("{id:int}")]
-        [SwaggerResponse(202, "Projeto excluído.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(202, "Grupo de medida de projeto excluído.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(404, "Projeto não encontrado para o id informado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult ExcluirProjeto(int id)
+        [SwaggerResponse(404, "Grupo de medida de projeto não encontrado para o id informado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ExcluirGrupoMedidaProjeto(int id)
         {
             using (var sessao = new GDATransaction())
             {
-                var validacao = this.ValidarExistenciaIdProjeto(sessao, id);
+                var validacao = this.ValidarExistenciaIdGrupoMedidaProjeto(sessao, id);
 
                 if (validacao != null)
                 {
@@ -44,12 +44,12 @@ namespace Glass.API.Backend.Controllers.Projetos.V1
                     GrupoMedidaProjetoDAO.Instance.DeleteByPrimaryKey(sessao, id);
                     sessao.Commit();
 
-                    return this.Aceito(string.Format("Projeto {0} excluído com sucesso!", id));
+                    return this.Aceito(string.Format("Grupo de medida de projeto {0} excluído com sucesso!", id));
                 }
                 catch (Exception e)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao("Erro ao excluir o projeto.", e);
+                    return this.ErroValidacao("Erro ao excluir o grupo de medida de projeto.", e);
                 }
             }
         }

@@ -499,6 +499,7 @@
     <Content Include="Vue\Projetos\Ferragens\Componentes\LstFerragens.Filtro.js" />
     <Content Include="Vue\Projetos\Ferragens\Componentes\LstFerragens.js" />
     <Content Include="Vue\Projetos\Ferragens\Templates\LstFerragens.Filtro.html" />
+    <Content Include="Vue\Projetos\Medidas\Grupos\Componentes\LstGrupoMedidaProjetos.js" />
     <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.Filtro.js" />
     <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.js" />
     <Content Include="Vue\Projetos\ModelosProjeto\Templates\LstModelosProjeto.Filtro.html" />

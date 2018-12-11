@@ -115,6 +115,40 @@ Servicos.Projetos = (function(http) {
          */
         obterParaControle: function () {
           return http().get(API + 'medidas/grupos/filtro');
+        },
+
+        /**
+         * Recupera a lista de grupos de medidas de projeto.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+          return http().get(API + 'medidas/grupos', {
+            params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+          });
+        },
+
+        /**
+         * Exclui um grupo de medida de projeto.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        excluir: function (id) {
+          return http().delete(API + 'medidas/grupos/' + id);
+        },
+
+        /**
+         * Insere um grupo de medida de projeto.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        inserir: function (grupoMedidaProjeto) {
+          return http().post(API + 'medidas/grupos/', grupoMedidaProjeto);
+        },
+
+        /**
+         * Atualiza um grupo de medida de projeto indicado.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        atualizar: function (id, grupoMedidaProjeto) {
+          return http().patch(API + 'medidas/grupos/' + id, grupoMedidaProjeto);
         }
       },
 

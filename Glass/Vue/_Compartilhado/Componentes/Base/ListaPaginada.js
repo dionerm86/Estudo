@@ -141,7 +141,7 @@
      * Função que busca os itens da lista, com base no filtro, página, número de registros
      * e ordenação atual.
      */
-    atualizar: function() {
+    atualizar: function(forcarAtualizacao) {
       const pesquisa = {
         filtro: this.filtro,
         paginaAtual: this.paginaAtual,
@@ -149,7 +149,7 @@
         ordenacao: this.ordenacao
       };
 
-      if (this.equivalentes(pesquisa, this.ultimaPesquisa)) {
+      if (!forcarAtualizacao && this.equivalentes(pesquisa, this.ultimaPesquisa)) {
         return;
       }
 
