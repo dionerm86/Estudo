@@ -888,6 +888,31 @@ namespace Glass.Data.DAL
             return sql.Replace("$$$", criterio.Trim());
         }
 
+        /// <summary>
+        /// Método criado para verifica unicamente se após a leitura de um ItemCarregamento, caso este seja de pedido,
+        /// verificar se a leitura na produção no setor de Expedição foi feita corretamente.
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="etiqueta">Etiqueta que deverá ser conferida.</param>
+        public void VerificarLeituraExpedicao(GDATransaction sessao, string etiqueta)
+        {
+            bool leituraEncontrada;
+            var idProdPedProducao = this.ObtemIdProdPedProducao(sessao, etiqueta);
+
+            if (idProdPedProducao == null)
+            {
+                throw new Exception($"Etiqueta não encontrada: {etiqueta}.");
+            }
+
+            var ultimaLeitura = LeituraProducaoDAO.Instance.ObtemUltimaLeitura(sessao, (uint)idProdPedProducao);
+            leituraEncontrada = SetorDAO.Instance.ObtemIdSetorExpCarregamento(sessao) == ultimaLeitura.IdSetor;
+
+            if (!leituraEncontrada)
+            {
+                throw new Exception($"O Item do carregamento {etiqueta} não possui leitura na expedição."); 
+            }
+        }
+
         private void GetSetores(ref ProdutoPedidoProducao[] retorno)
         {
             GetSetores(null, ref retorno);
