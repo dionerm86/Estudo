@@ -167,7 +167,7 @@ namespace Glass.UI.Web.Relatorios
                 var parcelasLiberacao = ParcelaLiberacaoDAO.Instance.ObtemParcelasLiberacao(liberacao.IdLiberarPedido);
                 var produtosCortadosRpt = ProdutosCortadosRptDAO.Instance.CopiaLista(produtosCortados.ToArray());
                 var lstPedidoRpt = PedidoRptDAL.Instance.CopiaLista(lstPedidosLib.ToArray(), PedidoRpt.TipoConstrutor.RelatorioLiberacao, false, login);
-                var lstProdLib = ProdutosLiberarPedidoRptDAL.Instance.CopiaLista(produtosLib);
+                var lstProdLib = ProdutosLiberarPedidoRptDAL.Instance.CopiaLista(produtosLib, lstPedidosLib.ToArray());
                 var pecasCanceladas = ProdutoPedidoProducaoRptDAL.Instance.CopiaLista(ProdutoPedidoProducaoDAO.Instance.PesquisarProdutosProducaoRelatorioLiberacao((int)liberacao.IdLiberarPedido, true).ToArray());
                 var cheques = ChequesDAO.Instance.GetByLiberacaoPedido(null, liberacao.IdLiberarPedido);
                 var resumoCorte = ResumoCorteDAO.Instance.ObterResumoCorte(lstProdLib);
@@ -578,7 +578,7 @@ namespace Glass.UI.Web.Relatorios
                     posicaoProdutos++;
                 }
 
-                var lstProdLib = Glass.Data.RelDAL.ProdutosLiberarPedidoRptDAL.Instance.CopiaLista(produtosLib);
+                var lstProdLib = Glass.Data.RelDAL.ProdutosLiberarPedidoRptDAL.Instance.CopiaLista(produtosLib, lstPedidosLib.ToArray());
 
                 // Se for mão de obra, apaga a quantidade de ambientes de todos os produtos contidos no mesmo, exceto de um deles,
                 // para que ao somar a quantidade de ambientes (peças) no relatório a soma fique correta
