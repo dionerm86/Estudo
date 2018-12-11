@@ -4051,6 +4051,12 @@ namespace Glass.Data.DAL
                             multaItem = multa - somaMulta;
                         }
 
+                        DateTime dataValida;
+                        if (!DateTime.TryParse(parc[1], out dataValida))
+                        {
+                            throw new Exception($"A data informada é invalida. Data informada {parc[1]}");
+                        }
+
                         ContasReceber contaRec = new ContasReceber();
                         contaRec.IdLoja = conta.IdLoja;
                         contaRec.IdCliente = conta.IdCliente;
