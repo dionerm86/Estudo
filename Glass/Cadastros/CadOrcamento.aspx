@@ -563,7 +563,7 @@
             if (recalcularOrcamento(idOrcamento, perguntar, "loading", tipoEntregaNovo, idClienteNovo)) {
                 if (lnkGerarPedido == null) {
                     alert("Orçamento recalculado com sucesso!");
-                    redirectUrl(window.location.href);
+                    redirectUrl(window.location.href.replace("&atualizar=true",""));
                 }
             }
         }
