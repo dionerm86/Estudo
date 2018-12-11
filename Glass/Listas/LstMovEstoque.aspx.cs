@@ -4,6 +4,7 @@ using System.Web.UI.WebControls;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Data.Model;
+using GDA;
 
 namespace Glass.UI.Web.Listas
 {
@@ -60,14 +61,44 @@ namespace Glass.UI.Web.Listas
                 DropDownList tipo = grdMovEstoque.FooterRow.FindControl("drpTipo") as DropDownList;
                 TextBox valor = grdMovEstoque.FooterRow.FindControl("txtValor") as TextBox;
                 TextBox obs = grdMovEstoque.FooterRow.FindControl("txtObs") as TextBox;
-                
-                if (tipo.SelectedValue == "1")
-                    MovEstoqueDAO.Instance.CreditaEstoqueManualComTransacao(idProd, idLoja, Glass.Conversoes.StrParaDecimal(qtde.Text),
-                        Glass.Conversoes.StrParaDecimalNullable(valor.Text), data.Data, obs.Text);
-                else
-                    MovEstoqueDAO.Instance.BaixaEstoqueManualComTransacao(idProd, idLoja, Glass.Conversoes.StrParaDecimal(qtde.Text),
-                        Glass.Conversoes.StrParaDecimalNullable(valor.Text), data.Data, obs.Text);
-    
+
+                using (var transacao = new GDATransaction())
+                {
+                    try
+                    {
+                        transacao.BeginTransaction();
+
+                        if (tipo.SelectedValue == "1")
+                        {
+                            MovEstoqueDAO.Instance.CreditaEstoqueManual(
+                                transacao,
+                                idProd,
+                                idLoja,
+                                qtde.Text.StrParaDecimal(),
+                                valor.Text.StrParaDecimalNullable(),
+                                data.Data,
+                                obs.Text);
+                        }
+                        else
+                        {
+                            MovEstoqueDAO.Instance.BaixaEstoqueManual(
+                                transacao,
+                                idProd,
+                                idLoja,
+                                qtde.Text.StrParaDecimal(),
+                                valor.Text.StrParaDecimalNullable(),
+                                data.Data,
+                                obs.Text);
+                        }
+
+                        transacao.Commit();
+                    }
+                    catch
+                    {
+                        transacao.Rollback();
+                    }
+                }
+
                 data.DataString = null;
                 qtde.Text = null;
                 tipo.SelectedValue = null;

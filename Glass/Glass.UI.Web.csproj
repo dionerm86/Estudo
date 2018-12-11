@@ -9035,9 +9035,6 @@
     <Content Include="Relatorios\rptLimiteChequeCpfCnpj.rdlc">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Relatorios\rptListaClientes.rdlc">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Relatorios\rptLstPedidos.rdlc">
       <SubType>Designer</SubType>
     </Content>
