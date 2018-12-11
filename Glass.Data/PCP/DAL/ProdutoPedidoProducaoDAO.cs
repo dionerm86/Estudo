@@ -889,11 +889,11 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MÈtodo criado para verifica unicamente se apÛs a leitura de um ItemCarregamento, caso este seja de pedido,
-        /// verificar se a leitura na produÁ„o no setor de ExpediÁ„o foi feita corretamente.
+        /// M√©todo criado para verifica unicamente se ap√≥s a leitura de um ItemCarregamento, caso este seja de pedido,
+        /// verificar se a leitura na produ√ß√£o no setor de Expedi√ß√£o foi feita corretamente.
         /// </summary>
-        /// <param name="sessao">Sess„o do GDA.</param>
-        /// <param name="etiqueta">Etiqueta que dever· ser conferida.</param>
+        /// <param name="sessao">SessÔøΩo do GDA.</param>
+        /// <param name="etiqueta">Etiqueta que dever√° ser conferida.</param>
         public void VerificarLeituraExpedicao(GDATransaction sessao, string etiqueta)
         {
             bool leituraEncontrada;
@@ -901,7 +901,7 @@ namespace Glass.Data.DAL
 
             if (idProdPedProducao == null)
             {
-                throw new Exception($"Etiqueta n„o encontrada: {etiqueta}.");
+                throw new Exception($"Etiqueta n√£o encontrada: {etiqueta}.");
             }
 
             var ultimaLeitura = LeituraProducaoDAO.Instance.ObtemUltimaLeitura(sessao, (uint)idProdPedProducao);
@@ -909,7 +909,7 @@ namespace Glass.Data.DAL
 
             if (!leituraEncontrada)
             {
-                throw new Exception($"O Item do carregamento {etiqueta} n„o possui leitura na expediÁ„o."); 
+                throw new Exception($"O Item do carregamento {etiqueta} n√£o possui leitura na expedi√ß√£o.");
             }
         }
 
