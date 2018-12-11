@@ -4,16 +4,12 @@
 
 using GDA;
 using Glass.Data.DAL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
 {
     /// <summary>
-    /// Controller de Troca/Devolucao.
+    /// Controller de trocas/devoluções.
     /// </summary>
     [RoutePrefix("api/v1/estoques/trocasDevolucoes")]
     public partial class TrocasDevolucoesController : BaseController

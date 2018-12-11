@@ -665,6 +665,7 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\ListaDto.cs" />
     <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\PermissoesDto.cs" />

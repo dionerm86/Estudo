@@ -1,15 +1,15 @@
 ﻿<%@ Page Title="Troca/Devolução  " Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
-    CodeBehind="LstParcelas.aspx.cs" Inherits="Glass.UI.Web.Listas.LstTrocaDev" EnableViewState="False" EnableViewStateMac="false" %>
+    CodeBehind="LstTrocaDev.aspx.cs" Inherits="Glass.UI.Web.Listas.LstTrocaDev" EnableViewState="False" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
             "~/Vue/Estoques/TrocasDevolucoes/Templates/LstTrocaDevolucao.Filtro.html")
     %>
     <div id="app">
-        <trocas-devolucoes-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></trocas-devolucoes-filtros>
-        <section>
+        <trocas-devolucoes-filtros :filtro.sync="filtro" :configuracoes="configuracoes" :agrupar-por-funcionario.sync="agruparPorFuncionario"
+            :agrupar-por-funcionario-associado.sync="agruparPorFuncionarioAssociado"></trocas-devolucoes-filtros>
+        <section v-if="configuracoes.cadastrarTrocaDevolucao">
             <a :href="obterLinkInserirTrocaDevolucao()">
                 Inserir troca/devolução
             </a>
@@ -25,7 +25,7 @@
                         <a href="#" @click.prevent="ordenar('pedido')">Pedido</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('nomeFuncionario')">Func. Solic.</a>
+                        <a href="#" @click.prevent="ordenar('funcionario')">Func. Solic.</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('cliente')">Cliente</a>
@@ -61,7 +61,7 @@
                         <a href="#" @click.prevent="ordenar('observacao')">Obs</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('funcionarioCadastro')">Func. Cad.</a>
+                        <a href="#" @click.prevent="ordenar('usuarioCadastro')">Func. Cad.</a>
                     </th>
                     <th></th>
                 </template>
@@ -82,10 +82,14 @@
                     </td>
                     <td>{{ item.id }}</td>
                     <td>{{ item.idPedido }}</td>
-                    <td>{{ item.nomeFuncionario }}</td>
-                    <td>{{ item.cliente }}</td>
+                    <td>{{ item.funcionario }}</td>
+                    <td>
+                        <span v-if="item.cliente">
+                            {{ item.cliente.id }} - {{ item.cliente.nome }}
+                        </span>
+                    </td>
                     <td>{{ item.tipo }}</td>
-                    <td>{{ item.dataTroca | data }}</td>
+                    <td>{{ item.dataTrocaDevolucao | data }}</td>
                     <td>{{ item.dataErro | data }}</td>
                     <td>{{ item.loja }}</td>
                     <td>{{ item.creditoGerado | moeda }}</td>
@@ -94,7 +98,7 @@
                     <td>{{ item.origem }}</td>
                     <td>{{ item.setor }}</td>
                     <td>{{ item.observacao }}</td>
-                    <td>{{ item.funcionarioCadastro }}</td>
+                    <td>{{ item.usuarioCadastro }}</td>
                     <td>
                         <log-alteracao tabela="TrocaDev" :id-item="item.id" :atualizar-ao-alterar="false"
                             v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
@@ -115,8 +119,8 @@
                     </a>
                 </span>
                 <span>
-                    <a href="#" @click.prevent="abrirListaControlePerdasExternas(false)">
-                        <img alt="" border="0" src="../Images/Excel.gif" /> Controle de perdas externas
+                    <a href="#" @click.prevent="abrirListaControlePerdasExternas()">
+                        <img alt="" border="0" src="../Images/printer.png" /> Controle de perdas externas
                     </a>
                 </span>
             </div>
@@ -124,7 +128,7 @@
     </div>
      <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
-             <asp:ScriptReference Path="~/Vue/Estoques/TrocasDevolucoes/Componentes/LstTrocaDevolucao.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/Estoques/TrocasDevolucoes/Componentes/LstTrocaDevolucao.Filtro.js" />
             <asp:ScriptReference Path="~/Vue/Estoques/TrocasDevolucoes/Componentes/LstTrocaDevolucao.js" />
         </Scripts>
     </asp:ScriptManager>

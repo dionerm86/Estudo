@@ -1,12 +1,47 @@
-var Servicos = Servicos || {};
+﻿var Servicos = Servicos || {};
 
 /**
  * Objeto com os serviços para a API de estoques.
  */
 Servicos.Estoques = (function(http) {
   const API = '/api/v1/estoques/';
+  const API_Troca = API + 'trocasDevolucoes/';
+  const API_Troca_Origens = API_Troca + 'origens/';
 
   return {
+    TrocasDevolucoes: {
+      Origens: {
+        /**
+         * Recupera a lista de origens para uso no controle de filtros.
+         * @returns {Promise} Uma promise com o resultado da busca.
+         */
+        obterParaFiltro: function () {
+          return http().get(API_Troca_Origens + 'filtro');
+        }
+      },
+
+      /**
+       * Recupera a lista de trocas/devoluções.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterListaTrocaDevolucao: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API_Troca.substr(0, API_Troca.length - 1), {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Recuprea as configurações para a tela de listagem de trocas/devoluções.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterConfiguracoesLista: function () {
+        return http().get(API_Troca + 'configuracoes');
+      }
+    },
+
     /**
      * Recupera a lista de estoques de produto.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
@@ -26,23 +61,6 @@ Servicos.Estoques = (function(http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterConfiguracoesLista: function() {
-      return http().get(API + 'configuracoes');
-    },
-
-
-    /**
- * Recupera o objeto com as configurações utilizadas na tela de listagem de estoques de produto.
- * @returns {Promise} Uma promise com o resultado da busca.
- */
-    obterOrigemTrocaDevolucaoLista: function () {
-      return http().get(API + 'trocasdevolucoes/' + 'origem');
-    },
-
-    /**
- * Recupera o objeto com as configurações utilizadas na tela de listagem de estoques de produto.
- * @returns {Promise} Uma promise com o resultado da busca.
- */
-    obterConfiguracoesListaTrocaDevolucoes: function () {
       return http().get(API + 'configuracoes');
     },
 

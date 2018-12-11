@@ -1894,7 +1894,6 @@
     <Content Include="Vue\_Compartilhado\Servicos\Publicos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Fornecedores.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Volumes.js" />
-    <Content Include="Vue\_Compartilhado\Servicos\TrocasDevolucoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Veiculos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Transportadores.js" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoBisote.html" />

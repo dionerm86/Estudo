@@ -19,6 +19,26 @@
       required: true,
       twoWay: false,
       validator: Mixins.Validacao.validarObjeto
+    },
+
+    /**
+     * Indica se o relatório será agrupado pelo funcionário.
+     * @type {?boolean}
+     */
+    agruparPorFuncionario: {
+      required: true,
+      twoWay: true,
+      validator: Mixins.Validacao.validarBooleanOuVazio
+    },
+
+    /**
+     * Indica se o relatório será agrupado pelo funcionário associado ao cliente.
+     * @type {?boolean}
+     */
+    agruparPorFuncionarioAssociado: {
+      required: true,
+      twoWay: true,
+      validator: Mixins.Validacao.validarBooleanOuVazio
     }
   },
 
@@ -26,26 +46,30 @@
     return {
       filtroAtual: this.merge(
         {
-          codigo: null,
+          id: null,
           idPedido: null,
-          situacao: null,
-          tipo: null,
-          idTrocaDevolucao: null,
-          periodoCadastroInicio: null,
-          periodoCadastroFim: null,
-          idsFuncionario: [],
           idCliente: null,
           nomeCliente: null,
+          idsFuncionario: [],
           idsFuncionarioAssociadoCliente: [],
+          idProduto: null,
+          tipo: null,
+          situacao: null,
+          periodoTrocaInicio: null,
+          periodoTrocaFim: null,
           idGrupoProduto: null,
           idSubgrupoProduto: null,
           tipoPedido: null,
+          idOrigemTrocaDevolucao: null,
+          idSetor: null,
+          idTipoPerda: []
         },
         this.filtro
       ),
       grupoAtual: null,
-      subgrupoAtual: null
-
+      subgrupoAtual: null,
+      origemAtual: null,
+      setorAtual: null,
     };
   },
 
@@ -78,9 +102,9 @@
     },
 
     /**
- * Retorna os itens para o controle de grupos de produto.
- * @returns {Promise} Uma Promise com o resultado da busca.
- */
+     * Retorna os itens para o controle de grupos de produto.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
     obterItensFiltroGrupos: function () {
       return Servicos.Produtos.Grupos.obterParaControle();
     },
@@ -95,21 +119,24 @@
     },
 
     /**
- * Retorna os itens para o controle de tipos de pedido.
- * @returns {Promise} Uma Promise com o resultado da busca.
- */
+     * Retorna os itens para o controle de tipos de pedido.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
     obterItensFiltroTiposPedido: function () {
       return Servicos.Pedidos.obterTiposPedido();
     },
 
     /**
-* Retorna os itens para o controle de tipos de pedido.
-* @returns {Promise} Uma Promise com o resultado da busca.
-*/
+     * Retorna os itens para o controle de tipos de pedido.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
     obterItensFiltroOrigemTrocaDevolucao: function () {
-      return Servicos.Estoques.obterOrigemTrocaDevolucaoLista();
+      return Servicos.Estoques.TrocasDevolucoes.Origens.obterParaFiltro();
     },
 
+    obterSetores: function () {
+      return Servicos.Producao.Setores.obterParaControle();
+    }
   },
 
   computed: {
@@ -124,6 +151,38 @@
       return {
         idGrupoProduto: (this.filtroAtual || {}).idGrupoProduto || 0
       };
+    },
+
+    /**
+     * Propriedade computada que normaliza o valor da propriedade 'agruparPorFuncionario'
+     * e que atualiza a propriedade principal em caso de alteração do valor.
+     * @type {boolean}
+     */
+    agruparPorFuncionarioAtual: {
+      get: function () {
+        return this.agruparPorFuncionario || false;
+      },
+      set: function (valor) {
+        if (valor !== this.agruparPorFuncionario) {
+          this.$emit('update:agruparPorFuncionario', valor);
+        }
+      }
+    },
+
+    /**
+     * Propriedade computada que normaliza o valor da propriedade 'agruparPorFuncionarioAssociado'
+     * e que atualiza a propriedade principal em caso de alteração do valor.
+     * @type {boolean}
+     */
+    agruparPorFuncionarioAssociadoAtual: {
+      get: function () {
+        return this.agruparPorFuncionarioAssociado || false;
+      },
+      set: function (valor) {
+        if (valor !== this.agruparPorFuncionarioAssociado) {
+          this.$emit('update:agruparPorFuncionarioAssociado', valor);
+        }
+      }
     }
   },
 
@@ -151,6 +210,28 @@
     subgrupoAtual: {
       handler: function (atual) {
         this.filtroAtual.idSubgrupoProduto = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'origemAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    origemAtual: {
+      handler: function (atual) {
+        this.filtroAtual.idOrigemTrocaDevolucao = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'setorAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    setorAtual: {
+      handler: function (atual) {
+        this.filtroAtual.idSetor = atual ? atual.id : null;
       },
       deep: true
     }

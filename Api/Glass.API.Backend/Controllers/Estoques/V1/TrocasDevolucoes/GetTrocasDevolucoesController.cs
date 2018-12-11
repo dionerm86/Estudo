@@ -6,7 +6,6 @@ using GDA;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
-using Glass.Data.Helper;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +13,16 @@ using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
 {
+    /// <summary>
+    /// Controller de trocas/devoluções.
+    /// </summary>
     public partial class TrocasDevolucoesController : BaseController
     {
         /// <summary>
-        /// Recupera a lista de estoques.
+        /// Recupera a lista de dados para a listagem de trocas/devoluções.
         /// </summary>
-        /// <param name="filtro">Os filtros para a busca dos estoques.</param>
-        /// <returns>Uma lista JSON com os dados dos estoques.</returns>
+        /// <param name="filtro">Os filtros para a busca das trocas/devoluções.</param>
+        /// <returns>Uma lista JSON com os dados das trocas/devoluções.</returns>
         [HttpGet]
         [Route("")]
         [SwaggerResponse(200, "Trocas/devoluções encontradas sem paginação (apenas uma página de retorno) ou última página retornada", Type = typeof(IEnumerable<Models.Estoques.V1.TrocasDevolucoes.Lista.ListaDto>))]
@@ -35,18 +37,19 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
 
                 var idsFuncionario = filtro.IdsFuncionario != null ? string.Join(",", filtro.IdsFuncionario) : string.Empty;
                 var idsFuncionarioAssociadoCliente = filtro.IdsFuncionario != null ? string.Join(",", filtro.IdsFuncionarioAssociadoCliente) : string.Empty;
+                var tiposPedidos = filtro.TipoPedido != null ? string.Join(",", filtro.TipoPedido) : string.Empty;
 
                 var trocasDevolucoes = TrocaDevolucaoDAO.Instance.GetList(
                     (uint)filtro.Id.GetValueOrDefault(),
                     (uint)filtro.IdPedido.GetValueOrDefault(),
                     filtro.Tipo.GetValueOrDefault(),
                     filtro.Situacao != null ? (int)filtro.Situacao.Value : 0,
-                    (uint)filtro.Idcliente.GetValueOrDefault(),
+                    (uint)filtro.IdCliente.GetValueOrDefault(),
                     filtro.NomeCliente ?? string.Empty,
                     idsFuncionario,
                     idsFuncionarioAssociadoCliente,
-                    filtro.DataInicio != null ? filtro.DataInicio.ToString() : string.Empty,
-                    filtro.DataFim != null ? filtro.DataInicio.ToString() : string.Empty,
+                    filtro.PeriodoTrocaInicio != null ? filtro.PeriodoTrocaInicio.ToString() : string.Empty,
+                    filtro.PeriodoTrocaFim != null ? filtro.PeriodoTrocaInicio.ToString() : string.Empty,
                     (uint)filtro.IdProduto.GetValueOrDefault(),
                     filtro.AlturaMinima.GetValueOrDefault(),
                     filtro.AlturaMaxima.GetValueOrDefault(),
@@ -55,7 +58,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
                     (uint)filtro.IdOrigemTrocaDevolucao.GetValueOrDefault(),
                     (uint)filtro.IdTipoPerda.GetValueOrDefault(),
                     filtro.IdSetor.GetValueOrDefault(),
-                    filtro.TipoPedido ?? string.Empty,
+                    tiposPedidos,
                     filtro.IdGrupoProduto,
                     filtro.IdSubgrupoProduto.GetValueOrDefault(),
                     filtro.ObterTraducaoOrdenacao(),
@@ -63,19 +66,19 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    trocasDevolucoes.Select(o => new Models.Estoques.V1.TrocasDevolucoes.Lista.ListaDto(o)),
+                    trocasDevolucoes.Select(troca => new Models.Estoques.V1.TrocasDevolucoes.Lista.ListaDto(troca)),
                     filtro,
                     () => TrocaDevolucaoDAO.Instance.GetCount(
                         (uint)filtro.Id.GetValueOrDefault(),
                         (uint)filtro.IdPedido.GetValueOrDefault(),
                         filtro.Tipo.GetValueOrDefault(),
                         filtro.Situacao != null ? (int)filtro.Situacao.Value : 0,
-                        (uint)filtro.Idcliente.GetValueOrDefault(),
+                        (uint)filtro.IdCliente.GetValueOrDefault(),
                         filtro.NomeCliente ?? string.Empty,
                         idsFuncionario,
                         idsFuncionarioAssociadoCliente,
-                        filtro.DataInicio != null ? filtro.DataInicio.ToString() : string.Empty,
-                        filtro.DataFim != null ? filtro.DataInicio.ToString() : string.Empty,
+                        filtro.PeriodoTrocaInicio != null ? filtro.PeriodoTrocaInicio.ToString() : string.Empty,
+                        filtro.PeriodoTrocaFim != null ? filtro.PeriodoTrocaInicio.ToString() : string.Empty,
                         (uint)filtro.IdProduto.GetValueOrDefault(),
                         filtro.AlturaMinima.GetValueOrDefault(),
                         filtro.AlturaMaxima.GetValueOrDefault(),
@@ -84,18 +87,31 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
                         (uint)filtro.IdOrigemTrocaDevolucao.GetValueOrDefault(),
                         (uint)filtro.IdTipoPerda.GetValueOrDefault(),
                         filtro.IdSetor.GetValueOrDefault(),
-                        filtro.TipoPedido ?? string.Empty,
+                        tiposPedidos,
                         filtro.IdGrupoProduto,
                         filtro.IdSubgrupoProduto.GetValueOrDefault()));
             }
         }
 
         /// <summary>
-        /// Recupera as Origem usadas pela tela de listagem de Troca/Devolução .
+        /// Obtém as configurações para a tela de listagem de trocas/devoluções.
         /// </summary>
-        /// <returns>Um objeto JSON com as orgiens da tela.</returns>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
-        [Route("origem")]
+        [Route("configuracoes")]
+        [SwaggerResponse(200, "Configurações encontradas.", Type = typeof(Models.Estoques.V1.TrocasDevolucoes.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesListagem()
+        {
+            var configuracoes = new Models.Estoques.V1.TrocasDevolucoes.Configuracoes.ListaDto();
+            return this.Item(configuracoes);
+        }
+
+        /// <summary>
+        /// Recupera as origens usadas pela tela de listagem de trocas/devoluções.
+        /// </summary>
+        /// <returns>Um objeto JSON com as origens da tela.</returns>
+        [HttpGet]
+        [Route("origens/filtro")]
         [SwaggerResponse(200, "Origens encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Origens não encontrados.")]
         public IHttpActionResult ObterOrigemListaTrocaDevolucao()
@@ -104,10 +120,10 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
             {
                 var origens = OrigemTrocaDescontoDAO.Instance.GetList()
                     .Select(f => new IdNomeDto
-                {
-                    Id = f.IdOrigemTrocaDesconto,
-                    Nome = f.Descricao,
-                });
+                    {
+                        Id = f.IdOrigemTrocaDesconto,
+                        Nome = f.Descricao,
+                    });
 
                 return this.Item(origens);
             }

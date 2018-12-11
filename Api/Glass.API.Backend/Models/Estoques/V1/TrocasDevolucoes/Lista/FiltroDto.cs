@@ -2,7 +2,6 @@
 using Glass.API.Backend.Models.Genericas.V1;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 
 namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
 {
@@ -26,28 +25,16 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         public int? Id { get; set; }
 
         /// <summary>
-        /// Obtém ou define o nome do cliente.
-        /// </summary>
-        [JsonProperty("idCliente")]
-        public int? Idcliente { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o nome do cliente.
+        /// Obtém ou define o identificador do pedido.
         /// </summary>
         [JsonProperty("idPedido")]
         public int? IdPedido { get; set; }
 
         /// <summary>
-        /// Obtém ou define o nome do cliente.
+        /// Obtém ou define o identificador do cliente.
         /// </summary>
-        [JsonProperty("idsFuncionario")]
-        public int?[] IdsFuncionario { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o nome do cliente.
-        /// </summary>
-        [JsonProperty("idsFuncionarioAssociadoCliente")]
-        public int?[] IdsFuncionarioAssociadoCliente { get; set; }
+        [JsonProperty("idCliente")]
+        public int? IdCliente { get; set; }
 
         /// <summary>
         /// Obtém ou define o nome do cliente.
@@ -56,10 +43,16 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         public string NomeCliente { get; set; }
 
         /// <summary>
-        /// Obtém ou define o identificador da loja do cliente.
+        /// Obtém ou define o nome do cliente.
         /// </summary>
-        [JsonProperty("idLoja")]
-        public int? IdLoja { get; set; }
+        [JsonProperty("idsFuncionario")]
+        public int[] IdsFuncionario { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o nome do cliente.
+        /// </summary>
+        [JsonProperty("idsFuncionarioAssociadoCliente")]
+        public int[] IdsFuncionarioAssociadoCliente { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador da loja do cliente.
@@ -82,26 +75,14 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         /// <summary>
         /// Obtém ou define a data inicial de cadastro do cliente.
         /// </summary>
-        [JsonProperty("dataInicio")]
-        public DateTime? DataInicio { get; set; }
+        [JsonProperty("periodoTrocaInicio")]
+        public DateTime? PeriodoTrocaInicio { get; set; }
 
         /// <summary>
         /// Obtém ou define a data final de cadastro do cliente.
         /// </summary>
-        [JsonProperty("dataFim")]
-        public DateTime? DataFim { get; set; }
-
-        /// <summary>
-        /// Obtém ou define um valor que indica qual rota será alterada para os clientes filtrados.
-        /// </summary>
-        [JsonProperty("idRotaNova")]
-        public int? IdRotaNova { get; set; }
-
-        /// <summary>
-        /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
-        /// </summary>
-        [JsonProperty("idVendedorNovo")]
-        public int? IdVendedorNovo { get; set; }
+        [JsonProperty("periodoTrocaFim")]
+        public DateTime? PeriodoTrocaFim { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
@@ -149,7 +130,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
         /// </summary>
         [JsonProperty("tipoPedido")]
-        public string TipoPedido { get; set; }
+        public int[] TipoPedido { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.

@@ -1,10 +1,12 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('descricao', 'asc')],
+  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('id', 'desc')],
 
   data: {
     configuracoes: {},
     filtro: {},
+    agruparPorFuncionario: false,
+    agruparPorFuncionarioAssociado: false
   },
 
   methods: {
@@ -17,19 +19,20 @@
      * @return {Promise} Uma promise com o resultado da busca.
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-      return Servicos.TrocasDevolucoes.obterListaTrocaDevolucao(filtro, pagina, numeroRegistros, ordenacao);
+      return Servicos.Estoques.TrocasDevolucoes.obterListaTrocaDevolucao(filtro, pagina, numeroRegistros, ordenacao);
     },
 
     /**
-     * Obtém link para a tela de inserção da troca/devolucao.
+     * Obtém link para a tela de inserção da troca/devolução.
      */
     obterLinkInserirTrocaDevolucao: function () {
-      return '../Cadastros/CadTrocaDev.aspx';
+      const popup = GetQueryString('popup') ? '?popup=1' : '';
+      return '../Cadastros/CadTrocaDev.aspx' + popup;
     },
 
     /**
-     * Obtém link para a tela de edição da troca/devolucao.
-     * @param {Object} item A troca/devolucao que será editada.
+     * Obtém link para a tela de edição da troca/devolução.
+     * @param {Object} item A troca/devolução que será editada.
      */
     obterLinkEditarTrocaDevoluca: function (item) {
       return '../Cadastros/CadTrocaDev.aspx?idTrocaDev=' + item.id;
@@ -54,32 +57,18 @@
     },
 
     /**
-     * Força a atualização da lista de parcelas, com base no filtro atual.
+     * Força a atualização da lista de trocas/devoluções, com base no filtro atual.
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     },
 
     /**
-     * cancela uma troca/devolucao se possivel.
-     * @param {Object} item A troca/devolucao que será cancelada.
+     * Cancela uma troca/devolução se possivel.
+     * @param {Object} item A troca/devolução que será cancelada.
      */
     cancelar: function (item) {
-      if (!this.perguntar('Confirmação', 'Tem certeza que deseja cancelar está troca/devolução?')) {
-        return;
-      }
-
-      var vm = this;
-
-      Servicos.TrocasDevolucoes.excluir(item.id)
-        .then(function (resposta) {
-          vm.atualizarLista();
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
+      this.abrirJanela(150, 420, '../Utils/SetMotivoCancTroca.aspx?idTrocaDev=' + item.id);
     },
 
 
@@ -88,7 +77,7 @@
     * @param {Object} item A Nota que será usado para abertura da tela.
     */
     abrirAnexos: function (item) {
-      this.abrirJanela(600, 700, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=trocaDevolucao');
+      this.abrirJanela(600, 700, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=trocadevolucao');
     },
 
     /**
@@ -138,18 +127,20 @@
      * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
      */
     abrirListaTrocaDevolucao: function (exportarExcel) {
-      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=Parcelas&exportarExcel=' + exportarExcel);
+      const filtros = this.formatarFiltros_();
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=Parcelas&exportarExcel=' + exportarExcel + filtros);
     },
 
-    abrirListaControlePerdasExternas: function (exportarExcel) {
-      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=Parcelas&exportarExcel=' + exportarExcel);
+    abrirListaControlePerdasExternas: function () {
+      const filtros = this.formatarFiltros_();
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=ControlePerdasExternas' + filtros);
     },
   },
 
   mounted: function () {
     var vm = this;
 
-    Servicos.Estoques.obterConfiguracoesListaTrocaDevolucoes()
+    Servicos.Estoques.TrocasDevolucoes.obterConfiguracoesLista()
       .then(function (resposta) {
         vm.configuracoes = resposta.data;
       });
