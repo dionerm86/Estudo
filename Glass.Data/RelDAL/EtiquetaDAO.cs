@@ -247,30 +247,23 @@ namespace Glass.Data.RelDAL
                                     ", exclua a conferência do mesmo, gere novamente e imprima a(s) etiqueta(s).");
                         }
 
-                        var itemEtiqueta = campos[4].Split('_');
-
-                        for (int i = 0; i < itemEtiqueta.Count(); i++)
-                        {
-                            // Salva a quantidade de determinado item que já foi impresso
-                            lstQtdImpresso.Add(campos[2].StrParaInt());
-                            lstQtdJaImpressa.Add(campos[1].StrParaInt());
-                            lstIdProdPed.Add(idProdPedEsp);
-
-                            // Salva obs
-                            lstObs.Add(campos[3]);
-                        }
+                        // Salva a quantidade de determinado item que já foi impresso
+                        lstIdProdPed.Add(idProdPedEsp);
+                        lstQtdJaImpressa.Add(campos[1].StrParaInt());
+                        lstQtdImpresso.Add(campos[2].StrParaInt());
 
                         // Salva as etiquetas que estão repostas e sendo reimpressas
                         if (lstQtdImpresso[lstQtdImpresso.Count - 1] == 0)
-                        {
-                            etiquetasRepostas.AddRange(itemEtiqueta);
-                        }
+                            etiquetasRepostas.AddRange(campos[4].Split('_'));
 
                         // Verifica se a impressão deve ser feita
                         imprimir = imprimir || lstQtdImpresso[lstQtdImpresso.Count - 1] > 0;
 
+                        // Salva obs
+                        lstObs.Add(campos[3]);
+
                         // Salva as etiquetas retornadas
-                        lstEtiqueta.AddRange(itemEtiqueta);
+                        lstEtiqueta.Add(campos[4]);
                     }
                     else
                     {
