@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais.CadastroAtualizacao;
+using Glass.Data.Helper;
 using System;
 
 namespace Glass.API.Backend.Helper.Estoques.Movimentacoes.Reais
@@ -22,6 +23,7 @@ namespace Glass.API.Backend.Helper.Estoques.Movimentacoes.Reais
         public ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal(
             CadastroAtualizacaoDto cadastro)
         {
+            this.cadastro = cadastro;
             this.movimentacaoEstoque = new Lazy<Data.Model.MovEstoque>(() =>
             {
                 var destino = new Glass.Data.Model.MovEstoque();

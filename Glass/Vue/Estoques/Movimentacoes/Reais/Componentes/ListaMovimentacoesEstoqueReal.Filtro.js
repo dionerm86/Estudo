@@ -10,12 +10,6 @@
       twoWay: true,
       validator: Mixins.Validacao.validarObjeto
     },
-
-    configuracoes: {
-      required: false,
-      twoWay: true,
-      validator: Mixins.Validacao.validarObjeto
-    },
   },
 
   data: function () {
@@ -166,10 +160,11 @@
   },
   
   mounted: function () {
+    //Inicialização dos filtros padronizados e das propriedades do objeto filtro.
     var dataAtual = new Date();
     this.filtroAtual.periodoMovimentacaoInicio = this.adicionarDias(dataAtual, -15);
     this.filtroAtual.periodoMovimentacaoFim = dataAtual;
-    this.filtrar()
+    this.filtrar();
   },
 
   template: '#ListaMovimentacoesEstoqueReal-Filtro-template'

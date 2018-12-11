@@ -48,10 +48,32 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Reais
 
                     sessao.BeginTransaction();
 
-                    var idMovimentacaoEstoqueReal = MovEstoqueDAO.Instance.Insert(sessao, movimentacaoEstoqueReal);
+                    if (dadosParaCadastro.TipoMovimentacao == 1)
+                    {
+                        MovEstoqueDAO.Instance.CreditaEstoqueManual(
+                            sessao,
+                            movimentacaoEstoqueReal.IdProd,
+                            movimentacaoEstoqueReal.IdLoja,
+                            movimentacaoEstoqueReal.QtdeMov,
+                            movimentacaoEstoqueReal.ValorMov,
+                            movimentacaoEstoqueReal.DataMov,
+                            movimentacaoEstoqueReal.Obs);
+                    }
+                    else
+                    {
+                        MovEstoqueDAO.Instance.BaixaEstoqueManual(
+                            sessao,
+                            movimentacaoEstoqueReal.IdProd,
+                            movimentacaoEstoqueReal.IdLoja,
+                            movimentacaoEstoqueReal.QtdeMov,
+                            movimentacaoEstoqueReal.ValorMov,
+                            movimentacaoEstoqueReal.DataMov,
+                            movimentacaoEstoqueReal.Obs);
+                    }
+
                     sessao.Commit();
 
-                    return this.Criado($"Movimentação de estoque real {idMovimentacaoEstoqueReal} inserido com sucesso!", idMovimentacaoEstoqueReal);
+                    return this.Criado($"Movimentação de estoque real inserida com sucesso!", 0);
                 }
                 catch (Exception ex)
                 {

@@ -116,7 +116,7 @@
       Servicos.Estoques.Movimentacoes.Reais.excluir(Movimentacao.id)
         .then(function (resposta) {
           vm.exibirMensagem(resposta.data.mensagem);
-          vm.$emit('update:filtro', vm.filtro);
+          vm.atualizarLista(true);
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
@@ -177,7 +177,8 @@
 
       Servicos.Estoques.Movimentacoes.Reais.inserir(this.movimentacao)
         .then(function (resposta) {
-          vm.atualizarLista();
+          vm.exibirMensagem(resposta.data.mensagem)
+          vm.atualizarLista(true);
           vm.cancelar();
         })
         .catch(function (erro) {
