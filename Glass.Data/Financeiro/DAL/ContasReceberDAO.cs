@@ -9304,7 +9304,9 @@ namespace Glass.Data.DAL
         {
             var atualRecebida = ObtemValorCampo<bool>(transaction, "recebida", "idContaR=" + objUpdate.IdContaR);
 
-            if (!atualRecebida && objUpdate.Recebida && (objUpdate.UsuRec == null || objUpdate.ValorRec == 0))
+            if (!atualRecebida && objUpdate.Recebida
+                && (objUpdate.UsuRec == null
+                || (!objUpdate.IsParcelaCartao && !objUpdate.Renegociada && objUpdate.ValorRec == 0)))
             {
                 throw new InvalidOperationException("Não é possível efetuar um recebimento sem um usuário referenciado ou valor zerado.");
             }
