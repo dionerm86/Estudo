@@ -33,7 +33,7 @@ namespace Glass.API.Backend.Controllers.Projetos.V1.Medidas.Grupos
                 return this.NaoEncontrado("Grupo de medida de projeto não encontrado.");
             }
 
-            return null;
+            return validacao;
         }
     }
 }
