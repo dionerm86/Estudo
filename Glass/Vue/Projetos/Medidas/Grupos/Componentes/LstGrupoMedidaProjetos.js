@@ -158,6 +158,9 @@
   },
 
   watch: {
+    /**
+     * Observador para a propriedade nomeGrupoMedidaProjetoAtual.
+     */
     nomeGrupoMedidaProjetoAtual: {
       handler: function (atual) {
         this.grupoMedidaProjeto.nome = atual ? atual : null;

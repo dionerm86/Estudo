@@ -23,7 +23,7 @@ namespace Glass.API.Backend.Models.Projetos.V1.Medidas.Grupos.Lista
         internal ListaDto(Data.Model.GrupoMedidaProjeto grupoMedidaProjeto)
         {
             this.Id = (int)grupoMedidaProjeto.IdGrupoMedProj;
-            this.Descricao = grupoMedidaProjeto.Descricao;
+            this.Nome = grupoMedidaProjeto.Descricao;
 
             var podeEditarExcluir = !System.Enum.GetNames(typeof(GrupoMedidaProjeto.TipoMedida))
                 .Any(f => f == Conversoes.ConverteValor<GrupoMedidaProjeto.TipoMedida>(this.Id).ToString());
@@ -47,8 +47,8 @@ namespace Glass.API.Backend.Models.Projetos.V1.Medidas.Grupos.Lista
         /// Obtém ou define a descrição do grupo de medida de projeto.
         /// </summary>
         [DataMember]
-        [JsonProperty("descricao")]
-        public string Descricao { get; set; }
+        [JsonProperty("nome")]
+        public string Nome { get; set; }
 
         /// <summary>
         /// Obtém ou define as permissoes para a listagem de grupos de medida de projeto.

@@ -49,9 +49,9 @@ namespace Glass.API.Backend.Controllers.Projetos.V1.Medidas.Grupos
                     grupoMedidaProjetoAtual = new ConverterCadastroAtualizacaoParaGrupoMedidaProjeto(dados, grupoMedidaProjetoAtual)
                         .ConverterParaGrupoMedidaProjeto();
 
-                    GrupoMedidaProjetoDAO.Instance.Update(sessao, grupoMedidaProjetoAtual);
-
                     LogAlteracaoDAO.Instance.LogGrupoMedidaProjeto(grupoMedidaProjetoAtual);
+
+                    GrupoMedidaProjetoDAO.Instance.Update(sessao, grupoMedidaProjetoAtual);
 
                     sessao.Commit();
 

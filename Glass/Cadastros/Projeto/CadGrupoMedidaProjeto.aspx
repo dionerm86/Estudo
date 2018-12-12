@@ -22,10 +22,10 @@
                         </button>
                     </td>
                     <td style="width: 300px;">
-                        {{ item.descricao }}
+                        {{ item.nome }}
                     </td>
                     <td>
-                        <log-alteracao tabela="GrupoMedidaProjeto" :id-item="item.id" v-if="item.permissoes.logAlteracoes"></log-alteracao>
+                        <log-alteracao tabela="GrupoMedidaProjeto" :atualizar-ao-alterar="false" :id-item="item.id" v-if="item.permissoes.logAlteracoes"></log-alteracao>
                     </td>
                 </template>
                 <template slot="itemEditando">

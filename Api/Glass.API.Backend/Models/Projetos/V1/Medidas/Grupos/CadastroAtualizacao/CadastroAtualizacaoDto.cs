@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 namespace Glass.API.Backend.Models.Projetos.V1.Medidas.Grupos.CadastroAtualizacao
 {
     /// <summary>
-    /// Classe que encapsula os dados de cadastro ou atualização de uma medida de projeto.
+    /// Classe que encapsula os dados de cadastro ou atualização de um grupo de medida de projeto.
     /// </summary>
     [DataContract(Name = "CadastroAtualizacao")]
     public class CadastroAtualizacaoDto : BaseCadastroAtualizacaoDto<CadastroAtualizacaoDto>
