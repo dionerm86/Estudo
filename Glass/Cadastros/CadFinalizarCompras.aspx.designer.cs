@@ -121,6 +121,42 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.GridView grdCompra;
         
         /// <summary>
+        /// txtNf control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtNf;
+        
+        /// <summary>
+        /// ctrlDataFabrica control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataFabrica;
+        
+        /// <summary>
+        /// drpFormaPagto control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpFormaPagto;
+        
+        /// <summary>
+        /// chkBoletoChegou control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkBoletoChegou;
+        
+        /// <summary>
         /// drpNumParc control.
         /// </summary>
         /// <remarks>
@@ -173,5 +209,14 @@ namespace Glass.UI.Web.Cadastros {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsPlanoContas;
+        
+        /// <summary>
+        /// odsFormaPagto control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsFormaPagto;
     }
 }
