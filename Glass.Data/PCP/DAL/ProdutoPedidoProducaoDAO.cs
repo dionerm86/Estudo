@@ -4519,7 +4519,7 @@ namespace Glass.Data.DAL
                 {
                     ErroDAO.Instance.InserirFromException("AlterarSituaçãoProduçãoPedido. Etiqueta:" + codEtiqueta + " IdSetor:" + idSetor, ex);
 
-                    throw ex;
+                    throw;
                 }
 
                 // Faz a ligação entre a peça e a chapa
@@ -4528,9 +4528,10 @@ namespace Glass.Data.DAL
                     var tipoEtiquetaChapa = ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(codMateriaPrima);
                     var idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(sessao, codMateriaPrima, tipoEtiquetaChapa);
                     var qtdeLeiturasChapaPedidoRevenda = ChapaCortePecaDAO.Instance.QtdeLeituraChapaPedidoRevenda(sessao, idProdImpressaoChapa, (uint)idPedidoRevenda.Value);
+                    var chapaPossuiLeitura = ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, idProdImpressaoChapa);
 
                     ChapaCortePecaDAO.Instance.Inserir(sessao, codMateriaPrima, codEtiqueta, temPlanoCorte, false);
-                    ChapaCortePecaDAO.Instance.BaixarEstoqueChapa(sessao, tipoEtiquetaChapa, idProdImpressaoChapa, codEtiqueta);
+                    ChapaCortePecaDAO.Instance.BaixarEstoqueChapa(sessao, tipoEtiquetaChapa, idProdImpressaoChapa, codEtiqueta, chapaPossuiLeitura);
                     ChapaTrocadaDevolvidaDAO.Instance.MarcarChapaComoUtilizada(sessao, codMateriaPrima);
 
                     /* Chamado 54054.

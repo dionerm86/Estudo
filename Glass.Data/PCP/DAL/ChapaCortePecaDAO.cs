@@ -55,10 +55,8 @@ namespace Glass.Data.DAL
             Insert(sessao, nova);
         }
 
-        public void BaixarEstoqueChapa(GDASession sessao, ProdutoImpressaoDAO.TipoEtiqueta tipoEtiquetaChapa, uint idProdImpressaoChapa, string codEtiqueta)
+        public void BaixarEstoqueChapa(GDASession sessao, ProdutoImpressaoDAO.TipoEtiqueta tipoEtiquetaChapa, uint idProdImpressaoChapa, string codEtiqueta, bool chapaPossuiLeitura)
         {
-            bool chapaPossuiLeitura = ChapaPossuiLeitura(sessao, idProdImpressaoChapa);
-
             if (tipoEtiquetaChapa == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
             {
                 uint idRetalhoProducao = ProdutoImpressaoDAO.Instance.ObtemValorCampo<uint>(sessao, "idRetalhoProducao", "idProdImpressao=" + idProdImpressaoChapa);
@@ -73,7 +71,9 @@ namespace Glass.Data.DAL
 
                         RetalhoProducaoDAO.Instance.AlteraSituacao(sessao, idRetalhoProducao, SituacaoRetalhoProducao.EmUso);
                         if (!UsoRetalhoProducaoDAO.Instance.PossuiAssociacao(sessao, idRetalhoProducao, idProdPedProducao.GetValueOrDefault(0)))
+                        {
                             UsoRetalhoProducaoDAO.Instance.AssociarRetalho(sessao, idRetalhoProducao, idProdPedProducao.GetValueOrDefault(0), false);
+                        }
                     }
 
                     MovEstoqueDAO.Instance.BaixaEstoqueChapaRetalho(sessao, idRetalhoProducao, chapaPossuiLeitura);
