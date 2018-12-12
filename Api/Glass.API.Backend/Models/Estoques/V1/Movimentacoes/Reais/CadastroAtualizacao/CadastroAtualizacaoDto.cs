@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais.CadastroAtualizacao
 {
     /// <summary>
-    /// Classe que encapsula os dados de cadastro ou atualização de um processo de etiqueta.
+    /// Classe que encapsula os dados de cadastro ou atualização de uma movimentação do estoque real.
     /// </summary>
     [DataContract(Name = "CadastroAtualizacao")]
     public class CadastroAtualizacaoDto : BaseCadastroAtualizacaoDto<CadastroAtualizacaoDto>
@@ -77,7 +77,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais.CadastroAtual
         /// </summary>
         [DataMember]
         [JsonProperty("idProduto")]
-        public uint IdProduto
+        public int IdProduto
         {
             get { return this.ObterValor(c => c.IdProduto); }
             set { this.AdicionarValor(c => c.IdProduto, value); }
@@ -88,7 +88,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais.CadastroAtual
         /// </summary>
         [DataMember]
         [JsonProperty("idLoja")]
-        public uint IdLoja
+        public int IdLoja
         {
             get { return this.ObterValor(c => c.IdLoja); }
             set { this.AdicionarValor(c => c.IdLoja, value); }

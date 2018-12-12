@@ -37,7 +37,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Reais
                 return this.NaoEncontrado("Movimentação não encontrada.");
             }
 
-            return null;
+            return validacao;
         }
 
         private IHttpActionResult ValidarCadastroMovimentacaoEstoqueReal(GDASession sessao, CadastroAtualizacaoDto dados)
@@ -67,7 +67,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Reais
         {
             if (dados == null)
             {
-                return this.ErroValidacao($"É preciso informar os dados para {tipo} da movimentação de estoque real.");
+                return this.ErroValidacao($"É preciso informar os dados para {tipo} da movimentação de estoque.");
             }
 
             return null;

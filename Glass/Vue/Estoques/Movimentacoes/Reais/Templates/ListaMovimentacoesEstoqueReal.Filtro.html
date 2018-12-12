@@ -7,11 +7,8 @@
         </span>
         <span class="form-group">
             <label>Tipo</label>
-            <select v-model="filtroAtual.tipoMovimentacao">
-                <option Value="0">Todas</option>
-                <option Value="1">Entradas</option>
-                <option Value="2">Saídas</option>
-            </select>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoMovimentacaoAtual" texto-selecionar="Todas"
+                                    v-bind:funcao-recuperar-itens="obterItensFiltroTiposMovimentacao"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -56,23 +53,23 @@
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
-            <label>Cor</label>
-            <select v-model="tipoCor">
-                <option value="0" selected>Sem Cor</option>
-                <option value="1">Cor do vidro</option>
-                <option value="2">Cor da ferragem</option>
-                <option value="3">Cor do alumínio</option>
-            </select>
+            <label>Cor vidro</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="corVidroAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroCoresVidro"
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
-            <lista-selecao-id-valor v-bind:item-selecionado.sync="corVidroAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroCoresVidro"
-                                    v-bind:ordenar="false" v-show="tipoCor == 1"></lista-selecao-id-valor>
+            <label>Cor ferragem</label>
             <lista-selecao-id-valor v-bind:item-selecionado.sync="corFerragemAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroCoresFerragem"
-                                    v-bind:ordenar="false" v-show="tipoCor == 2"></lista-selecao-id-valor>
-            <lista-selecao-id-valor v-bind:item-selecionado.sync="corAluminioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroCoresAluminio"
-                                    v-bind:ordenar="false" v-show="tipoCor == 3"></lista-selecao-id-valor>
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>        
+        </span>
+        <span class="form-group">
+            <label>Cor alumínio</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="corAluminioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroCoresAluminio"
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span> 
     </div>
     <div>
         <span class="form-group">

@@ -1,4 +1,4 @@
-﻿Vue.component('estoque-filtros', {
+Vue.component('estoque-filtros', {
   mixins: [Mixins.Objetos],
   props: {
     /**

@@ -7,7 +7,13 @@ Servicos.Estoques = (function(http) {
   const API = '/api/v1/estoques/';
 
   return {
+    /**
+     * Objeto com os serviços para a API de movimentações.
+     */
     Movimentacoes: {
+      /**
+       * Objeto com os serviços para a API de movimentações reais.
+       */
       Reais: {
        /**
         * Recupera a lista de movimentações do estoques real.
@@ -29,19 +35,19 @@ Servicos.Estoques = (function(http) {
         * @returns {Promise} Uma promise com o resultado da exclusão.
         */
         excluir: function (idMovimentacao) {
-            if (!idMovimentacao) {
-                throw new Error('Movimentação é obrigatória.');
-            }
+          if (!idMovimentacao) {
+            throw new Error('Movimentação é obrigatória.');
+          }
 
-            return http().delete(API + 'movimentacoes/reais/' + idMovimentacao);
+          return http().delete(API + 'movimentacoes/reais/' + idMovimentacao);
         },
 
        /**
-        * Obtém o código da tabela para exibição do log de movimentações.
+        * Obtém as configurações para a tela de movimentações do estoque real.
         * @returns {Promise} Uma promise com o resultado da busca.
         */
-        obterCodigoTabela: function () {
-          return http().get(API + 'movimentacoes/reais/codigoTabela');
+        obterConfiguracoesLista: function () {
+          return http().get(API + 'movimentacoes/reais/configuracoes');
         },
 
        /**
@@ -52,7 +58,13 @@ Servicos.Estoques = (function(http) {
         inserir: function (movimentacao) {
           return http().post(API + 'movimentacoes/reais/', movimentacao)
         },
-      }
+      },
+
+      TiposMovimentacao: {
+        obterParaControle: function () {
+          return http().get(API + 'movimentacoes/tiposMovimentacao');
+        },
+      },
     },
 
     /**

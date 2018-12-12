@@ -1,4 +1,4 @@
-﻿// <copyright file="DataCadastroMovimentacao.cs" company="Sync Softwares">
+﻿// <copyright file="DadosEstoqueDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 

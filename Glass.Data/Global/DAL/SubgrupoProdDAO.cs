@@ -19,7 +19,7 @@ namespace Glass.Data.DAL
             string filtroProducao = paraPedidoProducao && ("," + idGrupoProd + ",").Contains("," + (uint)Glass.Data.Model.NomeGrupoProd.Vidro + ",") ? " and produtosEstoque=1" : "";
             string filtroPedidoInterno = paraPedidoInterno ? " and s.idSubgrupoProd in (select s.idSubgrupoProd from produto where compra=true)" : "";
 
-            return "Select " + campos + " From subgrupo_prod Where IdGrupoProd in (" + idGrupoProd + ")" + filtroProducao + filtroPedidoInterno + " ORDER BY Descricao";
+            return "Select " + campos + " From subgrupo_prod Where IdGrupoProd in (" + idGrupoProd +  ")" + filtroProducao + filtroPedidoInterno + " ORDER BY Descricao";
         }
 
         public string SqlTabelaCliente(int idGrupoProd, int idCli, bool selecionar)

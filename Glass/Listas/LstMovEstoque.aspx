@@ -1,12 +1,13 @@
 ﻿<%@ Page Title="Extrato de Estoque" Language="C#" MasterPageFile="~/Painel.master"
-    AutoEventWireup="true" CodeBehind="LstMovEstoque.aspx.cs" Inherits="Glass.UI.Web.Listas.LstMovEstoque" %>
+    AutoEventWireup="true" CodeBehind="LstMovEstoque.aspx.cs" Inherits="Glass.UI.Web.Listas.LstMovEstoque"
+    EnableViewState="false" EnableViewStateMac="false" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
             "~/Vue/Estoques/Movimentacoes/Reais/Templates/ListaMovimentacoesEstoqueReal.Filtro.html")
     %>
     <div id="app">
-        <movimentacoesestoquereal-filtros :filtro.sync="filtro"></movimentacoesestoquereal-filtros>
+        <movimentacoesestoquereal-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></movimentacoesestoquereal-filtros>
         <section>
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum estoque de produto encontrado." :exibir-inclusao="listaNaoVazia" @atualizou-itens="atualizouItens">
                 <template slot="cabecalho">
@@ -76,9 +77,7 @@
                         {{ item.observacao }}
                     </td>
                     <td>
-                        <a href="#" v-on:click.prevent="abrirLogPopup(item.id, 'MovEstoque', '')" v-if="item.permissoes.logAlteracoes" title="Log de Alterações">
-                            <img src="../Images/log_edit.jpg" />
-                        </a>
+                        <log-alteracao tabela="MovEstoque" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
                     </td>
                 </template>
                 <template slot="itemIncluir">
@@ -98,18 +97,15 @@
                         <campo-data-hora :data-hora.sync="movimentacao.dataMovimentacao" :exibir-horas="true" v-if="inserindo"></campo-data-hora>
                     </td>
                     <td>
-                        <input type="number" v-model="movimentacao.quantidade" min="0" step="0.01" style="width: 40px" v-if="inserindo" />
+                        <input type="number" v-model="movimentacao.quantidade" min="0" style="width: 40px" v-if="inserindo" />
                     </td>
                     <td colspan="2"></td>
                     <td>
-                        <select v-model.number="movimentacao.tipoMovimentacao" v-if="inserindo">
-                            <option value=""></option>
-                            <option value="1">E</option>
-                            <option value="2">S</option>
-                        </select>
+                        <lista-selecao-id-valor :item-selecionado.sync="tipoMovimentacaoAtual" texto-selecionar="Todas" 
+                                                :funcao-recuperar-itens="obterItensFiltroTiposMovimentacao" v-if="inserindo"></lista-selecao-id-valor>
                     </td>
                     <td>
-                        <input type="number" v-model="movimentacao.valor" min="0" step="0.01" style="width: 50px" v-if="inserindo" />
+                        <input type="number" v-model="movimentacao.valor" min="0" style="width: 50px" v-if="inserindo" />
                     </td>
                     <td></td>                    
                     <td>

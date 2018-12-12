@@ -4,12 +4,13 @@
 
   data: {
     filtro: {},
+    configuracoes: {},
     inserindo: false,
     movimentacao: {},
     corlinha: null,
-    codigoTabela: null,
     exibirInclusao: false,
-    listaNaoVazia: false
+    listaNaoVazia: false,
+    tipoMovimentacaoAtual: {}
   },
 
   methods: {
@@ -22,22 +23,27 @@
      * @returns {Promise} Uma promise com o resultado da busca de estoques de produto.
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+      if (!this.configuracoes || !Object.keys(this.configuracoes).length) {
+        return Promise.reject();
+      }
+
       var filtroUsar = this.clonar(filtro || {});
       return Servicos.Estoques.Movimentacoes.Reais.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
 
-   /**
-    * Exibe um popup com a tela de log de alterações da movimentação.
-    */
-    abrirLogPopup: function (id, tabela, campo) {
-      this.abrirJanela(500, 700, '../Utils/ShowLogAlteracao.aspx?tabela=' + tabela + '&id=' + id + '&campo=' + campo);
+    /**
+     * Retorna os itens para o controle de tipos de movimentação.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterItensFiltroTiposMovimentacao: function () {
+      return Servicos.Estoques.Movimentacoes.TiposMovimentacao.obterParaControle();
     },
 
     /**
      * Exibe a tela log de cancelamento do extrato de estoque.
      */
     abrirLogCancelamento: function () {
-      this.abrirJanela(600, 800, '../Utils/ShowLogCancelamento.aspx?tabela=' + codigoTabela);        
+      this.abrirJanela(600, 800, '../Utils/ShowLogCancelamento.aspx?tabela=' + this.configuracoes.codigoTabela);
     },
 
     /**
@@ -61,7 +67,7 @@
         return this.exibirMensagem("É necessário informar um produto antes de gerar o relatório de movimentação.")
       }
 
-      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=MovEstoque' + this.formatarFiltros_() + '&exportarExcel=' + exportarExcel);      
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=MovEstoque' + this.formatarFiltros_() + '&exportarExcel=' + exportarExcel);
     },
 
     /**
@@ -106,17 +112,17 @@
     /**
      * Exclui uma movimentação do estoque real (lançamento manual)
      */
-    excluiMovimentacaoEstoqueReal: function(Movimentacao) {
+    excluiMovimentacaoEstoqueReal: function (Movimentacao) {
       if (!this.perguntar("Deseja excluir esta movimentação?")) {
-            return;
-        }
+        return;
+      }
 
       var vm = this;
 
       Servicos.Estoques.Movimentacoes.Reais.excluir(Movimentacao.id)
         .then(function (resposta) {
           vm.exibirMensagem(resposta.data.mensagem);
-          vm.atualizarLista(true);
+          vm.atualizarLista();
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
@@ -173,12 +179,12 @@
         return;
       }
 
-      var vm = this;      
+      var vm = this;
 
       Servicos.Estoques.Movimentacoes.Reais.inserir(this.movimentacao)
         .then(function (resposta) {
           vm.exibirMensagem(resposta.data.mensagem)
-          vm.atualizarLista(true);
+          vm.atualizarLista();
           vm.cancelar();
         })
         .catch(function (erro) {
@@ -202,15 +208,31 @@
       return form.checkValidity();
     },
 
+    /**
+     * Verifica se a lista se encontra vazia (para exibição da inclusão de movimentação somente caso a lista não se encontre vazia).
+     * @param {number} numeroItens O número de itens existentes na lista.
+     */
     atualizouItens: function (numeroItens) {
       this.listaNaoVazia = numeroItens > 0;
     },
   },
 
+  watch: {
+    tipoMovimentacaoAtual: {
+      handler: function (atual) {
+        this.movimentacao.tipoMovimentacao = atual ? atual.id : null;
+      },
+      deep: true
+    }
+  },
+
   mounted: function () {
-    Servicos.Estoques.Movimentacoes.Reais.obterCodigoTabela()
-    .then(function (resposta) {
-      this.codigoTabela = resposta.request.response;
-    });
+    var vm = this;
+
+    //Recuperação das configurações ao carregar o Vue.
+    Servicos.Estoques.Movimentacoes.Reais.obterConfiguracoesLista()
+      .then(function (resposta) {
+        vm.configuracoes = resposta.data;
+      });
   }
 });

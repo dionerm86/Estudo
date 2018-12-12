@@ -52,19 +52,19 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Reais
                     {
                         MovEstoqueDAO.Instance.CreditaEstoqueManual(
                             sessao,
-                            movimentacaoEstoqueReal.IdProd,
-                            movimentacaoEstoqueReal.IdLoja,
+                            (uint)movimentacaoEstoqueReal.IdProd,
+                            (uint)movimentacaoEstoqueReal.IdLoja,
                             movimentacaoEstoqueReal.QtdeMov,
                             movimentacaoEstoqueReal.ValorMov,
                             movimentacaoEstoqueReal.DataMov,
                             movimentacaoEstoqueReal.Obs);
                     }
-                    else
+                    else if (dadosParaCadastro.TipoMovimentacao == 2)
                     {
                         MovEstoqueDAO.Instance.BaixaEstoqueManual(
                             sessao,
-                            movimentacaoEstoqueReal.IdProd,
-                            movimentacaoEstoqueReal.IdLoja,
+                            (uint)movimentacaoEstoqueReal.IdProd,
+                            (uint)movimentacaoEstoqueReal.IdLoja,
                             movimentacaoEstoqueReal.QtdeMov,
                             movimentacaoEstoqueReal.ValorMov,
                             movimentacaoEstoqueReal.DataMov,
@@ -73,12 +73,12 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Reais
 
                     sessao.Commit();
 
-                    return this.Criado($"Movimentação de estoque real inserida com sucesso!", 0);
+                    return this.Criado($"Movimentação de estoque inserida com sucesso!", 0);
                 }
                 catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao($"Erro ao cadastrar movimentação de estoque real.", ex);
+                    return this.ErroValidacao($"Erro ao cadastrar movimentação de estoque.", ex);
                 }
             }
         }

@@ -61,18 +61,18 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Reais
         }
 
         /// <summary>
-        /// Recupera o código da tabela MovEstoque.
+        /// Recupera as configurações usadas pela tela de listagem de movimentações do estoque real.
         /// </summary>
-        /// <returns>Número inteiro com o código da tabela de cancelamento MovEstoque.</returns>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
-        [Route("codigoTabela")]
-        [SwaggerResponse(200, "Código da tabela de cancelamento encontrado", Type = typeof(int))]
-        [SwaggerResponse(204, "Código da tabela de cancelamento não encontrado")]
-        public IHttpActionResult ObterCodigoTabelaCancelamento()
+        [Route("configuracoes")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Estoques.V1.Movimentacoes.Reais.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoes()
         {
             using (var sessao = new GDATransaction())
             {
-                return this.Item((int)LogCancelamento.TabelaCancelamento.MovEstoque);
+                var configuracoes = new Models.Estoques.V1.Movimentacoes.Reais.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
             }
         }
     }

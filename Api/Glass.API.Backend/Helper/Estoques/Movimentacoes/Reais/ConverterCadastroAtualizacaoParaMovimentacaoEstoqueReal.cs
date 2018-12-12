@@ -49,8 +49,8 @@ namespace Glass.API.Backend.Helper.Estoques.Movimentacoes.Reais
             destino.TipoMov = this.cadastro.ObterValorNormalizado(c => c.TipoMovimentacao, destino.TipoMov);
             destino.ValorMov = this.cadastro.ObterValorNormalizado(c => c.Valor, destino.ValorMov);
             destino.Obs = this.cadastro.ObterValorNormalizado(c => c.Observacao, destino.Obs);
-            destino.IdProd = this.cadastro.ObterValorNormalizado(c => c.IdProduto, destino.IdProd);
-            destino.IdLoja = this.cadastro.ObterValorNormalizado(c => c.IdLoja, destino.IdLoja);
+            destino.IdProd = this.cadastro.ObterValorNormalizado(c => (uint)c.IdProduto, destino.IdProd);
+            destino.IdLoja = this.cadastro.ObterValorNormalizado(c => (uint)c.IdLoja, destino.IdLoja);
         }
     }
 }

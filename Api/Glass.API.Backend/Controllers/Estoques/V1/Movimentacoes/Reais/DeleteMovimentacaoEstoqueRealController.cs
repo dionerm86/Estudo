@@ -17,7 +17,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Reais
     public partial class MovimentacaoEstoqueRealController : BaseController
     {
         /// <summary>
-        /// Exclui um carregamento.
+        /// Exclui uma movimentação do estoque.
         /// </summary>
         /// <param name="id">O identificador da movimentação do estoque real que será excluída.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>

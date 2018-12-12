@@ -245,6 +245,7 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Estoques\V1\Movimentacoes\TiposMovimentacao\GetTiposMovimentacaoController.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\PostMovimentacaoEstoqueRealController.cs" />
@@ -675,6 +676,8 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\TiposMovimentacao\TiposMovimentacao.cs" />
     <Compile Include="Models\Funcionarios\V1\CadastroAtualizacao\DocumentosEDadosPessoaisDto.cs" />
     <Compile Include="Models\Funcionarios\V1\Detalhe\DocumentosEDadosPessoaisDto.cs" />
     <Compile Include="Models\Funcionarios\V1\Lista\ContatosDto.cs" />

@@ -1814,6 +1814,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoFuncionarios.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoMultiplaUf.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoTiposMovimentacao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoTiposPessoa.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSituacoes.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSetores.js" />
@@ -1922,6 +1923,7 @@
     <Content Include="Vue\_Compartilhado\Templates\Base\ListaSelecao.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\ListaSelecaoIdValor.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\ListaSelecaoMultipla.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoTiposMovimentacao.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoAcrescimoDesconto.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoAltura.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoAreaM2.html" />
@@ -6133,6 +6135,7 @@
     </Compile>
     <Compile Include="Listas\LstMovEstoque.aspx.cs">
       <DependentUpon>LstMovEstoque.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Listas\LstMovEstoque.aspx.designer.cs">
       <DependentUpon>LstMovEstoque.aspx</DependentUpon>

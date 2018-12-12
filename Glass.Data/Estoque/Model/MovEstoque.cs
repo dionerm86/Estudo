@@ -1,8 +1,7 @@
-﻿using System;
-using System.Drawing;
-using GDA;
+﻿using GDA;
 using Glass.Data.DAL;
 using Glass.Log;
+using System;
 
 namespace Glass.Data.Model
 {

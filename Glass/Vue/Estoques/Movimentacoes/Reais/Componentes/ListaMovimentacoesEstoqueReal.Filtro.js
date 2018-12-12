@@ -10,6 +10,12 @@
       twoWay: true,
       validator: Mixins.Validacao.validarObjeto
     },
+
+    configuracoes: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarObjeto
+    }
   },
 
   data: function () {
@@ -41,6 +47,7 @@
       corVidroAtual: null,
       corFerragemAtual: null,
       corAluminioAtual: null,
+      tipoMovimentacaoAtual: null
     };
   },
 
@@ -109,11 +116,18 @@
      */
     obterItensFiltroCoresAluminio: function () {
       return Servicos.Produtos.CoresAluminio.obterParaControle();
-    }
+    },
+
+    /**
+     * Retorna os itens para o controle de tipos de movimentação.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterItensFiltroTiposMovimentacao: function () {
+      return Servicos.Estoques.Movimentacoes.TiposMovimentacao.obterParaControle();
+    },
   },
 
   watch: {
-
     /**
      * Observador para a variável 'lojaAtual'.
      * Atualiza o filtro com o ID do item selecionado.
@@ -157,14 +171,34 @@
       },
       deep: true
     },
+
+    tipoMovimentacaoAtual: {
+      handler: function (atual) {
+        this.filtroAtual.tipoMovimentacao = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    configuracoes: {
+      handler: function (atual) {
+        //Inicialização dos filtros padronizados e das propriedades do objeto filtro.
+        var dataAtual = new Date();
+        this.filtroAtual.periodoMovimentacaoInicio = this.adicionarDias(dataAtual, -15);
+        this.filtroAtual.periodoMovimentacaoFim = dataAtual;
+        this.filtrar();
+
+        var vm = this;
+
+        this.$nextTick(function () {
+          vm.filtrar();
+        });
+      },
+      deep: true
+    }
   },
   
   mounted: function () {
-    //Inicialização dos filtros padronizados e das propriedades do objeto filtro.
-    var dataAtual = new Date();
-    this.filtroAtual.periodoMovimentacaoInicio = this.adicionarDias(dataAtual, -15);
-    this.filtroAtual.periodoMovimentacaoFim = dataAtual;
-    this.filtrar();
+
   },
 
   template: '#ListaMovimentacoesEstoqueReal-Filtro-template'
