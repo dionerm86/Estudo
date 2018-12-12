@@ -15,7 +15,7 @@ namespace Glass.UI.Web.Cadastros
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Cadastros.CadCompraPcp));
             Page.ClientScript.RegisterOnSubmitStatement(GetType(), "this_submit", "setDadosProdutos();\n");
         }
-    
+
         protected void btnBuscar_Click(object sender, EventArgs e)
         {
             try
@@ -32,18 +32,18 @@ namespace Glass.UI.Web.Cadastros
                 Glass.MensagemAlerta.ShowMsg(Glass.MensagemAlerta.FormatErrorMsg("Erro ao buscar pedido", ex), Page);
             }
         }
-    
+
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
             Response.Redirect("~/Listas/LstCompraPcp.aspx");
         }
-    
+
         protected void hdfIdPedidoEspelho_Load(object sender, EventArgs e)
         {
             var pedidos = hdfIdsPedidos.Value.Substring(0, hdfIdsPedidos.Value.LastIndexOf(','));
             ((HiddenField)sender).Value = pedidos.Contains(",") ? null : pedidos;
         }
-    
+
         protected void odsCompra_Inserting(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
         {
             if (hdfDadosProdutos.Value.Length == 0)
@@ -55,7 +55,7 @@ namespace Glass.UI.Web.Cadastros
             var pedidos = hdfIdsPedidos.Value.Substring(0, hdfIdsPedidos.Value.LastIndexOf(','));
 
             var compra = (Glass.Data.Model.Compra)e.InputParameters[0];
-            compra.IdLoja = FinanceiroConfig.FinanceiroPagto.CompraLojaPadrao > 0 ? 
+            compra.IdLoja = FinanceiroConfig.FinanceiroPagto.CompraLojaPadrao > 0 ?
                 FinanceiroConfig.FinanceiroPagto.CompraLojaPadrao.Value : UserInfo.GetUserInfo.IdLoja;
             compra.IdFormaPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto;
             compra.TipoCompra = (int)Glass.Data.Model.Compra.TipoCompraEnum.APrazo;
@@ -65,7 +65,7 @@ namespace Glass.UI.Web.Cadastros
             compra.IdPedidoEspelho = pedidos.Contains(",") ? null : Conversoes.StrParaUintNullable(pedidos);
             compra.TipoCompra = (int)Compra.TipoCompraEnum.AVista;
         }
-    
+
         protected void odsCompra_Inserted(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception == null)
@@ -73,7 +73,7 @@ namespace Glass.UI.Web.Cadastros
                 try
                 {
                     WebGlass.Business.Compra.Fluxo.Compra.Instance.CompraPcpInserted(Glass.Conversoes.StrParaUint(e.ReturnValue.ToString()), hdfDadosProdutos.Value.Trim(' ', '|').Split('|'));
-    
+
                     Response.Redirect("~/Cadastros/CadCompra.aspx?idCompra=" + e.ReturnValue + "&pcp=1");
                 }
                 catch (Exception ex)
@@ -87,23 +87,23 @@ namespace Glass.UI.Web.Cadastros
                 e.ExceptionHandled = true;
             }
         }
-    
+
         [Ajax.AjaxMethod]
         public string GetPlanoConta(string idFornecedor)
         {
             uint id = !String.IsNullOrEmpty(idFornecedor) ? Glass.Conversoes.StrParaUint(idFornecedor) : 0;
             if (id == 0)
                 return "";
-    
+
             uint? idConta = FornecedorDAO.Instance.ObtemIdConta(null, id);
             return idConta != null ? idConta.ToString() : String.Empty;
         }
-    
+
         protected void grdBenef_PreRender(object sender, EventArgs e)
         {
             ((GridView)sender).DataBind();
         }
-    
+
         protected void chkBenef_PreRender(object sender, EventArgs e)
         {
             CheckBox chkBenef = (CheckBox)sender;
@@ -111,32 +111,32 @@ namespace Glass.UI.Web.Cadastros
             HiddenField hdfIdProdPed = chkBenef.Parent.Parent.Parent.Parent.Parent.FindControl("hdfIdProdPed") as HiddenField;
             HiddenField hdfQtde = chkBenef.Parent.Parent.Parent.Parent.Parent.FindControl("hdfQtde") as HiddenField;
             HiddenField hdfQtdeBenef = chkBenef.Parent.FindControl("hdfQtdeBenef") as HiddenField;
-    
+
             uint? idBenef = hdfIdBenef != null ? Glass.Conversoes.StrParaUintNullable(hdfIdBenef.Value) : null;
             uint? idProdPed = hdfIdProdPed != null ? Glass.Conversoes.StrParaUintNullable(hdfIdProdPed.Value) : null;
             int qtde = Glass.Conversoes.StrParaInt(hdfQtde.Value);
-    
+
             int qtdeFazer = WebGlass.Business.Compra.Fluxo.Compra.Instance.QuantidadeBenefCompraPcp(idBenef, idProdPed, qtde);
-    
+
             if (hdfQtdeBenef != null)
                 hdfQtdeBenef.Value = qtdeFazer.ToString();
-    
+
             chkBenef.Visible = qtdeFazer > 0;
         }
-    
+
         protected void chkNaoCobrarVidro_DataBinding(object sender, EventArgs e)
         {
             CheckBox chkNaoCobrarVidro = (CheckBox)sender;
             GridViewRow linha = chkNaoCobrarVidro.Parent.Parent as GridViewRow;
-    
+
             if (linha == null)
                 return;
-    
+
             ProdutosPedidoEspelho produto = linha.DataItem as ProdutosPedidoEspelho;
-    
+
             if (produto == null)
                 return;
-    
+
             int qtdeJaFeita = ProdutosCompraBenefDAO.Instance.GetCountByProdPedBenef(produto.IdProdPed, 0);
             if (produto.Beneficiamentos.Count == 0 || qtdeJaFeita == produto.Beneficiamentos.NumeroBeneficiamentos)
             {
@@ -149,7 +149,7 @@ namespace Glass.UI.Web.Cadastros
                 chkNaoCobrarVidro.Checked = true;
             }
         }
-    
+
         [Ajax.AjaxMethod]
         public string GetAmbientes(string idsPedidosStr)
         {
@@ -182,6 +182,11 @@ namespace Glass.UI.Web.Cadastros
         protected void grdAmbientes_Load(object sender, EventArgs e)
         {
             ((GridView)sender).Visible = PedidoConfig.DadosPedido.AmbientePedido;
+        }
+
+        protected void grdProdutosPedido_Load(object sender, EventArgs e)
+        {
+            ((GridView)sender).Visible = !PedidoConfig.DadosPedido.AmbientePedido;
         }
     }
 }
