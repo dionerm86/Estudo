@@ -74,7 +74,9 @@ namespace Glass.UI.Web.Cadastros
                 {
                     WebGlass.Business.Compra.Fluxo.Compra.Instance.CompraPcpInserted(Glass.Conversoes.StrParaUint(e.ReturnValue.ToString()), hdfDadosProdutos.Value.Trim(' ', '|').Split('|'));
 
-                    Response.Redirect("~/Cadastros/CadCompra.aspx?idCompra=" + e.ReturnValue + "&pcp=1");
+                    Page.ClientScript.RegisterStartupScript(GetType(), "pergunta", @"
+                    if (!confirm('Compra gerada com sucesso! Número da compra: " + e.ReturnValue + @"\nDeseja continuar nesta tela?'))
+                        window.location.href = '" + this.ResolveClientUrl("~/Listas/LstCompraPcp.aspx") + "';\n", true);
                 }
                 catch (Exception ex)
                 {
