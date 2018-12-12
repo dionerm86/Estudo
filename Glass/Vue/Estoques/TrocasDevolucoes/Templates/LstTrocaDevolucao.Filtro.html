@@ -42,7 +42,7 @@
         </span>
         <span class="form-group">
             <label>Tipo Perda</label>
-            <span>...</span>
+            <controle-tipo-perda v-bind:tipo-perda.sync="tipoPerdaAtual" v-bind:exibir-subtipos="false"></controle-tipo-perda>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>

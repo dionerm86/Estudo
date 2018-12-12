@@ -62,7 +62,7 @@
           tipoPedido: null,
           idOrigemTrocaDevolucao: 0,
           idSetor: 0,
-          idTipoPerda: []
+          idTipoPerda: null
         },
         this.filtro
       ),
@@ -277,6 +277,17 @@
     situacaoAtual: {
       handler: function (atual) {
         this.filtroAtual.situacao = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'tipoPerdaAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    tipoPerdaAtual: {
+      handler: function (atual) {
+        this.filtroAtual.idTipoPerda = atual ? atual.id : null;
       },
       deep: true
     }

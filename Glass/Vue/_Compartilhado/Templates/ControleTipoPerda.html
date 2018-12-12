@@ -1,7 +1,7 @@
 ﻿<span>
     <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoPerdaAtual"
         v-bind:funcao-recuperar-itens="obterTiposPerda" v-bind="$attrs"></lista-selecao-id-valor>
-    <template v-if="exibirSubtipos">
+    <span v-if="exibirSubtipos" v-show="possuiSubtipos">
         <label>
             Subtipo:
         </label>
@@ -9,5 +9,5 @@
             v-bind:funcao-recuperar-itens="obterSubtiposPerda"
             v-bind:filtro-recuperar-itens="filtroSubtipoPerda"
             v-bind="$attrs"></lista-selecao-id-valor>
-    </template>
+    </span>
 </span>

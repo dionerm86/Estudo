@@ -24,14 +24,35 @@
     }
   },
 
+  data: function () {
+    return {
+      possuiSubtipos: false
+    };
+  },
+
   methods: {
     obterTiposPerda: function () {
       return Servicos.Producao.TiposPerda.obterParaFiltro();
     },
 
     obterSubtiposPerda: function (filtro) {
+      var vm = this;
       const idTipoPerda = filtro.idTipoPerda;
-      return Servicos.Producao.TiposPerda.SubtiposPerda.obterParaFiltro(idTipoPerda);
+
+      if (!idTipoPerda) {
+        this.possuiSubtipos = false;
+        return Promise.reject();
+      }
+
+      return Servicos.Producao.TiposPerda.SubtiposPerda.obterParaFiltro(idTipoPerda)
+        .then(function (resposta) {
+          vm.possuiSubtipos = !!(resposta && resposta.data && repsosta.data.length);
+          return resposta;
+        })
+        .catch(function (erro) {
+          vm.possuiSubtipos = false;
+          return erro;
+        });
     }
   },
 
