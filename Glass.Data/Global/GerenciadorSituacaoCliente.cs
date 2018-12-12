@@ -29,11 +29,11 @@ namespace Glass.Data
             {
                 if (gerenciador == null)
                 {
-                    var provedores1 = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    var provedoresSituacaoCliente = Microsoft.Practices.ServiceLocation.ServiceLocator
                         .Current.GetAllInstances<IProvedorSituacaoCliente>()
                         .ToList();
 
-                    gerenciador = new GerenciadorSituacaoCliente(provedores1);
+                    gerenciador = new GerenciadorSituacaoCliente(provedoresSituacaoCliente);
                 }
 
                 return gerenciador;
@@ -58,10 +58,10 @@ namespace Glass.Data
                 {
                     try
                     {
-                        IEnumerable<string> motivos1;
-                        if (provedor.VerificarBloqueio(sessao, cliente, out motivos1))
+                        IEnumerable<string> motivosBloqueio;
+                        if (provedor.VerificarBloqueio(sessao, cliente, out motivosBloqueio))
                         {
-                            motivosResultado.AddRange(motivos1);
+                            motivosResultado.AddRange(motivosBloqueio);
                             bloqueado = true;
                         }
                     }

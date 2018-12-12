@@ -403,7 +403,7 @@ namespace Glass
         /// <returns>Texto formatado com somente caracteres numéricos.</returns>
         public static string SomenteNumero(this string texto)
         {
-            if (!string.IsNullOrEmpty(texto))
+            if (!string.IsNullOrWhiteSpace(texto))
             {
                 return new string(texto.Where(char.IsNumber).ToArray());
             }
