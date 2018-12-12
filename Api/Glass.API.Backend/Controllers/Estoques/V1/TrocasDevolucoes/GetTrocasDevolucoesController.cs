@@ -3,6 +3,7 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
@@ -112,8 +113,8 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
         /// <returns>Um objeto JSON com as origens da tela.</returns>
         [HttpGet]
         [Route("origens/filtro")]
-        [SwaggerResponse(200, "Origens encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Origens não encontrados.")]
+        [SwaggerResponse(200, "Origens encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Origens não encontradas.")]
         public IHttpActionResult ObterOrigemListaTrocaDevolucao()
         {
             using (var sessao = new GDATransaction())
@@ -126,6 +127,44 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
                     });
 
                 return this.Item(origens);
+            }
+        }
+
+        /// <summary>
+        /// Recupera os tipos de trocas/devoluções.
+        /// </summary>
+        /// <returns>Um objeto JSON com as origens da tela.</returns>
+        [HttpGet]
+        [Route("tipos")]
+        [SwaggerResponse(200, "Tipos encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos não encontrados.")]
+        public IHttpActionResult ObterTiposTrocaDevolucao()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = new ConversorEnum<Data.Model.TrocaDevolucao.TipoTrocaDev>()
+                    .ObterTraducao();
+
+                return this.Item(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera as situações de trocas/devoluções.
+        /// </summary>
+        /// <returns>Um objeto JSON com as origens da tela.</returns>
+        [HttpGet]
+        [Route("situacoes")]
+        [SwaggerResponse(200, "Situações encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Situações não encontradas.")]
+        public IHttpActionResult ObterSituacoesTrocaDevolucao()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var situacoes = new ConversorEnum<Data.Model.TrocaDevolucao.SituacaoTrocaDev>()
+                    .ObterTraducao();
+
+                return this.Item(situacoes);
             }
         }
     }

@@ -9,7 +9,13 @@ Servicos.Estoques = (function(http) {
   const API_Troca_Origens = API_Troca + 'origens/';
 
   return {
+    /**
+     * Objeto com os serviços para a API de trocas/devoluções.
+     */
     TrocasDevolucoes: {
+      /**
+       * Objeto com os serviços para a API de origens de troca/devolução.
+       */
       Origens: {
         /**
          * Recupera a lista de origens para uso no controle de filtros.
@@ -34,11 +40,27 @@ Servicos.Estoques = (function(http) {
       },
 
       /**
-       * Recuprea as configurações para a tela de listagem de trocas/devoluções.
+       * Recupera as configurações para a tela de listagem de trocas/devoluções.
        * @returns {Promise} Uma promise com o resultado da busca.
        */
       obterConfiguracoesLista: function () {
         return http().get(API_Troca + 'configuracoes');
+      },
+
+      /**
+       * Recupera os tipos de trocas/devoluções.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterTipos: function () {
+        return http().get(API_Troca + 'tipos');
+      },
+
+      /**
+       * Recupera as situações de trocas/devoluções.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterSituacoes: function () {
+        return http().get(API_Troca + 'situacoes');
       }
     },
 

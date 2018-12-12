@@ -251,6 +251,8 @@
     <Compile Include="Controllers\Parcelas\V1\PostParcelasController.cs" />
     <Compile Include="Controllers\ImpressoesEtiquetas\V1\ImpressoesEtiquetasController.cs" />
     <Compile Include="Controllers\ImpressoesEtiquetas\V1\GetImpressoesEtiquetasController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\SubtiposPerda\GetSubtiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\SubtiposPerda\SubtiposPerdaController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\DeleteFerragensController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\DeleteFabricantesFerragemController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\FabricantesFerragemController.cs" />

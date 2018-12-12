@@ -12,21 +12,14 @@
         </span>
         <span class="form-group">
             <label>Tipo</label>
-            <select v-model="filtroAtual.tipo">
-                <option Value="0">Todas</option>
-                <option Value="1">Troca</option>
-                <option Value="2">Devolução</option>
-            </select>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoAtual" v-bind:funcao-recuperar-itens="obterTipos"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Situação</label>
-            <select v-model="filtroAtual.situacao">
-                <option Value="0">Todas</option>
-                <option Value="1">Aberta</option>
-                <option Value="2">Finalizada</option>
-                <option Value="3">Cancelada</option>
-            </select>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="situacaoAtual" v-bind:funcao-recuperar-itens="obterSituacoes"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -61,19 +54,19 @@
         </span>
         <span class="form-group">
             <label>Funcionário</label>
-            <lista-selecao-multipla texto-selecionar="Todos" v-bind:ids-selecionados.sync="filtroAtual.idsFuncionario" v-bind:funcao-recuperar-itens="obterItensFiltroVendedores"
+            <lista-selecao-multipla texto-selecionar="Selecione o funcionário" v-bind:ids-selecionados.sync="filtroAtual.idsFuncionario" v-bind:funcao-recuperar-itens="obterItensFiltroVendedores"
                 v-bind:ordenar="false"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Vendedor associado</label>
-            <lista-selecao-multipla texto-selecionar="Todos" v-bind:ids-selecionados.sync="filtroAtual.idsFuncionarioAssociadoCliente" v-bind:funcao-recuperar-itens="obterItensFiltroVendedoresAssociadosAClientes"
+            <lista-selecao-multipla texto-selecionar="Selecione o vendedor" v-bind:ids-selecionados.sync="filtroAtual.idsFuncionarioAssociadoCliente" v-bind:funcao-recuperar-itens="obterItensFiltroVendedoresAssociadosAClientes"
                 v-bind:ordenar="false"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Origem Troca/Devolução</label>
-            <lista-selecao-id-valor v-bind:item-selecionado="origemAtual" v-bind:funcao-recuperar-itens="obterItensFiltroOrigemTrocaDevolucao"
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="origemAtual" v-bind:funcao-recuperar-itens="obterItensFiltroOrigemTrocaDevolucao"
                 v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
@@ -103,13 +96,13 @@
         </span>
         <span class="form-group">
             <label>Grupo</label>
-            <lista-selecao-id-valor v-bind:item-selecionado.sync="grupoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroGrupos"
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="grupoAtual" v-bind:funcao-recuperar-itens="obterItensFiltroGrupos"
                 v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Subgrupo</label>
-            <lista-selecao-id-valor v-bind:item-selecionado.sync="subgrupoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroSubgrupos"
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="subgrupoAtual" v-bind:funcao-recuperar-itens="obterItensFiltroSubgrupos"
                 v-bind:ordenar="false" v-bind:filtro-recuperar-itens="filtroSubgrupos"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>

@@ -1807,6 +1807,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ControleExibicaoImagem.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleParcelas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleSelecaoParticipanteFiscal.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ControleTipoPerda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoFuncionarios.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoMultiplaUf.js" />
@@ -1940,6 +1941,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ControleImagemProjeto.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleParcelas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleSelecaoParticipanteFiscal.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ControleTipoPerda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoFuncionarios.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoMultiplaUf.html" />

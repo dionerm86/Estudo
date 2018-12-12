@@ -32,9 +32,34 @@ namespace Glass.API.Backend.Helper.Estoques
                 case "id":
                     return "idTrocaDevolucao";
 
+                case "pedido":
+                    return "idPedido";
+
+                case "funcionario":
+                    return "nomeFunc";
+
+                case "cliente":
+                    return "idCliente";
+
+                case "data":
+                    return "dataTroca";
+
+                case "origem":
+                    return "descrOrigemTrocaDevolucao";
+
+                case "observacao":
+                    return "obs";
+
+                case "usuariocadastro":
+                    return "nomeUsuCad";
+
+                case "tipo":
+                case "dataerro":
+                case "loja":
+                case "creditogerado":
+                case "valorexcedente":
                 case "situacao":
-                case "email":
-                case "totalcomprado":
+                case "setor":
                     return campo;
 
                 default:

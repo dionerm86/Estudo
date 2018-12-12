@@ -53,15 +53,15 @@
           idsFuncionario: [],
           idsFuncionarioAssociadoCliente: [],
           idProduto: null,
-          tipo: null,
-          situacao: null,
+          tipo: 0,
+          situacao: 0,
           periodoTrocaInicio: null,
           periodoTrocaFim: null,
-          idGrupoProduto: null,
-          idSubgrupoProduto: null,
+          idGrupoProduto: 0,
+          idSubgrupoProduto: 0,
           tipoPedido: null,
-          idOrigemTrocaDevolucao: null,
-          idSetor: null,
+          idOrigemTrocaDevolucao: 0,
+          idSetor: 0,
           idTipoPerda: []
         },
         this.filtro
@@ -70,6 +70,9 @@
       subgrupoAtual: null,
       origemAtual: null,
       setorAtual: null,
+      tipoAtual: null,
+      situacaoAtual: null,
+      tipoPerdaAtual: null
     };
   },
 
@@ -134,8 +137,28 @@
       return Servicos.Estoques.TrocasDevolucoes.Origens.obterParaFiltro();
     },
 
+    /**
+     * Recupera a lista de setores para o controle de filtro.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
     obterSetores: function () {
       return Servicos.Producao.Setores.obterParaControle();
+    },
+
+    /**
+     * Recupera os tipos de trocas/devoluções.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterTipos: function () {
+      return Servicos.Estoques.TrocasDevolucoes.obterTipos();
+    },
+
+    /**
+     * Recupera as situações de trocas/devoluções.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterSituacoes: function () {
+      return Servicos.Estoques.TrocasDevolucoes.obterSituacoes();
     }
   },
 
@@ -232,6 +255,28 @@
     setorAtual: {
       handler: function (atual) {
         this.filtroAtual.idSetor = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'tipoAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    tipoAtual: {
+      handler: function (atual) {
+        this.filtroAtual.tipo = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'situacaoAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    situacaoAtual: {
+      handler: function (atual) {
+        this.filtroAtual.situacao = atual ? atual.id : null;
       },
       deep: true
     }
