@@ -541,13 +541,14 @@ namespace Glass.Data.DAL
                         {
                             var veiculo = PedidoDAO.Instance.ObtemVeiculoCarregamento(idsPedidos);
 
-                            if (!string.IsNullOrEmpty(veiculo.Key))
+                            if (!string.IsNullOrEmpty(veiculo[0]))
                             {
                                 nf.Especie = FiscalConfig.NotaFiscalConfig.EspeciePadraoSeMesmoVeiculoOC;
                                 nf.ModalidadeFrete = ModalidadeFrete.ContaDoRemetente;
-                                nf.VeicPlaca = veiculo.Key;
-                                nf.VeicUf = veiculo.Value;
+                                nf.VeicPlaca = veiculo[0];
+                                nf.VeicUf = veiculo[1];
                                 nf.QtdVol = Convert.ToInt32(PedidoDAO.Instance.GetPedidosForOC(idsPedidos, 0, false).Sum(f => f.QtdePecasVidro + f.QtdeVolume));
+                                nf.VeicRntc = veiculo[2];
                             }
                         }
 
