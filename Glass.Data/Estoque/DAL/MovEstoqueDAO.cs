@@ -1578,7 +1578,9 @@ namespace Glass.Data.DAL
                 }
 
                 var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
-                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.QtdMarcadaSaida, item.Qtde, item.TotM, item.Altura);
+                var quantidadeItem = ProdutosPedidoDAO.Instance.ObtemQtde(sessao, item.IdProdPed);
+                var metroQuadradoItem = ProdutosPedidoDAO.Instance.ObtemTotM(sessao, item.IdProdPed);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.QtdMarcadaSaida, quantidadeItem, metroQuadradoItem, item.Altura);
 
                 ProdutosPedidoDAO.Instance.EstornoSaida(sessao, item.IdProdPed, item.QtdMarcadaSaida, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
