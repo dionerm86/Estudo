@@ -568,7 +568,6 @@
     <Content Include="Vue\PlanosConta\Componentes\LstPlanosConta.js" />
     <Content Include="Vue\ContasBancarias\Componentes\LstContasBancarias.js" />
     <Content Include="Vue\Funcionarios\Componentes\CadFuncionario.js" />
-    <Content Include="Vue\TrocasDevolucoes.js" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />
