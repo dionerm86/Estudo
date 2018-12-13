@@ -5044,6 +5044,33 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        /// <summary>
+        /// Altera a data emissão do XML da nota fiscal com a nova data passada.
+        /// </summary>
+        /// <param name="notaFiscal">Objeto Nota fiscal.</param>
+        /// <param name="dataEmissaoXml">Data emissao da NF de retorno da sefaz.</param>
+        public void AlterarDataEmissaoXml(NotaFiscal notaFiscal, string dataEmissaoXml)
+        {
+            try
+            {
+                var path = $"{Utils.GetNfeXmlPath}{notaFiscal.ChaveAcesso}-nfe.xml";
+
+                XmlDocument doc = new XmlDocument();
+                doc.Load(path);
+
+                XmlNode node;
+                node = doc.DocumentElement;
+
+                node["NFe"]["infNFe"]["ide"]["dhEmi"].InnerText = dataEmissaoXml;
+
+                doc.Save(path);
+            }
+            catch (Exception ex)
+            {
+                ErroDAO.Instance.InserirFromException($"Retorno Consulta Emissao NF. Nota fiscal ID {notaFiscal.IdNf}.", ex);
+            }
+        }
+
         #region Inclusão de protocolo de recebimento da NF-e
 
         /// <summary>
@@ -5378,24 +5405,28 @@ namespace Glass.Data.DAL
             }
 
             // Separa os valores
-            SeparaValoresAReceber(nf);
+            this.SeparaValoresAReceber(nf);
 
-            //Referencia a NF-e nas contas recebidas de pedidos que foram pagos antecipadamente ou que receberam sinal
-            ReferenciaPedidosAntecipados(null, nf);
+            // Referencia a NF-e nas contas recebidas de pedidos que foram pagos antecipadamente ou que receberam sinal
+            this.ReferenciaPedidosAntecipados(null, nf);
 
             // Altera situação da NFe para autorizada
-            AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
+            this.AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
 
             // Altera a data emissão da NFe para a data de autorização do retorno do xml.
             if (xmlProt?["protNFe"]?["infProt"]?["dhRecbto"] != null)
             {
-                var dataAutorizacaoNotaFiscal = DateTime.Parse(xmlProt?["protNFe"]?["infProt"]?["dhRecbto"]?.InnerXml);
+                var dataRetorno = xmlProt?["protNFe"]?["infProt"]?["dhRecbto"]?.InnerXml;
 
-                objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET dataEmissao=?dataEmissaoNf WHERE IdNf={ nf.IdNf }", new GDAParameter[] { new GDAParameter("?dataEmissaoNf", dataAutorizacaoNotaFiscal) });
+                var dataAutorizacaoNotaFiscal = DateTime.Parse(dataRetorno);
+
+                this.objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET dataEmissao = ?dataEmissaoNf WHERE IdNf = {nf.IdNf}", new GDAParameter[] { new GDAParameter("?dataEmissaoNf", dataAutorizacaoNotaFiscal) });
+
+                this.AlterarDataEmissaoXml(nf, dataRetorno);
             }
 
             // Envia email para o cliente com o XML
-            EnviarEmailXml(nf);
+            this.EnviarEmailXml(nf);
         }
 
         #endregion
@@ -7735,7 +7766,7 @@ namespace Glass.Data.DAL
             {
                 idNf = NotaFiscalDAO.Instance.Insert(nf);
             }
-            
+
             // Insere os produtos da nota
             if (idNf > 0)
             {
