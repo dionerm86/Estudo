@@ -1427,7 +1427,7 @@ function formaPagtoChange(control) {
         <asp:HiddenField ID="hdfIdProduto" runat="server" />
         <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCompra" runat="server" DataObjectTypeName="Glass.Data.Model.Compra"
             InsertMethod="Insert" SelectMethod="GetCompra" TypeName="Glass.Data.DAL.CompraDAO"
-            UpdateMethod="Update" OnInserted="odsCompra_Inserted" OnUpdated="odsCompra_Updated">
+            UpdateMethod="UpdateComTransacao" OnInserted="odsCompra_Inserted" OnUpdated="odsCompra_Updated">
             <SelectParameters>
                 <asp:QueryStringParameter Name="idCompra" QueryStringField="idCompra" Type="UInt32" />
             </SelectParameters>

@@ -35,7 +35,7 @@ namespace Glass.UI.Web.Cadastros
                 }
             }
     
-            ContasPagarDAO.Instance.BoletoChegou(!boletoChegou, 0, Glass.Conversoes.StrParaUint(idContaPg), dataVenc);
+            ContasPagarDAO.Instance.BoletoChegou(null, !boletoChegou, 0, Glass.Conversoes.StrParaUint(idContaPg), dataVenc);
     
             // Desmarca linha da grid como selecionada
             ((GridView)sender).SelectedIndex = -1;

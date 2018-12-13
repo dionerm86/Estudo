@@ -147,6 +147,16 @@
   <xs:complexType name="CondicaoPagtos">
     <xs:sequence>
       <xs:element minOccurs="0" name="CODCPGTO" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DIAS01" type="xs:int" />
+      <xs:element minOccurs="0" name="DIAS02" type="xs:int" />
+      <xs:element minOccurs="0" name="DIAS03" type="xs:int" />
+      <xs:element minOccurs="0" name="DIAS04" type="xs:int" />
+      <xs:element minOccurs="0" name="DIAS05" type="xs:int" />
+      <xs:element minOccurs="0" name="DIAS06" type="xs:int" />
+      <xs:element minOccurs="0" name="DIAS07" type="xs:int" />
+      <xs:element minOccurs="0" name="DIAS08" type="xs:int" />
+      <xs:element minOccurs="0" name="DIAS09" type="xs:int" />
+      <xs:element minOccurs="0" name="DIAS10" type="xs:int" />
       <xs:element minOccurs="0" name="NOMCPGTO" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>

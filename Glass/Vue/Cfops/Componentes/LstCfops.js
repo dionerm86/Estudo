@@ -213,7 +213,7 @@
      * Atualiza a lista de CFOP's.
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     }
   },
 

@@ -178,6 +178,76 @@ namespace Glass.Data.DAL
             return sql;
         }
 
+        /// <summary>
+        /// Método que altera os dados da compra e em seguinda finaliza ela.
+        /// </summary>
+        /// <param name="session">Sessão do GDA.</param>
+        /// <param name="idCompra">Identificador da compra que será alterada.</param>
+        /// <param name="numeroParcelas">Novas parcelas da compra.</param>
+        /// <param name="datasParcelas">Novas datas das parcelas da compra.</param>
+        /// <param name="nf">novo valor para o campo Nf.</param>
+        /// <param name="dataFabrica">nova data fábrica.</param>
+        /// <param name="idFormaPagto">Novo identificador da forma de pagamento.</param>
+        /// <param name="boletoChegou">Novo valor para boleto chegou</param>
+        public void AlterarDadosEFinalizarCompra(GDASession session, uint idCompra, int numeroParcelas, DateTime[] datasParcelas, string nf, DateTime? dataFabrica, uint idFormaPagto, bool boletoChegou)
+        {
+            this.AlteraParcelas(session, idCompra, numeroParcelas, datasParcelas);
+            var compra = this.GetElementByPrimaryKey(session, (int)idCompra);
+
+            compra.BoletoChegou = boletoChegou;
+
+            if (dataFabrica != null)
+            {
+                compra.DataFabrica = dataFabrica;
+            }
+
+            if (!string.IsNullOrWhiteSpace(nf))
+            {
+                compra.Nf = nf;
+            }
+
+            if (idFormaPagto > 0)
+            {
+                compra.IdFormaPagto = idFormaPagto;
+            }
+
+            this.Update(session, compra);
+
+            this.FinalizarCompra(session, idCompra);
+        }
+
+        /// <summary>
+        /// Método que altera os dados da compra e em seguinda finaliza ela.
+        /// </summary>
+        /// <param name="idCompra">Identificador da compra que será alterada.</param>
+        /// <param name="numeroParcelas">Novas parcelas da compra.</param>
+        /// <param name="datasParcelas">Novas datas das parcelas da compra.</param>
+        /// <param name="nf">novo valor para o campo Nf.</param>
+        /// <param name="dataFabrica">nova data fábrica.</param>
+        /// <param name="idFormaPagto">Novo identificador da forma de pagamento.</param>
+        /// <param name="boletoChegou">Novo valor para boleto chegou</param>
+        public void AlterarDadosEFinalizarCompraComTransacao(uint idCompra, int numeroParcelas, DateTime[] datasParcelas, string nf, DateTime? dataFabrica, uint idFormaPagto, bool boletoChegou)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    AlterarDadosEFinalizarCompra(transaction, idCompra, numeroParcelas, datasParcelas, nf, dataFabrica, idFormaPagto, boletoChegou);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
+        }
+
         private string SqlRpt(uint idCompra, uint idPedido, string nf, uint idFornec, string nomeFornec, string obs,
             bool soPcp, int situacao, bool emAtraso, string dataIni, string dataFim, string dataFabIni, string dataFabFim, string dataSaidaIni, string dataSaidaFim,
             string dataFinIni, string dataFinFim, string dataEntIni, string dataEntFim, string idsGrupoProd, uint idSubgrupoProd,
@@ -2138,24 +2208,75 @@ namespace Glass.Data.DAL
             return base.Insert(session, objInsert);
         }
 
-        public override int Update(Compra objUpdate)
+        /// <summary>
+        /// Método que atualiza a Compra
+        /// </summary>
+        /// <param name="objUpdate">Compra a ser atualizada.</param>
+        /// <returns>Retorna um inteiro com o de linhas afetadas com a alteração.</returns>
+        public int UpdateComTransacao(Compra objUpdate)
         {
-            var compraAtual = GetElementByPrimaryKey(objUpdate.IdCompra);
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var retorno = Update(transaction, objUpdate);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Método que atualiza a Compra.
+        /// </summary>
+        /// <param name="session">Sessão do GDA.</param>
+        /// <param name="objUpdate">Compra que será atualizada.</param>
+        /// <returns>Retorna um inteiro com o de linhas afetadas com a alteração.</returns>
+        public override int Update(GDASession session ,Compra objUpdate)
+        {
+            var compraAtual = this.GetElementByPrimaryKey(session, objUpdate.IdCompra);
 
             if (ObtemSituacao(null, objUpdate.IdCompra) == (int)Compra.SituacaoEnum.Finalizada)
+            {
                 throw new Exception("A compra está finalizada, não é possível atualizá-la");
+            }
 
-            int result = base.Update(objUpdate);
+            int result = base.Update(session, objUpdate);
 
-            UpdateTotalCompra(null, objUpdate.IdCompra);
+            this.UpdateTotalCompra(session, objUpdate.IdCompra);
 
-            ContasPagarDAO.Instance.BoletoChegou(objUpdate.BoletoChegou, objUpdate.IdCompra, 0, null);
+            ContasPagarDAO.Instance.BoletoChegou(
+                session,
+                objUpdate.BoletoChegou,
+                objUpdate.IdCompra,
+                0,
+                null);
 
-            AlteraParcelas(null, objUpdate.IdCompra, objUpdate.NumParc, objUpdate.TipoCompra, objUpdate.DatasParcelas,
-                objUpdate.ValoresParcelas, objUpdate.BoletosParcelas, objUpdate.FormasPagtoParcelas, 0, new DateTime(), false);
+            this.AlteraParcelas(
+                session,
+                objUpdate.IdCompra,
+                objUpdate.NumParc,
+                objUpdate.TipoCompra,
+                objUpdate.DatasParcelas,
+                objUpdate.ValoresParcelas,
+                objUpdate.BoletosParcelas,
+                objUpdate.FormasPagtoParcelas,
+                0,
+                new DateTime(),
+                false);
 
-            ///Insere um log das alterações de compra
-            LogAlteracaoDAO.Instance.LogCompra(compraAtual, objUpdate);
+            LogAlteracaoDAO.Instance.LogCompra(session, compraAtual, objUpdate);
 
             return result;
         }
