@@ -1036,7 +1036,7 @@ namespace Glass.Global.Negocios.Componentes
 
             /* Chamado 22919. */
             // Trata caracteres que não podem ser incluídos no código do produto.
-            produto.CodInterno = produto.CodInterno.Replace("'", "").Replace("\"", "").Replace("\t", "").Replace("\n", "");
+            produto.CodInterno = produto.CodInterno.Replace("'", "").Replace("\"", "").Replace("\t", "").Replace("\n", "").Replace("(", "").Replace(")", "");
 
             // Trata caracteres que não podem ser incluídos na descrição do produto.
             produto.Descricao = produto.Descricao.Replace("'", "").Replace("\"", "").Replace("\t", "").Replace("\n", "");

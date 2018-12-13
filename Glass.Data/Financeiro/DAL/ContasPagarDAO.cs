@@ -3721,7 +3721,7 @@ namespace Glass.Data.DAL
         /// <param name="boletoChegou"></param>
         /// <param name="idCompra"></param>
         /// <param name="idContaPg"></param>
-        public void BoletoChegou(bool boletoChegou, uint idCompra, uint idContaPg, string dataVenc)
+        public void BoletoChegou(GDASession session, bool boletoChegou, uint idCompra, uint idContaPg, string dataVenc)
         {
             string sql = "Update contas_pagar set boletoChegou=" + (boletoChegou ? 1 : 0);
 

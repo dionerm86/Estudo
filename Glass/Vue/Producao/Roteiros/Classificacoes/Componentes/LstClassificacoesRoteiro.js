@@ -61,7 +61,7 @@
      * Força a atualização da lista de classificações de roteiro, com base no filtro atual.
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     }
   }
 });

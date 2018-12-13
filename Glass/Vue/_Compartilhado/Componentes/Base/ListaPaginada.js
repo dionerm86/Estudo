@@ -140,8 +140,9 @@
     /**
      * Função que busca os itens da lista, com base no filtro, página, número de registros
      * e ordenação atual.
+     * @param {?boolean} [forcarAtualizacao=false] Indica se a atualização da lista será forçada ou não.
      */
-    atualizar: function(forcarAtualizacao) {
+    atualizar: function (forcarAtualizacao) {
       const pesquisa = {
         filtro: this.filtro,
         paginaAtual: this.paginaAtual,
