@@ -1220,7 +1220,7 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoquePerda(GDASession sessao, int idProdutoPedidoProducao, ProdutosPedidoEspelho produtoPedidoEspelho)
         {
-            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd);
+            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd, false);
             var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, 1, produtoPedidoEspelho.Qtde, produtoPedidoEspelho.TotM, produtoPedidoEspelho.Altura);
 
             var idLoja = ObterIdLojaProdutoPedidoProducao(
