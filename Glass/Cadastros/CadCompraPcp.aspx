@@ -633,7 +633,7 @@
                                                 <asp:GridView ID="grdProdutosPedido" runat="server" 
                                                     AlternatingRowStyle-CssClass="alt" AutoGenerateColumns="False" CellPadding="3" 
                                                     CssClass="gridStyle" DataKeyNames="IdProdPed" DataSourceID="odsProdXPed" 
-                                                    EditRowStyle-CssClass="edit" GridLines="None"
+                                                    EditRowStyle-CssClass="edit" GridLines="None" onload="grdProdutosPedido_Load"
                                                     PagerStyle-CssClass="pgr">
                                                     <RowStyle Height="20px" />
                                                     <Columns>

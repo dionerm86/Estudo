@@ -97,8 +97,8 @@ namespace Glass.Data.RelModel
         {
             get 
             {
-                return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto ? "m²" : ""; 
+                return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int?)IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
+                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int?)IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto ? "m²" : ""; 
             }
         }
 
@@ -106,7 +106,7 @@ namespace Glass.Data.RelModel
         {
             get
             {
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int?)IdSubgrupoProd, false);
                 string estoque = tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto ? 
                     Math.Round(M2Estoque, 2).ToString() : QtdeEstoque.ToString();
                 return estoque + DescrTipoCalculo;
@@ -117,7 +117,7 @@ namespace Glass.Data.RelModel
         {
             get
             {
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int?)IdSubgrupoProd, false);
                 string disponivel = tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto ? 
                     Math.Round(M2Estoque - QtdeReserva - (PedidoConfig.LiberarPedido ? QtdeLiberacao.GetValueOrDefault() : 0), 2).ToString() :
                     (QtdeEstoque - QtdeReserva - (PedidoConfig.LiberarPedido ? QtdeLiberacao : 0)).ToString();

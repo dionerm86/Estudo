@@ -116,6 +116,26 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Busca EFD
+
+        /// <summary>
+        /// Obtém os produtos de baixa de estoque fiscal, do produto informado.
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <param name="idProd">idProd.</param>
+        /// <returns>Retorna os produtos de baixa de estoque fiscal, do produto informado.</returns>
+        public List<ProdutoBaixaEstoqueFiscal> ObterParaItemProduzidoEfd(GDASession session, int idProd)
+        {
+            if (idProd == 0)
+            {
+                return new List<ProdutoBaixaEstoqueFiscal>();
+            }
+
+            return this.objPersistence.LoadData(session, $"SELECT * FROM produto_baixa_estoque_fiscal WHERE IdProd = {idProd};");
+        }
+
+        #endregion
+
         #region Obtém dados da baixa fiscal
 
         public uint ObterIdProdBaixa(uint idProd)

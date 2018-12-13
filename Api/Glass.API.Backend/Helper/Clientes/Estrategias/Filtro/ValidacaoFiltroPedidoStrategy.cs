@@ -108,6 +108,12 @@ namespace Glass.API.Backend.Helper.Clientes.Estrategias.Filtro
                 return this.apiController.ErroValidacao("Cliente bloqueado. Motivo: " + cliente.Obs);
             }
 
+            IEnumerable<string> motivos;
+            if (Data.GerenciadorSituacaoCliente.Gerenciador.VerificarBloqueio(null, cliente, out motivos))
+            {
+                return this.apiController.ErroValidacao($"Cliente bloqueado. Motivo: {string.Join(";", motivos)}");
+            }
+
             return null;
         }
 

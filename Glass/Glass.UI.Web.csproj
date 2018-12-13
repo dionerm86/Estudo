@@ -492,6 +492,9 @@
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.Filtro.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Templates\LstTrocaDevolucao.Filtro.html" />
+    <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.Filtro.js" />
+    <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.js" />
+    <Content Include="Vue\Estoques\Movimentacoes\Reais\Templates\ListaMovimentacoesEstoqueReal.Filtro.html" />
     <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
@@ -564,6 +567,7 @@
     <Content Include="Vue\Seguradoras\Componentes\LstSeguradoras.js" />
     <Content Include="Vue\PlanosConta\Componentes\LstPlanosConta.js" />
     <Content Include="Vue\ContasBancarias\Componentes\LstContasBancarias.js" />
+    <Content Include="Vue\Funcionarios\Componentes\CadFuncionario.js" />
     <Content Include="Vue\TrocasDevolucoes.js" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
@@ -572,6 +576,9 @@
     <Content Include="Vue\CoresVidro\Componentes\LstCoresVidro.js" />
     <Content Include="Vue\CoresAluminio\Componentes\LstCoresAluminio.js" />
     <Content Include="Vue\CoresFerragem\Componentes\LstCoresFerragem.js" />
+    <Content Include="Vue\Funcionarios\Componentes\LstFuncionarios.Filtro.js" />
+    <Content Include="Vue\Funcionarios\Componentes\LstFuncionarios.js" />
+    <Content Include="Vue\Funcionarios\Templates\LstFuncionarios.Filtro.html" />
     <Content Include="Vue\Aplicacoes\Componentes\LstAplicacoes.js" />
     <Content Include="Vue\Sinais\Componentes\LstSinais.Filtro.js" />
     <Content Include="Vue\Sinais\Componentes\LstSinais.js" />
@@ -1776,6 +1783,8 @@
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoComMascara.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoDataHora.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoDataHoraPeriodo.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoTelefone.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoUpload.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ControleTooltip.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\IndicadorSistemaOcupado.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaPaginada.js" />
@@ -1793,7 +1802,6 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaProduto.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCep.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCnpj.js" />
-    <Content Include="Vue\_Compartilhado\Componentes\CampoTelefone.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCpf.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoDescontoQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoEndereco.js" />
@@ -1816,6 +1824,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSetores.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoParcelas.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoUf.js" />
     <Content Include="Vue\_Compartilhado\Componentes\LogCancelamento.js" />
     <Content Include="Vue\_Compartilhado\Componentes\LogAlteracao.js" />
     <Content Include="Vue\_Compartilhado\Filtros\Data.js" />
@@ -1910,6 +1919,8 @@
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoComMascara.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoDataHora.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoDataHoraPeriodo.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoTelefone.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoUpload.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\ControleTooltip.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\IndicadorSistemaOcupado.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\ListaPaginada.html" />
@@ -1927,7 +1938,6 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaProduto.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCep.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCnpj.html" />
-    <Content Include="Vue\_Compartilhado\Templates\CampoTelefone.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCpf.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoDescontoQuantidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoEndereco.html" />
@@ -1950,6 +1960,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoSetores.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoParcelas.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoUf.html" />
     <Content Include="Vue\_Compartilhado\Templates\LogCancelamento.html" />
     <Content Include="Vue\_Compartilhado\Templates\LogAlteracao.html" />
     <Content Include="WebGlassParceiros\AlterarObsLiberacaoPedido.aspx" />

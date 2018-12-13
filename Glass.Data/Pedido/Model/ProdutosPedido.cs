@@ -722,7 +722,7 @@ namespace Glass.Data.Model
             get
             {
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(null, IdPedido);
-                return Glass.Global.CalculosFluxo.CalcM2Calculo(IdCliente, (int)Altura, Largura, Qtde, (int)IdProd, Redondo,
+                return Glass.Global.CalculosFluxo.CalcM2Calculo(null, IdCliente, (int)Altura, Largura, Qtde, (int)IdProd, Redondo,
                     Beneficiamentos.CountAreaMinima, ProdutoDAO.Instance.ObtemAreaMinima((int)IdProd), false, 0,
                     TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte).ToString();
             }
@@ -777,7 +777,7 @@ namespace Glass.Data.Model
                     IdGrupoProd = IdGrupoProd > 0 ? IdGrupoProd : (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)IdProd);
                     IdSubgrupoProd = IdSubgrupoProd > 0 ? IdSubgrupoProd : ((uint?)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)IdProd)).GetValueOrDefault();
 
-                    return GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int)IdSubgrupoProd);
+                    return GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int)IdSubgrupoProd, false);
                 }
 
                 return (int)TipoCalculoGrupoProd.Qtd;
@@ -1222,7 +1222,7 @@ namespace Glass.Data.Model
                     IdGrupoProd = (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)IdProd);
 
                 return Qtde > 0 ? TotM / Qtde * QtdeInvisivel : !Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro((int)IdGrupoProd) ? 0 :
-                    Glass.Global.CalculosFluxo.ArredondaM2(Largura, (int)Altura, QtdeInvisivel, (int)IdProd, Redondo);
+                    Glass.Global.CalculosFluxo.ArredondaM2(null, Largura, (int)Altura, QtdeInvisivel, (int)IdProd, Redondo, 0, true);
             }
         }
 

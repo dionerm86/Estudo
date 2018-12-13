@@ -1781,9 +1781,9 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="contaReceberAtual"></param>
         /// <param name="contaReceberNova"></param>
-        public void LogCompra(Compra compraAtual, Compra compraNova)
+        public void LogCompra(GDASession session, Compra compraAtual, Compra compraNova)
         {
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.Compra, (uint)compraAtual.IdCompra,
+            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.Compra, (uint)compraAtual.IdCompra,
                 compraAtual, compraNova);
         }
 

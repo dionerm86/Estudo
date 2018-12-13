@@ -541,13 +541,14 @@ namespace Glass.Data.DAL
                         {
                             var veiculo = PedidoDAO.Instance.ObtemVeiculoCarregamento(idsPedidos);
 
-                            if (!string.IsNullOrEmpty(veiculo.Key))
+                            if (!string.IsNullOrEmpty(veiculo[0]))
                             {
                                 nf.Especie = FiscalConfig.NotaFiscalConfig.EspeciePadraoSeMesmoVeiculoOC;
                                 nf.ModalidadeFrete = ModalidadeFrete.ContaDoRemetente;
-                                nf.VeicPlaca = veiculo.Key;
-                                nf.VeicUf = veiculo.Value;
+                                nf.VeicPlaca = veiculo[0];
+                                nf.VeicUf = veiculo[1];
                                 nf.QtdVol = Convert.ToInt32(PedidoDAO.Instance.GetPedidosForOC(idsPedidos, 0, false).Sum(f => f.QtdePecasVidro + f.QtdeVolume));
+                                nf.VeicRntc = veiculo[2];
                             }
                         }
 
@@ -3100,7 +3101,7 @@ namespace Glass.Data.DAL
                     // Recupera a quantidade que deverá ser mostrada na NF
                     decimal qtdPnf =
                         !nfeComplAjuste ?
-                            (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(pnf) :
+                            (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(null, pnf, false) :
                             /* Chamado 32888. */
                             nf.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Complementar ?
                                 (decimal)pnf.Qtde : 1;
@@ -5637,13 +5638,13 @@ namespace Glass.Data.DAL
                                     LogMovimentacaoNotaFiscalDAO.Instance.Insert(session, logMovNotaFiscal);
                                 }
 
-                                bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
+                                bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
+                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
                                 MovEstoqueDAO.Instance.CreditaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
                                     (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
 
-                                objPersistence.ExecuteCommand(session, "Update produtos_nf Set qtdeEntrada=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p).ToString().Replace(",", ".") +
+                                objPersistence.ExecuteCommand(session, "Update produtos_nf Set qtdeEntrada=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p, false).ToString().Replace(",", ".") +
                                     " Where idProdNf=" + p.IdProdNf);
                             }
 
@@ -5714,13 +5715,13 @@ namespace Glass.Data.DAL
                                     LogMovimentacaoNotaFiscalDAO.Instance.Insert(session, logMovNotaFiscal);
                                 }
 
-                                bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
+                                bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
+                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
                                 MovEstoqueDAO.Instance.BaixaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
                                     (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
 
-                                objPersistence.ExecuteCommand(session, "Update produtos_nf Set qtdeSaida=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(p).ToString().Replace(",", ".") +
+                                objPersistence.ExecuteCommand(session, "Update produtos_nf Set qtdeSaida=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p, false).ToString().Replace(",", ".") +
                                     " Where idProdNf=" + p.IdProdNf);
                             }
                         }
@@ -5952,6 +5953,7 @@ namespace Glass.Data.DAL
                     Left Join transportador t On (n.idTransportador=t.idTransportador)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
+                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Left Join (
                         select pnf.idNf
                         from movimentacao_bem_ativo_imob mbai
@@ -5971,6 +5973,7 @@ namespace Glass.Data.DAL
                     Left Join transportador t On (n.idTransportador=t.idTransportador)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
+                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
 
             NotaFiscal temp = new NotaFiscal();
@@ -6391,6 +6394,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN transportador transp ON (n.IdTransportador=transp.IdTransportador)
                     Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
+                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
             else
                 sql = @"Select Count(*) From (Select Distinct n.idNf From nota_fiscal n
@@ -6402,6 +6406,7 @@ namespace Glass.Data.DAL
                     Left Join fornecedor f On (n.idFornec=f.idFornec)
                     Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
+                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
 
             NotaFiscal temp = new NotaFiscal();
@@ -6846,6 +6851,7 @@ namespace Glass.Data.DAL
                 Left Join transportador t On (n.idTransportador=t.idTransportador)
                 Left Join funcionario func On (n.usuCad=func.idFunc)
                 Left Join plano_contas pc on (n.idConta=pc.idConta)
+                Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                 Left Join (
                     select pnf.idNf
                     from movimentacao_bem_ativo_imob mbai
@@ -8942,13 +8948,13 @@ namespace Glass.Data.DAL
                                     LogMovimentacaoNotaFiscalDAO.Instance.Insert(transaction, logMovNotaFiscal);
                                 }
 
-                                bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
+                                bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
+                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
                                 MovEstoqueDAO.Instance.CreditaEstoqueNotaFiscal(transaction, p.IdProd, nf.IdLoja.Value, idNf, p.IdProdNf,
                                     (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(transaction, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
 
-                                objPersistence.ExecuteCommand(transaction, "update produtos_nf set qtdeEntrada=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(transaction, p).ToString().Replace(",", ".") +
+                                objPersistence.ExecuteCommand(transaction, "update produtos_nf set qtdeEntrada=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(transaction, p, false).ToString().Replace(",", ".") +
                                     " where idProdNf=" + p.IdProdNf);
                             }
 

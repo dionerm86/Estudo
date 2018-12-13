@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -23,7 +23,7 @@ namespace Glass.UI.Web.Cadastros
     
             if (!PedidoDAO.Instance.PedidoExists(idPedido))
             {
-                Glass.MensagemAlerta.ShowMsg("N„o existe nenhum pedido com o n˙mero passado.", Page);
+                Glass.MensagemAlerta.ShowMsg("N√£o existe nenhum pedido com o n√∫mero passado.", Page);
                 tbSaida.Visible = false;
             }
             else
@@ -33,7 +33,7 @@ namespace Glass.UI.Web.Cadastros
     
                 if (PedidoDAO.Instance.IsProducao(null, idPedido))
                 {
-                    Glass.MensagemAlerta.ShowMsg("Este pedido È um pedido para produÁ„o. N„o È possÌvel selecionar um pedido desse tipo.", Page);
+                    Glass.MensagemAlerta.ShowMsg("Este pedido √© um pedido para produ√ß√£o. N√£o √© poss√≠vel selecionar um pedido desse tipo.", Page);
                     tbSaida.Visible = false;
                 }
                 else if (situacao == Glass.Data.Model.Pedido.SituacaoPedido.Cancelado)
@@ -43,7 +43,7 @@ namespace Glass.UI.Web.Cadastros
                 }
                 else if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Confirmado)
                 {
-                    Glass.MensagemAlerta.ShowMsg(string.Format("Este pedido ainda n„o foi {0}.",
+                    Glass.MensagemAlerta.ShowMsg(string.Format("Este pedido ainda n√£o foi {0}.",
                         Configuracoes.PedidoConfig.LiberarPedido ? "liberado" : "confirmado"), Page);
                     tbSaida.Visible = false;
                 }
@@ -57,7 +57,7 @@ namespace Glass.UI.Web.Cadastros
     
         protected void lnkTodos_Click(object sender, EventArgs e)
         {
-            // Marca todos os campos de qtd de saÌda com o total de saÌda que falta ser lanÁado
+            // Marca todos os campos de qtd de sa√≠da com o total de sa√≠da que falta ser lan√ßado
             foreach (GridViewRow row in grdProdutos.Rows)
             {
                 ((TextBox)row.FindControl("txtQtdSaida")).Text = (decimal.Parse(((HiddenField)row.FindControl("hdfQtde")).Value) -
@@ -75,7 +75,7 @@ namespace Glass.UI.Web.Cadastros
                 if (UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.AuxAlmoxarifado &&
                     !Config.PossuiPermissao(Config.FuncaoMenuEstoque.ControleEstoque))
                 {
-                    Glass.MensagemAlerta.ShowMsg("VocÍ n„o tem permiss„o para marcar saÌda de produtos.", Page);
+                    Glass.MensagemAlerta.ShowMsg("Voc√™ n√£o tem permiss√£o para marcar sa√≠da de produtos.", Page);
                     return;
                 }
 
@@ -84,7 +84,7 @@ namespace Glass.UI.Web.Cadastros
                 Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(null, idPedido);
                 if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Confirmado)
                 {
-                    Glass.MensagemAlerta.ShowMsg(string.Format("Este pedido ainda n„o foi {0}.",
+                    Glass.MensagemAlerta.ShowMsg(string.Format("Este pedido ainda n√£o foi {0}.",
                         Configuracoes.PedidoConfig.LiberarPedido ? "liberado" : "confirmado"), Page);
                     tbSaida.Visible = false;
                     return;
@@ -103,7 +103,7 @@ namespace Glass.UI.Web.Cadastros
                         DescricaoBaixa = ((HiddenField)r.FindControl("hdfDescr")).Value.Replace("'", "").Replace("\"", "")
                     };
     
-                    // Se a quantidade de saÌda for 0, continua no prÛximo item
+                    // Se a quantidade de sa√≠da for 0, continua no pr√≥ximo item
                     if (dadosProduto.Qtde == 0)
                         continue;
     
@@ -114,7 +114,7 @@ namespace Glass.UI.Web.Cadastros
                     (drpLoja.SelectedValue.StrParaUint(), lstProdPed, null, null, true, txtObservacao.Text);
 
                 txtObservacao.Text = null;
-                Glass.MensagemAlerta.ShowMsg("SaÌda de produtos efetuada com sucesso.", Page);
+                Glass.MensagemAlerta.ShowMsg("Sa√≠da de produtos efetuada com sucesso.", Page);
     
                 grdProdutos.DataBind();
                 txtNumPedido.Focus();
@@ -122,7 +122,7 @@ namespace Glass.UI.Web.Cadastros
             }
             catch (Exception ex)
             {
-                Glass.MensagemAlerta.ErrorMsg("Falha ao marcar saÌda de estoque.", ex, Page);
+                Glass.MensagemAlerta.ErrorMsg("Falha ao marcar sa√≠da de estoque.", ex, Page);
             }
         }
     
@@ -147,7 +147,7 @@ namespace Glass.UI.Web.Cadastros
                 if (idProd == 0 || qtde == 0)
                     continue;
     
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(idProd);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, idProd, false);
                 bool m2 = tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
     
                 MovEstoqueDAO.Instance.BaixaEstoqueManualComTransacao((uint)idProd, idLoja, (decimal)qtde, null, DateTime.Now, txtObservacao.Text);

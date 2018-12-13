@@ -96,6 +96,37 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.SubgruposProduto
         }
 
         /// <summary>
+        /// Recupera os subgrupos de produto para os controles de filtro das telas.
+        /// </summary>
+        /// <param name="idsGruposProduto">O identificador do grupo de produto.</param>
+        /// <returns>Uma lista JSON com os subgrupos de produto encontrados.</returns>
+        [HttpGet]
+        [Route("filtro/varios")]
+        [SwaggerResponse(200, "Subgrupos de produto encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Subgrupos de produto não encontrados.")]
+        public IHttpActionResult ObterSubgruposProdutoParaFiltro([FromUri] int[] idsGruposProduto)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                if (idsGruposProduto == null || !idsGruposProduto.Any())
+                {
+                    return this.SemConteudo();
+                }
+
+                var ids = string.Join(",", idsGruposProduto);
+                var situacoes = SubgrupoProdDAO.Instance.GetForFilter(ids)
+                    .Where(g => g.IdSubgrupoProd > 0)
+                    .Select(g => new IdNomeDto
+                    {
+                        Id = g.IdSubgrupoProd,
+                        Nome = g.Descricao,
+                    });
+
+                return this.Lista(situacoes);
+            }
+        }
+
+        /// <summary>
         /// Recupera a lista de tipos de subgrupo de produto.
         /// </summary>
         /// <returns>Uma lista JSON com os dados básicos dos tipos de subgrupo de produto.</returns>

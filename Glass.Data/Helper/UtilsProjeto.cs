@@ -1995,7 +1995,7 @@ namespace Glass.Data.Helper
                 float alturaCalc = material.Altura;
                 decimal total = material.Total;
                 decimal custo = material.Custo;
-                CalculosFluxo.CalcTamanhoAluminio(sessao, (int)material.IdProd, ref alturaCalc, Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)material.IdProd), 1, material.Valor,
+                CalculosFluxo.CalcTamanhoAluminio(sessao, (int)material.IdProd, ref alturaCalc, Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)material.IdProd, false), 1, material.Valor,
                     material.Qtde, ref total, ref custo);
 
                 material.AlturaCalc = alturaCalc;
@@ -3294,7 +3294,7 @@ namespace Glass.Data.Helper
 
                 // Caso o projeto possua altura e largura de vão, a área dele deve ser calculada com base nessas duas medidas, somente.
                 if (larguraVao > 0 && alturaVao > 0)
-                    return CalculosFluxo.ArredondaM2(sessao, larguraVao, alturaVao, qtdVao, 0, false);
+                    return CalculosFluxo.ArredondaM2(sessao, larguraVao, alturaVao, qtdVao, 0, false, 0, true);
 
                 #region Recupera o ID das medidas de vão do sistema
 
@@ -3348,11 +3348,11 @@ namespace Glass.Data.Helper
                 #endregion
 
                 // A área do vão será calculada com base na soma de todas as medidas de vão.
-                totM2 = CalculosFluxo.ArredondaM2(sessao, larguraVaoEsquerdo, alturaVao, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, larguraVaoCentral, alturaVao, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, larguraVaoDireito, alturaVao, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, larguraVaoDireitoSuperior, alturaVaoDireitoSuperior, qtdVao, 0, false) +
-                    CalculosFluxo.ArredondaM2(sessao, larguraVaoEsquerdoSuperior, alturaVaoEsquerdoSuperior, qtdVao, 0, false);
+                totM2 = CalculosFluxo.ArredondaM2(sessao, larguraVaoEsquerdo, alturaVao, qtdVao, 0, false, 0, true) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoCentral, alturaVao, qtdVao, 0, false, 0, true) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoDireito, alturaVao, qtdVao, 0, false, 0, true) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoDireitoSuperior, alturaVaoDireitoSuperior, qtdVao, 0, false, 0, true) +
+                    CalculosFluxo.ArredondaM2(sessao, larguraVaoEsquerdoSuperior, alturaVaoEsquerdoSuperior, qtdVao, 0, false, 0, true);
             }
 
             return totM2;
@@ -3389,7 +3389,7 @@ namespace Glass.Data.Helper
             foreach (PecaItemProjeto pip in lstPeca)
             {
                 numPecas += pip.Qtde;
-                areaTotal += Glass.Global.CalculosFluxo.ArredondaM2(sessao, pip.Largura, pip.Altura, pip.Qtde, 0, false);
+                areaTotal += Glass.Global.CalculosFluxo.ArredondaM2(sessao, pip.Largura, pip.Altura, pip.Qtde, 0, false, 0, true);
             }
 
             // Obtém a espessura das peças
@@ -3413,7 +3413,7 @@ namespace Glass.Data.Helper
             if (itemProjeto.Qtde == 0) itemProjeto.Qtde = 1;
 
             float areaVao = (!itemProjeto.MedidaExata ? (itemProjeto.M2Vao / itemProjeto.Qtde) : lstPeca.Count > 0 ?
-                Glass.Global.CalculosFluxo.ArredondaM2(sessao, lstPeca[0].Largura, lstPeca[0].Altura, lstPeca[0].Qtde, 0, lstPeca[0].Redondo) : 0);
+                Glass.Global.CalculosFluxo.ArredondaM2(sessao, lstPeca[0].Largura, lstPeca[0].Altura, lstPeca[0].Qtde, 0, lstPeca[0].Redondo, 0, true) : 0);
 
             if (ProjetoConfig.TelaCadastroAvulso.AreaTotalItemProjetoAreaPecas)
                 areaVao = areaTotal;
@@ -3436,7 +3436,6 @@ namespace Glass.Data.Helper
 
         #region CADProject
 
-
         /// <summary>
         /// Gera o arquivo para ser enviada para o CADProject.
         /// </summary>
@@ -3455,7 +3454,7 @@ namespace Glass.Data.Helper
 
             if (idArquivoCalcEngine <= 0)
             {
-                throw new InvalidOperationException("Peça não possui arquivo CalcEngine");
+                return;
             }
 
             var idArquivoMesaCorte = peca.IdArquivoMesaCorte;

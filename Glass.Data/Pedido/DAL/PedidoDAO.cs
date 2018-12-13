@@ -784,7 +784,7 @@ namespace Glass.Data.DAL
             if (pedido.ValoresParcelas != null && alterouValor)
             {
                 RecalculaParcelas(sessao, ref pedido, TipoCalculoParcelas.Valor);
-                SalvarParcelas(sessao, pedido);
+                SalvarParcelas(sessao, pedido, true);
             }
         }
 
@@ -3532,7 +3532,16 @@ namespace Glass.Data.DAL
                     sql += " and p.dataCad<=?dtFimSit";
 
                 if (idVendedor != "0")
-                    sql += " and " + (agruparFunc == 0 ? "p" : "c") + ".idFunc=" + idVendedor;
+                {
+                    if (agruparFunc != 2)
+                    {
+                        sql += $" and {(agruparFunc == 0 ? "p" : "c")}.idFunc = {idVendedor}";
+                    }
+                    else
+                    {
+                        sql += $" and p.IdComissionado = {idVendedor}";
+                    }
+                }
 
                 if (idVendedor == "0" && agruparFunc == 1)
                 {
@@ -4554,7 +4563,7 @@ namespace Glass.Data.DAL
             string nomeCliExterno, string codRotaExterna, bool selecionar)
         {
             var campos = @"p.*, c.nomeFantasia as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja, r.codInterno As codRota,
-                CAST(SUM(pp.qtde) as SIGNED) as QuantidadePecasPedido, COALESCE(vpp.qtde, 0) as QtdePecasVolume, SUM(pp.TotM) as TotMVolume,
+                SUM(pp.qtde) as QuantidadePecasPedido, COALESCE(vpp.qtde, 0) as QtdePecasVolume, SUM(pp.TotM) as TotMVolume,
                 SUM(pp.peso) as PesoVolume";
 
             var situacoesPedidoConsiderar = new List<Pedido.SituacaoPedido>
@@ -5493,10 +5502,15 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca a placa é uf do veiculo do pedido utilizado no carregamento
         /// </summary>
-        public KeyValuePair<string, string> ObtemVeiculoCarregamento(string idsPedidos)
+        public string[] ObtemVeiculoCarregamento(string idsPedidos)
         {
+            if (string.IsNullOrWhiteSpace(idsPedidos))
+            {
+                return new string[3];
+            }
+
             var sql = @"
-                SELECT CONCAT(v.Placa, ';', v.UfLicenc)
+                SELECT CONCAT(v.Placa, ';', IFNULL(v.UfLicenc,''), ';', IFNULL(v.Rntc,''))
                 FROM veiculo v
 	                INNER JOIN carregamento c ON (v.Placa = c.Placa)
                     INNER JOIN ordem_carga oc ON (c.IdCarregamento = oc.IdCarregamento)
@@ -5506,9 +5520,9 @@ namespace Glass.Data.DAL
             var dados = ExecuteMultipleScalar<string>(sql);
 
             if (dados.Count == 0 || dados.Count > 1)
-                return new KeyValuePair<string, string>();
+                return new string[3];
 
-            return new KeyValuePair<string, string>(dados[0].Split(';')[0], dados[0].Split(';')[1]);
+            return dados[0].Split(';');
         }
 
         /// <summary>
@@ -6046,7 +6060,7 @@ namespace Glass.Data.DAL
                         throw new Exception(retorno);
 
                     float qtdProd = 0;
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd, false);
 
                     // É necessário refazer o loop nos produtos do pedido para que caso tenha sido inserido o mesmo produto 2 ou mais vezes,
                     // seja somada a quantidade total inserida no pedido
@@ -6835,7 +6849,7 @@ namespace Glass.Data.DAL
                             foreach (var prod in lstProd)
                             {
                                 var qtdProd = 0F;
-                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(trans, (int)prod.IdProd);
+                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(trans, (int)prod.IdProd, false);
 
                                 // É necessário refazer o loop nos produtos do pedido para que caso tenha sido inserido o mesmo produto 2 ou mais vezes,
                                 // seja somada a quantidade total inserida no pedido
@@ -7238,9 +7252,9 @@ namespace Glass.Data.DAL
 
                             foreach (var p in lstProdPed)
                             {
-                                var m2 = new List<int> { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto }.Contains(GrupoProdDAO.Instance.TipoCalculo(trans, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd));
+                                var m2 = new List<int> { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto }.Contains(GrupoProdDAO.Instance.TipoCalculo(trans, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false));
 
-                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(trans, (int)p.IdProd);
+                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(trans, (int)p.IdProd, false);
                                 var qtdSaida = p.Qtde - p.QtdSaida;
 
                                 if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
@@ -7672,7 +7686,7 @@ namespace Glass.Data.DAL
 
                         float qtdProd = 0;
 
-                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)idProd);
+                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)idProd, false);
 
                         if (tipoCalc == (int)TipoCalculoGrupoProd.M2 || tipoCalc == (int)TipoCalculoGrupoProd.M2Direto)
                         {
@@ -7985,7 +7999,7 @@ namespace Glass.Data.DAL
                             foreach (var pp in ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido))
                             {
                                 var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)pp.IdGrupoProd,
-                                    (int)pp.IdSubgrupoProd);
+                                    (int)pp.IdSubgrupoProd, false);
                                 var m2 = tipoCalc == (int)TipoCalculoGrupoProd.M2 ||
                                     tipoCalc == (int)TipoCalculoGrupoProd.M2Direto;
 
@@ -8353,7 +8367,7 @@ namespace Glass.Data.DAL
                         var totM = ProdutosPedidoDAO.Instance.ObtemTotM(session, prodPed.IdProdPed);
                         var qtde = ProdutosPedidoDAO.Instance.ObtemQtde(session, prodPed.IdProdPed);
 
-                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(session, (int)idProd);
+                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(session, (int)idProd, false);
                         var m2 = tipoCalc == (int)TipoCalculoGrupoProd.M2 ||
                             tipoCalc == (int)TipoCalculoGrupoProd.M2Direto;
 
@@ -8633,7 +8647,7 @@ namespace Glass.Data.DAL
                     foreach (var p in ProdutosPedidoDAO.Instance.GetByPedidoLite(session, idPedido))
                     {
                         var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session,
-                            (int)p.IdProd);
+                            (int)p.IdProd, false);
 
                         var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
 
@@ -8784,16 +8798,16 @@ namespace Glass.Data.DAL
 
                                 bool m2 =
                                     Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session,
-                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) ==
+                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) ==
                                     (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
                                     Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session,
-                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) ==
+                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) ==
                                     (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
                                 Single m2Saida = Glass.Global.CalculosFluxo.ArredondaM2(session, (int)p.Largura,
                                     (int)p.Altura, qtdBaixa, (int)p.IdProd, p.Redondo, 0,
                                     Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session,
-                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) !=
+                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) !=
                                     (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto);
 
                                 float areaMinimaProd = ProdutoDAO.Instance.ObtemAreaMinima(session,
@@ -8807,7 +8821,7 @@ namespace Glass.Data.DAL
                                     p.Beneficiamentos.CountAreaMinimaSession(session), areaMinimaProd, false,
                                     p.Espessura, true);
 
-                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdProd);
+                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdProd, false);
                                 var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
 
                                 MovEstoqueDAO.Instance.BaixaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdBaixa), (decimal)(m2 ? m2CalcAreaMinima : 0), false, null, null, null);
@@ -8825,7 +8839,7 @@ namespace Glass.Data.DAL
                             foreach (var p in lstProdPed)
                             {
                                 var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session,
-                                    (int)p.IdProd);
+                                    (int)p.IdProd, false);
 
                                 var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
 
@@ -13793,7 +13807,7 @@ namespace Glass.Data.DAL
 
                             foreach (var prodPed in ProdutosPedidoDAO.Instance.GetByPedido(session, ped.IdPedido))
                             {
-                                var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(session, (int)prodPed.IdProd);
+                                var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(session, (int)prodPed.IdProd, false);
                                 var m2 = tipoCalc == (int)TipoCalculoGrupoProd.M2 || tipoCalc == (int)TipoCalculoGrupoProd.M2Direto;
                                 var qtdEstornoEstoque = prodPed.Qtde;
 
@@ -14882,7 +14896,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Salva as parcelas do pedido.
         /// </summary>
-        private void SalvarParcelas(GDASession session, Pedido objPedido)
+        private void SalvarParcelas(GDASession session, Pedido objPedido, bool validaDataParcela = false)
         {
             // Se for venda à vista exclui as parcelas
             if (objPedido.TipoVenda == 1)
@@ -14903,6 +14917,7 @@ namespace Glass.Data.DAL
                 }
 
                 if (objPedido.ValoresParcelas.Length > 0 && objPedido.ValoresParcelas[0] > 0)
+                {
                     for (int i = 0; i < objPedido.NumParc; i++)
                     {
                         // Chamado 35806. Caso o índice seja maior que a quantidade de itens dentro das variáveis "ValoresParcelas" ou
@@ -14912,10 +14927,16 @@ namespace Glass.Data.DAL
                             break;
                         }
 
+                        if (validaDataParcela && objPedido.DatasParcelas[i] < DateTime.Now.Date)
+                        {
+                            throw new Exception("A data de vencimento das parcelas do pedido deve ser igual ou maior que a data de hoje.");
+                        }
+
                         parcela.Valor = objPedido.ValoresParcelas[i];
                         parcela.Data = objPedido.DatasParcelas[i];
                         ParcelasPedidoDAO.Instance.Insert(session, parcela);
                     }
+                }
             }
         }
 
@@ -15587,7 +15608,7 @@ namespace Glass.Data.DAL
             }
 
             // Salva as parcelas do pedido.
-            SalvarParcelas(session, objUpdate);
+            SalvarParcelas(session, objUpdate, true);
 
             #endregion
 

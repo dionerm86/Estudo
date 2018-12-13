@@ -1,7 +1,7 @@
-﻿using System;
-using GDA;
+﻿using GDA;
 using Glass.Data.DAL;
 using Glass.Log;
+using System;
 
 namespace Glass.Data.Model
 {
@@ -200,7 +200,7 @@ namespace Glass.Data.Model
                         referencia += string.Format(" Etiq. Chapa: {0}", etiquetaChapa);
                 }
 
-                if (IdTrocaDevolucao > 0) 
+                if (IdTrocaDevolucao > 0)
                     referencia += " Troca/Dev.: " + IdTrocaDevolucao;
 
                 if (IdNf > 0)

@@ -1,8 +1,9 @@
-using Glass.Configuracoes;
+Ôªøusing Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Data.Model;
 using System;
+using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -27,7 +28,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             bool isProducao = IsPedidoProducao();
             bool isRevenda = IsPedidoRevenda();
 
-            // Indica se o pedido È um pedido de m„o de obra ou de produÁ„o
+            // Indica se o pedido √© um pedido de m√£o de obra ou de produ√ß√£o
             if (!String.IsNullOrEmpty(Request["idPedido"]))
             {
                 hdfPedidoMaoDeObra.Value = isMaoDeObra.ToString().ToLower();
@@ -41,7 +42,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
             if (isMaoDeObra)
             {
-                grdAmbiente.Columns[1].HeaderText = "PeÁa de vidro";
+                grdAmbiente.Columns[1].HeaderText = "Pe√ßa de vidro";
                 grdAmbiente.Columns[2].Visible = false;
                 grdAmbiente.Columns[3].Visible = true;
                 grdAmbiente.Columns[4].Visible = true;
@@ -66,7 +67,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             // Indica se os produtos devem ser bloqueados de acordo com o tipo de pedido
             hdfBloquearMaoDeObra.Value = PedidoConfig.DadosPedido.BloqueioPedidoMaoDeObra.ToString().ToLower();
 
-            // Se a empresa n„o possuir acesso ao mÛdulo PCP, esconde colunas Apl e Proc
+            // Se a empresa n√£o possuir acesso ao m√≥dulo PCP, esconde colunas Apl e Proc
             if (!Geral.ControlePCP)
             {
                 grdProdutos.Columns[9].Visible = false;
@@ -75,7 +76,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
             if (!IsPostBack && Request["idPedido"] != null)
             {
-                // Se este pedido n„o puder ser editado, volta para lista de pedidos
+                // Se este pedido n√£o puder ser editado, volta para lista de pedidos
                 if (!(PedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(Request["idPedido"])).EditVisible))
                 {
                     Response.Redirect("../Listas/LstPedidos.aspx");
@@ -117,8 +118,8 @@ namespace Glass.UI.Web.WebGlassParceiros
             if (!IsPostBack)
                 hdfNaoVendeVidro.Value = Glass.Configuracoes.Geral.NaoVendeVidro().ToString().ToLower();
 
-            // Mostra a opÁ„o de inserir projeto apenas se for pedido pedido de venda, se a empresa tiver opÁ„o de usar projeto
-            // e se o pedido tiver com opÁ„o readonly
+            // Mostra a op√ß√£o de inserir projeto apenas se for pedido pedido de venda, se a empresa tiver op√ß√£o de usar projeto
+            // e se o pedido tiver com op√ß√£o readonly
             if (!IsPostBack)
             {
                 uint? idObra = Request["idPedido"] != null ? PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(Request["idPedido"])) : null;
@@ -150,7 +151,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         {
             string ambiente = hdfIdAmbiente.Value;
 
-            // Se n„o houver nenhum produto cadastrado no pedido (e no ambiente passado)
+            // Se n√£o houver nenhum produto cadastrado no pedido (e no ambiente passado)
             if (grdProdutos.Rows.Count > 0 && ProdutosPedidoDAO.Instance.CountInPedidoAmbiente(Glass.Conversoes.StrParaUint(Request["idPedido"]), !String.IsNullOrEmpty(ambiente) ? Glass.Conversoes.StrParaUint(ambiente) : 0) == 0)
                 grdProdutos.Rows[0].Visible = false;
         }
@@ -226,7 +227,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
         #endregion
 
-        #region MÈtodos Ajax
+        #region M√©todos Ajax
 
         [Ajax.AjaxMethod]
         public string IsObraCliente(string idObra, string idCliente)
@@ -242,11 +243,11 @@ namespace Glass.UI.Web.WebGlassParceiros
             {
                 ProdutoObra prod = ProdutoObraDAO.Instance.GetByCodInterno(idObra.Value, codInterno);
                 if (prod == null)
-                    return "Erro;Esse produto n„o est· cadastrado no pagamento antecipado.";
+                    return "Erro;Esse produto n√£o est√° cadastrado no pagamento antecipado.";
 
                 float tamanhoProdutos = ProdutosPedidoDAO.Instance.TotalMedidasObra(idObra.Value, codInterno, null);
                 if (prod.TamanhoMaximo <= tamanhoProdutos)
-                    return "Erro;Esse produto j· foi utilizado totalmente para a obra.";
+                    return "Erro;Esse produto j√° foi utilizado totalmente para a obra.";
 
                 return "Ok;" + prod.ValorUnitario + ";" + (prod.TamanhoMaximo - tamanhoProdutos) + ";" + PedidoConfig.DadosPedido.AlterarValorUnitarioProduto.ToString().ToLower();
             }
@@ -262,7 +263,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             {
                 ProdutoObra prod = ProdutoObraDAO.Instance.GetByCodInterno(idObra.Value, codInterno);
                 if (prod == null)
-                    return "Erro;Esse produto n„o est· cadastrado no pagamento antecipado.";
+                    return "Erro;Esse produto n√£o est√° cadastrado no pagamento antecipado.";
 
                 float tamanhoProdutos = ProdutosPedidoDAO.Instance.TotalMedidasObra(idObra.Value, codInterno, null);
                 float tamanhoProduto = float.Parse(totM2Produto.Replace(".", ","));
@@ -274,7 +275,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         }
 
         /// <summary>
-        /// Retorna o cÛdigo que reprensenta a forma de pagamento "Cartao"
+        /// Retorna o c√≥digo que reprensenta a forma de pagamento "Cartao"
         /// </summary>
         /// <returns></returns>
         [Ajax.AjaxMethod()]
@@ -284,7 +285,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         }
 
         /// <summary>
-        /// Retorna o cÛdigo que reprensenta a forma de pagamento "Cheque"
+        /// Retorna o c√≥digo que reprensenta a forma de pagamento "Cheque"
         /// </summary>
         /// <returns></returns>
         [Ajax.AjaxMethod()]
@@ -294,7 +295,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         }
 
         /// <summary>
-        /// Retorna o cÛdigo que reprensenta a forma de pagamento "Dinheiro"
+        /// Retorna o c√≥digo que reprensenta a forma de pagamento "Dinheiro"
         /// </summary>
         /// <returns></returns>
         [Ajax.AjaxMethod()]
@@ -320,7 +321,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             {
                 Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno);
 
-                // Recupera o valor mÌnimo do produto
+                // Recupera o valor m√≠nimo do produto
                 int? tipoEntr = !string.IsNullOrWhiteSpace(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !string.IsNullOrWhiteSpace(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true",
@@ -329,7 +330,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         }
 
         /// <summary>
-        /// Retorna o CÛdigo/DescriÁ„o do produto
+        /// Retorna o C√≥digo/Descri√ß√£o do produto
         /// </summary>
         [Ajax.AjaxMethod()]
         public string GetProduto(string codInterno, string tipoEntrega, string revenda, string reposicao, string idCliente, string percComissao,
@@ -346,7 +347,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
 
                 if (prod == null)
-                    return "Erro;N„o existe produto com o cÛdigo informado.";
+                    return "Erro;N√£o existe produto com o c√≥digo informado.";
                 else if (prod.Situacao == Glass.Situacao.Inativo)
                     return "Erro;Produto inativo." + (!String.IsNullOrEmpty(prod.Obs) ? " Obs: " + prod.Obs : "");
                 else if (prod.Compra)
@@ -357,21 +358,21 @@ namespace Glass.UI.Web.WebGlassParceiros
                     if (!isAmbienteMaoObra)
                     {
                         if (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)
-                            return "Erro;Apenas produtos do grupo 'M„o de Obra Beneficiamento' podem ser incluÌdos nesse pedido.";
+                            return "Erro;Apenas produtos do grupo 'M√£o de Obra Beneficiamento' podem ser inclu√≠dos nesse pedido.";
                     }
                     else if (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
-                        return "Erro;Apenas produtos do grupo 'Vidro' podem ser usados como peÁa de vidro.";
+                        return "Erro;Apenas produtos do grupo 'Vidro' podem ser usados como pe√ßa de vidro.";
                 }
                 else if (isPedidoProducao)
                 {
                     if (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro || !SubgrupoProdDAO.Instance.IsSubgrupoProducao(prod.IdGrupoProd, prod.IdSubgrupoProd))
-                        return "Erro;Apenas produtos do grupo 'Vidro' marcados como 'Produtos para Estoque' podem ser incluÌdos nesse pedido.";
+                        return "Erro;Apenas produtos do grupo 'Vidro' marcados como 'Produtos para Estoque' podem ser inclu√≠dos nesse pedido.";
                 }
                 else if (PedidoConfig.DadosPedido.BloqueioPedidoMaoDeObra && prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)
-                    return "Erro;Produtos do grupo 'M„o de Obra Beneficiamento' est„o bloqueados para pedidos comuns.";
+                    return "Erro;Produtos do grupo 'M√£o de Obra Beneficiamento' est√£o bloqueados para pedidos comuns.";
 
                 if (SubgrupoProdDAO.Instance.ObterBloquearEcommerce(null, prod.IdSubgrupoProd.Value))
-                    return "Erro;Este produto n„o pode ser selecionado na plataforma e-commerce. Entre em contato com a empresa para mais informaÁıes";
+                    return "Erro;Este produto n√£o pode ser selecionado na plataforma e-commerce. Entre em contato com a empresa para mais informa√ß√µes";
 
                 string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
                 decimal valorProduto = 0;
@@ -394,13 +395,13 @@ namespace Glass.UI.Web.WebGlassParceiros
                 bool bloquearEstoque = GrupoProdDAO.Instance.BloquearEstoque(prod.IdGrupoProd, prod.IdSubgrupoProd) && !isPedidoProducao;
                 retorno += ";" + (bloquearEstoque ? ProdutoLojaDAO.Instance.GetEstoque(UserInfo.GetUserInfo.IdLoja, (uint)prod.IdProd, isPedidoProducao).ToString() : "100000");
 
-                // Verifica como deve ser feito o c·lculo do produto
-                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
+                // Verifica como deve ser feito o c√°lculo do produto
+                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
 
                 // Retorna a espessura do produto
                 retorno += ";" + prod.Espessura;
 
-                // Retorna a alÌquota ICMS do produto
+                // Retorna a al√≠quota ICMS do produto
                 retorno += ";" + prod.AliqICMSInterna.ToString().Replace(',', '.');
 
                 //if (isPedidoProducao)
@@ -427,21 +428,27 @@ namespace Glass.UI.Web.WebGlassParceiros
             try
             {
                 Cliente cli = ClienteDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idCli));
+                IEnumerable<string> motivos;
 
                 if (cli == null || cli.IdCli == 0)
-                    return "Erro;Cliente n„o encontrado.";
+                    return "Erro;Cliente n√£o encontrado.";
                 else if (cli.Situacao == (int)SituacaoCliente.Inativo)
                     return "Erro;Cliente inativo. Motivo: " + cli.Obs.Replace("\n", "<br />");
                 else if (cli.Situacao == (int)SituacaoCliente.Cancelado)
                     return "Erro;Cliente cancelado. Motivo: " + cli.Obs.Replace("\n", "<br />");
                 else if (cli.Situacao == (int)SituacaoCliente.Bloqueado)
                     return "Erro;Cliente bloqueado. Motivo: " + cli.Obs.Replace("\n", "<br />");
+
+                else if (Data.GerenciadorSituacaoCliente.Gerenciador.VerificarBloqueio(null, cli, out motivos))
+                {
+                    return $"Erro;Cliente bloqueado. Motivo: {string.Join(";", motivos)}";
+                }
                 else
                     return "Ok;" + cli.Nome + ";" + cli.Revenda.ToString().ToLower() + ";" + cli.Obs.Replace("\n", "<br />");
             }
             catch
             {
-                return "Erro;Cliente n„o encontrado.";
+                return "Erro;Cliente n√£o encontrado.";
             }
         }
 
@@ -465,7 +472,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 return "false";
 
             return (Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(prod.IdGrupoProd) && prod.IdSubgrupoProd != (int)Data.Helper.Utils.SubgrupoProduto.LevesDefeitos &&
-                Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd) != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd).ToString().ToLower();
+                Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false) != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd).ToString().ToLower();
         }
 
         #region Fast Delivery
@@ -473,7 +480,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         [Ajax.AjaxMethod]
         public string CheckFastDelivery(string idPedidoStr, string dataEntrega, string diferencaM2)
         {
-            // Se a data de entrega n„o tiver sido informada, n„o realiza verificaÁ„o de metragem quadrada
+            // Se a data de entrega n√£o tiver sido informada, n√£o realiza verifica√ß√£o de metragem quadrada
             if (String.IsNullOrEmpty(dataEntrega))
                 return "Ok|true";
 
@@ -490,7 +497,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 DateTime? novaDataEntrega = ProdutosPedidoDAO.Instance.GetFastDeliveryDay(idPedido, dataEntregaAtual, m2Pedido);
 
                 if (novaDataEntrega == null)
-                    throw new Exception("N„o foi possÌvel encontrar uma data para agendar o Fast Delivery.");
+                    throw new Exception("N√£o foi poss√≠vel encontrar uma data para agendar o Fast Delivery.");
 
                 return "Ok|" + (novaDataEntrega.Value == dataEntregaAtual).ToString().ToLower() + "|" + totalM2 + "|" + m2Pedido + "|" + novaDataEntrega.Value.ToString("dd/MM/yyyy");
             }
@@ -535,7 +542,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 grdProdutos.Visible = true;
                 grdProdutos.DataBind();
 
-                // Mostra no label qual ambiente est· sendo incluido produtos
+                // Mostra no label qual ambiente est√° sendo incluido produtos
                 bool maoDeObra = IsPedidoMaoDeObra();
                 AmbientePedido ambiente = AmbientePedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(hdfIdAmbiente.Value));
                 lblAmbiente.Text = "<br />" + ambiente.Ambiente;
@@ -550,7 +557,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
         protected void grdAmbiente_PreRender(object sender, EventArgs e)
         {
-            // Se n„o houver nenhum ambiente cadastrado para este pedido, esconde a primeira linha
+            // Se n√£o houver nenhum ambiente cadastrado para este pedido, esconde a primeira linha
             if (AmbientePedidoDAO.Instance.CountInPedido(Glass.Conversoes.StrParaUint(Request["idPedido"])) == 0)
                 grdAmbiente.Rows[0].Visible = false;
         }
@@ -590,7 +597,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 ambPed.IdProcesso = !String.IsNullOrEmpty(idProcesso) ? (uint?)Glass.Conversoes.StrParaUint(idProcesso) : null;
 
                 if (ambPed.Altura != ambPed.Largura && redondo)
-                    throw new Exception("O beneficiamento Redondo pode ser marcado somente em peÁas de medidas iguais.");
+                    throw new Exception("O beneficiamento Redondo pode ser marcado somente em pe√ßas de medidas iguais.");
             }
 
             try
@@ -606,7 +613,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 grdAmbiente.DataBind();
                 grdProdutos.DataBind();
 
-                // Esconde a 1™ linha da grdProduto, por n„o haver produtos cadastrados no ambiente
+                // Esconde a 1¬™ linha da grdProduto, por n√£o haver produtos cadastrados no ambiente
                 grdProdutos.Rows[0].Visible = false;
             }
             catch (Exception ex)
@@ -655,7 +662,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                     var ambientes = AmbientePedidoDAO.Instance.GetByPedido(Glass.Conversoes.StrParaUint(Request["idPedido"]), false);
                     foreach (AmbientePedido a in ambientes)
                         if (!AmbientePedidoDAO.Instance.PossuiProdutos(a.IdAmbientePedido))
-                            throw new Exception("O vidro " + a.PecaVidro + " n„o possui m„o-de-obra cadastrada. Cadastre alguma m„o-de-obra ou remova o vidro para continuar.");
+                            throw new Exception("O vidro " + a.PecaVidro + " n√£o possui m√£o-de-obra cadastrada. Cadastre alguma m√£o-de-obra ou remova o vidro para continuar.");
                 }
 
                 PedidoDAO.Instance.FinalizarPedidoComTransacao(Glass.Conversoes.StrParaUint(Request["idPedido"]), false);
@@ -680,7 +687,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
         #endregion
 
-        #region Em ConferÍncia "Pedido"
+        #region Em Confer√™ncia "Pedido"
 
         protected void btnEmConferencia_Click(object sender, EventArgs e)
         {
@@ -689,7 +696,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             // Verifica se o Pedido possui produtos
             if (ProdutosPedidoDAO.Instance.CountInPedido(idPedido) == 0)
             {
-                Glass.MensagemAlerta.ShowMsg("Inclua pelo menos um produto no pedido para finaliz·-lo.", Page);
+                Glass.MensagemAlerta.ShowMsg("Inclua pelo menos um produto no pedido para finaliz√°-lo.", Page);
                 return;
             }
 
@@ -744,7 +751,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             uint idCliente = Glass.Conversoes.StrParaUint(((HiddenField)dtvPedido.FindControl("hdfIdCliente")).Value);
             bool reposicao = bool.Parse(((HiddenField)dtvPedido.FindControl("hdfIsReposicao")).Value);
 
-            // Cria uma inst‚ncia do ProdutosPedido
+            // Cria uma inst√¢ncia do ProdutosPedido
             ProdutosPedido prodPed = new ProdutosPedido();
             prodPed.IdPedido = idPedido;
             prodPed.Qtde = float.Parse(((TextBox)grdProdutos.FooterRow.FindControl("txtQtdeIns")).Text.Replace('.', ','));
@@ -769,7 +776,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             prodPed.PedCli = ((TextBox)grdProdutos.FooterRow.FindControl("txtPedCli")).Text;
 
             if (altura != largura && redondo)
-                throw new Exception("O beneficiamento Redondo pode ser marcado somente em peÁas de medidas iguais.");
+                throw new Exception("O beneficiamento Redondo pode ser marcado somente em pe√ßas de medidas iguais.");
 
             uint idProdPed = 0;
 
@@ -794,7 +801,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
         #endregion
 
-        #region Cancelar ediÁ„o de pedido
+        #region Cancelar edi√ß√£o de pedido
 
         protected void btnCancelarEdit_Click(object sender, EventArgs e)
         {
@@ -855,7 +862,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
         #endregion
 
-        #region TÍmpera Fora
+        #region T√™mpera Fora
 
         protected void TemperaFora_Load(object sender, EventArgs e)
         {
@@ -864,7 +871,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
         #endregion
 
-        #region MÈtodos usados para iniciar valores na p·gina
+        #region M√©todos usados para iniciar valores na p√°gina
 
         protected string GetPosValor()
         {
@@ -875,12 +882,12 @@ namespace Glass.UI.Web.WebGlassParceiros
                 int tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
                 bool isRevenda = ClienteDAO.Instance.IsRevenda(PedidoDAO.Instance.ObtemIdCliente(null, idPedido));
 
-                // Verifica qual valor ser· utilizado
+                // Verifica qual valor ser√° utilizado
                 if (isRevenda) // Se for cliente revenda, valor de atacado
                     return "1";
-                else if (tipoEntrega == 1 || tipoEntrega == 4) // Balc„o ou Entrega
+                else if (tipoEntrega == 1 || tipoEntrega == 4) // Balc√£o ou Entrega
                     return "2";
-                else if (tipoEntrega == 2 || tipoEntrega == 3 || tipoEntrega == 5 || tipoEntrega == 6) // ColocaÁ„o Comum e Temperado
+                else if (tipoEntrega == 2 || tipoEntrega == 3 || tipoEntrega == 5 || tipoEntrega == 6) // Coloca√ß√£o Comum e Temperado
                     return "3";
                 else
                     return "1";
@@ -1181,7 +1188,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
         protected void lblQtdeAmbiente_PreRender(object sender, EventArgs e)
         {
-            ((Label)sender).Text = IsPedidoMaoDeObra() ? " x " + hdfQtdeAmbiente.Value + " peÁa(s) de vidro" : "";
+            ((Label)sender).Text = IsPedidoMaoDeObra() ? " x " + hdfQtdeAmbiente.Value + " pe√ßa(s) de vidro" : "";
         }
 
         protected string NomeControleBenef()
@@ -1206,7 +1213,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         }
 
         /// <summary>
-        /// Mostra/Esconde campos do total bruto e lÌquido
+        /// Mostra/Esconde campos do total bruto e l√≠quido
         /// </summary>
         protected void lblTotalBrutoLiquido_Load(object sender, EventArgs e)
         {
@@ -1255,7 +1262,7 @@ namespace Glass.UI.Web.WebGlassParceiros
 
         protected bool IsReposicao(object tipoVenda)
         {
-            return (int)tipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.ReposiÁ„o;
+            return (int)tipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposi√ß√£o;
         }
     }
 }

@@ -422,7 +422,7 @@ namespace Glass.Data.Helper
                 SubgrupoProdDAO.Instance.IsVidroTemperado(null, Glass.Conversoes.StrParaUint(idProd))) &&
                 tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2;
 
-            return Glass.Global.CalculosFluxo.ArredondaM2(larguraCalc, alturaCalc, qtde, 0, false, 0, calcMult5).ToString();
+            return Glass.Global.CalculosFluxo.ArredondaM2(null, larguraCalc, alturaCalc, qtde, 0, false, 0, calcMult5).ToString();
         }
 
         /// <summary>
@@ -458,7 +458,7 @@ namespace Glass.Data.Helper
             if (alturaCalc != larguraCalc && redondo)
                 throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
 
-            return Glass.Global.CalculosFluxo.ArredondaM2(larguraCalc, alturaCalc, qtde, (int)idProduto, redondo, espessura, tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !pedProdCorte).ToString();
+            return Glass.Global.CalculosFluxo.ArredondaM2(null, larguraCalc, alturaCalc, qtde, (int)idProduto, redondo, espessura, tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !pedProdCorte).ToString();
         }
 
         /// <summary>
@@ -497,7 +497,7 @@ namespace Glass.Data.Helper
             if (alturaCalc != larguraCalc && redondo)
                 throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
 
-            return Glass.Global.CalculosFluxo.CalcM2Calculo(idCli, alturaCalc, larguraCalc, qtde, idProduto, redondo, numBenef, areaMinima, true, espessura,
+            return Glass.Global.CalculosFluxo.CalcM2Calculo(null, idCli, alturaCalc, larguraCalc, qtde, idProduto, redondo, numBenef, areaMinima, true, espessura,
                 tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !pedProdCorte).ToString();
         }
 
@@ -537,7 +537,7 @@ namespace Glass.Data.Helper
             if (alturaCalc != larguraCalc && redondo)
                 throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
 
-            return Glass.Global.CalculosFluxo.CalcM2Calculo(idCli, alturaCalc, larguraCalc, qtde, idProduto, redondo, numBenef, areaMinima, false, espessura,
+            return Glass.Global.CalculosFluxo.CalcM2Calculo(null, idCli, alturaCalc, larguraCalc, qtde, idProduto, redondo, numBenef, areaMinima, false, espessura,
                 tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !pedProdCorte).ToString();
         }
 

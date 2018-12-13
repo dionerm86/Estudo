@@ -61,15 +61,15 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="chaveAcesso">chaveAcesso.</param>
         /// <returns>Retorna o número do MDFe associado à NFe informada, através da chave de acesso.</returns>
-        public int? ObterNumeroMdfeAssociadoNfe(GDASession session, string chaveAcesso)
+        public string ObterNumeroMdfeAssociadoNfe(GDASession session, string chaveAcesso)
         {
-            var sqlObterNumeroMdfe = $@"SELECT me.NumeroManifestoEletronico FROM cidade_descarga_mdfe cdm
+            var sqlObterNumeroMdfe = $@"SELECT GROUP_CONCAT(me.NumeroManifestoEletronico) FROM cidade_descarga_mdfe cdm
 	                INNER JOIN nfe_cidade_descarga_mdfe ncdm ON (cdm.IdCidadeDescarga = ncdm.IdCidadeDescarga)
 	                INNER JOIN manifesto_eletronico me ON (cdm.IdManifestoEletronico = me.IdManifestoEletronico)
                 WHERE ncdm.ChaveAcesso = ?chaveAcesso AND
-                    me.Situacao <> {(int)SituacaoEnum.Cancelado}";
+                    me.Situacao NOT IN ({(int)SituacaoEnum.Cancelado},{(int)SituacaoEnum.Encerrado})";
 
-            return this.ExecuteScalar<int?>(session, sqlObterNumeroMdfe, new GDAParameter("?chaveAcesso", chaveAcesso));
+            return this.ExecuteScalar<string>(session, sqlObterNumeroMdfe, new GDAParameter("?chaveAcesso", chaveAcesso));
         }
 
         #region Metodos Sobrescritos

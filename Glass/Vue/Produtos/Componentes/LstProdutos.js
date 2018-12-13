@@ -162,7 +162,7 @@ const app = new Vue({
      * Atualiza a lista de produtos
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     }
   },
 

@@ -10,14 +10,14 @@ namespace Glass.Global.Negocios.Componentes
     /// <summary>
     /// Implementação do fluxo de negócio dos funcionários.
     /// </summary>
-    public class FuncionarioFluxo : 
+    public class FuncionarioFluxo :
         Negocios.IFuncionarioFluxo,
         Entidades.IProvedorFuncionario
     {
         #region Funcionário
 
         /// <summary>
-        /// Recupera os funcionários ativos que são vendedores ou estão 
+        /// Recupera os funcionários ativos que são vendedores ou estão
         /// associados como vendedores para os clientes.
         /// </summary>
         /// <returns></returns>
@@ -44,7 +44,7 @@ namespace Glass.Global.Negocios.Componentes
         }
 
         /// <summary>
-        /// Recupera os funcionários ativos que são vendedores ou estão 
+        /// Recupera os funcionários ativos que são vendedores ou estão
         /// associados como vendedores para os clientes.
         /// </summary>
         /// <returns></returns>
@@ -120,7 +120,7 @@ namespace Glass.Global.Negocios.Componentes
                 whereClause
                     .And("f.IdLoja=?idLoja")
                     .Add("?idLoja", idLoja.Value)
-                    .AddDescription(() => 
+                    .AddDescription(() =>
                         string.Format("Loja: {0}",
                             SourceContext.Instance.CreateQuery()
                             .From<Data.Model.Loja>()
@@ -617,11 +617,11 @@ namespace Glass.Global.Negocios.Componentes
                         .From<Data.Model.Setor>()
                         .Select<Data.Model.Setor>(f => f.IdSetor, f => f.Descricao)
                         .Execute()
-                        .Select(f => 
-                            new 
-                            { 
-                                IdSetor = f.GetInt32("IdSetor"), 
-                                Descricao = f.GetString("Descricao") 
+                        .Select(f =>
+                            new
+                            {
+                                IdSetor = f.GetInt32("IdSetor"),
+                                Descricao = f.GetString("Descricao")
                             });
 
                     // Insere vários marcadores de produção
@@ -663,7 +663,7 @@ namespace Glass.Global.Negocios.Componentes
         public Colosoft.Business.SaveResult SalvarTipoFuncionario(Entidades.TipoFuncionario tipoFuncionario)
         {
             tipoFuncionario.Require("tipoFuncionario").NotNull();
-            
+
             using (var session = SourceContext.Instance.CreateSession())
             {
                 var resultado = tipoFuncionario.Save(session);
@@ -702,7 +702,7 @@ namespace Glass.Global.Negocios.Componentes
                 return session.Execute(false).ToDeleteResult();
             }
         }
-        
+
         #endregion
 
         #region FuncModulo
@@ -725,6 +725,6 @@ namespace Glass.Global.Negocios.Componentes
         }
 
         #endregion
-       
+
     }
 }

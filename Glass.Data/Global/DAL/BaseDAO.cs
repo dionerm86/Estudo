@@ -520,7 +520,7 @@ namespace Glass.Data.DAL
             alias = "'" + (!String.IsNullOrEmpty(alias) ? alias.TrimEnd(' ', '.') + "." : "") + "'";
 
             // Busca os campos que compõe a chave primária da tabela
-            string campo = "select cast(group_concat(concat(" + alias + @", column_name)) as char) from information_schema.key_column_usage 
+            string campo = "select cast(group_concat(concat(" + alias + @", column_name)) as char) from information_schema.key_column_usage
                 where table_schema='" + DBUtils.GetDBName + "' and table_name='" + nomeTabela + "' and constraint_name='primary'";
 
             // Recupera os campos
@@ -656,7 +656,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         private bool IsCampoChave(string nomeCampo, string nomeTabela)
         {
-            string sql = @"select count(*) from information_schema.key_column_usage 
+            string sql = @"select count(*) from information_schema.key_column_usage
                 where table_schema='" + DBUtils.GetDBName + @"' and table_name='" + nomeTabela + @"'
                 and column_name='" + nomeCampo + "'";
 

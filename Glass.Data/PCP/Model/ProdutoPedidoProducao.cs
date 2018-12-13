@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Helper;
@@ -12,7 +12,7 @@ using System.ComponentModel;
 namespace Glass.Data.Model
 {
     /// <summary>
-    /// EnumeraÁ„o com as situaÁıes de produÁ„o possÌveis.
+    /// Enumera√ß√£o com as situa√ß√µes de produ√ß√£o poss√≠veis.
     /// </summary>
     public enum SituacaoProdutoProducao
     {
@@ -65,29 +65,29 @@ namespace Glass.Data.Model
         public uint IdSetor { get; set; }
 
         [PersistenceProperty("IDFUNCPERDA")]
-        [Log("Funcion·rio Perda", "Nome", typeof(FuncionarioDAO))]
+        [Log("Funcion√°rio Perda", "Nome", typeof(FuncionarioDAO))]
         public uint? IdFuncPerda { get; set; }
 
         [PersistenceProperty("IdProdPedProducaoParent")]
         public uint? IdProdPedProducaoParent { get; set; }
 
         [PersistenceProperty("IDPEDIDOEXPEDICAO")]
-        [Log("Pedido ExpediÁ„o")]
+        [Log("Pedido Expedi√ß√£o")]
         public uint? IdPedidoExpedicao { get; set; }
 
         [PersistenceProperty("IDFUNCREPOS")]
-        [Log("Funcion·rio ReposiÁ„o", "Nome", typeof(FuncionarioDAO))]
+        [Log("Funcion√°rio Reposi√ß√£o", "Nome", typeof(FuncionarioDAO))]
         public uint? IdFuncRepos { get; set; }
 
         [PersistenceProperty("IDSETORREPOS")]
-        [Log("Setor ReposiÁ„o", "Descricao", typeof(SetorDAO))]
+        [Log("Setor Reposi√ß√£o", "Descricao", typeof(SetorDAO))]
         public uint? IdSetorRepos { get; set; }
 
         /// <summary>
-        /// 1-ProduÁ„o
+        /// 1-Produ√ß√£o
         /// 2-Perda
         /// 3-Cancelada (venda)
-        /// 4-Cancelada (m„o-de-obra)
+        /// 4-Cancelada (m√£o-de-obra)
         /// </summary>
         [PersistenceProperty("SITUACAO")]
         public long Situacao { get; set; }
@@ -112,7 +112,7 @@ namespace Glass.Data.Model
         public uint? IdSubtipoPerda { get; set; }
 
         [PersistenceProperty("OBS")]
-        [Log("ObservaÁ„o")]
+        [Log("Observa√ß√£o")]
         public string Obs { get; set; }
 
         [PersistenceProperty("ENTROUESTOQUE")]
@@ -120,32 +120,32 @@ namespace Glass.Data.Model
         public bool EntrouEstoque { get; set; }
 
         [PersistenceProperty("PECAREPOSTA")]
-        [Log("PeÁa Reposta?")]
+        [Log("Pe√ßa Reposta?")]
         public bool PecaReposta { get; set; }
 
         private uint? _tipoPerdaRepos;
 
         [PersistenceProperty("TIPOPERDAREPOS")]
-        [Log("Tipo de Perda ReposiÁ„o", "Descricao", typeof(TipoPerdaDAO))]
+        [Log("Tipo de Perda Reposi√ß√£o", "Descricao", typeof(TipoPerdaDAO))]
         public uint? TipoPerdaRepos
         {
-            get { return (_descrSetor != "Troca" && _descrSetor != "DevoluÁ„o") || _tipoPerdaRepos > 0 ? _tipoPerdaRepos : TipoPerdaDAO.Instance.GetIDByNomeExato("Outros"); }
+            get { return (_descrSetor != "Troca" && _descrSetor != "Devolu√ß√£o") || _tipoPerdaRepos > 0 ? _tipoPerdaRepos : TipoPerdaDAO.Instance.GetIDByNomeExato("Outros"); }
             set { _tipoPerdaRepos = value; }
         }
 
         [PersistenceProperty("IDSUBTIPOPERDAREPOS")]
-        [Log("Subtipo de Perda ReposiÁ„o", "Descricao", typeof(SubtipoPerdaDAO))]
+        [Log("Subtipo de Perda Reposi√ß√£o", "Descricao", typeof(SubtipoPerdaDAO))]
         public uint? IdSubtipoPerdaRepos { get; set; }
 
         [PersistenceProperty("DATAREPOS")]
-        [Log("Data de ReposiÁ„o")]
+        [Log("Data de Reposi√ß√£o")]
         public DateTime? DataRepos { get; set; }
 
         [PersistenceProperty("NUMETIQUETACANC")]
         public string NumEtiquetaCanc { get; set; }
 
         [PersistenceProperty("IDIMPRESSAO")]
-        [Log("Impress„o")]
+        [Log("Impress√£o")]
         public uint? IdImpressao { get; set; }
 
         [PersistenceProperty("CANCELADOADMIN")]
@@ -158,11 +158,11 @@ namespace Glass.Data.Model
         public int SituacaoProducao { get; set; }
 
         [PersistenceProperty("PECAPARADAPRODUCAO")]
-        [Log("PeÁa Parada na ProduÁ„o?")]
+        [Log("Pe√ßa Parada na Produ√ß√£o?")]
         public bool PecaParadaProducao { get; set; }
 
         [PersistenceProperty("MOTIVOPECAPARADAPRODUCAO")]
-        [Log("Motivo da peÁa parada na produÁ„o")]
+        [Log("Motivo da pe√ßa parada na produ√ß√£o")]
         public string MotivoPecaParadaProducao { get; set; }
 
         [PersistenceProperty("PosEtiquetaParent")]
@@ -286,7 +286,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("TOTM2", DirectionParameter.InputOptional)]
         public double TotM2
         {
-            get { return _totM2 > 0 ? _totM2 : Glass.Global.CalculosFluxo.ArredondaM2((int)Largura, (int)Altura, (int)Qtde, 0, false); }
+            get { return _totM2 > 0 ? _totM2 : Glass.Global.CalculosFluxo.ArredondaM2(null, (int)Largura, (int)Altura, (float)Qtde, 0, false, 0, true); }
             set { _totM2 = value; }
         }
 
@@ -395,7 +395,7 @@ namespace Glass.Data.Model
             }
         }
 
-        [Log("N˙mero da Etiqueta")]
+        [Log("N√∫mero da Etiqueta")]
         public string NumEtiquetaExibir
         {
             get { return NumEtiqueta != null ? NumEtiqueta : NumEtiquetaCanc; }
@@ -474,17 +474,17 @@ namespace Glass.Data.Model
             }
         }
 
-        [Log("SituaÁ„o")]
+        [Log("Situa√ß√£o")]
         public string DescrSituacao
         {
             get
             {
                 switch ((SituacaoEnum)Situacao)
                 {
-                    case SituacaoEnum.Producao: return "ProduÁ„o";
+                    case SituacaoEnum.Producao: return "Produ√ß√£o";
                     case SituacaoEnum.Perda: return "Perda";
                     case SituacaoEnum.CanceladaVenda: return "Cancelada (venda)";
-                    case SituacaoEnum.CanceladaMaoObra: return "Cancelada (m„o-de-obra)";
+                    case SituacaoEnum.CanceladaMaoObra: return "Cancelada (m√£o-de-obra)";
                     default: return "";
                 }
             }
@@ -620,13 +620,13 @@ namespace Glass.Data.Model
 
         public string PecaParadaProducaoStr
         {
-            get { return PecaParadaProducao ? "Sim" : "N„o"; }
+            get { return PecaParadaProducao ? "Sim" : "N√£o"; }
         }
 
         [Log("Data Leitura Setor")]
         internal DateTime? DataLeituraSetorVoltarPeca { get; set; }
 
-        [Log("Funcion·rio Leitura Setor")]
+        [Log("Funcion√°rio Leitura Setor")]
         internal string NomeFuncLeituraSetorVoltarPeca { get; set; }
 
         /// <summary>
@@ -644,7 +644,7 @@ namespace Glass.Data.Model
 
         #endregion
 
-        #region Campos de leitura da produÁ„o
+        #region Campos de leitura da produ√ß√£o
 
         private string[] _vetDataLeitura;
 
@@ -790,8 +790,8 @@ namespace Glass.Data.Model
                                     _setorNaoObrigatorio[pos] = temLeitura[pos] || !Utils.GetSetores[i].SetorPertenceARoteiro ||
                                         setorObrigatorio.Contains(Utils.GetSetores[i].IdSetor) ? String.Empty : @"
                                         <div style='text-align: center; opacity: 0.5; filter: alpha(opacity=50)'>
-                                            <img src='../../Images/alerta.png' alt='Setor n„o faz parte do roteiro de produÁ„o' 
-                                                title='Setor n„o faz parte do roteiro de produÁ„o, portanto n„o necessita ser lido' />
+                                            <img src='../../Images/alerta.png' alt='Setor n√£o faz parte do roteiro de produ√ß√£o' 
+                                                title='Setor n√£o faz parte do roteiro de produ√ß√£o, portanto n√£o necessita ser lido' />
                                         </div>";
                                 }
                             }
@@ -834,7 +834,7 @@ namespace Glass.Data.Model
         public string GroupSetorCorte { get; set; }
 
         /// <summary>
-        /// Verifica se o produto pedido produÁ„o tem leitura em algum setor oculto.
+        /// Verifica se o produto pedido produ√ß√£o tem leitura em algum setor oculto.
         /// </summary>
         public bool TemLeituraSetorOculto
         {
@@ -842,7 +842,7 @@ namespace Glass.Data.Model
             {
                 var leituras = LeituraProducaoDAO.Instance.ObterSetoresLidos(null, (int)IdProdPedProducao);
                 if (leituras != null && leituras.Count > 0)
-                    // Verifica se algum dos setores que a peÁa foi lida n„o est· sendo exibido no relatÛrio.
+                    // Verifica se algum dos setores que a pe√ßa foi lida n√£o est√° sendo exibido no relat√≥rio.
                     return leituras.Any(s => !SetorDAO.Instance.ExibirNoRelatorio(s));
                 else
                     return false;

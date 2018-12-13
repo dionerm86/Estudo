@@ -245,6 +245,13 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Estoques\V1\Movimentacoes\TiposMovimentacao\GetTiposMovimentacaoController.cs" />
+    <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\PostMovimentacaoEstoqueRealController.cs" />
+    <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\DeleteMovimentacaoEstoqueRealController.cs" />
+    <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\GetMovimentacaoEstoqueRealController.cs" />
+    <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\MovimentacaoEstoqueRealController.cs" />
     <Compile Include="Controllers\Estoques\V1\TrocasDevolucoes\GetTrocasDevolucoesController.cs" />
     <Compile Include="Controllers\Estoques\V1\TrocasDevolucoes\TrocasDevolucoesController.cs" />
     <Compile Include="Controllers\Parcelas\V1\PatchParcelasController.cs" />
@@ -340,9 +347,12 @@
     <Compile Include="Controllers\Condutores\GetCondutoresController.cs" />
     <Compile Include="Controllers\Condutores\PatchCondutoresController.cs" />
     <Compile Include="Controllers\Condutores\PostCondutoresController.cs" />
+    <Compile Include="Controllers\Funcionarios\V1\PatchFuncionariosController.cs" />
+    <Compile Include="Controllers\Funcionarios\V1\PostFuncionariosController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\DeleteCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PatchCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PostCoresAluminioController.cs" />
+    <Compile Include="Controllers\Funcionarios\V1\DeleteFuncionariosController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\DeleteCoresFerragemController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\PatchCoresFerragemController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\PostCoresFerragemController.cs" />
@@ -511,6 +521,7 @@
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
     <Compile Include="Helper\Pedidos\TraducaoOrdenacaoListaPedidosVolumes.cs" />
+    <Compile Include="Helper\Estoques\Movimentacoes\Reais\TraducaoOrdenacaoMovimentacaoEstoqueReal.cs" />
     <Compile Include="Helper\Parcelas\ConverterCadastroAtualizacaoParaParcelas.cs" />
     <Compile Include="Helper\Carregamentos\TraducaoOrdenacaoListaCarregamentos.cs" />
     <Compile Include="Helper\Estoques\TraducaoOrdenacaoListaTrocasDevolucoes.cs" />
@@ -562,12 +573,15 @@
     <Compile Include="Helper\PlanosConta\TraducaoOrdenacaoListaPlanosConta.cs" />
     <Compile Include="Helper\ContasBancarias\ConverterCadastroAtualizacaoParaContaBancaria.cs" />
     <Compile Include="Helper\ContasBancarias\TraducaoOrdenacaoListaContasBancarias.cs" />
+    <Compile Include="Helper\Funcionarios\ConverterCadastroAtualizacaoParaFuncionario.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\TraducaoOrdenacaoListaCoresVidro.cs" />
     <Compile Include="Helper\Produtos\CoresAluminio\ConverterCadastroAtualizacaoParaCorAluminio.cs" />
     <Compile Include="Helper\Produtos\CoresAluminio\TraducaoOrdenacaoListaCoresAluminio.cs" />
+    <Compile Include="Helper\Funcionarios\TraducaoOrdenacaoListaFuncionarios.cs" />
+    <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoFuncionarioStrategy.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\ConverterCadastroAtualizacaoParaCorFerragem.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\TraducaoOrdenacaoListaCoresFerragem.cs" />
     <Compile Include="Helper\Aplicacoes\ConverterCadastroAtualizacaoParaAplicacao.cs" />
@@ -671,6 +685,16 @@
     <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\ListaDto.cs" />
     <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\TiposMovimentacao\TiposMovimentacao.cs" />
+    <Compile Include="Models\Funcionarios\V1\CadastroAtualizacao\DocumentosEDadosPessoaisDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Detalhe\DocumentosEDadosPessoaisDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Lista\ContatosDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\DadosEstoqueDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\DataCadastroMovimentacaoDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\FiltroDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\ListaDto.cs" />
+    <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\PermissoesDto.cs" />
     <Compile Include="Models\Genericas\V1\CodigoNomeDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\Lista\FiltroDto.cs" />
@@ -731,6 +755,7 @@
     <Compile Include="Models\ContasBancarias\V1\Lista\DadosBancoDto.cs" />
     <Compile Include="Models\ContasBancarias\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Setores\CadastroAtualizacao\PosicaoDto.cs" />
+    <Compile Include="Models\Producao\V1\Setores\Filtro\SetorDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\TiposPerda\Lista\ListaDto.cs" />
@@ -908,6 +933,19 @@
     <Compile Include="Models\Estoques\V1\CadastroAtualizacao\CadastroAtualizacaoRapidaRealDto.cs" />
     <Compile Include="Models\Estoques\V1\CadastroAtualizacao\CadastroAtualizacaoRealDto.cs" />
     <Compile Include="Models\Estoques\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Configuracoes\DetalheDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Detalhe\AcessoDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Comuns\ContatosDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Detalhe\DetalheDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Comuns\DocumentosEDadosPessoaisDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Detalhe\PermisoesDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Comuns\BaseContatosDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Lista\DocumentosDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Helper\NotasFiscais\ConversorParticipanteModeloParaDto.cs" />
     <Compile Include="Models\Estoques\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Estoques\V1\Lista\ListaDto.cs" />
@@ -1098,16 +1136,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\Produtos\CoresAluminio\CadastroAtualizacao\" />
-    <Folder Include="Models\Produtos\CoresAluminio\Lista\" />
-    <Folder Include="Models\Produtos\CoresFerragem\CadastroAtualizacao\" />
-    <Folder Include="Models\Produtos\CoresFerragem\Lista\" />
-    <Folder Include="Models\Produtos\CoresVidro\CadastroAtualizacao\" />
-    <Folder Include="Models\Produtos\CoresVidro\Lista\" />
-    <Folder Include="Models\Transportadores\Configuracoes\" />
-    <Folder Include="Models\Transportadores\Lista\" />
-    <Folder Include="Models\Veiculos\Configuracoes\" />
-    <Folder Include="Models\Veiculos\Lista\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">

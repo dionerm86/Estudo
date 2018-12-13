@@ -6,6 +6,7 @@ using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.Producao.V1.Setores.Filtro;
 using Glass.Data.Helper;
 using Glass.Data.Model;
 using Swashbuckle.Swagger.Annotations;
@@ -154,17 +155,18 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Setores
         /// <returns>Uma lista JSON com os dados básicos das situações de produção.</returns>
         [HttpGet]
         [Route("filtro")]
-        [SwaggerResponse(200, "Setores de produção encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(200, "Setores de produção encontrados.", Type = typeof(IEnumerable<SetorDto>))]
         [SwaggerResponse(204, "Setores de produção não encontrados.")]
         public IHttpActionResult ObterParaControle(bool incluirSetorImpressao, bool incluirEtiquetaNaoImpressa)
         {
             using (var sessao = new GDATransaction())
             {
                 var setores = Utils.GetSetores
-                    .Select(s => new IdNomeDto
+                    .Select(s => new SetorDto
                     {
                         Id = s.IdSetor,
                         Nome = s.Descricao,
+                        Ordem = s.NumeroSequencia,
                     })
                     .ToList();
 
@@ -179,10 +181,11 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Setores
 
                 if (incluirEtiquetaNaoImpressa)
                 {
-                    setores.Insert(0, new IdNomeDto
+                    setores.Insert(0, new SetorDto
                     {
                         Id = -1,
                         Nome = "Etiqueta não impressa",
+                        Ordem = -1,
                     });
                 }
 

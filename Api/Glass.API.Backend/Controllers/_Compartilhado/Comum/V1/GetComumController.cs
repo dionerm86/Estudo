@@ -1,15 +1,12 @@
-// <copyright file="GetComumController.cs" company="Sync Softwares">
+﻿// <copyright file="GetComumController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Colosoft;
 using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Models.Genericas.V1;
 using Swashbuckle.Swagger.Annotations;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Comum.V1
@@ -52,6 +49,25 @@ namespace Glass.API.Backend.Controllers.Comum.V1
             {
                 var tipos = new ConversorEnum<Data.Model.TipoPessoaMigrado>()
                     .ObterTraducaoCodigoNome();
+
+                return this.Lista(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de funcionários.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos de tipos de funcionários.</returns>
+        [HttpGet]
+        [Route("estadosCivis")]
+        [SwaggerResponse(200, "Estados Civis encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Estados Civis não encontrados.")]
+        public IHttpActionResult ObterEstadosCivis()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = new ConversorEnum<EstadoCivil>()
+                    .ObterTraducao();
 
                 return this.Lista(tipos);
             }

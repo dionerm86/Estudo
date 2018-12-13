@@ -133,8 +133,8 @@ Servicos.Producao = (function(http) {
 
       /**
        * Recupera a lista de setores de produção para uso no controle de busca.
-       * @param {?boolean} [incluirSetorImpressao=null] Indica se o setor de impressão de etiquetas deve ser retornado.
-       * @param {?boolean} [incluirEtiquetaNaoImpressa=null] Indica se deve ser retornado um setor de 'etiqueta não impressa'.
+       * @param {?boolean} [incluirSetorImpressao=false] Indica se o setor de impressão de etiquetas deve ser retornado.
+       * @param {?boolean} [incluirEtiquetaNaoImpressa=false] Indica se deve ser retornado um setor de 'etiqueta não impressa'.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obterParaControle: function (incluirSetorImpressao, incluirEtiquetaNaoImpressa) {
@@ -434,6 +434,14 @@ Servicos.Producao = (function(http) {
      */
     obterSituacoes: function () {
       return http().get(API + 'situacoes');
+    },
+
+    /**
+     * Recupera a lista de setores de produção.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterSetores: function () {
+      return http().get("api/v1/producao/setores");
     },
 
     /**

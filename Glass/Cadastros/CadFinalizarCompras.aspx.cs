@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Glass.Configuracoes;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -31,7 +32,12 @@ namespace Glass.UI.Web.Cadastros
             {
                 DateTime[] datas = ctrlParcelas1.Datas;
                 List<uint> idsCompras = new List<uint>();
-    
+                var boletoChegou = chkBoletoChegou.Checked;
+                var idFormaPagto = Conversoes.StrParaUint(drpFormaPagto.SelectedValue);
+                var dataFabrica = ctrlDataFabrica.Data;
+                var nf = txtNf.Text;
+                var numParc = Conversoes.StrParaInt(drpNumParc.SelectedValue);
+
                 for (int i = 0; i < grdCompra.Rows.Count; i++)
                 {
                     CheckBox chkFinalizar = (CheckBox)grdCompra.Rows[i].FindControl("chkFinalizar");
@@ -46,7 +52,7 @@ namespace Glass.UI.Web.Cadastros
                 }
     
                 comprasOk = WebGlass.Business.Compra.Fluxo.FinalizarCompra.Instance.FinalizarVarias(idsCompras,
-                    datas, Glass.Conversoes.StrParaInt(drpNumParc.SelectedValue));
+                    datas, numParc, nf, dataFabrica, idFormaPagto, boletoChegou);
     
                 Glass.MensagemAlerta.ShowMsg("Compras finalizadas com sucesso!", Page);
             }

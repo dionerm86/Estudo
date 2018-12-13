@@ -465,8 +465,8 @@ namespace Glass.Rentabilidade.Negocios.Componentes
 
             var indicadores2 = SourceContext.Instance.CreateQuery()
                 .From<Data.Model.IndicadorFinanceiro>()
-                .Where(string.Join(" AND ", parametros.Select(f => $"Nome={f.Parametro}")))
-                .Add(parametros.Select(f => new Colosoft.Query.QueryParameter(f.Parametro, f.Valor)))
+                .Where(string.Join(" OR ", parametros.Select(f => $"Nome={f.Parametro}")))
+                .Add(parametros.Select(f => new Colosoft.Query.QueryParameter(f.Parametro, f.Nome)))
                 .ProcessLazyResult<Entidades.IndicadorFinanceiro>()
                 .ToList();
 

@@ -348,7 +348,7 @@ namespace Glass.Global.Negocios.Entidades
         /// <summary>
         /// Estado civil do funcionário.
         /// </summary>
-        public string EstCivil
+        public EstadoCivil? EstCivil
         {
             get { return DataModel.EstCivil; }
             set
@@ -917,13 +917,6 @@ namespace Glass.Global.Negocios.Entidades
         /// <returns></returns>
         public override Colosoft.Business.SaveResult Save(Colosoft.Data.IPersistenceSession session)
         {
-            if (!String.IsNullOrEmpty(EstCivil))
-            {
-                // Faz com que o estado civil seja salvo sempre com a primeira letra maiúscula e todas as outras minúsculas.
-                var estadoCivil = EstCivil.Substring(1, EstCivil.Length - 1);
-                EstCivil = EstCivil.Substring(0, 1).ToUpper() + estadoCivil.ToLower();
-            }
-
             // Se qualquer um que não seja Administrador tentar alterar qualquer funcionário para administrador, impede
             if (Glass.Data.Helper.UserInfo.GetUserInfo.TipoUsuario != (uint)Glass.Data.Helper.Utils.TipoFuncionario.Administrador &&
                 !Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync &&

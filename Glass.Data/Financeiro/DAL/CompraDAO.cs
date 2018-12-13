@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
@@ -178,6 +178,76 @@ namespace Glass.Data.DAL
             return sql;
         }
 
+        /// <summary>
+        /// M√©todo que altera os dados da compra e em seguinda finaliza ela.
+        /// </summary>
+        /// <param name="session">Sess√£o do GDA.</param>
+        /// <param name="idCompra">Identificador da compra que ser√° alterada.</param>
+        /// <param name="numeroParcelas">Novas parcelas da compra.</param>
+        /// <param name="datasParcelas">Novas datas das parcelas da compra.</param>
+        /// <param name="nf">novo valor para o campo Nf.</param>
+        /// <param name="dataFabrica">nova data f√°brica.</param>
+        /// <param name="idFormaPagto">Novo identificador da forma de pagamento.</param>
+        /// <param name="boletoChegou">Novo valor para boleto chegou</param>
+        public void AlterarDadosEFinalizarCompra(GDASession session, uint idCompra, int numeroParcelas, DateTime[] datasParcelas, string nf, DateTime? dataFabrica, uint idFormaPagto, bool boletoChegou)
+        {
+            this.AlteraParcelas(session, idCompra, numeroParcelas, datasParcelas);
+            var compra = this.GetElementByPrimaryKey(session, (int)idCompra);
+
+            compra.BoletoChegou = boletoChegou;
+
+            if (dataFabrica != null)
+            {
+                compra.DataFabrica = dataFabrica;
+            }
+
+            if (!string.IsNullOrWhiteSpace(nf))
+            {
+                compra.Nf = nf;
+            }
+
+            if (idFormaPagto > 0)
+            {
+                compra.IdFormaPagto = idFormaPagto;
+            }
+
+            this.Update(session, compra);
+
+            this.FinalizarCompra(session, idCompra);
+        }
+
+        /// <summary>
+        /// M√©todo que altera os dados da compra e em seguinda finaliza ela.
+        /// </summary>
+        /// <param name="idCompra">Identificador da compra que ser√° alterada.</param>
+        /// <param name="numeroParcelas">Novas parcelas da compra.</param>
+        /// <param name="datasParcelas">Novas datas das parcelas da compra.</param>
+        /// <param name="nf">novo valor para o campo Nf.</param>
+        /// <param name="dataFabrica">nova data f√°brica.</param>
+        /// <param name="idFormaPagto">Novo identificador da forma de pagamento.</param>
+        /// <param name="boletoChegou">Novo valor para boleto chegou</param>
+        public void AlterarDadosEFinalizarCompraComTransacao(uint idCompra, int numeroParcelas, DateTime[] datasParcelas, string nf, DateTime? dataFabrica, uint idFormaPagto, bool boletoChegou)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    AlterarDadosEFinalizarCompra(transaction, idCompra, numeroParcelas, datasParcelas, nf, dataFabrica, idFormaPagto, boletoChegou);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
+        }
+
         private string SqlRpt(uint idCompra, uint idPedido, string nf, uint idFornec, string nomeFornec, string obs,
             bool soPcp, int situacao, bool emAtraso, string dataIni, string dataFim, string dataFabIni, string dataFabFim, string dataSaidaIni, string dataSaidaFim,
             string dataFinIni, string dataFinFim, string dataEntIni, string dataEntFim, string idsGrupoProd, uint idSubgrupoProd,
@@ -254,7 +324,7 @@ namespace Glass.Data.DAL
             else if (situacao > 0)
             {
                 filtroAdicional += " And c.situacao=" + situacao;
-                criterio += "SituaÁ„o: " + PagtoDAO.Instance.GetSituacaoCompra(situacao) + "    ";
+                criterio += "Situa√ß√£o: " + PagtoDAO.Instance.GetSituacaoCompra(situacao) + "    ";
             }
 
             if (!String.IsNullOrEmpty(nf))
@@ -269,7 +339,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataIni))
             {
                 filtroAdicional += " and c.dataCad>=?dataIni";
-                criterio += "Data inÌcio: " + dataIni + "    ";
+                criterio += "Data in√≠cio: " + dataIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataFim))
@@ -281,7 +351,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataFabIni))
             {
                 filtroAdicional += " And c.dataFabrica>=?dataFabIni";
-                criterio += "Data fab. inÌcio: " + dataFabIni + "    ";
+                criterio += "Data fab. in√≠cio: " + dataFabIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataFabFim))
@@ -293,31 +363,31 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataSaidaIni))
             {
                 filtroAdicional += " And c.dataSaida>=?dataSaidaIni";
-                criterio += "Data saÌda inÌcio: " + dataSaidaIni + "    ";
+                criterio += "Data sa√≠da in√≠cio: " + dataSaidaIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataSaidaFim))
             {
                 filtroAdicional += " And c.dataSaida<=?dataSaidaFim";
-                criterio += "Data saÌda fim: " + dataSaidaIni + "    ";
+                criterio += "Data sa√≠da fim: " + dataSaidaIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataFinIni))
             {
                 filtroAdicional += " And c.dataFinalizada>=?dataFinIni";
-                criterio += "Data finalizaÁ„o inÌcio: " + dataFinIni + "    ";
+                criterio += "Data finaliza√ß√£o in√≠cio: " + dataFinIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataFinFim))
             {
                 filtroAdicional += " And c.dataFinalizada<=?dataFinFim";
-                criterio += "Data finalizaÁ„o fim: " + dataFinFim + "    ";
+                criterio += "Data finaliza√ß√£o fim: " + dataFinFim + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataEntIni))
             {
                 sql += " and p.dataEntrega>=?dataEntIni";
-                criterio += "Data entrega inÌcio: " + dataEntIni + "    ";
+                criterio += "Data entrega in√≠cio: " + dataEntIni + "    ";
                 temFiltro = true;
             }
 
@@ -331,7 +401,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(obs))
             {
                 filtroAdicional += " And c.Obs Like ?obs";
-                criterio += "ObservaÁ„o: " + obs + "    ";
+                criterio += "Observa√ß√£o: " + obs + "    ";
             }
 
             if (!String.IsNullOrEmpty(idsGrupoProd) && idsGrupoProd != "0")
@@ -435,13 +505,13 @@ namespace Glass.Data.DAL
 
             if (compra.TipoCompra == (int)Compra.TipoCompraEnum.AVista)
             {
-                descrPagto = "¿ Vista";
+                descrPagto = "√Ä Vista";
             }
             else
             {
                 if (compra.NumParc <= FinanceiroConfig.Compra.NumeroParcelasCompra)
                 {
-                    descrPagto += "¿ Prazo - " + compra.NumParc + " vez(es)";
+                    descrPagto += "√Ä Prazo - " + compra.NumParc + " vez(es)";
                     
                     descrPagto += ": ";
                     var lstParc = ParcelasCompraDAO.Instance.GetByCompra(compra.IdCompra).ToArray();
@@ -453,7 +523,7 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    descrPagto += "¿ Prazo - " + compra.NumParc + " vez(es) de " + compra.ValorParc.ToString("c");
+                    descrPagto += "√Ä Prazo - " + compra.NumParc + " vez(es) de " + compra.ValorParc.ToString("c");
 
                     if (compra.DataBaseVenc != null)
                         descrPagto += "  Data Base Venc.: " + compra.DataBaseVenc.Value.ToString("d");
@@ -464,7 +534,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna compra para ser utilizada em relatÛrio
+        /// Retorna compra para ser utilizada em relat√≥rio
         /// </summary>
         /// <param name="idCompra"></param>
         /// <returns></returns>
@@ -638,10 +708,10 @@ namespace Glass.Data.DAL
                 Replace("?filtroAdicional?", filtroAdicional)).ToList();
         }
 
-        #region RelatÛrio de AntecipaÁ„o
+        #region Relat√≥rio de Antecipa√ß√£o
 
         /// <summary>
-        /// Busca compras relacionados ‡ AntecipaÁ„o passada
+        /// Busca compras relacionados √† Antecipa√ß√£o passada
         /// </summary>
         /// <param name="idAntecipFornec"></param>
         /// <returns></returns>
@@ -663,7 +733,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Altera SituaÁ„o
+        #region Altera Situa√ß√£o
         
         public void AlteraSituacao(uint idCompra, Compra.SituacaoEnum situacao)
         {
@@ -677,7 +747,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca para finalizar v·rias
+        #region Busca para finalizar v√°rias
 
         private string SqlFinalizarVarias(uint idFornec, string nomeFornec, string dataIni, string dataFim,
             uint idConta, bool selecionar, out string filtroAdicional)
@@ -781,12 +851,12 @@ namespace Glass.Data.DAL
             /* Chamado 15739.
              * A compra foi finalizada mais de uma vez, fazendo com que o estoque fosse creditado duplicadamente. */
             if (compra.Situacao == Compra.SituacaoEnum.Finalizada)
-                throw new Exception("A compra est· finalizada.");
+                throw new Exception("A compra est√° finalizada.");
 
             /* Chamado 52468.
              * A compra foi finalizada sem plano de conta, gerando erro na tela de efetuar pagamento.. */
             if (compra.IdConta.GetValueOrDefault() == 0)
-                throw new Exception("Associe um plano de conta ‡ compra.");
+                throw new Exception("Associe um plano de conta √† compra.");
 
             Compra.SituacaoEnum situacao = (Compra.SituacaoEnum)ObtemValorCampo<int>(session, "situacao", "idCompra=" + idCompra);
 
@@ -795,13 +865,13 @@ namespace Glass.Data.DAL
                 // Atualiza data que comprou do fornecedor                        
                 FornecedorDAO.Instance.AtualizaDataUltCompra(session, compra.IdFornec.GetValueOrDefault());
 
-                #region Gera Contas ‡ Pagar
+                #region Gera Contas √† Pagar
 
                 if (!compra.IsCompraSemValores)
                 {
                     /* Chamado 28823 e 32807. */
                     if (compra.Total == 0 && compra.Desconto == 0)
-                        throw new Exception("A compra n„o pode ser finalizada com o valor total zerado, defina o valor dos produtos antes da finalizaÁ„o.");
+                        throw new Exception("A compra n√£o pode ser finalizada com o valor total zerado, defina o valor dos produtos antes da finaliza√ß√£o.");
 
                     decimal totalPago = (decimal)ContasPagarDAO.Instance.GetPagasTotal(session, idCompra);
 
@@ -815,22 +885,22 @@ namespace Glass.Data.DAL
                         {
                             //TODO: Alterar para somar o sinal no total da compra
                             if (ParcelasCompraDAO.Instance.ObtemTotalPorCompra(session, idCompra) != compra.Total - compra.ValorEntrada - totalPagoComTributado)
-                                throw new Exception("O valor definido nas parcelas da compra est· diferente do valor da compra. Valor a ser pago da compra: " +
+                                throw new Exception("O valor definido nas parcelas da compra est√° diferente do valor da compra. Valor a ser pago da compra: " +
                                     (compra.Total - compra.ValorEntrada - totalPagoComTributado).ToString("C") +
                                     ". Valor definido nas parcelas: " + ParcelasCompraDAO.Instance.ObtemTotalPorCompra(session, idCompra).ToString("C"));
                         }
                         else if (compra.ValorParc * compra.NumParc != compra.Total - compra.ValorEntrada - totalPagoComTributado)
-                            throw new Exception("O valor definido nas parcelas da compra est· diferente do valor da compra. Valor a ser pago da compra: " +
+                            throw new Exception("O valor definido nas parcelas da compra est√° diferente do valor da compra. Valor a ser pago da compra: " +
                                 (compra.Total - compra.ValorEntrada - totalPagoComTributado).ToString("C") + ". Valor definido nas parcelas: " + ParcelasCompraDAO.Instance.ObtemTotalPorCompra(session, idCompra).ToString("C"));
                     }
 
                     if (totalPago < compra.Total)
                     {
-                        // Se o pagamento for ‡ vista e o total da compra menos o valor j· pago e menos o valor trbutado for maior que 0,
+                        // Se o pagamento for √† vista e o total da compra menos o valor j√° pago e menos o valor trbutado for maior que 0,
                         // gera uma conta a pagar
                         if (compra.TipoCompra == (int)Compra.TipoCompraEnum.AVista && compra.Total - totalPagoComTributado > 0)
                         {
-                            #region ‡ vista
+                            #region √† vista
 
                             ContasPagar contaPagar = new ContasPagar();
                             contaPagar.IdFornec = compra.IdFornec;
@@ -851,15 +921,15 @@ namespace Glass.Data.DAL
                             #endregion
                         }
 
-                        // Se o pagamento foi efetuado ‡ prazo
+                        // Se o pagamento foi efetuado √† prazo
                         else if (compra.TipoCompra == (int)Compra.TipoCompraEnum.APrazo)
                         {
-                            #region ‡ prazo
+                            #region √† prazo
 
-                            // Busca as contas pagas relacionadas ‡ esta compra
+                            // Busca as contas pagas relacionadas √† esta compra
                             ContasPagar[] lstContas = ContasPagarDAO.Instance.GetByCompra(session, idCompra);
 
-                            // Exclui contas a pagar que n„o foram pagas (evitar duplicidade)
+                            // Exclui contas a pagar que n√£o foram pagas (evitar duplicidade)
                             foreach (ContasPagar c in lstContas)
                                 if (!c.Paga) ContasPagarDAO.Instance.DeleteByPrimaryKey(session, c.IdContaPg);
 
@@ -872,10 +942,10 @@ namespace Glass.Data.DAL
                             contaPagar.Contabil = compra.Contabil;
                             contaPagar.IdFormaPagto = compra.IdFormaPagto;
 
-                            // Indica para as prÛximas contas que elas n„o ser„o pagas ‡ vista
+                            // Indica para as pr√≥ximas contas que elas n√£o ser√£o pagas √† vista
                             contaPagar.AVista = false;
 
-                            // Se (FinanceiroConfig.Compra.NumeroParcelasCompra) ou menos parcelas tiverem sido geradas, busca as parcelas cadastradas na m„o
+                            // Se (FinanceiroConfig.Compra.NumeroParcelasCompra) ou menos parcelas tiverem sido geradas, busca as parcelas cadastradas na m√£o
                             var parcConfig = compra.NumParc <= FinanceiroConfig.Compra.NumeroParcelasCompra;
 
                             var lstParc = ParcelasCompraDAO.Instance.GetByCompra(session, idCompra);
@@ -885,7 +955,7 @@ namespace Glass.Data.DAL
                                 // Verifica se todas as datas de vencimento foram informadas
                                 foreach (ParcelasCompra p in lstParc)
                                     if (p.Data == null || p.Data.Value.Year == 1)
-                                        throw new Exception("Em uma ou mais parcelas da compra n„o foi informada a data de vencimento.");
+                                        throw new Exception("Em uma ou mais parcelas da compra n√£o foi informada a data de vencimento.");
 
                                 // Para cada parcela cadastrada manualmente da compra, gera uma conta a pagar
                                 foreach (ParcelasCompra p in lstParc)
@@ -901,7 +971,7 @@ namespace Glass.Data.DAL
                             {
                                 // Verifica se a data base de vencimento foi informada
                                 if (compra.DataBaseVenc == null || compra.DataBaseVenc.Value.Year == 1)
-                                    throw new Exception("A data base de vencimento das parcelas n„o foi informada.");
+                                    throw new Exception("A data base de vencimento das parcelas n√£o foi informada.");
 
                                 DateTime dataBase = compra.DataBaseVenc.Value;
                                 contaPagar.ValorVenc = ((decimal)compra.ValorParc - (totalPago / compra.NumParc));
@@ -917,7 +987,7 @@ namespace Glass.Data.DAL
 
                             ContasPagarDAO.Instance.AtualizaNumParcCompra(session, idCompra);
 
-                            // Chamado 15234: ValidaÁ„o criada para evitar erro interno no banco de inserir conta a pagar duplicada
+                            // Chamado 15234: Valida√ß√£o criada para evitar erro interno no banco de inserir conta a pagar duplicada
                             if (parcConfig && compra.ValorEntrada == 0 &&
                                 lstParc.Count < ContasPagarDAO.Instance.ExecuteScalar<int>(session, "Select Count(*) From contas_pagar Where idCompra=" + idCompra))
                             {
@@ -927,7 +997,7 @@ namespace Glass.Data.DAL
 
                             #endregion
                         }
-                        // Se o pagamento foi efetuado com antencipaÁ„o de fornecedor
+                        // Se o pagamento foi efetuado com antencipa√ß√£o de fornecedor
                         else if (compra.TipoCompra == (int)Compra.TipoCompraEnum.AntecipFornec)
                         {
                             #region Antecip Fornec
@@ -936,7 +1006,7 @@ namespace Glass.Data.DAL
 
                             decimal valorRestante = compra.Total - saldoAntecip;
 
-                            //Se n„o houver saldo sufuciente na antecipaÁ„o gera conta a pagar
+                            //Se n√£o houver saldo sufuciente na antecipa√ß√£o gera conta a pagar
                             if (valorRestante > 0)
                             {
                                 ContasPagar contaPagar = new ContasPagar();
@@ -965,13 +1035,13 @@ namespace Glass.Data.DAL
                 if (situacao == Compra.SituacaoEnum.Ativa)
                     MarcaSaida(session, idCompra);
 
-                //Atualiza o saldo da antecipaÁ„o
+                //Atualiza o saldo da antecipa√ß√£o
                 if (compra.TipoCompra == (int)Compra.TipoCompraEnum.AntecipFornec)
                     AntecipacaoFornecedorDAO.Instance.AtualizaSaldo(session, compra.IdAntecipFornec.GetValueOrDefault());
 
                 var logFuncSaida = new LogAlteracao
                 {
-                    Campo = "SituaÁ„o",
+                    Campo = "Situa√ß√£o",
                     IdRegistroAlt = (int)idCompra,
                     Tabela = (int)LogAlteracao.TabelaAlteracao.Compra,
                     Referencia = idCompra.ToString(),
@@ -987,7 +1057,7 @@ namespace Glass.Data.DAL
 
             if (!FinanceiroConfig.Compra.UsarControleFinalizacaoCompra || situacao == Compra.SituacaoEnum.AguardandoEntrega || situacao == Compra.SituacaoEnum.EmAndamento)
             {
-                // Se o estoque j· n„o tiver sido baixado pelo almoxarifado e se a empresa n„o d· baixa manual, baixa
+                // Se o estoque j√° n√£o tiver sido baixado pelo almoxarifado e se a empresa n√£o d√° baixa manual, baixa
                 if (!compra.EstoqueBaixado && !EstoqueConfig.EntradaEstoqueManual)
                     CreditarEstoqueCompra(session, compra);
 
@@ -998,7 +1068,7 @@ namespace Glass.Data.DAL
 
                 var logFuncSaida = new LogAlteracao
                 {
-                    Campo = "SituaÁ„o",
+                    Campo = "Situa√ß√£o",
                     IdRegistroAlt = (int)idCompra,
                     Tabela = (int)LogAlteracao.TabelaAlteracao.Compra,
                     Referencia = idCompra.ToString(),
@@ -1019,7 +1089,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Marca a data de saida da compra e altera a situaÁ„o
+        /// Marca a data de saida da compra e altera a situa√ß√£o
         /// </summary>
         /// <param name="idCompra"></param>
         private void MarcaSaida(GDASession sessao, uint idCompra)
@@ -1108,7 +1178,7 @@ namespace Glass.Data.DAL
             if (idFunc > 0)
             {
                 sql += " And s.usuCad=" + idFunc;
-                criterio += "Funcion·rio: " + FuncionarioDAO.Instance.GetNome(session, idFunc) + "    ";
+                criterio += "Funcion√°rio: " + FuncionarioDAO.Instance.GetNome(session, idFunc) + "    ";
                 temFiltro = true;
             }
 
@@ -1193,7 +1263,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca para relatÛrios
+        #region Busca para relat√≥rios
 
         /// <summary>
         /// Retorna uma lista com os sinais a serem pagos para o relatorio
@@ -1350,7 +1420,7 @@ namespace Glass.Data.DAL
 
                 foreach (ProdutosCompra p in lstProdCompra)
                 {
-                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd);
+                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd, false);
 
                     bool m2 = tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
@@ -1399,15 +1469,15 @@ namespace Glass.Data.DAL
 
                     Compra compra = GetElementByPrimaryKey(transaction, idCompra);
 
-                    #region OperaÁıes de cancelamento da compra
+                    #region Opera√ß√µes de cancelamento da compra
 
                     if (situacaoFinal == Compra.SituacaoEnum.Cancelada)
                     {
-                        // Se a compra j· estiver cancelada, n„o pode ser cancelada novamente
+                        // Se a compra j√° estiver cancelada, n√£o pode ser cancelada novamente
                         if (compra.Situacao == Compra.SituacaoEnum.Cancelada)
-                            throw new Exception("Esta compra j· foi cancelada.");
+                            throw new Exception("Esta compra j√° foi cancelada.");
 
-                        // Se a compra estiver ativa, apenas altera sua situaÁ„o para cancelada
+                        // Se a compra estiver ativa, apenas altera sua situa√ß√£o para cancelada
                         if (compra.Situacao == Compra.SituacaoEnum.Ativa)
                         {
                             objPersistence.ExecuteCommand(transaction, "update compra set obs=?obs where idCompra=" + idCompra,
@@ -1417,7 +1487,7 @@ namespace Glass.Data.DAL
                         }
                         else
                         {
-                            // Se a compra possuir alguma conta paga, n„o permite cancelamento
+                            // Se a compra possuir alguma conta paga, n√£o permite cancelamento
                             if (ContasPagarDAO.Instance.GetPagasCount(transaction, idCompra) > 0)
                                 throw new Exception("Esta compra possui contas pagas, cancele os pagamentos antes de cancelar a compra.");
 
@@ -1425,7 +1495,7 @@ namespace Glass.Data.DAL
                                 new GDAParameter("?obs", obs));
                         }
                     }
-                    // Se a compra possuir alguma conta paga, n„o permite a reabertura.
+                    // Se a compra possuir alguma conta paga, n√£o permite a reabertura.
                     else if (situacaoFinal == Compra.SituacaoEnum.Ativa &&
                         ContasPagarDAO.Instance.GetPagasCount(transaction, idCompra) > 0)
                         throw new Exception("Esta compra possui contas pagas, cancele os pagamentos antes de reabrir a compra.");
@@ -1436,10 +1506,10 @@ namespace Glass.Data.DAL
 
                     try
                     {
-                        // Busca as contas pagas relacionadas ‡ esta compra
+                        // Busca as contas pagas relacionadas √† esta compra
                         ContasPagar[] lstContas = ContasPagarDAO.Instance.GetByCompra(transaction, idCompra);
 
-                        // Exclui contas a pagar que n„o foram pagas
+                        // Exclui contas a pagar que n√£o foram pagas
                         foreach (ContasPagar c in lstContas)
                             if (!c.Paga) ContasPagarDAO.Instance.DeleteByPrimaryKey(transaction, c.IdContaPg);
                     }
@@ -1460,7 +1530,7 @@ namespace Glass.Data.DAL
                         {
                             p.TotM = Glass.Global.CalculosFluxo.ArredondaM2Compra(p.Largura, (int)p.Altura, (int)p.QtdeEntrada);
 
-                            int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdProd);
+                            int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdProd, false);
                             var m2 = tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
                             decimal qtdBaixa = (decimal)p.QtdeEntrada;
 
@@ -1509,13 +1579,13 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(transaction, "update compra set dataFinalizada=null, idFuncFinal=null, dataSaida=null where idCompra=" + idCompra);
                     AlteraSituacao(transaction, idCompra, situacaoFinal);
 
-                    //Se foi paga com antecipaÁ„o, atualiza o saldo.
+                    //Se foi paga com antecipa√ß√£o, atualiza o saldo.
                     if (compra.TipoCompra == (uint)Compra.TipoCompraEnum.AntecipFornec)
                         AntecipacaoFornecedorDAO.Instance.AtualizaSaldo(transaction, compra.IdAntecipFornec.GetValueOrDefault(0));
 
                     var logFuncReabrir = new LogAlteracao
                     {
-                        Campo = "SituaÁ„o",
+                        Campo = "Situa√ß√£o",
                         IdRegistroAlt = (int)idCompra,
                         Tabela = (int)LogAlteracao.TabelaAlteracao.Compra,
                         Referencia = idCompra.ToString(),
@@ -1565,7 +1635,7 @@ namespace Glass.Data.DAL
         public void ReabrirCompra(uint idCompra)
         {
             if (CompraNotaFiscalDAO.Instance.PossuiNFe(idCompra))
-                throw new Exception("N„o È possÌvel reabrir a compra porque ela possui NF-e vinculada.");
+                throw new Exception("N√£o √© poss√≠vel reabrir a compra porque ela possui NF-e vinculada.");
 
             EstornarCompra(idCompra, Compra.SituacaoEnum.Ativa, null);
         }
@@ -1577,11 +1647,11 @@ namespace Glass.Data.DAL
         #region Atualiza valor da compra
 
         /// <summary>
-        /// Atualiza o valor total da compra, somando os totais dos produtos relacionados ‡ ela
+        /// Atualiza o valor total da compra, somando os totais dos produtos relacionados √† ela
         /// </summary>
         public void UpdateTotalCompra(GDASession session, uint idCompra)
         {
-            // Atualiza valor do orÁamento
+            // Atualiza valor do or√ßamento
             string sql = @"update compra c set Total=
                 Round((Select Coalesce(Sum(Total+coalesce(valorBenef,0)), 0) From produtos_compra Where IdCompra=c.IdCompra)-c.Desconto+Coalesce(outrasDespesas, 0)
                 +Coalesce(frete, 0)+Coalesce(icms, 0)+Coalesce(seguro, 0)+Coalesce(ipi, 0), 2)
@@ -1654,7 +1724,7 @@ namespace Glass.Data.DAL
                 decimal totalCompra = ObtemValorCampo<decimal>(session, "total", "idCompra=" + idCompra);
                 decimal valorTributado = ObtemValorCampo<decimal>(session, "valorTributado", "idCompra=" + idCompra);
 
-                // Se total da compra menos os valores j· pagos e o valor tributado for igual a zero, excluir as parcelas da compra.
+                // Se total da compra menos os valores j√° pagos e o valor tributado for igual a zero, excluir as parcelas da compra.
                 if (totalCompra - totalPago - valorTributado == 0)
                     ParcelasCompraDAO.Instance.DeleteFromCompra(session, idCompra);
                 else if (valoresParcelas.Length > 0 && valoresParcelas[0] > 0)
@@ -1691,10 +1761,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se h· compras em andamento/aguardando entrega
+        #region Verifica se h√° compras em andamento/aguardando entrega
 
         /// <summary>
-        /// Verifica se h· compras em andamento/aguardando entrega.
+        /// Verifica se h√° compras em andamento/aguardando entrega.
         /// </summary>
         public bool TemCompraEmAndamentoAguardandoEntrega()
         {
@@ -1723,10 +1793,10 @@ namespace Glass.Data.DAL
                     if (ObtemValorCampo<int>(transaction, "situacao", "idCompra=" + idCompra) != (int)Compra.SituacaoEnum.EmAndamento)
                         throw new Exception("Apenas compras em andamento podem ser finalizadas dessa maneira.");
 
-                    // Vari·vel de retorno (id da nota fiscal)
+                    // Vari√°vel de retorno (id da nota fiscal)
                     uint idNf = 0;
 
-                    // Finaliza a compra normalmente se n„o houver produtos para gerar NF
+                    // Finaliza a compra normalmente se n√£o houver produtos para gerar NF
                     if (idProdQtdeNf.Count > 0)
                     {
                         // Recupera os produtos da compra e copia o vetor para os produtos da NF
@@ -1743,7 +1813,7 @@ namespace Glass.Data.DAL
                         var prodOrig = ProdutosCompraDAO.Instance.GetByString(transaction, idsProdCompra);
                         
                         // Recupera os produtos novamente do banco
-                        // Feito assim para que os objetos n„o usem a mesma referÍncia,
+                        // Feito assim para que os objetos n√£o usem a mesma refer√™ncia,
                         // permitindo que um fique diferente do outro
                         var prodCompra = ProdutosCompraDAO.Instance.GetByString(transaction, idsProdCompra);
                         var prodNf = ProdutosCompraDAO.Instance.GetByString(transaction, idsProdCompra).ToArray();
@@ -1799,7 +1869,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region ObtÈm dados da compra
+        #region Obt√©m dados da compra
 
         public uint ObtemIdLoja(uint idCompra)
         {
@@ -1812,7 +1882,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm as lojas das compras
+        /// Obt√©m as lojas das compras
         /// </summary>
         public string ObtemIdsLojas(string idsCompras)
         {
@@ -1924,10 +1994,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Cadastra a partir da cotaÁ„o de compra
+        #region Cadastra a partir da cota√ß√£o de compra
 
         /// <summary>
-        /// Cadastra a partir da cotaÁ„o de compra.
+        /// Cadastra a partir da cota√ß√£o de compra.
         /// </summary>
         public uint InsertFromCotacao(GDASession session, Compra objInsert, uint idCotacaoCompra)
         {
@@ -1941,7 +2011,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Excluir a partir de uma cotaÁ„o de compra
+        #region Excluir a partir de uma cota√ß√£o de compra
 
         public void DeleteFromCotacaoCompra(uint idCotacaoCompra)
         {
@@ -1989,7 +2059,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna os pedidos para geraÁ„o da nota fiscal.
+        /// Retorna os pedidos para gera√ß√£o da nota fiscal.
         /// </summary>
         /// <param name="idsPedidos"></param>
         /// <param name="idLiberarPedido"></param>
@@ -2033,9 +2103,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Gera a compra dos produtos de beneficiamento dos pedidos informados.
         /// </summary>
-        /// <param name="idsPedido">Ids dos pedidos separados por vÌrgula</param>
-        /// <returns>Retorna uma string concatenada por ";" onde a primeira posÌÁ„o mostra
-        /// os pedidos que geraram compra e a segunda posÌÁ„o mostra os pedidos que n„o geraram compra.</returns>
+        /// <param name="idsPedido">Ids dos pedidos separados por v√≠rgula</param>
+        /// <returns>Retorna uma string concatenada por ";" onde a primeira pos√≠√ß√£o mostra
+        /// os pedidos que geraram compra e a segunda pos√≠√ß√£o mostra os pedidos que n√£o geraram compra.</returns>
         public string GerarCompraProdBenef(string idsPedido, uint idFornecedor)
         {
             var dicionario = new Dictionary<string, bool>();
@@ -2067,23 +2137,23 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Gera a compra dos produtos de beneficiamento dos pedidos informados.
         /// </summary>
-        /// <param name="idsPedido">Ids dos pedidos separados por vÌrgula</param>
-        /// <returns>Retorna uma string concatenada por ";" onde a primeira posÌÁ„o mostra
-        /// os pedidos que geraram compra, a segunda posÌÁ„o mostra os pedidos que n„o geraram compra
-        /// e a terceira posiÁ„o mostra o cÛdigo da compra gerada.</returns>
+        /// <param name="idsPedido">Ids dos pedidos separados por v√≠rgula</param>
+        /// <returns>Retorna uma string concatenada por ";" onde a primeira pos√≠√ß√£o mostra
+        /// os pedidos que geraram compra, a segunda pos√≠√ß√£o mostra os pedidos que n√£o geraram compra
+        /// e a terceira posi√ß√£o mostra o c√≥digo da compra gerada.</returns>
         private string GerarCompraProdBenef(GDASession session, string idsPedido, uint? idCompra, uint? idFornecedor, ref Dictionary<string, bool> lstRetorno)
         {
-            // Caso o idCompra seja igual ‡ zero significa que a funÁ„o foi chamada pela tela de geraÁ„o de compra, e a mesma deve ser gerada.
+            // Caso o idCompra seja igual √† zero significa que a fun√ß√£o foi chamada pela tela de gera√ß√£o de compra, e a mesma deve ser gerada.
             if (idCompra.GetValueOrDefault() == 0)
             {
-                // Vari·veis criadas para retornar os pedidos que geraram e que n„o geraram compra.
+                // Vari√°veis criadas para retornar os pedidos que geraram e que n√£o geraram compra.
                 var gerouCompra = String.Empty;
                 var naoGerouCompra = String.Empty;
                 
-                // Cria a compra que ser· inserida e atualizada ao longo do mÈtodo.
+                // Cria a compra que ser√° inserida e atualizada ao longo do m√©todo.
                 var compra = new Compra();
                 compra.IdFornec = idFornecedor.GetValueOrDefault();
-                // Como todos os pedidos s„o da mesma loja, recupera o id loja do primeiro pedido.
+                // Como todos os pedidos s√£o da mesma loja, recupera o id loja do primeiro pedido.
                 compra.IdLoja = PedidoDAO.Instance.ObtemIdLoja(session, Conversoes.StrParaUint(idsPedido.Split(',')[0]));
                 compra.IdFormaPagto = FormaPagtoDAO.Instance.GetForCompra()[0].IdFormaPagto.GetValueOrDefault();
                 compra.Usucad = UserInfo.GetUserInfo.CodUser;
@@ -2092,64 +2162,64 @@ namespace Glass.Data.DAL
                 compra.Situacao = Compra.SituacaoEnum.Ativa;
                 compra.IdCompra = Insert(session, compra);
 
-                // Salva na vari·vel idCompra o id da compra gerado, esta vari·vel È usada ao longo do mÈtodo.
+                // Salva na vari√°vel idCompra o id da compra gerado, esta vari√°vel √© usada ao longo do m√©todo.
                 idCompra = compra.IdCompra;
 
-                // Vari·vel criada para informar se o pedido gerou ou n„o produtos de compra.
+                // Vari√°vel criada para informar se o pedido gerou ou n√£o produtos de compra.
                 var retorno = new Dictionary<string, bool>();
 
-                // RepetiÁ„o criada para gerar a compra de cada pedido.
+                // Repeti√ß√£o criada para gerar a compra de cada pedido.
                 foreach (var id in idsPedido.Split(','))
                 {
                     retorno.Add(id, false);
                     GerarCompraProdBenef(session, id, idCompra, null, ref retorno);
 
                     if (retorno[id])
-                        // O retorno do mÈtodo È o id do pedido que gerou a compra.
+                        // O retorno do m√©todo √© o id do pedido que gerou a compra.
                         gerouCompra += id + ",";
                     else
-                        // Caso algo dÍ errado o id do pedido que n„o gerou a compra È salvo para ser exibido para o usu·rio.
+                        // Caso algo d√™ errado o id do pedido que n√£o gerou a compra √© salvo para ser exibido para o usu√°rio.
                         naoGerouCompra += id + ",";
                 }
 
-                // Caso a vari·vel de pedidos que geraram compra esteja zerada ent„o a compra deve ser deletada.
+                // Caso a vari√°vel de pedidos que geraram compra esteja zerada ent√£o a compra deve ser deletada.
                 if (String.IsNullOrEmpty(gerouCompra))
                 {
                     Delete(session,compra);
-                    // Seta o id da compra como nulo para que na exibiÁ„o do retorno ao usu·rio nenhum cÛdigo de compra seja exibido.
+                    // Seta o id da compra como nulo para que na exibi√ß√£o do retorno ao usu√°rio nenhum c√≥digo de compra seja exibido.
                     idCompra = null;
                 }
                 else
                     // Atualiza o total da compra de acordo com o valor dos produtos inseridos na mesma.
                     CompraDAO.Instance.UpdateTotalCompra(session, idCompra.GetValueOrDefault());
 
-                // Retorna o id da compra gerada, o id dos pedidos que geraram compra e o id dos pedidos que n„o geraram compra.
+                // Retorna o id da compra gerada, o id dos pedidos que geraram compra e o id dos pedidos que n√£o geraram compra.
                 return idCompra + ";" + gerouCompra.TrimEnd(',') + ";" + naoGerouCompra.TrimEnd(',');
             }
 
-            // Salva o id do pedido, convertido, passado por par‚metro para evitar confus„o com a nomenclatura das vari·veis.
+            // Salva o id do pedido, convertido, passado por par√¢metro para evitar confus√£o com a nomenclatura das vari√°veis.
             var idPedido = Conversoes.StrParaUint(idsPedido);
-            // Vari·vel criada para excluir os produtos de compra gerados caso algo dÍ errado na geraÁ„o dos produtos do pedido.
+            // Vari√°vel criada para excluir os produtos de compra gerados caso algo d√™ errado na gera√ß√£o dos produtos do pedido.
             var lstProdutosCompra = new List<ProdutosCompra>();
 
-            // Caso o pedido j· possua compra de beneficiamento gerada È lanÁada uma exceÁ„o para que o 
-            // id seja salvo na vari·vel de retorno onde s„o informados quais pedidos geraram ou n„o geraram compra.
+            // Caso o pedido j√° possua compra de beneficiamento gerada √© lan√ßada uma exce√ß√£o para que o 
+            // id seja salvo na vari√°vel de retorno onde s√£o informados quais pedidos geraram ou n√£o geraram compra.
             if (PedidosCompraDAO.Instance.PossuiCompraProdBenefGerada(idPedido))
                 return "";
 
             try
             {
-                // RepetiÁ„o criada para gerar os produtos de compra de cada produto de beneficiamento.
+                // Repeti√ß√£o criada para gerar os produtos de compra de cada produto de beneficiamento.
                 foreach (var prodPed in ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false))
                     foreach (var beneficiamento in prodPed.Beneficiamentos.Where(f => BenefConfigDAO.Instance.ObtemIdProd(f.IdBenefConfig) > 0))
                     {
-                        // Salva nesta vari·vel os dados do item de beneficiamento que possui produto associado.
+                        // Salva nesta vari√°vel os dados do item de beneficiamento que possui produto associado.
                         var benef = BenefConfigDAO.Instance.GetElementByPrimaryKey(beneficiamento.IdBenefConfig);
 
                         // Define os dados do produto de compra do pedido.
                         var prodCompra = new ProdutosCompra();
                         prodCompra.IdCompra = idCompra.GetValueOrDefault();
-                        // Salva o id do pedido que est· gerando a compra, para que o relatÛrio seja agrupado por pedido.
+                        // Salva o id do pedido que est√° gerando a compra, para que o relat√≥rio seja agrupado por pedido.
                         prodCompra.IdPedido = prodPed.IdPedido;
                         prodCompra.IdProd = (uint)benef.IdProd.GetValueOrDefault();
                         // Salva o custo de compra do produto no valor do produto de compra.
@@ -2157,17 +2227,17 @@ namespace Glass.Data.DAL
                         prodCompra.Qtde = beneficiamento.Qtd * prodPed.Qtde;
                         prodCompra.Altura = prodPed.Altura + benef.AcrescimoAltura;
                         prodCompra.Largura = prodPed.Largura + benef.AcrescimoLargura;
-                        // O produto associado ‡ caixa, por exemplo, tem em sua descriÁ„o qual È a espessura da mesma,
+                        // O produto associado √† caixa, por exemplo, tem em sua descri√ß√£o qual √© a espessura da mesma,
                         // a linha abaixo trata a descricao do item do beneficiamento e recupera a espessura da caixa,
-                        // caso o item de beneficimento n„o tenha a espessura informada na descriÁ„o, ent„o a espessura È 0.
+                        // caso o item de beneficimento n√£o tenha a espessura informada na descri√ß√£o, ent√£o a espessura √© 0.
                         prodCompra.Espessura = benef.Descricao.LastIndexOf("MM") > 0 ?
                             Conversoes.StrParaFloat(benef.Descricao.Substring(benef.Descricao.LastIndexOf("MM") - 2, 2)) :
                             ProdutoDAO.Instance.ObtemEspessura((int)prodCompra.IdProd);
                         // Insere os produtos de compra do pedido.
                         ProdutosCompraDAO.Instance.Insert(session, prodCompra);
 
-                        // Adiciona na lista, de produtos de compra gerados, o produto inserido para que, caso a geraÁ„o de produtos do pedido
-                        // dÍ errado, todos os itens de compra do pedido possam ser excluÌdos.
+                        // Adiciona na lista, de produtos de compra gerados, o produto inserido para que, caso a gera√ß√£o de produtos do pedido
+                        // d√™ errado, todos os itens de compra do pedido possam ser exclu√≠dos.
                         lstProdutosCompra.Add(prodCompra);
                     }
 
@@ -2175,16 +2245,16 @@ namespace Glass.Data.DAL
                 var pedCompra = new PedidosCompra();
                 pedCompra.IdCompra = idCompra.GetValueOrDefault();
                 pedCompra.IdPedido = idPedido;
-                // Informa na tabela pedidos_compra que a compra È referente ‡ produtos associados ‡ itens de beneficiamentos.
+                // Informa na tabela pedidos_compra que a compra √© referente √† produtos associados √† itens de beneficiamentos.
                 pedCompra.ProdutoBenef = true;
                 PedidosCompraDAO.Instance.Insere(session, pedCompra);
 
-                // Salva na vari·vel de retorno que o pedido n„o gerou compra.
+                // Salva na vari√°vel de retorno que o pedido n√£o gerou compra.
                 lstRetorno[idPedido.ToString()] = true;
             }
             catch
             {
-                // Deleta todos os produtos de compra gerados caso algo dÍ errado.
+                // Deleta todos os produtos de compra gerados caso algo d√™ errado.
                 foreach (var prodCompra in lstProdutosCompra)
                     ProdutosCompraDAO.Instance.Delete(session, prodCompra);
             }
@@ -2194,7 +2264,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos Sobrescritos
+        #region M√©todos Sobrescritos
 
         public override uint Insert(Compra objInsert)
         {
@@ -2214,24 +2284,75 @@ namespace Glass.Data.DAL
             return base.Insert(session, objInsert);
         }
 
-        public override int Update(Compra objUpdate)
+        /// <summary>
+        /// M√©todo que atualiza a Compra
+        /// </summary>
+        /// <param name="objUpdate">Compra a ser atualizada.</param>
+        /// <returns>Retorna um inteiro com o de linhas afetadas com a altera√ß√£o.</returns>
+        public int UpdateComTransacao(Compra objUpdate)
         {
-            var compraAtual = GetElementByPrimaryKey(objUpdate.IdCompra);
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var retorno = Update(transaction, objUpdate);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// M√©todo que atualiza a Compra.
+        /// </summary>
+        /// <param name="session">Sess√£o do GDA.</param>
+        /// <param name="objUpdate">Compra que ser√° atualizada.</param>
+        /// <returns>Retorna um inteiro com o de linhas afetadas com a altera√ß√£o.</returns>
+        public override int Update(GDASession session ,Compra objUpdate)
+        {
+            var compraAtual = this.GetElementByPrimaryKey(session, objUpdate.IdCompra);
 
             if (ObtemSituacao(null, objUpdate.IdCompra) == (int)Compra.SituacaoEnum.Finalizada)
-                throw new Exception("A compra est· finalizada, n„o È possÌvel atualiz·-la");
+            {
+                throw new Exception("A compra est√° finalizada, n√£o √© poss√≠vel atualiz√°-la");
+            }
 
-            int result = base.Update(objUpdate);
+            int result = base.Update(session, objUpdate);
 
-            UpdateTotalCompra(null, objUpdate.IdCompra);
+            this.UpdateTotalCompra(session, objUpdate.IdCompra);
 
-            ContasPagarDAO.Instance.BoletoChegou(objUpdate.BoletoChegou, objUpdate.IdCompra, 0, null);
+            ContasPagarDAO.Instance.BoletoChegou(
+                session,
+                objUpdate.BoletoChegou,
+                objUpdate.IdCompra,
+                0,
+                null);
 
-            AlteraParcelas(null, objUpdate.IdCompra, objUpdate.NumParc, objUpdate.TipoCompra, objUpdate.DatasParcelas,
-                objUpdate.ValoresParcelas, objUpdate.BoletosParcelas, objUpdate.FormasPagtoParcelas, 0, new DateTime(), false);
+            this.AlteraParcelas(
+                session,
+                objUpdate.IdCompra,
+                objUpdate.NumParc,
+                objUpdate.TipoCompra,
+                objUpdate.DatasParcelas,
+                objUpdate.ValoresParcelas,
+                objUpdate.BoletosParcelas,
+                objUpdate.FormasPagtoParcelas,
+                0,
+                new DateTime(),
+                false);
 
-            ///Insere um log das alteraÁıes de compra
-            LogAlteracaoDAO.Instance.LogCompra(compraAtual, objUpdate);
+            LogAlteracaoDAO.Instance.LogCompra(session, compraAtual, objUpdate);
 
             return result;
         }

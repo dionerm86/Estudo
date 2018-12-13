@@ -180,7 +180,7 @@ namespace Glass.Data.DAL
                             var prodCompra = prod.IdProdCompra > 0 ? ProdutosCompraDAO.Instance.GetElementByPrimaryKey(transaction, prod.IdProdCompra.Value) : null;
                             var prodNf = prod.IdProdNf > 0 ? ProdutosNfDAO.Instance.GetElementByPrimaryKey(transaction, prod.IdProdNf.Value) : null;
 
-                            int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, prodCompra != null ? (int)prodCompra.IdProd : (int)prodNf.IdProd);
+                            int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, prodCompra != null ? (int)prodCompra.IdProd : (int)prodNf.IdProd, false);
 
                             // Remove a peça da reserva e a coloca na liberação
                             float m2Calc = prodCompra != null ?

@@ -163,7 +163,7 @@ namespace Glass.Data.Model
 
         public int TipoCalc
         {
-            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd); }
+            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int?)IdSubgrupoProd, false); }
         }
 
         public string IsVidro
@@ -188,7 +188,7 @@ namespace Glass.Data.Model
 
         public float TotalM2CalcSemChapa
         {
-            get { return IdProd > 0 ? Glass.Global.CalculosFluxo.CalcM2Calculo(IdCliente, (int)Altura, Largura, Qtde, (int)IdProd, Redondo, Beneficiamentos.CountAreaMinima, ProdutoDAO.Instance.ObtemAreaMinima((int)IdProd), false, 0, true) : 0; }
+            get { return IdProd > 0 ? Glass.Global.CalculosFluxo.CalcM2Calculo(null, IdCliente, (int)Altura, Largura, Qtde, (int)IdProd, Redondo, Beneficiamentos.CountAreaMinima, ProdutoDAO.Instance.ObtemAreaMinima((int)IdProd), false, 0, true) : 0; }
         }
 
         public bool BenefVisible

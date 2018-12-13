@@ -373,7 +373,7 @@ namespace Glass.Data.RelModel
         /// 3 - Oper. sem crédito do Imposto - Outras
         /// </summary>
         [PersistenceProperty("CodValorFiscal", DirectionParameter.InputOptional)]
-        public UInt64 CodValorFiscal { get; set; }
+        public int CodValorFiscal { get; set; }
 
         [PersistenceProperty("BaseCalculo", DirectionParameter.InputOptional)]
         public decimal BaseCalculo { get; set; }
@@ -507,7 +507,7 @@ namespace Glass.Data.RelModel
 
         [PersistenceProperty("Borda", DirectionParameter.InputOptional)]
         public string Borda { get; set; }
-        
+
         [PersistenceProperty("IdNF", DirectionParameter.InputOptional)]
         public uint IdNF { get; set; }
 

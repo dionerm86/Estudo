@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 namespace Glass.API.Backend.Models.Clientes.V1.Configuracoes
 {
     /// <summary>
-    /// Classe que encapsula as configurações para a tela de listagem de orçamentos.
+    /// Classe que encapsula as configurações para a tela de listagem de clientes.
     /// </summary>
     [DataContract(Name = "Lista")]
     public class ListaDto

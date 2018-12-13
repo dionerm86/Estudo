@@ -226,8 +226,6 @@ namespace Glass.Data.Helper
                                 {
                                     var pecaItemProjeto = PecaItemProjetoDAO.Instance.GetByMaterial(ppe.IdMaterItemProj.Value);
 
-                                    var idArquivoCalcEngine = ArquivoMesaCorteDAO.Instance.ObtemIdArquivoCalcEngine(pecaItemProjeto.IdArquivoMesaCorte.GetValueOrDefault());
-
                                     // Se o material não estiver associado à uma peça, não há associação com o arquivo de mesa de corte vindo do projeto
                                     if (pecaItemProjeto != null &&
                                         pecaItemProjeto.Item != null &&

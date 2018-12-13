@@ -8,9 +8,9 @@ namespace Glass.UI.Web.Utils
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-    
+
         }
-    
+
         protected void btnConfirmar_Click(object sender, EventArgs e)
         {
             try
@@ -21,7 +21,9 @@ namespace Glass.UI.Web.Utils
                 System.Security.Cryptography.X509Certificates.X509Certificate2 cert = Certificado.GetCertificado(idLoja);
 
                 if (DateTime.Now > cert.NotAfter)
+                {
                     throw new Exception("O certificado digital cadastrado está vencido, insira um novo certificado para emitir esta nota. Data Venc.: " + cert.GetExpirationDateString());
+                }
 
                 string msg = EnviaXML.EnviaInutilizacao(idNf, txtMotivo.Text);
 
@@ -32,6 +34,13 @@ namespace Glass.UI.Web.Utils
             }
             catch (Exception ex)
             {
+                if (ex.Message.Contains("URI está vazio.") || ex.Message.Contains("URI is empty."))
+                {
+                    var mensagem = "A inutilização não está disponivel na versão 4.00 da NF-e para o seu Estado, assim que possível será disponibilizada.";
+                    Glass.MensagemAlerta.ErrorMsg("Info.:", new Exception(mensagem), Page);
+                    return;
+                }
+
                 Glass.MensagemAlerta.ErrorMsg("Falha ao inutilizar NFe.", ex, Page);
                 return;
             }

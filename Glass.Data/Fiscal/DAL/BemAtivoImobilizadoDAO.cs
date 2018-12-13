@@ -12,14 +12,14 @@ namespace Glass.Data.DAL
 
         #region Busca padrão
 
-        private string Sql(int tipo, bool forEfd, bool selecionar)
+        private string Sql(int tipo, bool forEfd, bool selecionar, bool bensAtivoImobilizado, string idsLojas)
         {
             bool isForEfd = forEfd && selecionar;
             string campos = selecionar ? @"bai.*, p.codInterno as codInternoProd, p.descricao as descrProd, 
                 pcc.descricao as descrPlanoContaContabil, coalesce(l.nomeFantasia, l.razaoSocial) as nomeLoja,
                 pcc.codInterno as codInternoContaContabil" : "count(*)";
 
-            string sql = "select " + campos + @"
+            string sql = $@"select {campos} 
                 from bem_ativo_imobilizado bai
                     left join produto p on (bai.idProd=p.idProd)
                     left join plano_conta_contabil pcc on (bai.idContaContabil=pcc.idContaContabil)
@@ -27,14 +27,30 @@ namespace Glass.Data.DAL
                     " + (isForEfd ? @"
                         left join movimentacao_bem_ativo_imob mbai on (bai.idBemAtivoImobilizado=mbai.idBemAtivoImobilizado)
                         left join produtos_nf pnf on (mbai.idProdNf=pnf.idProdNf)
-                        left join nota_fiscal nf on (pnf.idNf=nf.idNf)" : String.Empty) + @"
+                        left join nota_fiscal nf on (pnf.idNf=nf.idNf)" : string.Empty) + @"
                 where 1";
 
+            if (bensAtivoImobilizado)
+            {
+                if (!string.IsNullOrWhiteSpace(idsLojas) && idsLojas != "0")
+                {
+                    sql += $" and bai.idLoja in ({idsLojas})";
+                }
+
+                var campoData = $"coalesce(if(nf.tipoDocumento <> {(int)NotaFiscal.TipoDoc.Saída}, nf.dataSaidaEnt, null), nf.dataEmissao)";
+
+                sql += $" and {campoData} >= ?dataIni and {campoData} <= ?dataFim";
+            }
+
             if (tipo > 0)
-                sql += " and bai.tipo=" + tipo;
+            {
+                sql += $" and bai.tipo = {tipo}";
+            }
 
             if (isForEfd)
+            {
                 sql += " group by bai.idBemAtivoImobilizado";
+            }
 
             return sql;
         }
@@ -55,12 +71,12 @@ namespace Glass.Data.DAL
 
         public IList<BemAtivoImobilizado> GetListReal(int tipo, string sortExpression, int startRow, int pageSize)
         {
-            return LoadDataWithSortExpression(Sql(tipo, false, true), sortExpression, startRow, pageSize);
+            return LoadDataWithSortExpression(Sql(tipo, false, true, false, string.Empty), sortExpression, startRow, pageSize);
         }
 
         public int GetCountReal(int tipo)
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(tipo, false, false));
+            return objPersistence.ExecuteSqlQueryCount(Sql(tipo, false, false, false, string.Empty));
         }
 
         #endregion
@@ -74,7 +90,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public IList<BemAtivoImobilizado> GetByTipo(int tipo)
         {
-            return objPersistence.LoadData(Sql(tipo, false, true)).ToList();
+            return objPersistence.LoadData(Sql(tipo, false, true, false, string.Empty)).ToList();
         }
 
         #endregion
@@ -140,15 +156,9 @@ namespace Glass.Data.DAL
 
         public IList<BemAtivoImobilizado> GetForEFD(string idsLojas, DateTime inicio, DateTime fim)
         {
-            string sql = Sql(0, true, true);
+            var sql = this.Sql(0, true, true, true, idsLojas);
 
-            if (!String.IsNullOrEmpty(idsLojas) && idsLojas != "0")
-                sql += " and bai.idLoja in (" + idsLojas + ")";
-
-            string campoData = "coalesce(if(nf.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Saída + ", nf.dataSaidaEnt, null), nf.dataEmissao)";
-            sql += " and " + campoData + ">=?dataIni and " + campoData + "<=?dataFim";
-
-            return objPersistence.LoadData(sql, new GDAParameter("?dataIni", inicio), new GDAParameter("?dataFim", fim)).ToList();
+            return this.objPersistence.LoadData(sql, new GDAParameter("?dataIni", inicio), new GDAParameter("?dataFim", fim)).ToList();
         }
 
         #endregion
