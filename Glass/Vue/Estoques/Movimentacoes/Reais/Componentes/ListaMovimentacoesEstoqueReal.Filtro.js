@@ -196,10 +196,6 @@
       deep: true
     }
   },
-  
-  mounted: function () {
-
-  },
 
   template: '#ListaMovimentacoesEstoqueReal-Filtro-template'
 });
