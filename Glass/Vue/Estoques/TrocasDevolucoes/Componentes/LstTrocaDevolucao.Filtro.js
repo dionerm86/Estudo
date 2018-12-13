@@ -62,7 +62,11 @@
           tipoPedido: null,
           idOrigemTrocaDevolucao: 0,
           idSetor: 0,
-          idTipoPerda: null
+          idTipoPerda: null,
+          alturaMinima: null,
+          alturaMaxima: null,
+          larguraMinima: null,
+          larguraMaxima: null
         },
         this.filtro
       ),

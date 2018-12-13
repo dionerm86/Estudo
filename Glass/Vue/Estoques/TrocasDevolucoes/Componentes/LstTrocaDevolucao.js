@@ -1,6 +1,6 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('id', 'desc')],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('id', 'desc')],
 
   data: {
     configuracoes: {},
@@ -82,40 +82,39 @@
 
     /**
      * Retornar uma string com os filtros selecionados na tela
+     * @param {String} [nomeAdicionalAgrupar=''] Um texto a ser adicionado no nome do parâmetro de agrupamento.
+     * @returns {String} Uma string com os filtros convertidos para uso na querystring.
      */
-    formatarFiltros_: function () {
+    formatarFiltros_: function (nomeAdicionalAgrupar) {
       var filtros = [];
 
-      this.incluirFiltroComLista(filtros, 'numeroNfe', this.filtro.numeroNfe);
+      if (!nomeAdicionalAgrupar) {
+        nomeAdicionalAgrupar = '';
+      }
+
+      this.incluirFiltroComLista(filtros, 'idTrocaDevolucao', this.filtro.id);
       this.incluirFiltroComLista(filtros, 'idPedido', this.filtro.idPedido);
-      this.incluirFiltroComLista(filtros, 'modelo', this.filtro.modelo);
-      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
-      this.incluirFiltroComLista(filtros, 'idCliente', this.filtro.idCliente);
-      this.incluirFiltroComLista(filtros, 'nomeCliente', this.filtro.nomeCliente);
-      this.incluirFiltroComLista(filtros, 'tipoFiscal', this.filtro.tipoFiscal);
-      this.incluirFiltroComLista(filtros, 'idFornec', this.filtro.idFornecedor);
-      this.incluirFiltroComLista(filtros, 'nomeFornec', this.filtro.nomeFornecedor);
-      this.incluirFiltroComLista(filtros, 'codRota', this.filtro.codigoRota);
+      this.incluirFiltroComLista(filtros, 'tipo', this.filtro.tipo);
       this.incluirFiltroComLista(filtros, 'situacao', this.filtro.situacao);
-      this.incluirFiltroComLista(filtros, 'dataIni', this.filtro.periodoEmissaoInicio);
-      this.incluirFiltroComLista(filtros, 'dataFim', this.filtro.periodoEmissaoFim);
-      this.incluirFiltroComLista(filtros, 'idsCfop', this.filtro.idsCfop);
-      this.incluirFiltroComLista(filtros, 'tiposCfop', this.filtro.tiposCfop);
-      this.incluirFiltroComLista(filtros, 'dataEntSaiIni', this.filtro.periodoEntradaSaidaInicio);
-      this.incluirFiltroComLista(filtros, 'dataEntSaiFim', this.filtro.periodoEntradaSaidaFim);
-      this.incluirFiltroComLista(filtros, 'formaPagto', this.filtro.tipoVenda);
-      this.incluirFiltroComLista(filtros, 'idsFormaPagtoNotaFiscal', this.filtro.idsFormaPagamento);
-      this.incluirFiltroComLista(filtros, 'tipoNf', this.filtro.tipoDocumento);
-      this.incluirFiltroComLista(filtros, 'finalidade', this.filtro.finalidade);
-      this.incluirFiltroComLista(filtros, 'formaEmissao', this.filtro.tipoEmissao);
-      this.incluirFiltroComLista(filtros, 'infCompl', this.filtro.informacaoComplementar);
-      this.incluirFiltroComLista(filtros, 'codInternoProd', this.filtro.codigoInternoProduto);
-      this.incluirFiltroComLista(filtros, 'descrProd', this.filtro.descricaoProduto);
-      this.incluirFiltroComLista(filtros, 'lote', this.filtro.lote);
-      this.incluirFiltroComLista(filtros, 'valorInicial', this.filtro.valorNotaFiscalInicio);
-      this.incluirFiltroComLista(filtros, 'valorFinal', this.filtro.valorNotaFiscalFim);
-      this.incluirFiltroComLista(filtros, 'ordenar', this.filtro.ordenacaoFiltro);
-      this.incluirFiltroComLista(filtros, 'agrupar', this.filtro.agrupar);
+      this.incluirFiltroComLista(filtros, 'idCli', this.filtro.idCliente);
+      this.incluirFiltroComLista(filtros, 'nomeCli', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtros, 'dataIni', this.filtro.periodoTrocaInicio);
+      this.incluirFiltroComLista(filtros, 'dataFim', this.filtro.periodoTrocaFim);
+      this.incluirFiltroComLista(filtros, 'idsFunc', this.filtro.idsFuncionario);
+      this.incluirFiltroComLista(filtros, 'idsFuncionarioAssociadoCliente', this.filtro.idsFuncionarioAssociadoCliente);
+      this.incluirFiltroComLista(filtros, 'idProduto', this.filtro.idProduto);
+      this.incluirFiltroComLista(filtros, 'alturaMin', this.filtro.alturaMinima);
+      this.incluirFiltroComLista(filtros, 'alturaMax', this.filtro.alturaMaxima);
+      this.incluirFiltroComLista(filtros, 'larguraMin', this.filtro.larguraMinima);
+      this.incluirFiltroComLista(filtros, 'larguraMax', this.filtro.larguraMaxima);
+      this.incluirFiltroComLista(filtros, 'idOrigemTrocaDevolucao', this.filtro.idOrigemTrocaDevolucao);
+      this.incluirFiltroComLista(filtros, 'idTipoPerda', this.filtro.idTipoPerda);
+      this.incluirFiltroComLista(filtros, 'idSetor', this.filtro.idSetor);
+      this.incluirFiltroComLista(filtros, 'tipoPedido', this.filtro.tipoPedido);
+      this.incluirFiltroComLista(filtros, 'idGrupo', this.filtro.idGrupoProduto);
+      this.incluirFiltroComLista(filtros, 'idSubgrupo', this.filtro.idSubgrupoProduto);
+      this.incluirFiltroComLista(filtros, 'agrupar' + nomeAdicionalAgrupar, this.agruparPorFuncionario.toString());
+      this.incluirFiltroComLista(filtros, 'agruparFuncionarioAssociadoCliente', this.agruparPorFuncionarioAssociado.toString());
 
       return filtros.length
         ? '&' + filtros.join('&')
@@ -128,11 +127,11 @@
      */
     abrirListaTrocaDevolucao: function (exportarExcel) {
       const filtros = this.formatarFiltros_();
-      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=Parcelas&exportarExcel=' + exportarExcel + filtros);
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=ListaTrocaDevolucao&exportarExcel=' + exportarExcel + filtros);
     },
 
     abrirListaControlePerdasExternas: function () {
-      const filtros = this.formatarFiltros_();
+      const filtros = this.formatarFiltros_('Func');
       this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=ControlePerdasExternas' + filtros);
     },
   },
