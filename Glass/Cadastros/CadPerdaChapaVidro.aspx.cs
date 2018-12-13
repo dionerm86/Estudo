@@ -66,22 +66,31 @@ namespace Glass.UI.Web.Cadastros
                 if (e.CommandName == "Marcar")
                 {
                     string etiqueta = e.CommandArgument.ToString().Split(';')[0];
-                    uint idNf = Glass.Conversoes.StrParaUint(etiqueta.Split('-')[0].Substring(1));
                     uint idProd = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString().Split(';')[1]);
                     uint idProdNf = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString().Split(';')[2]);
-    
+
+                    var dadosRetalho = ctrlRetalhoProducao1.Dados;
+
+                    if (dadosRetalho.Any())
+                    {
+                        MensagemAlerta.ShowMsg("Cancele o retalho gerado antes de cancelar a perda.", Page);
+                        return;
+                    }
+
                     PerdaChapaVidroDAO.Instance.MarcaPerdaChapaVidroComTransacao(etiqueta, ctrlTipoPerda1.IdTipoPerda.Value, ctrlTipoPerda1.IdSubtipoPerda, txtObsPerda.Text);
-    
-                    List<RetalhoProducaoAuxiliar> dadosRetalho = ctrlRetalhoProducao1.Dados;
-    
-                    if (dadosRetalho.Count > 0)
-                        Page.ClientScript.RegisterStartupScript(this.GetType(), "Imprimir",
-                            string.Format("imprimirRetalhos('{0}');", idProdNf + ";" + idProd), true);
+
+                    if (dadosRetalho.Any())
+                    {
+                        Page.ClientScript.RegisterStartupScript(
+                            this.GetType(),
+                            "Imprimir",
+                            string.Format("imprimirRetalhos('{0}');", idProdNf + ";" + idProd),
+                            true);
+                    }
                     else
+                    {
                         LimpaTela();
-    
-                    
-                    
+                    }
                 }
             }
             catch (Exception ex)

@@ -571,10 +571,10 @@ namespace Glass.UI.Web.Cadastros.Producao
                                 Glass.Conversoes.StrParaInt(quantidadeArray[i]),
                                 observacaoArray != null && observacaoArray.Length > 0 && observacaoArray.Length >= i - 1 ? observacaoArray[i] : null));
 
-                        RetalhoProducaoDAO.Instance.CriarRetalho(dadosRetalho, idProd.Value, idProdNf);
+                        RetalhoProducaoDAO.Instance.CriarRetalho(dadosRetalho, idProd.Value, idProdNf, null);
                     }
                     else
-                        RetalhoProducaoDAO.Instance.CriarRetalho(altura, largura, quantidade, numEtiqueta, observacao);
+                        RetalhoProducaoDAO.Instance.CriarRetalho(altura, largura, quantidade, numEtiqueta, observacao, null);
                 }
 
                 return "Ok|" + descrProd.Replace("<br />", " - ");

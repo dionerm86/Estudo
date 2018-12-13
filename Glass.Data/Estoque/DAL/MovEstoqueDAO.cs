@@ -1328,11 +1328,6 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueRetalho(GDASession sessao, RetalhoProducao retalho)
         {
-            if (retalho.Situacao != SituacaoRetalhoProducao.Disponivel)
-            {
-                return;
-            }
-
             new EstoqueStrategyFactory()
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
@@ -1342,8 +1337,21 @@ namespace Glass.Data.DAL
                     TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdRetalhoProducao = (uint)retalho.IdRetalhoProducao,
                     QtdeMov = 1,
-                    AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)retalho.IdProd),
-                    BaixarMesmoProdutoSemMateriaPrima = true,
+                    DataMov = DateTime.Now,
+                });
+
+            var produtoRetalho = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, retalho.IdProd);
+            var quantidadeBaixaProdutoOriginal = Math.Round((decimal)(produtoRetalho.Altura * produtoRetalho.Largura) / 1000000, 2);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = (uint)produtoRetalho.IdProdOrig,
+                    IdLoja = UserInfo.GetUserInfo.IdLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdRetalhoProducao = (uint)retalho.IdRetalhoProducao,
+                    QtdeMov = quantidadeBaixaProdutoOriginal,
                     DataMov = DateTime.Now,
                 });
         }
@@ -1969,7 +1977,7 @@ namespace Glass.Data.DAL
                 (int)produtoPedidoEspelho.IdProd);
 
             var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd, false);
-            var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, 1, 1, produtoPedidoEspelho.TotM, produtoPedidoEspelho.Altura);
+            var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, 1, produtoPedidoEspelho.Qtde, produtoPedidoEspelho.TotM, produtoPedidoEspelho.Altura);
 
             new EstoqueStrategyFactory()
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
@@ -2081,7 +2089,7 @@ namespace Glass.Data.DAL
                 });
         }
 
-        public void CreditaEstoqueRetalho(GDASession sessao, int idProd, int idRetalhoProducao, LoginUsuario usuario)
+        public void CreditaEstoqueRetalho(GDASession sessao, int idProd, RetalhoProducao retalho, LoginUsuario usuario)
         {
             var idLoja = usuario != null
                 ? usuario.IdLoja
@@ -2094,12 +2102,27 @@ namespace Glass.Data.DAL
                     IdProd = (uint)idProd,
                     IdLoja = idLoja,
                     TipoMov = MovEstoque.TipoMovEnum.Entrada,
-                    IdRetalhoProducao = (uint)idRetalhoProducao,
+                    IdRetalhoProducao = (uint)retalho.IdRetalhoProducao,
                     QtdeMov = 1,
                     AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, idProd),
                     BaixarMesmoProdutoSemMateriaPrima = true,
                     DataMov = DateTime.Now,
                     Usuario = usuario,
+                });
+
+            var produtoRetalho = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, retalho.IdProd);
+            var quantidadeEntradaProdutoOriginal = Math.Round((decimal)(produtoRetalho.Altura * produtoRetalho.Largura) / 1000000, 2);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Creditar(sessao, new MovimentacaoDto
+                {
+                    IdProd = (uint)produtoRetalho.IdProdOrig,
+                    IdLoja = UserInfo.GetUserInfo.IdLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
+                    IdRetalhoProducao = (uint)retalho.IdRetalhoProducao,
+                    QtdeMov = quantidadeEntradaProdutoOriginal,
+                    DataMov = DateTime.Now,
                 });
         }
 
