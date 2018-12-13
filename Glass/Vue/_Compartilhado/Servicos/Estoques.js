@@ -1,4 +1,4 @@
-var Servicos = Servicos || {};
+﻿var Servicos = Servicos || {};
 
 /**
  * Objeto com os serviços para a API de estoques.
@@ -7,6 +7,66 @@ Servicos.Estoques = (function(http) {
   const API = '/api/v1/estoques/';
 
   return {
+    /**
+     * Objeto com os serviços para a API de movimentações.
+     */
+    Movimentacoes: {
+      /**
+       * Objeto com os serviços para a API de movimentações reais.
+       */
+      Reais: {
+       /**
+        * Recupera a lista de movimentações do estoques real.
+        * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
+        * @param {number} pagina O número da página de resultados a ser exibida.
+        * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+        * @param {string} ordenacao A ordenação para o resultado.
+        * @returns {Promise} Uma promise com o resultado da busca.
+        */
+        obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+          return http().get(API + 'movimentacoes/reais', {
+            params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+          });
+        },
+
+       /**
+        * Exclui uma movimentação do estoque real.
+        * @param {number} identificador da movimentação.
+        * @returns {Promise} Uma promise com o resultado da exclusão.
+        */
+        excluir: function (idMovimentacao) {
+          if (!idMovimentacao) {
+            throw new Error('Movimentação é obrigatória.');
+          }
+
+          return http().delete(API + 'movimentacoes/reais/' + idMovimentacao);
+        },
+
+       /**
+        * Obtém as configurações para a tela de movimentações do estoque real.
+        * @returns {Promise} Uma promise com o resultado da busca.
+        */
+        obterConfiguracoesLista: function () {
+          return http().get(API + 'movimentacoes/reais/configuracoes');
+        },
+
+       /**
+        * Insere uma nova movimentação do estoque real.
+        * @param {?Object} objeto com os dados necessários para cadastro de uma nova movimentação.
+        * @returns {Promise} Uma promise com o resultado da inserção.
+        */
+        inserir: function (movimentacao) {
+          return http().post(API + 'movimentacoes/reais/', movimentacao)
+        },
+      },
+
+      TiposMovimentacao: {
+        obterParaControle: function () {
+          return http().get(API + 'movimentacoes/tiposMovimentacao');
+        },
+      },
+    },
+
     /**
      * Recupera a lista de estoques de produto.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.

@@ -98,7 +98,7 @@
      * Atualiza a lista de pedidos.
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     },
 
     /**

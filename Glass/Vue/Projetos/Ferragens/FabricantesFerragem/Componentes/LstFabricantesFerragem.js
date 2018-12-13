@@ -149,7 +149,7 @@
      * Força a atualização da lista de fabricantes de ferragem, com base no filtro atual.
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     }
   }
 });

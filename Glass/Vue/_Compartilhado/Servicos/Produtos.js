@@ -192,6 +192,23 @@ Servicos.Produtos = (function(http) {
             idGrupoProduto
           }
         });
+      },
+
+      /**
+       * Recupera a lista de subgrupos de produto para uso no controle de busca.
+       * @param {string} [idGrupoProduto=null] O identificador do grupo de produto que irá filtrar os subgrupos.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterVariosParaControle: function (idsGruposProduto) {
+        if (!idsGruposProduto || !idsGruposProduto.length) {
+          return Promise.reject();
+        }
+
+        return http().get(API + 'subgrupos/filtro/varios', {
+          params: {
+            idsGruposProduto
+          }
+        });
       }
     },
 
