@@ -20,7 +20,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         /// <param name="dadosParaAtualizacao">Os dados que serão atualizados no funcionário.</param>
         /// <returns>Um status HTTP que indica se o funcionário foi atualizado.</returns>
         [HttpPatch]
-        [Route("{id}")]
+        [Route("{id:int}")]
         [SwaggerResponse(202, "Funcionário atualizado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Funcionário não encontrado.", Type = typeof(MensagemDto))]

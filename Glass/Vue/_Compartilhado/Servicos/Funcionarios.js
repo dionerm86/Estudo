@@ -8,6 +8,25 @@ Servicos.Funcionarios = (function(http) {
 
   return {
     /**
+     *Objeto com os serviços para a API de tipos.
+     */
+    Tipos: {
+      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'tipos', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      excluir: function (id) {
+        return http().delete(API + 'tipos/' + id)
+      },
+
+      inserir: function (tipoFuncionario) {
+        return http().post(API + 'tipos/', tipoFuncionario)
+      },
+    },
+
+    /**
      * Busca os funcionários de um tipo específico para o controle de filtro.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
