@@ -118,23 +118,25 @@ namespace WebGlass.Business.Compra.Fluxo
             scriptExecutar += "redirectUrl('" + pathName + "');";
         }
 
-        public string FinalizarVarias(IEnumerable<uint> idsCompras, DateTime[] datasParcelas, int numeroParcelas)
+        public string FinalizarVarias(IEnumerable<uint> idsCompras, DateTime[] datasParcelas, int numeroParcelas, string nf, DateTime? dataFabrica, uint idFormaPagto, bool boletoChegou)
         {
             string retorno = "";
 
             //Verifica se as compras que estão sendo finalizadas tem sinal a pagar
             string idsComprasSinalPagar = "";
             foreach (uint idCompra in idsCompras)
+            {
                 if (CompraDAO.Instance.TemSinalPagar(idCompra))
                     idsComprasSinalPagar += idCompra + ", ";
+            }
+                
 
             if (!string.IsNullOrEmpty(idsComprasSinalPagar))
                 throw new Exception("A(s) compra(s): " + idsComprasSinalPagar.TrimEnd(' ').TrimEnd(',') + " possui(em) sinal a pagar.");
 
             foreach (uint idCompra in idsCompras)
             {
-                CompraDAO.Instance.AlteraParcelas(null, idCompra, numeroParcelas, datasParcelas);
-                CompraDAO.Instance.FinalizarCompraComTransacao(idCompra);
+                CompraDAO.Instance.AlterarDadosEFinalizarCompraComTransacao(idCompra, numeroParcelas, datasParcelas, nf, dataFabrica, idFormaPagto, boletoChegou);
 
                 retorno += idCompra + ", ";
             }
