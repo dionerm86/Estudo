@@ -5187,11 +5187,15 @@ namespace Glass.Data.DAL
                     new GDAParameter("?idProdPedProducao", idProdPedProducao));
             }
 
-            MovEstoqueDAO.Instance.BaixaEstoquePecaRepostaPedidoProducao(
-                transaction,
-                PedidoDAO.Instance.GetTipoPedido(transaction, idPedido),
-                (int)idProdPedProducao,
-                prodPedEsp);
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(transaction, idPedido);
+            if (tipoPedido == Pedido.TipoPedidoEnum.Producao)
+            {
+                MovEstoqueDAO.Instance.BaixaEstoquePecaRepostaPedidoProducao(transaction, (int)idProdPedProducao, prodPedEsp);
+            }
+            else
+            {
+                MovEstoqueDAO.Instance.BaixaEstoquePerda(transaction, (int)idProdPedProducao, prodPedEsp);
+            }
 
             if (passouSetorLaminado)
             {

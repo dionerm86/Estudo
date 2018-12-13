@@ -1182,10 +1182,9 @@ namespace Glass.Data.DAL
             }
         }
 
-        public void BaixaEstoquePecaRepostaPedidoProducao(GDASession sessao, Pedido.TipoPedidoEnum tipoPedido, int idProdutoPedidoProducao, ProdutosPedidoEspelho produtoPedidoEspelho)
+        public void BaixaEstoquePecaRepostaPedidoProducao(GDASession sessao, int idProdutoPedidoProducao, ProdutosPedidoEspelho produtoPedidoEspelho)
         {
-            if (tipoPedido != Pedido.TipoPedidoEnum.Producao
-                || !ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
+            if (!ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
             {
                 return;
             }
@@ -1219,10 +1218,36 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET entrouEstoque = FALSE WHERE idProdPedProducao = {idProdutoPedidoProducao}");
         }
 
+        public void BaixaEstoquePerda(GDASession sessao, int idProdutoPedidoProducao, ProdutosPedidoEspelho produtoPedidoEspelho)
+        {
+            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd);
+            var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, 1, produtoPedidoEspelho.Qtde, produtoPedidoEspelho.TotM, produtoPedidoEspelho.Altura);
+
+            var idLoja = ObterIdLojaProdutoPedidoProducao(
+                sessao,
+                idProdutoPedidoProducao,
+                (int)produtoPedidoEspelho.IdPedido,
+                (int)produtoPedidoEspelho.IdProd);
+
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Baixar(sessao, new MovimentacaoDto
+                {
+                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdLoja = (uint)idLoja,
+                    TipoMov = MovEstoque.TipoMovEnum.Saida,
+                    IdProdPedProducao = (uint)idProdutoPedidoProducao,
+                    QtdeMov = quantidadeBaixa,
+                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
+                    AlterarMateriaPrima = true,
+                    BaixarMesmoProdutoSemMateriaPrima = true,
+                    DataMov = DateTime.Now,
+                });
+        }
+
         public void BaixaEstoqueVoltarPecaProducaoRetalho(GDASession sessao, int idProdutoPedidoProducao, IEnumerable<RetalhoProducao> retalhos)
         {
             var idPedido = ProdutoPedidoProducaoDAO.Instance.ObtemIdPedido(sessao, (uint)idProdutoPedidoProducao);
-
 
             foreach (var item in retalhos)
             {
