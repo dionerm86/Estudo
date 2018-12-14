@@ -160,8 +160,6 @@ namespace Glass.Projeto.Negocios.Componentes
         {
             ferragem.Require("cliente").NotNull();
 
-            var ferragens = this.ObterFerragem(ferragem.IdFerragem);
-
             var retornoAtualizacao = string.Empty;
 
             // Se for inserção adiciona a situação.
