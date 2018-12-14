@@ -182,7 +182,7 @@
             </lista-paginada>
         </section>
     </div>
-     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+    <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
             <asp:ScriptReference Path="~/Vue/Processos/Componentes/LstProcessos.js" />
         </Scripts>
