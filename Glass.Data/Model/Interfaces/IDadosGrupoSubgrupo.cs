@@ -8,6 +8,6 @@
         bool ProdutoEAluminio();
         bool ProdutoEVidro();
         TipoSubgrupoProd TipoSubgrupo();
-        TipoCalculoGrupoProd TipoCalculo(bool fiscal = false);
+        TipoCalculoGrupoProd TipoCalculo(bool fiscal = false, bool compra = false);
     }
 }
