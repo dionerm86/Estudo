@@ -15,6 +15,7 @@ namespace Glass.Projeto.Negocios.Entidades
     /// Representa uma ferragem.
     /// </summary>
     [Colosoft.Business.EntityLoader(typeof(FerragemLoader))]
+    [Glass.Negocios.ControleAlteracao(Data.Model.LogAlteracao.TabelaAlteracao.Ferragem)]
     public class Ferragem : Colosoft.Business.Entity<Glass.Data.Model.Ferragem>
     {
         #region Tipos Aninhados

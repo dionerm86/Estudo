@@ -2,6 +2,7 @@
 
 namespace Glass.Data.Model
 {
+    [PersistenceBaseDAO(typeof(Data.DAL.CodigoFerragemDAO))]
     [PersistenceClass("codigo_ferragem")]
     public class CodigoFerragem : Colosoft.Data.BaseModel
     {

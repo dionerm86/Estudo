@@ -231,6 +231,25 @@ namespace Glass.Data.DAL
             return sql;
         }
 
+        public void LogFerragem(Ferragem ferragem, SequenciaObjeto atual)
+        {
+            LogFerragem(null, ferragem, atual);
+        }
+
+        public void LogFerragem(GDASession session, Ferragem ferragem, SequenciaObjeto sequencia)
+        {
+            var outro = FerragemDAO.Instance.GetElementByPrimaryKey(session, (uint)ferragem.IdFerragem);
+
+            if (sequencia == SequenciaObjeto.Novo)
+            {
+                this.InserirLog(session, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.Ferragem, (uint)ferragem.IdFerragem, outro, ferragem);
+            }
+            else
+            {
+                this.InserirLog(session, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.Ferragem, (uint)ferragem.IdFerragem, ferragem, outro);
+            }
+        }
+
         /// <summary>
         /// Retorna a data da última alteração feita em um campo de um registro.
         /// </summary>
