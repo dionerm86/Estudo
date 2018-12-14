@@ -204,6 +204,8 @@ namespace Glass.Projeto.Negocios.Componentes
             {
                 resultado = ferragem.Save(session);
 
+                LogAlteracaoDAO.Instance.LogFerragem(ferragem.DataModel, LogAlteracaoDAO.SequenciaObjeto.Atual);
+
                 if (!resultado)
                 {
                     return resultado;
