@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais
+namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Fiscais
 {
     /// <summary>
     /// Classe que encapsula data de cadastro e movimentação de estoque.
