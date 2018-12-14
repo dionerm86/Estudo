@@ -144,6 +144,10 @@ Servicos.Projetos = (function(http) {
          * @returns {Promise} Uma promise com o resultado da operação.
          */
         inserir: function (grupoMedidaProjeto) {
+          if (!grupoMedidaProjeto) {
+            throw new Error('Grupo de medida de projeto é obrigatório.');
+          }
+
           return http().post(API + 'medidas/grupos/', grupoMedidaProjeto);
         },
 
