@@ -131,81 +131,55 @@ namespace Glass.Data.Model
 
         private List<ConstanteFerragem> _constantedaferragem = null;
 
-        private List<ConstanteFerragem> ConstFerragem
-        {
-            get
-            {
-                if (_constantedaferragem == null)
-                    _constantedaferragem = ConstanteFerragemDAO.Instance.ObterConstantesFerragens(IdFerragem);
-                return this._constantedaferragem;
-            }
-
-            set
-            {
-                _constantedaferragem = value;
-            }
-        }
-
         [Log("Constante da Ferragem")]
         public string ConstanteDaFerragem
         {
             get
             {
-                StringBuilder retorno = new StringBuilder();
-                foreach (var dados in ConstFerragem)
+                if (_constantedaferragem == null)
+                {
+                    _constantedaferragem = ConstanteFerragemDAO.Instance.ObterConstantesFerragens(IdFerragem);
+                }
+
+                var retorno = new StringBuilder();
+                foreach (var dados in _constantedaferragem)
                 {
                     if (!string.IsNullOrWhiteSpace(dados.Nome))
                     {
-                        retorno.AppendFormat("Nome: {0} ", dados.Nome);
-
+                        retorno.AppendFormat("{0}:", dados.Nome);
                     }
 
                     if (!string.IsNullOrWhiteSpace(dados.Valor.ToString()))
                     {
-                        retorno.AppendFormat("Valor: {0} ", dados.Valor);
+                        retorno.AppendFormat(" {0} ", dados.Valor);
                     }
-
-                    retorno.AppendFormat(string.Empty);
                 }
 
                 return retorno.ToString().TrimEnd(',', ' ');
             }
         }
 
-        private List<CodigoFerragem> _codferragem = null;
-
-        private List<CodigoFerragem> CodFerragem
-        {
-            get
-            {
-                if (this._codferragem == null)
-                {
-                    this._codferragem = CodigoFerragemDAO.Instance.ObterCodigoFerragens(this.IdFerragem);
-                }
-
-                return this._codferragem;
-            }
-
-            set
-            {
-                this._codferragem = value;
-            }
-        }
+        private List<CodigoFerragem> _codferragem;
 
         [Log("Código da Ferragem")]
         public string CodigoDaFeragem
         {
             get
             {
-                StringBuilder retorno = new StringBuilder();
-                foreach (var dados in this.CodFerragem)
+                if (_codferragem == null)
+                {
+                    _codferragem = CodigoFerragemDAO.Instance.ObterCodigoFerragens(IdFerragem);
+                }
+
+                var retorno = new StringBuilder();
+
+                foreach (var dados in _codferragem)
                 {
                     if (!string.IsNullOrWhiteSpace(dados.Codigo))
                     {
-                        retorno.AppendFormat("Código: {0} ", dados.Codigo);
-                    }
+                        retorno.AppendFormat("{0} ", dados.Codigo);
 
-                    retorno.AppendFormat(string.Empty);
+                    }
                 }
 
                 return retorno.ToString().TrimEnd(',', ' ');

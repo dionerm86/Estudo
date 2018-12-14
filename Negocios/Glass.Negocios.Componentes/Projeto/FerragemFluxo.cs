@@ -208,7 +208,7 @@ namespace Glass.Projeto.Negocios.Componentes
                 {
                     return resultado;
                 }
-                LogAlteracaoDAO.Instance.LogFerragem(ferragem.DataModel, LogAlteracaoDAO.SequenciaObjeto.Atual);
+
                 resultado = session.Execute(false).ToSaveResult();
             }
 
@@ -223,11 +223,9 @@ namespace Glass.Projeto.Negocios.Componentes
                 string.Format(
                 "Falha ao atualizar a ferragem no WebGlass. Erro: {0}.",
                 resultado.Message.ToString()).GetFormatter());
-
             }
 
-            
-
+            LogAlteracaoDAO.Instance.LogFerragem(ferragem.DataModel, LogAlteracaoDAO.SequenciaObjeto.Atual);
 
             return resultado;
         }
