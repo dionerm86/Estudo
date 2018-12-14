@@ -17,11 +17,13 @@ namespace Glass.Data.Helper.Estoque.Estrategia
     {
         public void Baixar(GDASession sessao, MovimentacaoDto movimentacao)
         {
+            movimentacao.Tipo = MovEstoque.TipoMovEnum.Saida;
             this.Movimentar(sessao, movimentacao);
         }
 
         public void Creditar(GDASession sessao, MovimentacaoDto movimentacao)
         {
+            movimentacao.Tipo = MovEstoque.TipoMovEnum.Entrada;
             this.Movimentar(sessao, movimentacao);
         }
 
@@ -34,7 +36,7 @@ namespace Glass.Data.Helper.Estoque.Estrategia
         {
             movimentacao.Usuario = movimentacao.Usuario != null ? movimentacao.Usuario : UserInfo.GetUserInfo;
 
-            if (!GrupoProdDAO.Instance.AlterarEstoque(sessao, (int)movimentacao.IdProd) && !movimentacao.LancManual)
+            if (!GrupoProdDAO.Instance.AlterarEstoque(sessao, (int)movimentacao.IdProduto) && !movimentacao.LancamentoManual)
             {
                 return;
             }
@@ -54,16 +56,16 @@ namespace Glass.Data.Helper.Estoque.Estrategia
                 {
                     produtosBaixaEstoque = ProdutoBaixaEstoqueDAO.Instance.GetByProd(
                         sessao,
-                        movimentacao.IdProd,
-                        movimentacao.BaixarMesmoProdutoSemMateriaPrima);
+                        movimentacao.IdProduto,
+                        movimentacao.BaixarProprioProdutoSeNaoTiverMateriaPrima);
                 }
                 else
                 {
                     produtosBaixaEstoque = new ProdutoBaixaEstoque[] 
                     {
                         new ProdutoBaixaEstoque{
-                            IdProd = (int)movimentacao.IdProd,
-                            IdProdBaixa = (int)movimentacao.IdProd,
+                            IdProd = (int)movimentacao.IdProduto,
+                            IdProdBaixa = (int)movimentacao.IdProduto,
                             Qtde = 1,
                         },
                     };
@@ -71,11 +73,11 @@ namespace Glass.Data.Helper.Estoque.Estrategia
 
                 foreach (var item in produtosBaixaEstoque)
                 {
-                    var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)movimentacao.IdProd);
+                    var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)movimentacao.IdProduto);
 
                     // Se não for lançamento manual, não for mov. de produção e o produto for chapa de vidro mov. a matéria-prima
-                    if (!movimentacao.LancManual
-                        && movimentacao.AlterarProdBase
+                    if (!movimentacao.LancamentoManual
+                        && movimentacao.AlterarProdutoBase
                         && (tipoSubgrupo == TipoSubgrupoProd.ChapasVidro || tipoSubgrupo == TipoSubgrupoProd.ChapasVidroLaminado))
                     {
                         var m2Chapa = ProdutoDAO.Instance.ObtemM2Chapa(sessao, item.IdProdBaixa);
@@ -89,23 +91,23 @@ namespace Glass.Data.Helper.Estoque.Estrategia
                         if (idProdBase.HasValue)
                         {
                             var movimentacaoDto = movimentacao;
-                            movimentacaoDto.IdProd = (uint)idProdBase.Value;
-                            movimentacaoDto.QtdeMov = movimentacaoDto.QtdeMov * m2Chapa;
-                            movimentacaoDto.BaixarMesmoProdutoSemMateriaPrima = true;
+                            movimentacaoDto.IdProduto = (uint)idProdBase.Value;
+                            movimentacaoDto.Quantidade = movimentacaoDto.Quantidade * m2Chapa;
+                            movimentacaoDto.BaixarProprioProdutoSeNaoTiverMateriaPrima = true;
 
                             this.Movimentar(sessao, movimentacaoDto);
                         }
                     }
 
-                    var qtde = movimentacao.QtdeMov * (decimal)item.Qtde;
+                    var qtde = movimentacao.Quantidade * (decimal)item.Qtde;
                     decimal saldoQtdeAnterior = 0, saldoValorAnterior = 0, saldoQtdeValidar = 0;
 
                     MovEstoqueDAO.Instance.ValidarMovimentarEstoque(
                         sessao,
                         item.IdProdBaixa,
                         (int)movimentacao.IdLoja,
-                        movimentacao.DataMov,
-                        movimentacao.TipoMov,
+                        movimentacao.Data,
+                        movimentacao.Tipo,
                         qtde,
                         ref saldoQtdeAnterior,
                         ref saldoValorAnterior,
@@ -137,14 +139,14 @@ namespace Glass.Data.Helper.Estoque.Estrategia
                     movEstoque.IdVolume = movimentacao.IdVolume;
                     movEstoque.IdInventarioEstoque = movimentacao.IdInventarioEstoque;
                     movEstoque.IdProdImpressaoChapa = movimentacao.IdProdImpressaoChapa;
-                    movEstoque.LancManual = movimentacao.LancManual;
-                    movEstoque.TipoMov = (int)movimentacao.TipoMov;
-                    movEstoque.DataMov = movimentacao.DataMov.AddSeconds(1);
+                    movEstoque.LancManual = movimentacao.LancamentoManual;
+                    movEstoque.TipoMov = (int)movimentacao.Tipo;
+                    movEstoque.DataMov = movimentacao.Data.AddSeconds(1);
                     movEstoque.QtdeMov = qtde;
                     movEstoque.Obs = movimentacao.Observacao;
-                    movEstoque.SaldoQtdeMov = Math.Round(saldoQtdeAnterior + (movimentacao.TipoMov == MovEstoque.TipoMovEnum.Entrada ? qtde : -qtde), Configuracoes.Geral.NumeroCasasDecimaisTotM);
+                    movEstoque.SaldoQtdeMov = Math.Round(saldoQtdeAnterior + (movimentacao.Tipo == MovEstoque.TipoMovEnum.Entrada ? qtde : -qtde), Configuracoes.Geral.NumeroCasasDecimaisTotM);
 
-                    if (movimentacao.DataMov.Date != DateTime.Now.Date)
+                    if (movimentacao.Data.Date != DateTime.Now.Date)
                     {
                         movEstoque.DataCad = DateTime.Now;
                     }
@@ -154,11 +156,11 @@ namespace Glass.Data.Helper.Estoque.Estrategia
                         movEstoque.ValorMov = 0;
                         movEstoque.SaldoValorMov = 0;
                     }
-                    else if (movimentacao.TipoMov == MovEstoque.TipoMovEnum.Entrada)
+                    else if (movimentacao.Tipo == MovEstoque.TipoMovEnum.Entrada)
                     {
                         var saldoQuantidadeMovimentada = movEstoque.SaldoQtdeMov > 0 ? movEstoque.SaldoQtdeMov : 1;
-                        var perc = movimentacao.TipoMov == MovEstoque.TipoMovEnum.Entrada && movimentacao.QtdeMov > movEstoque.SaldoQtdeMov
-                            ? movimentacao.QtdeMov / saldoQuantidadeMovimentada
+                        var perc = movimentacao.Tipo == MovEstoque.TipoMovEnum.Entrada && movimentacao.Quantidade > movEstoque.SaldoQtdeMov
+                            ? movimentacao.Quantidade / saldoQuantidadeMovimentada
                             : 1;
 
                         movEstoque.ValorMov = Math.Abs(movimentacao.Total);
@@ -190,7 +192,7 @@ namespace Glass.Data.Helper.Estoque.Estrategia
             }
             catch (Exception ex)
             {
-                ErroDAO.Instance.InserirFromException($"MovEstoque - IdMovEstoque:{idMovEstoque}' IdProd:{movimentacao.IdProd}' IdLoja:{movimentacao.IdLoja}", ex);
+                ErroDAO.Instance.InserirFromException($"MovEstoque - IdMovEstoque:{idMovEstoque}' IdProd:{movimentacao.IdProduto}' IdLoja:{movimentacao.IdLoja}", ex);
                 throw;
             }
         }

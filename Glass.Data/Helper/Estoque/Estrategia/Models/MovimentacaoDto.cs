@@ -15,7 +15,7 @@ namespace Glass.Data.Helper.Estoque.Estrategia.Models
         /// <summary>
         /// Obtém ou define o identificador do produto.
         /// </summary>
-        public uint IdProd { get; set; }
+        public uint IdProduto { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador da loja.
@@ -25,7 +25,7 @@ namespace Glass.Data.Helper.Estoque.Estrategia.Models
         /// <summary>
         /// Obtém ou define o tipo da movimentação.
         /// </summary>
-        public MovEstoque.TipoMovEnum TipoMov { get; set; }
+        public MovEstoque.TipoMovEnum Tipo { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador do pedido.
@@ -130,12 +130,12 @@ namespace Glass.Data.Helper.Estoque.Estrategia.Models
         /// <summary>
         /// Obtém ou define um valor que indica se o lançamento de estoque é manual.
         /// </summary>
-        public bool LancManual { get; set; }
+        public bool LancamentoManual { get; set; }
 
         /// <summary>
         /// Obtém ou define a quantidade de movimentação que será feita no estoque.
         /// </summary>
-        public decimal QtdeMov { get; set; }
+        public decimal Quantidade { get; set; } = 1;
 
         /// <summary>
         /// Obtém ou define o valor total da movimentação.
@@ -150,17 +150,17 @@ namespace Glass.Data.Helper.Estoque.Estrategia.Models
         /// <summary>
         /// Obtém ou define um valor que indica se deverá ser baixado o próprio produto caso o mesmo não tenha matéria prima.
         /// </summary>
-        public bool BaixarMesmoProdutoSemMateriaPrima { get; set; }
+        public bool BaixarProprioProdutoSeNaoTiverMateriaPrima { get; set; }
 
         /// <summary>
         /// Obtém ou define a data da movimentação no estoque.
         /// </summary>
-        public DateTime DataMov { get; set; }
+        public DateTime Data { get; set; } = DateTime.Now;
 
         /// <summary>
         /// Obtém ou define um valor que indica se deverá alterar também o estoque do produto base do produto informado.
         /// </summary>
-        public bool AlterarProdBase { get; set; }
+        public bool AlterarProdutoBase { get; set; }
 
         /// <summary>
         /// Obtém ou define o usuário que está realizando a movimentação no estoque.

@@ -515,18 +515,15 @@ namespace Glass.Data.DAL
                         .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                         .Baixar(sessao, new MovimentacaoDto
                         {
-                            IdProd = item.IdProd,
+                            IdProduto = item.IdProd,
                             IdLoja = idLoja,
-                            TipoMov = MovEstoque.TipoMovEnum.Saida,
                             IdPedido = idPedido,
                             IdProdPed = item.IdProdPed,
-                            LancManual = false,
-                            QtdeMov = quantidadeBaixa,
+                            Quantidade = quantidadeBaixa,
                             Total = GetTotalProdPed(sessao, (int)item.IdProdPed),
                             AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)item.IdProd),
-                            BaixarMesmoProdutoSemMateriaPrima = true,
-                            DataMov = DateTime.Now,
-                            AlterarProdBase = true,
+                            BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                            AlterarProdutoBase = true,
                         });
                 }
             }
@@ -556,16 +553,13 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = produtoPedido.IdProd,
+                    IdProduto = produtoPedido.IdProd,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdPedido = produtoPedido.IdPedido,
                     IdProdPed = produtoPedido.IdProdPed,
                     IdProdImpressaoChapa = idProdImpressaoChapa,
-                    QtdeMov = 1,
                     Total = GetTotalProdPed(sessao, (int)produtoPedido.IdProdPed),
-                    DataMov = DateTime.Now,
-                    AlterarProdBase = true,
+                    AlterarProdutoBase = true,
                 });
         }
 
@@ -577,13 +571,10 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = idProd.Value,
+                    IdProduto = idProd.Value,
                     IdLoja = (uint)ObterIdLojaPeloIdProdImpressaoChapa(sessao, 0, (int)idProd.Value, idProdImpressaoChapa),
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdProdPedProducao = idProdPedProducao,
-                    QtdeMov = 1,
                     Total = GetTotalProdPedProducao(sessao, (int)idProdPedProducao),
-                    DataMov = DateTime.Now,
                 });
         }
 
@@ -611,18 +602,16 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Baixar(sessao, new MovimentacaoDto
                     {
-                        IdProd = produtoPedido.IdProd,
+                        IdProduto = produtoPedido.IdProd,
                         IdLoja = idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Saida,
                         IdPedido = produtoPedido.IdPedido,
                         IdProdPed = produtoPedido.IdProdPed,
                         IdVolume = item.IdVolume,
-                        QtdeMov = quantidadeBaixa,
+                        Quantidade = quantidadeBaixa,
                         Total = GetTotalProdPed(sessao, (int)produtoPedido.IdProdPed),
                         AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)produtoPedido.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
             }
 
@@ -655,18 +644,16 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Baixar(sessao, new MovimentacaoDto
                     {
-                        IdProd = produtoPedido.IdProd,
+                        IdProduto = produtoPedido.IdProd,
                         IdLoja = (uint)idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Saida,
                         IdPedido = produtoPedido.IdPedido,
                         IdProdPed = produtoPedido.IdProdPed,
-                        QtdeMov = quantidadeBaixa,
-                        LancManual = true,
+                        Quantidade = quantidadeBaixa,
+                        LancamentoManual = true,
                         Total = GetTotalProdPed(sessao, (int)produtoPedido.IdProdPed),
                         AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)produtoPedido.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                         Observacao = observacao,
                     });
 
@@ -698,17 +685,15 @@ namespace Glass.Data.DAL
                         .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                         .Baixar(sessao, new MovimentacaoDto
                         {
-                            IdProd = item.IdProd,
+                            IdProduto = item.IdProd,
                             IdLoja = (uint)idLoja,
-                            TipoMov = MovEstoque.TipoMovEnum.Saida,
                             IdCompra = (uint)idCompra,
                             IdProdCompra = item.IdProdCompra,
-                            QtdeMov = quantidadeBaixa,
+                            Quantidade = quantidadeBaixa,
                             Total = GetTotalProdCompra(sessao, (int)item.IdProdCompra),
                             AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                            BaixarMesmoProdutoSemMateriaPrima = true,
-                            DataMov = DateTime.Now,
-                            AlterarProdBase = true,
+                            BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                            AlterarProdutoBase = true,
                         });
                 }
 
@@ -736,17 +721,15 @@ namespace Glass.Data.DAL
                         .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                         .Baixar(sessao, new MovimentacaoDto
                         {
-                            IdProd = produtoCompra.IdProd,
+                            IdProduto = produtoCompra.IdProd,
                             IdLoja = (uint)idLoja,
-                            TipoMov = MovEstoque.TipoMovEnum.Saida,
                             IdCompra = (uint)idCompra,
                             IdProdCompra = item.IdProdCompra,
-                            QtdeMov = quantidadeBaixa,
+                            Quantidade = quantidadeBaixa,
                             Total = GetTotalProdCompra(sessao, (int)item.IdProdCompra),
                             AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)produtoCompra.IdProd),
-                            BaixarMesmoProdutoSemMateriaPrima = true,
-                            DataMov = DateTime.Now,
-                            AlterarProdBase = true,
+                            BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                            AlterarProdutoBase = true,
                         });
                 }
             }
@@ -770,17 +753,15 @@ namespace Glass.Data.DAL
                         .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                         .Baixar(sessao, new MovimentacaoDto
                         {
-                            IdProd = produtoNotaFiscal.IdProd,
+                            IdProduto = produtoNotaFiscal.IdProd,
                             IdLoja = (uint)idLoja,
-                            TipoMov = MovEstoque.TipoMovEnum.Saida,
                             IdNf = (uint)idNotaFiscal,
                             IdProdNf = produtoNotaFiscal.IdProdNf,
-                            QtdeMov = quantidadeBaixa,
+                            Quantidade = quantidadeBaixa,
                             Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)produtoNotaFiscal.IdProdNf),
                             AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)produtoNotaFiscal.IdProd),
-                            BaixarMesmoProdutoSemMateriaPrima = true,
-                            DataMov = DateTime.Now,
-                            AlterarProdBase = true,
+                            BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                            AlterarProdutoBase = true,
                         });
                 }
             }
@@ -841,18 +822,16 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Baixar(sessao, new MovimentacaoDto
                     {
-                        IdProd = produtoPedido.IdProd,
+                        IdProduto = produtoPedido.IdProd,
                         IdLoja = idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Saida,
                         IdPedido = produtoPedido.IdPedido,
                         IdLiberarPedido = idLiberarPedido,
                         IdProdLiberarPedido = idProdutoLiberarPedido,
-                        QtdeMov = qtdeBaixa,
+                        Quantidade = qtdeBaixa,
                         Total = GetTotalProdLiberarPedido(sessao, (int)idProdutoLiberarPedido),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)produtoPedido.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
             }
 
@@ -877,17 +856,15 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Baixar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = (uint)ObterIdLojaTrocaDevolucao(sessao, idTrocaDevolucao, (int)item.IdProd),
-                        TipoMov = MovEstoque.TipoMovEnum.Saida,
                         IdTrocaDevolucao = item.IdTrocaDevolucao,
                         IdProdTrocaDev = item.IdProdTrocaDev,
-                        QtdeMov = qtdeBaixa,
+                        Quantidade = qtdeBaixa,
                         Total = GetTotalProdTrocaDevolucao(sessao, (int?)item.IdProdTrocaDev, null),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
             }
         }
@@ -910,17 +887,15 @@ namespace Glass.Data.DAL
                         .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                         .Baixar(sessao, new MovimentacaoDto
                         {
-                            IdProd = item.IdProd,
+                            IdProduto = item.IdProd,
                             IdLoja = idLoja,
-                            TipoMov = MovEstoque.TipoMovEnum.Saida,
                             IdTrocaDevolucao = item.IdTrocaDevolucao,
                             IdProdTrocado = item.IdProdTrocado,
-                            QtdeMov = qtdeBaixa,
+                            Quantidade = qtdeBaixa,
                             Total = GetTotalProdTrocaDevolucao(sessao, null, (int?)item.IdProdTrocado),
                             AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                            BaixarMesmoProdutoSemMateriaPrima = true,
-                            DataMov = DateTime.Now,
-                            AlterarProdBase = true,
+                            BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                            AlterarProdutoBase = true,
                         });
                 }
             }
@@ -941,17 +916,15 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Baixar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = notaFiscal.IdLoja.Value,
-                        TipoMov = MovEstoque.TipoMovEnum.Saida,
                         IdNf = item.IdNf,
                         IdProdNf = item.IdProdNf,
-                        QtdeMov = quantidadeBaixa,
+                        Quantidade = quantidadeBaixa,
                         Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)item.IdProdNf),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
 
                 objPersistence.ExecuteCommand(sessao, $"UPDATE produtos_nf SET qtdeSaida={ProdutosNfDAO.Instance.ObtemQtdDanfe(sessao, item, false).ToString().Replace(",", ".")} Where idProdNf={item.IdProdNf}");
@@ -982,17 +955,15 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Baixar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = (uint)idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Saida,
                         IdPedidoInterno = item.IdPedidoInterno,
                         IdProdPedInterno = item.IdProdPedInterno,
-                        QtdeMov = quantidadeBaixa,
+                        Quantidade = quantidadeBaixa,
                         Total = GetTotalProdPedInterno(sessao, (int)item.IdProd, (int)item.IdProdPedInterno),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
 
                 objPersistence.ExecuteCommand(sessao, "UPDATE produto_pedido_interno SET qtdeConfirmada=COALESCE(qtdeConfirmada,0)+?qtde WHERE idProdPedInterno=" + item.IdProdPedInterno,
@@ -1021,14 +992,13 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = idProd,
+                    IdProduto = idProd,
                     IdLoja = idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
-                    LancManual = true,
-                    QtdeMov = qtdeBaixa,
+                    LancamentoManual = true,
+                    Quantidade = qtdeBaixa,
                     Total = valor.GetValueOrDefault(GetTotalEstoqueManual(sessao, (int)idProd, qtdeBaixa)),
-                    DataMov = dataMov,
-                    AlterarProdBase = true,
+                    Data = dataMov,
+                    AlterarProdutoBase = true,
                     Observacao = observacao,
                 });
         }
@@ -1051,13 +1021,10 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Baixar(sessao, new MovimentacaoDto
                     {
-                        IdProd = produtoPedidoEspelho.IdProd,
+                        IdProduto = produtoPedidoEspelho.IdProd,
                         IdLoja = (uint)idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Saida,
                         IdProdPedProducao = item.IdProdPedProducao,
-                        QtdeMov = 1,
                         Total = GetTotalProdPedProducao(sessao, (int)item.IdProdPedProducao),
-                        DataMov = DateTime.Now,
                     });
 
                 CreditaEstoqueProducao(sessao, (int)produtoPedidoEspelho.IdProd, idLoja, (int)item.IdProdPedProducao, (decimal)(m2Calc > 0 && passouSetorLaminado ? m2Calc : 1));
@@ -1089,14 +1056,11 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdProduto = produtoPedidoEspelho.IdProd,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = 1,
                     Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
-                    BaixarMesmoProdutoSemMateriaPrima = true,
-                    DataMov = DateTime.Now,
+                    BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                 });
 
             // Credita a matéria-prima do box
@@ -1130,13 +1094,10 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdProduto = produtoPedidoEspelho.IdProd,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = 1,
                     Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
-                    DataMov = DateTime.Now,
                 });
 
             CreditaEstoqueProducao(sessao, (int)produtoPedidoEspelho.IdProd, idLoja, idProdutoPedidoProducao, (decimal)(m2Calc > 0 && !pecaPassouSetorLaminado ? m2Calc : 1));
@@ -1159,15 +1120,13 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdProduto = produtoPedidoEspelho.IdProd,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = quantidadeBaixa,
+                    Quantidade = quantidadeBaixa,
                     Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                     AlterarMateriaPrima = !SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd),
-                    BaixarMesmoProdutoSemMateriaPrima = true,
-                    DataMov = DateTime.Now,
+                    BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                 });
 
             var codigoEtiqueta = ProdutoPedidoProducaoDAO.Instance.ObtemEtiqueta(sessao, (uint)idProdutoPedidoProducao);
@@ -1202,13 +1161,11 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdProduto = produtoPedidoEspelho.IdProd,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = quantidadeBaixa,
+                    Quantidade = quantidadeBaixa,
                     Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
-                    DataMov = DateTime.Now,
                 });
 
             // Só baixa apenas se a peça possuir produto para baixa associado
@@ -1233,15 +1190,13 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdProduto = produtoPedidoEspelho.IdProd,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = quantidadeBaixa,
+                    Quantidade = quantidadeBaixa,
                     Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                     AlterarMateriaPrima = true,
-                    BaixarMesmoProdutoSemMateriaPrima = true,
-                    DataMov = DateTime.Now,
+                    BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                 });
         }
 
@@ -1263,13 +1218,10 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Baixar(sessao, new MovimentacaoDto
                     {
-                        IdProd = (uint)item.IdProd,
+                        IdProduto = (uint)item.IdProd,
                         IdLoja = (uint)idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Saida,
                         IdProdPedProducao = item.IdProdPedProducaoOrig.GetValueOrDefault(),
-                        QtdeMov = 1,
                         Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
-                        DataMov = DateTime.Now,
                     });
             }
         }
@@ -1293,14 +1245,12 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = (uint)idProd,
+                    IdProduto = (uint)idProd,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = quantidadeBaixa,
+                    Quantidade = quantidadeBaixa,
                     Total = GetTotalProdPedProducao(sessao, (int)idProdutoPedidoProducao),
                     AlterarMateriaPrima = true,
-                    DataMov = DateTime.Now,
                 });
         }
 
@@ -1316,14 +1266,12 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = (uint)idProduto,
+                    IdProduto = (uint)idProduto,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = quantidadeBaixa,
+                    Quantidade = quantidadeBaixa,
                     Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                     AlterarMateriaPrima = true,
-                    DataMov = DateTime.Now,
                 });
         }
 
@@ -1340,14 +1288,11 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = idProduto,
+                    IdProduto = idProduto,
                     IdLoja = UserInfo.GetUserInfo.IdLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdRetalhoProducao = idRetalhoProducao,
-                    QtdeMov = 1,
                     AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)idProduto),
-                    BaixarMesmoProdutoSemMateriaPrima = true,
-                    DataMov = DateTime.Now,
+                    BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                 });
         }
 
@@ -1357,12 +1302,9 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = (uint)retalho.IdProd,
+                    IdProduto = (uint)retalho.IdProd,
                     IdLoja = UserInfo.GetUserInfo.IdLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdRetalhoProducao = (uint)retalho.IdRetalhoProducao,
-                    QtdeMov = 1,
-                    DataMov = DateTime.Now,
                 });
 
             var produtoRetalho = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, retalho.IdProd);
@@ -1372,12 +1314,10 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = (uint)produtoRetalho.IdProdOrig,
+                    IdProduto = (uint)produtoRetalho.IdProdOrig,
                     IdLoja = UserInfo.GetUserInfo.IdLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdRetalhoProducao = (uint)retalho.IdRetalhoProducao,
-                    QtdeMov = quantidadeBaixaProdutoOriginal,
-                    DataMov = DateTime.Now,
+                    Quantidade = quantidadeBaixaProdutoOriginal,
                 });
         }
 
@@ -1401,14 +1341,11 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
                 {
-                    IdProd = perdaChapaVidro.IdProd,
+                    IdProduto = perdaChapaVidro.IdProd,
                     IdLoja = idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Saida,
                     IdPerdaChapaVidro = perdaChapaVidro.IdPerdaChapaVidro,
-                    QtdeMov = 1,
                     Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)perdaChapaVidro.IdProdNf.GetValueOrDefault()),
-                    DataMov = DateTime.Now,
-                    AlterarProdBase = true,
+                    AlterarProdutoBase = true,
                 });
         }
 
@@ -1422,15 +1359,13 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Baixar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Saida,
                         IdInventarioEstoque = item.IdInventarioEstoque,
-                        LancManual = true,
-                        QtdeMov = quantidadeBaixa,
+                        LancamentoManual = true,
+                        Quantidade = quantidadeBaixa,
                         Total = GetTotalEstoqueManual(sessao, (int)item.IdProd, quantidadeBaixa),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                     });
             }
         }
@@ -1467,19 +1402,17 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Creditar(sessao, new MovimentacaoDto
                     {
-                        IdProd = produtoPedido.IdProd,
+                        IdProduto = produtoPedido.IdProd,
                         IdLoja = saidaEstoque.IdLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
                         IdPedido = saidaEstoque.IdPedido,
                         IdLiberarPedido = saidaEstoque.IdLiberarPedido,
                         IdProdLiberarPedido = (uint?)idProdutoLiberarPedido,
                         IdProdPed = produtoPedido.IdProdPed,
-                        QtdeMov = quantidadeEntrada,
+                        Quantidade = quantidadeEntrada,
                         Total = GetTotalProdPed(sessao, (int)produtoPedido.IdProdPed),
                         AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)produtoPedido.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
 
                 ProdutosPedidoDAO.Instance.MarcarSaida(sessao, item.IdProdPed, -item.QtdeSaida, saidaEstoque.IdSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
@@ -1518,17 +1451,15 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Creditar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
                         IdPedido = idPedido,
                         IdProdPed = item.IdProdPed,
-                        QtdeMov = quantidadeEntrada,
+                        Quantidade = quantidadeEntrada,
                         Total = GetTotalProdPed(sessao, (int)item.IdProdPed),
                         AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
             }
 
@@ -1565,18 +1496,16 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Creditar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
                         IdPedido = (uint)idPedido,
                         IdProdPed = item.IdProdPed,
                         IdVolume = (uint)idVolume,
-                        QtdeMov = quantidadeEntrada,
+                        Quantidade = quantidadeEntrada,
                         Total = GetTotalProdPed(sessao, (int)item.IdProdPed),
                         AlterarMateriaPrima = tipoPedido != Pedido.TipoPedidoEnum.Producao || !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
             }
 
@@ -1621,18 +1550,16 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Creditar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
                         IdPedido = (uint)idPedido,
                         IdProdPed = item.IdProdPed,
                         IdProdImpressaoChapa = (uint)idProdImpressaoChapa,
-                        QtdeMov = quantidadeEntrada,
+                        Quantidade = quantidadeEntrada,
                         Total = GetTotalProdPed(sessao, (int)item.IdProdPed),
                         AlterarMateriaPrima = tipoPedido != Pedido.TipoPedidoEnum.Producao || !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
             }
 
@@ -1665,17 +1592,15 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Creditar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = compra.IdLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
                         IdCompra = item.IdCompra,
                         IdProdCompra = item.IdProdCompra,
-                        QtdeMov = quantidadeEntrada,
+                        Quantidade = quantidadeEntrada,
                         Total = GetTotalProdCompra(sessao, (int)item.IdProdCompra),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
 
                 objPersistence.ExecuteCommand(sessao, $"UPDATE produtos_compra SET qtdeEntrada={item.Qtde.ToString().Replace(",", ".")} WHERE idProdCompra={item.IdProdCompra}");
@@ -1699,17 +1624,15 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Creditar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
                         IdCompra = idCompra,
                         IdProdCompra = item.IdProdCompra,
-                        QtdeMov = quantidadeEntrada,
+                        Quantidade = quantidadeEntrada,
                         Total = GetTotalProdCompra(sessao, (int)item.IdProdCompra),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
             }
 
@@ -1771,18 +1694,16 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Creditar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
                         IdPedido = item.IdPedido,
                         IdLiberarPedido = idLiberarPedido,
                         IdProdLiberarPedido = item.IdProdLiberarPedido,
-                        QtdeMov = quantidadeEntrada,
+                        Quantidade = quantidadeEntrada,
                         Total = GetTotalProdLiberarPedido(sessao, (int)item.IdProdLiberarPedido),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
             }
 
@@ -1807,17 +1728,15 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Creditar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = (uint)ObterIdLojaTrocaDevolucao(sessao, idTrocaDevolucao, (int)item.IdProd),
-                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
                         IdTrocaDevolucao = item.IdTrocaDevolucao,
                         IdProdTrocaDev = item.IdProdTrocaDev,
-                        QtdeMov = quantidadeEntrada,
+                        Quantidade = quantidadeEntrada,
                         Total = GetTotalProdTrocaDevolucao(sessao, (int?)item.IdProdTrocaDev, null),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = DateTime.Now,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        AlterarProdutoBase = true,
                     });
             }
         }
@@ -1840,17 +1759,15 @@ namespace Glass.Data.DAL
                         .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                         .Creditar(sessao, new MovimentacaoDto
                         {
-                            IdProd = item.IdProd,
+                            IdProduto = item.IdProd,
                             IdLoja = (uint)ObterIdLojaTrocaDevolucao(sessao, idTrocaDevolucao, (int)item.IdProd),
-                            TipoMov = MovEstoque.TipoMovEnum.Entrada,
                             IdTrocaDevolucao = item.IdTrocaDevolucao,
                             IdProdTrocado = item.IdProdTrocado,
-                            QtdeMov = quantidadeEntrada,
+                            Quantidade = quantidadeEntrada,
                             Total = GetTotalProdTrocaDevolucao(sessao, null, (int?)item.IdProdTrocado),
                             AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                            BaixarMesmoProdutoSemMateriaPrima = true,
-                            DataMov = DateTime.Now,
-                            AlterarProdBase = true,
+                            BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                            AlterarProdutoBase = true,
                         });
                 }
             }
@@ -1881,17 +1798,16 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Creditar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = (uint)idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
                         IdNf = item.IdNf,
                         IdProdNf = item.IdProdNf,
-                        QtdeMov = quantidadeEntrada,
+                        Quantidade = quantidadeEntrada,
                         Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)item.IdProdNf),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = dataMov,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        Data = dataMov,
+                        AlterarProdutoBase = true,
                     });
             }
         }
@@ -1918,17 +1834,16 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Creditar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = notaFiscal.IdLoja.Value,
-                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
                         IdNf = item.IdNf,
                         IdProdNf = item.IdProdNf,
-                        QtdeMov = quantidadeEntrada,
+                        Quantidade = quantidadeEntrada,
                         Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)item.IdProdNf),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarMesmoProdutoSemMateriaPrima = true,
-                        DataMov = dataMov,
-                        AlterarProdBase = true,
+                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                        Data = dataMov,
+                        AlterarProdutoBase = true,
                     });
             }
         }
@@ -1941,14 +1856,13 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
                 {
-                    IdProd = idProd,
+                    IdProduto = idProd,
                     IdLoja = idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
-                    LancManual = true,
-                    QtdeMov = qtdeEntrada,
+                    LancamentoManual = true,
+                    Quantidade = qtdeEntrada,
                     Total = valor.GetValueOrDefault(totalEstoqueManual),
-                    DataMov = dataMov,
-                    AlterarProdBase = true,
+                    Data = dataMov,
+                    AlterarProdutoBase = true,
                     Observacao = observacao,
                 });
         }
@@ -1972,13 +1886,10 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
                 {
-                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdProduto = produtoPedidoEspelho.IdProd,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = 1,
                     Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
-                    DataMov = DateTime.Now,
                 });
 
             var quantidadeBaixaMateriaPrima = produtoPedidoEspelho.TotM / produtoPedidoEspelho.Qtde;
@@ -2008,15 +1919,13 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
                 {
-                    IdProd = (uint)idProduto,
+                    IdProduto = (uint)idProduto,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = quantidadeEntrada,
+                    Quantidade = quantidadeEntrada,
                     Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                     AlterarMateriaPrima = !SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd),
-                    BaixarMesmoProdutoSemMateriaPrima = true,
-                    DataMov = DateTime.Now,
+                    BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                 });
 
             var idProdutoPedido = ProdutosPedidoDAO.Instance.ObterIdProdPed(sessao, (int)produtoPedidoEspelho.IdProdPed);
@@ -2046,13 +1955,10 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
                 {
-                    IdProd = idProduto.GetValueOrDefault(),
+                    IdProduto = idProduto.GetValueOrDefault(),
                     IdLoja = (uint)ObterIdLojaPeloIdProdImpressaoChapa(sessao, idPedido, (int)idProduto, idProdutoImpressaoChapa),
-                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = 1,
                     Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
-                    DataMov = DateTime.Now,
                 });
         }
 
@@ -2080,13 +1986,10 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
                 {
-                    IdProd = produtoPedidoEspelho.IdProd,
+                    IdProduto = produtoPedidoEspelho.IdProd,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = 1,
                     Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
-                    DataMov = DateTime.Now,
                 });
 
             var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd, false);
@@ -2102,15 +2005,13 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
                 {
-                    IdProd = (uint)idProduto,
+                    IdProduto = (uint)idProduto,
                     IdLoja = (uint)idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    QtdeMov = quantidadeEntrada,
+                    Quantidade = quantidadeEntrada,
                     Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                     AlterarMateriaPrima = true,
-                    BaixarMesmoProdutoSemMateriaPrima = true,
-                    DataMov = DateTime.Now,
+                    BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                 });
         }
 
@@ -2124,14 +2025,11 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
                 {
-                    IdProd = (uint)idProd,
+                    IdProduto = (uint)idProd,
                     IdLoja = idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
                     IdRetalhoProducao = (uint)retalho.IdRetalhoProducao,
-                    QtdeMov = 1,
                     AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, idProd),
-                    BaixarMesmoProdutoSemMateriaPrima = true,
-                    DataMov = DateTime.Now,
+                    BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                     Usuario = usuario,
                 });
 
@@ -2142,12 +2040,10 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
                 {
-                    IdProd = (uint)produtoRetalho.IdProdOrig,
+                    IdProduto = (uint)produtoRetalho.IdProdOrig,
                     IdLoja = UserInfo.GetUserInfo.IdLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
                     IdRetalhoProducao = (uint)retalho.IdRetalhoProducao,
-                    QtdeMov = quantidadeEntradaProdutoOriginal,
-                    DataMov = DateTime.Now,
+                    Quantidade = quantidadeEntradaProdutoOriginal,
                 });
         }
 
@@ -2157,14 +2053,11 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
                 {
-                    IdProd = idProd,
+                    IdProduto = idProd,
                     IdLoja = idLoja,
-                    TipoMov = MovEstoque.TipoMovEnum.Entrada,
                     IdPerdaChapaVidro = idPerdaChapaVidro,
-                    QtdeMov = 1,
                     Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)idProdNf),
-                    DataMov = DateTime.Now,
-                    AlterarProdBase = true,
+                    AlterarProdutoBase = true,
                 });
         }
 
@@ -2178,14 +2071,12 @@ namespace Glass.Data.DAL
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                     .Creditar(sessao, new MovimentacaoDto
                     {
-                        IdProd = item.IdProd,
+                        IdProduto = item.IdProd,
                         IdLoja = idLoja,
-                        TipoMov = MovEstoque.TipoMovEnum.Entrada,
                         IdInventarioEstoque = item.IdInventarioEstoque,
-                        LancManual = true,
-                        QtdeMov = quantidadeEntrada,
+                        LancamentoManual = true,
+                        Quantidade = quantidadeEntrada,
                         Total = this.GetTotalEstoqueManual(sessao, (int)item.IdProd, quantidadeEntrada),
-                        DataMov = DateTime.Now,
                     });
             }
         }
