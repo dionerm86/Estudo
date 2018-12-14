@@ -366,6 +366,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             try
             {
                 Cliente cli = ClienteDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idCli));
+                IEnumerable<string> motivos;
 
                 if (cli == null || cli.IdCli == 0)
                     return "Erro;Cliente não encontrado.";
@@ -375,6 +376,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     return "Erro;Cliente cancelado. Motivo: " + cli.Obs;
                 else if (cli.Situacao == (int)SituacaoCliente.Bloqueado)
                     return "Erro;Cliente bloqueado. Motivo: " + cli.Obs;
+
+                else if (Glass.Data.GerenciadorSituacaoCliente.Gerenciador.VerificarBloqueio(null, cli, out motivos))
+                {
+                    return $"Erro;Cliente bloqueado. Motivo: {string.Join(";", motivos)}";
+                }
                 else
                     return "Ok;" + cli.Nome + ";" + cli.Revenda.ToString().ToLower();
             }
@@ -624,9 +630,9 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 CheckBox check = dtvProjeto.FindControl("chkApenasVidros") as CheckBox;
                 if (check != null)
                     apenasVidros = check.Checked;
-
-                uint idPedido = ProjetoDAO.Instance.GerarPedido(Glass.Conversoes.StrParaUint(Request["idProjeto"]), apenasVidros, null, false);
-
+    
+                uint idPedido = ProjetoDAO.Instance.GerarPedido(Glass.Conversoes.StrParaUint(Request["idProjeto"]), apenasVidros, false);
+    
                 Response.Redirect("~/Cadastros/CadPedido.aspx?idPedido=" + idPedido);
             }
             catch (Exception ex)

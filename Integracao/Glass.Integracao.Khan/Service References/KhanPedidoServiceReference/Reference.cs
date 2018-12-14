@@ -1838,6 +1838,36 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
         private string CODCPGTOField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int DIAS01Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int DIAS02Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int DIAS03Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int DIAS04Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int DIAS05Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int DIAS06Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int DIAS07Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int DIAS08Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int DIAS09Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int DIAS10Field;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string NOMCPGTOField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
@@ -1859,6 +1889,136 @@ namespace Glass.Integracao.Khan.KhanPedidoServiceReference {
                 if ((object.ReferenceEquals(this.CODCPGTOField, value) != true)) {
                     this.CODCPGTOField = value;
                     this.RaisePropertyChanged("CODCPGTO");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int DIAS01 {
+            get {
+                return this.DIAS01Field;
+            }
+            set {
+                if ((this.DIAS01Field.Equals(value) != true)) {
+                    this.DIAS01Field = value;
+                    this.RaisePropertyChanged("DIAS01");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int DIAS02 {
+            get {
+                return this.DIAS02Field;
+            }
+            set {
+                if ((this.DIAS02Field.Equals(value) != true)) {
+                    this.DIAS02Field = value;
+                    this.RaisePropertyChanged("DIAS02");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int DIAS03 {
+            get {
+                return this.DIAS03Field;
+            }
+            set {
+                if ((this.DIAS03Field.Equals(value) != true)) {
+                    this.DIAS03Field = value;
+                    this.RaisePropertyChanged("DIAS03");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int DIAS04 {
+            get {
+                return this.DIAS04Field;
+            }
+            set {
+                if ((this.DIAS04Field.Equals(value) != true)) {
+                    this.DIAS04Field = value;
+                    this.RaisePropertyChanged("DIAS04");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int DIAS05 {
+            get {
+                return this.DIAS05Field;
+            }
+            set {
+                if ((this.DIAS05Field.Equals(value) != true)) {
+                    this.DIAS05Field = value;
+                    this.RaisePropertyChanged("DIAS05");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int DIAS06 {
+            get {
+                return this.DIAS06Field;
+            }
+            set {
+                if ((this.DIAS06Field.Equals(value) != true)) {
+                    this.DIAS06Field = value;
+                    this.RaisePropertyChanged("DIAS06");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int DIAS07 {
+            get {
+                return this.DIAS07Field;
+            }
+            set {
+                if ((this.DIAS07Field.Equals(value) != true)) {
+                    this.DIAS07Field = value;
+                    this.RaisePropertyChanged("DIAS07");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int DIAS08 {
+            get {
+                return this.DIAS08Field;
+            }
+            set {
+                if ((this.DIAS08Field.Equals(value) != true)) {
+                    this.DIAS08Field = value;
+                    this.RaisePropertyChanged("DIAS08");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int DIAS09 {
+            get {
+                return this.DIAS09Field;
+            }
+            set {
+                if ((this.DIAS09Field.Equals(value) != true)) {
+                    this.DIAS09Field = value;
+                    this.RaisePropertyChanged("DIAS09");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal int DIAS10 {
+            get {
+                return this.DIAS10Field;
+            }
+            set {
+                if ((this.DIAS10Field.Equals(value) != true)) {
+                    this.DIAS10Field = value;
+                    this.RaisePropertyChanged("DIAS10");
                 }
             }
         }

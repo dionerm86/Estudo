@@ -246,7 +246,7 @@
      * Força a atualização da lista de setores, com base no filtro atual.
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     }
   },
 

@@ -23,6 +23,9 @@ namespace Glass.Integracao.Khan.KhanParceirosServiceReference {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool AVISARField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private bool BLOQUEARField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -36,6 +39,9 @@ namespace Glass.Integracao.Khan.KhanParceirosServiceReference {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string NomsitField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string SITMENField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string baifatField;
@@ -86,6 +92,19 @@ namespace Glass.Integracao.Khan.KhanParceirosServiceReference {
             }
             set {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal bool AVISAR {
+            get {
+                return this.AVISARField;
+            }
+            set {
+                if ((this.AVISARField.Equals(value) != true)) {
+                    this.AVISARField = value;
+                    this.RaisePropertyChanged("AVISAR");
+                }
             }
         }
         
@@ -150,6 +169,19 @@ namespace Glass.Integracao.Khan.KhanParceirosServiceReference {
                 if ((object.ReferenceEquals(this.NomsitField, value) != true)) {
                     this.NomsitField = value;
                     this.RaisePropertyChanged("Nomsit");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        internal string SITMEN {
+            get {
+                return this.SITMENField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SITMENField, value) != true)) {
+                    this.SITMENField = value;
+                    this.RaisePropertyChanged("SITMEN");
                 }
             }
         }

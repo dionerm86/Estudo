@@ -1,6 +1,7 @@
 ﻿using System;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using System.Collections.Generic;
 
 namespace WebGlass.Business.Orcamento.Ajax
 {
@@ -42,6 +43,7 @@ namespace WebGlass.Business.Orcamento.Ajax
             try
             {
                 var cli = ClienteDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(idCli));
+                IEnumerable<string> motivos;
 
                 if (cli == null || cli.IdCli == 0)
                     return "Erro|Cliente não encontrado.";
@@ -54,6 +56,11 @@ namespace WebGlass.Business.Orcamento.Ajax
 
                 else if (cli.Situacao == (int)Glass.Data.Model.SituacaoCliente.Bloqueado && !OrcamentoConfig.TelaCadastro.PermitirInserirClienteInativoBloqueado)
                     return "Erro|Cliente bloqueado. Motivo: " + cli.Obs;
+
+                else if (Glass.Data.GerenciadorSituacaoCliente.Gerenciador.VerificarBloqueio(null, cli, out motivos))
+                {
+                    return $"Erro;Cliente bloqueado. Motivo: {string.Join(";", motivos)}";
+                }
 
                 string[] obs = Glass.Data.Helper.MetodosAjax.GetObsCli(idCli).Split(';');
                 if (obs[0] == "Erro")

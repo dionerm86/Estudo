@@ -453,7 +453,8 @@ namespace Glass.UI.Web.WebGlassParceiros
             try
             {
                 Cliente cli = ClienteDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idCli));
-    
+                IEnumerable<string> motivos;
+
                 if (cli == null || cli.IdCli == 0)
                     return "Erro;Cliente não encontrado.";
                 else if (cli.Situacao == (int)SituacaoCliente.Inativo)
@@ -462,6 +463,11 @@ namespace Glass.UI.Web.WebGlassParceiros
                     return "Erro;Cliente cancelado. Motivo: " + cli.Obs;
                 else if (cli.Situacao == (int)SituacaoCliente.Bloqueado)
                     return "Erro;Cliente bloqueado. Motivo: " + cli.Obs;
+
+                else if (Glass.Data.GerenciadorSituacaoCliente.Gerenciador.VerificarBloqueio(null, cli, out motivos))
+                {
+                    return $"Erro;Cliente bloqueado. Motivo: {string.Join(";", motivos)}";
+                }
                 else
                     return "Ok;" + cli.Nome + ";" + cli.Revenda.ToString().ToLower() + ";" + cli.IdTransportador;
             }

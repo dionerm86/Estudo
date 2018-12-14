@@ -8,12 +8,12 @@ function callbackSelecao(beneficiamento, controle, beneficiamentosControle, pref
     {
         var prefixoCampos = controle.id.substr(prefixoControle.length);
         prefixoCampos = prefixoCampos.substr(0, prefixoCampos.indexOf("_drpTipo"));
-        
+
         var altura = parseInt(document.getElementById(prefixoControle + prefixoCampos + "_drpAltura").value, 10);
         var largura = parseInt(document.getElementById(prefixoControle + prefixoCampos + "_drpLargura").value, 10);
         var valor = parseFloat(controle.value) > 0 ? "2" : "0";
-        if (((altura > 0 || largura > 0) && !(altura == 2 && largura == 2 && valor == "0")) || prefixoControle == "ctl00_ctl00_Pagina_Conteudo_ctrlBenef1_")
-            return;
+        if ((altura > 0 || largura > 0) && !(altura == 2 && largura == 2 && valor == "0"))
+          return;
 
         document.getElementById(prefixoControle + prefixoCampos + "_drpAltura").value = valor;
         document.getElementById(prefixoControle + prefixoCampos + "_drpLargura").value = valor;
@@ -27,14 +27,14 @@ function valorAdicionalVintageDekor(beneficiamento, controle, beneficiamentosCon
 {
     // Variável de valor de retorno
     var valorRetorno = 0;
-        
+
     // Verifica se o controle é o do molde
     if (controle.id.indexOf("_Molde_") > -1)
     {
         // Variáveis de controle da execução
         var lapidacao = false;
         var bisote = false;
-        
+
         // Percorre os beneficiamentos
         for (s = 0; s < beneficiamentosControle.length; s++)
         {
@@ -43,19 +43,19 @@ function valorAdicionalVintageDekor(beneficiamento, controle, beneficiamentosCon
             {
                 // Recupera o valor do beneficiamento (arquivo ctrlBenef.js)
                 valorRetorno += recuperaValorBenef(prefixoControle, beneficiamentosControle[s].ID) / 100;
-                
+
                 // Indica que a alteração na lapidação foi feita
                 lapidacao = true;
                 if (bisote)
                     break;
             }
-            
+
             // Verifica se o beneficiamento é 'Bisote'
             else if (beneficiamentosControle[s].Descricao.toLowerCase() == "bisote")
             {
                 // Recupera o valor do beneficiamento (arquivo ctrlBenef.js)
                 valorRetorno += recuperaValorBenef(prefixoControle, beneficiamentosControle[s].ID) / 100;
-                
+
                 // Indica que a alteração no bisotê foi feita
                 bisote = true;
                 if (lapidacao)
@@ -63,8 +63,8 @@ function valorAdicionalVintageDekor(beneficiamento, controle, beneficiamentosCon
             }
         }
     }
-    
-    // Retorna o valor 
+
+    // Retorna o valor
     return valorRetorno;
 }
 

@@ -102,6 +102,12 @@ namespace Glass.API.Backend.Helper.CadastroAtualizacao
         private PropertyInfo ObterPropriedade()
         {
             var membroExpressao = this.campoDto.Body as MemberExpression;
+            var metodoExpressao = this.campoDto.Body as UnaryExpression;
+
+            if (membroExpressao == null && metodoExpressao != null)
+            {
+                membroExpressao = metodoExpressao.Operand as MemberExpression;
+            }
 
             if (membroExpressao == null)
             {

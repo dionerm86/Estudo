@@ -93,7 +93,7 @@
      * Atualiza a lista de funcionários
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     }
   },
 

@@ -892,7 +892,7 @@ namespace Glass.UI.Web.Relatorios
                 case "ListaOrcamento":
                     {
                         var trocador = 0;
-                        report.ReportPath = "Relatorios/rptListaOrcamentos.rdlc";
+                        report.ReportPath = Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaOrcamentos{0}.rdlc");
                         var orcamentos = OrcamentoDAO.Instance.GetForRptLista(Glass.Conversoes.StrParaUint(Request["IdLoja"]), Glass.Conversoes.StrParaUint(Request["IdVend"]),
                             (Request["Situacao"].Split(',').Select(f => int.TryParse(f, out trocador)).Select(f => trocador)), Request["dtIniSit"], Request["dtFimSit"], Request["DtIni"], Request["DtFim"]);
 

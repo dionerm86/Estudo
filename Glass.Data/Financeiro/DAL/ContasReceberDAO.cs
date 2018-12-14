@@ -4051,6 +4051,12 @@ namespace Glass.Data.DAL
                             multaItem = multa - somaMulta;
                         }
 
+                        DateTime dataValida;
+                        if (!DateTime.TryParse(parc[1], out dataValida))
+                        {
+                            throw new Exception($"A data informada é invalida. Data informada {parc[1]}");
+                        }
+
                         ContasReceber contaRec = new ContasReceber();
                         contaRec.IdLoja = conta.IdLoja;
                         contaRec.IdCliente = conta.IdCliente;
@@ -9304,7 +9310,12 @@ namespace Glass.Data.DAL
         {
             var atualRecebida = ObtemValorCampo<bool>(transaction, "recebida", "idContaR=" + objUpdate.IdContaR);
 
-            if (!atualRecebida && objUpdate.Recebida && (objUpdate.UsuRec == null || objUpdate.ValorRec == 0))
+            if (!atualRecebida
+                && objUpdate.Recebida
+                && objUpdate.UsuRec == null
+                && !objUpdate.IsParcelaCartao
+                && !objUpdate.Renegociada
+                && objUpdate.ValorRec == 0)
             {
                 throw new InvalidOperationException("Não é possível efetuar um recebimento sem um usuário referenciado ou valor zerado.");
             }

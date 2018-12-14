@@ -784,7 +784,7 @@ namespace Glass.Data.DAL
             if (pedido.ValoresParcelas != null && alterouValor)
             {
                 RecalculaParcelas(sessao, ref pedido, TipoCalculoParcelas.Valor);
-                SalvarParcelas(sessao, pedido);
+                SalvarParcelas(sessao, pedido, true);
             }
         }
 
@@ -4563,7 +4563,7 @@ namespace Glass.Data.DAL
             string nomeCliExterno, string codRotaExterna, bool selecionar)
         {
             var campos = @"p.*, c.nomeFantasia as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja, r.codInterno As codRota,
-                CAST(SUM(pp.qtde) as SIGNED) as QuantidadePecasPedido, COALESCE(vpp.qtde, 0) as QtdePecasVolume, SUM(pp.TotM) as TotMVolume,
+                SUM(pp.qtde) as QuantidadePecasPedido, COALESCE(vpp.qtde, 0) as QtdePecasVolume, SUM(pp.TotM) as TotMVolume,
                 SUM(pp.peso) as PesoVolume";
 
             var situacoesPedidoConsiderar = new List<Pedido.SituacaoPedido>
@@ -5502,10 +5502,15 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca a placa é uf do veiculo do pedido utilizado no carregamento
         /// </summary>
-        public KeyValuePair<string, string> ObtemVeiculoCarregamento(string idsPedidos)
+        public string[] ObtemVeiculoCarregamento(string idsPedidos)
         {
+            if (string.IsNullOrWhiteSpace(idsPedidos))
+            {
+                return new string[3];
+            }
+
             var sql = @"
-                SELECT CONCAT(v.Placa, ';', v.UfLicenc)
+                SELECT CONCAT(v.Placa, ';', IFNULL(v.UfLicenc,''), ';', IFNULL(v.Rntc,''))
                 FROM veiculo v
 	                INNER JOIN carregamento c ON (v.Placa = c.Placa)
                     INNER JOIN ordem_carga oc ON (c.IdCarregamento = oc.IdCarregamento)
@@ -5515,9 +5520,9 @@ namespace Glass.Data.DAL
             var dados = ExecuteMultipleScalar<string>(sql);
 
             if (dados.Count == 0 || dados.Count > 1)
-                return new KeyValuePair<string, string>();
+                return new string[3];
 
-            return new KeyValuePair<string, string>(dados[0].Split(';')[0], dados[0].Split(';')[1]);
+            return dados[0].Split(';');
         }
 
         /// <summary>
@@ -14891,7 +14896,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Salva as parcelas do pedido.
         /// </summary>
-        private void SalvarParcelas(GDASession session, Pedido objPedido)
+        private void SalvarParcelas(GDASession session, Pedido objPedido, bool validaDataParcela = false)
         {
             // Se for venda à vista exclui as parcelas
             if (objPedido.TipoVenda == 1)
@@ -14912,6 +14917,7 @@ namespace Glass.Data.DAL
                 }
 
                 if (objPedido.ValoresParcelas.Length > 0 && objPedido.ValoresParcelas[0] > 0)
+                {
                     for (int i = 0; i < objPedido.NumParc; i++)
                     {
                         // Chamado 35806. Caso o índice seja maior que a quantidade de itens dentro das variáveis "ValoresParcelas" ou
@@ -14921,10 +14927,16 @@ namespace Glass.Data.DAL
                             break;
                         }
 
+                        if (validaDataParcela && objPedido.DatasParcelas[i] < DateTime.Now.Date)
+                        {
+                            throw new Exception("A data de vencimento das parcelas do pedido deve ser igual ou maior que a data de hoje.");
+                        }
+
                         parcela.Valor = objPedido.ValoresParcelas[i];
                         parcela.Data = objPedido.DatasParcelas[i];
                         ParcelasPedidoDAO.Instance.Insert(session, parcela);
                     }
+                }
             }
         }
 
@@ -15596,7 +15608,7 @@ namespace Glass.Data.DAL
             }
 
             // Salva as parcelas do pedido.
-            SalvarParcelas(session, objUpdate);
+            SalvarParcelas(session, objUpdate, true);
 
             #endregion
 

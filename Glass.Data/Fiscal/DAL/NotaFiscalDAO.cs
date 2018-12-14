@@ -541,13 +541,14 @@ namespace Glass.Data.DAL
                         {
                             var veiculo = PedidoDAO.Instance.ObtemVeiculoCarregamento(idsPedidos);
 
-                            if (!string.IsNullOrEmpty(veiculo.Key))
+                            if (!string.IsNullOrEmpty(veiculo[0]))
                             {
                                 nf.Especie = FiscalConfig.NotaFiscalConfig.EspeciePadraoSeMesmoVeiculoOC;
                                 nf.ModalidadeFrete = ModalidadeFrete.ContaDoRemetente;
-                                nf.VeicPlaca = veiculo.Key;
-                                nf.VeicUf = veiculo.Value;
+                                nf.VeicPlaca = veiculo[0];
+                                nf.VeicUf = veiculo[1];
                                 nf.QtdVol = Convert.ToInt32(PedidoDAO.Instance.GetPedidosForOC(idsPedidos, 0, false).Sum(f => f.QtdePecasVidro + f.QtdeVolume));
+                                nf.VeicRntc = veiculo[2];
                             }
                         }
 
@@ -5043,6 +5044,33 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        /// <summary>
+        /// Altera a data emissão do XML da nota fiscal com a nova data passada.
+        /// </summary>
+        /// <param name="notaFiscal">Objeto Nota fiscal.</param>
+        /// <param name="dataEmissaoXml">Data emissao da NF de retorno da sefaz.</param>
+        public void AlterarDataEmissaoXml(NotaFiscal notaFiscal, string dataEmissaoXml)
+        {
+            try
+            {
+                var path = $"{Utils.GetNfeXmlPath}{notaFiscal.ChaveAcesso}-nfe.xml";
+
+                XmlDocument doc = new XmlDocument();
+                doc.Load(path);
+
+                XmlNode node;
+                node = doc.DocumentElement;
+
+                node["NFe"]["infNFe"]["ide"]["dhEmi"].InnerText = dataEmissaoXml;
+
+                doc.Save(path);
+            }
+            catch (Exception ex)
+            {
+                ErroDAO.Instance.InserirFromException($"Retorno Consulta Emissao NF. Nota fiscal ID {notaFiscal.IdNf}.", ex);
+            }
+        }
+
         #region Inclusão de protocolo de recebimento da NF-e
 
         /// <summary>
@@ -5377,24 +5405,28 @@ namespace Glass.Data.DAL
             }
 
             // Separa os valores
-            SeparaValoresAReceber(nf);
+            this.SeparaValoresAReceber(nf);
 
-            //Referencia a NF-e nas contas recebidas de pedidos que foram pagos antecipadamente ou que receberam sinal
-            ReferenciaPedidosAntecipados(null, nf);
+            // Referencia a NF-e nas contas recebidas de pedidos que foram pagos antecipadamente ou que receberam sinal
+            this.ReferenciaPedidosAntecipados(null, nf);
 
             // Altera situação da NFe para autorizada
-            AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
+            this.AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
 
             // Altera a data emissão da NFe para a data de autorização do retorno do xml.
             if (xmlProt?["protNFe"]?["infProt"]?["dhRecbto"] != null)
             {
-                var dataAutorizacaoNotaFiscal = DateTime.Parse(xmlProt?["protNFe"]?["infProt"]?["dhRecbto"]?.InnerXml);
+                var dataRetorno = xmlProt?["protNFe"]?["infProt"]?["dhRecbto"]?.InnerXml;
 
-                objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET dataEmissao=?dataEmissaoNf WHERE IdNf={ nf.IdNf }", new GDAParameter[] { new GDAParameter("?dataEmissaoNf", dataAutorizacaoNotaFiscal) });
+                var dataAutorizacaoNotaFiscal = DateTime.Parse(dataRetorno);
+
+                this.objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET dataEmissao = ?dataEmissaoNf WHERE IdNf = {nf.IdNf}", new GDAParameter[] { new GDAParameter("?dataEmissaoNf", dataAutorizacaoNotaFiscal) });
+
+                this.AlterarDataEmissaoXml(nf, dataRetorno);
             }
 
             // Envia email para o cliente com o XML
-            EnviarEmailXml(nf);
+            this.EnviarEmailXml(nf);
         }
 
         #endregion
@@ -5952,6 +5984,7 @@ namespace Glass.Data.DAL
                     Left Join transportador t On (n.idTransportador=t.idTransportador)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
+                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Left Join (
                         select pnf.idNf
                         from movimentacao_bem_ativo_imob mbai
@@ -5971,6 +6004,7 @@ namespace Glass.Data.DAL
                     Left Join transportador t On (n.idTransportador=t.idTransportador)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
+                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
 
             NotaFiscal temp = new NotaFiscal();
@@ -6391,6 +6425,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN transportador transp ON (n.IdTransportador=transp.IdTransportador)
                     Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
+                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
             else
                 sql = @"Select Count(*) From (Select Distinct n.idNf From nota_fiscal n
@@ -6402,6 +6437,7 @@ namespace Glass.Data.DAL
                     Left Join fornecedor f On (n.idFornec=f.idFornec)
                     Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
+                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
 
             NotaFiscal temp = new NotaFiscal();
@@ -6846,6 +6882,7 @@ namespace Glass.Data.DAL
                 Left Join transportador t On (n.idTransportador=t.idTransportador)
                 Left Join funcionario func On (n.usuCad=func.idFunc)
                 Left Join plano_contas pc on (n.idConta=pc.idConta)
+                Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                 Left Join (
                     select pnf.idNf
                     from movimentacao_bem_ativo_imob mbai
@@ -7729,7 +7766,7 @@ namespace Glass.Data.DAL
             {
                 idNf = NotaFiscalDAO.Instance.Insert(nf);
             }
-            
+
             // Insere os produtos da nota
             if (idNf > 0)
             {

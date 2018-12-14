@@ -3,6 +3,7 @@ using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace WebGlass.Business.Cliente.Ajax
 {
@@ -25,6 +26,7 @@ namespace WebGlass.Business.Cliente.Ajax
                 var limite = Glass.Data.CalculadoraLimiteCredito.Calculadora.ObterLimite(null, cli);
                 var limiteDisponivel = (limite - ContasReceberDAO.Instance.GetDebitos((uint)cli.IdCli, null));
                 var temLimite = limite == 0 || limiteDisponivel > 0;
+                IEnumerable<string> motivos;
 
                 if (cli.Situacao == (int)Glass.Data.Model.SituacaoCliente.Inativo)
                     return "Erro;Cliente inativo. Motivo: " + cli.Obs;
@@ -35,6 +37,10 @@ namespace WebGlass.Business.Cliente.Ajax
                 else if (cli.Situacao == (int)Glass.Data.Model.SituacaoCliente.Bloqueado)
                     return "Erro;Cliente bloqueado. Motivo: " + cli.Obs;
 
+                else if (Glass.Data.GerenciadorSituacaoCliente.Gerenciador.VerificarBloqueio(null, cli, out motivos))
+                {
+                    return $"Erro;Cliente bloqueado. Motivo: {string.Join(";", motivos)}";
+                }
                 else if (FinanceiroConfig.BloquearEmissaoPedidoLimiteExcedido && !temLimite && FinanceiroConfig.PerguntarVendedorFinalizacaoFinanceiro)
                     return "Erro;Cliente não possui limite suficiente para emitir pedidos. Limite Disponível: " + limiteDisponivel;
 
