@@ -1,4 +1,5 @@
-﻿<%@ Page Title="Grupo de Medida de Projeto" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadGrupoMedidaProjeto.aspx.cs" Inherits="Glass.UI.Web.Cadastros.Projeto.CadGrupoMedidaProjeto" %>
+﻿<%@ Page Title="Grupo de Medida de Projeto" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadGrupoMedidaProjeto.aspx.cs" 
+    Inherits="Glass.UI.Web.Cadastros.Projeto.CadGrupoMedidaProjeto" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="server">
     <div id="app">    
@@ -38,7 +39,7 @@
                         </button>
                     </td>
                     <td>
-                        <input type="text" v-model="nomeGrupoMedidaProjetoAtual" maxlength="60" style="width: 300px">
+                        <input type="text" v-model="grupoMedidaProjeto.nome" maxlength="60" style="width: 300px">
                     </td>
                     <td></td>
                 </template>
@@ -55,7 +56,7 @@
                         </button>
                     </td>
                     <td>
-                        <input type="text" v-model="nomeGrupoMedidaProjetoAtual" maxlength="60" style="width: 300px" v-if="inserindo">
+                        <input type="text" v-model="grupoMedidaProjeto.nome" maxlength="60" style="width: 300px" v-if="inserindo">
                     </td>
                     <td></td>
                 </template>
@@ -64,7 +65,7 @@
     </div>
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
-            <asp:ScriptReference Path="~/Vue/Projetos/Medidas/Grupos/Componentes/LstGrupoMedidaProjetos.js" />
+            <asp:ScriptReference Path="~/Vue/Projetos/Medidas/Grupos/Componentes/LstGruposMedidaProjeto.js" />
         </Scripts>
     </asp:ScriptManager>
 </asp:Content>

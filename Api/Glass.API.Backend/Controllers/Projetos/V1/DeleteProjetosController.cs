@@ -41,7 +41,7 @@ namespace Glass.API.Backend.Controllers.Projetos.V1
                 {
                     sessao.BeginTransaction();
 
-                    GrupoMedidaProjetoDAO.Instance.DeleteByPrimaryKey(sessao, id);
+                    ProjetoDAO.Instance.DeleteByPrimaryKey(sessao, id);
                     sessao.Commit();
 
                     return this.Aceito(string.Format("Projeto {0} excluído com sucesso!", id));

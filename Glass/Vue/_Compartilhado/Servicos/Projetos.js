@@ -132,6 +132,10 @@ Servicos.Projetos = (function(http) {
          * @returns {Promise} Uma promise com o resultado da operação.
          */
         excluir: function (id) {
+          if (!id) {
+            throw new Error('Grupo de medida de projeto é obrigatória.');
+          }
+
           return http().delete(API + 'medidas/grupos/' + id);
         },
 
@@ -148,6 +152,14 @@ Servicos.Projetos = (function(http) {
          * @returns {Promise} Uma promise com o resultado da operação.
          */
         atualizar: function (id, grupoMedidaProjeto) {
+          if (!id) {
+            throw new Error('Grupo de medida de projeto é obrigatório.');
+          }
+
+          if (!grupoMedidaProjeto || grupoMedidaProjeto === {}) {
+            return Promise.resolve();
+          }
+
           return http().patch(API + 'medidas/grupos/' + id, grupoMedidaProjeto);
         }
       },

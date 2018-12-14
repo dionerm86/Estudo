@@ -1,13 +1,11 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('descricao', 'asc')],
+  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('nome', 'asc')],
 
   data: {
     numeroLinhaEdicao: -1,
     inserindo: false,
     grupoMedidaProjeto: {},
-    grupoMedidaProjetoOriginal: {},
-    nomeGrupoMedidaProjetoAtual: null
   },
 
   methods: {
@@ -41,11 +39,11 @@
     },
 
     /**
-     * Exclui um processo de etiqueta.
+     * Exclui um grupo de medida de projeto.
      * @param {Object} grupoMedidaProjeto O grupo de medida de projeto que será excluído.
      */
     excluir: function (grupoMedidaProjeto) {
-      if (!this.perguntar('Deseja excluir o grupo de medida de projeto (' + grupoMedidaProjeto.descricao + ')?')) {
+      if (!this.perguntar('Deseja excluir o grupo de medida de projeto (' + grupoMedidaProjeto.nome + ')?')) {
         return;
       }
 
@@ -53,7 +51,7 @@
 
       Servicos.Projetos.Medidas.Grupos.excluir(grupoMedidaProjeto.id)
         .then(function (resposta) {
-          vm.exibirMensagem(resposta.data.mensagem)
+          vm.exibirMensagem(resposta.data.mensagem);
           vm.atualizarLista();
         })
         .catch(function (erro) {
@@ -96,12 +94,11 @@
         return;
       }
 
-      var grupoMedidaProjetoAtualizar = this.patch(this.grupoMedidaProjeto, this.grupoMedidaProjetoOriginal);
       var vm = this;
 
-      Servicos.Projetos.Medidas.Grupos.atualizar(this.grupoMedidaProjeto.id, grupoMedidaProjetoAtualizar)
+      Servicos.Projetos.Medidas.Grupos.atualizar(vm.grupoMedidaProjeto.id, vm.grupoMedidaProjeto)
         .then(function (resposta) {
-          vm.exibirMensagem(resposta.data.mensagem)
+          vm.exibirMensagem(resposta.data.mensagem);
           vm.atualizarLista();
           vm.cancelar();
         })
@@ -125,14 +122,10 @@
      * @param {?Object} [grupoMedidaProjeto=null] O grupo de medida de projeto que servirá como base para criação do objeto (para edição).
      */
     iniciarCadastroOuAtualizacao_: function (grupoMedidaProjeto) {
-      this.nomeGrupoMedidaProjetoAtual = grupoMedidaProjeto ? grupoMedidaProjeto.descricao : null;
-
       this.grupoMedidaProjeto = {
         id: grupoMedidaProjeto ? grupoMedidaProjeto.id : null,
-        nome: grupoMedidaProjeto ? grupoMedidaProjeto.descricao : null
+        nome: grupoMedidaProjeto ? grupoMedidaProjeto.nome : null
       };
-
-      this.grupoMedidaProjetoOriginal = this.clonar(this.grupoMedidaProjeto);
     },
 
     /**
@@ -155,17 +148,5 @@
     atualizarLista: function () {
       this.$refs.lista.atualizar(true);
     },
-  },
-
-  watch: {
-    /**
-     * Observador para a propriedade nomeGrupoMedidaProjetoAtual.
-     */
-    nomeGrupoMedidaProjetoAtual: {
-      handler: function (atual) {
-        this.grupoMedidaProjeto.nome = atual ? atual : null;
-      },
-      deep: true
-    }
   },
 });

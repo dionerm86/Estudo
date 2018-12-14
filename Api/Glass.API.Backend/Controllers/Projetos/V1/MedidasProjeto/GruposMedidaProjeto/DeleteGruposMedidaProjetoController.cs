@@ -1,4 +1,4 @@
-﻿// <copyright file="DeleteGrupoMedidaProjetoController.cs" company="Sync Softwares">
+﻿// <copyright file="DeleteGruposMedidaProjetoController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -9,12 +9,12 @@ using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.Projetos.V1.Medidas.Grupos
+namespace Glass.API.Backend.Controllers.Projetos.V1.MedidasProjeto.GruposMedidaProjeto
 {
     /// <summary>
     /// Controller de Grupos de medida de projeto.
     /// </summary>
-    public partial class GrupoMedidaProjetoController : BaseController
+    public partial class GruposMedidaProjetoController : BaseController
     {
         /// <summary>
         /// Exclui um grupo de medida de projeto.

@@ -270,11 +270,9 @@
     <Compile Include="Controllers\Projetos\V1\GruposProjeto\GruposProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\GruposProjeto\PatchGruposProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\GruposProjeto\PostGruposProjetoController.cs" />
-    <Compile Include="Controllers\Projetos\V1\Medidas\Grupos\DeleteGrupoMedidaProjetoController.cs" />
-    <Compile Include="Controllers\Projetos\V1\Medidas\Grupos\GetGrupoMedidaProjetoController.cs" />
-    <Compile Include="Controllers\Projetos\V1\Medidas\Grupos\GrupoMedidaProjetoController.cs" />
-    <Compile Include="Controllers\Projetos\V1\Medidas\Grupos\PatchGrupoMedidaProjetoController.cs" />
-    <Compile Include="Controllers\Projetos\V1\Medidas\Grupos\PostGrupoMedidaProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\MedidasProjeto\GruposMedidaProjeto\DeleteGruposMedidaProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\MedidasProjeto\GruposMedidaProjeto\PatchGruposMedidaProjetoController.cs" />
+    <Compile Include="Controllers\Projetos\V1\MedidasProjeto\GruposMedidaProjeto\PostGruposMedidaProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\ModelosProjeto\GetModelosProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\ModelosProjeto\ModelosProjetoController.cs" />
     <Compile Include="Controllers\Projetos\V1\ProjetosController.cs" />

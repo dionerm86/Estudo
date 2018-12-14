@@ -9,7 +9,7 @@ using System;
 namespace Glass.API.Backend.Helper.Projetos.Medidas.Grupos
 {
     /// <summary>
-    /// Classe que realiza a tradução entre o DTO e a model para cadastro ou atualização de medidas de projeto.
+    /// Classe que realiza a tradução entre o DTO e a model para cadastro ou atualização de grupos de medida de projeto.
     /// </summary>
     public class ConverterCadastroAtualizacaoParaGrupoMedidaProjeto
     {

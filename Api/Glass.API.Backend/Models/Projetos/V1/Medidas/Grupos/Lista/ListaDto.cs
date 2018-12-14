@@ -25,13 +25,10 @@ namespace Glass.API.Backend.Models.Projetos.V1.Medidas.Grupos.Lista
             this.Id = (int)grupoMedidaProjeto.IdGrupoMedProj;
             this.Nome = grupoMedidaProjeto.Descricao;
 
-            var podeEditarExcluir = !System.Enum.GetNames(typeof(GrupoMedidaProjeto.TipoMedida))
-                .Any(f => f == Conversoes.ConverteValor<GrupoMedidaProjeto.TipoMedida>(this.Id).ToString());
-
             this.Permissoes = new PermissoesDto
             {
-                Editar = podeEditarExcluir,
-                Excluir = podeEditarExcluir,
+                Editar = this.PodeEditarExcluir(),
+                Excluir = this.PodeEditarExcluir(),
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.GrupoMedidaProjeto, (uint)this.Id, null),
             };
         }
@@ -51,10 +48,20 @@ namespace Glass.API.Backend.Models.Projetos.V1.Medidas.Grupos.Lista
         public string Nome { get; set; }
 
         /// <summary>
-        /// Obtém ou define as permissoes para a listagem de grupos de medida de projeto.
+        /// Obtém ou define as permissões para a listagem de grupos de medida de projeto.
         /// </summary>
         [DataMember]
         [JsonProperty("permissoes")]
         public PermissoesDto Permissoes { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o item da lista poder ser editado ou excluido.
+        /// </summary>
+        /// <returns>Resultado da validação que indica se o item atual pode ser editado/excluido.</returns>
+        private bool PodeEditarExcluir()
+        {
+            return !System.Enum.GetNames(typeof(GrupoMedidaProjeto.TipoMedida))
+                   .Any(f => f == Conversoes.ConverteValor<GrupoMedidaProjeto.TipoMedida>(this.Id).ToString());
+        }
     }
 }
