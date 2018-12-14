@@ -15455,6 +15455,11 @@ namespace Glass.Data.DAL
                 objUpdate.IdOrcamento = null;
             }
 
+            if (!string.IsNullOrWhiteSpace(ped.PrazoEntrega))
+            {
+                objUpdate.PrazoEntrega = ped.PrazoEntrega;
+            }
+
             if (!PedidoConfig.Comissao.AlterarPercComissionado)
             {
                 objUpdate.PercComissao = objUpdate.IdComissionado > 0 ? ComissionadoDAO.Instance.ObtemValorCampo<float>(session, "Percentual",
