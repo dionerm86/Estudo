@@ -329,6 +329,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
 
                 produtoOrcamento.AliquotaIcms = item.AliqIcms;
                 produtoOrcamento.BcIcms = item.BcIcms;
+                produtoOrcamento.BcIcmsSemReducao = item.BcIcmsSemReducao;
                 produtoOrcamento.ValorIcms = item.ValorIcms;
                 produtoOrcamento.PercRedBcIcms = produtoOrcamentoImposto.PercRedBcIcms;
 
