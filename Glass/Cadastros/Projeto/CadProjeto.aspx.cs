@@ -630,9 +630,9 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 CheckBox check = dtvProjeto.FindControl("chkApenasVidros") as CheckBox;
                 if (check != null)
                     apenasVidros = check.Checked;
-
-                uint idPedido = ProjetoDAO.Instance.GerarPedido(Glass.Conversoes.StrParaUint(Request["idProjeto"]), apenasVidros, null, false);
-
+    
+                uint idPedido = ProjetoDAO.Instance.GerarPedido(Glass.Conversoes.StrParaUint(Request["idProjeto"]), apenasVidros, false);
+    
                 Response.Redirect("~/Cadastros/CadPedido.aspx?idPedido=" + idPedido);
             }
             catch (Exception ex)

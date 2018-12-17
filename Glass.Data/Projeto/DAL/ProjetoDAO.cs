@@ -158,7 +158,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Gera um pedido para o projeto passado, retornando o idPedido
         /// </summary>
-        public uint GerarPedido(uint idProjeto, bool apenasVidros, int? tipoEntrega, bool parceiro)
+        public uint GerarPedido(uint idProjeto, bool apenasVidros, bool parceiro)
         {
             FilaOperacoes.GerarPedido.AguardarVez();
 
@@ -204,11 +204,7 @@ namespace Glass.Data.DAL
                     pedido.IdFunc = projeto.IdFunc;
                     pedido.IdCli = projeto.IdCliente.Value;
 
-                    var rota = RotaDAO.Instance.GetByCliente(transaction, projeto.IdCliente.Value);
-
-                    pedido.TipoEntrega =
-                        rota != null && rota.EntregaBalcao ? (int)Pedido.TipoEntregaPedido.Balcao :
-                        tipoEntrega != null ? tipoEntrega : (int)PedidoConfig.TipoEntregaPadraoPedido;
+                    pedido.TipoEntrega = ObterTipoEntregaParaGeracaoPedido(transaction, projeto.TipoEntrega, (int)projeto.IdCliente);
 
                     pedido.Situacao = Pedido.SituacaoPedido.Ativo;
                     pedido.DataPedido = DateTime.Now;
@@ -601,6 +597,18 @@ namespace Glass.Data.DAL
             }
         }
 
+        private int ObterTipoEntregaParaGeracaoPedido(GDATransaction transaction, int? tipoEntrega, int idCliente)
+        {
+            var rota = RotaDAO.Instance.GetByCliente(transaction, (uint)idCliente);
+
+            if (rota != null && rota.EntregaBalcao)
+            {
+                return (int)Pedido.TipoEntregaPedido.Balcao;
+            }
+
+            return tipoEntrega ?? (int)PedidoConfig.TipoEntregaPadraoPedido;
+        }
+
         #endregion
 
         #region Gerar Pedido Parceiro
@@ -655,7 +663,7 @@ namespace Glass.Data.DAL
 
             try
             {
-                idPedido = GerarPedido(idProjeto, apenasVidros, proj.TipoEntrega, true);
+                idPedido = GerarPedido(idProjeto, apenasVidros, true);
             }
             catch (Exception ex)
             {

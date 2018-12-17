@@ -185,6 +185,8 @@ namespace Glass.Fiscal.Negocios.Componentes
                         // Soma o IPI à base de cálculo, se CFOP estiver marcado para calcular desta forma
                         if (item.NaturezaOperacao.IpiIntegraBcIcms) item.BcIcms += item.ValorIpi;
 
+                        item.BcIcmsSemReducao = Math.Round(item.BcIcms, 2, MidpointRounding.AwayFromZero);
+
                         // Se for CST 20: Com redução na BC ICMS
                         // Se for CST 70: Com redução na BC ICMS, considerando o código do valor fiscal = 1
                         if ((item.Cst == Sync.Fiscal.Enumeracao.Cst.CstIcms.ComReducaoDeBaseDeCalculo ||

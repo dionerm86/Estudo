@@ -446,6 +446,7 @@ namespace Glass.Data.DAL
                 nameof(ProdutosNf.ValorIpi),
                 nameof(ProdutosNf.AliqIcms),
                 nameof(ProdutosNf.BcIcms),
+                nameof(ProdutosNf.BcIcmsSemReducao),
                 nameof(ProdutosNf.ValorIcms),
                 nameof(ProdutosNf.AliqFcp),
                 nameof(ProdutosNf.BcFcp),

@@ -206,6 +206,12 @@ namespace Glass.Data.Model
         public decimal BcIcms { get; set; }
 
         /// <summary>
+        /// Base de calculo ICMS sem Redução.
+        /// </summary>
+        [PersistenceProperty("BCICMSSEMREDUCAO")]
+        public decimal BcIcmsSemReducao { get; set; }
+
+        /// <summary>
         /// Valor do ICMS desonerado
         /// </summary>
         [PersistenceProperty("ValorIcmsDesonerado")]
@@ -630,7 +636,17 @@ namespace Glass.Data.Model
 
         public int TipoCalc
         {
-            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int?)IdSubgrupoProd, false); }
+            get
+            {
+                if (this.IdProd > 0)
+                {
+                    this.IdGrupoProd = this.IdGrupoProd > 0 ? this.IdGrupoProd : (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)this.IdProd);
+
+                    return GrupoProdDAO.Instance.TipoCalculo(null, (int)this.IdGrupoProd, false);
+                }
+
+                return (int)TipoCalculoGrupoProd.Qtd;
+            }
         }
 
         public bool AlturaEnabled
