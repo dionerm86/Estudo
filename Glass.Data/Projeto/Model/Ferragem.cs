@@ -96,9 +96,8 @@ namespace Glass.Data.Model
         [PersistenceProperty("ALTURA")]
         public double Altura { get; set; }
 
-        [Log("Altura", "Valor", typeof(ConstanteFerragem))]
+        [Log("Largura")]
         [PersistenceProperty("LARGURA")]
-        [PersistenceForeignKey(typeof(ConstanteFerragem), "IdConstanteFerragem")]
         public double Largura { get; set; }
 
         [PersistenceProperty("DATAALTERACAO")]
@@ -178,7 +177,6 @@ namespace Glass.Data.Model
                     if (!string.IsNullOrWhiteSpace(dados.Codigo))
                     {
                         retorno.AppendFormat("{0} ", dados.Codigo);
-
                     }
                 }
 
