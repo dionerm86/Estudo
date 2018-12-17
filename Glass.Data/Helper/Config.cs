@@ -758,8 +758,9 @@ namespace Glass.Data.Helper
             UsarTLS12NFe = 1533,
             TextoEmailAdministradores = 1534,
             IgnorarReducaoBcIcmsCalculoDifal = 1535,
+
             #endregion
-        }s
+        }
 
         /// <summary>
         /// Enumeração com o tipo do item no banco de dados.
