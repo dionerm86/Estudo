@@ -52,7 +52,7 @@
      */
     abrirRelatorio: function (exportarExcel) {
       if (Object.keys(this.filtro).length === 0 || !this.filtro.idLoja) {
-        return this.exibirMensagem("É necessário informar a loja e um produto antes de gerar o relatório de movimentação.")
+        return this.exibirMensagem("É necessário informar a loja e o produto antes de gerar o relatório de movimentação.")
       }
 
       this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=ExtratoEstoqueFiscal' + this.formatarFiltros_() + "&exportarExcel=" + exportarExcel);
@@ -222,6 +222,10 @@
   },
 
   watch: {
+    /**
+     * Observador para a variável 'tipoMovimentacaoAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
     tipoMovimentacaoAtual: {
       handler: function (atual) {
         this.movimentacao.tipoMovimentacao = atual ? atual.id : null;

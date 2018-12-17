@@ -11,6 +11,10 @@
       validator: Mixins.Validacao.validarObjeto
     },
 
+    /**
+     * Configurações utilizadas na tela de movimentações de estoque fiscal.
+     * @type {Object}
+     */
     configuracoes: {
       required: true,
       twoWay: false,
@@ -174,6 +178,10 @@
       deep: true
     },
 
+    /**
+     * Observador para a variável 'tipoMovimentacaoAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
     tipoMovimentacaoAtual: {
       handler: function (atual) {
         this.filtroAtual.tipoMovimentacao = atual ? atual.id : null;
@@ -181,12 +189,20 @@
       deep: true
     },
 
+    /**
+     * Observador para a variável 'idGrupoProdutoAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
     idGrupoProdutoAtual: {
       handler: function (atual) {
         this.filtroAtual.idGrupoProduto = atual ? atual.id : null;
       }
     },
 
+    /**
+     * Observador para a variável 'idSubgrupoProdutoAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
     idSubgrupoProdutoAtual: {
       handler: function (atual) {
         this.filtroAtual.idSubgrupoProduto = atual ? atual.id : null;

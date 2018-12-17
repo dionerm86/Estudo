@@ -11,7 +11,7 @@
     <div id="app">
         <movimentacoes-estoque-fiscal-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></movimentacoes-estoque-fiscal-filtros>
         <section>
-            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma movimentação de estoque fiscal de produto encontrada." :exibir-inclusao="listaNaoVazia" @atualizou-itens="atualizouItens">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma movimentação de estoque fiscal encontrada (Certifique-se de ter informado a loja e o produto)." :exibir-inclusao="listaNaoVazia" @atualizou-itens="atualizouItens">
                 <template slot="cabecalho">
                     <th></th>
                     <th>Cód. Mov.</th>
