@@ -43,19 +43,19 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         public string NomeCliente { get; set; }
 
         /// <summary>
-        /// Obtém ou define o nome do cliente.
+        /// Obtém ou define os identificadores dos funcionários associados a troca/devolução.
         /// </summary>
         [JsonProperty("idsFuncionario")]
         public int[] IdsFuncionario { get; set; }
 
         /// <summary>
-        /// Obtém ou define o nome do cliente.
+        /// Obtém ou define os identificadores dos funcionários/vendedores associados ao cliente da troca/devolução.
         /// </summary>
         [JsonProperty("idsFuncionarioAssociadoCliente")]
         public int[] IdsFuncionarioAssociadoCliente { get; set; }
 
         /// <summary>
-        /// Obtém ou define o identificador da loja do cliente.
+        /// Obtém ou define o identificador do produto.
         /// </summary>
         [JsonProperty("idProduto")]
         public int? IdProduto { get; set; }
@@ -73,73 +73,73 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
         public Data.Model.TrocaDevolucao.SituacaoTrocaDev? Situacao { get; set; }
 
         /// <summary>
-        /// Obtém ou define a data inicial de cadastro do cliente.
+        /// Obtém ou define a data inicial de troca/devolução.
         /// </summary>
         [JsonProperty("periodoTrocaInicio")]
         public DateTime? PeriodoTrocaInicio { get; set; }
 
         /// <summary>
-        /// Obtém ou define a data final de cadastro do cliente.
+        /// Obtém ou define a data final de troca/devolução.
         /// </summary>
         [JsonProperty("periodoTrocaFim")]
         public DateTime? PeriodoTrocaFim { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
+        /// Obtém ou define a altura mínima do produto.
         /// </summary>
         [JsonProperty("alturaMinima")]
         public int? AlturaMinima { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
+        /// Obtém ou define a altura máxima do produto.
         /// </summary>
         [JsonProperty("alturaMaxima")]
         public int? AlturaMaxima { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
+        /// Obtém ou define a largura mínima do produto.
         /// </summary>
         [JsonProperty("larguraMinima")]
         public int? LarguraMinima { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
+        /// Obtém ou define a largura máxima do produto.
         /// </summary>
         [JsonProperty("larguraMaxima")]
         public int? LarguraMaxima { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
+        /// Obtém ou define o identificador da origem de troca/devolução.
         /// </summary>
-        [JsonProperty("idOrigemTrocaDevolucao")]
-        public int? IdOrigemTrocaDevolucao { get; set; }
+        [JsonProperty("idOrigem")]
+        public int? IdOrigem { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
+        /// Obtém ou define o identificador do tipo de perda.
         /// </summary>
         [JsonProperty("idTipoPerda")]
         public int? IdTipoPerda { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
+        /// Obtém ou define o identificador do setor.
         /// </summary>
         [JsonProperty("idSetor")]
         public int? IdSetor { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
+        /// Obtém ou define os tipos de pedido que geraram as trocas/devoluções.
         /// </summary>
         [JsonProperty("tipoPedido")]
         public int[] TipoPedido { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
+        /// Obtém ou define o identificador do gurpo de produto.
         /// </summary>
         [JsonProperty("idGrupoProduto")]
         public int IdGrupoProduto { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica qual vendedor será alterado para os clientes filtrados.
+        /// Obtém ou define o identificador do subgrupo de produto.
         /// </summary>
         [JsonProperty("idSubgrupoProduto")]
         public int? IdSubgrupoProduto { get; set; }

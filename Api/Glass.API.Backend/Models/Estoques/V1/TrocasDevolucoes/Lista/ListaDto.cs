@@ -14,7 +14,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
     /// <summary>
     /// Classe com o DTO do serviço de trocas/devoluções.
     /// </summary>
-    public class ListaDto
+    public class ListaDto : IdDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
@@ -50,13 +50,6 @@ namespace Glass.API.Backend.Models.Estoques.V1.TrocasDevolucoes.Lista
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.TrocaDev, trocaDevolucao.IdTrocaDevolucao, null),
             };
         }
-
-        /// <summary>
-        /// Obtém ou define o identificador da troca/devolução.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("id")]
-        public int Id { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador do pedido da troca/devolução.

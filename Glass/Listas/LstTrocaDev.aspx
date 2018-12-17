@@ -70,7 +70,7 @@
                         <a :href="obterLinkEditarTrocaDevoluca(item)" title="Editar" v-if="item.permissoes.editar">
                             <img src="../Images/EditarGrid.gif">
                         </a>
-                        <button @click.prevent="cancelar(item)" title="Cancelar" v-if="item.permissoes.editar">
+                        <button @click.prevent="cancelar(item)" title="Cancelar" v-if="item.permissoes.cancelar">
                             <img src="../Images/ExcluirGrid.gif">
                         </button>
                         <a href="#" @click.prevent="abrirRelatorioTrocaDevolucao(item)" title="Troca/Devolução">

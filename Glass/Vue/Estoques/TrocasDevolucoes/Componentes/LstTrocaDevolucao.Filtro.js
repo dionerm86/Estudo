@@ -60,7 +60,7 @@
           idGrupoProduto: 0,
           idSubgrupoProduto: 0,
           tipoPedido: null,
-          idOrigemTrocaDevolucao: 0,
+          idOrigem: 0,
           idSetor: 0,
           idTipoPerda: null,
           alturaMinima: null,
@@ -247,7 +247,7 @@
      */
     origemAtual: {
       handler: function (atual) {
-        this.filtroAtual.idOrigemTrocaDevolucao = atual ? atual.id : null;
+        this.filtroAtual.idOrigem = atual ? atual.id : null;
       },
       deep: true
     },

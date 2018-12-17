@@ -33,7 +33,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.TrocasDevolucoes
                 return this.NaoEncontrado("Troca/Devolucao não encontrada.");
             }
 
-            return null;
+            return validacao;
         }
     }
 }

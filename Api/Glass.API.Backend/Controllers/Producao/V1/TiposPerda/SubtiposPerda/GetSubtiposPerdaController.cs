@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1.TiposPerda.SubtiposPerda
         /// Recupera a lista de subtipos de perda para uso em controles.
         /// </summary>
         /// <param name="idTipoPerda">O identificador do tipo de perda para busca dos subtipos.</param>
-        /// <returns>Uma lista JSON com os dados básicos dos tipos de perda.</returns>
+        /// <returns>Uma lista JSON com os dados básicos dos subtipos de perda.</returns>
         [HttpGet]
         [Route("filtro")]
         [SwaggerResponse(200, "Subtipos de perda encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]

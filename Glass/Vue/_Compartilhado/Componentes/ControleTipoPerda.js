@@ -67,7 +67,7 @@
 
       return Servicos.Producao.TiposPerda.SubtiposPerda.obterParaFiltro(idTipoPerda)
         .then(function (resposta) {
-          vm.possuiSubtipos = !!(resposta && resposta.data && repsosta.data.length);
+          vm.possuiSubtipos = Boolean(resposta && resposta.data && repsosta.data.length);
           return resposta;
         })
         .catch(function (erro) {
