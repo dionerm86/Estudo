@@ -39,8 +39,8 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1.Tipos
                         .ConverterParaTipoFuncionario();
 
                     var id = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
-                             .GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>()
-                             .SalvarTipoFuncionario(tipoFuncionario);
+                        .GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>()
+                        .SalvarTipoFuncionario(tipoFuncionario);
 
                     sessao.Commit();
 

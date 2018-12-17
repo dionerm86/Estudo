@@ -32,6 +32,9 @@ namespace Glass.API.Backend.Helper.Funcionarios.Tipos
                 case "descricao":
                     return "DESCRICAO";
 
+                case "id":
+                    return "IDTIPOFUNC";
+
                 default:
                     return this.OrdenacaoPadrao;
             }

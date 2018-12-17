@@ -13,7 +13,7 @@ namespace Glass.API.Backend.Models.Funcionarios.V1.Tipos
     /// <summary>
     /// Classe que encapsula os dados de um tipo de funcionário para a tela de listagem.
     /// </summary>
-    [DataContract(Name = "TiposFuncionario")]
+    [DataContract(Name = "TipoFuncionario")]
     public class ListaDto
     {
         /// <summary>

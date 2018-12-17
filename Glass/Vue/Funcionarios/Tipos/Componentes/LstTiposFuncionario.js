@@ -4,8 +4,7 @@
 
   data: {
     inserindo: false,
-    tipoFuncionario: {},
-    descricaoTipoFuncionarioAtual: null
+    tipoFuncionario: {}
   },
 
   methods: {
@@ -65,7 +64,6 @@
       Servicos.Funcionarios.Tipos.inserir(this.tipoFuncionario)
         .then(function (resposta) {
           vm.exibirMensagem(resposta.data.mensagem);
-          vm.descricaoTipoFuncionarioAtual = "";
           vm.atualizarLista();
           vm.cancelar();
         })
@@ -88,7 +86,6 @@
      */
     iniciarCadastro_: function () {
       this.tipoFuncionario = {
-        id: null,
         descricao: null
       };
     },
@@ -113,17 +110,5 @@
     atualizarLista: function () {
       this.$refs.lista.atualizar(true);
     },
-  },
-
-  watch: {
-    /**
-     * Observador para a propriedade descricaoTipoFuncionarioAtual.
-     */
-    descricaoTipoFuncionarioAtual: {
-      handler: function (atual) {
-        this.tipoFuncionario.descricao = atual ? atual : null;
-      },
-      deep: true
-    }
   },
 });

@@ -18,7 +18,6 @@ namespace Glass.API.Backend.Models.Funcionarios.V1.Tipos
         public FiltroDto()
             : base(item => new TraducaoOrdenacaoListaTiposFuncionario(item.Ordenacao))
         {
-            this.NumeroRegistros = 15;
         }
     }
 }

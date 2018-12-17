@@ -11,19 +11,59 @@ Servicos.Funcionarios = (function(http) {
      *Objeto com os serviços para a API de tipos.
      */
     Tipos: {
+      /**
+       * Recupera a lista de tipos de funcionário para uso no controle de busca.
+       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
       obter: function (filtro, pagina, numeroRegistros, ordenacao) {
         return http().get(API + 'tipos', {
           params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
 
+      /**
+       * Remove um tipo de funcionário.
+       * @param {!number} id O identificador do tipo de funcionário que será excluído.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
       excluir: function (id) {
+        if (!id) {
+          throw new Error('Tipo de funcionário é obrigatório.');
+        }
+        
         return http().delete(API + 'tipos/' + id)
       },
 
+      /**
+       * Insere um tipo de funcionário.
+       * @param {!Object} tipoFuncionario O objeto com os dados do tipo de funcionário a ser inserido.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
       inserir: function (tipoFuncionario) {
+        if (!tipoFuncionario) {
+          throw new Error('Tipo de funcionário é obrigatório.');
+        }
+
         return http().post(API + 'tipos/', tipoFuncionario)
       },
+    },
+
+    /**
+     * Recupera a lista de processos (etiqueta) para uso no controle de busca.
+     * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+     * @param {number} pagina O número da página de resultados a ser exibida.
+     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+     * @param {string} ordenacao A ordenação para o resultado.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+      return http().get(API.substr(0, API.length - 1), {
+        params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+      });
     },
 
     /**

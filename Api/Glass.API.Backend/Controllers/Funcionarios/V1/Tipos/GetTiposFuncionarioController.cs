@@ -39,17 +39,17 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1.Tipos
                 filtro = filtro ?? new Models.Funcionarios.V1.Tipos.FiltroDto();
 
                 var tiposFuncionario = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
-                                       .GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>()
-                                       .PesquisarTiposFuncionario();
+                    .GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>()
+                    .PesquisarTiposFuncionario();
 
                 ((Colosoft.Collections.IVirtualList)tiposFuncionario).Configure(filtro.NumeroRegistros);
                 ((Colosoft.Collections.ISortableCollection)tiposFuncionario).ApplySort(filtro.ObterTraducaoOrdenacao());
 
                 return this.ListaPaginada(
                     tiposFuncionario
-                                   .Skip(filtro.ObterPrimeiroRegistroRetornar())
-                                   .Take(filtro.NumeroRegistros)
-                                   .Select(g => new ListaDto(g)),
+                        .Skip(filtro.ObterPrimeiroRegistroRetornar())
+                        .Take(filtro.NumeroRegistros)
+                        .Select(g => new ListaDto(g)),
                     filtro,
                     () => tiposFuncionario.Count);
             }

@@ -1,6 +1,5 @@
 <%@ Page Title="Tipos de Funcionário" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadTipoFuncionario.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.CadTipoFuncionario" EnableViewState="false" EnableViewStateMac="false" %>
-<%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <div id="app">
         <section>
@@ -8,7 +7,7 @@
                 :numero-registros="15" :exibir-inclusao="true">
                 <template slot="cabecalho">
                     <th></th>
-                    <th><a href="#" @click.prevent="ordenar('descricao')">Cod.</a></th>
+                    <th><a href="#" @click.prevent="ordenar('id')">Cod.</a></th>
                     <th>
                         <a href="#" @click.prevent="ordenar('descricao')">Descrição</a>
                     </th>
@@ -43,7 +42,7 @@
                         </button>
                     </td>
                     <td>
-                        <input type="text" v-model="descricaoTipoFuncionarioAtual" maxlength="35" style="width: 170px" v-if="inserindo">
+                        <input type="text" v-model="tipoFuncionario.descricao" maxlength="35" style="width: 170px" v-if="inserindo">
                     </td>
                     <td></td>
                 </template>

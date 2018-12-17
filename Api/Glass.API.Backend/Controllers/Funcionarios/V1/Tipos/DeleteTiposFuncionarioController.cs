@@ -42,8 +42,8 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1.Tipos
                     sessao.BeginTransaction();
 
                     Microsoft.Practices.ServiceLocation.ServiceLocator.Current
-                    .GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>()
-                    .ApagarTipoFuncionario(id);
+                        .GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>()
+                        .ApagarTipoFuncionario(id);
 
                     sessao.Commit();
 
