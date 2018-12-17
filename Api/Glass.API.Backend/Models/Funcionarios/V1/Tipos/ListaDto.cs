@@ -2,7 +2,6 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Global.Negocios.Entidades;
@@ -15,7 +14,7 @@ namespace Glass.API.Backend.Models.Funcionarios.V1.Tipos
     /// Classe que encapsula os dados de um tipo de funcionário para a tela de listagem.
     /// </summary>
     [DataContract(Name = "TipoFuncionario")]
-    public class ListaDto : IdCodigoDto
+    public class ListaDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
@@ -32,6 +31,13 @@ namespace Glass.API.Backend.Models.Funcionarios.V1.Tipos
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(Glass.Data.Model.LogAlteracao.TabelaAlteracao.TipoFuncionario, (uint)this.Id, null),
             };
         }
+
+        /// <summary>
+        /// Obtém ou define o identificador do tipo de funcionário.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("id")]
+        public int Id { get; set; }
 
         /// <summary>
         /// Obtém ou define descrição do tipo de funcionário.
