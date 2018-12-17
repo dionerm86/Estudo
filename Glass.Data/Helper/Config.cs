@@ -756,9 +756,10 @@ namespace Glass.Data.Helper
             NomeArquivoMesaBarraPorCeCedilha = 1531,
             ListaVendasPedidosVaziaPorPadrao = 1532,
             UsarTLS12NFe = 1533,
-            TextoEmailAdministradores = 1534
+            TextoEmailAdministradores = 1534,
+            IgnorarReducaoBcIcmsCalculoDifal = 1535,
             #endregion
-        }
+        }s
 
         /// <summary>
         /// Enumeração com o tipo do item no banco de dados.

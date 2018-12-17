@@ -278,6 +278,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
 
                 produtoNf.AliqIcms = item.AliqIcms;
                 produtoNf.BcIcms = item.BcIcms;
+                produtoNf.BcIcmsSemReducao = item.BcIcmsSemReducao;
                 produtoNf.ValorIcms = item.ValorIcms;
 
                 produtoNf.AliqFcp = item.AliqFcp;

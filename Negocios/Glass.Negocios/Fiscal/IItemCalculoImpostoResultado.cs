@@ -63,6 +63,11 @@ namespace Glass.Fiscal.Negocios
         decimal BcIcms { get; }
 
         /// <summary>
+        /// Base de calc. do ICMS sem Reducao.
+        /// </summary>
+        decimal BcIcmsSemReducao { get; }
+
+        /// <summary>
         /// Valor do ICMS.
         /// </summary>
         decimal ValorIcms { get; }
