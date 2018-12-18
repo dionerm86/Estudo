@@ -43,6 +43,96 @@ Servicos.Carregamentos = (function(http) {
      * Objeto com os serviços para a API de ordens de carga.
      */
     OrdensCarga: {
+     /**
+      * Recupera a lista de ordens de carga.
+      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
+      * @param {number} pagina O número da página de resultados a ser exibida.
+      * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+      * @param {string} ordenacao A ordenação para o resultado.
+      * @returns {Promise} Uma promise com o resultado da busca.
+      */
+      obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'ordensCarga', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Recupera o objeto com as configurações utilizadas na tela de listagem de ordens de carga.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterConfiguracoesLista: function () {
+        return http().get(API + 'ordensCarga/configuracoes');
+      },
+
+     /**
+       * Recupera o objeto com os pedidos associados a uma ordem de carga.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterListaPedidosPorOrdemCarga: function (id) {
+        if (!id) {
+          throw new Error('Ordem de carga é obrigatória.');
+        }
+
+        return http().get(API + 'ordensCarga/' + id + '/pedidos');
+      },
+
+      /**
+       * Verifica se é possível associar um pedido a uma determinada ordem de carga.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      verificarPermissaoParaAssociarPedidosNaOrdemDeCarga: function (id) {
+        if (!id) {
+          throw new Error('Ordem de carga é obrigatória.');
+        }
+
+        return http().post(API + 'ordensCarga/' + id + '/verificarPermissaoAssociarPedidos');
+      },
+
+      /**
+       * Exclui uma ordem de carga.
+       * @returns {Promise} Uma promise com o resultado da exclusão.
+       */
+      excluir: function (id) {
+        if (!id) {
+          throw new Error('Ordem de carga é obrigatória.');
+        }
+
+        return http().delete(API + 'ordensCarga/' + id)
+      },
+
+      /**
+       * Desassocia um pedido de uma ordem de carga.
+       * @returns {Promise} Uma promise com o resultado da exclusão.
+       */
+      desassociarPedidoOrdemCarga: function (id, idPedido) {
+        if (!id) {
+          throw new Error('Ordem de carga é obrigatória.');
+        }
+
+        if (!idPedido) {
+          throw new Error('Pedido é obrigatório.');
+        }
+
+        return this.http().delete(API + 'ordensCarga/' + id + '/desassociarPedido/' + idPedido);
+      },
+
+      /**
+       * Obtem uma lista com os tipos de ordem de carga.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterTiposOrdensCarga: function () {
+        return this.http().get(API + 'ordensCarga/tipos');
+      },
+
+      /**
+       * Obtem uma lista com as situações de ordem de carga.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterTiposOrdensCarga: function () {
+        return this.http().get(API + 'ordensCarga/situacoes');
+      },
+
       /**
        * Recupera a lista de ordens de carga.
        * @param {number} idCarregamento O identificador do carregamento.

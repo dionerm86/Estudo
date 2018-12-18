@@ -216,6 +216,12 @@
     <Compile Include="Controllers\Carregamentos\V1\CarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\Itens\Pendencias\GetPendenciasCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\Itens\Pendencias\PendenciasCarregamentosController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\Lista\DeleteOrdensCargaController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\Lista\GetOrdensCargaController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\Lista\OrdensCargaController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\Lista\PostOrdensCargaController.cs" />
+    <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
+    <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Configuracoes\ListaDto.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PostCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\DeleteCarregamentosController.cs" />
@@ -246,7 +252,13 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\TiposMovimentacao\GetTiposMovimentacaoController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\Pedidos\GetPedidosOrdemCargaController.cs" />
+    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\Pedidos\PedidosOrdemCargaController.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
+    <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\ListaDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\TiposOrdemCarga\TiposOrdemCarga.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\PostMovimentacaoEstoqueRealController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\DeleteMovimentacaoEstoqueRealController.cs" />
@@ -727,6 +739,7 @@
     <Compile Include="Models\Pedidos\V1\ListaVolumes\FiltroDto.cs" />
     <Compile Include="Models\Pedidos\V1\ListaVolumes\ListaDto.cs" />
     <Compile Include="Models\Pedidos\V1\ListaVolumes\PermissoesDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Pedidos\ListaDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\GruposConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CategoriasConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />

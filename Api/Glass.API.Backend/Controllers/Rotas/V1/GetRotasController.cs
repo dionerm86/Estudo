@@ -92,5 +92,28 @@ namespace Glass.API.Backend.Controllers.Rotas.V1
                 return this.Lista(rotas);
             }
         }
+
+        /// <summary>
+        /// Recupera as rotas externas.
+        /// </summary>
+        /// <returns>Uma lista JSON com as rotas externas encontradas.</returns>
+        [HttpGet]
+        [Route("externa")]
+        [SwaggerResponse(200, "Rotas externas encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Rotas externas não encontradas.")]
+        public IHttpActionResult ObterRotasExternas()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var rotasExternas = Glass.Data.Helper.DataSources.Instance.GetRotasExternas()
+                    .Select(p => new IdNomeDto
+                    {
+                        Id = (int)p.Id,
+                        Nome = p.Descr,
+                    });
+
+                return this.Lista(rotasExternas);
+            }
+        }
     }
 }
