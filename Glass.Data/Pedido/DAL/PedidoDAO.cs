@@ -13974,6 +13974,7 @@ namespace Glass.Data.DAL
 
             pedidoNovo.Acrescimo = pedido.Acrescimo;
             pedidoNovo.CodCliente = pedido.CodCliente;
+            pedidoNovo.DatasParcelas = pedido.DatasParcelas;
             pedidoNovo.Desconto = pedido.Desconto;
             pedidoNovo.DeveTransferir = pedido.DeveTransferir;
             pedidoNovo.FastDelivery = pedido.FastDelivery;
@@ -13994,6 +13995,7 @@ namespace Glass.Data.DAL
             pedidoNovo.TipoEntrega = pedido.TipoEntrega;
             pedidoNovo.TipoVenda = pedido.TipoVenda;
             pedidoNovo.ValorEntrada = pedido.ValorEntrada;
+            pedidoNovo.ValoresParcelas = pedido.ValoresParcelas;
             pedidoNovo.IdComissionado = pedido.IdComissionado;
             pedidoNovo.PercComissao = pedido.PercComissao;
             pedidoNovo.DataEntrega = pedido.DataEntrega;
