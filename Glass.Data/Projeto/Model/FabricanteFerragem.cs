@@ -1,7 +1,7 @@
 ﻿using GDA;
 
 namespace Glass.Data.Model
-{
+{ 
     [PersistenceClass("fabricante_ferragem")]
     public class FabricanteFerragem : Colosoft.Data.BaseModel
     {

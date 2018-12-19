@@ -33,7 +33,8 @@
                                 <asp:TextBox ID="txtNomeFerragem" runat="server" Text='<%# Bind("Nome") %>'></asp:TextBox>
                             </InsertItemTemplate>
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtNomeFerragem" runat="server" Text='<%# Bind("Nome") %>'></asp:TextBox>
+                                <asp:TextBox ID="txtNomeFerragem" runat="server" Text='<%# Bind("Nome") %>'
+                                    Enabled='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:TextBox>
                             </EditItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Calc. Pkg.">

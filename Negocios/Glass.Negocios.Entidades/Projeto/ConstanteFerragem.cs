@@ -17,8 +17,23 @@ namespace Glass.Projeto.Negocios.Entidades
                 Configure()
                     .Uid(f => f.IdConstanteFerragem)
                     .Description(f => f.Nome)
-                    .FindName(f => f.Nome)
+                    .FindName(new ConstanteFerragemFindNameConverter(), f => f.Nome, f => f.Valor)
                     .Creator(f => new ConstanteFerragem(f));
+            }
+        }
+
+        /// <summary>
+        /// Implementação do conversor do nome.
+        /// </summary>
+        class ConstanteFerragemFindNameConverter : Colosoft.IFindNameConverter
+        {
+            /// <inheritdoc />
+            public string Convert(object[] baseInfo)
+            {
+                var nome = baseInfo[0];
+                var valor = baseInfo[1];
+
+                return $"{nome}: {valor}";
             }
         }
 
