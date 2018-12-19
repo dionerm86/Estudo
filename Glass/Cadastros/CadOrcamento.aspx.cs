@@ -35,9 +35,14 @@ namespace Glass.UI.Web.Cadastros
 
                 if (this.Request["atualizar"] == "true")
                 {
-                    var tipoEntrega = OrcamentoDAO.Instance.ObterTipoEntrega(null, Conversoes.StrParaInt(this.hdfIdOrcamento.Value));
-                    var idCliente = OrcamentoDAO.Instance.ObterIdCliente(null, Conversoes.StrParaInt(this.hdfIdOrcamento.Value));
-                    this.Page.ClientScript.RegisterStartupScript(this.GetType(), "callback", $"recalcular({this.hdfIdOrcamento.Value}, false, {tipoEntrega}, {idCliente});", true);
+                    if (Request["clienteAlterado"] == "true")
+                    {
+                        Page.ClientScript.RegisterClientScriptBlock(GetType(), "Aviso", "alert('O cliente foi alterado, o orçamento será recalculado!')", true);
+                    }
+
+                    var tipoEntrega = OrcamentoDAO.Instance.ObtemTipoEntrega(Conversoes.StrParaUint(hdfIdOrca.Value));
+                    var idCliente = OrcamentoDAO.Instance.ObtemIdCliente(Conversoes.StrParaUint(hdfIdOrca.Value));
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "callback", $"recalcular({hdfIdOrca.Value}, false, {tipoEntrega}, {idCliente});", true);
                 }
 
                 // Se o usuário não tiver permissão para editar este orçamento, retorna para listagem de orçamentos
@@ -448,6 +453,7 @@ namespace Glass.UI.Web.Cadastros
                     }
 
                     OrcamentoDAO.Instance.Update(orca);
+                    Response.Redirect("CadOrcamento.aspx?IdOrca=" + hdfIdOrca.Value + "&atualizar=true&clienteAlterado=true");
                 }
 
                 var idPedido = PedidoDAO.Instance.GerarPedido(idOrcamento);
