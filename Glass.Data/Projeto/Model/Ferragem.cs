@@ -2,7 +2,6 @@
 using System;
 using System.ComponentModel;
 using Glass.Log;
-using Glass.Data.DAL;
 
 namespace Glass.Data.Model
 {
