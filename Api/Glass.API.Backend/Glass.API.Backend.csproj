@@ -252,12 +252,11 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\TiposMovimentacao\GetTiposMovimentacaoController.cs" />
-    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\Pedidos\GetPedidosOrdemCargaController.cs" />
-    <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\Pedidos\PedidosOrdemCargaController.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\FiltroDto.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\ListaDto.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\SituacoesOrdemCarga\SituacoesOrdemCarga.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\TiposOrdemCarga\TiposOrdemCarga.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\PostMovimentacaoEstoqueRealController.cs" />

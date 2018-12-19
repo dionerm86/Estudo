@@ -68,6 +68,14 @@
     },
 
     /**
+     * Retorna os itens para o controle de rotas externas.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterItensFiltroRotasExternas: function () {
+      return Servicos.Rotas.obterFiltroRotasExternas();
+    },
+
+    /**
      * Retorna os itens para o controle de tipos de ordens de carga.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
@@ -79,8 +87,8 @@
      * Retorna os itens para o controle de situações de ordem de carga.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterItensFiltroSituacoesOrdensCarga: function () {
-      return Servicos.Carregamentos.OrdensCarga.obterSituacoes();
+    obterItensFiltroSituacoesOrdemCarga: function () {
+      return Servicos.Carregamentos.OrdensCarga.obterSituacoesParaControle();
     }
   },
 

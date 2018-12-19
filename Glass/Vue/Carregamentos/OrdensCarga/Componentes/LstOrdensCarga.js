@@ -4,7 +4,8 @@
 
   data: {
     configuracoes: {},
-    filtro: {}
+    filtro: {},
+    pedidosEmExibicao: []
   },
 
   methods: {
@@ -60,9 +61,18 @@
     },
 
     /**
+     * Indica se os pedidos estão sendo exibidos na lista.
+     * @param {!number} indice O número da linha que está sendo verificada.
+     * @returns {boolean} Verdadeiro, se os itens estiverem sendo exibidos.
+     */
+    exibindoPedidos: function (indice) {
+      return this.pedidosEmExibicao.indexOf(indice) > -1;
+    },
+
+    /**
      * Exclui uma ordem de carga
      */
-    excluiMovimentacaoEstoqueReal: function (ordemCarga) {
+    excluir: function (ordemCarga) {
       if (!this.perguntar("Deseja realmente excluir esta OC?")) {
         return;
       }
@@ -79,6 +89,69 @@
             vm.exibirMensagem('Erro', erro.mensagem);
           }
         });
+    },
+
+    /**
+     * Exibe o relatório da ordem de carga.
+     * @param {Object} item A ordem de carga que será exibida para impressão.
+     * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
+     */
+    abrirRelatorioOrdemCarga: function (item) {
+      var url = '../Relatorios/RelBase.aspx?rel=OrdemCarga&idOrdemCarga=' + item.id;
+      this.abrirJanela(600, 800, url);
+    },
+
+    /**
+     * Obtem o link para o cadastro de ordens de carga.
+     */
+    obterLinkInserirOrdemCarga: function () {
+      return '../Cadastros/CadOrdemCarga.aspx';
+    },
+
+    /**
+     * Alterna a exibição dos pedidos.
+     */
+    alternarExibicaoPedidos: function (indice) {
+      var i = this.pedidosEmExibicao.indexOf(indice);
+
+      if (i > -1) {
+        this.pedidosEmExibicao.splice(i, 1);
+      } else {
+        this.pedidosEmExibicao.push(indice);
+      }
+    },
+
+    /**
+     * Retorna o número de colunas da lista paginada.
+     * @type {number}
+     */
+    numeroColunasLista: function () {
+      return this.$refs.lista.numeroColunas();
+    },
+
+    /**
+     * Abre um popup para incluir pedidos na ordem de carga.
+     * @param {Object} item a ordem de carga que será usada para incluir pedidos.
+     */
+    abrirInclusaoPedido: function (item) {
+      var vm = this;
+
+      Servicos.Carregamentos.OrdensCarga.verificarPermissaoParaAssociarPedidosNaOrdemDeCarga(item.id)
+        .then(function () {
+          vm.abrirJanela(600, 800, '../Cadastros/CadItensCarregamento.aspx?popup=true&idCarregamento=' + item.id);
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem(erro.mensagem);
+          }
+        });
+    },
+
+    /**
+     * Limpa a lista de pedidos em exibição ao realizar paginação da lista principal.
+     */
+    atualizouItens: function () {
+      this.pedidosEmExibicao.splice(0, this.pedidosEmExibicao.length);
     },
 
     /**

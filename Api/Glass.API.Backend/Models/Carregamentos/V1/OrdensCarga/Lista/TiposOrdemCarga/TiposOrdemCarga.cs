@@ -7,7 +7,7 @@ using System.ComponentModel;
 namespace Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Lista.TiposOrdemCarga
 {
     /// <summary>
-    /// Enumerador com o tipo de ordem de carga.
+    /// Enumerador com os tipos de ordem de carga.
     /// </summary>
     public enum TipoMovimentação
     {

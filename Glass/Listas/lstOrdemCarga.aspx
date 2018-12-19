@@ -17,18 +17,19 @@
 
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
-            "~/Vue/Carregamentos/OrdensCarga/Templates/LstOrdensCarga.Filtro.html")
+            "~/Vue/Carregamentos/OrdensCarga/Templates/LstOrdensCarga.Filtro.html",
+            "~/Vue/Carregamentos/OrdensCarga/Templates/LstOrdensCarga.Pedidos.html")
     %>
 
     <div id="app">
         <ordenscarga-filtros :filtro.sync="filtro" :configuracoes.sync="configuracoes"></ordenscarga-filtros>
         <section>
-            <a :href="obterLinkInserirOrdemCarga()" v-if="configuracoes.emitirPedido">
+            <a :href="obterLinkInserirOrdemCarga()">
                 Gerar Ordem de Carga
             </a>
         </section>
         <section>
-            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma ordem de carga encontrada">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma ordem de carga encontrada" v-on:atualizou-itens="atualizouItens">
                 <template slot="cabecalho">
                     <th></th>
                     <th>Cód. OC</th>
@@ -47,29 +48,43 @@
                     <th>Situação</th>
                     <th></th>
                 </template>
-                <template slot="item" slot-scope="{ item }">
-                    <td>
-                        
+                <template slot="item" slot-scope="{ item, index }">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="excluir(item)" title="Excluir">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                        <button v-on:click.prevent="alternarExibicaoPedidos(index)" v-if="!exibindoPedidos(index)">
+                            <img src="../../Images/mais.gif" title="Exibir pedidos" />
+                        </button>
+                        <button v-on:click.prevent="alternarExibicaoPedidos(index)" v-if="exibindoPedidos(index)">
+                            <img src="../../Images/menos.gif" title="Esconder pedidos" />
+                        </button>
                     </td>
                     <td>{{ item.id }}</td>
-                    <td>{{ item.idCliente }} - {{ item.nomeCliente }}</td>
+                    <td>{{ item.cliente.id }} - {{ item.cliente.nome }}</td>
                     <td>{{ item.loja }}</td>
                     <td>{{ item.rota }}</td>
-                    <td class="destaque">{{ item.peso }}</td>
-                    <td>{{ item.pesoPendente }}</td>
-                    <td>{{ item.totalMetroQuadrado }}</td>
+                    <td class="destaque">
+                        <span>{{ item.peso | decimal }}</span>
+                    </td>
+                    <td>{{ item.pesoPendente | decimal }}</td>
+                    <td>{{ item.totalMetroQuadrado | decimal }}</td>
                     <td>{{ item.quantidadePecas }}</td>
-                    <td>{{ item.valorTotalPedidos}}</td>
-                    <td>{{ item.totalMetroQuadradoPendente}}</td>
+                    <td>{{ item.valorTotalPedidos | moeda }}</td>
+                    <td>{{ item.totalMetroQuadradoPendente | decimal }}</td>
                     <td>{{ item.quantidadePecasPendentes }}</td>
                     <td>{{ item.quantidadeVolumes }}</td>
                     <td>{{ item.tipo }}</td>
                     <td>{{ item.situacao }}</td>
-                    <td>
-
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="abrirRelatorioOrdemCarga(item)" title="Visualizar ordem de carga">
+                            <img src="../Images/Relatorio.gif">
+                        </button>
+                        <log-alteracao tabela="OrdemCarga" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logAlteracoes"></log-alteracao>
+                        <log-cancelamento tabela="OrdemCarga" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logCancelamento"></log-cancelamento>
                     </td>
                 </template>
-                <template slot="novaLinhaItem" slot-scope="{ item, index, classe }" v-if="exibindoOrdensCarga(index)">
+                <template slot="novaLinhaItem" slot-scope="{ item, index, classe }" v-if="exibindoPedidos(index)">
                     <tr v-bind:class="classe" style="border-top: none">
                         <td></td>
                         <td v-bind:colspan="numeroColunasLista() - 1">
@@ -82,11 +97,26 @@
                 </template>
             </lista-paginada>
         </section>
+        <section class="links">
+            <div>
+                <span>
+                    <a href="#" @click.prevent="abrirRelatorio(false)" title="Imprimir">
+                        <img alt="" border="0" src="../Images/printer.png" /> Imprimir
+                    </a>
+                </span>
+                <span>
+                    <a href="#" @click.prevent="abrirRelatorio(true)" title="Exportar para o Excel">
+                        <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel
+                    </a>
+                </span>
+            </div>
+        </section>
     </div>
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
-            <asp:ScriptReference Path="~/Vue/Carregamentos/OrdensCarga/Componentes/LstOrdensCarga.js" />
             <asp:ScriptReference Path="~/Vue/Carregamentos/OrdensCarga/Componentes/LstOrdensCarga.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/Carregamentos/OrdensCarga/Componentes/LstOrdensCarga.Pedidos.js" />
+            <asp:ScriptReference Path="~/Vue/Carregamentos/OrdensCarga/Componentes/LstOrdensCarga.js" />
         </Scripts>
     </asp:ScriptManager>
 </asp:Content>

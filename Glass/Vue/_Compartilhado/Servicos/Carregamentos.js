@@ -39,7 +39,7 @@ Servicos.Carregamentos = (function(http) {
       },
     },
 
-     /**
+    /**
      * Objeto com os serviços para a API de ordens de carga.
      */
     OrdensCarga: {
@@ -65,7 +65,7 @@ Servicos.Carregamentos = (function(http) {
         return http().get(API + 'ordensCarga/configuracoes');
       },
 
-     /**
+      /**
        * Recupera o objeto com os pedidos associados a uma ordem de carga.
        * @returns {Promise} Uma promise com o resultado da busca.
        */
@@ -114,23 +114,23 @@ Servicos.Carregamentos = (function(http) {
           throw new Error('Pedido é obrigatório.');
         }
 
-        return this.http().delete(API + 'ordensCarga/' + id + '/desassociarPedido/' + idPedido);
+        return http().delete(API + 'ordensCarga/' + id + '/desassociarPedido/' + idPedido);
       },
 
       /**
        * Obtem uma lista com os tipos de ordem de carga.
        * @returns {Promise} Uma promise com o resultado da busca.
        */
-      obterTiposOrdensCarga: function () {
-        return this.http().get(API + 'ordensCarga/tipos');
+      obterTiposParaControle: function () {
+        return http().get(API + 'ordensCarga/tipos');
       },
 
       /**
        * Obtem uma lista com as situações de ordem de carga.
        * @returns {Promise} Uma promise com o resultado da busca.
        */
-      obterTiposOrdensCarga: function () {
-        return this.http().get(API + 'ordensCarga/situacoes');
+      obterSituacoesParaControle: function () {
+        return http().get(API + 'ordensCarga/situacoes');
       },
 
       /**

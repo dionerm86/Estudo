@@ -70,7 +70,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                             throw new Exception("Não é possível remover este Pedido da OC, pois o mesmo já possui peças carregadas.");
 
                         if (PedidoOrdemCargaDAO.Instance.ObtemQtdePedidosOC(trans, idOC) == 1)
-                            throw new Exception("A OC só possiu este Pedido, não é possível removê-lo.");
+                            throw new Exception("A OC só possui este Pedido, não é possível removê-lo.");
 
                         //Se for OC de transferência é ja tiver gerado uma OC de venda, tem que deletar 
                         //a de venda primeiro.

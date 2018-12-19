@@ -60,7 +60,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
         /// <param name="idPedido">O identificador do pedido que será desassociado.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpDelete]
-        [Route("{id:int}")]
+        [Route("{id:int}/desassociarPedido/{idPedido:int}")]
         [SwaggerResponse(202, "Pedido desassociado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Ordem de carga não encontrada para o id informado.", Type = typeof(MensagemDto))]

@@ -508,7 +508,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 throw new Exception("Não é possível remover essa OC do Carregamento, pois a mesma possui itens que já foram carregados.");
 
             if (CarregamentoDAO.Instance.ObtemQtdeOCsCarregamento(sessao, OrdemCargaDAO.Instance.GetIdCarregamento(sessao, idOC).GetValueOrDefault(0)) == 1)
-                throw new Exception("O Carregamento só possiu esta OC, não é possível removê-la.");
+                throw new Exception("O Carregamento só possui esta OC, não é possível removê-la.");
 
             var oc = OrdemCargaDAO.Instance.GetElementByPrimaryKey(sessao, idOC);
 

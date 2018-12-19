@@ -1,0 +1,55 @@
+﻿<section>
+    <lista-paginada ref="lista" v-bind:funcao-recuperar-itens="buscarPedidos" v-bind:filtro="filtro"
+                    ordenacao="ordenacao" mensagem-lista-vazia="Nenhum pedido associado.">
+        <template slot="cabecalho">
+            <th></th>
+            <th>
+                Pedido
+            </th>
+            <th>
+                Tipo de Pedido
+            </th>
+            <th>
+                Dt. Entrega
+            </th>
+            <th>
+                Peso
+            </th>
+            <th>
+                Peças Pendentes na Produção
+            </th>
+            <th>
+                Volumes Pendentes
+            </th>
+            <th>
+                Obs.
+            </th>            
+            <th></th>
+        </template>
+        <template slot="item" slot-scope="{ item, index }">
+            <td>
+                <button @click.prevent="desassociarPedido(item)" title="Remover Pedido">
+                    <img src="../Images/ExcluirGrid.gif">
+                </button>
+            </td>
+            <td :style="{ color: item.corLinha }">{{ item.codigoPedidoCliente }}</td>
+            <td :style="{ color: item.corLinha }">{{ item.tipoPedido }}</td>
+            <td :style="{ color: item.corLinha }">{{ item.dataEntrega | data }}</td>
+            <td :style="{ color: item.corLinha }">{{ item.peso | decimal }}</td>
+            <td :style="{ color: item.corLinha }">{{ item.quantidadePecasPendentes }}</td>
+            <td :style="{ color: item.corLinha }">{{ item.quantidadeVolumesPendentes }}</td>
+            <td 
+                <controle-tooltip v-if="item && item.observacaoLiberacao">
+                    <template slot="botao">
+                        <img src="../Images/blocodenotas.png"/>
+                    </template>
+
+                    Observação: {{ item.id }}
+                    <div>
+                        {{ item.observacaoLiberacao }}
+                    </div>
+                </controle-tooltip>
+            </td>
+        </template>
+    </lista-paginada>
+</section>

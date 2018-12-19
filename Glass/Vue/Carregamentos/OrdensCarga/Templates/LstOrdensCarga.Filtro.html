@@ -2,12 +2,12 @@
     <div>
         <span class="form-group">
             <label for="idCarregamento">Carregamento</label>
-            <input id="id" type="number" v-model.number="filtroAtual.idCarregamento" />
+            <input id="id" style="width: 60px" type="number" v-model.number="filtroAtual.idCarregamento" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label for="idOrdemCarga">Cód. OC</label>
-            <input id="idOrdemCarga" type="number" v-model.number="filtroAtual.id" />
+            <input id="idOrdemCarga" style="width: 60px" type="number" v-model.number="filtroAtual.id" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -20,15 +20,15 @@
     <div>
         <span class="form-group">
             <label>Cliente</label>
-            <input type="number" v-model.number="filtroAtual.idCliente" />
-            <input type="text" v-model.number="filtroAtual.nomeCliente" />
+            <input type="number" style="width: 50px" v-model.number="filtroAtual.idCliente" />
+            <input type="text" style="width: 200px" v-model.number="filtroAtual.nomeCliente" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
     <div>
         <span class="form-group">
             <label for="idPedido">Pedido</label>
-            <input id="idPedido" type="number" v-model.number="filtroAtual.idPedido" />
+            <input id="idPedido" style="width: 60px" type="number" v-model.number="filtroAtual.idPedido" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">

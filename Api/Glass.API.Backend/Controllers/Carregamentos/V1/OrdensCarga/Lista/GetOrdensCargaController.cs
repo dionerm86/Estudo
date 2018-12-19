@@ -35,6 +35,10 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
             {
                 filtro = filtro ?? new FiltroDto();
 
+                var situacoes = filtro.SituacoesOrdemCarga != null && filtro.SituacoesOrdemCarga.Any() ? string.Join(",", filtro.SituacoesOrdemCarga.Select(soc => (int)soc).ToArray()) : null;
+                var tipos = filtro.TiposOrdemCarga != null && filtro.TiposOrdemCarga.Any() ? string.Join(",", filtro.TiposOrdemCarga.Select(toc => (int)toc).ToArray()) : null;
+                var rotasExternas = filtro.IdsRotaExterna != null && filtro.IdsRotaExterna.Any() ? string.Join(",", filtro.IdsRotaExterna.ToArray()) : null;
+
                 var ordensCarga = OrdemCargaDAO.Instance.GetListWithExpression(
                     (uint)(filtro.IdCarregamento ?? 0),
                     (uint)(filtro.Id ?? 0),
@@ -45,12 +49,12 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
                     (uint)(filtro.IdRota ?? 0),
                     filtro.PeriodoEntregaPedidoInicio?.ToShortDateString(),
                     filtro.PeriodoEntregaPedidoFim?.ToShortDateString(),
-                    string.Join(",", filtro.SituacoesOrdemCarga.ToString()),
-                    string.Join(",", filtro.TiposOrdemCarga.ToString()),
+                    situacoes,
+                    tipos,
                     (uint)(filtro.IdClienteExterno ?? 0),
                     filtro.NomeClienteExterno,
-                    string.Join(",", filtro.IdsRotaExterna.ToString()),
-                    filtro.ObterTraducaoOrdenacao(),
+                    string.Join(",", rotasExternas),
+                    null,
                     filtro.ObterPrimeiroRegistroRetornar(),
                     filtro.NumeroRegistros);
 
@@ -67,11 +71,11 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
                         (uint)(filtro.IdRota ?? 0),
                         filtro.PeriodoEntregaPedidoInicio?.ToShortDateString(),
                         filtro.PeriodoEntregaPedidoFim?.ToShortDateString(),
-                        string.Join(",", filtro.SituacoesOrdemCarga.ToString()),
-                        string.Join(",", filtro.TiposOrdemCarga.ToString()),
+                        situacoes,
+                        tipos,
                         (uint)(filtro.IdClienteExterno ?? 0),
                         filtro.NomeClienteExterno,
-                        string.Join(",", filtro.IdsRotaExterna.ToString())));
+                        rotasExternas));
             }
         }
 
@@ -98,6 +102,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
         [HttpGet]
         [Route("tipos")]
         [SwaggerResponse(200, "Tipos de ordem de carga encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de ordem de carga não encontrados.")]
         public IHttpActionResult ObterTiposOrdemCarga()
         {
             using (var sessao = new GDATransaction())
@@ -106,6 +111,54 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
                     .ObterTraducao();
 
                 return this.Lista(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera as situações de ordem de carga.
+        /// </summary>
+        /// <returns>Uma lista JSON com as situãções de ordem de carga.</returns>
+        [HttpGet]
+        [Route("situacoes")]
+        [SwaggerResponse(200, "Situações de ordem de carga encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(200, "Situações de ordem de carga não encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        public IHttpActionResult ObterSituacoesOrdemCarga()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var situacoes = new Helper.ConversorEnum<Models.Carregamentos.V1.OrdensCarga.Lista.SituacoesOrdemCarga.SituacoesOrdemCarga>()
+                    .ObterTraducao();
+
+                return this.Lista(situacoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de pedidos.
+        /// </summary>
+        /// <param name="id">O identificador da ordem de carga utilizado na busca.</param>
+        /// <returns>Uma lista JSON com os dados dos pedidos.</returns>
+        [HttpGet]
+        [Route("{id:int}/pedidos")]
+        [SwaggerResponse(200, "Pedidos encontrados.", Type = typeof(IEnumerable<Models.Pedidos.V1.Lista.ListaDto>))]
+        [SwaggerResponse(204, "Pedidos não encontrados para o filtro informado.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Ordem de carga não encontrada para o id informado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterListaPedidosParaOrdemCarga(int id)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var validacao = this.ValidarExistenciaIdOrdemCarga(sessao, id);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
+                var idsPedidos = string.Join(",", Data.DAL.PedidoDAO.Instance.GetIdsPedidosForOC((uint)id));
+
+                var pedidos = Data.DAL.PedidoDAO.Instance.GetPedidosForOC(idsPedidos, (uint)id, false);
+
+                return this.Lista(pedidos.Select(p => new Models.Carregamentos.V1.OrdensCarga.Lista.Pedidos.ListaDto(p)));
             }
         }
     }
