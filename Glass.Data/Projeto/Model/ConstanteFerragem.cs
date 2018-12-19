@@ -1,9 +1,7 @@
 ﻿using GDA;
-using Glass.Data.DAL;
 
 namespace Glass.Data.Model
 {
-    [PersistenceBaseDAO(typeof(ConstanteFerragemDAO))]
     [PersistenceClass("constante_ferragem")]
     public class ConstanteFerragem : Colosoft.Data.BaseModel
     {

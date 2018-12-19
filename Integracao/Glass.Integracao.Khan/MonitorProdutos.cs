@@ -116,6 +116,11 @@ namespace Glass.Integracao.Khan
         /// <param name="entidade">Produto atualizado.</param>
         protected override void EntidadeAtualizada(Global.Negocios.Entidades.Produto entidade)
         {
+            if (!this.configuracao.Ativo)
+            {
+                return;
+            }
+
             var produto = Converter(entidade);
 
             this.logger.Info($"Salvando produto '{entidade.CodInterno}' na Khan...".GetFormatter());

@@ -104,20 +104,7 @@ namespace Glass.Integracao.Khan
         /// <summary>
         /// Obtém um valor que indica se o integrador está ativo.
         /// </summary>
-        public bool Ativo
-        {
-            get
-            {
-                var config = System.Configuration.ConfigurationManager.AppSettings["Khan:Integracao"];
-                var resultado = false;
-                if (bool.TryParse(config, out resultado))
-                {
-                    return resultado;
-                }
-
-                return false;
-            }
-        }
+        public bool Ativo => this.Configuracao.Ativo;
 
         /// <summary>
         /// Obtém o monitor dos indicadores financeiros.
@@ -323,7 +310,7 @@ namespace Glass.Integracao.Khan
             }
 
             this.monitores.Clear();
-            this.MonitorIndicadoresFinanceiros.Dispose();
+            this.MonitorIndicadoresFinanceiros?.Dispose();
             GC.SuppressFinalize(this);
         }
     }

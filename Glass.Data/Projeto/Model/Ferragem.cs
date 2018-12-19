@@ -3,8 +3,6 @@ using System;
 using System.ComponentModel;
 using Glass.Log;
 using Glass.Data.DAL;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Glass.Data.Model
 {
@@ -54,7 +52,6 @@ namespace Glass.Data.Model
         CentroDireita = 4096
     }
 
-    [PersistenceBaseDAO(typeof(FerragemDAO))]
     [PersistenceClass("ferragem")]
     public class Ferragem : Colosoft.Data.BaseModel
     {
@@ -63,7 +60,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDFERRAGEM", PersistenceParameterType.IdentityKey)]
         public int IdFerragem { get; set; }
 
-        [Log("Fabricante", "Nome", typeof(BaseDAO<FabricanteFerragemDAO>))]
+        [Log("Fabricante")]
         [PersistenceProperty("IDFABRICANTEFERRAGEM")]
         [PersistenceForeignKey(typeof(FabricanteFerragem), "IdFabricanteFerragem")]
         public int IdFabricanteFerragem { get; set; }
@@ -121,66 +118,6 @@ namespace Glass.Data.Model
             set
             {
                 _uUID = value;
-            }
-        }
-
-        #endregion
-
-        #region Propriedades de Suporte
-
-        private List<ConstanteFerragem> _constantedaferragem = null;
-
-        [Log("Constante da Ferragem")]
-        public string ConstanteDaFerragem
-        {
-            get
-            {
-                if (_constantedaferragem == null)
-                {
-                    _constantedaferragem = ConstanteFerragemDAO.Instance.ObterConstantesFerragens(IdFerragem);
-                }
-
-                var retorno = new StringBuilder();
-                foreach (var dados in _constantedaferragem)
-                {
-                    if (!string.IsNullOrWhiteSpace(dados.Nome))
-                    {
-                        retorno.AppendFormat("{0}:", dados.Nome);
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(dados.Valor.ToString()))
-                    {
-                        retorno.AppendFormat(" {0} ", dados.Valor);
-                    }
-                }
-
-                return retorno.ToString().TrimEnd(',', ' ');
-            }
-        }
-
-        private List<CodigoFerragem> _codferragem;
-
-        [Log("Código da Ferragem")]
-        public string CodigoDaFeragem
-        {
-            get
-            {
-                if (_codferragem == null)
-                {
-                    _codferragem = CodigoFerragemDAO.Instance.ObterCodigoFerragens(IdFerragem);
-                }
-
-                var retorno = new StringBuilder();
-
-                foreach (var dados in _codferragem)
-                {
-                    if (!string.IsNullOrWhiteSpace(dados.Codigo))
-                    {
-                        retorno.AppendFormat("{0} ", dados.Codigo);
-                    }
-                }
-
-                return retorno.ToString().TrimEnd(',', ' ');
             }
         }
 

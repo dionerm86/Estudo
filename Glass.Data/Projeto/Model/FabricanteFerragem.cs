@@ -1,9 +1,7 @@
 ﻿using GDA;
-using Glass.Data.DAL;
 
 namespace Glass.Data.Model
-{
-    [PersistenceBaseDAO(typeof(FabricanteFerragemDAO))]
+{ 
     [PersistenceClass("fabricante_ferragem")]
     public class FabricanteFerragem : Colosoft.Data.BaseModel
     {

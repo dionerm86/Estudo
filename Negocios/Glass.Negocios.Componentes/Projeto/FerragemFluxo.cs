@@ -202,7 +202,7 @@ namespace Glass.Projeto.Negocios.Componentes
             {
                 resultado = ferragem.Save(session);
 
-                LogAlteracaoDAO.Instance.LogFerragem(ferragem.DataModel, LogAlteracaoDAO.SequenciaObjeto.Novo);
+                // LogAlteracaoDAO.Instance.LogFerragem(ferragem.DataModel, LogAlteracaoDAO.SequenciaObjeto.Novo);
 
                 if (!resultado)
                 {
@@ -225,7 +225,7 @@ namespace Glass.Projeto.Negocios.Componentes
                 resultado.Message.ToString()).GetFormatter());
             }
 
-            LogAlteracaoDAO.Instance.LogFerragem(ferragem.DataModel, LogAlteracaoDAO.SequenciaObjeto.Atual);
+            // LogAlteracaoDAO.Instance.LogFerragem(ferragem.DataModel, LogAlteracaoDAO.SequenciaObjeto.Atual);
 
             return resultado;
         }
