@@ -170,7 +170,7 @@ namespace Glass.Data.DAL
                 float altura = objInsert.Altura, totM2 = objInsert.TotM, totM2Calc = objInsert.TotM2Calc;
                 decimal custo = objInsert.CustoProd, total = objInsert.Total;
 
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objInsert.IdProd);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objInsert.IdProd, false);
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(session, (uint)objInsert.IdPedido);
 
                 Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente, (int)objInsert.IdProd, objInsert.Largura,
@@ -221,7 +221,7 @@ namespace Glass.Data.DAL
                         prodPed.TotM2Calc = prodPed.TotM2Calc > 0 ? (prodPed.TotM2Calc / prodPed.Qtde) * (float)qtde : prodPed.TotM;
 
                         prodPed.Qtde = (float)qtde;
-                        int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdProd);
+                        int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdProd, false);
 
                         if (tipoCalc == (uint)TipoCalculoGrupoProd.Qtd || tipoCalc == (uint)TipoCalculoGrupoProd.QtdM2 || tipoCalc == (uint)TipoCalculoGrupoProd.QtdDecimal)
                             prodPed.Total = (decimal)prodPed.Qtde * prodPed.ValorVendido;
@@ -305,7 +305,7 @@ namespace Glass.Data.DAL
 
                         if (percDesc > 0)
                         {
-                            int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)objInsert.IdProd);
+                            int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)objInsert.IdProd, false);
 
                             objInsert.Total -= (objInsert.Total + objInsert.ValorBenef) * (decimal)percDesc;
 
@@ -408,7 +408,7 @@ namespace Glass.Data.DAL
                 float altura = objUpdate.Altura, totM2 = objUpdate.TotM, totM2Calc = objUpdate.TotM2Calc;
                 decimal custo = objUpdate.CustoProd, total = objUpdate.Total;
 
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objUpdate.IdProd);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objUpdate.IdProd, false);
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(session, (uint)objUpdate.IdPedido);
 
                 Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente, (int)objUpdate.IdProd,

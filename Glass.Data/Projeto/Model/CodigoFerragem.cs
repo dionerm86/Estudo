@@ -1,4 +1,5 @@
 ﻿using GDA;
+using Glass.Log;
 
 namespace Glass.Data.Model
 {

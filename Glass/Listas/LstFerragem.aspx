@@ -29,6 +29,7 @@
                     <th>
                         <a href="#" @click.prevent="ordenar('dataAlteracao')">Data alteração</a>
                     </th>
+                    <th></th>
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
                     <td style="white-space: nowrap">
@@ -46,6 +47,10 @@
                     <td>{{ item.fabricante }}</td>
                     <td>{{ item.situacao }}</td>
                     <td>{{ item.dataAlteracao | dataHora }}</td>
+                    <td>
+                        <log-alteracao tabela="Ferragem" :id-item="item.id" :atualizar-ao-alterar="false"
+                            v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
+                    </td>
                 </template>
             </lista-paginada>
         </section>

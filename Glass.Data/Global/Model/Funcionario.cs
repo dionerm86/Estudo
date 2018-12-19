@@ -71,7 +71,7 @@ namespace Glass.Data.Model
 
         [Log("Estado Civil")]
         [PersistenceProperty("ESTCIVIL")]
-        public string EstCivil { get; set; }
+        public EstadoCivil? EstCivil { get; set; }
 
         [Log("Telefone Residencial")]
         [PersistenceProperty("TELRES")]

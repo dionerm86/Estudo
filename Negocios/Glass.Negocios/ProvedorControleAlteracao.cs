@@ -42,16 +42,28 @@
         /// <summary>
         /// Configura o provedor.
         /// </summary>
-        public static void Configurar()
+        public static void Configurar(Colosoft.Domain.IDomainEvents domainEvents)
         {
-            var persistingEvent = Colosoft.Domain.DomainEvents.Instance.GetEvent<Colosoft.Business.EntityPersistingEvent>();
-            var deletingEvent = Colosoft.Domain.DomainEvents.Instance.GetEvent<Colosoft.Business.EntityDeletingWithPersistenceSessionEvent>();
+            var persistingEvent = domainEvents.GetEvent<Colosoft.Business.EntityPersistingEvent>();
+            var deletingEvent = domainEvents.GetEvent<Colosoft.Business.EntityDeletingWithPersistenceSessionEvent>();
 
             // Registra o método acionado pelo evento persistencia da entidade.
-            persistingEvent.Subscribe(OnPersistingEntity);
+            persistingEvent.Subscribe(
+                OnPersistingEntity,
+                Colosoft.Domain.DomainEventThreadOption.PublisherThread,
+                true,
+                null,
+                false,
+                System.Guid.NewGuid().ToString());
 
             // Registra o método acionado pelo evento de exclusão da entidade.
-            deletingEvent.Subscribe(OnDeletingEntity);
+            deletingEvent.Subscribe(
+                OnDeletingEntity,
+                Colosoft.Domain.DomainEventThreadOption.PublisherThread,
+                true,
+                null,
+                false,
+                System.Guid.NewGuid().ToString());
         }
 
         #endregion

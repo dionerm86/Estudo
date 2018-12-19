@@ -62,7 +62,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.CadastroAtualizacao
         }
 
         /// <summary>
-        /// Obtém ou define se o pedido é "fast delivery".
+        /// Obtém ou define um valor que indica se o pedido é "fast delivery".
         /// </summary>
         [DataMember]
         [JsonProperty("fastDelivery")]
@@ -84,7 +84,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.CadastroAtualizacao
         }
 
         /// <summary>
-        /// Obtém ou define se o pedido possui "deve transferir".
+        /// Obtém ou define um valor que indica se o pedido possui "deve transferir".
         /// </summary>
         [DataMember]
         [JsonProperty("deveTransferir")]
@@ -172,7 +172,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.CadastroAtualizacao
         }
 
         /// <summary>
-        /// Obtém ou define se o pedido deve gerar um pedido de corte.
+        /// Obtém ou define um valor que indica se o pedido deve gerar um pedido de corte.
         /// </summary>
         [DataMember]
         [JsonProperty("gerarPedidoCorte")]

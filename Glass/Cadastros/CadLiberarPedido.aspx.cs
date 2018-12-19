@@ -824,7 +824,6 @@ namespace Glass.UI.Web.Cadastros
                 var percentual = ((!PedidoConfig.RatearDescontoProdutos ? totalPedido - pedido.DescontoTotal : totalPedido) +
                     (!PedidoConfig.RatearDescontoProdutos ? pedido.DescontoTotal : 0)) / (dividir > 0 ? dividir : 1);
 
-
                 var descontoReais = pedido.DescontoTotal * percentual;
 
                 // Se o desconto dado no pedido for de 100%, a propriedade DescontoTotal retorna 0, é necessário fazer
@@ -836,8 +835,7 @@ namespace Glass.UI.Web.Cadastros
                     possuiPedidoDescontoCemPorCento = true;
                 }
 
-                totalPedido = totalPedido - descontoReais;
-
+                totalPedido = Math.Round(totalPedido - descontoReais, 2, MidpointRounding.AwayFromZero);
 
                 // Aplica o fast delivery novamente
                 if (pedido.FastDelivery && pedido.DescontoTotal > 0)

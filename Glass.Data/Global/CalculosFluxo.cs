@@ -12,64 +12,26 @@ namespace Glass.Global
         #region Cálculo de arredondamento de M2
 
         /// <summary>
-        /// Cálculo de arredondamento de m2 utilizando 2 casas decimais
+        /// Cálculo de arredondamento de m2 utilizando 2 casas decimais.
         /// </summary>
-        /// <param name="largura"></param>
-        /// <param name="altura"></param>
-        /// <param name="qtd"></param>
-        /// <returns></returns>
-        public static float ArredondaM2(int largura, int altura, int qtd, int idProd, bool redondo, float espessura = 0, bool calcMult5 = true)
-        {
-            return ArredondaM2(largura, altura, (float)qtd, idProd, redondo, espessura, calcMult5);
-        }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Cálculo de arredondamento de m2 utilizando 2 casas decimais
-        /// </summary>
-        /// <param name="largura"></param>
-        /// <param name="altura"></param>
-        /// <param name="qtd"></param>
-        /// <returns></returns>
-        public static float ArredondaM2(int largura, int altura, float qtd, int idProd, bool redondo)
-        {
-            return ArredondaM2(null, largura, altura, qtd, idProd, redondo);
-        }
-
-        /// <summary>
-        /// Cálculo de arredondamento de m2 utilizando 2 casas decimais
-        /// </summary>
-        /// <param name="largura"></param>
-        /// <param name="altura"></param>
-        /// <param name="qtd"></param>
-        /// <returns></returns>
-        public static float ArredondaM2(GDASession sessao, int largura, int altura, float qtd, int idProd, bool redondo)
-        {
-            return ArredondaM2(sessao, largura, altura, qtd, idProd, redondo, 0, true);
-        }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Cálculo de arredondamento de m2 utilizando 2 casas decimais
-        /// </summary>
-        /// <param name="largura"></param>
-        /// <param name="altura"></param>
-        /// <param name="qtd"></param>
-        /// <returns></returns>
-        public static float ArredondaM2(int largura, int altura, float qtd, int idProd, bool redondo, float espessura, bool calcMult5)
-        {
-            return ArredondaM2(null, largura, altura, qtd, idProd, redondo, espessura, calcMult5);
-        }
-
-        /// <summary>
-        /// Cálculo de arredondamento de m2 utilizando 2 casas decimais
-        /// </summary>
-        /// <param name="largura"></param>
-        /// <param name="altura"></param>
-        /// <param name="qtd"></param>
-        /// <returns></returns>
-        public static float ArredondaM2(GDASession sessao, int largura, int altura, float qtd, int idProd,
-            bool redondo, float espessura, bool calcMult5)
+        /// <param name="sessao">sessao.</param>
+        /// <param name="largura">largura.</param>
+        /// <param name="altura">altura.</param>
+        /// <param name="qtd">qtd.</param>
+        /// <param name="idProd">idProd.</param>
+        /// <param name="redondo">redondo.</param>
+        /// <param name="espessura">espessura.</param>
+        /// <param name="calcMult5">calcMult5.</param>
+        /// <returns>Retorna o M2 calculado com arredondamento de 2 casas decimais.</returns>
+        public static float ArredondaM2(
+            GDASession sessao,
+            int largura,
+            int altura,
+            float qtd,
+            int idProd,
+            bool redondo,
+            float espessura,
+            bool calcMult5)
         {
             var container = new ContainerCalculoDTO();
 
@@ -80,7 +42,7 @@ namespace Glass.Global
                 Altura = altura,
                 Qtde = qtd,
                 Redondo = redondo,
-                Espessura = espessura
+                Espessura = espessura,
             };
 
             return CalculoM2.Instance.Calcular(sessao, container, produto, calcMult5);
@@ -120,46 +82,36 @@ namespace Glass.Global
         /// <summary>
         /// Cálculo de M2.
         /// </summary>
-        /// <param name="idCliente"></param>
-        /// <param name="altura"></param>
-        /// <param name="largura"></param>
-        /// <param name="qtde"></param>
-        /// <param name="idProduto"></param>
-        /// <param name="redondo"></param>
-        /// <param name="numBenef"></param>
-        /// <param name="areaMinima"></param>
-        /// <param name="usarChapa"></param>
-        /// <param name="espessura"></param>
-        /// <param name="calcMult5"></param>
-        /// <returns></returns>
-        public static float CalcM2Calculo(uint idCliente, int altura, int largura, float qtde, int idProduto, bool redondo, int numBenef,
-            float areaMinima, bool usarChapa, float espessura, bool calcMult5)
-        {
-            return CalcM2Calculo(null, idCliente, altura, largura, qtde, idProduto, redondo, numBenef, areaMinima, usarChapa, espessura, calcMult5);
-        }
-
-        /// <summary>
-        /// Cálculo de M2.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idCliente"></param>
-        /// <param name="altura"></param>
-        /// <param name="largura"></param>
-        /// <param name="qtde"></param>
-        /// <param name="idProduto"></param>
-        /// <param name="redondo"></param>
-        /// <param name="numBenef"></param>
-        /// <param name="areaMinima"></param>
-        /// <param name="usarChapa"></param>
-        /// <param name="espessura"></param>
-        /// <param name="calcMult5"></param>
-        /// <returns></returns>
-        public static float CalcM2Calculo(GDASession sessao, uint idCliente, int altura, int largura, float qtde, int idProduto, bool redondo, int numBenef,
-            float areaMinima, bool usarChapa, float espessura, bool calcMult5)
+        /// <param name="sessao">sessao.</param>
+        /// <param name="idCliente">idCliente.</param>
+        /// <param name="altura">altura.</param>
+        /// <param name="largura">largura.</param>
+        /// <param name="qtde">qtde.</param>
+        /// <param name="idProduto">idProduto.</param>
+        /// <param name="redondo">redondo.</param>
+        /// <param name="numBenef">numBenef.</param>
+        /// <param name="areaMinima">areaMinima.</param>
+        /// <param name="usarChapa">usarChapa.</param>
+        /// <param name="espessura">espessura.</param>
+        /// <param name="calcMult5">calcMult5.</param>
+        /// <returns>Retorna o M2 calculado.</returns>
+        public static float CalcM2Calculo(
+            GDASession sessao,
+            uint idCliente,
+            int altura,
+            int largura,
+            float qtde,
+            int idProduto,
+            bool redondo,
+            int numBenef,
+            float areaMinima,
+            bool usarChapa,
+            float espessura,
+            bool calcMult5)
         {
             var container = new ContainerCalculoDTO()
             {
-                Cliente = new ClienteDTO(() => idCliente)
+                Cliente = new ClienteDTO(() => idCliente),
             };
 
             var produto = new ProdutoCalculoDTO()
@@ -169,7 +121,7 @@ namespace Glass.Global
                 Largura = largura,
                 Qtde = qtde,
                 Redondo = redondo,
-                Espessura = espessura
+                Espessura = espessura,
             };
 
             return CalculoM2.Instance.CalcularM2Calculo(sessao, container, produto, usarChapa, calcMult5, numBenef);
@@ -191,7 +143,7 @@ namespace Glass.Global
         /// <returns></returns>
         public static string GetDescrTipoCalculo(int idGrupoProd, int? idSubgrupoProd, bool nf, bool unidade)
         {
-            int tipo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(idGrupoProd, idSubgrupoProd, nf);
+            int tipo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, idGrupoProd, idSubgrupoProd, nf);
             return GetDescrTipoCalculo(tipo, unidade);
         }
 

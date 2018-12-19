@@ -1,4 +1,4 @@
-<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Layout.master.cs" Inherits="Glass.UI.Web.Layout" %>
+ï»¿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Layout.master.cs" Inherits="Glass.UI.Web.Layout" %>
 
 <%@ Register Src="Controls/ctrlPopupTela.ascx" TagName="ctrlPopupTela" TagPrefix="uc1" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -222,8 +222,8 @@
             window.onbeforeunload = function()
             {
                 if (paginaBloqueada)
-                    return "As alterações feitas por você ainda estão sendo processadas.\n" +
-                        "Se você sair agora elas podem não ser feitas corretamente.\n" +
+                    return "As alteraÃ§Ãµes feitas por vocÃª ainda estÃ£o sendo processadas.\n" +
+                        "Se vocÃª sair agora elas podem nÃ£o ser feitas corretamente.\n" +
                         "Tem certeza que deseja sair?";
             }
         }
@@ -245,7 +245,7 @@
             if (botao != null) botao.click();
         }
 
-        // Impede que ao F5 reenvie informações de postback, ao pressioná-lo irá apenas "entrar" na página novamente.
+        // Impede que ao F5 reenvie informaÃ§Ãµes de postback, ao pressionÃ¡-lo irÃ¡ apenas "entrar" na pÃ¡gina novamente.
         document.onkeydown = function (e) {
             if (e.keyCode === 116) {
                 atualizarPaginaBotao();
@@ -291,7 +291,7 @@
                                             </tr>
                                             <tr>
                                                 <td class="textoLogo">
-                                                    <asp:Label ID="lblCoord" runat="server" Text="Coordenação: (31) 9207-0051"></asp:Label>
+                                                    <asp:Label ID="lblCoord" runat="server" Text="CoordenaÃ§Ã£o: (31) 9207-0051"></asp:Label>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -302,7 +302,7 @@
                                             </tr>
                                             <tr>
                                                 <td class="textoLogo">
-                                                    Versão: <asp:LinkButton ID="lnkVersao" runat="server" ForeColor="Gray" Font-Size="XX-Small"
+                                                    VersÃ£o: <asp:LinkButton ID="lnkVersao" runat="server" ForeColor="Gray" Font-Size="XX-Small"
                                                         Font-Overline="false" OnClientClick="openWindow(590, 760, '../Utils/VersaoDLLs.aspx'); return false;"></asp:LinkButton>
                                                 </td>
                                             </tr>
@@ -319,7 +319,7 @@
                             <asp:Label ID="lblUsuario" runat="server" CssClass="textoTopo"></asp:Label>
                             <asp:Label ID="lblDataTrabalho" runat="server" CssClass="textoTopo"></asp:Label>
                             <br />
-                            <asp:LinkButton runat="server" ID="lnkAvaliacoesPendentes" Font-Size="Small" ForeColor="Red" Visible="false" Text="Por favor, avalie aqui nosso último atendimento!" OnClientClick="openWindow(600, 800, '../Utils/AvaliacaoAtendimento.aspx'); return false;" />
+                            <asp:LinkButton runat="server" ID="lnkAvaliacoesPendentes" Font-Size="Small" ForeColor="Red" Visible="false" Text="Por favor, avalie aqui nosso Ãºltimo atendimento!" OnClientClick="openWindow(600, 800, '../Utils/AvaliacaoAtendimento.aspx'); return false;" />
                             <asp:Label ID="lblPedidosAguardandoFinanceiro" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>
                             <asp:Label ID="lblQuantidadeProdutosEstoqueMinimo" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>
                             <br />
@@ -327,7 +327,7 @@
                             <asp:LinkButton ID="lnkMensagens" runat="server" OnClick="lnkMensagens_Click" ToolTip="Mensagens Recebidas"> <img src='<%= ResolveUrl("~/Images/mail.png") %>' border="0" /></asp:LinkButton>
                             <asp:LinkButton ID="lnkMensagensNaoLidas" runat="server" OnClick="lnkMensagens_Click"
                                 ToolTip="Mensagens Recebidas" Visible="false"> <img src='<%= ResolveUrl("~/Images/mail_received.png") %>' border="0" /></asp:LinkButton>
-                            <asp:LinkButton ID="lnkControleUsuario" runat="server" CausesValidation="False" ToolTip="Controle de Usuários" PostBackUrl="~/Utils/ControleUsuario.aspx">
+                            <asp:LinkButton ID="lnkControleUsuario" runat="server" CausesValidation="False" ToolTip="Controle de UsuÃ¡rios" PostBackUrl="~/Utils/ControleUsuario.aspx">
                                 <img border="0" src='<%= ResolveUrl("~/Images/controlUser.png") %>' /></asp:LinkButton>
                             <asp:HyperLink ID="lnkConfiguracao" runat="server" OnLoad="lnkConfiguracao_Load"
                                 NavigateUrl="~/Utils/Config.aspx"> <img border="0" src='<%= ResolveUrl("~/Images/Configuracoes.png") %>' /></asp:HyperLink>
@@ -374,7 +374,7 @@
                 </span>
                 <br />
                 <span style="font-size: medium">
-                    Processando suas informações...
+                    Processando suas informaÃ§Ãµes...
                 </span>
             </span>
         </InnerHTML>
@@ -391,7 +391,7 @@
         {
             if (<%= IsPopupControle().ToString().ToLower() %> || window != window.top)
             {
-                // Altera a função __doPostBack, se ela existir
+                // Altera a funÃ§Ã£o __doPostBack, se ela existir
                 if (!window["__doPostBack"])
                     return;
 

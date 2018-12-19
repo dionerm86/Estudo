@@ -19,9 +19,6 @@ namespace Glass.UI.Web.Listas
             grdMedicao.Columns[0].Visible = lnkInserir.Visible;
             grdMedicao.Columns[12].Visible = lnkInserir.Visible;
     
-            if (Request["idMedicao"] != null)
-                txtNumMedicao.Text = Request["idMedicao"];
-    
             grdMedicao.DataBind();
         }
     

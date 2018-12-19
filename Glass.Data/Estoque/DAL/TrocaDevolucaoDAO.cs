@@ -307,7 +307,7 @@ namespace Glass.Data.DAL
             {
                 bool m2 = pt.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || pt.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
-                int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)pt.IdProd);
+                int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)pt.IdProd, false);
                 float qtdCredito = pt.Qtde;
 
                 if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
@@ -332,7 +332,7 @@ namespace Glass.Data.DAL
 
                     bool m2 = ptd.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || ptd.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
-                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)ptd.IdProd);
+                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)ptd.IdProd, false);
                     float qtdSaida = ptd.Qtde;
 
                     if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
@@ -358,7 +358,7 @@ namespace Glass.Data.DAL
             {
                 bool m2 = pt.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || pt.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
-                int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)pt.IdProd);
+                int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)pt.IdProd, false);
                 float qtdSaida = pt.Qtde;
 
                 if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
@@ -381,7 +381,7 @@ namespace Glass.Data.DAL
                     if (!ptd.AlterarEstoque)
                         continue;
 
-                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)ptd.IdProd);
+                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)ptd.IdProd, false);
                     float qtdCredito = ptd.Qtde;
 
                     if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||

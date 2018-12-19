@@ -434,7 +434,7 @@ namespace Glass.Data.RelDAL
 
                         for (var i = 0; i < itens.Length; i++)
                         {
-                            var qtde = GrupoProdDAO.Instance.TipoCalculo(session, (int)itens[i].IdProd) == (int)TipoCalculoGrupoProd.Qtd ?
+                            var qtde = GrupoProdDAO.Instance.TipoCalculo(session, (int)itens[i].IdProd, false) == (int)TipoCalculoGrupoProd.Qtd ?
                                 itens[i].Qtde + " " : "";
 
                             itens[i].BenefEtiqueta = true;
@@ -485,7 +485,7 @@ namespace Glass.Data.RelDAL
             else if (!reImpressao)
             {
                 var idImpr = idImpressao.StrParaUint();
-                var imprPedido = ImpressaoEtiquetaDAO.Instance.GetTipoImpressao(session, idImpr) == ProdutoImpressaoDAO.TipoEtiqueta.Pedido;
+                var imprPedido = idSolucaoOtimizacao.GetValueOrDefault() > 0 || ImpressaoEtiquetaDAO.Instance.GetTipoImpressao(session, idImpr) == ProdutoImpressaoDAO.TipoEtiqueta.Pedido;
 
                 if (lstEtiq.Count == 0 && imprPedido)
                     throw new Exception("Ocorreu uma falha ao recuperar as etiquetas a serem impressas.");

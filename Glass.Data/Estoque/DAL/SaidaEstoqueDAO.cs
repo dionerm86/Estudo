@@ -225,7 +225,7 @@ namespace Glass.Data.DAL
                         {
                             var prodPed = ProdutosPedidoDAO.Instance.GetElementFluxoLite(transaction, prod.IdProdPed);
                             var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdGrupoProd,
-                                (int?)prodPed.IdSubgrupoProd);
+                                (int?)prodPed.IdSubgrupoProd, false);
 
                             if (!lstIdsPedidos.Contains(prodPed.IdPedido))
                                 lstIdsPedidos.Add(prodPed.IdPedido);

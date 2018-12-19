@@ -116,6 +116,7 @@
     <Compile Include="MonitorProdutos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProvedorLimiteCredito.cs" />
+    <Compile Include="ProvedorSituacaoCliente.cs" />
     <Compile Include="Seguranca\KhanClientMessageInspector.cs" />
     <Compile Include="Seguranca\KhanEndpointBehavior.cs" />
     <Compile Include="Service References\KhanConsultasServiceReference\Reference.cs">
@@ -241,6 +242,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">
+      <Project>{ba4d9710-6531-44af-99fd-01542f41e1ad}</Project>
+      <Name>Glass.Comum</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Glass.Data\Glass.Data.csproj">
       <Project>{4f2eaa30-6616-4d69-8355-44557e20c398}</Project>
       <Name>Glass.Data</Name>

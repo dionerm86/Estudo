@@ -4051,6 +4051,12 @@ namespace Glass.Data.DAL
                             multaItem = multa - somaMulta;
                         }
 
+                        DateTime dataValida;
+                        if (!DateTime.TryParse(parc[1], out dataValida))
+                        {
+                            throw new Exception($"A data informada é invalida. Data informada {parc[1]}");
+                        }
+
                         ContasReceber contaRec = new ContasReceber();
                         contaRec.IdLoja = conta.IdLoja;
                         contaRec.IdCliente = conta.IdCliente;
@@ -9284,23 +9290,45 @@ namespace Glass.Data.DAL
 
         #region CRUD
 
-
+        /// <summary>
+        /// Atualiza a conta a receber.
+        /// </summary>
+        /// <param name="objUpdate">Objeto com os dados a serem atualizados.</param>
+        /// <returns>Número de linhas afetadas.</returns>
         public override int Update(ContasReceber objUpdate)
         {
             return Update(null, objUpdate);
         }
 
-        public override int Update(GDASession session, ContasReceber objUpdate)
+        /// <summary>
+        /// Atualiza a conta a receber.
+        /// </summary>
+        /// <param name="transaction">Sessão utilizada para a execução do comando.</param>
+        /// <param name="objUpdate">Objeto com os dados a serem atualizados.</param>
+        /// <returns>Número de linhas afetadas.</returns>
+        public override int Update(GDASession transaction, ContasReceber objUpdate)
         {
-            var old = GetElementByPrimaryKey(session, objUpdate.IdContaR);
+            var atualRecebida = ObtemValorCampo<bool>(transaction, "recebida", "idContaR=" + objUpdate.IdContaR);
 
-            if (old.Recebida && !objUpdate.Recebida)
+            if (!atualRecebida
+                && objUpdate.Recebida
+                && objUpdate.UsuRec == null
+                && !objUpdate.IsParcelaCartao
+                && !objUpdate.Renegociada
+                && objUpdate.ValorRec == 0)
+            {
+                throw new InvalidOperationException("Não é possível efetuar um recebimento sem um usuário referenciado ou valor zerado.");
+            }
+
+            if (atualRecebida && !objUpdate.Recebida)
+            {
                 objUpdate.DestinoRec = null;
+            }
 
-            return base.Update(session, objUpdate);
+            return base.Update(transaction, objUpdate);
         }
 
         #endregion
 
-        }
+    }
 }

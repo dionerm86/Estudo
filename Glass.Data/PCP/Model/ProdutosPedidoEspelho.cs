@@ -206,6 +206,12 @@ namespace Glass.Data.Model
         public decimal BcIcms { get; set; }
 
         /// <summary>
+        /// Base de calculo ICMS sem Redução.
+        /// </summary>
+        [PersistenceProperty("BCICMSSEMREDUCAO")]
+        public decimal BcIcmsSemReducao { get; set; }
+
+        /// <summary>
         /// Valor do ICMS desonerado
         /// </summary>
         [PersistenceProperty("ValorIcmsDesonerado")]
@@ -592,7 +598,7 @@ namespace Glass.Data.Model
             get
             {
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(null, IdPedido);
-                return Glass.Global.CalculosFluxo.CalcM2Calculo(IdCliente, (int)Altura, Largura, Qtde, (int)IdProd, Redondo,
+                return Glass.Global.CalculosFluxo.CalcM2Calculo(null, IdCliente, (int)Altura, Largura, Qtde, (int)IdProd, Redondo,
                     Beneficiamentos.CountAreaMinima, ProdutoDAO.Instance.ObtemAreaMinima((int)IdProd), false, 0, 
                     TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte).ToString();
             }
@@ -630,7 +636,17 @@ namespace Glass.Data.Model
 
         public int TipoCalc
         {
-            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd); }
+            get
+            {
+                if (this.IdProd > 0)
+                {
+                    this.IdGrupoProd = this.IdGrupoProd > 0 ? this.IdGrupoProd : (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)this.IdProd);
+
+                    return GrupoProdDAO.Instance.TipoCalculo(null, (int)this.IdGrupoProd, false);
+                }
+
+                return (int)TipoCalculoGrupoProd.Qtd;
+            }
         }
 
         public bool AlturaEnabled

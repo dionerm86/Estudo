@@ -146,7 +146,7 @@ const app = new Vue({
      * Força a atualização da lista de feriados, com base no filtro atual.
      */
     atualizarLista: function () {
-      this.$refs.lista.atualizar();
+      this.$refs.lista.atualizar(true);
     }
   }
 });

@@ -1,4 +1,4 @@
-<%@ Page Title="Cadastro CTe" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+Ôªø<%@ Page Title="Cadastro CTe" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="CadConhecimentoTransporte.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadConhecimentoTransporte" %>
 
 <%@ Register Src="~/Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc2" %>
@@ -63,14 +63,14 @@
             setNfReferenciada(dadosRetorno[0], dadosRetorno[1]);
         }
 
-        //M·scara para campos com valor decimal
+        //M√°scara para campos com valor decimal
         function mascaraValor(controle, precisao)
         {
             $("#"+controle.id).unmaskMoney();
             $("#"+controle.id).maskMoney({showSymbol:false,symbol:"R$", decimal:",", precision:precisao ,thousands:".", allowZero:true});
         }
 
-        // Seta informaÁıes da nota fiscal selecionada no popup.
+        // Seta informa√ß√µes da nota fiscal selecionada no popup.
         function setNfReferenciada(idNf, numNf)
         {
             FindControl('txtNumNfIns', 'input').value = numNf;
@@ -85,19 +85,19 @@
             FindControl(controleTxt, 'input').value = nomeCidade;
         }
 
-        // FunÁ„o chamada antes de inserir dados
+        // Fun√ß√£o chamada antes de inserir dados
         function onInsert()
         {
             return validar();
         }
 
-        // FunÁ„o chamada antes atualizar dados
+        // Fun√ß√£o chamada antes atualizar dados
         function onUpdate()
         {
             return validar();
         }
 
-        // ValidaÁ„o de dados de inserÁ„o ou atualizaÁ„o
+        // Valida√ß√£o de dados de inser√ß√£o ou atualiza√ß√£o
         function validar()
         {
             if (!validate('c'))
@@ -119,7 +119,7 @@
             {
                 if(veiculo.value == 'selecione')
                 {
-                    alert('Para cte de lotaÁ„o deve(m) ser selecionada(s) a(s) placa(s) de VeÌculo(s)');
+                    alert('Para cte de lota√ß√£o deve(m) ser selecionada(s) a(s) placa(s) de Ve√≠culo(s)');
                     veiculo.focus();
                     return false;
                 }
@@ -127,7 +127,7 @@
 
             if (tipoCTe.value == '2' && FindControl("dtvConhecimentoTransporte_ctrlDataAnulacao_txtData","input") != null && FindControl("dtvConhecimentoTransporte_ctrlDataAnulacao_txtData","input").value == "") {
 
-                alert('Campo Data AnulaÁ„o deve ser preenchido.');
+                alert('Campo Data Anula√ß√£o deve ser preenchido.');
                 return false;
             }
 
@@ -137,7 +137,7 @@
             {
                 if(drpResponsavelSeguro.value == '6')
                 {
-                    alert('Para cte Normal ou de SubstituiÁ„o, deve ser informado o respons·vel pelo seguro da carga.');
+                    alert('Para cte Normal ou de Substitui√ß√£o, deve ser informado o respons√°vel pelo seguro da carga.');
                     drpResponsavelSeguro.focus();
                     return false;
                 }
@@ -162,7 +162,7 @@
                     txtNumeroOrdemColeta.style.border = 'solid 1px red';
                     txtData.style.border = 'solid 1px red';
 
-                    alert('N˙mero Ordem Coleta e Data Emiss„o devem ser ambos preenchidos ou vazios.');
+                    alert('N√∫mero Ordem Coleta e Data Emiss√£o devem ser ambos preenchidos ou vazios.');
                     return false;
                 }
             }
@@ -180,31 +180,22 @@
             {
                 if(drpResponsavelSeguro.value == "1" && lblDecrPartExpedidor.innerText == '')
                 {
-                    alert('Se o respons·vel pelo seguro È o expedidor, o mesmo deve ser informado como participante');
+                    alert('Se o respons√°vel pelo seguro √© o expedidor, o mesmo deve ser informado como participante');
                     return false;
                 }
                 else if(drpResponsavelSeguro.value == "2" && lblDecrPartRecebedor.innerText == '')
                 {
-                    alert('Se o respons·vel pelo seguro È o recebedor, o mesmo deve ser informado como participante');
+                    alert('Se o respons√°vel pelo seguro √© o recebedor, o mesmo deve ser informado como participante');
                     return false;
                 }
             }
-            /*Fim Participante Cte*/
-
-            /* CobranÁa Cte.
-            Verifica dados Participante Cte*/
-            var chkContaPagar = FindControl("CtrlDupl1_chkGerarContasPagar", "input");
-            if (chkContaPagar != null && chkContaPagar.checked && FindControl("ctrlParticipanteEmitente_drpPart", "select").value != "1"){
-                alert('Para gerar contas a pagar È necess·rio que o emitente seja um fornecedor.');
-                return false;
-            }
-            /*Fim cobranÁa Cte*/
+            /*Fim Participante Cte*/          
 
             return true;
         }
 
         /**
-         * Exibe o controle da data de anulaÁ„o se o tipo do CT-e for de AnulaÁ„o de valores, e esconde o mesmo controle, caso n„o seja.
+         * Exibe o controle da data de anula√ß√£o se o tipo do CT-e for de Anula√ß√£o de valores, e esconde o mesmo controle, caso n√£o seja.
          * @param {?Object} controle O dropDownList referente ao tipo do CT-e.
          */
         function exibirEsconderDataAnulacao(controle){
@@ -240,38 +231,38 @@
                             </div>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label21" runat="server" Text="Natureza de OperaÁ„o *"></asp:Label>
+                                    <asp:Label ID="Label21" runat="server" Text="Natureza de Opera√ß√£o *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <uc2:ctrlNaturezaOperacao ID="ctrlNaturezaOperacao" runat="server" CodigoNaturezaOperacao='<%# Bind("IdNaturezaOperacao") %>'
-                                        PermitirVazio="False" ValidationGroup="c" ErrorMessage="Preencha a natureza de operaÁ„o" />
+                                        PermitirVazio="False" ValidationGroup="c" ErrorMessage="Preencha a natureza de opera√ß√£o" />
                                 </div>
                                 <div class="dtvHeader">
                                     <asp:Label ID="Label6" runat="server" Text="Tipo Documento CT-e *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:DropDownList ID="drpTipoDocumentoCte" runat="server" Enabled="false" SelectedValue='<%# Bind("TipoDocumentoCte") %>'>
-                                        <asp:ListItem Value="2">SaÌda</asp:ListItem>
+                                        <asp:ListItem Value="2">Sa√≠da</asp:ListItem>
                                         <asp:ListItem Value="3">Entrada (terceiros)</asp:ListItem>
                                     </asp:DropDownList>
                                 </div>
                             </div>
                             <div class="dtvRow" runat="server" id="terceiros1" onload="ExibirDadosTerceiros">
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label2" runat="server" Text="N˙mero CT-e *"></asp:Label>
+                                    <asp:Label ID="Label2" runat="server" Text="N√∫mero CT-e *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtNumCte" runat="server" MaxLength="50" Width="200px" Text='<%# Bind("NumeroCte") %>'
                                         onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvNumCte" runat="server" ErrorMessage="N˙mero do CT-e deve ser preenchido"
+                                    <asp:RequiredFieldValidator ID="rfvNumCte" runat="server" ErrorMessage="N√∫mero do CT-e deve ser preenchido"
                                         ControlToValidate="txtNumCte" Display="Dynamic" ValidationGroup="c">*</asp:RequiredFieldValidator>
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label36" runat="server" Text="Data Emiss„o *"></asp:Label>
+                                    <asp:Label ID="Label36" runat="server" Text="Data Emiss√£o *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <uc2:ctrlData ID="ctrlDataEmissao" runat="server" ReadOnly="ReadWrite" DataNullable='<%# Bind("DataEmissao") %>'
-                                        ValidateEmptyText="true" ValidationGroup="c" ErrorMessage="Campo Data Emiss„o deve ser preenchido."
+                                        ValidateEmptyText="true" ValidationGroup="c" ErrorMessage="Campo Data Emiss√£o deve ser preenchido."
                                         ExibirHoras="True" />
                                 </div>
                             </div>
@@ -283,11 +274,11 @@
                                     <asp:TextBox ID="txtChaveAcesso" runat="server" MaxLength="50" Width="200px" Text='<%# Bind("ChaveAcesso") %>'></asp:TextBox>
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label126" runat="server" Text="Data Entrada/SaÌda"></asp:Label>
+                                    <asp:Label ID="Label126" runat="server" Text="Data Entrada/Sa√≠da"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <uc2:ctrlData ID="ctrlDataEntradaSaida" runat="server" ReadOnly="ReadWrite" DataNullable='<%# Bind("DataEntradaSaida") %>'
-                                        ValidateEmptyText="false" ValidationGroup="c" ErrorMessage="Campo Data Entrada SaÌda deve ser preenchido."
+                                        ValidateEmptyText="false" ValidationGroup="c" ErrorMessage="Campo Data Entrada Sa√≠da deve ser preenchido."
                                         ExibirHoras="True" />
                                 </div>
                             </div>
@@ -298,18 +289,18 @@
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtCidadeCte" runat="server" MaxLength="50" Enabled="False" Width="200px"
                                         ReadOnly="True"></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeCte" runat="server" ErrorMessage="campo cidade n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeCte" runat="server" ErrorMessage="campo cidade n√£o pode ser vazio."
                                         ControlToValidate="txtCidadeCte" ValidationGroup="c" Display="Dynamic">*</asp:RequiredFieldValidator>
                                     <asp:ImageButton ID="imgPesq" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClientClick="openWindow(500, 700, '../Utils/SelCidade.aspx?controleTxt=txtCidadeCte&controleHdf=hdfCidadeCte'); return false;" />
                                     <asp:HiddenField ID="hdfCidadeCte" runat="server" Value='<%# Bind("IdCidadeCte") %>' />
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label17" runat="server" Text="Cidade InÌcio *"></asp:Label>
+                                    <asp:Label ID="Label17" runat="server" Text="Cidade In√≠cio *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtCidadeInicio" runat="server" Enabled="False" MaxLength="50" Width="200px"
                                         ReadOnly="True"></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeInicio" runat="server" ErrorMessage="campo cidade inÌcio n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeInicio" runat="server" ErrorMessage="campo cidade in√≠cio n√£o pode ser vazio."
                                         ControlToValidate="txtCidadeInicio" ValidationGroup="c" Display="Dynamic">*</asp:RequiredFieldValidator>
                                     <asp:ImageButton ID="imgPesq1" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClientClick="openWindow(500, 700, '../Utils/SelCidade.aspx?controleTxt=txtCidadeInicio&controleHdf=hdfCidadeInicio'); return false;" />
                                     <asp:HiddenField ID="hdfCidadeInicio" runat="server" Value='<%# Bind("IdCidadeInicio") %>' />
@@ -322,7 +313,7 @@
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtCidadeFim" runat="server" Enabled="False" MaxLength="50" Width="200px"
                                         ReadOnly="True"></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeFim" runat="server" ErrorMessage="campo cidade fim n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeFim" runat="server" ErrorMessage="campo cidade fim n√£o pode ser vazio."
                                         ControlToValidate="txtCidadeFim" ValidationGroup="c" Display="Dynamic">*</asp:RequiredFieldValidator>
                                     <asp:ImageButton ID="imgPesq2" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClientClick="openWindow(500, 700, '../Utils/SelCidade.aspx?controleTxt=txtCidadeFim&controleHdf=hdfCidadeFim'); return false;" />
                                     <asp:HiddenField ID="hdfCidadeFim" runat="server" Value='<%# Bind("IdCidadeFim") %>' />
@@ -360,14 +351,14 @@
                             </div>--%>
                             <%--<div class="dtvRow">
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label2" runat="server" Text="N˙mero Cte"></asp:Label>
+                                    <asp:Label ID="Label2" runat="server" Text="N√∫mero Cte"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtNumCte" runat="server" MaxLength="50" Width="200px" Text='<%# Bind("NumeroCte") %>'
                                         ReadOnly="True"></asp:TextBox>
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label3" runat="server" Text="Cod. AleatÛrio"></asp:Label>
+                                    <asp:Label ID="Label3" runat="server" Text="Cod. Aleat√≥rio"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtCodAleatorio" runat="server" Enabled="False"  OnLoad="txtCodAleatorio_Load" MaxLength="50"
@@ -376,7 +367,7 @@
                             </div>--%>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
-                                    <asp:CheckBox ID="chkGerarContasReceber" runat="server" Checked='<%# Bind("GerarContasReceber") %>' Text="Gerar contas ‡ receber" />
+                                    <asp:CheckBox ID="chkGerarContasReceber" runat="server" Checked='<%# Bind("GerarContasReceber") %>' Text="Gerar contas √† receber" />
                                 </div>
                                 <div class="dtvHeader">
                                     <asp:Label ID="Label5" runat="server" Text="Modelo"></asp:Label>
@@ -388,17 +379,17 @@
                             </div>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label4" runat="server" Text="SÈrie *"></asp:Label>
+                                    <asp:Label ID="Label4" runat="server" Text="S√©rie *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtSerie" runat="server" MaxLength="3" Width="25px" Text='<%# Bind("Serie") %>'
                                         OnLoad="txtSerie_Load">
                                     </asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvTxtSerie" runat="server" ErrorMessage="campo sÈrie n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="rfvTxtSerie" runat="server" ErrorMessage="campo s√©rie n√£o pode ser vazio."
                                         ControlToValidate="txtSerie" ValidationGroup="c" Display="Dynamic">*</asp:RequiredFieldValidator>
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label7" runat="server" Text="Tipo Emiss„o *"></asp:Label>
+                                    <asp:Label ID="Label7" runat="server" Text="Tipo Emiss√£o *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtTipoEmissao" runat="server" MaxLength="160" Width="200px" Text="Normal"
@@ -414,7 +405,7 @@
                                         <asp:ListItem Value="selecione" Text="Selecione um Tipo"></asp:ListItem>
                                         <asp:ListItem Value="0" Text="CT-e Normal"></asp:ListItem>
                                         <asp:ListItem Value="1" Text="CT-e de Complemento de Valores"></asp:ListItem>
-                                        <asp:ListItem Value="2" Text="CT-e de AnulaÁ„o de Valores"></asp:ListItem>
+                                        <asp:ListItem Value="2" Text="CT-e de Anula√ß√£o de Valores"></asp:ListItem>
                                         <asp:ListItem Value="3" Text="CT-e Substituto"></asp:ListItem>
                                     </asp:DropDownList>
                                     <asp:CompareValidator ID="cvdrpTipoCte" ControlToValidate="drpTipoCte" runat="server"
@@ -422,25 +413,25 @@
                                         ValidationGroup="c">*</asp:CompareValidator>
                                 </div>
                                 <div class="dtvHeader" id="divLabelDataAnulacao" style="display:none">
-                                    <asp:Label ID="Label37" runat="server" Text="Data AnulaÁ„o"></asp:Label>
+                                    <asp:Label ID="Label37" runat="server" Text="Data Anula√ß√£o"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow" id="divDataAnulacao" style="display:none">
                                     <uc2:ctrlData ID="ctrlDataAnulacao" runat="server"  DataString='<%# Bind("DataAnulacao")%>'/>
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label10" runat="server" Text="Tipo ServiÁo *"></asp:Label>
+                                    <asp:Label ID="Label10" runat="server" Text="Tipo Servi√ßo *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:DropDownList ID="drpTipoServico" runat="server" Height="20px" Width="180px"
                                         SelectedValue='<%# Bind("TipoServico") %>'>
                                         <asp:ListItem Value="selecione" Text="Selecione um Tipo"></asp:ListItem>
                                         <asp:ListItem Value="0" Text="Normal"></asp:ListItem>
-                                        <asp:ListItem Value="1" Text="SubcontrataÁ„o"></asp:ListItem>
+                                        <asp:ListItem Value="1" Text="Subcontrata√ß√£o"></asp:ListItem>
                                         <asp:ListItem Value="2" Text="Redespacho"></asp:ListItem>
-                                        <asp:ListItem Value="3" Text="Redespacho Intermedi·rio"></asp:ListItem>
+                                        <asp:ListItem Value="3" Text="Redespacho Intermedi√°rio"></asp:ListItem>
                                     </asp:DropDownList>
                                     <asp:CompareValidator ID="cvdrpTipoServico" ControlToValidate="drpTipoServico" runat="server"
-                                        ErrorMessage="Selecione um tipo de serviÁo" ValueToCompare="selecione" Operator="NotEqual"
+                                        ErrorMessage="Selecione um tipo de servi√ßo" ValueToCompare="selecione" Operator="NotEqual"
                                         ValidationGroup="c">*</asp:CompareValidator>
                                 </div>
                             </div>
@@ -465,7 +456,7 @@
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtVlrTot" runat="server" MaxLength="20" onclick="mascaraValor(this, 2); return false;"
                                         Width="140px" Text='<%# Bind("ValorTotal") %>'></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="campo valor total n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="campo valor total n√£o pode ser vazio."
                                         ControlToValidate="txtVlrTot" ValidationGroup="c">*</asp:RequiredFieldValidator>
                                 </div>
                                 <div class="dtvHeader">
@@ -474,7 +465,7 @@
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtValorReceber" runat="server" MaxLength="20" onclick="mascaraValor(this, 2); return false;"
                                         Width="140px" Text='<%# Bind("ValorReceber") %>'></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvtxtValorReceber" runat="server" ErrorMessage="campo valor receber n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="rfvtxtValorReceber" runat="server" ErrorMessage="campo valor receber n√£o pode ser vazio."
                                         ControlToValidate="txtValorReceber" ValidationGroup="c" Display="Dynamic">*</asp:RequiredFieldValidator>
                                 </div>
                             </div>
@@ -488,12 +479,12 @@
                                 </div>
                             </div>
                             <div class="dtvTitulo">
-                                CobranÁa
+                                Cobran√ßa
                             </div>
                             <uc1:ctrlDupl ID="CtrlDupl1" runat="server" ObjCobrancaCte='<%# Bind("ObjCobrancaCte") %>'
                                 TipoDocumentoCte='<%# GetTipoDocumentoCte() %>' />
                             <div class="dtvTitulo">
-                                VeÌculo
+                                Ve√≠culo
                             </div>
                             <uc1:ctrlVeiculoCte ID="CtrlVeiculoCte1" runat="server" ObjVeiculoCte='<%# Bind("ObjVeiculoCte") %>'
                                 TipoDocumentoCte='<%# GetTipoDocumentoCte() %>' />
@@ -525,7 +516,7 @@
                             <uc1:ctrlImpostosCte ID="ctrlImpostosCte" runat="server" ObjImpostoCte='<%# Bind("ObjImpostoCte") %>'
                                 TipoDocumentoCte='<%# GetTipoDocumentoCte() %>' />
                             <div class="dtvTitulo" runat="server" id="lblConhecimento" onload="NaoExibirDadosTerceiros">
-                                Conhecimento Transporte Rodovi·rio
+                                Conhecimento Transporte Rodovi√°rio
                             </div>
                             <div runat="server" id="divCtrlConhecimentoTransRod" onload="NaoExibirDadosTerceiros">
                                 <uc1:ctrlConhecimentoTransRod ID="ctrlConhecimentoTransRod" runat="server" ObjCteRod='<%# Bind("ObjConhecimentoTransporteRodoviario") %>'
@@ -555,7 +546,7 @@
                             <div class="item">
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label21" runat="server" Text="Natureza de OperaÁ„o:"></asp:Label>
+                                        <asp:Label ID="Label21" runat="server" Text="Natureza de Opera√ß√£o:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowROMaior">
                                         <asp:Label runat="server" ID="lblNaturezaOperacaoCod" Visible="true" Text='<%# Eval("CodigoNaturezaOperacao") %>'></asp:Label>
@@ -579,13 +570,13 @@
                                 </div>
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label228" runat="server" Text="Data Emiss„o"></asp:Label>
+                                        <asp:Label ID="Label228" runat="server" Text="Data Emiss√£o"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="Label129" runat="server" Text='<%# Eval("DataEmissao") %>'></asp:Label>
                                     </div>
                                     <div id="Div1" class="dtvHeaderRO" runat="server" onload="ExibirDadosTerceiros">
-                                        <asp:Label ID="Label126" runat="server" Text="Data Entrada/SaÌda"></asp:Label>
+                                        <asp:Label ID="Label126" runat="server" Text="Data Entrada/Sa√≠da"></asp:Label>
                                     </div>
                                     <div id="Div2" class="dtvAlternatingRowRO" runat="server" onload="ExibirDadosTerceiros">
                                         <asp:Label ID="Label227" runat="server" Text='<%# Eval("DataEntradaSaida") %>'></asp:Label>
@@ -605,7 +596,7 @@
                                         <asp:Label runat="server" ID="lblCidadeCte" Visible="true" Text='<%# Eval("NomeCidadeCte") %>'></asp:Label>
                                     </div>
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label17" runat="server" Text="Cidade InÌcio:"></asp:Label>
+                                        <asp:Label ID="Label17" runat="server" Text="Cidade In√≠cio:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label runat="server" ID="lblCidadeInicio" Visible="true" Text='<%# Eval("NomeCidadeInicio") %>'></asp:Label>
@@ -633,13 +624,13 @@
                                 </div>--%>
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label2" runat="server" Text="N˙mero CT-e:"></asp:Label>
+                                        <asp:Label ID="Label2" runat="server" Text="N√∫mero CT-e:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label runat="server" ID="lblNumCte" Text='<%# Eval("NumeroCte") %>'></asp:Label>
                                     </div>
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label3" runat="server" Text="Cod. AleatÛrio:"></asp:Label>
+                                        <asp:Label ID="Label3" runat="server" Text="Cod. Aleat√≥rio:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label runat="server" ID="lblCodAleatorio" Text='<%# Eval("CodAleatorio") %>'></asp:Label>
@@ -653,19 +644,19 @@
                                         <asp:Label ID="lblModelo" runat="server" Text='<%# Eval("Modelo") %>'></asp:Label>
                                     </div>
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label4" runat="server" Text="SÈrie:"></asp:Label>
+                                        <asp:Label ID="Label4" runat="server" Text="S√©rie:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="lblSerie" runat="server" Text='<%# Eval("Serie") %>'></asp:Label>
                                     </div>
                                     <%--<div class="dtvHeaderRO">
-                                        <asp:Label ID="Label6" runat="server" Text="Data Emiss„o:"></asp:Label>
+                                        <asp:Label ID="Label6" runat="server" Text="Data Emiss√£o:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label runat="server" ID="lblDataEmissao" Text='<%# Convert.ToDateTime(Eval("DataEmissao").ToString()).ToShortDateString() %>'></asp:Label>
                                     </div>--%>
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label7" runat="server" Text="Tipo Emiss„o:"></asp:Label>
+                                        <asp:Label ID="Label7" runat="server" Text="Tipo Emiss√£o:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label runat="server" ID="lblTipoEmissao" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.Cte)Container.DataItem).TipoEmissaoString %>'></asp:Label>
@@ -679,7 +670,7 @@
                                         <asp:Label runat="server" ID="lblTipoCte" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.Cte)Container.DataItem).TipoCteString %>'></asp:Label>
                                     </div>
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label10" runat="server" Text="Tipo ServiÁo:"></asp:Label>
+                                        <asp:Label ID="Label10" runat="server" Text="Tipo Servi√ßo:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label runat="server" ID="Label16" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.Cte)Container.DataItem).TipoServicoString %>'></asp:Label>
@@ -688,7 +679,7 @@
                                         <asp:Label ID="Label11" runat="server" Text="Retirada:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
-                                        <asp:Label runat="server" ID="lblRetirada" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.Cte)Container.DataItem).Retirada ? "Sim" : "N„o"  %>'></asp:Label>
+                                        <asp:Label runat="server" ID="lblRetirada" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.Cte)Container.DataItem).Retirada ? "Sim" : "N√£o"  %>'></asp:Label>
                                     </div>
                                 </div>
                                 <div class="dtvRowRO">
@@ -705,10 +696,10 @@
                                         <asp:Label ID="lblValorReceber" runat="server" Text='<%# Eval("ValorReceber", "{0:C}") %>'></asp:Label>
                                     </div>
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="lblGerarContasReceber1" runat="server" Text="Gerar conta ‡ receber:"></asp:Label>
+                                        <asp:Label ID="lblGerarContasReceber1" runat="server" Text="Gerar conta √† receber:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
-                                        <asp:Label ID="lblGerarContasReceber" runat="server" Text='<%# (bool)Eval("GerarContasReceber") ? "Sim" : "N„o" %>'></asp:Label>
+                                        <asp:Label ID="lblGerarContasReceber" runat="server" Text='<%# (bool)Eval("GerarContasReceber") ? "Sim" : "N√£o" %>'></asp:Label>
                                     </div>
                                 </div>
                                 <div class="dtvRowRO">
@@ -737,7 +728,7 @@
                                 <ItemTemplate>
                                     <div class="dtvRowRO">
                                         <div class="dtvHeaderRO">
-                                            <asp:Label ID="Label19" runat="server" Text="N˙mero Duplicata:"></asp:Label>
+                                            <asp:Label ID="Label19" runat="server" Text="N√∫mero Duplicata:"></asp:Label>
                                         </div>
                                         <div class="dtvAlternatingRowRO">
                                             <asp:Label ID="lblNumDupl" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.CobrancaDuplCte)Container.DataItem).NumeroDupl %>'></asp:Label>
@@ -765,7 +756,7 @@
                             <div class="item">
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label23" runat="server" Text="N˙mero Fatura:"></asp:Label>
+                                        <asp:Label ID="Label23" runat="server" Text="N√∫mero Fatura:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="lblNumFatura" runat="server" Text='<%# Eval("ObjCobrancaCte.NumeroFatura") %>'></asp:Label>
@@ -785,7 +776,7 @@
                                 </div>
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label26" runat="server" Text="Valor LÌquido Fatura:"></asp:Label>
+                                        <asp:Label ID="Label26" runat="server" Text="Valor L√≠quido Fatura:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="lblVlrLiquidoFatura" runat="server" Text='<%# Eval("ObjCobrancaCte.ValorLiquidoFatura").ToString() != "0,00" ? Eval("ObjCobrancaCte.ValorLiquidoFatura", "{0:C}") : "" %>'></asp:Label>
@@ -794,7 +785,7 @@
                                         <asp:Label ID="Label116" runat="server" Text="Contas a Pagar:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO" runat="server" visible='<%# IsEntradaTerceiros() %>'>
-                                        <asp:Label ID="Label119" runat="server" Text='<%# ((bool)Eval("ObjCobrancaCte.GerarContasPagar") ? "G" : "N„o g") + "erar contas a pagar" %>'></asp:Label>
+                                        <asp:Label ID="Label119" runat="server" Text='<%# ((bool)Eval("ObjCobrancaCte.GerarContasPagar") ? "G" : "N√£o g") + "erar contas a pagar" %>'></asp:Label>
                                     </div>
                                     <div class="dtvHeaderRO" runat="server" visible='<%# IsEntradaTerceiros() %>'>
                                         <asp:Label ID="Label120" runat="server" Text="Plano de Contas:"></asp:Label>
@@ -808,7 +799,7 @@
                                 DataSource='<%# Eval("ObjVeiculoCte")%>'>
                                 <HeaderTemplate>
                                     <div class="dtvTitulo">
-                                        VeÌculo
+                                        Ve√≠culo
                                     </div>
                                 </HeaderTemplate>
                                 <ItemTemplate>
@@ -842,13 +833,13 @@
                                         <asp:Label ID="lblNomeSeguradora" runat="server" Text='<%# Eval("ObjSeguroCte.NomeSeguradora") %>'></asp:Label>
                                     </div>
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label32" runat="server" Text="Respons·vel Seguro:"></asp:Label>
+                                        <asp:Label ID="Label32" runat="server" Text="Respons√°vel Seguro:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="lblRespSeguro" runat="server" Text='<%# Eval("ObjSeguroCte.DescricaoResponsavelSeguro") %>'></asp:Label>
                                     </div>
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label31" runat="server" Text="N˙mero ApÛlice:"></asp:Label>
+                                        <asp:Label ID="Label31" runat="server" Text="N√∫mero Ap√≥lice:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="lblNumApolice" runat="server" Text='<%# Eval("ObjSeguroCte.NumeroApolice") %>'></asp:Label>
@@ -856,13 +847,13 @@
                                 </div>
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label34" runat="server" Text="N˙mero AverbaÁ„o:"></asp:Label>
+                                        <asp:Label ID="Label34" runat="server" Text="N√∫mero Averba√ß√£o:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="lblNumAverbacao" runat="server" Text='<%# Eval("ObjSeguroCte.NumeroAverbacao") %>'></asp:Label>
                                     </div>
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label38" runat="server" Text="Valor Carga AverbaÁ„o:"></asp:Label>
+                                        <asp:Label ID="Label38" runat="server" Text="Valor Carga Averba√ß√£o:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="lblVlrCargaAverb" runat="server" Text='<%# Eval("ObjSeguroCte.ValorCargaAverbacao").ToString() != "0,00" ? String.Format("{0:C}", Eval("ObjSeguroCte.ValorCargaAverbacao")) : "" %>'></asp:Label>
@@ -875,13 +866,13 @@
                             <div class="item">
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label33" runat="server" Text="Tipo PerÌodo Data:"></asp:Label>
+                                        <asp:Label ID="Label33" runat="server" Text="Tipo Per√≠odo Data:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="lblTpPerData" runat="server" Text='<%# Eval("ObjEntregaCte.DescricaoTipoPeriodoData") %>'></asp:Label>
                                     </div>
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label39" runat="server" Text="Tipo PerÌodo Hora:"></asp:Label>
+                                        <asp:Label ID="Label39" runat="server" Text="Tipo Per√≠odo Hora:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="lblTpPeriodoHora" runat="server" Text='<%# Eval("ObjEntregaCte.DescricaoTipoPeriodoHora") %>'></asp:Label>
@@ -896,7 +887,7 @@
                                 </div>
                                 <div class="dtvRowRO">
                                     <%--<div class="dtvHeaderRO">
-                                        <asp:Label ID="Label41" runat="server" Text="Previs„o inicial:" Visible='<%# Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "3" ||  Eval("ObjEntregaCte.TipoPeriodoHora").ToString() == "3" %>'></asp:Label>
+                                        <asp:Label ID="Label41" runat="server" Text="Previs√£o inicial:" Visible='<%# Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "3" ||  Eval("ObjEntregaCte.TipoPeriodoHora").ToString() == "3" %>'></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="Label42" runat="server" Visible='<%# Eval("ObjEntregaCte.TipoPeriodoData").ToString() == "3" || Eval("ObjEntregaCte.TipoPeriodoHora").ToString() == "4"%>'
@@ -992,7 +983,7 @@
                                 </div>
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label60" runat="server" Text="Outras CaracterÌsticas:"></asp:Label>
+                                        <asp:Label ID="Label60" runat="server" Text="Outras Caracter√≠sticas:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowROMaior">
                                         <asp:Label ID="Label61" runat="server" Text='<%# Eval("ObjInfoCte.OutrasCaract") %>'></asp:Label>
@@ -1030,7 +1021,7 @@
                                         </div>
                                         <div class="dtvRowRO">
                                             <div class="dtvHeaderRO">
-                                                <asp:Label ID="Label68" runat="server" Text="AlÌquota:"></asp:Label>
+                                                <asp:Label ID="Label68" runat="server" Text="Al√≠quota:"></asp:Label>
                                             </div>
                                             <div class="dtvAlternatingRowRO">
                                                 <asp:Label ID="Label70" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.ImpostoCte)Container.DataItem).Aliquota %>'></asp:Label>
@@ -1050,7 +1041,7 @@
                                         </div>
                                         <div class="dtvRowRO">
                                             <div class="dtvHeaderRO">
-                                                <asp:Label ID="Label75" runat="server" Text="AlÌquota ST Retido:"></asp:Label>
+                                                <asp:Label ID="Label75" runat="server" Text="Al√≠quota ST Retido:"></asp:Label>
                                             </div>
                                             <div class="dtvAlternatingRowRO">
                                                 <asp:Label ID="Label76" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.ImpostoCte)Container.DataItem).AliquotaStRetido %>'></asp:Label>
@@ -1062,7 +1053,7 @@
                                                 <asp:Label ID="Label78" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.ImpostoCte)Container.DataItem).ValorStRetido.ToString("C") %>'></asp:Label>
                                             </div>
                                             <div class="dtvHeaderRO">
-                                                <asp:Label ID="Label79" runat="server" Text="Valor CrÈdito:"></asp:Label>
+                                                <asp:Label ID="Label79" runat="server" Text="Valor Cr√©dito:"></asp:Label>
                                             </div>
                                             <div class="dtvAlternatingRowRO">
                                                 <asp:Label ID="Label80" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.ImpostoCte)Container.DataItem).ValorCred.ToString("C") %>'></asp:Label>
@@ -1072,22 +1063,22 @@
                                 </ItemTemplate>
                             </asp:Repeater>
                             <div class="dtvTitulo" runat="server" id="Div6" onload="NaoExibirDadosTerceiros">
-                                Conhecimento Transporte Rodovi·rio
+                                Conhecimento Transporte Rodovi√°rio
                             </div>
                             <div runat="server" id="div12" onload="NaoExibirDadosTerceiros">
                                 <div class="item">
                                     <div class="dtvRowRO">
                                         <div class="dtvHeaderRO">
-                                            <asp:Label ID="Label83" runat="server" Text="LotaÁ„o:"></asp:Label>
+                                            <asp:Label ID="Label83" runat="server" Text="Lota√ß√£o:"></asp:Label>
                                         </div>
                                         <div class="dtvAlternatingRowRO">
-                                            <asp:Label ID="Label84" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.Cte)Container.DataItem).ObjConhecimentoTransporteRodoviario.Lotacao ? "Sim" : "N„o"  %>'></asp:Label>
+                                            <asp:Label ID="Label84" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.Cte)Container.DataItem).ObjConhecimentoTransporteRodoviario.Lotacao ? "Sim" : "N√£o"  %>'></asp:Label>
                                         </div>
                                         <asp:Repeater runat="server" DataSource='<%# Eval("ObjConhecimentoTransporteRodoviario.ObjLacreCteRod") %>'
                                             ID="rptLacre">
                                             <ItemTemplate>
                                                 <div class="dtvHeaderRO">
-                                                    <asp:Label ID="Label85" runat="server" Text="N˙mero Lacre:"></asp:Label>
+                                                    <asp:Label ID="Label85" runat="server" Text="N√∫mero Lacre:"></asp:Label>
                                                 </div>
                                                 <div class="dtvAlternatingRowRO">
                                                     <asp:Label ID="Label86" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.LacreCteRod)Container.DataItem).NumeroLacre%>'></asp:Label>
@@ -1109,7 +1100,7 @@
                                                         <asp:Label ID="Label90" runat="server" Text='<%# Glass.Data.DAL.TransportadorDAO.Instance.GetElement(((WebGlass.Business.ConhecimentoTransporte.Entidade.OrdemColetaCteRod)Container.DataItem).IdTransportador).Nome %>'></asp:Label>
                                                     </div>
                                                     <div class="dtvHeaderRO">
-                                                        <asp:Label ID="Label91" runat="server" Text="N˙mero Ordem Coleta:"></asp:Label>
+                                                        <asp:Label ID="Label91" runat="server" Text="N√∫mero Ordem Coleta:"></asp:Label>
                                                     </div>
                                                     <div class="dtvAlternatingRowRO">
                                                         <asp:Label ID="Label92" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.OrdemColetaCteRod)Container.DataItem).Numero %>'></asp:Label>
@@ -1117,13 +1108,13 @@
                                                 </div>
                                                 <div class="dtvRowRO">
                                                     <div class="dtvHeaderRO">
-                                                        <asp:Label ID="Label93" runat="server" Text="SÈrie:"></asp:Label>
+                                                        <asp:Label ID="Label93" runat="server" Text="S√©rie:"></asp:Label>
                                                     </div>
                                                     <div class="dtvAlternatingRowRO">
                                                         <asp:Label ID="Label94" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.OrdemColetaCteRod)Container.DataItem).Serie %>'></asp:Label>
                                                     </div>
                                                     <div class="dtvHeaderRO">
-                                                        <asp:Label ID="Label95" runat="server" Text="Data Emiss„o:"></asp:Label>
+                                                        <asp:Label ID="Label95" runat="server" Text="Data Emiss√£o:"></asp:Label>
                                                     </div>
                                                     <div class="dtvAlternatingRowRO">
                                                         <asp:Label ID="Label96" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.OrdemColetaCteRod)Container.DataItem).DataEmissao %>'></asp:Label>
@@ -1144,7 +1135,7 @@
                                                         <asp:Label ID="Label98" runat="server" Text='<%# Glass.Data.DAL.FornecedorDAO.Instance.GetElement(((WebGlass.Business.ConhecimentoTransporte.Entidade.ValePedagioCteRod)Container.DataItem).IdFornec).Nomefantasia %>'></asp:Label>
                                                     </div>
                                                     <div class="dtvHeaderRO">
-                                                        <asp:Label ID="Label99" runat="server" Text="N˙mero Compra:"></asp:Label>
+                                                        <asp:Label ID="Label99" runat="server" Text="N√∫mero Compra:"></asp:Label>
                                                     </div>
                                                     <div class="dtvAlternatingRowRO">
                                                         <asp:Label ID="Label100" runat="server" Text='<%# ((WebGlass.Business.ConhecimentoTransporte.Entidade.ValePedagioCteRod)Container.DataItem).NumeroCompra %>'></asp:Label>
@@ -1187,7 +1178,7 @@
                                 </div>
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label111" runat="server" Text="Caract. ServiÁo:"></asp:Label>
+                                        <asp:Label ID="Label111" runat="server" Text="Caract. Servi√ßo:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="Label112" runat="server" Text='<%# Eval("ObjComplCte.CaractServico") %>'></asp:Label>
@@ -1212,7 +1203,7 @@
                             <div class="item">
                                 <%--<div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label115" runat="server" Text="N˙mero SequÍncia"></asp:Label>
+                                        <asp:Label ID="Label115" runat="server" Text="N√∫mero Sequ√™ncia"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowRO">
                                         <asp:Label ID="Label116" runat="server" Text='<%# Eval("ObjParticipanteCte[0].NumSeq") %>'></asp:Label>
@@ -1243,7 +1234,7 @@
                             <div class="item">
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label121" runat="server" Text="Natureza BC do CrÈdito:"></asp:Label>
+                                        <asp:Label ID="Label121" runat="server" Text="Natureza BC do Cr√©dito:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowROMaior">
                                         <asp:Label ID="Label122" runat="server" Text='<%# Eval("ObjEfdCte.DescrNaturezaBcCred") %>'></asp:Label>
@@ -1259,7 +1250,7 @@
                                 </div>
                                 <div class="dtvRowRO" style="height: 30px">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label45" runat="server" Text="Tipo de ContribuiÁ„o Social:"></asp:Label>
+                                        <asp:Label ID="Label45" runat="server" Text="Tipo de Contribui√ß√£o Social:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowROMaior">
                                         <asp:Label ID="Label46" runat="server" Text='<%# Eval("ObjEfdCte.DescrCodCont") %>'></asp:Label>
@@ -1267,7 +1258,7 @@
                                 </div>
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label69" runat="server" Text="Tipo de CrÈdito:"></asp:Label>
+                                        <asp:Label ID="Label69" runat="server" Text="Tipo de Cr√©dito:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowROMaior">
                                         <asp:Label ID="Label103" runat="server" Text='<%# Eval("ObjEfdCte.DescrCodCred") %>'></asp:Label>
@@ -1275,7 +1266,7 @@
                                 </div>
                                 <div class="dtvRowRO">
                                     <div class="dtvHeaderRO">
-                                        <asp:Label ID="Label104" runat="server" Text="Plano de Conta Cont·bil:"></asp:Label>
+                                        <asp:Label ID="Label104" runat="server" Text="Plano de Conta Cont√°bil:"></asp:Label>
                                     </div>
                                     <div class="dtvAlternatingRowROMaior">
                                         <asp:Label ID="Label115" runat="server" Text='<%# Eval("ObjEfdCte.DescrCodCred") %>'></asp:Label>
@@ -1289,38 +1280,38 @@
                             </div>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label21" runat="server" Text="Natureza de OperaÁ„o *"></asp:Label>
+                                    <asp:Label ID="Label21" runat="server" Text="Natureza de Opera√ß√£o *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <uc2:ctrlNaturezaOperacao ID="ctrlNaturezaOperacao" runat="server" CodigoNaturezaOperacao='<%# Bind("IdNaturezaOperacao") %>'
-                                        PermitirVazio="False" ValidationGroup="c" ErrorMessage="Preencha a natureza de operaÁ„o" />
+                                        PermitirVazio="False" ValidationGroup="c" ErrorMessage="Preencha a natureza de opera√ß√£o" />
                                 </div>
                                 <div class="dtvHeader">
                                     <asp:Label ID="Label6" runat="server" Text="Tipo Documento CT-e *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:DropDownList ID="drpTipoDocumentoCte" runat="server" Enabled="false" SelectedValue='<%# Bind("TipoDocumentoCte") %>'>
-                                        <asp:ListItem Value="2">SaÌda</asp:ListItem>
+                                        <asp:ListItem Value="2">Sa√≠da</asp:ListItem>
                                         <asp:ListItem Value="3">Entrada (terceiros)</asp:ListItem>
                                     </asp:DropDownList>
                                 </div>
                             </div>
                             <div class="dtvRow" runat="server" id="terceiros1" onload="ExibirDadosTerceiros">
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label2" runat="server" Text="N˙mero CT-e *"></asp:Label>
+                                    <asp:Label ID="Label2" runat="server" Text="N√∫mero CT-e *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtNumCte" runat="server" MaxLength="50" Width="200px" Text='<%# Bind("NumeroCte") %>'
                                         onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvNumCte" runat="server" ErrorMessage="N˙mero do CT-e deve ser preenchido"
+                                    <asp:RequiredFieldValidator ID="rfvNumCte" runat="server" ErrorMessage="N√∫mero do CT-e deve ser preenchido"
                                         ControlToValidate="txtNumCte" Display="Dynamic" ValidationGroup="c">*</asp:RequiredFieldValidator>
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label36" runat="server" Text="Data Emiss„o *"></asp:Label>
+                                    <asp:Label ID="Label36" runat="server" Text="Data Emiss√£o *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <uc2:ctrlData ID="ctrlDataEmissao" runat="server" ReadOnly="ReadWrite" DataNullable='<%# Bind("DataEmissao") %>'
-                                        ValidateEmptyText="true" ValidationGroup="c" ErrorMessage="Campo Data Emiss„o deve ser preenchido."
+                                        ValidateEmptyText="true" ValidationGroup="c" ErrorMessage="Campo Data Emiss√£o deve ser preenchido."
                                         ExibirHoras="True" />
                                 </div>
                             </div>
@@ -1332,11 +1323,11 @@
                                     <asp:TextBox ID="txtChaveAcesso" runat="server" MaxLength="50" Width="200px" Text='<%# Bind("ChaveAcesso") %>'></asp:TextBox>
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label126" runat="server" Text="Data Entrada/SaÌda"></asp:Label>
+                                    <asp:Label ID="Label126" runat="server" Text="Data Entrada/Sa√≠da"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <uc2:ctrlData ID="ctrlDataEntradaSaida" runat="server" ReadOnly="ReadWrite" DataNullable='<%# Bind("DataEntradaSaida") %>'
-                                        ValidateEmptyText="false" ValidationGroup="c" ErrorMessage="Campo Data Entrada SaÌda deve ser preenchido."
+                                        ValidateEmptyText="false" ValidationGroup="c" ErrorMessage="Campo Data Entrada Sa√≠da deve ser preenchido."
                                         ExibirHoras="True" />
                                 </div>
                             </div>
@@ -1347,18 +1338,18 @@
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtCidadeCte" Text='<%# Glass.Data.DAL.CidadeDAO.Instance.GetNome(((WebGlass.Business.ConhecimentoTransporte.Entidade.Cte)Container.DataItem).IdCidadeCte) %>'
                                         runat="server" MaxLength="50" Enabled="False" Width="200px" ReadOnly="True"></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeCte" runat="server" ErrorMessage="campo cidade n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeCte" runat="server" ErrorMessage="campo cidade n√£o pode ser vazio."
                                         ControlToValidate="txtCidadeCte" ValidationGroup="c" Display="Dynamic">*</asp:RequiredFieldValidator>
                                     <asp:ImageButton ID="imgPesq" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClientClick="openWindow(500, 700, '../Utils/SelCidade.aspx?controleTxt=txtCidadeCte&controleHdf=hdfCidadeCte'); return false;" />
                                     <asp:HiddenField ID="hdfCidadeCte" runat="server" Value='<%# Bind("IdCidadeCte") %>' />
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label17" runat="server" Text="Cidade InÌcio *"></asp:Label>
+                                    <asp:Label ID="Label17" runat="server" Text="Cidade In√≠cio *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtCidadeInicio" Text='<%# Glass.Data.DAL.CidadeDAO.Instance.GetNome(((WebGlass.Business.ConhecimentoTransporte.Entidade.Cte)Container.DataItem).IdCidadeInicio) %>'
                                         runat="server" Enabled="False" MaxLength="50" Width="200px" ReadOnly="True"></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeInicio" runat="server" ErrorMessage="campo cidade inÌcio n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeInicio" runat="server" ErrorMessage="campo cidade in√≠cio n√£o pode ser vazio."
                                         ControlToValidate="txtCidadeInicio" ValidationGroup="c" Display="Dynamic">*</asp:RequiredFieldValidator>
                                     <asp:ImageButton ID="imgPesq1" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClientClick="openWindow(500, 700, '../Utils/SelCidade.aspx?controleTxt=txtCidadeInicio&controleHdf=hdfCidadeInicio'); return false;" />
                                     <asp:HiddenField ID="hdfCidadeInicio" runat="server" Value='<%# Bind("IdCidadeInicio") %>' />
@@ -1371,7 +1362,7 @@
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtCidadeFim" runat="server" Text='<%# Glass.Data.DAL.CidadeDAO.Instance.GetNome(((WebGlass.Business.ConhecimentoTransporte.Entidade.Cte)Container.DataItem).IdCidadeFim) %>'
                                         Enabled="False" MaxLength="50" Width="200px" ReadOnly="True"></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeFim" runat="server" ErrorMessage="campo cidade fim n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="rfvTxtCidadeFim" runat="server" ErrorMessage="campo cidade fim n√£o pode ser vazio."
                                         ControlToValidate="txtCidadeFim" ValidationGroup="c" Display="Dynamic">*</asp:RequiredFieldValidator>
                                     <asp:ImageButton ID="imgPesq2" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClientClick="openWindow(500, 700, '../Utils/SelCidade.aspx?controleTxt=txtCidadeFim&controleHdf=hdfCidadeFim'); return false;" />
                                     <asp:HiddenField ID="hdfCidadeFim" runat="server" Value='<%# Bind("IdCidadeFim") %>' />
@@ -1409,14 +1400,14 @@
                             </div>--%>
                             <%--<div class="dtvRow">
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label2" runat="server" Text="N˙mero Cte"></asp:Label>
+                                    <asp:Label ID="Label2" runat="server" Text="N√∫mero Cte"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtNumCte" runat="server" MaxLength="50" Width="200px" Text='<%# Bind("NumeroCte") %>'
                                         ReadOnly="True"></asp:TextBox>
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label3" runat="server" Text="Cod. AleatÛrio"></asp:Label>
+                                    <asp:Label ID="Label3" runat="server" Text="Cod. Aleat√≥rio"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtCodAleatorio" runat="server" Enabled="False"  OnLoad="txtCodAleatorio_Load" MaxLength="50"
@@ -1425,7 +1416,7 @@
                             </div>--%>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
-                                    <asp:CheckBox ID="chkGerarContasReceber" runat="server" Checked='<%# Bind("GerarContasReceber") %>' Text="Gerar contas ‡ receber" />
+                                    <asp:CheckBox ID="chkGerarContasReceber" runat="server" Checked='<%# Bind("GerarContasReceber") %>' Text="Gerar contas √† receber" />
                                 </div>
                                 <div class="dtvAlternatingRow">
                                 </div>
@@ -1439,17 +1430,17 @@
                             </div>
                             <div class="dtvRow">
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label4" runat="server" Text="SÈrie *"></asp:Label>
+                                    <asp:Label ID="Label4" runat="server" Text="S√©rie *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtSerie" runat="server" MaxLength="3" Width="25px" Text='<%# Bind("Serie") %>'
                                         OnLoad="txtSerie_Load">
                                     </asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvTxtSerie" runat="server" ErrorMessage="campo sÈrie n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="rfvTxtSerie" runat="server" ErrorMessage="campo s√©rie n√£o pode ser vazio."
                                         ControlToValidate="txtSerie" ValidationGroup="c" Display="Dynamic">*</asp:RequiredFieldValidator>
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label7" runat="server" Text="Tipo Emiss„o *"></asp:Label>
+                                    <asp:Label ID="Label7" runat="server" Text="Tipo Emiss√£o *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtTipoEmissao" runat="server" MaxLength="160" Width="200px" Text='<%# Eval("TipoEmissaoString") %>'
@@ -1466,7 +1457,7 @@
                                         <asp:ListItem Value="selecione" Text="Selecione um Tipo"></asp:ListItem>
                                         <asp:ListItem Value="0" Text="CT-e Normal"></asp:ListItem>
                                         <asp:ListItem Value="1" Text="CT-e de Complemento de Valores"></asp:ListItem>
-                                        <asp:ListItem Value="2" Text="CT-e de AnulaÁ„o de Valores"></asp:ListItem>
+                                        <asp:ListItem Value="2" Text="CT-e de Anula√ß√£o de Valores"></asp:ListItem>
                                         <asp:ListItem Value="3" Text="CT-e Substituto"></asp:ListItem>
                                     </asp:DropDownList>
                                     <asp:CompareValidator ID="cvdrpTipoCte" ControlToValidate="drpTipoCte" runat="server"
@@ -1474,24 +1465,24 @@
                                         ValidationGroup="c">*</asp:CompareValidator>
                                 </div>
                                 <div class="dtvHeader">
-                                    <asp:Label ID="Label10" runat="server" Text="Tipo ServiÁo *"></asp:Label>
+                                    <asp:Label ID="Label10" runat="server" Text="Tipo Servi√ßo *"></asp:Label>
                                 </div>
                                 <div class="dtvAlternatingRow">
                                     <asp:DropDownList ID="drpTipoServico" runat="server" Height="20px" Width="180px"
                                         SelectedValue='<%# Bind("TipoServico") %>'>
                                         <asp:ListItem Value="selecione" Text="Selecione um Tipo"></asp:ListItem>
                                         <asp:ListItem Value="0" Text="Normal"></asp:ListItem>
-                                        <asp:ListItem Value="1" Text="SubcontrataÁ„o"></asp:ListItem>
+                                        <asp:ListItem Value="1" Text="Subcontrata√ß√£o"></asp:ListItem>
                                         <asp:ListItem Value="2" Text="Redespacho"></asp:ListItem>
-                                        <asp:ListItem Value="3" Text="Redespacho Intermedi·rio"></asp:ListItem>
+                                        <asp:ListItem Value="3" Text="Redespacho Intermedi√°rio"></asp:ListItem>
                                     </asp:DropDownList>
                                     <asp:CompareValidator ID="cvdrpTipoServico" ControlToValidate="drpTipoServico" runat="server"
-                                        ErrorMessage="Selecione um tipo de serviÁo" ValueToCompare="selecione" Operator="NotEqual"
+                                        ErrorMessage="Selecione um tipo de servi√ßo" ValueToCompare="selecione" Operator="NotEqual"
                                         ValidationGroup="c">*</asp:CompareValidator>
                                 </div>
                             </div>
                             <div class="dtvHeader" id="divLabelDataAnulacao" style="display:none">
-                                    <asp:Label ID="Label37" runat="server" Text="Data AnulaÁ„o"></asp:Label>
+                                    <asp:Label ID="Label37" runat="server" Text="Data Anula√ß√£o"></asp:Label>
                             </div>
                             <div class="dtvAlternatingRow" id="divDataAnulacao" style="display:none">
                                 <uc2:ctrlData ID="ctrlDataAnulacao" runat="server"  DataString='<%# Bind("DataAnulacao")%>'/>
@@ -1517,7 +1508,7 @@
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtVlrTot" runat="server" MaxLength="20" onclick="mascaraValor(this, 2); return false;"
                                         Width="140px" Text='<%# Bind("ValorTotal", "{0:C}") %>'></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvtxtValorTotal" runat="server" ErrorMessage="campo valor total n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="rfvtxtValorTotal" runat="server" ErrorMessage="campo valor total n√£o pode ser vazio."
                                         ControlToValidate="txtVlrTot" ValidationGroup="c" Display="Dynamic">*</asp:RequiredFieldValidator>
                                 </div>
                                 <div class="dtvHeader">
@@ -1526,7 +1517,7 @@
                                 <div class="dtvAlternatingRow">
                                     <asp:TextBox ID="txtValorReceber" runat="server" MaxLength="20" onclick="mascaraValor(this, 2); return false;"
                                         Width="140px" Text='<%# Bind("ValorReceber", "{0:C}") %>'></asp:TextBox>
-                                    <asp:RequiredFieldValidator ID="rfvtxtValorReceber" runat="server" ErrorMessage="campo valor receber n„o pode ser vazio."
+                                    <asp:RequiredFieldValidator ID="rfvtxtValorReceber" runat="server" ErrorMessage="campo valor receber n√£o pode ser vazio."
                                         ControlToValidate="txtValorReceber" ValidationGroup="c" Display="Dynamic">*</asp:RequiredFieldValidator>
                                 </div>
                             </div>
@@ -1540,12 +1531,12 @@
                                 </div>
                             </div>
                             <div class="dtvTitulo">
-                                CobranÁa
+                                Cobran√ßa
                             </div>
                             <uc1:ctrlDupl ID="CtrlDupl1" runat="server" ObjCobrancaCte='<%# Bind("ObjCobrancaCte") %>'
                                 TipoDocumentoCte='<%# GetTipoDocumentoCte() %>' />
                             <div class="dtvTitulo">
-                                VeÌculo
+                                Ve√≠culo
                             </div>
                             <uc1:ctrlVeiculoCte ID="CtrlVeiculoCte1" runat="server" ObjVeiculoCte='<%# Bind("ObjVeiculoCte") %>'
                                 TipoDocumentoCte='<%# GetTipoDocumentoCte() %>' />
@@ -1577,7 +1568,7 @@
                             <uc1:ctrlImpostosCte ID="ctrlImpostosCte" runat="server" ObjImpostoCte='<%# Bind("ObjImpostoCte") %>'
                                 TipoDocumentoCte='<%# GetTipoDocumentoCte() %>' />
                             <div runat="server" id="divConhecimento" class="dtvTitulo" onload="NaoExibirDadosTerceiros">
-                                Conhecimento Transporte Rodovi·rio
+                                Conhecimento Transporte Rodovi√°rio
                             </div>
                             <div runat="server" id="divctrlConhecimentoTransRod" class="dtvTitulo" onload="NaoExibirDadosTerceiros">
                                 <uc1:ctrlConhecimentoTransRod ID="ctrlConhecimentoTransRod" runat="server" ObjCteRod='<%# Bind("ObjConhecimentoTransporteRodoviario") %>'
@@ -1623,12 +1614,12 @@
                                 OnClientClick="return confirm(&quot;Tem certeza que deseja finalizar esse CTe?&quot;)"
                                 OnLoad="btnEmitirFinalizar_Load" Text="Finalizar" />
                             <asp:Button ID="btnPreVisualizar" runat="server" OnClick="btnPreVisualizar_Click"
-                                OnLoad="btnPreVisualizar_Load" Text="PrÈ-visualizar" ToolTip="Exibe uma prÈvia de como ficar· o DACTE apÛs emiss„o do cte." />
+                                OnLoad="btnPreVisualizar_Load" Text="Pr√©-visualizar" ToolTip="Exibe uma pr√©via de como ficar√° o DACTE ap√≥s emiss√£o do cte." />
                             <asp:Button ID="btnVoltar" runat="server" CausesValidation="false" OnClick="btnCancelar_Click"
                                 Text="Voltar" />
                             <asp:ImageButton ID="imgObsLancFiscal" runat="server" ImageUrl="~/Images/Nota.gif"
                                 OnClientClick='<%# "openWindow(600, 800, \"../Utils/SetObsLancFiscal.aspx?idCte=" + Eval("IdCte") + "\"); return false" %>'
-                                ToolTip="ObservaÁıes do LanÁamento Fiscal" />
+                                ToolTip="Observa√ß√µes do Lan√ßamento Fiscal" />
                             <asp:ImageButton ID="imgAjustes" runat="server" ImageUrl="~/Images/dinheiro.gif"
                                 OnClientClick='<%# Eval("IdCte", "openWindow(600, 950, \"../Listas/LstAjusteDocumentoFiscal.aspx?idCte={0}\"); return false;") %>'
                                 ToolTip="Ajustes do Documento Fiscal" />
@@ -1637,7 +1628,7 @@
                     </asp:TemplateField>
                 </Fields>
             </asp:DetailsView>
-            * campos obrigatÛrios
+            * campos obrigat√≥rios
         </div>
         <div class="dtv">
             <div id="lnkProduto" runat="server">
@@ -1709,7 +1700,7 @@
                                 <asp:Label ID="lblEmitenteF" runat="server" Text='<%# Eval("NomeEmitente") %>'></asp:Label>
                             </FooterTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Data Emiss„o" SortExpression="DataEmissao">
+                        <asp:TemplateField HeaderText="Data Emiss√£o" SortExpression="DataEmissao">
                             <ItemTemplate>
                                 <asp:Label ID="lblDataEmissao" runat="server" Text='<%# Eval("DataEmissao") %>'></asp:Label>
                             </ItemTemplate>

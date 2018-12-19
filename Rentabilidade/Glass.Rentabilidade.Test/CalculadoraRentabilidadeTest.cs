@@ -30,7 +30,6 @@ namespace Glass.Rentabilidade.Test
 
             calculo.Formula = "PrecoCusto2 + CustoFinanceiro + ICMSCompra + ICMSVenda + SubstituicaoCompras + IPICompra + IPIVenda + Comissao + CustoADM + TOTIMPFED + Extras";
 
-
             var calculadora = new CalculadoraRentabilidade(new ProvedorIndicadorFinanceiro(indicadoresFinanceiros), calculo);
             calculadora.Preparar();
 

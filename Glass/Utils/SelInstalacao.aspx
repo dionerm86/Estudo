@@ -110,6 +110,11 @@
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click" />
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan="6" align="center">
+                            <asp:CheckBox ID="chkCanceladas" runat="server" Text="Buscar canceladas" AutoPostBack="True" />
+                        </td>
+                    </tr>
                 </table>
             </td>
         </tr>
@@ -140,7 +145,7 @@
                     </Columns>
                     <PagerStyle />
                     <EditRowStyle />
-                    <AlternatingRowStyle />
+                    <AlternatingRowStyle /> 
                 </asp:GridView>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsInstalacao" runat="server" SelectMethod="GetListAbertas"
                     TypeName="Glass.Data.DAL.InstalacaoDAO" EnablePaging="True" MaximumRowsParameterName="pageSize"
@@ -157,6 +162,8 @@
                             Type="String" />
                         <asp:ControlParameter ControlID="drpLoja" Name="idLoja" PropertyName="SelectedValue"
                             Type="UInt32" />
+                        <asp:ControlParameter ControlID="chkCanceladas" Name="buscarCanceladas" PropertyName="Checked"
+                Type="Boolean" DefaultValue="false"/>
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.LojaDAO">

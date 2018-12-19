@@ -111,19 +111,24 @@ namespace Glass.Data.DAL
             return base.Update(objUpdate);
         }
 
-        public override int DeleteByPrimaryKey(uint Key)
+        public override int DeleteByPrimaryKey(uint key)
+        {
+            return this.DeleteByPrimaryKey(null, (int)key);
+        }
+
+        public override int DeleteByPrimaryKey(GDASession sessao, int key)
         {
             // Verifica se este grupo medida projeto está associado a alguma medida de projeto
-            if (CurrentPersistenceObject.ExecuteSqlQueryCount("Select Count(*) From medida_projeto Where idGrupoMedProj=" + Key) > 0)
+            if (CurrentPersistenceObject.ExecuteSqlQueryCount("Select Count(*) From medida_projeto Where idGrupoMedProj=" + key) > 0)
                 throw new Exception("Esse grupo de medidas não pode ser excluído pois existem medidas associadas a ele.");
 
-            //Verifica se este grupo medida projeto está associado a algum arquivo calcengine variável
-            GDAParameter p = new GDAParameter("?variavelsistema", ObtemDescricao(Key));
+            // Verifica se este grupo medida projeto está associado a algum arquivo calcengine variável
+            GDAParameter p = new GDAParameter("?variavelsistema", ObtemDescricao((uint)key));
             if (CurrentPersistenceObject.ExecuteSqlQueryCount("Select Count(*) From arquivo_calcengine_variavel Where variavelsistema=?variavelsistema", p) > 0)
                 throw new Exception("Esse grupo de medidas não pode ser excluído pois existem arquivos calcengine variáveis associadas a ele.");
 
-            LogAlteracaoDAO.Instance.ApagaLogGrupoMedidaProjeto(Key);
-            return base.DeleteByPrimaryKey(Key);
+            LogAlteracaoDAO.Instance.ApagaLogGrupoMedidaProjeto((uint)key);
+            return base.DeleteByPrimaryKey(sessao, key);
         }
 
         public override int Delete(GrupoMedidaProjeto objDelete)

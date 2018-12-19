@@ -1,4 +1,5 @@
-﻿<%@ Page Title="Cadastro de Orçamento" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadOrcamento.aspx.cs"
+﻿
+<%@ Page Title="Cadastro de Orçamento" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadOrcamento.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.CadOrcamento" %>
 
 <%@ Register Src="../Controls/ctrlTextBoxFloat.ascx" TagName="ctrlTextBoxFloat" TagPrefix="uc1" %>
@@ -562,7 +563,7 @@
             if (recalcularOrcamento(idOrcamento, perguntar, "loading", tipoEntregaNovo, idClienteNovo)) {
                 if (lnkGerarPedido == null) {
                     alert("Orçamento recalculado com sucesso!");
-                    redirectUrl(window.location.href);
+                    redirectUrl(window.location.href.replace("&atualizar=true",""));
                 }
             }
         }

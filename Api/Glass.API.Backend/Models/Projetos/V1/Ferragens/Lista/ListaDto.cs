@@ -33,6 +33,7 @@ namespace Glass.API.Backend.Models.Projetos.V1.Ferragens.Lista
             {
                 Excluir = UserInfo.GetUserInfo.IsAdminSync,
                 AlterarSituacao = UserInfo.GetUserInfo.IsAdminSync,
+                LogAlteracoes = Glass.Data.DAL.LogAlteracaoDAO.Instance.TemRegistro(Glass.Data.Model.LogAlteracao.TabelaAlteracao.Ferragem, (uint)this.Id, null),
             };
         }
 

@@ -152,9 +152,41 @@
         </tr>
         <tr>
             <td align="center">
-                <table>
+                                <table>
                     <tr>
-                        <td>
+                        <td align="left" class="dtvHeader" nowrap="nowrap">
+                            NF/Pedido
+                        </td>
+                        <td align="left" nowrap="nowrap" valign="middle">
+                            <asp:TextBox ID="txtNf" runat="server" MaxLength="20"></asp:TextBox>
+                        </td>
+                        <td align="left" class="dtvHeader" nowrap="nowrap">
+                            Data entr. fábrica
+                        </td>
+                        <td align="left" nowrap="nowrap">
+                            <uc2:ctrlData id="ctrlDataFabrica" runat="server" readonly="ReadWrite" />
+                        </td>
+                    </tr>
+                    <tr id="trFormaPgto">
+                        <td align="left" class="dtvHeader" nowrap="nowrap" >
+                            Forma Pagto.
+                        </td>
+                        <td align="left" nowrap="nowrap" >
+                            <table cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td>
+                                        <asp:DropDownList ID="drpFormaPagto" runat="server" onchange="formaPagtoChange(this);"
+                                            DataSourceID="odsFormaPagto" DataTextField="Descricao" DataValueField="IdFormaPagto">
+                                        </asp:DropDownList>
+                                    </td>
+                                    <td>
+                                        &nbsp;<asp:CheckBox ID="chkBoletoChegou" runat="server" Text="Boleto Chegou" />
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td align="left" class="dtvHeader" nowrap="nowrap">
                             Número de parcelas
                         </td>
                         <td>
@@ -183,6 +215,9 @@
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsPlanoContas" runat="server" SelectMethod="GetPlanoContasCompra"
                     TypeName="Glass.Data.DAL.PlanoContasDAO">
+                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForCompra"
+                    TypeName="Glass.Data.DAL.FormaPagtoDAO">
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

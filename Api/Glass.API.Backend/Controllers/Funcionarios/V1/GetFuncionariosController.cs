@@ -3,9 +3,12 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
+using Glass.Data.Helper;
 using Swashbuckle.Swagger.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -17,6 +20,20 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
     /// </summary>
     public partial class FuncionariosController : BaseController
     {
+        /// <summary>
+        /// Recupera as configurações usadas pela tela de listagem de pedidos.
+        /// </summary>
+        /// <param name="id">O identificador do pedido.</param>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("{id}/configuracoes")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Funcionarios.V1.Configuracoes.DetalheDto))]
+        public IHttpActionResult ObterConfiguracoesDetalhePedido(int id)
+        {
+            var configuracoes = new Models.Funcionarios.V1.Configuracoes.DetalheDto();
+            return this.Item(configuracoes);
+        }
+
         /// <summary>
         /// Obtém uma lista de funcionários que realizaram finalização de pedidos.
         /// </summary>
@@ -44,7 +61,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         /// Obtém uma lista de vendedores.
         /// </summary>
         /// <param name="idVendedorAtual">Identificador do vendedor já selecionado no pedido/orçamento/PCP.</param>
-        /// <param name="orcamento">O resultado deve considerar os emissores de orçamentos?</param>
+        /// <param name="orcamento">Indica se o resultado deve considerar os emissores de orçamentos.</param>
         /// <returns>Uma lista JSON com os dados básicos dos vendedores.</returns>
         [HttpGet]
         [Route("vendedores")]
@@ -54,7 +71,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var funcionarios = !orcamento.HasValue || !orcamento.Value
+                var funcionarios = !orcamento.GetValueOrDefault()
                     ? FuncionarioDAO.Instance.GetVendedores()
                     : FuncionarioDAO.Instance.GetVendedoresOrcamento(sessao, idVendedorAtual);
 
@@ -285,27 +302,126 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         }
 
         /// <summary>
-        /// Obtém uma lista de funcionários ativos associados à clientes.
+        /// Recupera as configurações usadas pela tela de listagem de funcionários.
         /// </summary>
-        /// <returns>Uma lista JSON com os dados básicos dos funcionários ativos associados à clientes.</returns>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
-        [Route("sugestoesCliente")]
-        [SwaggerResponse(200, "Funcionários encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Funcionários não encontrados.")]
-        public IHttpActionResult ObterFuncionariosSugestao()
+        [Route("configuracoes")]
+        [SwaggerResponse(200, "Configurações encontradas.", Type = typeof(Models.Funcionarios.V1.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesListaFuncionarios()
         {
             using (var sessao = new GDATransaction())
             {
+                var configuracoes = new Models.Funcionarios.V1.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de funcionários.
+        /// </summary>
+        /// <param name="filtro">Os filtros para a busca dos funcionários.</param>
+        /// <returns>Uma lista JSON com os dados dos funcionários.</returns>
+        [HttpGet]
+        [Route("")]
+        [SwaggerResponse(200, "Funcionários sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Funcionarios.V1.Lista.ListaDto>))]
+        [SwaggerResponse(204, "Funcionários não encontradas para o filtro informado.")]
+        [SwaggerResponse(206, "Funcionários paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Funcionarios.V1.Lista.ListaDto>))]
+        [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterListaFuncionarios([FromUri] Models.Funcionarios.V1.Lista.FiltroDto filtro)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                filtro = filtro ?? new Models.Funcionarios.V1.Lista.FiltroDto();
+
                 var funcionarios = Microsoft.Practices.ServiceLocation.ServiceLocator
                     .Current.GetInstance<Global.Negocios.IFuncionarioFluxo>()
-                    .ObterFuncionariosSugestao()
-                    .Select(f => new IdNomeDto
+                    .PesquisarFuncionarios(
+                        filtro.IdLoja,
+                        filtro.Nome,
+                        filtro.Situacao,
+                        filtro.ApenasRegistrados,
+                        filtro.IdTipoFuncionario,
+                        filtro.IdSetor,
+                        filtro.PeriodoDataNascimentoInicio,
+                        filtro.PeriodoDataNascimentoFim);
+
+                ((Colosoft.Collections.IVirtualList)funcionarios).Configure(filtro.NumeroRegistros);
+                ((Colosoft.Collections.ISortableCollection)funcionarios).ApplySort(filtro.ObterTraducaoOrdenacao());
+
+                return this.ListaPaginada(
+                    funcionarios
+                        .Skip(filtro.ObterPrimeiroRegistroRetornar())
+                        .Take(filtro.NumeroRegistros)
+                        .Select(f => new Models.Funcionarios.V1.Lista.ListaDto(f)),
+                    filtro,
+                    () => funcionarios.Count);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de funcionários.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos de tipos de funcionários.</returns>
+        [HttpGet]
+        [Route("tiposFuncionario")]
+        [SwaggerResponse(200, "Tipos encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos não encontrados.")]
+        public IHttpActionResult ObterTipos()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = TipoFuncDAO.Instance.GetAll(sessao)
+                    .Select(t => new IdNomeDto
                     {
-                        Id = f.Id,
-                        Nome = f.Name,
+                        Id = t.IdTipoFuncionario,
+                        Nome = t.Descricao,
                     });
 
-                return this.Lista(funcionarios);
+                return this.Lista(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera os detalhes de um funcionário.
+        /// </summary>
+        /// <param name="id">O identificador do funcionário.</param>
+        /// <returns>Um objeto JSON com os dados do funcionário.</returns>
+        [HttpGet]
+        [Route("{id:int}")]
+        [SwaggerResponse(200, "Funcionário encontrado.", Type = typeof(Models.Funcionarios.V1.Detalhe.DetalheDto))]
+        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Funcionário não encontrado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterFuncionario(int id)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var validacao = this.ValidarIdFuncionario(id);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
+                var funcionarioFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Global.Negocios.IFuncionarioFluxo>();
+
+                var funcionario = funcionarioFluxo.ObtemFuncionario(id);
+
+                if (funcionario == null || (funcionario.AdminSync && !UserInfo.GetUserInfo.IsAdminSync))
+                {
+                    return this.NaoEncontrado(string.Format("Funcionário {0} não encontrado.", id));
+                }
+
+                try
+                {
+                    var detalhe = new Models.Funcionarios.V1.Detalhe.DetalheDto(funcionario);
+                    return this.Item(detalhe);
+                }
+                catch (Exception e)
+                {
+                    return this.ErroInternoServidor("Erro ao recuperar o funcionário.", e);
+                }
             }
         }
     }

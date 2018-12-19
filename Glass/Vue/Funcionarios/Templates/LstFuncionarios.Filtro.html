@@ -1,0 +1,44 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label for="idLoja">Loja</label>
+            <lista-selecao-lojas v-bind:loja.sync="lojaAtual" v-bind:ativas="true"></lista-selecao-lojas>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="nome">Nome</label>
+            <input id="nome" type="text" v-model="filtroAtual.nome" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Situacão</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="situacaoAtual"
+                v-bind:funcao-recuperar-itens="obterItensFiltroSituacao"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="apenasRegistrados" type="checkbox" v-model="filtroAtual.apenasRegistrados" />
+            <label for="apenasRegistrados">Apenas Registrados</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Tipo de Funcionário</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoFuncionarioAtual"
+                v-bind:funcao-recuperar-itens="obterItensFiltroTiposFuncionario"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group" v-if="exibirFiltroSetor">
+            <label>Setor</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="setorAtual" v-bind:funcao-recuperar-itens="obterItensFiltroSetor"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Período Nasc.</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoDataNascimentoInicio" v-bind:data-hora-final.sync="filtroAtual.periodoDataNascimentoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

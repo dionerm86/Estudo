@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="Config.aspx.cs" Inherits="Glass.UI.Web.Utils.SystemConfig" Title="ConfiguraÁıes" %>
+Ôªø<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="Config.aspx.cs" Inherits="Glass.UI.Web.Utils.SystemConfig" Title="Configura√ß√µes" %>
 
 <%@ Reference Control="~/Controls/ctrlLogPopup.ascx" %>
 <%@ Register Src="~/Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
@@ -35,7 +35,7 @@
         }
     </style>
     <script type="text/javascript">
-        // Vari·veis
+        // Vari√°veis
         var bBanco = false;
         var salvando = false;
         var botaoSalvarPrecoClicado = false;
@@ -47,18 +47,18 @@
         }
 
         // -----------------------------------
-        // FunÁ„o que muda a aba ativa na tela
+        // Fun√ß√£o que muda a aba ativa na tela
         // -----------------------------------
         function mudaAba(nomeAba) {
             if (salvando)
                 return;
 
-            // vari·vel que contÈm os identificadores das abas
+            // vari√°vel que cont√©m os identificadores das abas
             var abas = new Array("geral", "comissao", "precoProduto", "financeiro", "planoconta", "orcamento", "pedido", "projeto", "nfe", "pcp", "liberarPedido", "rentabilidade", "internas");
 
             // percorre todas as abas
             for (i = 0; i < abas.length; i++) {
-                // recupera o tÌtulo de aba atual e altera dependendo do par‚metro
+                // recupera o t√≠tulo de aba atual e altera dependendo do par√¢metro
                 var aba = document.getElementById("aba_" + abas[i]);
                 var borda = (abas[i] == nomeAba) ? "1px solid gray" : "1px solid silver";
                 var bordaInferior = (abas[i] == nomeAba) ? "1px solid white" : "";
@@ -68,7 +68,7 @@
                 aba.style.borderRight = borda;
                 aba.style.borderBottom = bordaInferior;
 
-                // recupera a aba atual e exibe/esconde dependendo do par‚metro
+                // recupera a aba atual e exibe/esconde dependendo do par√¢metro
                 var aba = document.getElementById(abas[i]);
                 aba.style.display = (abas[i] == nomeAba) ? "block" : "none";
             }
@@ -82,7 +82,7 @@
         }
 
         // ---------------------------------------------------------------------------------
-        // FunÁ„o respons·vel por habilitar/desabilitar o campo de texto do ajuste de preÁo.
+        // Fun√ß√£o respons√°vel por habilitar/desabilitar o campo de texto do ajuste de pre√ßo.
         // ---------------------------------------------------------------------------------
         function ajustePrecoCheck(checkbox, texto, hidden) {
             texto.disabled = !checkbox.checked;
@@ -90,23 +90,23 @@
         }
 
         // ------------------------------------------------------------------
-        // FunÁ„o respons·vel por alterar o preÁo do produto no campo hidden.
+        // Fun√ß√£o respons√°vel por alterar o pre√ßo do produto no campo hidden.
         // ------------------------------------------------------------------
         function alteraPreco(texto, hidden) {
             hidden.value = texto.value;
         }
 
         // --------------------------------------------------------------------------------------
-        // FunÁ„o respons·vel por garantir que todos os dados sejam inseridos no ajuste de preÁo.
+        // Fun√ß√£o respons√°vel por garantir que todos os dados sejam inseridos no ajuste de pre√ßo.
         // --------------------------------------------------------------------------------------
         function validarPreco(controle, tipo) {
-            // Chamado 12466. Caso o bot„o tenha sido clicado, n„o deve ser permitido clic·-lo novamente,
+            // Chamado 12466. Caso o bot√£o tenha sido clicado, n√£o deve ser permitido clic√°-lo novamente,
             // para evitar que o ajuste seja feito em duplicidade.
             if (botaoSalvarPrecoClicado) {
                 controle.disabled = true;
                 return false;
             }
-            // Informa que o bot„o foi clicado, para que, caso seja clicado novamente, n„o salve as informaÁıes no banco de dados duplicadamente.
+            // Informa que o bot√£o foi clicado, para que, caso seja clicado novamente, n√£o salve as informa√ß√µes no banco de dados duplicadamente.
             botaoSalvarPrecoClicado = true;
 
             var chkAtacado = FindControl("chkAtacado" + tipo, "input");
@@ -118,20 +118,20 @@
             var txbObra = FindControl("txbObra" + tipo, "input");
 
             if (chkAtacado.checked && txbAtacado.value == "") {
-                alert("Preencha o campo 'Atacado' ou desmarque essa opÁ„o.");
-                // Informa que o bot„o n„o executou a operaÁ„o de atualizaÁ„o das informaÁıes.
+                alert("Preencha o campo 'Atacado' ou desmarque essa op√ß√£o.");
+                // Informa que o bot√£o n√£o executou a opera√ß√£o de atualiza√ß√£o das informa√ß√µes.
                 botaoSalvarPrecoClicado = false;
                 return false;
             }
 
             if (chkBalcao.checked && txbBalcao.value == "") {
-                alert("Preencha o campo 'Balc„o' ou desmarque essa opÁ„o.");
+                alert("Preencha o campo 'Balc√£o' ou desmarque essa op√ß√£o.");
                 botaoSalvarPrecoClicado = false;
                 return false;
             }
 
             if (chkObra.checked && txbObra.value == "") {
-                alert("Preencha o campo 'Obra' ou desmarque essa opÁ„o.");
+                alert("Preencha o campo 'Obra' ou desmarque essa op√ß√£o.");
                 botaoSalvarPrecoClicado = false;
                 return false;
             }
@@ -146,7 +146,7 @@
         }
 
         // ------------------------------------------------------------------
-        // FunÁ„o que valida os processos/aplicaÁıes escolhidos pelo usu·rio.
+        // Fun√ß√£o que valida os processos/aplica√ß√µes escolhidos pelo usu√°rio.
         // ------------------------------------------------------------------
         function validarProjeto() {
             var processoInst = FindControl("txtTexto_19", "input") != null ? FindControl("txtTexto_19", "input").value : null;
@@ -155,22 +155,22 @@
             var aplicacaoCx = FindControl("txtTexto_22", "input") != null ? FindControl("txtTexto_22", "input").value : null;
 
             if (processoInst != null && processoInst != "" && SystemConfig.ProcessoExiste(processoInst).value != "true") {
-                alert("Processo da instalaÁ„o n„o existe.");
+                alert("Processo da instala√ß√£o n√£o existe.");
                 return false;
             }
 
             if (aplicacaoInst != null && aplicacaoInst != "" && SystemConfig.AplicacaoExiste(aplicacaoInst).value != "true") {
-                alert("AplicaÁ„o da instalaÁ„o n„o existe.");
+                alert("Aplica√ß√£o da instala√ß√£o n√£o existe.");
                 return false;
             }
 
             if (processoCx != null && processoCx != "" && SystemConfig.ProcessoExiste(processoCx).value != "true") {
-                alert("Processo do caixilho n„o existe.");
+                alert("Processo do caixilho n√£o existe.");
                 return false;
             }
 
             if (aplicacaoCx != null && aplicacaoCx != "" && SystemConfig.AplicacaoExiste(aplicacaoCx).value != "true") {
-                alert("AplicaÁ„o do caixilho n„o existe.");
+                alert("Aplica√ß√£o do caixilho n√£o existe.");
                 return false;
             }
 
@@ -178,7 +178,7 @@
         }
 
         // --------------------------------------------------------------------------
-        // FunÁ„o que indica se os campos de valor da configuraÁ„o est„o preenchidos.
+        // Fun√ß√£o que indica se os campos de valor da configura√ß√£o est√£o preenchidos.
         // --------------------------------------------------------------------------
         function isConfigVazio(tabela) {
             /*
@@ -197,7 +197,7 @@
 
             if (valor.length == 0)
             {
-            alert("O campo '" + tabela.rows[i].cells[0].innerHTML + "' n„o pode ser vazio.");
+            alert("O campo '" + tabela.rows[i].cells[0].innerHTML + "' n√£o pode ser vazio.");
             return true;
             }
             }
@@ -209,7 +209,7 @@
         var planoContaControl = "";
 
         // ------------------------------------------------------
-        // FunÁ„o que salva o plano de conta selecionado no popup
+        // Fun√ß√£o que salva o plano de conta selecionado no popup
         // ------------------------------------------------------
         function setPlanoConta(idConta, descricao) {
             FindControl("lbl" + planoContaControl, "span").innerHTML = descricao;
@@ -217,7 +217,7 @@
         }
 
         // ------------------------------------------------------------
-        // FunÁ„o que indica se o bot„o de salvar pode ser pressionado.
+        // Fun√ß√£o que indica se o bot√£o de salvar pode ser pressionado.
         // ------------------------------------------------------------
         function alterarSalvar(botao, salvar) {
             botao.disabled = salvar;
@@ -225,7 +225,7 @@
         }
 
         // -------------------------------------------------------------------------------------------
-        // Retorna o valor que ser· salvo no HiddenField para configuraÁıes de tipo "GrupoEnumMetodo".
+        // Retorna o valor que ser√° salvo no HiddenField para configura√ß√µes de tipo "GrupoEnumMetodo".
         // -------------------------------------------------------------------------------------------
         function retornaValor(nomeCampo, tipo) {
             var valores = new Array();
@@ -243,7 +243,7 @@
         }
 
         // -----------------------------------------------
-        // FunÁ„o que recupera os valores da configuraÁ„o.
+        // Fun√ß√£o que recupera os valores da configura√ß√£o.
         // -----------------------------------------------
         function getTexto(tabela) {
             var texto = new String();
@@ -280,7 +280,7 @@
         }
 
         // --------------------------------------------
-        // FunÁ„o que salva os valores da configuraÁ„o.
+        // Fun√ß√£o que salva os valores da configura√ß√£o.
         // --------------------------------------------
         function salvarConfig(botao, tipo) {
             var tabela = null;
@@ -322,7 +322,7 @@
             }
 
             if (tabela == null) {
-                alert("Tipo inv·lido '" + tipo + "'.");
+                alert("Tipo inv√°lido '" + tipo + "'.");
                 return;
             }
 
@@ -390,21 +390,21 @@
                 <div align="left" class="aba">
                     <span id="aba_geral" onclick="mudaAba('geral')">Geral
                     </span>
-                    <span id="aba_comissao" onclick="mudaAba('comissao')">Comiss„o
+                    <span id="aba_comissao" onclick="mudaAba('comissao')">Comiss√£o
                     </span>
-                    <span id="aba_precoProduto" onclick="mudaAba('precoProduto')">Ajuste de preÁo
+                    <span id="aba_precoProduto" onclick="mudaAba('precoProduto')">Ajuste de pre√ßo
                     </span>
                     <span id="aba_financeiro" onclick="mudaAba('financeiro')">Financeiro
                     </span>
                     <span id="aba_planoconta" onclick="mudaAba('planoconta')">Plano Conta
                     </span>
-                    <span id="aba_orcamento" onclick="mudaAba('orcamento')">OrÁamento
+                    <span id="aba_orcamento" onclick="mudaAba('orcamento')">Or√ßamento
                     </span>
                     <span id="aba_pedido" onclick="mudaAba('pedido')">Pedido
                     </span>
                     <span id="aba_pcp" onclick="mudaAba('pcp')" runat="server" clientidmode="Static">PCP
                     </span>
-                    <span id="aba_liberarPedido" onclick="mudaAba('liberarPedido')">LiberaÁ„o
+                    <span id="aba_liberarPedido" onclick="mudaAba('liberarPedido')">Libera√ß√£o
                     </span>
                     <span id="aba_projeto" onclick="mudaAba('projeto')">Projeto
                     </span>
@@ -420,23 +420,23 @@
                             <legend>Telas para administradores </legend>
                             <asp:LinkButton ID="lnkUsuariosLogados" runat="server"
                                 OnClick="lnkUsuariosLogados_Click" CausesValidation="False">
-                             Usu·rios Logados</asp:LinkButton>
+                             Usu√°rios Logados</asp:LinkButton>
                             &nbsp;&nbsp;
                             <asp:LinkButton ID="lnkControleBenef" runat="server"
                                 OnClick="lnkControleBenef_Click" CausesValidation="False">Controle de Beneficiamentos</asp:LinkButton>
                             &nbsp;&nbsp;
                             <asp:LinkButton ID="lnkRelatorioDinamico" runat="server"
-                                OnClick="lnkRelatorioDinamico_Click" CausesValidation="False">RelatÛrio Din‚mico</asp:LinkButton>
+                                OnClick="lnkRelatorioDinamico_Click" CausesValidation="False">Relat√≥rio Din√¢mico</asp:LinkButton>
                             <br />
                             <br />
                             <asp:LinkButton ID="lnkPrecoBenef" runat="server"
-                                PostBackUrl="~/Listas/LstBenefConfig.aspx" CausesValidation="False">PreÁos de Beneficiamentos</asp:LinkButton>
+                                PostBackUrl="~/Listas/LstBenefConfig.aspx" CausesValidation="False">Pre√ßos de Beneficiamentos</asp:LinkButton>
                             &nbsp;&nbsp;
-                            <asp:LinkButton ID="lnkEstoque" runat="server" CausesValidation="False" PostBackUrl="~/Listas/LstEstoque.aspx">LanÁar Estoque</asp:LinkButton>
+                            <asp:LinkButton ID="lnkEstoque" runat="server" CausesValidation="False" PostBackUrl="~/Listas/LstEstoque.aspx">Lan√ßar Estoque</asp:LinkButton>
                             &nbsp;&nbsp;
-                            <asp:LinkButton ID="lnkEstoqueFiscal" runat="server" CausesValidation="False" PostBackUrl="~/Listas/LstEstoque.aspx?fiscal=1">LanÁar Estoque Fiscal</asp:LinkButton>
+                            <asp:LinkButton ID="lnkEstoqueFiscal" runat="server" CausesValidation="False" PostBackUrl="~/Listas/LstEstoque.aspx?fiscal=1">Lan√ßar Estoque Fiscal</asp:LinkButton>
                             &nbsp;&nbsp;
-                            <asp:LinkButton ID="lnkLoginSistema" runat="server" CausesValidation="False" PostBackUrl="~/Utils/LoginSistema.aspx">UtilizaÁ„o do Sistema</asp:LinkButton>
+                            <asp:LinkButton ID="lnkLoginSistema" runat="server" CausesValidation="False" PostBackUrl="~/Utils/LoginSistema.aspx">Utiliza√ß√£o do Sistema</asp:LinkButton>
                             <br />
                             <br />
                             <asp:LinkButton ID="lnkExportarImportar" runat="server" CausesValidation="False" PostBackUrl="~/Cadastros/Projeto/ExportarImportar.aspx">Exportar/Importar/Duplicar Modelo de Projeto</asp:LinkButton>
@@ -450,7 +450,7 @@
                             <asp:LinkButton ID="lnkIntegradores" runat="server" CausesValidation="False" PostBackUrl="~/Listas/LstIntegradores.aspx">Integradores</asp:LinkButton>
                         </fieldset>
                         <fieldset runat="server" id="configGeral">
-                            <legend>ConfiguraÁıes gerais </legend>
+                            <legend>Configura√ß√µes gerais </legend>
                             <asp:Table ID="tblGeral" runat="server" OnLoad="tblGeral_Load">
                             </asp:Table>
                             <asp:Button ID="btnSalvarGeral" runat="server" Text="Salvar"
@@ -467,12 +467,12 @@
                          <br />  <br />
                         <fieldset>
                             <legend>
-	                            Comiss„o Gerente
+	                            Comiss√£o Gerente
                             </legend>
                             <table>
                                 <tr>
                                     <td nowrap="nowrap">
-                                        Selecione o funcion·rio que receber· comiss„o de todos os pedidos
+                                        Selecione o funcion√°rio que receber√° comiss√£o de todos os pedidos
                                     </td>
                                 </tr>
                                 <tr>
@@ -520,21 +520,21 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="left">M„o de Obra:</td>
+                                                    <td align="left">M√£o de Obra:</td>
                                                     <td align="right">
                                                          <asp:TextBox ID="txbMaoDeObra" runat="server" Text='<%# Bind("PercentualMaoDeObra") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
                                                     </td>
                                                     <td>
-                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObra" runat="server" Tabela="ComissaoConfigGerente" IdRegistro='<%# Eval("IdComissaoConfigGerente") %>' Campo="Percentual M„o Obra" />
+                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObra" runat="server" Tabela="ComissaoConfigGerente" IdRegistro='<%# Eval("IdComissaoConfigGerente") %>' Campo="Percentual M√£o Obra" />
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="left">M„o de Obra Especial:</td>
+                                                    <td align="left">M√£o de Obra Especial:</td>
                                                     <td align="right">
                                                          <asp:TextBox ID="txbMaoDeObraEspecial" runat="server" Text='<%# Bind("PercentualMaoDeObraEspecial") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
                                                     </td>
                                                     <td>
-                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObraEspecial" runat="server" Tabela="ComissaoConfigGerente" IdRegistro='<%# Eval("IdComissaoConfigGerente") %>' Campo="Percentual M„o Obra Especial" />
+                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObraEspecial" runat="server" Tabela="ComissaoConfigGerente" IdRegistro='<%# Eval("IdComissaoConfigGerente") %>' Campo="Percentual M√£o Obra Especial" />
                                                     </td>
                                                 </tr>
                                             </table>
@@ -562,7 +562,7 @@
                         <br />
                         <table>
                             <tr>
-                                <td nowrap="nowrap">Selecione o funcion·rio:
+                                <td nowrap="nowrap">Selecione o funcion√°rio:
                                 </td>
                                 <td>
                                     <asp:DropDownList ID="drpFunc" runat="server" AutoPostBack="True" DataSourceID="odsFunc"
@@ -579,7 +579,7 @@
                         </colo:VirtualObjectDataSource>
                         <br />
                         <fieldset style='<%= !UsarDescontoComissao() ? "display: none": "" %>'>
-                            <legend>Desconto da Comiss„o
+                            <legend>Desconto da Comiss√£o
                             </legend>
                             <asp:DetailsView ID="dtvDescontoComissao" runat="server" AutoGenerateRows="False"
                                 DataSourceID="odsDescontoComissao" DefaultMode="Edit" GridLines="None"
@@ -599,14 +599,14 @@
                                                     <td align="left">Desconto dado no<br />
                                                         pedido (%)
                                                     </td>
-                                                    <td align="left" style="padding-left: 33px">Percentual de reduÁ„o<br />
-                                                        na comiss„o
+                                                    <td align="left" style="padding-left: 33px">Percentual de redu√ß√£o<br />
+                                                        na comiss√£o
                                                     </td>
                                                 </tr>
                                             </table>
                                         </EditItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="1™" SortExpression="FaixaUm">
+                                    <asp:TemplateField HeaderText="1¬™" SortExpression="FaixaUm">
                                         <ItemTemplate>
                                             <asp:Label ID="Label7" runat="server" Text='<%# Bind("FaixaUm") %>'></asp:Label>
                                         </ItemTemplate>
@@ -628,7 +628,7 @@
                                             <asp:TextBox ID="TextBox6" runat="server" Text='<%# Bind("FaixaUm") %>'></asp:TextBox>
                                         </InsertItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="2™" SortExpression="FaixaDois">
+                                    <asp:TemplateField HeaderText="2¬™" SortExpression="FaixaDois">
                                         <ItemTemplate>
                                             <asp:Label ID="Label8" runat="server" Text='<%# Bind("FaixaDois") %>'></asp:Label>
                                         </ItemTemplate>
@@ -651,7 +651,7 @@
                                             <asp:TextBox ID="TextBox7" runat="server" Text='<%# Bind("FaixaDois") %>'></asp:TextBox>
                                         </InsertItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="3™" SortExpression="FaixaTres">
+                                    <asp:TemplateField HeaderText="3¬™" SortExpression="FaixaTres">
                                         <ItemTemplate>
                                             <asp:Label ID="Label9" runat="server" Text='<%# Bind("FaixaTres") %>'></asp:Label>
                                         </ItemTemplate>
@@ -674,7 +674,7 @@
                                             <asp:TextBox ID="TextBox8" runat="server" Text='<%# Bind("FaixaTres") %>'></asp:TextBox>
                                         </InsertItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="4™" SortExpression="FaixaQuatro">
+                                    <asp:TemplateField HeaderText="4¬™" SortExpression="FaixaQuatro">
                                         <ItemTemplate>
                                             <asp:Label ID="Label10" runat="server" Text='<%# Bind("FaixaQuatro") %>'></asp:Label>
                                         </ItemTemplate>
@@ -697,7 +697,7 @@
                                             <asp:TextBox ID="TextBox9" runat="server" Text='<%# Bind("FaixaQuatro") %>'></asp:TextBox>
                                         </InsertItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="5™" SortExpression="FaixaCinco">
+                                    <asp:TemplateField HeaderText="5¬™" SortExpression="FaixaCinco">
                                         <ItemTemplate>
                                             <asp:Label ID="Label11" runat="server" Text='<%# Bind("FaixaCinco") %>'></asp:Label>
                                         </ItemTemplate>
@@ -732,7 +732,7 @@
                             </asp:DetailsView>
                         </fieldset>
                         <fieldset>
-                            <legend>Comiss„o
+                            <legend>Comiss√£o
                             </legend>
                             <asp:DetailsView ID="dtvComissao" runat="server" AutoGenerateRows="False" DataSourceID="odsComissao"
                                 DefaultMode="Edit" GridLines="None">
@@ -769,21 +769,21 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="left">M„o de Obra:</td>
+                                                    <td align="left">M√£o de Obra:</td>
                                                     <td align="right">
                                                          <asp:TextBox ID="txbMaoDeObra" runat="server" Text='<%# Bind("PercentualMaoDeObra") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
                                                     </td>
                                                     <td>
-                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObra" runat="server" Tabela="ComissaoConfig" IdRegistro='<%# Eval("IdComissaoConfig") %>' Campo="Percentual M„o Obra" />
+                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObra" runat="server" Tabela="ComissaoConfig" IdRegistro='<%# Eval("IdComissaoConfig") %>' Campo="Percentual M√£o Obra" />
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="left">M„o de Obra Especial:</td>
+                                                    <td align="left">M√£o de Obra Especial:</td>
                                                     <td align="right">
                                                          <asp:TextBox ID="txbMaoDeObraEspecial" runat="server" Text='<%# Bind("PercentualMaoDeObraEspecial") %>' OnKeyPress="return soNumeros(event, false, true)"></asp:TextBox>
                                                     </td>
                                                     <td>
-                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObraEspecial" runat="server" Tabela="ComissaoConfig" IdRegistro='<%# Eval("IdComissaoConfig") %>' Campo="Percentual M„o Obra Especial" />
+                                                        <uc1:ctrlLogPopup ID="ctrlLogPopupPercentualMaoDeObraEspecial" runat="server" Tabela="ComissaoConfig" IdRegistro='<%# Eval("IdComissaoConfig") %>' Campo="Percentual M√£o Obra Especial" />
                                                     </td>
                                                 </tr>
                                             </table>
@@ -797,13 +797,13 @@
                                                         <asp:Label ID="lblFaixasValor" runat="server" Text="Faixas de valor"></asp:Label>
                                                     </td>
                                                     <td align="right">
-                                                        <asp:Label ID="lblPercentualComissao" runat="server" Text="Percentual de comiss„o"></asp:Label>
+                                                        <asp:Label ID="lblPercentualComissao" runat="server" Text="Percentual de comiss√£o"></asp:Label>
                                                     </td>
                                                 </tr>
                                             </table>
                                         </EditItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="1™" SortExpression="FaixaUm">
+                                    <asp:TemplateField HeaderText="1¬™" SortExpression="FaixaUm">
                                         <ItemTemplate>
                                             <asp:Label ID="Label1" runat="server" Text='<%# Bind("FaixaUm") %>'></asp:Label>
                                         </ItemTemplate>
@@ -826,7 +826,7 @@
                                             <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("FaixaUm") %>'></asp:TextBox>
                                         </InsertItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="2™" SortExpression="FaixaDois">
+                                    <asp:TemplateField HeaderText="2¬™" SortExpression="FaixaDois">
                                         <ItemTemplate>
                                             <asp:Label ID="Label2" runat="server" Text='<%# Bind("FaixaDois") %>'></asp:Label>
                                         </ItemTemplate>
@@ -849,7 +849,7 @@
                                             <asp:TextBox ID="TextBox2" runat="server" Text='<%# Bind("FaixaDois") %>'></asp:TextBox>
                                         </InsertItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="3™" SortExpression="FaixaTres">
+                                    <asp:TemplateField HeaderText="3¬™" SortExpression="FaixaTres">
                                         <ItemTemplate>
                                             <asp:Label ID="Label3" runat="server" Text='<%# Bind("FaixaTres") %>'></asp:Label>
                                         </ItemTemplate>
@@ -872,7 +872,7 @@
                                             <asp:TextBox ID="TextBox3" runat="server" Text='<%# Bind("FaixaTres") %>'></asp:TextBox>
                                         </InsertItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="4™" SortExpression="FaixaQuatro">
+                                    <asp:TemplateField HeaderText="4¬™" SortExpression="FaixaQuatro">
                                         <ItemTemplate>
                                             <asp:Label ID="Label4" runat="server" Text='<%# Bind("FaixaQuatro") %>'></asp:Label>
                                         </ItemTemplate>
@@ -895,7 +895,7 @@
                                             <asp:TextBox ID="TextBox4" runat="server" Text='<%# Bind("FaixaQuatro") %>'></asp:TextBox>
                                         </InsertItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="5™" SortExpression="FaixaCinco">
+                                    <asp:TemplateField HeaderText="5¬™" SortExpression="FaixaCinco">
                                         <ItemTemplate>
                                             <asp:Label ID="Label5" runat="server" Text='<%# Bind("FaixaCinco") %>'></asp:Label>
                                         </ItemTemplate>
@@ -918,15 +918,15 @@
                                             <asp:TextBox ID="TextBox5" runat="server" Text='<%# Bind("FaixaCinco") %>'></asp:TextBox>
                                         </InsertItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Percentual ˙nico" ShowHeader="False" SortExpression="PercUnico">
+                                    <asp:TemplateField HeaderText="Percentual √∫nico" ShowHeader="False" SortExpression="PercUnico">
                                         <InsertItemTemplate>
                                             <asp:CheckBox ID="CheckBox1" runat="server" Checked='<%# Bind("PercUnico") %>'
-                                                ToolTip="Define que caso esteja sendo utilizada mais de uma faixa de valor, a ˙ltima faixa atingida ser· utilizada para o c·lculo de toda a comiss„o, mas caso esta opÁ„o fique desmarcada, a comiss„o ser· calculada com o percentual definido em cada faixa de valor." />
+                                                ToolTip="Define que caso esteja sendo utilizada mais de uma faixa de valor, a √∫ltima faixa atingida ser√° utilizada para o c√°lculo de toda a comiss√£o, mas caso esta op√ß√£o fique desmarcada, a comiss√£o ser√° calculada com o percentual definido em cada faixa de valor." />
                                         </InsertItemTemplate>
                                         <EditItemTemplate>
                                             <asp:CheckBox ID="chkPercentualUnico" runat="server" Checked='<%# Bind("PercUnico") %>'
-                                                Text="Percentual ˙nico"
-                                                ToolTip="Define que caso esteja sendo utilizada mais de uma faixa de valor, a ˙ltima faixa atingida ser· utilizada para o c·lculo de toda a comiss„o, mas caso esta opÁ„o fique desmarcada, a comiss„o ser· calculada com o percentual definido em cada faixa de valor." />
+                                                Text="Percentual √∫nico"
+                                                ToolTip="Define que caso esteja sendo utilizada mais de uma faixa de valor, a √∫ltima faixa atingida ser√° utilizada para o c√°lculo de toda a comiss√£o, mas caso esta op√ß√£o fique desmarcada, a comiss√£o ser√° calculada com o percentual definido em cada faixa de valor." />
                                         </EditItemTemplate>
                                         <ItemTemplate>
                                             <asp:CheckBox ID="CheckBox1" runat="server" Checked='<%# Bind("PercUnico") %>' Enabled="false" />
@@ -1001,23 +1001,23 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>PreÁo base
+                                    <td>Pre√ßo base
                                     </td>
                                     <td>
                                         <asp:DropDownList ID="drpPrecoBase" runat="server" AutoPostBack="True" OnSelectedIndexChanged="drpPrecoBase_SelectedIndexChanged">
                                             <asp:ListItem Value="0">Custo Forn.</asp:ListItem>
                                             <asp:ListItem Value="1">Custo Imp.</asp:ListItem>
                                             <asp:ListItem Value="2">Atacado</asp:ListItem>
-                                            <asp:ListItem Value="3">Balc„o</asp:ListItem>
+                                            <asp:ListItem Value="3">Balc√£o</asp:ListItem>
                                             <asp:ListItem Value="4">Obra</asp:ListItem>
                                         </asp:DropDownList>
                                     </td>
                                 </tr>
                             </table>
                             <p>
-                                Marque o tipo de preÁo que ser· atualizado e digite a
+                                Marque o tipo de pre√ßo que ser√° atualizado e digite a
                                 <br />
-                                porcentagem que ser· calculada em cima do preÁo base
+                                porcentagem que ser√° calculada em cima do pre√ßo base
                                 <br />
                                 para cada produto do grupo/subgrupo selecionado
                             </p>
@@ -1069,7 +1069,7 @@
                                                 Checked="True" />
                                         </HeaderTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Balc„o" SortExpression="AjusteBalcao">
+                                    <asp:TemplateField HeaderText="Balc√£o" SortExpression="AjusteBalcao">
                                         <ItemTemplate>
                                             <asp:Label ID="Label2" runat="server" Text='<%# Bind("AjusteBalcao") %>'></asp:Label>
                                         </ItemTemplate>
@@ -1081,7 +1081,7 @@
                                         </EditItemTemplate>
                                         <HeaderTemplate>
                                             <asp:CheckBox ID="chkBalcaoProd" runat="server" onclick="ajustePrecoCheck(this, FindControl('txbBalcaoProd', 'input'), FindControl('hdfBalcaoProd', 'input'))"
-                                                Text="Balc„o" Checked="True" />
+                                                Text="Balc√£o" Checked="True" />
                                         </HeaderTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Obra" SortExpression="AjusteObra">
@@ -1128,19 +1128,19 @@
                             </colo:VirtualObjectDataSource>
                             <center>
                                 <br />
-                                ⁄ltimas modificaÁıes no preÁo desse grupo/sub-grupo
+                                √öltimas modifica√ß√µes no pre√ßo desse grupo/sub-grupo
                                 <asp:GridView ID="grdViewLogProduto" runat="server" GridLines="None" PageSize="5"
                                     AutoGenerateColumns="False" DataKeyNames="IdLogProduto" DataSourceID="odsViewLogProduto"
                                     CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
-                                    EditRowStyle-CssClass="edit" EmptyDataText="N„o h· modificaÁıes recentes" AllowPaging="True"
+                                    EditRowStyle-CssClass="edit" EmptyDataText="N√£o h√° modifica√ß√µes recentes" AllowPaging="True"
                                     AllowSorting="True">
                                     <Columns>
-                                        <asp:BoundField DataField="NomeFunc" HeaderText="Funcion·rio" SortExpression="NomeFunc" />
-                                        <asp:BoundField DataField="DescrTipoPrecoBase" HeaderText="PreÁo base" SortExpression="TipoPrecoBase" />
+                                        <asp:BoundField DataField="NomeFunc" HeaderText="Funcion√°rio" SortExpression="NomeFunc" />
+                                        <asp:BoundField DataField="DescrTipoPrecoBase" HeaderText="Pre√ßo base" SortExpression="TipoPrecoBase" />
                                         <asp:BoundField DataField="ColunaCustoFabBase" HeaderText="Custo Forn." SortExpression="AjusteCustoFabBase" />
                                         <asp:BoundField DataField="ColunaCustoCompra" HeaderText="Custo Imp." SortExpression="AjusteCustoCompra" />
                                         <asp:BoundField DataField="ColunaAtacado" HeaderText="Atacado" SortExpression="AjusteAtacado" />
-                                        <asp:BoundField DataField="ColunaBalcao" HeaderText="Balc„o" SortExpression="AjusteBalcao" />
+                                        <asp:BoundField DataField="ColunaBalcao" HeaderText="Balc√£o" SortExpression="AjusteBalcao" />
                                         <asp:BoundField DataField="ColunaObra" HeaderText="Obra" SortExpression="AjusteObra" />
                                         <asp:BoundField DataField="DataAjusteString" HeaderText="Data" SortExpression="DataAjuste" />
                                     </Columns>
@@ -1180,9 +1180,9 @@
                                 </tr>
                             </table>
                             <p>
-                                Marque o tipo de preÁo que ser· atualizado e digite a
+                                Marque o tipo de pre√ßo que ser√° atualizado e digite a
                                 <br />
-                                porcentagem que ser· calculada em cima do preÁo de
+                                porcentagem que ser√° calculada em cima do pre√ßo de
                                 <br />
                                 custo para cada beneficiamento do tipo selecionado
                             </p>
@@ -1215,7 +1215,7 @@
                                                 Checked="True" />
                                         </HeaderTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Balc„o" SortExpression="AjusteBalcao">
+                                    <asp:TemplateField HeaderText="Balc√£o" SortExpression="AjusteBalcao">
                                         <ItemTemplate>
                                             <asp:Label ID="Label2" runat="server" Text='<%# Bind("AjusteBalcao") %>'></asp:Label>
                                         </ItemTemplate>
@@ -1227,7 +1227,7 @@
                                         </EditItemTemplate>
                                         <HeaderTemplate>
                                             <asp:CheckBox ID="chkBalcaoBenef" runat="server" onclick="ajustePrecoCheck(this, FindControl('txbBalcaoBenef', 'input'), FindControl('hdfBalcaoBenef', 'input'))"
-                                                Text="Balc„o" Checked="True" />
+                                                Text="Balc√£o" Checked="True" />
                                         </HeaderTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Obra" SortExpression="AjusteObra">
@@ -1263,16 +1263,16 @@
                             </asp:DetailsView>
                             <center>
                                 <br />
-                                ⁄ltimas modificaÁıes no preÁo desses beneficiamentos
+                                √öltimas modifica√ß√µes no pre√ßo desses beneficiamentos
                                 <asp:GridView ID="grdViewLogBenef" runat="server" GridLines="None" PageSize="5" AutoGenerateColumns="False"
                                     DataKeyNames="IdLogProduto" DataSourceID="odsViewLogBenef" CssClass="gridStyle"
                                     PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit"
-                                    EmptyDataText="N„o h· modificaÁıes recentes" AllowPaging="True" AllowSorting="True">
+                                    EmptyDataText="N√£o h√° modifica√ß√µes recentes" AllowPaging="True" AllowSorting="True">
                                     <Columns>
-                                        <asp:BoundField DataField="NomeFunc" HeaderText="Funcion·rio" SortExpression="NomeFunc" />
-                                        <asp:BoundField DataField="DescrTipoPrecoBase" HeaderText="PreÁo base" SortExpression="TipoPrecoBase" />
+                                        <asp:BoundField DataField="NomeFunc" HeaderText="Funcion√°rio" SortExpression="NomeFunc" />
+                                        <asp:BoundField DataField="DescrTipoPrecoBase" HeaderText="Pre√ßo base" SortExpression="TipoPrecoBase" />
                                         <asp:BoundField DataField="ColunaAtacado" HeaderText="Atacado" SortExpression="AjusteAtacado" />
-                                        <asp:BoundField DataField="ColunaBalcao" HeaderText="Balc„o" SortExpression="AjusteBalcao" />
+                                        <asp:BoundField DataField="ColunaBalcao" HeaderText="Balc√£o" SortExpression="AjusteBalcao" />
                                         <asp:BoundField DataField="ColunaObra" HeaderText="Obra" SortExpression="AjusteObra" />
                                         <asp:BoundField DataField="DataAjusteString" HeaderText="Data" SortExpression="DataAjuste" />
                                     </Columns>
@@ -1464,7 +1464,7 @@
                             </tr>
                             <tr>
                                 <td align="left">
-                                    <asp:Label ID="Label20" runat="server" Text="Comiss„o" Font-Bold="True"></asp:Label>
+                                    <asp:Label ID="Label20" runat="server" Text="Comiss√£o" Font-Bold="True"></asp:Label>
                                 </td>
                                 <td align="left">
                                     <asp:Label ID="lblComissao" runat="server">Nenhum plano de conta associado.</asp:Label>
@@ -1484,7 +1484,7 @@
                             </tr>
                             <tr>
                                 <td align="left">
-                                    <asp:Label ID="Label26" runat="server" Text="QuitaÁ„o Parcelas de Cartıes" Font-Bold="True"></asp:Label>
+                                    <asp:Label ID="Label26" runat="server" Text="Quita√ß√£o Parcelas de Cart√µes" Font-Bold="True"></asp:Label>
                                 </td>
                                 <td align="left">
                                     <asp:Label ID="lblQuitacaoParcelaCartao" runat="server">Nenhum plano de conta associado.</asp:Label>
@@ -1496,7 +1496,7 @@
                             </tr>
                             <tr>
                                 <td align="left">
-                                    <asp:Label ID="Label28" runat="server" Text="Estorno QuitaÁ„o Parcelas de Cartıes" Font-Bold="True"></asp:Label>
+                                    <asp:Label ID="Label28" runat="server" Text="Estorno Quita√ß√£o Parcelas de Cart√µes" Font-Bold="True"></asp:Label>
                                 </td>
                                 <td align="left">
                                     <asp:Label ID="lblEstornoQuitacaoParcelaCartao" runat="server">Nenhum plano de conta associado.</asp:Label>
@@ -1516,7 +1516,7 @@
                             </tr>
                             <tr>
                                 <td align="left">
-                                    <asp:Label ID="Label22" runat="server" Text="Juros Venda Cart„o" Font-Bold="True"></asp:Label>
+                                    <asp:Label ID="Label22" runat="server" Text="Juros Venda Cart√£o" Font-Bold="True"></asp:Label>
                                 </td>
                                 <td align="left">
                                     <asp:Label ID="lblJurosCartao" runat="server">Nenhum plano de conta associado.</asp:Label>
@@ -1528,7 +1528,7 @@
                             </tr>
                             <tr>
                                 <td align="left">
-                                    <asp:Label ID="Label24" runat="server" Text="Estorno Juros Venda Cart„o" Font-Bold="True"></asp:Label>
+                                    <asp:Label ID="Label24" runat="server" Text="Estorno Juros Venda Cart√£o" Font-Bold="True"></asp:Label>
                                 </td>
                                 <td align="left">
                                     <asp:Label ID="lblEstJurosCartao" runat="server">Nenhum plano de conta associado.</asp:Label>
@@ -1623,7 +1623,7 @@
                         <br />
                         <br />
                         <fieldset>
-                            <legend>ConfiguraÁ„o da Aresta</legend>
+                            <legend>Configura√ß√£o da Aresta</legend>
                             <table>
                                 <tr>
                                     <td>
@@ -1664,7 +1664,7 @@
 
                         <table>
                             <tr>
-                                <td nowrap="nowrap">Selecione o funcion·rio:
+                                <td nowrap="nowrap">Selecione o funcion√°rio:
                                 </td>
                                 <td>
                                     <asp:DropDownList ID="drpFuncFaixaRentabilidadeComissao"
@@ -1677,13 +1677,13 @@
                         </table>
 
                         <fieldset>
-                            <legend>Faixas de Rentabilidade para Comiss„o
+                            <legend>Faixas de Rentabilidade para Comiss√£o
                             </legend>
                             <uc1:ctrlConfigFaixasRentabilidadeComissao ID="ctrlFaixasRentabilidadeComissao" runat="server" />
                         </fieldset>
 
                         <fieldset>
-                            <legend>Faixas de Rentabilidade para LiberÁ„o
+                            <legend>Faixas de Rentabilidade para Libera√ß√£o
                             </legend>
                             <uc1:ctrlConfigFaixasRentabilidadeLiberacao ID="ctrlFaixasRentabilidadeLiberacao" runat="server" />
                         </fieldset>

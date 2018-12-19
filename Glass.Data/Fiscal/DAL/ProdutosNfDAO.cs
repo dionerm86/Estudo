@@ -446,6 +446,7 @@ namespace Glass.Data.DAL
                 nameof(ProdutosNf.ValorIpi),
                 nameof(ProdutosNf.AliqIcms),
                 nameof(ProdutosNf.BcIcms),
+                nameof(ProdutosNf.BcIcmsSemReducao),
                 nameof(ProdutosNf.ValorIcms),
                 nameof(ProdutosNf.AliqFcp),
                 nameof(ProdutosNf.BcFcp),
@@ -618,56 +619,140 @@ namespace Glass.Data.DAL
         #region Retorna a quantidade que será usada no DANFE
 
         /// <summary>
-        /// Retorna a quantidade que será usada no DANFE
+        /// Obtém a quantidade que será usada no DANFE.
         /// </summary>
-        public float ObtemQtdDanfe(ProdutosNf pnf)
-        {
-            return ObtemQtdDanfe(null, pnf);
-        }
-
-        /// <summary>
-        /// Retorna a quantidade que será usada no DANFE
-        /// </summary>
-        public float ObtemQtdDanfe(GDASession session, ProdutosNf pnf)
-        {
-            return ObtemQtdDanfe(session, pnf, false);
-        }
-
-        public float ObtemQtdDanfe(ProdutosNf pnf, bool nfQtdBaixaM2)
-        {
-            return ObtemQtdDanfe(null, pnf, nfQtdBaixaM2);
-        }
-
+        /// <param name="session">session.</param>
+        /// <param name="pnf">pnf.</param>
+        /// <param name="nfQtdBaixaM2">nfQtdBaixaM2.</param>
+        /// <returns>Retorna a quantidade que será usada no DANFE.</returns>
         public float ObtemQtdDanfe(GDASession session, ProdutosNf pnf, bool nfQtdBaixaM2)
         {
-            return ObtemQtdDanfe(session, pnf.IdProd, pnf.TotM, pnf.Qtde, pnf.Altura, pnf.Largura, nfQtdBaixaM2, true);
+            return this.ObtemQtdDanfe(session, pnf.IdProd, pnf.TotM, pnf.Qtde, pnf.Altura, pnf.Largura, nfQtdBaixaM2, true);
         }
 
         /// <summary>
-        /// Retorna a quantidade que será usada no DANFE
+        /// Obtém a quantidade que será usada no DANFE.
         /// </summary>
-        public float ObtemQtdDanfe(uint idProd, float totM2, float qtde, float altura, int largura, bool nfQtdBaixaM2, bool tipoCalcFiscal)
+        /// <param name="session">session.</param>
+        /// <param name="idProd">idProd.</param>
+        /// <param name="totM2">totM2.</param>
+        /// <param name="qtde">qtde.</param>
+        /// <param name="altura">altura.</param>
+        /// <param name="largura">largura.</param>
+        /// <param name="nfQtdBaixaM2">nfQtdBaixaM2.</param>
+        /// <param name="tipoCalcFiscal">tipoCalcFiscal.</param>
+        /// <returns>Retorna a quantidade que será usada no DANFE.</returns>
+        public float ObtemQtdDanfe(
+            GDASession session,
+            uint idProd,
+            float totM2,
+            float qtde,
+            float altura,
+            int largura,
+            bool nfQtdBaixaM2,
+            bool tipoCalcFiscal)
         {
-            return ObtemQtdDanfe(null, idProd, totM2, qtde, altura, largura, nfQtdBaixaM2, tipoCalcFiscal);
+            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)idProd, tipoCalcFiscal);
+
+            return this.ObtemQtdDanfe(
+                session,
+                idProd,
+                totM2,
+                qtde,
+                altura,
+                largura,
+                nfQtdBaixaM2,
+                tipoCalcFiscal,
+                0,
+                null,
+                (TipoCalculoGrupoProd)tipoCalculo,
+                null,
+                null,
+                null,
+                null);
         }
 
         /// <summary>
-        /// Retorna a quantidade que será usada no DANFE
+        /// Obtém a quantidade que será usada no DANFE.
         /// </summary>
-        public float ObtemQtdDanfe(GDASession session, uint idProd, float totM2, float qtde, float altura, int largura, bool nfQtdBaixaM2, bool tipoCalcFiscal)
+        /// <param name="session">session.</param>
+        /// <param name="idProd">idProd.</param>
+        /// <param name="totM2">totM2.</param>
+        /// <param name="qtde">qtde.</param>
+        /// <param name="altura">altura.</param>
+        /// <param name="largura">largura.</param>
+        /// <param name="nfQtdBaixaM2">nfQtdBaixaM2.</param>
+        /// <param name="tipoCalcFiscal">tipoCalcFiscal.</param>
+        /// <param name="idGrupo">idGrupo.</param>
+        /// <param name="idSubgrupo">idSubgrupo.</param>
+        /// <param name="tipoCalculo">tipoCalculo.</param>
+        /// <param name="tipoCalculoGrupo">tipoCalculoGrupo.</param>
+        /// <param name="tipoCalculoNfGrupo">tipoCalculoNfGrupo.</param>
+        /// <param name="tipoCalculoSubgrupo">tipoCalculoSubgrupo.</param>
+        /// <param name="tipoCalculoNfSubgrupo">tipoCalculoNfSubgrupo.</param>
+        /// <returns>Retorna a quantidade que será usada no DANFE.</returns>
+        public float ObtemQtdDanfe(
+            GDASession session,
+            uint idProd,
+            float totM2,
+            float qtde,
+            float altura,
+            int largura,
+            bool nfQtdBaixaM2,
+            bool tipoCalcFiscal,
+            int idGrupo,
+            int? idSubgrupo,
+            TipoCalculoGrupoProd? tipoCalculo,
+            TipoCalculoGrupoProd? tipoCalculoGrupo,
+            TipoCalculoGrupoProd? tipoCalculoNfGrupo,
+            TipoCalculoGrupoProd? tipoCalculoSubgrupo,
+            TipoCalculoGrupoProd? tipoCalculoNfSubgrupo)
         {
-            int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)idProd, tipoCalcFiscal);
+            if (!tipoCalculo.HasValue)
+            {
+                tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(
+                  idGrupo,
+                  idSubgrupo,
+                  tipoCalcFiscal,
+                  tipoCalculoGrupo,
+                  tipoCalculoNfGrupo,
+                  tipoCalculoSubgrupo,
+                  tipoCalculoNfSubgrupo);
+            }
 
-            if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto || (nfQtdBaixaM2 && tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.QtdM2))
-                return totM2 > 0 ? totM2 : Glass.Global.CalculosFluxo.ArredondaM2(session, largura, (int)altura, qtde, (int)idProd, false);
-            else if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
-                tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6 ||
-                tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML)
+            if (tipoCalculo == TipoCalculoGrupoProd.M2
+                || tipoCalculo == TipoCalculoGrupoProd.M2Direto
+                || (nfQtdBaixaM2 && tipoCalculo == TipoCalculoGrupoProd.QtdM2))
+            {
+                return totM2 > 0
+                    ? totM2
+                    : Global.CalculosFluxo.ArredondaM2(
+                        session,
+                        largura,
+                        (int)altura,
+                        qtde,
+                        (int)idProd,
+                        false,
+                        0,
+                        true);
+            }
+            else if (tipoCalculo == TipoCalculoGrupoProd.MLAL0
+                || tipoCalculo == TipoCalculoGrupoProd.MLAL05
+                || tipoCalculo == TipoCalculoGrupoProd.MLAL1
+                || tipoCalculo == TipoCalculoGrupoProd.MLAL6
+                || tipoCalculo == TipoCalculoGrupoProd.ML)
+            {
                 return altura * qtde;
-            else if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.Perimetro)
-                return ((2 * (altura + largura)) / 1000f) * qtde;
-            else // Qtd/QtdM2
+            }
+            else if (tipoCalculo == TipoCalculoGrupoProd.Perimetro)
+            {
+                return 2 * (altura + largura) / 1000f * qtde;
+            }
+            else
+            {
+                // Qtd/QtdM2
                 return qtde;
+            }
         }
 
         #endregion
@@ -1775,7 +1860,7 @@ namespace Glass.Data.DAL
                             else
                                 valorTotal += prodNf.Total;
 
-                            qtdeTotal += ObtemQtdDanfe(prodNf);
+                            qtdeTotal += ObtemQtdDanfe(null, prodNf, false);
                         }
 
                         valorParcelaImportada += (valorTotal / Convert.ToDecimal(qtdeTotal)) * Convert.ToDecimal(pbe.Qtde);
@@ -1844,7 +1929,7 @@ namespace Glass.Data.DAL
                             else
                                 valorTotal += prodNf.Total;
 
-                            qtdeTotal += ObtemQtdDanfe(prodNf);
+                            qtdeTotal += ObtemQtdDanfe(null, prodNf, false);
                         }
 
                         valorParcelaImportada += valorTotal / Convert.ToDecimal(qtdeTotal);
@@ -1945,7 +2030,7 @@ namespace Glass.Data.DAL
                 foreach (var prodNf in prodsNfSaida)
                 {
                     valorTotal += prodNf.Total;
-                    qtdeTotal += ObtemQtdDanfe(prodNf);
+                    qtdeTotal += ObtemQtdDanfe(null, prodNf, false);
                 }
 
                 valorOperacaoInterestadual += valorTotal / Convert.ToDecimal(qtdeTotal);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CalcEngine;
+using Glass.Data.DAL;
 
 namespace Glass.Projeto.Negocios.Componentes
 {
@@ -159,7 +160,41 @@ namespace Glass.Projeto.Negocios.Componentes
         {
             ferragem.Require("cliente").NotNull();
 
-            #region Atualiza os dados da ferragem no WebGlass
+            var retornoAtualizacao = string.Empty;
+
+            // Se for inserção adiciona a situação.
+            if (!ferragem.ExistsInStorage)
+            {
+                ferragem.Situacao = Situacao.Ativo;
+            }
+
+            if (ferragem.Situacao == Situacao.Ativo)
+            {
+                this._cache.Atualizar(ferragem);
+            }
+            else
+            {
+                this._cache.Apagar(ferragem);
+            }
+
+            var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Entidades.IFerragemRepositorioCalcPackage>();
+            var source = new PartTemplateSynchronizerSource(repositorio);
+            source.Atualizar(ferragem, this.FerragemSincronizada, (f, mensagem) => { retornoAtualizacao = mensagem; });
+
+            var sincronizador = this.CriarSincronizador(source);
+
+            //Executa a sincronização
+            sincronizador.Synchronize();
+
+            /* Chamado 65883. */
+            if (!string.IsNullOrEmpty(retornoAtualizacao))
+            {
+                return new Colosoft.Business.SaveResult(
+                    false,
+                    string.Format(
+                        "Falha ao atualizar a ferragem no CadProject. Erro: {0}.",
+                        retornoAtualizacao).GetFormatter());
+            }
 
             Colosoft.Business.SaveResult resultado = null;
 
@@ -178,47 +213,15 @@ namespace Glass.Projeto.Negocios.Componentes
             /* Chamado 65883. */
             if (!resultado)
             {
-                return new Colosoft.Business.SaveResult(false, string.Format("Falha ao atualizar a ferragem no WebGlass. Erro: {0}.",
-                    resultado.Message.ToString()).GetFormatter());
+                source.Apagar(ferragem, this.FerragemSincronizada, (f, mensagem) => { retornoAtualizacao = mensagem; });
+                sincronizador.Synchronize();
+
+                return new Colosoft.Business.SaveResult(
+                false,
+                string.Format(
+                "Falha ao atualizar a ferragem no WebGlass. Erro: {0}.",
+                resultado.Message.ToString()).GetFormatter());
             }
-
-            #endregion
-
-            #region Atualiza os dados da ferragem no CadProject
-
-            var retornoAtualizacao = string.Empty;
-
-            // Se for inserção adiciona a situação.
-            if (!ferragem.ExistsInStorage)
-            {
-                ferragem.Situacao = Situacao.Ativo;
-            }
-
-            if (ferragem.Situacao == Situacao.Ativo)
-            {
-                _cache.Atualizar(ferragem);
-            }
-            else
-            {
-                _cache.Apagar(ferragem);
-            }
-
-            var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Entidades.IFerragemRepositorioCalcPackage>();
-            var source = new PartTemplateSynchronizerSource(repositorio);
-            source.Atualizar(ferragem, FerragemSincronizada, (f, mensagem) => { retornoAtualizacao = mensagem; });
-
-            /* Chamado 65883. */
-            if (!string.IsNullOrEmpty(retornoAtualizacao))
-            {
-                return new Colosoft.Business.SaveResult(false, string.Format("Falha ao atualizar a ferragem no CadProject. Erro: {0}. IMPORTANTE: a ferragem foi atualizada no WebGlass.", retornoAtualizacao).GetFormatter());
-            }
-
-            var sincronizador = CriarSincronizador(source);
-
-            // Executa a sincronização
-            sincronizador.Synchronize();
-
-            #endregion
 
             return resultado;
         }

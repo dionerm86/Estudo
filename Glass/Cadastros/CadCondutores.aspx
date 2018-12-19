@@ -12,7 +12,7 @@
                         <a href="#" @click.prevent="ordenar('Nome')">Nome</a>
                     </th>
                     <th>
-                        <a href="#">Cpf</a>
+                        CPF
                     </th>
                 </template>
                 <template slot="item" slot-scope="{ item, index }">

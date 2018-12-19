@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Web.UI.WebControls;
 using Glass.Data.Model;
 using Glass.Data.DAL;
@@ -28,7 +28,7 @@ namespace Glass.UI.Web.Utils
         }
     
         /// <summary>
-        /// Retorna o CÛdigo/DescriÁ„o do produto
+        /// Retorna o C√≥digo/Descri√ß√£o do produto
         /// </summary>
         [Ajax.AjaxMethod()]
         public string GetProduto(string codInterno, string tipoEntrega, string revenda, string reposicao, 
@@ -38,7 +38,7 @@ namespace Glass.UI.Web.Utils
             Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno);
     
             if (prod == null)
-                return "Erro;N„o existe produto com o cÛdigo informado.";
+                return "Erro;N√£o existe produto com o c√≥digo informado.";
             else if (prod.Situacao == Glass.Situacao.Inativo)
                 return "Erro;Produto inativo.";
             else if (prod.Compra)
@@ -47,10 +47,10 @@ namespace Glass.UI.Web.Utils
             if (!isAmbienteMaoObra)
             {
                 if (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)
-                    return "Erro;Apenas produtos do grupo 'M„o de Obra Beneficiamento' podem ser incluÌdos nesse pedido.";
+                    return "Erro;Apenas produtos do grupo 'M√£o de Obra Beneficiamento' podem ser inclu√≠dos nesse pedido.";
             }
             else if (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
-                return "Erro;Apenas produtos do grupo 'Vidro' podem ser usados como peÁa de vidro.";
+                return "Erro;Apenas produtos do grupo 'Vidro' podem ser usados como pe√ßa de vidro.";
     
             string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
             decimal valorProduto = 0;
@@ -66,8 +66,8 @@ namespace Glass.UI.Web.Utils
     
             retorno += ";" + valorProduto.ToString("F2");
     
-            // Verifica como deve ser feito o c·lculo do produto
-            retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
+            // Verifica como deve ser feito o c√°lculo do produto
+            retorno += ";" + GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
 
             return retorno;
         }
@@ -79,7 +79,7 @@ namespace Glass.UI.Web.Utils
                 var idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
                 var pcp = !string.IsNullOrEmpty(Request["pcp"]) ? Request["pcp"] == "true" : false;
     
-                // Recupera os dados da m„o de obra
+                // Recupera os dados da m√£o de obra
                 var idProdMaoObra = Glass.Conversoes.StrParaUint(hdfIdProdMaoObra.Value);
                 int qtdeMaoObra = Glass.Conversoes.StrParaInt(txtQtdeMaoObra.Text);
                 var valorMaoObra = Glass.Conversoes.StrParaDecimal(txtValorUnitMaoObra.Text);
@@ -140,7 +140,7 @@ namespace Glass.UI.Web.Utils
 
                         if (novo.Altura != novo.Largura && redondoAmbiente)
                         {
-                            throw new Exception("O beneficiamento Redondo pode ser marcado somente em peÁas de medidas iguais.");
+                            throw new Exception("O beneficiamento Redondo pode ser marcado somente em pe√ßas de medidas iguais.");
                         }
     
                         idAmbiente = AmbientePedidoDAO.Instance.InsertComTransacao(novo);
@@ -158,7 +158,7 @@ namespace Glass.UI.Web.Utils
 
                         if (novo.Altura != novo.Largura && redondoAmbiente)
                         {
-                            throw new Exception("O beneficiamento Redondo pode ser marcado somente em peÁas de medidas iguais.");
+                            throw new Exception("O beneficiamento Redondo pode ser marcado somente em pe√ßas de medidas iguais.");
                         }
 
                         idAmbiente = AmbientePedidoEspelhoDAO.Instance.InsertComTransacao(novo);
@@ -166,10 +166,10 @@ namespace Glass.UI.Web.Utils
     
                     if (idAmbiente <= 0)
                     {
-                        throw new Exception("Ambiente n„o cadastrado.");
+                        throw new Exception("Ambiente n√£o cadastrado.");
                     }
     
-                    // Insere a m„o de obra no ambiente
+                    // Insere a m√£o de obra no ambiente
                     if (!pcp)
                     {
                         ProdutosPedido prod = new ProdutosPedido();
