@@ -14904,6 +14904,8 @@ namespace Glass.Data.DAL
             if (objPedido.TipoVenda == 1)
             {
                 ParcelasPedidoDAO.Instance.DeleteFromPedido(session, objPedido.IdPedido);
+
+                objPersistence.ExecuteCommand(session, "UPDATE Pedido SET IdParcela = NULL, NumParc = NULL WHERE IdPedido =" + objPedido.IdPedido);
             }
             // Se for venda à prazo, salva as parcelas
             else if (objPedido.TipoVenda == 2)
