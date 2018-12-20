@@ -22,8 +22,8 @@
         </span>
         <span class="form-group">
             <label>Situação</label>
-            <lista-selecao-id-valor v-bind:ids-selecionados.sync="filtroAtual.situacao" texto-selecionar="Selecione a situação"
-                v-bind:funcao-recuperar-itens="obterItensFiltroSituacoes" v-bind:ordenar="false" style="width: 188px"></lista-selecao-id-valor>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.situacao" texto-selecionar="Selecione a situação"
+                v-bind:funcao-recuperar-itens="obterItensFiltroSituacoes" v-bind:ordenar="false" style="width: 188px"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>

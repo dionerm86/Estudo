@@ -12,7 +12,7 @@ Servicos.Estoques = (function(http) {
      */
     Movimentacoes: {
       /**
-       * Objeto com os serviços para a API de movimentações reais.
+       * Objeto com os serviços para a API de movimentações de estoque real.
        */
       Reais: {
        /**
@@ -60,8 +60,11 @@ Servicos.Estoques = (function(http) {
         },
       },
 
+      /**
+       * Objeto com os serviços para a API de movimentações de estoque fiscal.
+       */
       Fiscais: {
-        /**
+       /**
         * Recupera a lista de movimentações do estoques fiscal.
         * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
         * @param {number} pagina O número da página de resultados a ser exibida.
@@ -75,9 +78,9 @@ Servicos.Estoques = (function(http) {
           });
         },
 
-        /**
+       /**
         * Exclui uma movimentação do estoque fiscal.
-        * @param {number} identificador da movimentação.
+        * @param {number} idMovimentacao O identificador da movimentação que será excluida.
         * @returns {Promise} Uma promise com o resultado da exclusão.
         */
         excluir: function (idMovimentacao) {
@@ -98,10 +101,14 @@ Servicos.Estoques = (function(http) {
 
         /**
          * Insere uma nova movimentação do estoque fiscal.
-         * @param {?Object} objeto com os dados necessários para cadastro de uma nova movimentação.
+         * @param {?Object} movimentacao O objeto com os dados necessários para cadastro de uma movimentação de ajuste manual de estoque fiscal.
          * @returns {Promise} Uma promise com o resultado da inserção.
          */
         inserir: function (movimentacao) {
+          if (!movimentcao) {
+            throw new error('Movimentação é obrigatória.');
+          }
+
           return http().post(API + 'movimentacoes/fiscais/', movimentacao)
         },
       },

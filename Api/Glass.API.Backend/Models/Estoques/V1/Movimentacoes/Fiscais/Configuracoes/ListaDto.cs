@@ -19,14 +19,14 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Fiscais.Configuraco
         /// </summary>
         internal ListaDto()
         {
-            this.CodigoTabela = (int)LogCancelamento.TabelaCancelamento.MovEstoqueFiscal;
+            this.CodigoTabelaLogCancelamento = (int)LogCancelamento.TabelaCancelamento.MovEstoqueFiscal;
         }
 
         /// <summary>
         /// Obtém ou define o código da tabela de cancelamento.
         /// </summary>
         [DataMember]
-        [JsonProperty("codigoTabela")]
-        public int CodigoTabela { get; set; }
+        [JsonProperty("codigoTabelaLogCancelamento")]
+        public int CodigoTabelaLogCancelamento { get; set; }
     }
 }

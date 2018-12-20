@@ -119,7 +119,7 @@
                     <td></td>
                 </template>
             </lista-paginada>
-            <section class="link">
+            <section class="links">
                 <div>
                     <span>
                         <a href="#" @click.prevent="abrirLogCancelamento()">
@@ -179,7 +179,7 @@
         </section>
     </div>
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
-        <Scripts>
+        <Scripts>           
             <asp:ScriptReference Path="~/Vue/Estoques/Movimentacoes/Fiscais/Componentes/ListaMovimentacoesEstoqueFiscal.Filtro.js" />
             <asp:ScriptReference Path="~/Vue/Estoques/Movimentacoes/Fiscais/Componentes/ListaMovimentacoesEstoqueFiscal.js" />
         </Scripts>

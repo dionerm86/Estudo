@@ -43,7 +43,7 @@
      * Exibe a tela log de cancelamento do extrato de estoque fiscal.
      */
     abrirLogCancelamento: function () {
-      this.abrirJanela(600, 800, '../Utils/ShowLogCancelamento.aspx?tabela=' + this.configuracoes.codigoTabela);
+      this.abrirJanela(600, 800, '../Utils/ShowLogCancelamento.aspx?tabela=' + this.configuracoes.codigoTabelaLogCancelamento);
     },
 
     /**
@@ -114,7 +114,7 @@
     /**
      * Exclui uma movimentação do estoque fiscal (lançamento manual)
      */
-    excluir: function (Movimentacao) {
+    excluir: function (movimentacao) {
       if (!this.perguntar("Deseja excluir esta movimentação?")) {
         return;
       }
@@ -218,7 +218,7 @@
      */
     atualizouItens: function (numeroItens) {
       this.listaNaoVazia = numeroItens > 0;
-    },
+    }
   },
 
   watch: {
@@ -237,7 +237,6 @@
   mounted: function () {
     var vm = this;
 
-    //Recuperação das configurações ao carregar o Vue.
     Servicos.Estoques.Movimentacoes.Fiscais.obterConfiguracoesLista()
       .then(function (resposta) {
         vm.configuracoes = resposta.data;

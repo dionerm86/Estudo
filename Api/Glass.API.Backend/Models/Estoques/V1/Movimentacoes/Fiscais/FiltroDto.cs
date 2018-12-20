@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Helper.Estoques.Movimentacoes.Fiscais;
+using Glass.API.Backend.Models.Estoques.V1.Movimentacoes.TiposMovimentacao;
 using Glass.API.Backend.Models.Genericas.V1;
 using Newtonsoft.Json;
 using System;
@@ -71,7 +72,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Fiscais
         /// Obtém ou define o tipo da movimentação.
         /// </summary>
         [JsonProperty("tipoMovimentacao")]
-        public int? TipoMovimentacao { get; set; }
+        public TipoMovimentacao TipoMovimentacao { get; set; }
 
         /// <summary>
         /// Obtém ou define a situação do produto.

@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Fiscais.CadastroAtualizacao;
+using Glass.API.Backend.Models.Estoques.V1.Movimentacoes.TiposMovimentacao;
 using Glass.Data.Helper;
 using System;
 
@@ -46,7 +47,7 @@ namespace Glass.API.Backend.Helper.Estoques.Movimentacoes.Fiscais
         {
             destino.DataMov = this.cadastro.ObterValorNormalizado(c => c.DataMovimentacao, destino.DataMov);
             destino.QtdeMov = this.cadastro.ObterValorNormalizado(c => c.Quantidade, destino.QtdeMov);
-            destino.TipoMov = this.cadastro.ObterValorNormalizado(c => c.TipoMovimentacao, destino.TipoMov);
+            destino.TipoMov = (int)this.cadastro.ObterValorNormalizado(c => c.TipoMovimentacao, (TipoMovimentacao)destino.TipoMov);
             destino.ValorMov = this.cadastro.ObterValorNormalizado(c => c.Valor, destino.ValorMov);
             destino.Obs = this.cadastro.ObterValorNormalizado(c => c.Observacao, destino.Obs);
             destino.IdProd = (uint)this.cadastro.ObterValorNormalizado(c => c.IdProduto, (int)destino.IdProd);

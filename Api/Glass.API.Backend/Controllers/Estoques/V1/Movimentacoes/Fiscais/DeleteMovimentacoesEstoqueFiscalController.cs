@@ -39,9 +39,9 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Fiscais
                         return validacao;
                     }
 
-                    var movimentacao = MovEstoqueFiscalDAO.Instance.GetElementByPrimaryKey(id);
+                    var movimentacao = MovEstoqueFiscalDAO.Instance.GetElementByPrimaryKey(sessao, id);
 
-                    MovEstoqueFiscalDAO.Instance.Delete(movimentacao);
+                    MovEstoqueFiscalDAO.Instance.Delete(sessao, movimentacao);
 
                     return this.Aceito($"Movimentação excluída.");
                 }

@@ -6,6 +6,7 @@ using GDA;
 using Glass.API.Backend.Helper.Estoques.Movimentacoes.Fiscais;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Fiscais.CadastroAtualizacao;
+using Glass.API.Backend.Models.Estoques.V1.Movimentacoes.TiposMovimentacao;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Exceptions;
@@ -48,7 +49,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Fiscais
 
                     sessao.BeginTransaction();
 
-                    if (dadosParaCadastro.TipoMovimentacao == 1)
+                    if (dadosParaCadastro.TipoMovimentacao == TipoMovimentacao.TipoMovimentacaoEntrada)
                     {
                         MovEstoqueFiscalDAO.Instance.CreditaEstoqueManual(
                             sessao,
@@ -59,7 +60,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Fiscais
                             movimentacaoEstoqueFiscal.DataMov,
                             movimentacaoEstoqueFiscal.Obs);
                     }
-                    else if (dadosParaCadastro.TipoMovimentacao == 2)
+                    else if (dadosParaCadastro.TipoMovimentacao == TipoMovimentacao.TipoMovimentacaoSaida)
                     {
                         MovEstoqueFiscalDAO.Instance.BaixaEstoqueManual(
                             sessao,

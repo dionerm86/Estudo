@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Genericas.V1.CadastroAtualizacao;
+using Glass.API.Backend.Models.Estoques.V1.Movimentacoes.TiposMovimentacao;
 using Glass.Data.Model;
 using Newtonsoft.Json;
 using System;
@@ -44,7 +45,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Fiscais.CadastroAtu
         /// </summary>
         [DataMember]
         [JsonProperty("tipoMovimentacao")]
-        public int TipoMovimentacao
+        public TipoMovimentacao TipoMovimentacao
         {
             get { return this.ObterValor(c => c.TipoMovimentacao); }
             set { this.AdicionarValor(c => c.TipoMovimentacao, value); }

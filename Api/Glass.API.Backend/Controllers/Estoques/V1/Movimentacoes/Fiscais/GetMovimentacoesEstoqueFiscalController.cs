@@ -36,7 +36,6 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Fiscais
                 filtro = filtro ?? new Models.Estoques.V1.Movimentacoes.Fiscais.FiltroDto();
 
                 var situacao = filtro.SituacaoProduto.GetValueOrDefault(Situacao.Ativo);
-                var idLoja = filtro.IdLoja.GetValueOrDefault((int)UserInfo.GetUserInfo.IdLoja);
 
                 var movimentacoesEstoqueFiscal = MovEstoqueFiscalDAO.Instance.GetList(
                     (uint)(filtro.IdLoja ?? 0),
@@ -46,7 +45,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.Fiscais
                     filtro.NumeroNotaFiscal,
                     filtro.PeriodoMovimentacaoInicio?.ToShortDateString(),
                     filtro.PeriodoMovimentacaoFim?.ToShortDateString(),
-                    filtro.TipoMovimentacao ?? 0,
+                    (int)filtro.TipoMovimentacao,
                     (int)situacao,
                     (uint)(filtro.IdCfop ?? 0),
                     (uint)(filtro.IdGrupoProduto ?? 0),

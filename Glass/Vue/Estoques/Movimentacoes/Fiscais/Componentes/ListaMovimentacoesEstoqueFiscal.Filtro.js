@@ -53,7 +53,8 @@
       corAluminioAtual: null,
       idGrupoProdutoAtual: null,
       idSubgrupoProdutoAtual: null,
-      tipoMovimentacaoAtual: null
+      tipoMovimentacaoAtual: null,
+      situacaoAtual: null
     };
   },
 
@@ -131,6 +132,14 @@
     obterItensFiltroTiposMovimentacao: function () {
       return Servicos.Estoques.Movimentacoes.TiposMovimentacao.obterParaControle();
     },
+
+    /**
+     * Retorna os itens para o controle de situações da movimentação.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterSituacoes: function () {
+      return Servicos.Comum.obterSituacoes();
+    }
   },
 
   watch: {
@@ -146,7 +155,7 @@
     },
 
     /**
-     * Observador para a variável 'corVidro'.
+     * Observador para a variável 'corVidroAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */
     corVidroAtual: {
@@ -157,7 +166,7 @@
     },
 
     /**
-     * Observador para a variável 'corFerragem'.
+     * Observador para a variável 'corFerragemAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */
     corFerragemAtual: {
@@ -209,13 +218,22 @@
       }
     },
 
+    /**
+     * Observador para a variável 'situacaoAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    situacaoAtual: {
+      handler: function (atual) {
+        this.filtroAtual.situacaoProduto = atual ? atual.id : null;
+      }
+    },
+
     configuracoes: {
       handler: function (atual) {
         //Inicialização dos filtros padronizados e das propriedades do objeto filtro.
         var dataAtual = new Date();
         this.filtroAtual.periodoMovimentacaoInicio = this.adicionarDias(dataAtual, -15);
         this.filtroAtual.periodoMovimentacaoFim = dataAtual;
-        this.filtrar();
 
         var vm = this;
 
