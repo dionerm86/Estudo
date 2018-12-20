@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using GDA;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
@@ -20,7 +20,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Tipo da movimentaÁ„o.
+        /// Tipo da movimenta√ß√£o.
         /// </summary>
         public enum TipoEnum
         {
@@ -31,9 +31,9 @@ namespace Glass.Data.Model
             Entrada = 1,
 
             /// <summary>
-            /// SaÌda.
+            /// Sa√≠da.
             /// </summary>
-            [Description("SaÌda")]
+            [Description("Sa√≠da")]
             Saida,
         }
 
@@ -74,7 +74,7 @@ namespace Glass.Data.Model
         public uint? IdContaR { get; set; }
 
         /// <summary>
-        /// Campo utilizado para identificar qual cheque devolvido esta sendo pago com esta movimentaÁ„o
+        /// Campo utilizado para identificar qual cheque devolvido esta sendo pago com esta movimenta√ß√£o
         /// </summary>
         [PersistenceProperty("IDCHEQUE")]
         public uint? IdCheque { get; set; }
@@ -127,7 +127,7 @@ namespace Glass.Data.Model
         public uint? IdDevolucaoPagto { get; set; }
 
         /// <summary>
-        /// 1-Entrada, 2-SaÌda
+        /// 1-Entrada, 2-Sa√≠da
         /// </summary>
         [PersistenceProperty("TIPOMOV")]
         public int TipoMov { get; set; }
@@ -151,6 +151,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("DATAMOV")]
         public DateTime DataMov { get; set; }
 
+        [PersistenceProperty("IDCAIXADIARIO")]
+        public int? IdCaixaDiario { get; set; }
+
         [PersistenceProperty("DATAMOVBANCO")]
         public DateTime? DataMovBanco { get; set; }
 
@@ -158,14 +161,14 @@ namespace Glass.Data.Model
         [PersistenceProperty("SALDO")]
         public decimal Saldo { get; set; }
 
-        [Log("N˙m. Aut. Construcard")]
+        [Log("N√∫m. Aut. Construcard")]
         [PersistenceProperty("NUMAUTCONSTRUCARD")]
         public string NumAutConstrucard { get; set; }
 
         [PersistenceProperty("LANCMANUAL")]
         public bool LancManual { get; set; }
 
-        [Log("ObservaÁ„o")]
+        [Log("Observa√ß√£o")]
         [PersistenceProperty("OBS")]
         public string Obs { get; set; }
 
@@ -272,16 +275,16 @@ namespace Glass.Data.Model
         [Log("Tipo Mov.")]
         public string DescrTipoMov
         {
-            get { return TipoMov == 1 ? "Entrada" : "SaÌda"; }
+            get { return TipoMov == 1 ? "Entrada" : "Sa√≠da"; }
         }
 
-        [Log("Forma SaÌda")]
+        [Log("Forma Sa√≠da")]
         public string DescrFormaSaida
         {
             get { return FormaSaida == 1 ? "Dinheiro" : FormaSaida == 2 ? "Cheque" : ""; }
         }
 
-        [Log("ReferÍncia")]
+        [Log("Refer√™ncia")]
         public string Referencia
         {
             get
@@ -298,7 +301,7 @@ namespace Glass.Data.Model
                     refer += "Acerto Cheque: " + IdAcertoCheque + " ";
 
                 if (IdDeposito > 0)
-                    refer += "DepÛsito: " + IdDeposito + " ";
+                    refer += "Dep√≥sito: " + IdDeposito + " ";
 
                 if (IdCheque > 0)
                     refer += "Cheque: " + ChequesDAO.Instance.ObtemNumCheque(IdCheque.Value) + " ";
@@ -310,7 +313,7 @@ namespace Glass.Data.Model
                     refer += "Pedido: " + IdPedido + " ";
 
                 if (IdLiberarPedido > 0)
-                    refer += "LiberaÁ„o: " + IdLiberarPedido + " ";
+                    refer += "Libera√ß√£o: " + IdLiberarPedido + " ";
 
                 if (IdPagto > 0)
                     refer += "Pagto: " + IdPagto + " ";
@@ -319,13 +322,13 @@ namespace Glass.Data.Model
                     refer += "Obra: " + IdObra + " ";
 
                 if (IdAntecipFornec > 0)
-                    refer += "AntecipaÁ„o de fornecedor: " + IdAntecipFornec + " ";
+                    refer += "Antecipa√ß√£o de fornecedor: " + IdAntecipFornec + " ";
 
                 if (IdTrocaDevolucao > 0)
-                    refer += "Troca/DevoluÁ„o: " + IdTrocaDevolucao + " ";
+                    refer += "Troca/Devolu√ß√£o: " + IdTrocaDevolucao + " ";
 
                 if (IdDevolucaoPagto > 0)
-                    refer += "DevoluÁ„o de pagto.: " + IdDevolucaoPagto + " ";
+                    refer += "Devolu√ß√£o de pagto.: " + IdDevolucaoPagto + " ";
 
                 if (IdSinal > 0)
                     refer += SinalDAO.Instance.GetReferencia(IdSinal.Value) + " ";
@@ -334,10 +337,10 @@ namespace Glass.Data.Model
                     refer += "Sinal da Compra: " + IdSinalCompra + " ";
 
                 if (IdCreditoFornecedor > 0)
-                    refer += "CrÈd. Fornecedor: " + IdCreditoFornecedor + " ";
+                    refer += "Cr√©d. Fornecedor: " + IdCreditoFornecedor + " ";
 
                 if (IdCartaoNaoIdentificado > 0)
-                    refer += "Cart„o n„o Identificado: " + IdCartaoNaoIdentificado + " ";
+                    refer += "Cart√£o n√£o Identificado: " + IdCartaoNaoIdentificado + " ";
 
                 if (IdContaR > 0)
                     refer += ContasReceberDAO.Instance.GetReferencia(IdContaR.Value) +
@@ -373,7 +376,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Controla se o total de dinheiro, cheque e cheques de terc em aberto aparecer·
+        /// Controla se o total de dinheiro, cheque e cheques de terc em aberto aparecer√°
         /// </summary>
         public bool MostrarTotalGeral { get; set; }
 
