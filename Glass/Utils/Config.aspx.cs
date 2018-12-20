@@ -168,7 +168,7 @@ namespace Glass.UI.Web.Utils
 
         protected bool UsarDescontoComissao()
         {
-            return Glass.Configuracoes.ComissaoConfig.DescontarComissaoPerc && Glass.Configuracoes.PedidoConfig.Comissao.PerComissaoPedido;
+            return Glass.Configuracoes.ComissaoConfig.DescontarComissaoPerc;
         }
 
         #endregion
