@@ -1138,7 +1138,7 @@ namespace Glass.Data.Model
             get
             {
                 return (TipoCalculo == (int)TipoCalculoGrupoProd.ML || TipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 ||
-                    TipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
+                    TipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 || (TipoCalculo == (int)TipoCalculoGrupoProd.Perimetro ||
                     TipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 || TipoCalculo == (int)TipoCalculoGrupoProd.MLAL6) ? TotalML.ToString("N2") + "ml" :
                     TipoCalculo == (int)TipoCalculoGrupoProd.M2 || TipoCalculo == (int)TipoCalculoGrupoProd.M2Direto ||
                     TipoCalculo == (int)TipoCalculoGrupoProd.QtdM2 || GrupoProdDAO.Instance.IsVidro(IdGrupoProd) ?
@@ -1162,7 +1162,7 @@ namespace Glass.Data.Model
             get
             {
                 return (TipoCalculo == (int)TipoCalculoGrupoProd.ML || TipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 ||
-                    TipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
+                    TipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 || (TipoCalculo == (int)TipoCalculoGrupoProd.Perimetro ||
                     TipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 || TipoCalculo == (int)TipoCalculoGrupoProd.MLAL6) ? TotalML.ToString("N2") + "ml" : "";
             }
         }
