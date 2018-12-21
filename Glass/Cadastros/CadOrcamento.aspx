@@ -594,7 +594,6 @@
 
         function setCliente(idCli, nome) {
             hdfIdCliente.value = idCli;
-            recalcular(idOrcamento, false, "", idCli);
             eval(lnkGerarPedido.href.replace(/%20/g, " "));
         }
 
