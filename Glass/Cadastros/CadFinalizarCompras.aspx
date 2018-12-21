@@ -1,4 +1,4 @@
-<%@ Page Title="Finalizar Várias Compras" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+ï»¿<%@ Page Title="Finalizar VÃ¡rias Compras" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="CadFinalizarCompras.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadFinalizarCompras" %>
 
 <%@ Register Src="../Controls/ctrlParcelas.ascx" TagName="ctrlParcelas" TagPrefix="uc1" %>
@@ -123,7 +123,7 @@
         <tr>
             <td align="center">
                 <asp:GridView ID="grdCompra" runat="server" AutoGenerateColumns="False" CssClass="gridStyle"
-                    DataSourceID="odsCompra" EmptyDataText="Não há compra à prazo para finalizar"
+                    DataSourceID="odsCompra" EmptyDataText="NÃ£o hÃ¡ compra Ã  prazo para finalizar"
                     GridLines="None">
                     <Columns>
                         <asp:TemplateField>
@@ -134,7 +134,7 @@
                                 <asp:CheckBox ID="chkFinalizar" runat="server" />
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:BoundField DataField="IdCompra" HeaderText="Cód." SortExpression="IdCompra" />
+                        <asp:BoundField DataField="IdCompra" HeaderText="CÃ³d." SortExpression="IdCompra" />
                         <asp:BoundField DataField="NomeLoja" HeaderText="Loja" SortExpression="NomeLoja" />
                         <asp:BoundField DataField="NomeFornec" HeaderText="Fornecedor" SortExpression="NomeFornec" />
                         <asp:BoundField DataField="DataCad" DataFormatString="{0:d}" HeaderText="Data" SortExpression="DataCad" />
@@ -161,10 +161,10 @@
                             <asp:TextBox ID="txtNf" runat="server" MaxLength="20"></asp:TextBox>
                         </td>
                         <td align="left" class="dtvHeader" nowrap="nowrap">
-                            Data entr. fábrica
+                            Data entr. fÃ¡brica
                         </td>
                         <td align="left" nowrap="nowrap">
-                            <uc2:ctrlData id="ctrlDataFabrica" runat="server" readonly="ReadWrite" />
+                            <uc2:ctrlData id="ctrlDataFabrica" runat="server" readonly="ReadWrite" ValidateEmptyText="true" ErrorMessage="Informe a data entr. fÃ¡brica." />
                         </td>
                     </tr>
                     <tr id="trFormaPgto">
@@ -187,7 +187,7 @@
                             </table>
                         </td>
                         <td align="left" class="dtvHeader" nowrap="nowrap">
-                            Número de parcelas
+                            NÃºmero de parcelas
                         </td>
                         <td>
                             <asp:DropDownList ID="drpNumParc" runat="server" OnLoad="drpNumParc_Load">

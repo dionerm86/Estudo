@@ -38,7 +38,7 @@ namespace Glass.Api.Implementacao.Pedido
         private uint GerarPedidoSemItem(int idProjeto)
         {
             var proj = Glass.Data.DAL.ProjetoDAO.Instance.GetElementByPrimaryKey(idProjeto);
-            var idPedido = Glass.Data.DAL.ProjetoDAO.Instance.GerarPedido((uint)idProjeto, true, proj.TipoEntrega, true);
+            var idPedido = Glass.Data.DAL.ProjetoDAO.Instance.GerarPedido((uint)idProjeto, true, true);
 
             // Altera os dados do pedido
             DateTime dataEntrega, dataFastDelivery;

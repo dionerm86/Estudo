@@ -4041,7 +4041,10 @@ namespace Glass.Data.DAL
                                     nomeUfDestino.ToUpper().Contains("TO");
 
                                 var percentualIcmsInterestadual = pnf.CstOrig == 1 ? 4 : origemSulSudesteExcetoES && destinoNorteNordesteCentroOesteES ? 7 : 12;
-                                var valorDifal = (pnf.BcIcms * ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)) - (pnf.BcIcms * ((decimal)percentualIcmsInterestadual / 100));
+
+                                var baseIcmsCalculoDifal = FiscalConfig.NotaFiscalConfig.IgnorarReducaoBcIcmsCalculoDifal ? pnf.BcIcmsSemReducao : pnf.BcIcms;
+
+                                var valorDifal = (baseIcmsCalculoDifal * ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)) - (baseIcmsCalculoDifal * ((decimal)percentualIcmsInterestadual / 100));
 
                                 var estadosDifalRIcmsPr = FiscalConfig.EstadosConsiderarRicmsPr;
 
@@ -4052,11 +4055,11 @@ namespace Glass.Data.DAL
                                     valorDifal = Math.Round(valorDifal / (1 - ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)), 4);
                                 }
 
-                                var percentualIcmsUFDestino = DateTime.Now.Year == 2018 ? (decimal)0.8 : 100;
-                                var percentualIcmsUFRemetente = DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
+                                var percentualIcmsUFDestino = DateTime.Now.Year == 2018 ? 0.8M : 100;
+                                var percentualIcmsUFRemetente = DateTime.Now.Year == 2018 ? 0.2M : 0;
                                 valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
                                 valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
-                                var valorIcmsFCP = Math.Round(pnf.BcIcms * (aliqFcp / 100), 2);
+                                var valorIcmsFCP = Math.Round(baseIcmsCalculoDifal * (aliqFcp / 100), 2);
 
                                 totalIcmsUFDestino += valorIcmsUFDestino;
                                 totalIcmsUFRemetente += valorIcmsUFRemetente;
@@ -4064,8 +4067,8 @@ namespace Glass.Data.DAL
 
                                 XmlElement icmsUfDest = doc.CreateElement("ICMSUFDest");
 
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCFCPUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));// Valor da Base de Cálculo do FCP na UF de destino.
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCUFDest", Formatacoes.TrataValorDecimal(baseIcmsCalculoDifal, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCFCPUFDest", Formatacoes.TrataValorDecimal(baseIcmsCalculoDifal, 2));// Valor da Base de Cálculo do FCP na UF de destino.
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(aliqFcp, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInternaDestinatario, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal(percentualIcmsInterestadual, 2));
@@ -5044,6 +5047,33 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        /// <summary>
+        /// Altera a data emissão do XML da nota fiscal com a nova data passada.
+        /// </summary>
+        /// <param name="notaFiscal">Objeto Nota fiscal.</param>
+        /// <param name="dataEmissaoXml">Data emissao da NF de retorno da sefaz.</param>
+        public void AlterarDataEmissaoXml(NotaFiscal notaFiscal, string dataEmissaoXml)
+        {
+            try
+            {
+                var path = $"{Utils.GetNfeXmlPath}{notaFiscal.ChaveAcesso}-nfe.xml";
+
+                XmlDocument doc = new XmlDocument();
+                doc.Load(path);
+
+                XmlNode node;
+                node = doc.DocumentElement;
+
+                node["NFe"]["infNFe"]["ide"]["dhEmi"].InnerText = dataEmissaoXml;
+
+                doc.Save(path);
+            }
+            catch (Exception ex)
+            {
+                ErroDAO.Instance.InserirFromException($"Retorno Consulta Emissao NF. Nota fiscal ID {notaFiscal.IdNf}.", ex);
+            }
+        }
+
         #region Inclusão de protocolo de recebimento da NF-e
 
         /// <summary>
@@ -5378,24 +5408,28 @@ namespace Glass.Data.DAL
             }
 
             // Separa os valores
-            SeparaValoresAReceber(nf);
+            this.SeparaValoresAReceber(nf);
 
-            //Referencia a NF-e nas contas recebidas de pedidos que foram pagos antecipadamente ou que receberam sinal
-            ReferenciaPedidosAntecipados(null, nf);
+            // Referencia a NF-e nas contas recebidas de pedidos que foram pagos antecipadamente ou que receberam sinal
+            this.ReferenciaPedidosAntecipados(null, nf);
 
             // Altera situação da NFe para autorizada
-            AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
+            this.AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
 
             // Altera a data emissão da NFe para a data de autorização do retorno do xml.
             if (xmlProt?["protNFe"]?["infProt"]?["dhRecbto"] != null)
             {
-                var dataAutorizacaoNotaFiscal = DateTime.Parse(xmlProt?["protNFe"]?["infProt"]?["dhRecbto"]?.InnerXml);
+                var dataRetorno = xmlProt?["protNFe"]?["infProt"]?["dhRecbto"]?.InnerXml;
 
-                objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET dataEmissao=?dataEmissaoNf WHERE IdNf={ nf.IdNf }", new GDAParameter[] { new GDAParameter("?dataEmissaoNf", dataAutorizacaoNotaFiscal) });
+                var dataAutorizacaoNotaFiscal = DateTime.Parse(dataRetorno);
+
+                this.objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET dataEmissao = ?dataEmissaoNf WHERE IdNf = {nf.IdNf}", new GDAParameter[] { new GDAParameter("?dataEmissaoNf", dataAutorizacaoNotaFiscal) });
+
+                this.AlterarDataEmissaoXml(nf, dataRetorno);
             }
 
             // Envia email para o cliente com o XML
-            EnviarEmailXml(nf);
+            this.EnviarEmailXml(nf);
         }
 
         #endregion
@@ -7735,7 +7769,7 @@ namespace Glass.Data.DAL
             {
                 idNf = NotaFiscalDAO.Instance.Insert(nf);
             }
-            
+
             // Insere os produtos da nota
             if (idNf > 0)
             {

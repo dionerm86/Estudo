@@ -264,6 +264,11 @@ namespace Glass.Integracao.Khan
 
         private void NotaFiscalGerada(Data.Domain.NotaFiscalEventoArgs e)
         {
+            if (!this.configuracao.Ativo)
+            {
+                return;
+            }
+
             var task = Task.Run(async () => await this.SalvarNotaFiscal(e.Sessao, e.NotaFiscal));
 
             try

@@ -120,6 +120,8 @@ namespace Glass.Data.Model
             FaixaRentabilidadeLiberacao = 109,
             GrupoCliente,
             ImagemOrcamento = 111,
+            Ferragem
+       
         }
 
         public static string GetDescrTabela(int tabela)
@@ -218,6 +220,7 @@ namespace Glass.Data.Model
                 case TabelaAlteracao.FaixaRentabilidadeComissao: return "Faixa Rentabilidade Comissão";
                 case TabelaAlteracao.FaixaRentabilidadeLiberacao: return "Faixa Rentabilidade Liberação";
                 case TabelaAlteracao.GrupoCliente: return "Grupo Cliente";
+                case TabelaAlteracao.Ferragem: return "Ferragem";
                 default: return string.Empty;
             }
         }

@@ -1007,7 +1007,7 @@ namespace Glass.Data.DAL.CTe
             ManipulacaoXml.SetNode(xmlInut, infInut, "ano", DateTime.Now.ToString("yy"));
             ManipulacaoXml.SetNode(xmlInut, infInut, "CNPJ", Formatacoes.TrataStringDocFiscal(cnpj).PadLeft(14, '0'));
             ManipulacaoXml.SetNode(xmlInut, infInut, "mod", cte.Modelo);
-            ManipulacaoXml.SetNode(xmlInut, infInut, "serie", cte.Serie.ToString());
+            ManipulacaoXml.SetNode(xmlInut, infInut, "serie", cte.Serie.StrParaInt().ToString());
             ManipulacaoXml.SetNode(xmlInut, infInut, "nCTIni", cte.NumeroCte.ToString());
             ManipulacaoXml.SetNode(xmlInut, infInut, "nCTFin", cte.NumeroCte.ToString());
             ManipulacaoXml.SetNode(xmlInut, infInut, "xJust", Formatacoes.TrataStringDocFiscal(justificativa));

@@ -99,6 +99,25 @@ namespace Glass.Integracao.Khan
             }
         }
 
+        /// <summary>
+        /// Obtém um valor que indica se o integrador está ativo.
+        /// </summary>
+        public bool Ativo
+        {
+            get
+            {
+                var config = System.Configuration.ConfigurationManager.AppSettings["Khan:Integracao"];
+                var resultado = false;
+
+                if (bool.TryParse(config, out resultado))
+                {
+                    return resultado;
+                }
+
+                return false;
+            }
+        }
+
         /// <inheritdoc />
         public override bool VerificarSomenteLeitura(string nome)
         {
