@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         /// <param name="id">O identificador do funcionário que será excluído.</param>
         /// <returns>Um status HTTP indicando se o funcionário foi excluído.</returns>
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:int}")]
         [SwaggerResponse(202, "Funcionário excluído.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na exclusão do funcionário.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Funcionário não encontrado para o filtro informado.", Type = typeof(MensagemDto))]

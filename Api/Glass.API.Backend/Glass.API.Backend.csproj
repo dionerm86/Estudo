@@ -252,6 +252,10 @@
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\DeleteMovimentacaoEstoqueRealController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\GetMovimentacaoEstoqueRealController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\MovimentacaoEstoqueRealController.cs" />
+    <Compile Include="Controllers\Funcionarios\V1\Tipos\DeleteTiposFuncionarioController.cs" />
+    <Compile Include="Controllers\Funcionarios\V1\Tipos\GetTiposFuncionarioController.cs" />
+    <Compile Include="Controllers\Funcionarios\V1\Tipos\PostTiposFuncionarioController.cs" />
+    <Compile Include="Controllers\Funcionarios\V1\Tipos\TiposFuncionarioController.cs" />
     <Compile Include="Controllers\Estoques\V1\TrocasDevolucoes\GetTrocasDevolucoesController.cs" />
     <Compile Include="Controllers\Estoques\V1\TrocasDevolucoes\TrocasDevolucoesController.cs" />
     <Compile Include="Controllers\Parcelas\V1\PatchParcelasController.cs" />
@@ -523,6 +527,8 @@
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Funcionarios\Tipos\ConverterCadastroAtualizacaoParaTipoFuncionario.cs" />
+    <Compile Include="Helper\Funcionarios\Tipos\TraducaoOrdenacaoListaTiposFuncionario.cs" />
     <Compile Include="Helper\Pedidos\TraducaoOrdenacaoListaPedidosVolumes.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\TraducaoOrdenacaoMovimentacaoEstoqueReal.cs" />
     <Compile Include="Helper\Parcelas\ConverterCadastroAtualizacaoParaParcelas.cs" />
@@ -700,6 +706,10 @@
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\FiltroDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\ListaDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\PermissoesDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Tipos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Tipos\FiltroDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Tipos\ListaDto.cs" />
+    <Compile Include="Models\Funcionarios\V1\Tipos\PermissoesDto.cs" />
     <Compile Include="Models\Genericas\V1\CodigoNomeDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\Lista\FiltroDto.cs" />

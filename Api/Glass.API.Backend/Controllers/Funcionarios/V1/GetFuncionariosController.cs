@@ -26,7 +26,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         /// <param name="id">O identificador do pedido.</param>
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
-        [Route("{id}/configuracoes")]
+        [Route("{id:int}/configuracoes")]
         [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Funcionarios.V1.Configuracoes.DetalheDto))]
         public IHttpActionResult ObterConfiguracoesDetalhePedido(int id)
         {
@@ -286,7 +286,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         /// <param name="id">O identificador do funcionário.</param>
         /// <returns>A data de trabalho do funcionário.</returns>
         [HttpGet]
-        [Route("{id}/dataTrabalho")]
+        [Route("{id:int}/dataTrabalho")]
         [SwaggerResponse(200, "Data de trabalho encontrada.", Type = typeof(DataDto))]
         public IHttpActionResult ObterDataTrabalhoFuncionario(int id)
         {
