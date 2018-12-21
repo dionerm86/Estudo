@@ -516,8 +516,8 @@
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="TotalQtde" HeaderText="Qtde" SortExpression="TotalQtde" />
-                        <asp:BoundField DataField="TotalM2Rel" HeaderText="Total M²" SortExpression="TotalM2Rel" />
-                        <asp:BoundField DataField="TotalMLRel" HeaderText="Total ML" SortExpression="TotalMLRel" />
+                        <asp:BoundField DataField="TotalM2" HeaderText="Total M²" SortExpression="TotalM2" />
+                        <asp:BoundField DataField="TotalML" HeaderText="Total ML" SortExpression="TotalML" />
                         <asp:BoundField DataField="TotalCusto" DataFormatString="{0:C}" HeaderText="Custo Total"
                             SortExpression="TotalCusto" />
                         <asp:BoundField DataField="ValorVendido" DataFormatString="{0:C}" HeaderText="Valor Vendido"

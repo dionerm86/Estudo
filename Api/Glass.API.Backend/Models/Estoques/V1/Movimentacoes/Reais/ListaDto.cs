@@ -16,7 +16,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais
     /// Classe que encapsula os dados de movimentação de estoque real para a tela de listagem.
     /// </summary>
     [DataContract(Name = "MovimentacoesEstoqueReal")]
-    public class ListaDto
+    public class ListaDto : IdDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
@@ -59,13 +59,6 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais
 
             this.CorLinha = this.ObterCorLinha();
         }
-
-        /// <summary>
-        /// Obtém ou define o identificador da movimentação.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("id")]
-        public int? Id { get; set; }
 
         /// <summary>
         /// Obtém ou define a referencia da movimentação.
