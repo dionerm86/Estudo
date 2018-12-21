@@ -252,10 +252,14 @@
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\DeleteMovimentacaoEstoqueRealController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\GetMovimentacaoEstoqueRealController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\MovimentacaoEstoqueRealController.cs" />
+    <Compile Include="Controllers\Estoques\V1\TrocasDevolucoes\GetTrocasDevolucoesController.cs" />
+    <Compile Include="Controllers\Estoques\V1\TrocasDevolucoes\TrocasDevolucoesController.cs" />
     <Compile Include="Controllers\Parcelas\V1\PatchParcelasController.cs" />
     <Compile Include="Controllers\Parcelas\V1\PostParcelasController.cs" />
     <Compile Include="Controllers\ImpressoesEtiquetas\V1\ImpressoesEtiquetasController.cs" />
     <Compile Include="Controllers\ImpressoesEtiquetas\V1\GetImpressoesEtiquetasController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\SubtiposPerda\GetSubtiposPerdaController.cs" />
+    <Compile Include="Controllers\Producao\V1\TiposPerda\SubtiposPerda\SubtiposPerdaController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\DeleteFerragensController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\DeleteFabricantesFerragemController.cs" />
     <Compile Include="Controllers\Projetos\V1\Ferragens\FabricantesFerragem\FabricantesFerragemController.cs" />
@@ -523,6 +527,7 @@
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\TraducaoOrdenacaoMovimentacaoEstoqueReal.cs" />
     <Compile Include="Helper\Parcelas\ConverterCadastroAtualizacaoParaParcelas.cs" />
     <Compile Include="Helper\Carregamentos\TraducaoOrdenacaoListaCarregamentos.cs" />
+    <Compile Include="Helper\Estoques\TraducaoOrdenacaoListaTrocasDevolucoes.cs" />
     <Compile Include="Helper\ImpressoesEtiquetas\TraducaoOrdenacaoListaImpressoesEtiquetas.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\ConverterCadastroAtualizacaoParaFabricanteFerragem.cs" />
     <Compile Include="Helper\Projetos\Ferragens\FabricantesFerragem\TraducaoOrdenacaoListaFabricantesFerragem.cs" />
@@ -681,6 +686,10 @@
     <Compile Include="Models\Condutores\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Condutores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Condutores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\ListaDto.cs" />
+    <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\TiposMovimentacao\TiposMovimentacao.cs" />
     <Compile Include="Models\Funcionarios\V1\CadastroAtualizacao\DocumentosEDadosPessoaisDto.cs" />
