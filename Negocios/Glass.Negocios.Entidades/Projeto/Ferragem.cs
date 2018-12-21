@@ -15,6 +15,7 @@ namespace Glass.Projeto.Negocios.Entidades
     /// Representa uma ferragem.
     /// </summary>
     [Colosoft.Business.EntityLoader(typeof(FerragemLoader))]
+    [Glass.Negocios.ControleAlteracao(Data.Model.LogAlteracao.TabelaAlteracao.Ferragem)]
     public class Ferragem : Colosoft.Business.Entity<Glass.Data.Model.Ferragem>
     {
         #region Tipos Aninhados
@@ -28,7 +29,9 @@ namespace Glass.Projeto.Negocios.Entidades
                     .Description(f => f.Nome)
                     .FindName(f => f.Nome)
                     .Child<CodigoFerragem, Data.Model.CodigoFerragem>("Codigos", f => f.Codigos, f => f.IdFerragem)
+                    .Log("Codigos", "Código da Ferragem")
                     .Child<ConstanteFerragem, Data.Model.ConstanteFerragem>("Constantes", f => f.Constantes, f => f.IdFerragem)
+                    .Log("Constantes", "Constante da Ferragem")
                     .Reference<FabricanteFerragem, Data.Model.FabricanteFerragem>("Fabricante", f => f.Fabricante, f => f.IdFabricanteFerragem)
                     .Creator(f => new Ferragem(f));
             }

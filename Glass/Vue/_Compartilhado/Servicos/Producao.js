@@ -5,6 +5,14 @@
  */
 Servicos.Producao = (function(http) {
   const API = '/api/v1/producao/';
+  const API_TipoPerda = API + 'tiposPerda/';
+  const API_TipoPerda_SubtipoPerda = function (idTipoPerda) {
+    const complemento = 'subtiposPerda/';
+
+    return idTipoPerda > 0
+      ? API_TipoPerda + idTipoPerda + '/' + complemento
+      : API_TipoPerda + complemento;
+  };
 
   return {
     /**
@@ -275,6 +283,24 @@ Servicos.Producao = (function(http) {
      */
     TiposPerda: {
       /**
+       * Objeto com os serviços para a API de subtipos de perda.
+       */
+      SubtiposPerda: {
+        /**
+         * Recupera uma lista de subtipos de perda para um tipo selecionado.
+         * @param {!number} idTipoPerda O identificador do tipo de perda.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        obterParaFiltro: function (idTipoPerda) {
+          if (!idTipoPerda) {
+            throw new Error('Tipo de perda é obrigatório.');
+          }
+
+          return http().get(API_TipoPerda_SubtipoPerda(idTipoPerda) + 'filtro');
+        }
+      },
+
+      /**
        * Recupera a lista de tipos de perda.
        * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
        * @param {number} pagina O número da página de resultados a ser exibida.
@@ -283,7 +309,7 @@ Servicos.Producao = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obter: function (filtro, pagina, numeroRegistros, ordenacao) {
-        return http().get(API + 'tiposPerda', {
+        return http().get(API_TipoPerda.substr(0, API_TipoPerda.length - 1), {
           params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
@@ -298,7 +324,7 @@ Servicos.Producao = (function(http) {
           throw new Error('Tipo de perda é obrigatório.');
         }
 
-        return http().delete(API + 'tiposPerda/' + id);
+        return http().delete(API_TipoPerda + id);
       },
 
       /**
@@ -307,7 +333,7 @@ Servicos.Producao = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       inserir: function (tipoPerda) {
-        return http().post(API + 'tiposPerda', tipoPerda);
+        return http().post(API_TipoPerda.substr(0, API_TipoPerda.length - 1), tipoPerda);
       },
 
       /**
@@ -325,7 +351,7 @@ Servicos.Producao = (function(http) {
           return Promise.resolve();
         }
 
-        return http().patch(API + 'tiposPerda/' + id, tipoPerda);
+        return http().patch(API_TipoPerda + id, tipoPerda);
       },
 
       /**
@@ -333,7 +359,15 @@ Servicos.Producao = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obterSituacoes: function () {
-        return http().get(API + 'tiposPerda/situacoes');
+        return http().get(API_TipoPerda + 'situacoes');
+      },
+
+      /**
+       * Recupera uma lista de tipos de perda para uso no controle de seleção.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaFiltro: function () {
+        return http().get(API_TipoPerda + 'filtro');
       }
     },
 

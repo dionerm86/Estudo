@@ -70,14 +70,12 @@
                     dadosCli = SelCliente.GetCliMedicao(idCli).value;
                 }
 
-                try
-                {
+                try {
                     dadosCli = dadosCli.split('|');
                     window.opener.setDadosCliente(dadosCli[0], dadosCli[1], dadosCli[2], dadosCli[3], dadosCli[4], dadosCli[5],
                         dadosCli[6], dadosCli[7], idCli, dadosCli[8], dadosCli[9]);
                 }
-                catch (err)
-                {
+                catch (err) {
                     closeWindow();
                 }
             }

@@ -552,6 +552,15 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirEmitirNotaParaClienteBloqueadoOuInativo); }
             }
+
+            /// <summary>
+            /// Obtém um valor que indica se, será utilizada a base de cálculo do ICMS sem a redução para o Difal.
+            /// </summary>
+            public static bool IgnorarReducaoBcIcmsCalculoDifal
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.IgnorarReducaoBcIcmsCalculoDifal); }
+            }
+
         }
     }
 }

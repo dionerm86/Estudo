@@ -148,6 +148,15 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.ImageButton imgPesq1;
         
         /// <summary>
+        /// chkCanceladas control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkCanceladas;
+        
+        /// <summary>
         /// btnFechar control.
         /// </summary>
         /// <remarks>

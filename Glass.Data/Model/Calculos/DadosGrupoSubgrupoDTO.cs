@@ -1,5 +1,6 @@
 ﻿using GDA;
 using Glass.Comum.Cache;
+using Glass.Configuracoes;
 using Glass.Data.DAL;
 using System;
 
@@ -56,8 +57,16 @@ namespace Glass.Data.Model.Calculos
             return subgrupoProduto.Value.TipoSubgrupo;
         }
 
-        public TipoCalculoGrupoProd TipoCalculo(bool fiscal = false)
+        public TipoCalculoGrupoProd TipoCalculo(bool fiscal = false, bool compra = false)
         {
+            if (compra)
+            {
+                var tipoCalculoSubGrupo = CompraConfig.UsarTipoCalculoNfParaCompra
+                        ? subgrupoProduto.Value.TipoCalculoNf
+                        : subgrupoProduto.Value.TipoCalculo;
+                return tipoCalculoSubGrupo ?? TipoCalculoGrupoProd.Qtd;
+            }
+
             TipoCalculoGrupoProd? tipoCalculoFiscal = subgrupoProduto != null
                 ? subgrupoProduto.Value.TipoCalculoNf ?? grupoProduto.Value.TipoCalculoNf
                 : grupoProduto.Value.TipoCalculoNf;

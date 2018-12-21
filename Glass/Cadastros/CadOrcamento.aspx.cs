@@ -35,9 +35,14 @@ namespace Glass.UI.Web.Cadastros
 
                 if (this.Request["atualizar"] == "true")
                 {
-                    var tipoEntrega = OrcamentoDAO.Instance.ObterTipoEntrega(null, Conversoes.StrParaInt(this.hdfIdOrcamento.Value));
-                    var idCliente = OrcamentoDAO.Instance.ObterIdCliente(null, Conversoes.StrParaInt(this.hdfIdOrcamento.Value));
-                    this.Page.ClientScript.RegisterStartupScript(this.GetType(), "callback", $"recalcular({this.hdfIdOrcamento.Value}, false, {tipoEntrega}, {idCliente});", true);
+                    if (this.Request["clienteAlterado"] == "true")
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "Aviso", "alert('O cliente foi alterado, o orçamento será recalculado!')", true);
+                    }
+
+                    var tipoEntrega = OrcamentoDAO.Instance.ObterTipoEntrega(null, (int)orcamento.IdOrcamento);
+                    var idCliente = OrcamentoDAO.Instance.ObterIdCliente(null, (int)orcamento.IdOrcamento);
+                    this.Page.ClientScript.RegisterStartupScript(this.GetType(), "callback", $"recalcular({orcamento.IdOrcamento}, false, {tipoEntrega}, {idCliente});", true);
                 }
 
                 // Se o usuário não tiver permissão para editar este orçamento, retorna para listagem de orçamentos
@@ -398,7 +403,7 @@ namespace Glass.UI.Web.Cadastros
 
             try
             {
-                var idOrcamento = Request["idOrca"].StrParaUint();
+                var idOrcamento = this.Request["idOrca"].StrParaUint();
                 var orca = OrcamentoDAO.Instance.GetElement(idOrcamento);
 
                 LinkButton lnkGerarPedido = (LinkButton)sender;
@@ -429,7 +434,7 @@ namespace Glass.UI.Web.Cadastros
 
                     if (string.IsNullOrWhiteSpace(orca.Endereco))
                     {
-                        orca.Endereco = $"{ cliente.Endereco }{ (!string.IsNullOrWhiteSpace(cliente.Numero) ? $", { cliente.Numero }" : string.Empty) }";
+                        orca.Endereco = $"{cliente.Endereco}{(!string.IsNullOrWhiteSpace(cliente.Numero) ? $", {cliente.Numero}" : string.Empty)}";
                     }
 
                     if (string.IsNullOrWhiteSpace(orca.TelCliente))
@@ -444,20 +449,21 @@ namespace Glass.UI.Web.Cadastros
 
                     if (string.IsNullOrWhiteSpace(orca.Email))
                     {
-                        orca.Email = (cliente.Email != null ? cliente.Email.Split(',')[0] : null);
+                        orca.Email = cliente.Email != null ? cliente.Email.Split(',')[0] : null;
                     }
 
                     OrcamentoDAO.Instance.Update(orca);
+                    this.Response.Redirect($"CadOrcamento.aspx?IdOrca={orca.IdOrcamento}&atualizar=true&clienteAlterado=true");
                 }
 
                 var idPedido = PedidoDAO.Instance.GerarPedido(idOrcamento);
-                Response.Redirect($"../Cadastros/CadPedido.aspx?idPedido={ idPedido }");
+                this.Response.Redirect($"../Cadastros/CadPedido.aspx?idPedido={ idPedido }");
             }
             catch (Exception ex)
             {
                 if (clienteGerado)
                 {
-                    dtvOrcamento.DataBind();
+                    this.dtvOrcamento.DataBind();
                 }
 
                 MensagemAlerta.ErrorMsg("Falha ao gerar pedido.", ex, Page);

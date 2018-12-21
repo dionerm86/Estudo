@@ -1,6 +1,7 @@
 ﻿using GDA;
 using System;
 using System.ComponentModel;
+using Glass.Log;
 
 namespace Glass.Data.Model
 {
@@ -58,30 +59,40 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDFERRAGEM", PersistenceParameterType.IdentityKey)]
         public int IdFerragem { get; set; }
 
+        [Log("Fabricante")]
         [PersistenceProperty("IDFABRICANTEFERRAGEM")]
+        [PersistenceForeignKey(typeof(FabricanteFerragem), "IdFabricanteFerragem")]
         public int IdFabricanteFerragem { get; set; }
 
+        [Log("Nome")]
         [PersistenceProperty("NOME")]
         public string Nome { get; set; }
 
+        [Log("Situação")]
         [PersistenceProperty("SITUACAO")]
         public Situacao Situacao { get; set; }
 
+        [Log("Pode Rotacionar")]
         [PersistenceProperty("PODEROTACIONAR")]
         public bool PodeRotacionar { get; set; }
 
+        [Log("Pode Espelhar")]
         [PersistenceProperty("PODEESPELHAR")]
         public bool PodeEspelhar { get; set; }
 
+        [Log("Medidas Estáticas")]
         [PersistenceProperty("MEDIDASESTATICAS")]
         public bool MedidasEstaticas { get; set; }
 
+        [Log("Estilo Ancoragem")]
         [PersistenceProperty("ESTILOANCORAGEM")]
         public EstiloAncoragem EstiloAncoragem { get; set; }
 
+        [Log("Altura")]
         [PersistenceProperty("ALTURA")]
         public double Altura { get; set; }
 
+        [Log("Largura")]
         [PersistenceProperty("LARGURA")]
         public double Largura { get; set; }
 

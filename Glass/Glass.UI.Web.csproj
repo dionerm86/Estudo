@@ -489,12 +489,16 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.Filtro.js" />
+    <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.js" />
+    <Content Include="Vue\Estoques\TrocasDevolucoes\Templates\LstTrocaDevolucao.Filtro.html" />
     <Content Include="Vue\Estoques\Movimentacoes\Fiscais\Componentes\ListaMovimentacoesEstoqueFiscal.Filtro.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Fiscais\Componentes\ListaMovimentacoesEstoqueFiscal.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Fiscais\Templates\ListaMovimentacoesEstoqueFiscal.Filtro.html" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.Filtro.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Templates\ListaMovimentacoesEstoqueReal.Filtro.html" />
+    <Content Include="Vue\Funcionarios\Tipos\Componentes\LstTiposFuncionario.js" />
     <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
@@ -505,6 +509,7 @@
     <Content Include="Vue\Projetos\Ferragens\Componentes\LstFerragens.Filtro.js" />
     <Content Include="Vue\Projetos\Ferragens\Componentes\LstFerragens.js" />
     <Content Include="Vue\Projetos\Ferragens\Templates\LstFerragens.Filtro.html" />
+    <Content Include="Vue\Projetos\Medidas\Grupos\Componentes\LstGruposMedidaProjeto.js" />
     <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.Filtro.js" />
     <Content Include="Vue\Projetos\ModelosProjeto\Componentes\LstModelosProjeto.js" />
     <Content Include="Vue\Projetos\ModelosProjeto\Templates\LstModelosProjeto.Filtro.html" />
@@ -1814,6 +1819,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ControleExibicaoImagem.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleParcelas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleSelecaoParticipanteFiscal.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ControleTipoPerda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoFuncionarios.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoMultiplaUf.js" />
@@ -1949,6 +1955,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ControleImagemProjeto.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleParcelas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleSelecaoParticipanteFiscal.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ControleTipoPerda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoFuncionarios.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoMultiplaUf.html" />

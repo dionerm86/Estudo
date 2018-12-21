@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -797,6 +797,8 @@ namespace Glass.UI.Web.Cadastros
                         hdfLibParc.Value = "true";
                 }
 
+                totalPedido = Math.Round(totalPedido, 2);
+
                 /* Chamado 54882. */
                 totalPedido += existeEspelho ? pedidoEspelho.ValorEntrega : pedido.ValorEntrega;
 
@@ -835,7 +837,7 @@ namespace Glass.UI.Web.Cadastros
                     possuiPedidoDescontoCemPorCento = true;
                 }
 
-                totalPedido = Math.Round(totalPedido - descontoReais, 2, MidpointRounding.AwayFromZero);
+                totalPedido = totalPedido - descontoReais;
 
                 // Aplica o fast delivery novamente
                 if (pedido.FastDelivery && pedido.DescontoTotal > 0)

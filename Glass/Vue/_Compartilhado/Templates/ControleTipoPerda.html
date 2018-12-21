@@ -1,0 +1,13 @@
+﻿<span>
+    <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoPerdaAtual"
+        v-bind:funcao-recuperar-itens="obterTiposPerda" v-bind="$attrs"></lista-selecao-id-valor>
+    <span v-if="exibirSubtipos" v-show="possuiSubtipos">
+        <label>
+            Subtipo:
+        </label>
+        <lista-selecao-id-valor v-bind:item-selecionado.sync="subtipoPerdaAtual"
+            v-bind:funcao-recuperar-itens="obterSubtiposPerda"
+            v-bind:filtro-recuperar-itens="filtroSubtipoPerda"
+            v-bind="$attrs"></lista-selecao-id-valor>
+    </span>
+</span>
