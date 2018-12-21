@@ -121,7 +121,7 @@
 
       var vm = this;
 
-      Servicos.Estoques.Movimentacoes.Fiscais.excluir(Movimentacao.id)
+      Servicos.Estoques.Movimentacoes.Fiscais.excluir(movimentacao.id)
         .then(function (resposta) {
           vm.exibirMensagem(resposta.data.mensagem);
           vm.atualizarLista();
