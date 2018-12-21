@@ -22,14 +22,16 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Lista.Pedidos
         internal ListaDto(Glass.Data.Model.Pedido pedido)
         {
             this.Id = (int)pedido.IdPedido;
-            this.IdPedidoExterno = (int)pedido.IdPedidoExterno;
+            this.IdPedidoExterno = (int?)pedido.IdPedidoExterno;
             this.Importado = pedido.Importado;
             this.CodigoPedidoCliente = pedido.IdPedidoCodCliente;
-            this.ClienteExterno = new IdNomeDto
-            {
-                Id = (int)pedido.IdClienteExterno,
-                Nome = pedido.ClienteExterno,
-            };
+            this.ClienteExterno = ((int?)pedido.IdClienteExterno).HasValue
+                ? null
+                : new IdNomeDto
+                {
+                    Id = (int)pedido.IdClienteExterno,
+                    Nome = pedido.ClienteExterno,
+                };
 
             this.RotaExterna = pedido.RotaExterna;
             this.TipoPedido = pedido.DescricaoTipoPedido;
@@ -63,7 +65,7 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Lista.Pedidos
         public string CodigoPedidoCliente { get; set; }
 
         /// <summary>
-        /// Obtém ou define o cliente externo da pedido.
+        /// Obtém ou define o cliente externo do pedido.
         /// </summary>
         [DataMember]
         [JsonProperty("clienteExterno")]
@@ -125,11 +127,7 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Lista.Pedidos
         [JsonProperty("corLinha")]
         public string CorLinha { get; set; }
 
-        /// <summary>
-        /// Obtém ou define a cor da linha da listagem de pedidos por ordem de carga.
-        /// </summary>
-        /// <returns>Uma string com a cor da linha.</returns>
-        public string ObterCorLinha()
+        private string ObterCorLinha()
         {
             return this.QuantidadePecasPendentes > 0 ? "red" : string.Empty;
         }

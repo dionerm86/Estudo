@@ -1,5 +1,6 @@
 <%@ Page Title="Ordens de Carga" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
-    CodeBehind="LstOrdemCarga.aspx.cs" Inherits="Glass.UI.Web.Listas.lstOrdemCarga" %>
+    CodeBehind="LstOrdemCarga.aspx.cs" Inherits="Glass.UI.Web.Listas.lstOrdemCarga" 
+    EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     

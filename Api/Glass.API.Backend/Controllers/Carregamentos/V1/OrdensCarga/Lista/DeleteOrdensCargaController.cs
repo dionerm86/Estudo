@@ -17,7 +17,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
     public partial class OrdensCargaController : BaseController
     {
         /// <summary>
-        /// Exclui uma ordens de carga.
+        /// Exclui uma ordem de carga.
         /// </summary>
         /// <param name="id">O identificador da ordem de carga que será excluída.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
@@ -32,6 +32,8 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
             {
                 try
                 {
+                    sessao.BeginTransaction();
+
                     var validacao = this.ValidarExistenciaIdOrdemCarga(sessao, id);
 
                     if (validacao != null)
@@ -39,9 +41,12 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
                         return validacao;
                     }
 
-                    var ordemCarga = OrdemCargaDAO.Instance.GetElementByPrimaryKey(id);
+                    var ordemCarga = OrdemCargaDAO.Instance.GetElementByPrimaryKey(sessao, id);
 
-                    WebGlass.Business.OrdemCarga.Fluxo.OrdemCargaFluxo.Instance.Delete(ordemCarga);
+                    WebGlass.Business.OrdemCarga.Fluxo.OrdemCargaFluxo.Instance.Delete(sessao, ordemCarga);
+
+                    sessao.Commit();
+                    sessao.Close();
 
                     return this.Aceito($"Ordem de carga excluída.");
                 }
@@ -68,21 +73,28 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
         {
             using (var sessao = new GDATransaction())
             {
-                var validacao = this.ValidarDesassociacaoPedidoOrdemCarga(sessao, id, idPedido);
-
-                if (validacao != null)
-                {
-                    return validacao;
-                }
-
                 try
                 {
+                    sessao.BeginTransaction();
+
+                    var validacao = this.ValidarDesassociacaoPedidoOrdemCarga(sessao, id, idPedido);
+
+                    if (validacao != null)
+                    {
+                        return validacao;
+                    }
+
                     WebGlass.Business.OrdemCarga.Fluxo.PedidosOCFluxo.Instance.RemoverPedido((uint)id, (uint)idPedido);
+
+                    sessao.Commit();
+                    sessao.Close();
 
                     return this.Aceito($"Pedido {idPedido} desassociado da ordem de carga {id}.");
                 }
                 catch (Exception ex)
                 {
+                    sessao.Rollback();
+                    sessao.Close();
                     return this.ErroValidacao($"Erro ao desassociar pedido da ordem de carga.", ex);
                 }
             }

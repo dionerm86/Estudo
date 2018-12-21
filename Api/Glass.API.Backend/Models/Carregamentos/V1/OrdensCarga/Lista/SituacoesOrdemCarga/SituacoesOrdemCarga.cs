@@ -12,27 +12,27 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Lista.SituacoesO
     public enum SituacoesOrdemCarga
     {
         /// <summary>
-        /// Finalizado.
+        /// Finalizada.
         /// </summary>
-        [Description("Finalizado")]
-        SituacaoOrdemCargaFinalizada = 1,
+        [Description("Finalizada")]
+        Finalizada = 1,
 
         /// <summary>
         /// Pendente carregamento.
         /// </summary>
         [Description("Pendente Carregamento")]
-        SituacaoOrdemCargaPendenteCarregamento = 2,
+        PendenteCarregamento = 2,
 
         /// <summary>
-        /// Carregado.
+        /// Carregada.
         /// </summary>
-        [Description("Carregado")]
-        SituacaoOrdemCargaCarregada = 3,
+        [Description("Carregada")]
+        Carregada = 3,
 
         /// <summary>
-        /// Carregado parcialmente.
+        /// Carregada parcialmente.
         /// </summary>
-        [Description("Carregado Parcialmente")]
-        SituacaoOrdemCargaCarregadaParcialmente = 4,
+        [Description("Carregada Parcialmente")]
+        CarregadaParcialmente = 4,
     }
 }

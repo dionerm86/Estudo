@@ -33,8 +33,8 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Lista
             this.Rota = ordemCarga.CodRota;
             this.Peso = (decimal)ordemCarga.Peso;
             this.PesoPendente = (decimal)ordemCarga.PesoPendenteProducao;
-            this.TotalMetroQuadrado = (decimal)ordemCarga.TotalM2;
-            this.TotalMetroQuadradoPendente = (decimal)ordemCarga.TotalM2PendenteProducao;
+            this.TotaEmM2 = (decimal)ordemCarga.TotalM2;
+            this.TotalEmM2Pendente = (decimal)ordemCarga.TotalM2PendenteProducao;
             this.QuantidadePecas = (int)ordemCarga.QtdePecasVidro;
             this.QuantidadePecasPendentes = (int)ordemCarga.QtdePecaPendenteProducao;
             this.ValorTotalPedidos = ordemCarga.ValorTotalPedidos;
@@ -88,15 +88,15 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Lista
         /// Obtém ou define o total em metros quadrados da ordem de carga.
         /// </summary>
         [DataMember]
-        [JsonProperty("totalMetroQuadrado")]
-        public decimal? TotalMetroQuadrado { get; set; }
+        [JsonProperty("totaEmM2")]
+        public decimal? TotaEmM2 { get; set; }
 
         /// <summary>
         /// Obtém ou define o total pendente em metros quadrados da ordem de carga.
         /// </summary>
         [DataMember]
-        [JsonProperty("totalMetroQuadradoPendente")]
-        public decimal? TotalMetroQuadradoPendente { get; set; }
+        [JsonProperty("totalEmM2Pendente")]
+        public decimal? TotalEmM2Pendente { get; set; }
 
         /// <summary>
         /// Obtém ou define a quantidade total de peças da ordem de carga.
@@ -106,7 +106,7 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Lista
         public int? QuantidadePecas { get; set; }
 
         /// <summary>
-        /// Obtém ou define a quantidade total de peças da ordem de carga.
+        /// Obtém ou define a quantidade pendente de peças da ordem de carga.
         /// </summary>
         [DataMember]
         [JsonProperty("quantidadePecasPendentes")]

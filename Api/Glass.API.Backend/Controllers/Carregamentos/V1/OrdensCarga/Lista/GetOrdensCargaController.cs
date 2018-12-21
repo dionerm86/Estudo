@@ -8,6 +8,8 @@ using Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Lista;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
+using System;
+using WebGlass.Business.OrdemCarga.Fluxo;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -107,7 +109,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
         {
             using (var sessao = new GDATransaction())
             {
-                var tipos = new Helper.ConversorEnum<Models.Carregamentos.V1.OrdensCarga.Lista.TiposOrdemCarga.TipoMovimentação>()
+                var tipos = new Helper.ConversorEnum<Models.Carregamentos.V1.OrdensCarga.Lista.TiposOrdemCarga.TipoMovimentacao>()
                     .ObterTraducao();
 
                 return this.Lista(tipos);
@@ -117,7 +119,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
         /// <summary>
         /// Recupera as situações de ordem de carga.
         /// </summary>
-        /// <returns>Uma lista JSON com as situãções de ordem de carga.</returns>
+        /// <returns>Uma lista JSON com as situações de ordem de carga.</returns>
         [HttpGet]
         [Route("situacoes")]
         [SwaggerResponse(200, "Situações de ordem de carga encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
@@ -159,6 +161,45 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
                 var pedidos = Data.DAL.PedidoDAO.Instance.GetPedidosForOC(idsPedidos, (uint)id, false);
 
                 return this.Lista(pedidos.Select(p => new Models.Carregamentos.V1.OrdensCarga.Lista.Pedidos.ListaDto(p)));
+            }
+        }
+
+        /// <summary>
+        /// Recupera a permissão para associar pedidos a ordem de carga.
+        /// </summary>
+        /// <param name="id">O identificador da ordem de carga.</param>
+        /// <returns>Um objeto JSON que define a permissão para associar pedidos.</returns>
+        [HttpGet]
+        [Route("{id:int}/verificarPermissaoAssociarPedidos")]
+        [SwaggerResponse(200, "Associação de pedidos autorizada.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Ordem de carga não encontrada para o id informado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterPermissaoAssociarPedidos(int id)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                try
+                {
+                    var validacao = this.ValidarExistenciaIdOrdemCarga(sessao, id);
+
+                    if (validacao != null)
+                    {
+                        return validacao;
+                    }
+
+                    var podeAssociarPedidosOrdemCarga = OrdemCargaFluxo.Instance.PodeAdicionarPedido((uint)id);
+
+                    if (!podeAssociarPedidosOrdemCarga)
+                    {
+                        return this.ErroValidacao($"Associação de pedidos a ordem de carga não autorizada.");
+                    }
+
+                    return this.Ok();
+                }
+                catch (Exception ex)
+                {
+                    return this.ErroValidacao($"Erro ao obter permissão para associar pedidos a ordem de carga.", ex);
+                }
             }
         }
     }

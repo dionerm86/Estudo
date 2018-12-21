@@ -731,74 +731,87 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         static volatile object _apagarOcLock = new object();
 
         /// <summary>
-        /// Deleta uma OC
+        /// Deleta uma OC passando a transação como parâmetro.
         /// </summary>
         public void Delete(Glass.Data.Model.OrdemCarga objDelete)
         {
+            using (var sessao = new GDATransaction())
+            {
+                try
+                {
+                    sessao.BeginTransaction();
+
+                    this.Delete(sessao, objDelete);
+
+                    sessao.Commit();
+                    sessao.Close();
+                }
+                catch
+                {
+                    sessao.Rollback();
+                    sessao.Close();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Deleta uma OC
+        /// </summary>
+        public void Delete(GDATransaction sessao, Glass.Data.Model.OrdemCarga objDelete)
+        {
             lock (_apagarOcLock)
             {
-                using (var transaction = new GDATransaction())
+                try
                 {
-                    try
+                    if (objDelete.IdOrdemCarga == 0)
+                        throw new Exception("Nenhuma ordem de carga informada.");
+
+                    var situacaoOC = OrdemCargaDAO.Instance.GetSituacao(sessao, objDelete.IdOrdemCarga);
+
+                    //Valida se esta oc ja foi carregada, se sim não pode deletar
+                    if (situacaoOC == Glass.Data.Model.OrdemCarga.SituacaoOCEnum.PendenteCarregamento ||
+                        situacaoOC == Glass.Data.Model.OrdemCarga.SituacaoOCEnum.Carregado)
+                        throw new Exception("A OC " + objDelete.IdOrdemCarga + " já esta vinculada a um carregamento.");
+
+                    //Se for OC de transferência é ja tiver gerado uma OC de venda, tem que deletar
+                    //a de venda primeiro.
+                    var tipoOC = OrdemCargaDAO.Instance.GetTipoOrdemCarga(sessao, objDelete.IdOrdemCarga);
+                    if (tipoOC == Glass.Data.Model.OrdemCarga.TipoOCEnum.Transferencia)
                     {
-                        transaction.BeginTransaction();
-
-                        if (objDelete.IdOrdemCarga == 0)
-                            throw new Exception("Nenhuma ordem de carga informada.");
-
-                        var situacaoOC = OrdemCargaDAO.Instance.GetSituacao(transaction, objDelete.IdOrdemCarga);
-
-                        //Valida se esta oc ja foi carregada, se sim não pode deletar
-                        if (situacaoOC == Glass.Data.Model.OrdemCarga.SituacaoOCEnum.PendenteCarregamento ||
-                            situacaoOC == Glass.Data.Model.OrdemCarga.SituacaoOCEnum.Carregado)
-                            throw new Exception("A OC " + objDelete.IdOrdemCarga + " já esta vinculada a um carregamento.");
-
-                        //Se for OC de transferência é ja tiver gerado uma OC de venda, tem que deletar
-                        //a de venda primeiro.
-                        var tipoOC = OrdemCargaDAO.Instance.GetTipoOrdemCarga(transaction, objDelete.IdOrdemCarga);
-                        if (tipoOC == Glass.Data.Model.OrdemCarga.TipoOCEnum.Transferencia)
+                        var idsPedidos = OrdemCargaDAO.Instance.GetIdsPedidosOC(sessao, objDelete.IdOrdemCarga, Glass.Data.Model.OrdemCarga.TipoOCEnum.Venda);
+                        if (idsPedidos.Count > 0)
+                            throw new Exception("Falha ao excluir OC os pedidos: " + string.Join(", ", idsPedidos.Select(p => p.ToString()).ToArray())
+                                + " estão vinculados a uma OC de venda.");
+                    }
+                    else
+                    {
+                        var idsPedidos = PedidoDAO.Instance.GetIdsPedidosByOCs(sessao, objDelete.IdOrdemCarga.ToString());
+                        foreach (var idPedido in idsPedidos)
                         {
-                            var idsPedidos = OrdemCargaDAO.Instance.GetIdsPedidosOC(transaction, objDelete.IdOrdemCarga, Glass.Data.Model.OrdemCarga.TipoOCEnum.Venda);
-                            if (idsPedidos.Count > 0)
-                                throw new Exception("Falha ao excluir OC os pedidos: " + string.Join(", ", idsPedidos.Select(p => p.ToString()).ToArray())
-                                    + " estão vinculados a uma OC de venda.");
-                        }
-                        else
-                        {
-                            var idsPedidos = PedidoDAO.Instance.GetIdsPedidosByOCs(transaction, objDelete.IdOrdemCarga.ToString());
-                            foreach (var idPedido in idsPedidos)
+                            if (OrdemCargaConfig.UsarOrdemCargaParcial && PedidoDAO.Instance.ObtemOrdemCargaParcial(sessao, idPedido))
                             {
-                                if (OrdemCargaConfig.UsarOrdemCargaParcial && PedidoDAO.Instance.ObtemOrdemCargaParcial(transaction, idPedido))
-                                {
-                                    var qtdOrdemCarga = PedidoOrdemCargaDAO.Instance.ObtemQtdeOrdemCarga(transaction, idPedido);
-                                    var qtdLib = LiberarPedidoDAO.Instance.GetIdsLiberacaoAtivaByPedido(transaction, idPedido).Count;
+                                var qtdOrdemCarga = PedidoOrdemCargaDAO.Instance.ObtemQtdeOrdemCarga(sessao, idPedido);
+                                var qtdLib = LiberarPedidoDAO.Instance.GetIdsLiberacaoAtivaByPedido(sessao, idPedido).Count;
 
-                                    if (qtdLib > 0 && qtdLib == qtdOrdemCarga)
-                                        throw new Exception("Não é possível excluir esta OC, pois ela possui Pedidos liberados.");
-                                }
-                                else if (LiberarPedidoDAO.Instance.GetIdsLiberacaoAtivaByPedido(transaction, idPedido).Count > 0)
+                                if (qtdLib > 0 && qtdLib == qtdOrdemCarga)
                                     throw new Exception("Não é possível excluir esta OC, pois ela possui Pedidos liberados.");
                             }
+                            else if (LiberarPedidoDAO.Instance.GetIdsLiberacaoAtivaByPedido(sessao, idPedido).Count > 0)
+                                throw new Exception("Não é possível excluir esta OC, pois ela possui Pedidos liberados.");
                         }
-
-                        //Deleta os itens da ordem de carga.
-                        PedidoOrdemCargaDAO.Instance.DeleteByOrdemCarga(transaction, objDelete.IdOrdemCarga);
-
-                        //Deleta a OC
-                        OrdemCargaDAO.Instance.DeleteByPrimaryKey(transaction, objDelete.IdOrdemCarga);
-
-                        transaction.Commit();
-                        transaction.Close();
                     }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        transaction.Close();
 
-                        ErroDAO.Instance.InserirFromException(string.Format("Delete - OrdemCarga: {0}", objDelete.IdOrdemCarga), ex);
+                    //Deleta os itens da ordem de carga.
+                    PedidoOrdemCargaDAO.Instance.DeleteByOrdemCarga(sessao, objDelete.IdOrdemCarga);
 
-                        throw;
-                    }
+                    //Deleta a OC
+                    OrdemCargaDAO.Instance.DeleteByPrimaryKey(sessao, objDelete.IdOrdemCarga);
+                }
+                catch (Exception ex)
+                {
+                    ErroDAO.Instance.InserirFromException(string.Format("Delete - OrdemCarga: {0}", objDelete.IdOrdemCarga), ex);
+
+                    throw;
                 }
             }
         }

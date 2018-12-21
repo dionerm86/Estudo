@@ -98,7 +98,7 @@ namespace Glass.API.Backend.Controllers.Rotas.V1
         /// </summary>
         /// <returns>Uma lista JSON com as rotas externas encontradas.</returns>
         [HttpGet]
-        [Route("externa")]
+        [Route("externas")]
         [SwaggerResponse(200, "Rotas externas encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Rotas externas não encontradas.")]
         public IHttpActionResult ObterRotasExternas()

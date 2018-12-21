@@ -9,18 +9,18 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga.Lista.TiposOrdem
     /// <summary>
     /// Enumerador com os tipos de ordem de carga.
     /// </summary>
-    public enum TipoMovimentação
+    public enum TipoMovimentacao
     {
         /// <summary>
         /// Venda.
         /// </summary>
         [Description("Venda")]
-        TipoOrdemCargaVenda = 1,
+        Venda = 1,
 
         /// <summary>
         /// Transferência.
         /// </summary>
         [Description("Transferencia")]
-        TipoOrdemCargaTransferencia = 2,
+        Transferencia = 2,
     }
 }
