@@ -125,9 +125,8 @@ namespace WebGlass.Business.Compra.Fluxo
             scriptExecutar = string.Empty;
             string pathName = "../Listas/LstCompras.aspx";
 
-            if ((compra.TipoCompra == (int)Glass.Data.Model.Compra.TipoCompraEnum.AVista || compra.ValorEntrada > 0) &&
-                ContasPagarDAO.Instance.TemContaAVista(compra.IdCompra))
-            {
+            if ((compra.TipoCompra == (int)Glass.Data.Model.Compra.TipoCompraEnum.AVista || compra.ValorEntrada > 0) && ContasPagarDAO.Instance.TemContaAVista(compra.IdCompra) && Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
+            { 
                 pathName = "../Cadastros/CadContaPagar.aspx?idCompra=" + compra.IdCompra;
             }
             else if (isPcp)
