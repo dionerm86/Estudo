@@ -4507,6 +4507,12 @@ namespace Glass.Data.DAL
 
         public void VerificaEstoque(GDASession session, ProdutosNf pnf, ProdutosNf[] lstProdNfValida, uint idLoja)
         {
+            var tipoCalcM2 = new List<int>
+            {
+                (int)TipoCalculoGrupoProd.M2,
+                (int)TipoCalculoGrupoProd.M2Direto,
+            };
+
             uint idNaturezaOperacao = pnf.IdNaturezaOperacao > 0 ? pnf.IdNaturezaOperacao.Value : NotaFiscalDAO.Instance.ObtemIdNaturezaOperacao(session, pnf.IdNf);
             bool alteraEstoqueFiscal = NaturezaOperacaoDAO.Instance.AlterarEstoqueFiscal(session, idNaturezaOperacao);
             bool alteraEstoqueTerceiros = CfopDAO.Instance.AlterarEstoqueTerceiros(session, NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, idNaturezaOperacao));
@@ -4524,7 +4530,19 @@ namespace Glass.Data.DAL
                     {
                         foreach (ProdutoBaixaEstoqueFiscal pBaixaComparacao in ProdutoBaixaEstoqueFiscalDAO.Instance.GetByProd(session, pVal.IdProd))
                             if (pBaixa.IdProdBaixa == pBaixaComparacao.IdProdBaixa)
-                                qtdEstoque += (float)Math.Round(ProdutosNfDAO.Instance.ObtemQtdDanfe(session, pVal, true) * pBaixaComparacao.Qtde, 2);
+                            {
+                                var qtdeDanfe = ProdutosNfDAO.Instance.ObtemQtdDanfe(
+                                    session,
+                                    (uint)pBaixaComparacao.IdProdBaixa,
+                                    pVal.TotM,
+                                    pVal.Qtde,
+                                    pVal.Altura,
+                                    pVal.Largura,
+                                    true,
+                                    true);
+
+                                qtdEstoque += (float)Math.Round(qtdeDanfe * pBaixaComparacao.Qtde, 2);
+                            }
                     }
 
                     // O valor é arredondado porque a quantidade do produto na nota fiscal considera 4 casas decimais,
