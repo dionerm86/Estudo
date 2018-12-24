@@ -3047,9 +3047,9 @@ namespace Glass.Data.DAL
             {
                 #region Declaração de variáveis
 
-                var valorRecebido = ItemAcertoChequeDAO.Instance.ObtemValorCampo<decimal>(session, "SUM(ValorReceb)", string.Format("IdCheque={0}", cheque.IdCheque));
+                var valorRecebido = ItemAcertoChequeDAO.Instance.ObterValorRecebidoCheque(session, cheque.IdCheque);
                 // Chamado 18003.
-                var valorReceb = Math.Max(cheque.ValorReceb, valorRecebido) - Math.Min(cheque.ValorReceb, valorRecebido);
+                var valorReceb = cheque.ValorReceb - valorRecebido;
                 // Atualiza a data do recebimento deste cheque.
                 cheque.DataReceb = acertoCheque.DataRecebimento;
 
