@@ -412,9 +412,8 @@
                     cAltura.disabled = CalcProd_DesabilitarAltura(tipoCalc);
                     cLargura.disabled = CalcProd_DesabilitarLargura(tipoCalc);
 
-                    FindControl("hdfAlturaCalc", "input").value = "";
-
                     FindControl("lblDescrProd", "span").innerHTML = retorno[2];
+                    FindControl("hdfAlturaCalc", "input").value = "";
                 }
 
                 insKit = false;
@@ -682,8 +681,10 @@
                 var largura = new Number(FindControl("txtLarguraIns", "input").value.replace(',', '.'));
                 var tipoCalc = FindControl("hdfTipoCalc", "input").value;
                 var m2Minimo = FindControl("hdfM2Minimo", "input").value;
+                var controleAlturaCalc = FindControl("hdfAlturaCalcIns", "input");
+                arredondaAltura(controleAlturaCalc);
 
-                var retorno = CalcProd_CalcTotalProd(valorIns, totM2, totM2Calc, m2Minimo, total, qtde, altura, FindControl("hdfAlturaCalc", "input"), largura, false, tipoCalc);
+                var retorno = CalcProd_CalcTotalProd(valorIns, totM2, totM2Calc, m2Minimo, total, qtde, altura, controleAlturaCalc, largura, false, tipoCalc);
                 if (retorno != "")
                     FindControl("lblTotalIns", "span").innerHTML = retorno;
             }
@@ -1379,9 +1380,9 @@
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtAlturaIns" runat="server" onblur="GetAdicionalAlturaChapa(); calcM2Prod();" Text='<%# Bind("Altura") %>'
                                     onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdfTipoCalc', 'input').value), true);"
-                                    onchange="FindControl('hdfAlturaCalc', 'input').value = this.value; arredondaAltura(FindControl('hdfAlturaCalc', 'input'));"
+                                    onchange="FindControl('hdfAlturaCalcIns', 'input').value = this.value; arredondaAltura(FindControl('hdfAlturaCalcIns', 'input'));"
                                     Enabled='<%# Eval("AlturaEnabled") %>' Width="50px"></asp:TextBox>
-                                <asp:HiddenField ID="hdfAlturaCalc" runat="server" Value='<%# Bind("AlturaCalc") %>' />
+                                <asp:HiddenField ID="hdfAlturaCalcIns" runat="server" Value='<%# Bind("AlturaCalc") %>' />
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <asp:TextBox ID="txtAlturaIns" runat="server" onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdfTipoCalc', 'input').value), true);"
