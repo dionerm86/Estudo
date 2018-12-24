@@ -766,7 +766,7 @@ namespace Glass.Data.Helper
                             var dadosCheque = c.Split('\t');
 
                             // Cheque próprio empresa.
-                            if (dadosCheque[0] == "proprio") // Se for cheque próprio
+                            if (dadosCheque[0].ToLower() == "proprio") // Se for cheque próprio
                             {
                                 // Insere cheque no BD
                                 var cheque = ChequesDAO.Instance.GetFromString(sessao, c);
