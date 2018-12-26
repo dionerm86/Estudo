@@ -1502,9 +1502,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             else if (linhaControle != null) codProd = linhaControle.FindControl("txtCodProdIns");
             if (linhaControle != null)
             {
-                HiddenField hdfAltura = (HiddenField)linhaControle.FindControl("hdfAlturaCalc");
-                if (hdfAltura == null)
-                    hdfAltura = (HiddenField)linhaControle.FindControl("hdfAlturaCalcIns");
+                HiddenField hdfAltura = (HiddenField)linhaControle.FindControl("hdfAlturaCalcIns");
                 TextBox txtEspessura = (TextBox)linhaControle.FindControl("txtEspessura");
                 TextBox txtLargura = (TextBox)linhaControle.FindControl("txtLarguraIns");
                 Control quantidade = (TextBox)linhaControle.FindControl("txtQtdeIns");
