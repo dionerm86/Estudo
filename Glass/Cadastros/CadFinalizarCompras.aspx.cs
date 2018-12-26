@@ -16,6 +16,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 ((TextBox)ctrlDataIni.FindControl("txtData")).Text = DateTime.Now.AddDays(-15).ToString("dd/MM/yyyy");
                 ((TextBox)ctrlDataFim.FindControl("txtData")).Text = DateTime.Now.ToString("dd/MM/yyyy");
+                ((TextBox)ctrlDataFabrica.FindControl("txtData")).Text = DateTime.Now.ToString("dd/MM/yyyy");
             }
         }
     
