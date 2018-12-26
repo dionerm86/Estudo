@@ -13,7 +13,7 @@
         <span class="form-group">
             <label>Rota</label>
             <lista-selecao-id-valor v-bind:item-selecionado.sync="rotaAtual" texto-selecionar="Selecione uma Rota"
-                                    v-bind:funcao-recuperar-itens="obterItensFiltroRotas"></lista-selecao-id-valor>
+                v-bind:funcao-recuperar-itens="obterItensFiltroRotas"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
@@ -33,7 +33,7 @@
         </span>
         <span class="form-group">
             <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoEntregaPedidoInicio" 
-                                     v-bind:data-hora-final.sync="filtroAtual.periodoMovimentacaoFim"></campo-data-hora-periodo>
+                v-bind:data-hora-final.sync="filtroAtual.periodoMovimentacaoFim"></campo-data-hora-periodo>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -46,13 +46,13 @@
         <span class="form-group">
             <label>Tipo da OC</label>
             <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.tiposOrdemCarga" 
-                                    v-bind:funcao-recuperar-itens="obterItensFiltroTiposOrdemCarga" v-bind:ordenar="false"></lista-selecao-multipla>
+                v-bind:funcao-recuperar-itens="obterItensFiltroTiposOrdemCarga" v-bind:ordenar="false"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Situação</label>
             <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.situacoesOrdemCarga" v-bind:funcao-recuperar-itens="obterItensFiltroSituacoesOrdemCarga"
-                                    v-bind:ordenar="false"></lista-selecao-multipla>
+                v-bind:ordenar="false"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>

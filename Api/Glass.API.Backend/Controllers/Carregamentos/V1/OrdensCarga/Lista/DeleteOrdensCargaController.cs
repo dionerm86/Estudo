@@ -84,7 +84,7 @@ namespace Glass.API.Backend.Controllers.Carregamentos.V1.OrdensCarga.Lista
                         return validacao;
                     }
 
-                    WebGlass.Business.OrdemCarga.Fluxo.PedidosOCFluxo.Instance.RemoverPedido((uint)id, (uint)idPedido);
+                    WebGlass.Business.OrdemCarga.Fluxo.PedidosOCFluxo.Instance.RemoverPedido(sessao, (uint)id, (uint)idPedido);
 
                     sessao.Commit();
                     sessao.Close();

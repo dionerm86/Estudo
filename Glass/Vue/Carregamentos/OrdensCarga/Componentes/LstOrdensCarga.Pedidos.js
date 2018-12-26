@@ -45,6 +45,7 @@
 
       Servicos.Carregamentos.OrdensCarga.desassociarPedidoOrdemCarga(idOrdemCarga, pedido.id)
         .then(function (resposta) {
+          this.exibirMensagem(resposta.data.mensagem)
           vm.atualizarLista();
         })
         .catch(function (erro) {

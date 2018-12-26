@@ -60,7 +60,7 @@ Servicos.Rotas = (function(http) {
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     obterFiltroRotasExternas: function () {
-      return http().get(API + 'externa');
+      return http().get(API + 'externas');
     }
   };
 })(function() {

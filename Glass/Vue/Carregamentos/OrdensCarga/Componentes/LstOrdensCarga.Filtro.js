@@ -94,21 +94,6 @@
 
   watch: {
     /**
-     * Observador para a propriedade 'configuracoes'.
-     * Atualiza os filtros padronizados.
-     */
-    configuracoes: {
-      handler: function () {
-
-        var vm = this;
-        this.$nextTick(function () {
-          vm.filtrar();
-        });
-      },
-      deep: true
-    },
-
-    /**
      * Observador para a variável 'rotaAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */

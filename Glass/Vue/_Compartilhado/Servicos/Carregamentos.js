@@ -86,7 +86,7 @@ Servicos.Carregamentos = (function(http) {
           throw new Error('Ordem de carga é obrigatória.');
         }
 
-        return http().post(API + 'ordensCarga/' + id + '/verificarPermissaoAssociarPedidos');
+        return http().get(API + 'ordensCarga/' + id + '/verificarPermissaoAssociarPedidos');
       },
 
       /**

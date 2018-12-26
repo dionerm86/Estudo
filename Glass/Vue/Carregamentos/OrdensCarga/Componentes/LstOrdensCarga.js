@@ -18,10 +18,6 @@
      * @returns {Promise} Uma promise com o resultado da busca de estoques de produto.
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-      if (!this.configuracoes || !Object.keys(this.configuracoes).length) {
-        return Promise.reject();
-      }
-
       var filtroUsar = this.clonar(filtro || {});
       return Servicos.Carregamentos.OrdensCarga.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
@@ -165,7 +161,6 @@
   mounted: function () {
     var vm = this;
 
-    //Recuperação das configurações ao carregar o Vue.
     Servicos.Carregamentos.OrdensCarga.obterConfiguracoesLista()
       .then(function (resposta) {
         vm.configuracoes = resposta.data;
