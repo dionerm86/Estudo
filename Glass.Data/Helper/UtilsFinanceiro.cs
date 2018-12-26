@@ -3153,14 +3153,13 @@ namespace Glass.Data.Helper
                 foreach (ItemAcertoCheque i in ItemAcertoChequeDAO.Instance.GetByAcertoCheque(sessao, idAcertoCheque))
                 {
                     Cheques c = ChequesDAO.Instance.GetElementByPrimaryKey(sessao, i.IdCheque);
-                    decimal valor = Math.Min(c.ValorReceb, i.ValorReceb);
                     var jurosAcerto = AcertoChequeDAO.Instance.ObtemValorCampo<decimal>(sessao, "Juros", "idAcertoCheque=" + idAcertoCheque);
                     var numCheques = ItemAcertoChequeDAO.Instance.ObtemValorCampo<int>(sessao, "Count(*)", "idAcertoCheque=" + i.IdAcertoCheque);
                     var descontoAcerto = AcertoChequeDAO.Instance.ObtemValorCampo<decimal>(sessao, "Desconto", "idAcertoCheque=" + idAcertoCheque);
                     var valorTotal = AcertoChequeDAO.Instance.ObtemValorCampo<decimal>(sessao, "ValorAcerto", "idAcertoCheque=" + idAcertoCheque);
                     valorTotal = Math.Round(valorTotal - jurosAcerto + descontoAcerto, 2);
 
-                    c.ValorReceb -= valor;
+                    c.ValorReceb -= i.ValorReceb;
                     c.JurosReceb -= Math.Round(jurosAcerto / numCheques, 2);
                     c.DescontoReceb -= Math.Round((c.ValorRestante + c.DescontoReceb) / valorTotal * descontoAcerto, 2);
                     c.Situacao = c.Situacao == (int)Cheques.SituacaoCheque.Quitado ? (int)Cheques.SituacaoCheque.Devolvido :
@@ -3168,7 +3167,7 @@ namespace Glass.Data.Helper
                     c.DataReceb = c.Situacao == (int)Cheques.SituacaoCheque.Devolvido || c.Situacao == (int)Cheques.SituacaoCheque.EmAberto ? null : c.DataReceb;
                     ChequesDAO.Instance.UpdateBase(sessao, c);
 
-                    i.ValorReceb -= valor;
+                    i.ValorReceb = 0;
                     ItemAcertoChequeDAO.Instance.Update(sessao, i);
                 }
 
