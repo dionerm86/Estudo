@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CadProjetoAvulso.aspx.cs"
+Ôªø<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CadProjetoAvulso.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.Projeto.CadProjetoAvulso" Title="Efetuar Projeto" MasterPageFile="~/Layout.master" %>
 
 <%@ Register Src="../../Controls/ctrlBenef.ascx" TagName="ctrlbenef" TagPrefix="uc4" %>
@@ -60,7 +60,7 @@
                     return;
                 }
                 else if(retorno == null){
-                    alert("Erro na recuperaÁ„o do valor de tabela do produto.");
+                    alert("Erro na recupera√ß√£o do valor de tabela do produto.");
                     return;
                 }
 
@@ -98,7 +98,7 @@
             {
                 if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
                 {
-                    alert("Informe a aplicaÁ„o.");
+                    alert("Informe a aplica√ß√£o.");
                     return false;
                 }
 
@@ -132,7 +132,7 @@
                 var totM2 = parseFloat(FindControl("lblTotM2Ins", "span").innerHTML.replace(",", "."));
                 if (totM2 > tamanhoMaximo)
                 {
-                    alert("O total de m≤ da peÁa ultrapassa o m·ximo definido no pagamento antecipado. Tamanho m·ximo: " + tamanhoMaximo.toString().replace(".", ",") + " m≤");
+                    alert("O total de m¬≤ da pe√ßa ultrapassa o m√°ximo definido no pagamento antecipado. Tamanho m√°ximo: " + tamanhoMaximo.toString().replace(".", ",") + " m¬≤");
                     return false;
                 }
             }
@@ -142,8 +142,8 @@
 
         function exibirObs(num, botao) {
             for (iTip = 0; iTip < 2; iTip++) {
-                TagToTip('tbObsCalc_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'ObservaÁ„o', CLOSEBTN, true,
-                    CLOSEBTNTEXT, 'Fechar (N„o salva a alteraÁ„o)', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, false,
+                TagToTip('tbObsCalc_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'Observa√ß√£o', CLOSEBTN, true,
+                    CLOSEBTNTEXT, 'Fechar (N√£o salva a altera√ß√£o)', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, false,
                     FIX, [botao, 9 - getTableWidth('tbObsCalc_' + num), 7]);
             }
         }
@@ -188,7 +188,7 @@
                 idPedidoEspelho, "", idProjetoModelo, espessuraVidro, idCorVidro, idCorAluminio, idCorFerragem, apenasVidros, medidaExata).value;
 
             if (retorno == null) {
-                alert("Falha na requisiÁ„o AJAX.");
+                alert("Falha na requisi√ß√£o AJAX.");
                 return false;
             }
 
@@ -206,13 +206,13 @@
 
                 FindControl("hdfIdItemProjeto", "input").value = retorno[1];
 
-                // Limpa a tabela de medidas da instalaÁ„o e de peÁas para n„o trazerem os mesmos valores
+                // Limpa a tabela de medidas da instala√ß√£o e de pe√ßas para n√£o trazerem os mesmos valores
                 var tbMedInst = FindControl("tbMedInst", "table");
                 var tbPecaModelo = FindControl("tbPecaModelo", "table");
                 if (tbMedInst != null) tbMedInst.innerHTML = "";
                 if (tbPecaModelo != null) tbPecaModelo.innerHTML = "";
 
-                // Faz um submit no form, para recarregar a p·gina e montar o modelo escolhido
+                // Faz um submit no form, para recarregar a p√°gina e montar o modelo escolhido
                 if (retorno[2] != undefined && retorno[2] != null && retorno[2] != "")
                     FindControl(retorno[2], "input").value = retorno[3];
 
@@ -274,7 +274,7 @@
         var insKit = false;
         var insTubo = false;
 
-        // FunÁ„o chamada apÛs selecionar produto pelo popup
+        // Fun√ß√£o chamada ap√≥s selecionar produto pelo popup
         function setProduto(codInterno) {
             try {
                 if (insKit)
@@ -291,7 +291,7 @@
             }
         }
 
-        // Carrega dados do produto com base no cÛdigo do produto passado
+        // Carrega dados do produto com base no c√≥digo do produto passado
         function loadProduto(codInterno) {
             if (codInterno == "")
                 return false;
@@ -314,7 +314,7 @@
             var verificaProduto = CadProjetoAvulso.IsProdutoObra(idPedido, codInterno).value.split(";");
             if (verificaProduto[0] == "Erro")
             {
-                alert("Esse produto n„o pode ser usado no projeto. " + verificaProduto[1]);
+                alert("Esse produto n√£o pode ser usado no projeto. " + verificaProduto[1]);
                 return false;
             }
             else if (parseFloat(verificaProduto[1].replace(",", ".")) > 0)
@@ -350,22 +350,22 @@
                     FindControl("hdfIdKit", "input").value = retorno[1];
                     FindControl("lblDescrKit", "span").innerHTML = retorno[2];
                     txtValor.value = verificaProduto[1] != "0" ? verificaProduto[1] : retorno[3];
-                    FindControl("hdfKitValMin", "input").value = retorno[3]; // Armazena o valor mÌnimo
+                    FindControl("hdfKitValMin", "input").value = retorno[3]; // Armazena o valor m√≠nimo
                 }
                 else if (insTubo) {
                     FindControl("hdfIdTubo", "input").value = retorno[1];
                     FindControl("lblDescrTubo", "span").innerHTML = retorno[2];
                     txtValor.value = verificaProduto[1] != "0" ? verificaProduto[1] : retorno[3];
-                    FindControl("hdfTuboValMin", "input").value = retorno[3]; // Armazena o valor mÌnimo
+                    FindControl("hdfTuboValMin", "input").value = retorno[3]; // Armazena o valor m√≠nimo
                 }
                 else if (retorno[0] == "Prod") {
                     FindControl("hdfIdProdMater", "input").value = retorno[1];
-                    txtValor.value = verificaProduto[1] != "0" ? verificaProduto[1] : retorno[3]; // Exibe no cadastro o valor mÌnimo do produto
-                    FindControl("hdfValMin", "input").value = retorno[3]; // Armazena o valor mÌnimo
-                    FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto È vidro
-                    FindControl("hdfIsAluminio", "input").value = retorno[5]; // Informa se o produto È vidro
-                    FindControl("hdfM2Minimo", "input").value = retorno[6]; // Informa se o produto possui m≤ mÌnimo
-                    FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como produto È calculado
+                    txtValor.value = verificaProduto[1] != "0" ? verificaProduto[1] : retorno[3]; // Exibe no cadastro o valor m√≠nimo do produto
+                    FindControl("hdfValMin", "input").value = retorno[3]; // Armazena o valor m√≠nimo
+                    FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto √© vidro
+                    FindControl("hdfIsAluminio", "input").value = retorno[5]; // Informa se o produto √© vidro
+                    FindControl("hdfM2Minimo", "input").value = retorno[6]; // Informa se o produto possui m¬≤ m√≠nimo
+                    FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como produto √© calculado
                     var tipoCalc = retorno[7];
 
                     if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != ""){
@@ -383,8 +383,8 @@
                     if (FindControl("lnkBenef", "a") != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1)
                         FindControl("lnkBenef", "a").style.display = exibirControleBenef(nomeControle) ? "" : "none";
 
-                    // Se o produto n„o for vidro, desabilita os textboxes largura e altura,
-                    // mas se o produto for alumÌnio e a empresa trabalhar com venda de alumÌnio
+                    // Se o produto n√£o for vidro, desabilita os textboxes largura e altura,
+                    // mas se o produto for alum√≠nio e a empresa trabalhar com venda de alum√≠nio
                     // no metro linear, deixa o campo altura habilitado
                     var cAltura = FindControl("txtAlturaIns", "input");
                     var cLargura = FindControl("txtLarguraIns", "input");
@@ -413,7 +413,7 @@
                     cLargura.disabled = CalcProd_DesabilitarLargura(tipoCalc);
 
                     FindControl("lblDescrProd", "span").innerHTML = retorno[2];
-                    FindControl("hdfAlturaCalc", "input").value = "";
+                    FindControl("hdfAlturaCalcIns", "input").value = "";
                 }
 
                 insKit = false;
@@ -430,7 +430,7 @@
         /* Chamado 19375.
          * Evitar registro duplicado. */
         var salvandoProduto = false;
-        // Chamado quando um produto est· para ser inserido no item_projeto
+        // Chamado quando um produto est√° para ser inserido no item_projeto
         function onSaveProd() {
             if (salvandoProduto) {
                 return false;
@@ -460,7 +460,7 @@
 
             valMin = new Number(valMin.replace(',', '.'));
             if (codProd == "") {
-                alert("Informe o cÛdigo do produto.");
+                alert("Informe o c√≥digo do produto.");
                 salvandoProduto = false;
                 return false;
             }
@@ -476,7 +476,7 @@
                 return false;
             }
             else if (!FindControl("txtValorIns", "input").disabled && new Number(valor.replace(',', '.')) < valMin) {
-                alert("Valor especificado abaixo do valor mÌnimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
+                alert("Valor especificado abaixo do valor m√≠nimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
                 salvandoProduto = false;
                 return false;
             }
@@ -487,7 +487,7 @@
                     return false;
                 }
             }
-            // Se o textbox da largura estiver habilitado, dever· ser informada
+            // Se o textbox da largura estiver habilitado, dever√° ser informada
             else if (FindControl("txtLarguraIns", "input").disabled == false && largura == "") {
                 alert("Informe a largura.");
                 salvandoProduto = false;
@@ -520,7 +520,7 @@
             return true;
         }
 
-        // FunÁ„o chamada quando o produto est· para ser atualizado
+        // Fun√ß√£o chamada quando o produto est√° para ser atualizado
         function onUpdateProd() {
             if (!validate("produto"))
                 return false;
@@ -542,7 +542,7 @@
 
             valMin = new Number(valMin.replace(',', '.'));
             if (!FindControl("txtValorIns", "input").disabled && new Number(valor.replace(',', '.')) < valMin) {
-                alert("Valor especificado abaixo do valor mÌnimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
+                alert("Valor especificado abaixo do valor m√≠nimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
                 return false;
             }
 
@@ -597,7 +597,7 @@
                 if (altura != "" && largura != "" &&
                     parseInt(altura) > 0 && parseInt(largura) > 0 &&
                     parseInt(altura) != parseInt(largura) && redondo) {
-                    alert('O beneficiamento Redondo pode ser marcado somente em peÁas de medidas iguais.');
+                    alert('O beneficiamento Redondo pode ser marcado somente em pe√ßas de medidas iguais.');
 
                     if (FindControl("Redondo_chkSelecao", "input") != null && FindControl("Redondo_chkSelecao", "input").checked)
                         FindControl("Redondo_chkSelecao", "input").checked = false;
@@ -656,7 +656,7 @@
                 return;
             }
             else if(retorno == null){
-                alert("Erro na recuperaÁ„o do valor de tabela do produto.");
+                alert("Erro na recupera√ß√£o do valor de tabela do produto.");
                 return;
             }
 
@@ -693,7 +693,7 @@
             }
         }
 
-        // FunÁ„o chamada pelo popup de escolha da AplicaÁ„o do produto
+        // Fun√ß√£o chamada pelo popup de escolha da Aplica√ß√£o do produto
         function setApl(idAplicacao, codInterno, aplBenef) {
             aplBenef = aplBenef == true ? true : false;
             var campo = !aplBenef ? "txtAplIns" : "txtAplicacaoIns";
@@ -729,7 +729,7 @@
                 var response = MetodosAjax.GetEtiqAplicacao(codInterno).value;
 
                 if (response == null || response == "") {
-                    alert("Falha ao buscar AplicaÁ„o. Ajax Error.");
+                    alert("Falha ao buscar Aplica√ß√£o. Ajax Error.");
                     setApl("", "", aplBenef);
                     return false
                 }
@@ -749,7 +749,7 @@
             }
         }
 
-        // FunÁ„o chamada pelo popup de escolha do Processo do produto
+        // Fun√ß√£o chamada pelo popup de escolha do Processo do produto
         function setProc(idProcesso, codInterno, codAplicacao, procBenef) {
             procBenef = procBenef == true ? true : false;
             var campo = !procBenef ? "txtProcIns" : "txtProcessoIns";
@@ -780,7 +780,7 @@
             if(idSubgrupo.value != "" && retornoValidacao.value == "false" && FindControl("txtProcIns", "input").value != "")
             {
                 FindControl("txtProcIns", "input").value = "";
-                alert("Este processo n„o pode ser selecionado para este produto.")
+                alert("Este processo n√£o pode ser selecionado para este produto.")
                 return false;
             }
 
@@ -835,7 +835,7 @@
                 return false;
             }
             else {
-                alert("ObservaÁ„o salva.");
+                alert("Observa√ß√£o salva.");
                 window.opener.refreshPage();
             }
         }
@@ -958,7 +958,7 @@
                                         <table style="width: 100%">
                                             <tr>
                                                 <td align="center">
-                                                    <asp:Label ID="lblMedidas" runat="server" Text="Medidas das PeÁas" Font-Bold="True"
+                                                    <asp:Label ID="lblMedidas" runat="server" Text="Medidas das Pe√ßas" Font-Bold="True"
                                                         Visible="False"></asp:Label>
                                                 </td>
                                             </tr>
@@ -1076,7 +1076,7 @@
                                             </tr>
                                             <tr>
                                                 <td align="center">
-                                                    <asp:Label ID="lblMedidasInst" runat="server" Text="Medidas da ·rea InstalaÁ„o" Font-Bold="True"
+                                                    <asp:Label ID="lblMedidasInst" runat="server" Text="Medidas da √°rea Instala√ß√£o" Font-Bold="True"
                                                         Visible="False"></asp:Label>
                                                 </td>
                                             </tr>
@@ -1110,7 +1110,7 @@
                                                     <table id="tbSubtotal" runat="server" visible="false">
                                                         <tr>
                                                             <td>
-                                                                <asp:Label ID="lblDescrM2Vao" runat="server" Text="¡rea do V„o:" Font-Bold="True"
+                                                                <asp:Label ID="lblDescrM2Vao" runat="server" Text="√Årea do V√£o:" Font-Bold="True"
                                                                     Font-Size="Small"></asp:Label>
                                                             </td>
                                                             <td>
@@ -1137,7 +1137,7 @@
                                 <tr>
                                     <td align="center">
                                         <uc3:ctrlcoritemprojeto ID="ctrlCorItemProjeto2" runat="server" ExibirTooltip="false"
-                                            Titulo="Alterar cores dos materiais de todos os c·lculos" OnLoad="ctrlCorItemProjeto2_Load"
+                                            Titulo="Alterar cores dos materiais de todos os c√°lculos" OnLoad="ctrlCorItemProjeto2_Load"
                                             OnCorAlterada="ctrlCorItemProjeto_CorAlterada" Visible="False"></uc3:ctrlcoritemprojeto>
                                         <asp:GridView GridLines="None" ID="grdItemProjeto" runat="server" AllowPaging="True"
                                             AllowSorting="True" AutoGenerateColumns="False" DataKeyNames="IdItemProjeto"
@@ -1159,7 +1159,7 @@
                                                     </ItemTemplate>
                                                     <ItemStyle Wrap="False" />
                                                 </asp:TemplateField>
-                                                <asp:BoundField DataField="CodigoModelo" HeaderText="CÛd." SortExpression="CodigoModelo">
+                                                <asp:BoundField DataField="CodigoModelo" HeaderText="C√≥d." SortExpression="CodigoModelo">
                                                     <HeaderStyle Wrap="False" />
                                                     <ItemStyle Wrap="False" />
                                                 </asp:BoundField>
@@ -1195,9 +1195,9 @@
                                             <EditRowStyle CssClass="edit"></EditRowStyle>
                                             <AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
                                         </asp:GridView>
-                                        <asp:Button ID="btnNovoCalculo" runat="server" Text="Novo C·lculo" OnClientClick="novoModelo(); return false;"
+                                        <asp:Button ID="btnNovoCalculo" runat="server" Text="Novo C√°lculo" OnClientClick="novoModelo(); return false;"
                                             Visible="False" />
-                                        <asp:Button ID="btnNovoCalculoDupl" runat="server" Text="Novo C·lculo ()" OnClientClick="duplicar(); return false"
+                                        <asp:Button ID="btnNovoCalculoDupl" runat="server" Text="Novo C√°lculo ()" OnClientClick="duplicar(); return false"
                                             Visible="False" />
                                         <colo:VirtualObjectDataSource culture="pt-BR" ID="odsItemProjeto" runat="server" DeleteMethod="ExcluiProjeto"
                                             SelectMethod="GetListAvulso" TypeName="Glass.Data.DAL.ItemProjetoDAO" EnablePaging="True"
