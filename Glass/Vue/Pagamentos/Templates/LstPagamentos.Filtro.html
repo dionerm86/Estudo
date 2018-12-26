@@ -1,0 +1,56 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label for="id">Num. Pagto</label>
+            <input id="id" type="number" v-model.number="filtroAtual.id" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="NumeroNotaFiscal">Num. NFe</label>
+            <input id="NumeroNotaFiscal" type="number" v-model.number="filtroAtual.numeroNotaFiscal" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Fornecedor</label>
+            <input id="idFornecedor" type="number" v-model.number="filtroAtual.idFornecedor" style="width: 50px" />
+            <input id="nomeFornecedor" type="text" v-model="filtroAtual.nomeFornecedor" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label for="NumCompra">Num. Compra</label>
+            <input id="NumCompra" type="number" v-model.number="filtroAtual.idCompra" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Período</label>
+            <campo-data-hora-periodo :data-hora-inicial.sync="filtroAtual.periodoCadastroInicio" 
+                :data-hora-final.sync="filtroAtual.periodoCadastroFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Valor</label>
+            <input id="valorInicial" type="number" v-model="filtroAtual.valorInicial" style="width: 60px" /> até
+            <input id="valorFinal" type="number" v-model="filtroAtual.valorFinal" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label for="idImpostoServico">Imposto Serviço</label>
+            <input id="idImpostoServico" type="number" v-model="filtroAtual.idImpostoServico" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="custoFixo">Custo Fixo</label>
+            <input id="custoFixo" type="number" v-model="filtroAtual.idCustoFixo" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="observacao">Observação</label>
+            <input id="observacao" type="text" style="width: 200px" v-model="filtroAtual.observacao" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>
