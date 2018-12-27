@@ -480,6 +480,11 @@
     <Content Include="Vue\Carregamentos\Itens\Pendencias\Componentes\ListaPendenciaCarregamento.Filtro.js" />
     <Content Include="Vue\Carregamentos\Itens\Pendencias\Componentes\ListaPendenciaCarregamento.js" />
     <Content Include="Vue\Carregamentos\Itens\Pendencias\Templates\ListaPendenciaCarregamento.Filtro.html" />
+    <Content Include="Vue\Carregamentos\OrdensCarga\Componentes\LstOrdensCarga.Filtro.js" />
+    <Content Include="Vue\Carregamentos\OrdensCarga\Componentes\LstOrdensCarga.js" />
+    <Content Include="Vue\Carregamentos\OrdensCarga\Componentes\LstOrdensCarga.Pedidos.js" />
+    <Content Include="Vue\Carregamentos\OrdensCarga\Templates\LstOrdensCarga.Filtro.html" />
+    <Content Include="Vue\Carregamentos\OrdensCarga\Templates\LstOrdensCarga.Pedidos.html" />
     <Content Include="Vue\Carregamentos\Templates\LstCarregamentos.Filtro.html" />
     <Content Include="Vue\Cfops\NaturezasOperacao\Componentes\LstNaturezasOperacao.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.Filtro.js" />
@@ -9480,7 +9485,6 @@
     <Folder Include="Relatorios\CFe\" />
     <Folder Include="Relatorios\Clientes\" />
     <Folder Include="Relatorios\Fornecedores\" />
-    <Folder Include="Vue\Carregamentos\OrdensCarga\" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

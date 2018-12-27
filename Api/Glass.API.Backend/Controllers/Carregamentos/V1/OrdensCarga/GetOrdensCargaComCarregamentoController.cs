@@ -3,6 +3,7 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Models.Carregamentos.V1.OrdensCarga;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
