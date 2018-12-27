@@ -9,7 +9,7 @@
     <div id="app">
         <movimentacoesestoquereal-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></movimentacoesestoquereal-filtros>
         <section>
-            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum estoque de produto encontrado." :exibir-inclusao="listaNaoVazia" @atualizou-itens="atualizouItens">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma movimentação de estoque real de produto encontrada." :exibir-inclusao="listaNaoVazia" @atualizou-itens="atualizouItens">
                 <template slot="cabecalho">
                     <th></th>
                     <th>Cód. Mov.</th>

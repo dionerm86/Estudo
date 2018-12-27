@@ -492,6 +492,9 @@
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.Filtro.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Templates\LstTrocaDevolucao.Filtro.html" />
+    <Content Include="Vue\Estoques\Movimentacoes\Fiscais\Componentes\ListaMovimentacoesEstoqueFiscal.Filtro.js" />
+    <Content Include="Vue\Estoques\Movimentacoes\Fiscais\Componentes\ListaMovimentacoesEstoqueFiscal.js" />
+    <Content Include="Vue\Estoques\Movimentacoes\Fiscais\Templates\ListaMovimentacoesEstoqueFiscal.Filtro.html" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.Filtro.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Templates\ListaMovimentacoesEstoqueReal.Filtro.html" />
