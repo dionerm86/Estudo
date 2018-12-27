@@ -170,19 +170,24 @@ namespace Glass
         /// </summary>
         /// <param name="cpfCnpj"></param>
         /// <returns></returns>
-        public static string FormataCpfCnpj(string cpfCnpj)
+        public static string FormataCpfCnpj(this string cpfCnpj)
         {
-            if (String.IsNullOrEmpty(cpfCnpj))
+            if (string.IsNullOrWhiteSpace(cpfCnpj))
+            {
                 return null;
+            }
 
-            cpfCnpj = cpfCnpj.Replace(".", "").Replace("/", "").Replace("-", "");
+            cpfCnpj = cpfCnpj.Replace(".", string.Empty).Replace("/", string.Empty).Replace("-", string.Empty);
 
             if (cpfCnpj.Length < 11)
+            {
                 return cpfCnpj;
+            }
 
             if (cpfCnpj.Length == 11)
             {
-                return String.Format("{0}.{1}.{2}-{3}",
+                return string.Format(
+                    "{0}.{1}.{2}-{3}",
                     cpfCnpj.Substring(0, 3),
                     cpfCnpj.Substring(3, 3),
                     cpfCnpj.Substring(6, 3),
@@ -190,7 +195,8 @@ namespace Glass
             }
             else
             {
-                return String.Format("{0}.{1}.{2}/{3}-{4}",
+                return string.Format(
+                    "{0}.{1}.{2}/{3}-{4}",
                     cpfCnpj.Substring(0, 2),
                     cpfCnpj.Substring(2, 3),
                     cpfCnpj.Substring(5, 3),

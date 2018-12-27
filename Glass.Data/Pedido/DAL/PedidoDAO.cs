@@ -13988,6 +13988,7 @@ namespace Glass.Data.DAL
 
             pedidoNovo.Acrescimo = pedido.Acrescimo;
             pedidoNovo.CodCliente = pedido.CodCliente;
+            pedidoNovo.DatasParcelas = pedido.DatasParcelas;
             pedidoNovo.Desconto = pedido.Desconto;
             pedidoNovo.DeveTransferir = pedido.DeveTransferir;
             pedidoNovo.FastDelivery = pedido.FastDelivery;
@@ -14008,6 +14009,7 @@ namespace Glass.Data.DAL
             pedidoNovo.TipoEntrega = pedido.TipoEntrega;
             pedidoNovo.TipoVenda = pedido.TipoVenda;
             pedidoNovo.ValorEntrada = pedido.ValorEntrada;
+            pedidoNovo.ValoresParcelas = pedido.ValoresParcelas;
             pedidoNovo.IdComissionado = pedido.IdComissionado;
             pedidoNovo.PercComissao = pedido.PercComissao;
             pedidoNovo.DataEntrega = pedido.DataEntrega;
@@ -14902,6 +14904,8 @@ namespace Glass.Data.DAL
             if (objPedido.TipoVenda == 1)
             {
                 ParcelasPedidoDAO.Instance.DeleteFromPedido(session, objPedido.IdPedido);
+
+                objPersistence.ExecuteCommand(session, "UPDATE Pedido SET IdParcela = NULL, NumParc = NULL WHERE IdPedido =" + objPedido.IdPedido);
             }
             // Se for venda à prazo, salva as parcelas
             else if (objPedido.TipoVenda == 2)

@@ -1,4 +1,4 @@
-// <copyright file="GetTiposPerdaController.cs" company="Sync Softwares">
+﻿// <copyright file="GetTiposPerdaController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -68,6 +68,31 @@ namespace Glass.API.Backend.Controllers.Producao.V1.TiposPerda
                     .ObterTraducao();
 
                 return this.Lista(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de perda para uso em controles.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos tipos de perda.</returns>
+        [HttpGet]
+        [Route("filtro")]
+        [SwaggerResponse(200, "Tipos de perda encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de perda não encontrados.")]
+        public IHttpActionResult ObterParaFiltro()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tiposPerda = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<PCP.Negocios.IPerdaFluxo>()
+                    .PesquisarTiposPerda()
+                    .Select(t => new IdNomeDto
+                    {
+                        Id = t.IdTipoPerda,
+                        Nome = t.Descricao,
+                    });
+
+                return this.Lista(tiposPerda);
             }
         }
     }

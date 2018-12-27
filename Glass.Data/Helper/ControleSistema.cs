@@ -98,6 +98,7 @@ namespace Glass.Data.Helper
             CristalBox,
             CristalForte,
             CristalVidros,
+            CyberGlass,
 
             #endregion
 

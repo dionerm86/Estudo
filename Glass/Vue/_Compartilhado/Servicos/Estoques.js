@@ -5,6 +5,8 @@
  */
 Servicos.Estoques = (function(http) {
   const API = '/api/v1/estoques/';
+  const API_Troca = API + 'trocasDevolucoes/';
+  const API_Troca_Origens = API_Troca + 'origens/';
 
   return {
     /**
@@ -12,7 +14,7 @@ Servicos.Estoques = (function(http) {
      */
     Movimentacoes: {
       /**
-       * Objeto com os serviços para a API de movimentações reais.
+       * Objeto com os serviços para a API de movimentações de estoque real.
        */
       Reais: {
        /**
@@ -60,11 +62,119 @@ Servicos.Estoques = (function(http) {
         },
       },
 
+      /**
+       * Objeto com os serviços para a API de movimentações de estoque fiscal.
+       */
+      Fiscais: {
+       /**
+        * Recupera a lista de movimentações do estoques fiscal.
+        * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
+        * @param {number} pagina O número da página de resultados a ser exibida.
+        * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+        * @param {string} ordenacao A ordenação para o resultado.
+        * @returns {Promise} Uma promise com o resultado da busca.
+        */
+        obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+          return http().get(API + 'movimentacoes/fiscais', {
+            params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+          });
+        },
+
+       /**
+        * Exclui uma movimentação do estoque fiscal.
+        * @param {number} idMovimentacao O identificador da movimentação que será excluida.
+        * @returns {Promise} Uma promise com o resultado da exclusão.
+        */
+        excluir: function (idMovimentacao) {
+          if (!idMovimentacao) {
+            throw new Error('Movimentação é obrigatória.');
+          }
+
+          return http().delete(API + 'movimentacoes/fiscais/' + idMovimentacao);
+        },
+
+        /**
+         * Obtém as configurações para a tela de movimentações do estoque fiscal.
+         * @returns {Promise} Uma promise com o resultado da busca.
+         */
+        obterConfiguracoesLista: function () {
+          return http().get(API + 'movimentacoes/fiscais/configuracoes');
+        },
+
+        /**
+         * Insere uma nova movimentação do estoque fiscal.
+         * @param {?Object} movimentacao O objeto com os dados necessários para cadastro de uma movimentação de ajuste manual de estoque fiscal.
+         * @returns {Promise} Uma promise com o resultado da inserção.
+         */
+        inserir: function (movimentacao) {
+          if (!movimentcao) {
+            throw new error('Movimentação é obrigatória.');
+          }
+
+          return http().post(API + 'movimentacoes/fiscais/', movimentacao)
+        },
+      },
+
       TiposMovimentacao: {
         obterParaControle: function () {
           return http().get(API + 'movimentacoes/tiposMovimentacao');
         },
       },
+    },
+
+    /**
+     * Objeto com os serviços para a API de trocas/devoluções.
+     */
+    TrocasDevolucoes: {
+      /**
+       * Objeto com os serviços para a API de origens de troca/devolução.
+       */
+      Origens: {
+        /**
+         * Recupera a lista de origens para uso no controle de filtros.
+         * @returns {Promise} Uma promise com o resultado da busca.
+         */
+        obterParaFiltro: function () {
+          return http().get(API_Troca_Origens + 'filtro');
+        }
+      },
+
+      /**
+       * Recupera a lista de trocas/devoluções.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterListaTrocaDevolucao: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API_Troca.substr(0, API_Troca.length - 1), {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Recupera as configurações para a tela de listagem de trocas/devoluções.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterConfiguracoesLista: function () {
+        return http().get(API_Troca + 'configuracoes');
+      },
+
+      /**
+       * Recupera os tipos de trocas/devoluções.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterTipos: function () {
+        return http().get(API_Troca + 'tipos');
+      },
+
+      /**
+       * Recupera as situações de trocas/devoluções.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterSituacoes: function () {
+        return http().get(API_Troca + 'situacoes');
+      }
     },
 
     /**

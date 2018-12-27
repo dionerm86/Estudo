@@ -26,5 +26,12 @@ namespace Glass.API.Backend.Models.Projetos.V1.Ferragens.Lista
         [DataMember]
         [JsonProperty("alterarSituacao")]
         public bool AlterarSituacao { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se a ferragem possui log.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("logAlteracoes")]
+        public bool LogAlteracoes { get; set; }
     }
 }

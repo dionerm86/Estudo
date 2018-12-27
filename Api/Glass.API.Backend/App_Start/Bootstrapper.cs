@@ -263,7 +263,7 @@ namespace Glass.API.Backend
             // Configura o local de armazenamento os values
             Colosoft.Runtime.RuntimeValueStorage.Instance = new Colosoft.Web.HttpSessionValueStorage();
 
-            Glass.Negocios.ProvedorControleAlteracao.Configurar();
+            Glass.Negocios.ProvedorControleAlteracao.Configurar(this.DomainEvents);
 
             GDA.GDASettings.LoadConfiguration();
             GDA.GDASession.DefaultCommandTimeout = 60;

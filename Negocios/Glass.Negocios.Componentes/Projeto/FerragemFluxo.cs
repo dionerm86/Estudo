@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CalcEngine;
+using Glass.Data.DAL;
 
 namespace Glass.Projeto.Negocios.Componentes
 {
@@ -182,7 +183,7 @@ namespace Glass.Projeto.Negocios.Componentes
 
             var sincronizador = this.CriarSincronizador(source);
 
-            // Executa a sincronização
+            //Executa a sincronização
             sincronizador.Synchronize();
 
             /* Chamado 65883. */
@@ -216,10 +217,10 @@ namespace Glass.Projeto.Negocios.Componentes
                 sincronizador.Synchronize();
 
                 return new Colosoft.Business.SaveResult(
-                    false,
-                    string.Format(
-                    "Falha ao atualizar a ferragem no WebGlass. Erro: {0}.",
-                    resultado.Message.ToString()).GetFormatter());
+                false,
+                string.Format(
+                "Falha ao atualizar a ferragem no WebGlass. Erro: {0}.",
+                resultado.Message.ToString()).GetFormatter());
             }
 
             return resultado;

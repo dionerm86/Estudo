@@ -1,4 +1,4 @@
-// <copyright file="ListaDto.cs" company="Sync Softwares">
+﻿// <copyright file="ListaDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -19,7 +19,7 @@ namespace Glass.API.Backend.Models.Projetos.V1.Ferragens.Configuracoes
         /// </summary>
         public ListaDto()
         {
-            this.CadastrarFerragem = PCPConfig.ControleCavalete;
+            this.CadastrarFerragem = Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync;
         }
 
         /// <summary>

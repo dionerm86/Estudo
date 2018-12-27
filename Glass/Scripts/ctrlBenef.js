@@ -1377,7 +1377,7 @@ function calculaTotal(nomeControle, prefixoControle, callbackTotal)
     if (dadosProduto.TipoCalculo == 4 || dadosProduto.TipoCalculo == 6 || dadosProduto.TipoCalculo == 7 || dadosProduto.TipoCalculo == 9)
     {
         var campoAltura = document.getElementById(getVar(nomeControle).Altura);
-        total.Valor = valorAluminio(campoAltura, getValorUnitario(nomeControle).toString(), getQuantidade(nomeControle), dadosProduto.TipoCalculo != 9 && !getVar(nomeControle).Compra, dadosProduto.TipoCalculo);
+        total.Valor = valorAluminio(campoAltura, getValorUnitario(nomeControle).toString(), getQuantidade(nomeControle), dadosProduto.TipoCalculo != 9 && !getVar(nomeControle).Compra);
         total.Valor = getValorPercComissao(nomeControle, total.Valor);
     }
 

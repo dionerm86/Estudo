@@ -206,6 +206,12 @@ namespace Glass.Data.Model
         public decimal BcIcms { get; set; }
 
         /// <summary>
+        /// Base de calculo ICMS sem Redução.
+        /// </summary>
+        [PersistenceProperty("BCICMSSEMREDUCAO")]
+        public decimal BcIcmsSemReducao { get; set; }
+
+        /// <summary>
         /// Valor do ICMS desonerado
         /// </summary>
         [PersistenceProperty("ValorIcmsDesonerado")]

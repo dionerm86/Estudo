@@ -1,4 +1,4 @@
-﻿// <copyright file="GetMovimentacaoEstoqueRealController.cs" company="Sync Softwares">
+﻿// <copyright file="GetTiposMovimentacaoController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 

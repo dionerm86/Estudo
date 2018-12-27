@@ -22,9 +22,22 @@
             $("#" + controle.id).maskMoney({ showSymbol: false, symbol: "R$", decimal: ",", precision: precisao, thousands: "", allowZero: true });
         }
 
-        function onInsert() {
+        var clicked = false;
 
-            return validar();
+        function onInsert() {
+            if (clicked) {
+                return false;
+            }
+
+            clicked = true;
+
+            var retornoValidacao = validar();
+
+            if (!retornoValidacao) {
+                clicked = false;
+            }
+
+            return retornoValidacao;
         }
 
         // Validação de dados de inserção ou atualização
@@ -127,6 +140,8 @@
                 alert('O peso da carga é maior que o permitido');
                 return false;
             }
+
+            return true;
         }
 
         // Exibe a tabela de associar NFe ou CTe de acordo com o tipo Emitente
