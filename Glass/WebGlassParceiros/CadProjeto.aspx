@@ -1,4 +1,4 @@
-<%@ Page Title="Efetuar OrÁamento" Language="C#" MasterPageFile="~/WebGlassParceiros/PainelParceiros.master"
+Ôªø<%@ Page Title="Efetuar Or√ßamento" Language="C#" MasterPageFile="~/WebGlassParceiros/PainelParceiros.master"
     AutoEventWireup="true" CodeBehind="CadProjeto.aspx.cs" Inherits="Glass.UI.Web.WebGlassParceiros.CadProjeto" %>
 
 <%@ Register Src="../Controls/ctrlLinkQueryString.ascx" TagName="ctrllinkquerystring" TagPrefix="uc2" %>
@@ -37,7 +37,7 @@
             {
                 if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == dControl("txtValorIns", "input").value = retorno.value.repl"")
                 {
-                    alert("Informe a aplicaÁ„o.");
+                    alert("Informe a aplica√ß√£o.");
                     return false;
                 }
 
@@ -55,7 +55,7 @@
         {
             for (iTip = 0; iTip < 2; iTip++)
             {
-                TagToTip('tbObsCalc_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'ObservaÁ„o', CLOSEBTN, true,
+                TagToTip('tbObsCalc_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'Observa√ß√£o', CLOSEBTN, true,
                     CLOSEBTNTEXT, 'Fechar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, false,
                     FIX, [botao, 9 - getTableWidth('tbObsCalc_' + num), 7]);
             }
@@ -86,7 +86,7 @@
                 idCorFerragem, apenasVidros, medidaExata).value;
 
             if (retorno == null) {
-                alert("Falha na requisiÁ„o AJAX.");
+                alert("Falha na requisi√ß√£o AJAX.");
                 return false;
             }
 
@@ -99,24 +99,24 @@
             else if (retorno[0] == "ok") {
                 FindControl("hdfIdItemProjeto", "input").value = retorno[1];
 
-                // Limpa a tabela de medidas da instalaÁ„o e de peÁas para n„o trazerem os mesmos valores
+                // Limpa a tabela de medidas da instala√ß√£o e de pe√ßas para n√£o trazerem os mesmos valores
                 var tbMedInst = FindControl("tbMedInst", "table");
                 var tbPecaModelo = FindControl("tbPecaModelo", "table");
                 if (tbMedInst != null) tbMedInst.innerHTML = "";
                 if (tbPecaModelo != null) tbPecaModelo.innerHTML = "";
 
-                // Faz um submit no form, para recarregar a p·gina e montar o modelo escolhido
+                // Faz um submit no form, para recarregar a p√°gina e montar o modelo escolhido
                 getForm().submit();
             }
         }
 
-        // VerificaÁ„oes ao inserir projeto
+        // Verifica√ß√£oes ao inserir projeto
         function onInsert() {
             // Verifica se o tipo de entrega foi informado.
             if (FindControl("drpTipoEntrega", "select") != null && FindControl("drpTipoEntrega", "select").value == "" &&
                 FindControl("drpTipoEntrega", "select").style.display != "none")
             {
-                alert("O tipo de entrega n„o foi informado.");
+                alert("O tipo de entrega n√£o foi informado.");
                 return false;
             }
 
@@ -124,18 +124,18 @@
             if (FindControl("drpTipoPedido", "select") != null && FindControl("drpTipoPedido", "select").style.display != "none" &&
                 (FindControl("drpTipoPedido", "select").value == "" || FindControl("drpTipoPedido", "select").value == "0"))
             {
-                alert("O tipo de venda n„o foi informado.");
+                alert("O tipo de venda n√£o foi informado.");
                 return false;
             }
         }
 
-        // VerificaÁ„oes ao atualizar projeto
+        // Verifica√ß√£oes ao atualizar projeto
         function onUpdate() {
             // Verifica se o tipo de entrega foi informado.
             if (FindControl("drpTipoEntrega", "select") != null && FindControl("drpTipoEntrega", "select").value == "" &&
                 FindControl("drpTipoEntrega", "select").style.display != "none")
             {
-                alert("O tipo de entrega n„o foi informado.");
+                alert("O tipo de entrega n√£o foi informado.");
                 return false;
             }
 
@@ -143,7 +143,7 @@
             if (FindControl("drpTipoPedido", "select") != null && FindControl("drpTipoPedido", "select").style.display != "none" &&
                 (FindControl("drpTipoPedido", "select").value == "" || FindControl("drpTipoPedido", "select").value == "0"))
             {
-                alert("O tipo de venda n„o foi informado.");
+                alert("O tipo de venda n√£o foi informado.");
                 return false;
             }
         }
@@ -194,7 +194,7 @@
         var insKit = false;
         var insTubo = false;
 
-        // FunÁ„o chamada apÛs selecionar produto pelo popup
+        // Fun√ß√£o chamada ap√≥s selecionar produto pelo popup
         function setProduto(codInterno) {
             try {
                 if (insKit)
@@ -211,7 +211,7 @@
             }
         }
 
-        // Carrega dados do produto com base no cÛdigo do produto passado
+        // Carrega dados do produto com base no c√≥digo do produto passado
         function loadProduto(codInterno) {
             if (codInterno == "")
                 return false;
@@ -240,22 +240,22 @@
                     FindControl("hdfIdKit", "input").value = retorno[1];
                     FindControl("lblDescrKit", "span").innerHTML = retorno[2];
                     FindControl("txtValorKit", "input").value = retorno[3];
-                    FindControl("hdfKitValMin", "input").value = retorno[3]; // Armazena o valor mÌnimo
+                    FindControl("hdfKitValMin", "input").value = retorno[3]; // Armazena o valor m√≠nimo
                 }
                 else if (insTubo) {
                     FindControl("hdfIdTubo", "input").value = retorno[1];
                     FindControl("lblDescrTubo", "span").innerHTML = retorno[2];
                     FindControl("txtValorTubo", "input").value = retorno[3];
-                    FindControl("hdfTuboValMin", "input").value = retorno[3]; // Armazena o valor mÌnimo
+                    FindControl("hdfTuboValMin", "input").value = retorno[3]; // Armazena o valor m√≠nimo
                 }
                 else if (retorno[0] == "Prod") {
                     FindControl("hdfIdProdMater", "input").value = retorno[1];
-                    FindControl("txtValorIns", "input").value = retorno[3]; // Exibe no cadastro o valor mÌnimo do produto
-                    FindControl("hdfValMin", "input").value = retorno[3]; // Armazena o valor mÌnimo
-                    FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto È vidro
-                    FindControl("hdfIsAluminio", "input").value = retorno[5]; // Informa se o produto È vidro
-                    FindControl("hdfM2Minimo", "input").value = retorno[6]; // Informa se o produto possui m≤ mÌnimo
-                    FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como produto È calculado
+                    FindControl("txtValorIns", "input").value = retorno[3]; // Exibe no cadastro o valor m√≠nimo do produto
+                    FindControl("hdfValMin", "input").value = retorno[3]; // Armazena o valor m√≠nimo
+                    FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto √© vidro
+                    FindControl("hdfIsAluminio", "input").value = retorno[5]; // Informa se o produto √© vidro
+                    FindControl("hdfM2Minimo", "input").value = retorno[6]; // Informa se o produto possui m¬≤ m√≠nimo
+                    FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como produto √© calculado
                     var tipoCalc = retorno[7];
 
                     if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != ""){
@@ -272,12 +272,12 @@
                             FindControl("lnkBenef", "a").style.display = "none";
                         }
 
-                        qtdEstoque = retorno[16]; // Pega a quantidade disponÌvel em estoque deste produto
+                        qtdEstoque = retorno[16]; // Pega a quantidade dispon√≠vel em estoque deste produto
                         exibirMensagemEstoque = retorno[15] == "true";
                         qtdEstoqueMensagem = retorno[17];
 
-                        // Se o produto n„o for vidro, desabilita os textboxes largura e altura,
-                        // mas se o produto for alumÌnio e a empresa trabalhar com venda de alumÌnio
+                        // Se o produto n√£o for vidro, desabilita os textboxes largura e altura,
+                        // mas se o produto for alum√≠nio e a empresa trabalhar com venda de alum√≠nio
                     // no metro linear, deixa o campo altura habilitado
                     var cAltura = FindControl("txtAlturaIns", "input");
                     var cLargura = FindControl("txtLarguraIns", "input");
@@ -320,7 +320,7 @@
             }
         }
 
-        // Chamado quando um produto est· para ser inserido no item_projeto
+        // Chamado quando um produto est√° para ser inserido no item_projeto
         function onSaveProd() {
             if (!validate("produto"))
                 return false;
@@ -337,7 +337,7 @@
 
             valMin = new Number(valMin.replace(',', '.'));
             if (codProd == "") {
-                alert("Informe o cÛdigo do produto.");
+                alert("Informe o c√≥digo do produto.");
                 return false;
             }
             else if (valor == "" || parseFloat(valor.replace(",", ".")) == 0) {
@@ -349,7 +349,7 @@
                 return false;
             }
             else if (new Number(valor.replace(',', '.')) < valMin) {
-                alert("Valor especificado abaixo do valor mÌnimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
+                alert("Valor especificado abaixo do valor m√≠nimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
                 return false;
             }
             else if (FindControl("txtAlturaIns", "input").disabled == false) {
@@ -358,7 +358,7 @@
                     return false;
                 }
             }
-            // Se o textbox da largura estiver habilitado, dever· ser informada
+            // Se o textbox da largura estiver habilitado, dever√° ser informada
             else if (FindControl("txtLarguraIns", "input").disabled == false && largura == "") {
                 alert("Informe a largura.");
                 return false;
@@ -372,7 +372,7 @@
             FindControl("txtLarguraIns", "input").disabled = false;
         }
 
-        // FunÁ„o chamada quando o produto est· para ser atualizado
+        // Fun√ß√£o chamada quando o produto est√° para ser atualizado
         function onUpdateProd() {
             if (!validate("produto"))
                 return false;
@@ -396,7 +396,7 @@
             else if (retorno[0] == "Prod") {
                 retorno[3] = new Number(retorno[3].replace(',', '.'));
                 if (new Number(valor.replace(',', '.')) < retorno[3]) {
-                    alert("Valor especificado abaixo do valor mÌnimo (R$ " + retorno[3].toFixed(2).replace(".", ",") + ")");
+                    alert("Valor especificado abaixo do valor m√≠nimo (R$ " + retorno[3].toFixed(2).replace(".", ",") + ")");
                     return false;
                 }
             }
@@ -437,7 +437,7 @@
                 if (altura != "" && largura != "" &&
                     parseInt(altura) > 0 && parseInt(largura) > 0 &&
                     parseInt(altura) != parseInt(largura) && redondo) {
-                    alert('O beneficiamento Redondo pode ser marcado somente em peÁas de medidas iguais.');
+                    alert('O beneficiamento Redondo pode ser marcado somente em pe√ßas de medidas iguais.');
 
                     if (FindControl("Redondo_chkSelecao", "input") != null && FindControl("Redondo_chkSelecao", "input").checked)
                         FindControl("Redondo_chkSelecao", "input").checked = false;
@@ -497,7 +497,7 @@
                 return;
             }
             else if (retorno == null) {
-                alert("Erro na recuperaÁ„o do valor de tabela do produto.");
+                alert("Erro na recupera√ß√£o do valor de tabela do produto.");
                 return;
             }
 
@@ -507,7 +507,7 @@
                 valMin.value = retorno.value.replace(".", ",");
             }
             else{
-                alert("N„o foi possÌvel encontrar o controle 'hdfValMin'");
+                alert("N√£o foi poss√≠vel encontrar o controle 'hdfValMin'");
                 return false;
             }
 
@@ -517,7 +517,7 @@
                 valorIns.value = retorno.value.replace(".", ",");
             }
             else{
-                alert("N„o foi possÌvel encontrar o controle 'txtValorIns'");
+                alert("N√£o foi poss√≠vel encontrar o controle 'txtValorIns'");
                 return false;
             }
         }
@@ -548,7 +548,7 @@
             }
         }
 
-        // FunÁ„o chamada pelo popup de escolha da AplicaÁ„o do produto
+        // Fun√ß√£o chamada pelo popup de escolha da Aplica√ß√£o do produto
         function setApl(idAplicacao, codInterno, aplBenef) {
 
             var verificaEtiquetaApl = MetodosAjax.VerificaEtiquetaAplicacaoEcommerce(idAplicacao, FindControl("hdfIdProjeto", "input").value);
@@ -583,7 +583,7 @@
                 var response = MetodosAjax.GetEtiqAplicacao(codInterno).value;
 
                 if (response == null || response == "") {
-                    alert("Falha ao buscar AplicaÁ„o. Ajax Error.");
+                    alert("Falha ao buscar Aplica√ß√£o. Ajax Error.");
                     setApl("", "", aplBenef);
                     return false
                 }
@@ -603,7 +603,7 @@
             }
         }
 
-        // FunÁ„o chamada pelo popup de escolha do Processo do produto
+        // Fun√ß√£o chamada pelo popup de escolha do Processo do produto
         function setProc(idProcesso, codInterno, codAplicacao, procBenef) {
             procBenef = procBenef == true ? true : false;
             var campo = !procBenef ? "txtProcIns" : "txtProcessoIns";
@@ -617,7 +617,7 @@
             if(idSubgrupo.value != "" && retornoValidacao.value == "false" && FindControl("txtProcIns", "input").value != "")
             {
                 FindControl("txtProcIns", "input").value = "";
-                alert("Este processo n„o pode ser selecionado para este produto.")
+                alert("Este processo n√£o pode ser selecionado para este produto.")
                 return false;
             }
 
@@ -676,7 +676,7 @@
                 return false;
             }
             else
-                alert("ObservaÁ„o salva.");
+                alert("Observa√ß√£o salva.");
         }
 
         function duplicar()
@@ -695,7 +695,7 @@
         function gerarPedido()
         {
             if (click) return false;
-            if (!confirm('Deseja gerar um pedido deste orÁamento?'))
+            if (!confirm('Deseja gerar um pedido deste or√ßamento?'))
                 return;
             click = true;
         }
@@ -795,7 +795,7 @@
             var isCalcAluminio = tipoCalc == 4 || tipoCalc == 6 || tipoCalc == 7 || tipoCalc == 9;
             var isCalcM2 = tipoCalc == 2 || tipoCalc == 10;
 
-            // Se for c·lculo por barra de 6m, multiplica a qtd pela altura
+            // Se for c√°lculo por barra de 6m, multiplica a qtd pela altura
             if (isCalcAluminio)
                 txtQtd = parseInt(txtQtd) * parseFloat(txtAltura.toString().replace(',', '.'));
             else if (isCalcM2)
@@ -810,9 +810,9 @@
             if (estoqueMenor)
             {
                 if (qtdEstoque == 0)
-                    alert("N„o h· nenhuma peÁa deste produto no estoque.");
+                    alert("N√£o h√° nenhuma pe√ßa deste produto no estoque.");
                 else
-                    alert("H· apenas " + qtdEstoque + " " + (isCalcM2 ? "m≤" : isCalcAluminio ? "ml (" + parseFloat(qtdEstoque / 6).toFixed(2) + " barras)" : "peÁa(s)") + " deste produto no estoque.");
+                    alert("H√° apenas " + qtdEstoque + " " + (isCalcM2 ? "m¬≤" : isCalcAluminio ? "ml (" + parseFloat(qtdEstoque / 6).toFixed(2) + " barras)" : "pe√ßa(s)") + " deste produto no estoque.");
 
                 FindControl("txtQtdeIns", "input").value = "";
             }
@@ -820,6 +820,15 @@
             var exibirPopup = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ExibePopupVidrosEstoque.ToString().ToLower() %>;
             if (exibirPopup && exibirMensagemEstoque && (qtdEstoqueMensagem <= 0 || estoqueMenor))
                 openWindow(400, 600, "../Utils/DadosEstoque.aspx?idProd=" + FindControl("hdfIdProd", "input").value);
+        }
+
+        function novoCalculo() {
+            window.location = window.location.href;
+
+            openWindow(600, 750, 'SelModelo.aspx?idProjeto=' + 
+                (FindControl('hdfIdProjeto', 'input') != null ? FindControl('hdfIdProjeto', 'input').value : '0') + 
+                '&apenasVidro=' + (FindControl('hdfApenasVidros', 'input') != null ? FindControl('hdfApenasVidros', 'input').value : 'false') + 
+                '&Parceiro=true');
         }
 
     </script>
@@ -876,7 +885,7 @@
                                                 <tr>
 
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="Label22" runat="server" Text="Seu cÛd. Pedido"></asp:Label>
+                                                        <asp:Label ID="Label22" runat="server" Text="Seu c√≥d. Pedido"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
                                                         <asp:TextBox ID="txtPedCli" runat="server" MaxLength="30"
@@ -921,7 +930,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="dtvHeader" colspan="4">
-                                                        ObservaÁ„o
+                                                        Observa√ß√£o
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -977,7 +986,7 @@
                                                 <tr>
 
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="Label23" runat="server" Text="Seu cÛd. Pedido"></asp:Label>
+                                                        <asp:Label ID="Label23" runat="server" Text="Seu c√≥d. Pedido"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
                                                         <asp:TextBox ID="txtPedCli" runat="server" MaxLength="20"
@@ -1021,7 +1030,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="dtvHeader" colspan="4">
-                                                        ObservaÁ„o
+                                                        Observa√ß√£o
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1065,7 +1074,7 @@
                                                         <asp:Label ID="lblTotal" runat="server" Text='<%# Eval("Total", "{0:C}") %>'></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold;">
-                                                        <asp:Label ID="Label12" runat="server" Text="Seu cÛd. Pedido"></asp:Label>
+                                                        <asp:Label ID="Label12" runat="server" Text="Seu c√≥d. Pedido"></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:Label ID="lblPedCli" runat="server" Text='<%# Eval("PedCli") %>'></asp:Label>
@@ -1112,8 +1121,8 @@
                                             <asp:Button ID="btnEditar" runat="server" CommandName="Edit" Text="Editar" />
                                             <asp:Button ID="btnVoltar" runat="server" OnClick="btnCancelar_Click" Text="Voltar" />
                                             <asp:Button ID="btnGerarOrcamento" runat="server" OnClick="btnGerarOrcamento_Click"
-                                                Text="Gerar OrÁamento"
-                                                OnClientClick="return confirm('Gerar orÁamento para este projeto?');"
+                                                Text="Gerar Or√ßamento"
+                                                OnClientClick="return confirm('Gerar or√ßamento para este projeto?');"
                                                 onload="ctrProjeto_Load" />
                                             <asp:Button ID="btnGerarPedido" runat="server" OnClick="btnGerarPedido_Click" OnClientClick="return gerarPedido();"
                                                 Text="Gerar Pedido" />
@@ -1124,7 +1133,7 @@
                             </asp:DetailsView>
                         </td>
                         <td align="center">
-                            <uc3:ctrlCorItemProjeto ID="ctrlCorItemProjeto2" runat="server" ExibirTooltip="false" Titulo="Alterar cores dos materiais de todos os c·lculos"
+                            <uc3:ctrlCorItemProjeto ID="ctrlCorItemProjeto2" runat="server" ExibirTooltip="false" Titulo="Alterar cores dos materiais de todos os c√°lculos"
                                 OnLoad="ctrlCorItemProjeto2_Load" OnCorAlterada="ctrlCorItemProjeto_CorAlterada"></uc3:ctrlCorItemProjeto>
                         </td>
                     </tr>
@@ -1157,12 +1166,12 @@
                             <table>
                                 <tr>
                                     <td>
-                                        <asp:Label ID="Label32" runat="server" Font-Bold="true" Font-Size="Large" BorderColor="DarkSlateBlue" Text="ObservaÁ„o Faturamento/Entrega"></asp:Label>
+                                        <asp:Label ID="Label32" runat="server" Font-Bold="true" Font-Size="Large" BorderColor="DarkSlateBlue" Text="Observa√ß√£o Faturamento/Entrega"></asp:Label>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <asp:Label Font-Bold="true" Text="Como vocÍ gostaria que fosse entregue este pedido? (balc„o, entrega, transportador)" runat="server" />
+                                        <asp:Label Font-Bold="true" Text="Como voc√™ gostaria que fosse entregue este pedido? (balc√£o, entrega, transportador)" runat="server" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -1186,10 +1195,10 @@
                 <table style="width: 100%">
                     <tr>
                         <td class="subtitle1">
-                            <asp:Label ID="lblCalculoProjeto" runat="server" Text="C·lculo de Projeto" OnLoad="lblCalculoProjeto_Load"></asp:Label>
+                            <asp:Label ID="lblCalculoProjeto" runat="server" Text="C√°lculo de Projeto" OnLoad="lblCalculoProjeto_Load"></asp:Label>
                         </td>
                         <td class="subtitle1" align="center">
-                            <asp:Label ID="lblCalculosEfetuados" runat="server" Text="C·lculos Efetuados" OnLoad="lblCalculosEfetuados_Load"></asp:Label>
+                            <asp:Label ID="lblCalculosEfetuados" runat="server" Text="C√°lculos Efetuados" OnLoad="lblCalculosEfetuados_Load"></asp:Label>
                         </td>
                     </tr>
                     <tr id="trProjeto" runat="server" onload="trProjeto_Load">
@@ -1197,8 +1206,8 @@
                             <table style="width: 100%">
                                 <tr>
                                     <td align="center">
-                                        <asp:Button ID="btnNovoCalculo" runat="server" Text="Novo C·lculo"
-                                            OnClientClick="openWindow(600, 750, 'SelModelo.aspx?idProjeto=' + (FindControl('hdfIdProjeto', 'input') != null ? FindControl('hdfIdProjeto', 'input').value : '0') + '&apenasVidro=' + (FindControl('hdfApenasVidros', 'input') != null ? FindControl('hdfApenasVidros', 'input').value : 'false') + '&Parceiro=true'); return false;" />
+                                        <asp:Button ID="btnNovoCalculo" runat="server" Text="Novo C√°lculo"
+                                            OnClientClick="novoCalculo();" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -1244,7 +1253,7 @@
                                                     <table style="width: 100%">
                                                         <tr>
                                                             <td align="center">
-                                                                <asp:Label ID="lblMedidas" runat="server" Text="Medidas das PeÁas" Font-Bold="True"
+                                                                <asp:Label ID="lblMedidas" runat="server" Text="Medidas das Pe√ßas" Font-Bold="True"
                                                                     Visible="False"></asp:Label>
                                                             </td>
                                                         </tr>
@@ -1362,7 +1371,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td align="center">
-                                                                <asp:Label ID="lblMedidasInst" runat="server" Text="Medidas da ·rea InstalaÁ„o" Font-Bold="True"
+                                                                <asp:Label ID="lblMedidasInst" runat="server" Text="Medidas da √°rea Instala√ß√£o" Font-Bold="True"
                                                                     Visible="False"></asp:Label>
                                                             </td>
                                                         </tr>
@@ -1380,7 +1389,7 @@
                                                                             <td colspan="4" align="center">
                                                                                 <asp:Button ID="btnCalcMed" runat="server" OnClick="btnCalcMed_Click" Text="Calcular Medidas" />
                                                                                 <asp:Button ID="btnConfCalc" runat="server" OnClick="btnConfCalc_Click" Text="Confirmar"
-                                                                                    OnClientClick="if (!confirm('AS MEDIDAS CALCULADAS NESSE PROJETO S√O DE SUA RESPONSABILIDADE.\nDESEJA CONFIRMAR AS MEDIDAS?')) return false" />
+                                                                                    OnClientClick="if (!confirm('AS MEDIDAS CALCULADAS NESSE PROJETO S√ÉO DE SUA RESPONSABILIDADE.\nDESEJA CONFIRMAR AS MEDIDAS?')) return false" />
                                                                                 <asp:Button ID="btnExcluirProjeto" runat="server" OnClick="btnExcluirProjeto_Click" Text="Excluir Projeto"
                                                                                     ForeColor="Red" OnClientClick="return confirm('Tem certeza que deseja excluir este projeto?')" />
                                                                                 <asp:Button ID="btnCancCalc" runat="server" OnClick="btnCancCalc_Click" Text="Limpar" />
@@ -1395,7 +1404,7 @@
                                                                 <table id="tbSubtotal" runat="server" visible="false" >
                                                                     <tr>
                                                                         <td>
-                                                                            <asp:Label ID="lblDescrM2Vao" runat="server" Text="¡rea do V„o:" Font-Bold="True"
+                                                                            <asp:Label ID="lblDescrM2Vao" runat="server" Text="√Årea do V√£o:" Font-Bold="True"
                                                                                 Font-Size="Small"></asp:Label>
                                                                         </td>
                                                                         <td>
@@ -1436,13 +1445,13 @@
                                                         <asp:LinkButton ID="lnkEditItem" runat="server" CommandArgument='<%# Eval("IdItemProjeto") %>'
                                                             CommandName="EditarItem">
                                                     <img src="../Images/edit.gif" border="0"></asp:LinkButton>
-                                                        <asp:LinkButton ID="lnkExcluirItem" runat="server" CommandName="Delete" OnClientClick="return confirm('Tem certeza que deseja excluir este c·lculo?');"
+                                                        <asp:LinkButton ID="lnkExcluirItem" runat="server" CommandName="Delete" OnClientClick="return confirm('Tem certeza que deseja excluir este c√°lculo?');"
                                                             Visible='<%# Eval("EditDeleteVisible") %>'>
                                                     <img src="../Images/ExcluirGrid.gif" border="0"></asp:LinkButton>
                                                     </ItemTemplate>
                                                     <ItemStyle Wrap="False" />
                                                 </asp:TemplateField>
-                                                <asp:BoundField DataField="CodigoModelo" HeaderText="CÛd." SortExpression="CodigoModelo">
+                                                <asp:BoundField DataField="CodigoModelo" HeaderText="C√≥d." SortExpression="CodigoModelo">
                                                     <HeaderStyle Wrap="False" />
                                                     <ItemStyle Wrap="False" />
                                                 </asp:BoundField>
@@ -1482,7 +1491,7 @@
                                 <tr>
                                     <td>
                                         &nbsp;
-                                        <asp:Button ID="btnNovoCalculoDupl" runat="server" Text="Novo C·lculo ()"
+                                        <asp:Button ID="btnNovoCalculoDupl" runat="server" Text="Novo C√°lculo ()"
                                             OnClientClick="duplicar(); return false"
                                             Visible="False" />
                                     </td>
@@ -1507,7 +1516,7 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="2">
-                                                    <asp:Label ID="lblObsTotal" runat="server" Font-Size="Smaller" Text="Considerando otimizaÁ„o das barras de alumÌnio"
+                                                    <asp:Label ID="lblObsTotal" runat="server" Font-Size="Smaller" Text="Considerando otimiza√ß√£o das barras de alum√≠nio"
                                                         Visible="False" onload="ctrProjeto_Load"></asp:Label>
                                                 </td>
                                             </tr>

@@ -53,6 +53,14 @@ Servicos.Rotas = (function(http) {
           codigo: codigo
         }
       });
+    },
+
+    /**
+     * Recupera a lista de rotas externas para uso no controle de seleção.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    obterFiltroRotasExternas: function () {
+      return http().get(API + 'externas');
     }
   };
 })(function() {
