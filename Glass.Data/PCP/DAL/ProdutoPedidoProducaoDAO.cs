@@ -6989,7 +6989,7 @@ namespace Glass.Data.DAL
                 ProdutoImpressaoDAO.Instance.ExecuteScalar<int>(sessao, "update produto_impressao set idImpressao=" +
                     Glass.Conversoes.StrParaUintNullable(dadosReposicao[4]) + " where idProdImpressao=" + idProdImpressao);
 
-                AtualizaIdImpressao(sessao, (int)idProdPedProducao, Glass.Conversoes.StrParaInt(dadosReposicao[4]));
+                this.AtualizaIdImpressao(sessao, (int)idProdPedProducao, Glass.Conversoes.StrParaInt(dadosReposicao[4]));
             }
 
             // Apaga as leituras dessa peça
