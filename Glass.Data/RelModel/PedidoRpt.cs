@@ -172,6 +172,7 @@ namespace Glass.Data.RelModel
             ValorEntrega = ped.ValorEntrega;
             TelVendedor = ped.TelVendedor;
             NomeTransportador = ped.NomeTransportador;
+            OrcamentoString = ped.OrcamentoString;
         }
 
         private void RelatorioLiberacao(Pedido ped)
@@ -473,6 +474,8 @@ namespace Glass.Data.RelModel
         public byte[] BarCodeImage { get; set; }
 
         public string PedCliExterno { get; set; }
+
+        public string OrcamentoString { get; set; }
 
         #region Campos usados no cálculo de totais do pedido na liberação
 
