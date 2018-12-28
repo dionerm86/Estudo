@@ -25,7 +25,7 @@ function CalcProd_CalcTotalProd(valorIns, totM2, totM2Calc, m2Minimo, total, qtd
         }
         // Se for cálculo de alumínio
         else if (tipoCalc == 4 || tipoCalc == 6 || tipoCalc == 7 || tipoCalc == 9)
-            total = valorAluminio(campoAltura, total, qtde, arredondarAluminio, tipoCalc);
+            total = valorAluminio(campoAltura, total, qtde, arredondarAluminio);
         // Se for cálculo por perímetro
         else if (tipoCalc == 3)
         {
@@ -77,7 +77,7 @@ function CalcProd_CalcValorUnitProd(valorIns, totM2, totM2Calc, m2Minimo, total,
         }
         // Se for cálculo de alumínio
         else if (tipoCalc == 4 || tipoCalc == 6 || tipoCalc == 7 || tipoCalc == 9)
-            valorIns = valorUnitAluminio(campoAltura, total, qtde, arredondarAluminio, tipoCalc);
+            valorIns = valorUnitAluminio(campoAltura, total, qtde, arredondarAluminio);
         // Se for cálculo por perímetro
         else if (tipoCalc == 3)
         {

@@ -4523,8 +4523,22 @@ namespace Glass.Data.DAL
                     foreach (ProdutosNf pVal in lstProdNfValida)
                     {
                         foreach (ProdutoBaixaEstoqueFiscal pBaixaComparacao in ProdutoBaixaEstoqueFiscalDAO.Instance.GetByProd(session, pVal.IdProd))
+                        {
                             if (pBaixa.IdProdBaixa == pBaixaComparacao.IdProdBaixa)
-                                qtdEstoque += (float)Math.Round(ProdutosNfDAO.Instance.ObtemQtdDanfe(session, pVal, true) * pBaixaComparacao.Qtde, 2);
+                            {
+                                var qtdeDanfe = ProdutosNfDAO.Instance.ObtemQtdDanfe(
+                                    session,
+                                    (uint)pBaixaComparacao.IdProdBaixa,
+                                    pVal.TotM,
+                                    pVal.Qtde,
+                                    pVal.Altura,
+                                    pVal.Largura,
+                                    true,
+                                    true);
+
+                                qtdEstoque += (float)Math.Round(qtdeDanfe * pBaixaComparacao.Qtde, 2);
+                            }
+                        }
                     }
 
                     // O valor é arredondado porque a quantidade do produto na nota fiscal considera 4 casas decimais,

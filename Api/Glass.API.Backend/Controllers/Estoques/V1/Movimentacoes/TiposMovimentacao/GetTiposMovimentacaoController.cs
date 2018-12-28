@@ -1,4 +1,4 @@
-﻿// <copyright file="GetMovimentacaoEstoqueRealController.cs" company="Sync Softwares">
+﻿// <copyright file="GetTiposMovimentacaoController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -25,10 +25,10 @@ namespace Glass.API.Backend.Controllers.Estoques.V1.Movimentacoes.TiposMovimenta
         /// <returns>Uma lista JSON com os dados dos estoques.</returns>
         [HttpGet]
         [Route("api/v1/estoques/movimentacoes/tiposMovimentacao")]
-        [SwaggerResponse(200, "Tipos de Movimentação encontrados.", Type = typeof(IEnumerable<Models.Estoques.V1.Movimentacoes.TiposMovimentacao.TipoMovimentação>))]
+        [SwaggerResponse(200, "Tipos de Movimentação encontrados.", Type = typeof(IEnumerable<Models.Estoques.V1.Movimentacoes.TiposMovimentacao.TipoMovimentacao>))]
         public IHttpActionResult ObterTiposMovimentacao()
         {
-            var tiposMovimentacao = new Helper.ConversorEnum<Models.Estoques.V1.Movimentacoes.TiposMovimentacao.TipoMovimentação>()
+            var tiposMovimentacao = new Helper.ConversorEnum<Models.Estoques.V1.Movimentacoes.TiposMovimentacao.TipoMovimentacao>()
                 .ObterTraducao();
 
             return this.Lista(tiposMovimentacao);

@@ -3132,6 +3132,11 @@ namespace Glass.Data.Model
             }
         }
 
+        public string OrcamentoString
+        {
+            get { return IdOrcamento > 0 ? "(Orç.: " + IdOrcamento + ")" : string.Empty; }
+        }
+
         #endregion
 
         #region IContainerCalculo
