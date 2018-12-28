@@ -33,7 +33,7 @@ namespace Glass.API.Backend.Controllers.Pagamentos.V1
                 return this.NaoEncontrado("Pagamento não encontrado.");
             }
 
-            return null;
+            return validacao;
         }
     }
 }
