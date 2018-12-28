@@ -1,0 +1,154 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Cód. Conta Pagar</label>
+            <input type="number" v-model="filtroAtual.id" style="width: 50px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Num. Compra</label>
+            <input type="number" v-model="filtroAtual.idCompra" style="width: 50px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>NF/Pedido</label>
+            <input type="text" v-model="filtroAtual.numeroNotaFiscal" style="width: 50px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Rest. Pagto</label>
+            <input type="number" v-model="filtroAtual.idPagamentoRestante" style="width: 50px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Custo Fixo</label>
+            <input type="number" v-model="filtroAtual.idCustoFixo" style="width: 50px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Imp./Serv.</label>
+            <input type="number" v-model="filtroAtual.idImpostoServico" style="width: 50px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Comissão</label>
+            <input type="number" v-model="filtroAtual.idComissao" style="width: 50px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Loja</label>
+            <lista-selecao-lojas :loja.sync="lojaAtual" :ativas="true"></lista-selecao-lojas>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Fornecedor</label>
+            <input type="number" v-model="filtroAtual.idFornecedor" style="width: 50px" />
+            <input type="text" v-model="filtroAtual.nomeFornecedor" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Venc.</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoVencimentoInicio" 
+                v-bind:data-hora-final.sync="filtroAtual.periodoVencimentoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Valor Venc.</label>
+            <input type="number" v-model="filtroAtual.valorInicial" style="width: 50px" /> até 
+            <input type="number" v-model="filtroAtual.valorFinal" style="width: 50px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Tipo</label>
+            <lista-selecao-id-valor :item-selecionado.sync="tipoAtual"
+                :funcao-recuperar-itens="obterTiposContabeis"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Plano de conta</label>
+            <input type="text" v-model="filtroAtual.planoConta" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Data Cad.</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoCadastroInicio"
+                v-bind:data-hora-final.sync="filtroAtual.periodoCadastroFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Num. CTe</label>
+            <input type="text" v-model="filtroAtual.numeroCte" style="width: 50px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Transportadora</label>
+            <input type="number" v-model="filtroAtual.idTransportadora" style="width: 50px" />
+            <input type="text" v-model="filtroAtual.nomeTransportadora" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Transportadora</label>
+            <lista-selecao-id-valor :item-selecionado.sync="formaPagamentoAtual"
+                :funcao-recuperar-itens="obterTransportadoras"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Forma Pagto.</label>
+            <lista-selecao-multipla :ids-selecionados.sync="filtroAtual.idsFormaPagamento"
+                :funcao-recuperar-itens="obterFormasPagamentoCompras"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Período Baixado</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoPagamentoInicio"
+                v-bind:data-hora-final.sync="filtroAtual.periodoPagamentoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Período Emissão NF-e/Compra</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoNotaFiscalInicio"
+                v-bind:data-hora-final.sync="filtroAtual.periodoNotaFiscalFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <input type="checkbox" v-model="filtroAtual.buscarCheques" />
+            <label>Incluir cheques</label>
+        </span>
+        <span class="form-group">
+            <input type="checkbox" v-model="filtroAtual.buscarPrevisaoCustoFixo" />
+            <label>Exibir previsão de custo fixo</label>
+        </span>
+        <span class="form-group">
+            <input type="checkbox" v-model="filtroAtual.apenasContasDeCustoFixo" />
+            <label>Contas de custo fixo</label>
+        </span>
+        <span class="form-group">
+            <input type="checkbox" v-model="filtroAtual.apenasContasDeComissao" />
+            <label>Contas de comissão</label>
+        </span>
+        <span class="form-group">
+            <input type="checkbox" v-model="filtroAtual.apenasContasComValorAPagar" />
+            <label>Contas sem valor</label>
+        </span>
+    </div>
+    <div>
+        <span>
+            <label>Agrupar impressão por:</label>
+            <select v-model="filtroAtual.agruparImpressaoPor">
+                <option></option>
+                <option Value="1" Selected>Fornecedor</option>
+                <option Value="2">Data Venc.</option>
+                <option Value="3">Data Cad.</option>
+                <option Value="4">Plano de Conta</option>
+            </select>
+        </span>
+    </div>
+</section>

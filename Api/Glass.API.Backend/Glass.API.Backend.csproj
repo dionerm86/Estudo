@@ -245,8 +245,20 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\ContasPagar\V1\ContasPagarController.cs" />
+    <Compile Include="Controllers\ContasPagar\V1\GetContasPagarController.cs" />
+    <Compile Include="Controllers\ContasPagar\V1\PatchContasPagarController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\TiposMovimentacao\GetTiposMovimentacaoController.cs" />
+    <Compile Include="Helper\ContasPagar\ConverterCadastroAtualizacaoParaContasPagar.cs" />
+    <Compile Include="Helper\ContasPagar\TraducaoOrdenacaoListaContasPagar.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
+    <Compile Include="Models\ContasPagar\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\ContasPagar\V1\Lista\DatasDto.cs" />
+    <Compile Include="Models\ContasPagar\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ContasPagar\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\ContasPagar\V1\Lista\ObservacoesDto.cs" />
+    <Compile Include="Models\ContasPagar\V1\Lista\ParcelasDto.cs" />
+    <Compile Include="Models\ContasPagar\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\PostMovimentacaoEstoqueRealController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\DeleteMovimentacaoEstoqueRealController.cs" />
@@ -1155,6 +1167,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\ContasPagarReceber\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">
