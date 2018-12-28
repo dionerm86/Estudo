@@ -105,6 +105,11 @@ namespace Glass.Fiscal.Negocios.Componentes
         public decimal BcIcms { get; set; }
 
         /// <summary>
+        /// Base de calc. do ICMS, sem percentual de redução.
+        /// </summary>
+        public decimal BcIcmsSemReducao { get; set; }
+
+        /// <summary>
         /// Valor do ICMS.
         /// </summary>
         public decimal ValorIcms { get; set; }

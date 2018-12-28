@@ -323,6 +323,10 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                     ValidaLeitura(trans, idCarregamento, etiqueta, idPedidoExp);
 
+                    var etiquetaPedido = !etiqueta.ToUpper().Substring(0, 1).Equals("N")
+                        && !etiqueta.ToUpper().Substring(0, 1).Equals("R")
+                        && !etiqueta.ToUpper().Substring(0, 1).Equals("V");
+
                     #region Volume
 
                     if (etiqueta.ToUpper().Substring(0, 1).Equals("V"))
@@ -440,9 +444,15 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     //Faz a leitura no carregamento
                     ItemCarregamentoDAO.Instance.EfetuaLeitura(trans, idFunc, DateTime.Now, idCarregamento, etiqueta);
 
+                    if (etiquetaPedido)
+                    {
+                        ProdutoPedidoProducaoDAO.Instance.VerificarLeituraExpedicao(trans, etiqueta);
+                    }
+
                     /* Chamado 35100. */
-                    /* Chamado 58740. */
-                    if (string.IsNullOrEmpty(etiqueta) || !ItemCarregamentoDAO.Instance.PecaCarregada(trans, idCarregamento, etiqueta))
+                    if (string.IsNullOrEmpty(etiqueta) 
+                        && etiquetaPedido 
+                        && !ItemCarregamentoDAO.Instance.PecaCarregada(trans, idCarregamento, etiqueta))
                         throw new Exception(string.Format("Falha ao marcar peça como carregada. Etiqueta: {0}.", etiqueta));
 
                     //Verifica se terminou de carregar

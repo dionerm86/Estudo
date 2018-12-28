@@ -749,6 +749,7 @@ namespace Glass.UI.Web.Relatorios
                 !string.IsNullOrEmpty(cliente.NumeroEntrega) &&
                 !string.IsNullOrEmpty(cliente.BairroEntrega) &&
                 !string.IsNullOrEmpty(cliente.CidadeEntrega) ? cliente.EnderecoCompletoEntrega : cliente.EnderecoCompleto;
+            var cpfCnpj = cliente.CpfCnpj.FormataCpfCnpj();
 
             // Preenche as informações necessárias com dados do banco
             info = info
@@ -757,7 +758,8 @@ namespace Glass.UI.Web.Relatorios
                 .Replace("[telcont]", telCont)
                 .Replace("[telcel]", telCel)
                 .Replace("[cidade]", cidade)
-                .Replace("[endereco]", endereco);
+                .Replace("[endereco]", endereco)
+                .Replace("[cpfcnpj]", cpfCnpj);
 
             // Limpa caracteres desnecessários
             info = info

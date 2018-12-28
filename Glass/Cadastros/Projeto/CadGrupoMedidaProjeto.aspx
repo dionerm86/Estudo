@@ -1,84 +1,71 @@
-﻿<%@ Page Title="Grupo de Medida de Projeto" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadGrupoMedidaProjeto.aspx.cs" Inherits="Glass.UI.Web.Cadastros.Projeto.CadGrupoMedidaProjeto" %>
-
-<%@ Register src="../../Controls/ctrlLogPopup.ascx" tagname="ctrlLogPopup" tagprefix="uc1" %>
+﻿<%@ Page Title="Grupo de Medida de Projeto" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadGrupoMedidaProjeto.aspx.cs" 
+    Inherits="Glass.UI.Web.Cadastros.Projeto.CadGrupoMedidaProjeto" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="server">
-    <script type="text/javascript">
-
-        function onSave(insert) {
-            var descricao = FindControl(insert ? "txtDescricaoIn" : "txtDescricaoEd", "input").value;
-
-            if (descricao == "") {
-                alert("Informe a descrição.");
-                return false;
-            }
-        }
-
-    </script>
-    <table>
-        <tr>
-            <td align="center">
-                <asp:GridView ID="grdGrupoMedidaProjeto" runat="server" AllowPaging="true" AllowSorting="true" AutoGenerateColumns="false" GridLines="None"
-                    CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" PageSize="15" ShowFooter="true"
-                    DataSourceID="odsGrupoMedidaProjeto" DataKeyNames="IdGrupoMedProj">
-                    <Columns>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:ImageButton ID="imbEdit" runat="server" CommandName="Edit"
-                                    ImageUrl="~/Images/Edit.gif" ToolTip="Editar" Visible='<%# Eval("PodeEditarExcluir") %>' />
-                                <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" 
-                                    ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Excluir" Visible='<%# Eval("PodeEditarExcluir") %>'
-                                    OnClientClick="return confirm('Tem certeza que deseja excluir este Grupo?');" />
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:ImageButton ID="imbAtualizar" runat="server" CommandName="Update" 
-                                    Height="16px" ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" OnClientClick="return onSave(false);" />
-                                <asp:ImageButton ID="imbCancelar" runat="server" CommandName="Cancel"
-                                    ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Cancelar" />
-                            </EditItemTemplate>
-                            <ItemStyle Wrap="False" />
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Descrição" SortExpression="Descricao">
-                            <ItemTemplate>
-                                <asp:Label ID="lblDescricao" runat="server" Text='<%# Bind("Descricao") %>'></asp:Label>
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:TextBox ID="txtDescricaoEd" runat="server" MaxLength="60" 
-                                    Text='<%# Bind("Descricao") %>' Width="300px"></asp:TextBox>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:TextBox ID="txtDescricaoIn" runat="server" MaxLength="60" 
-                                    Text='<%# Bind("Descricao") %>' Width="300px"></asp:TextBox>
-                            </FooterTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" 
-                                    IdRegistro='<%# Eval("IdGrupoMedProj") %>' 
-                                    Tabela="GrupoMedidaProjeto"/>
-                            </ItemTemplate>
-                            <FooterTemplate>
-                                <asp:ImageButton ID="imbInserir" runat="server" OnClientClick="return onSave(true);"
-                                    ImageUrl="~/Images/insert.gif" ToolTip="Inserir" onclick="imbInserir_Click" />
-                            </FooterTemplate>
-                        </asp:TemplateField>
-                    </Columns>
-                    <PagerStyle CssClass="pgr" />
-                    <EditRowStyle CssClass="edit" />
-                    <AlternatingRowStyle CssClass="alt" />
-                </asp:GridView>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <colo:VirtualObjectDataSource ID="odsGrupoMedidaProjeto" runat="server" Culture="pt-BR" EnablePaging="true"
-                    MaximumRowsParameterName="pageSize" StartRowIndexParameterName="startRow" SortParameterName="sortExpression"
-                    TypeName="Glass.Data.DAL.GrupoMedidaProjetoDAO" DataObjectTypeName="Glass.Data.Model.GrupoMedidaProjeto"
-                    SelectMethod="GetList" SelectCountMethod="GetCount"
-                    UpdateMethod="Update" DeleteMethod="Delete"
-                    OnUpdated="odsGrupoMedidaProjeto_Updated" OnDeleted="odsGrupoMedidaProjeto_Deleted">
-                </colo:VirtualObjectDataSource>
-            </td>
-        </tr>
-    </table>
+    <div id="app">    
+        <section>
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum grupo de medida de projeto encontrado"
+                :numero-registros="15" :exibir-inclusao="true" :linha-editando="numeroLinhaEdicao">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('descricao')">Descrição</a>
+                    </th>
+                    <th></th>
+                </template>
+                <template slot="item" slot-scope="{ item, index }">
+                    <td>
+                        <button @click.prevent="editar(item, index)" title="Editar" v-if="item.permissoes.editar && !inserindo && numeroLinhaEdicao === -1">
+                            <img src="../../Images/edit.gif" />
+                        </button>
+                        <button @click.prevent="excluir(item)" title="Excluir" v-if="item.permissoes.excluir && !inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/ExcluirGrid.gif" />
+                        </button>
+                    </td>
+                    <td style="width: 300px;">
+                        {{ item.nome }}
+                    </td>
+                    <td>
+                        <log-alteracao tabela="GrupoMedidaProjeto" :atualizar-ao-alterar="false" :id-item="item.id" v-if="item.permissoes.logAlteracoes"></log-alteracao>
+                    </td>
+                </template>
+                <template slot="itemEditando">
+                    <td>
+                        <button @click.prevent="atualizar" title="Atualizar">
+                            <img src="../../Images/ok.gif" />
+                        </button>
+                        <button @click.prevent="cancelar" title="Cancelar">
+                            <img src="../Images/ExcluirGrid.gif" />
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="grupoMedidaProjeto.nome" maxlength="60" style="width: 300px">
+                    </td>
+                    <td></td>
+                </template>
+                <template slot="itemIncluir">
+                    <td>
+                        <button v-on:click.prevent="iniciarCadastro" title="Novo grupo de medida de projeto..." v-if="!inserindo">
+                            <img src="../../Images/Insert.gif">
+                        </button>
+                        <button v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">
+                            <img src="../../Images/Ok.gif">
+                        </button>
+                        <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
+                            <img src="../../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="grupoMedidaProjeto.nome" maxlength="60" style="width: 300px" v-if="inserindo">
+                    </td>
+                    <td></td>
+                </template>
+            </lista-paginada>
+        </section>
+    </div>
+    <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/Projetos/Medidas/Grupos/Componentes/LstGruposMedidaProjeto.js" />
+        </Scripts>
+    </asp:ScriptManager>
 </asp:Content>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using Glass.Data.Helper;
 
 namespace WebGlass.Business.Compra.Fluxo
 {
@@ -81,22 +82,38 @@ namespace WebGlass.Business.Compra.Fluxo
             var compra = CompraDAO.Instance.GetElementByPrimaryKey(idCompra);
 
             if (compra.IdFornec == 0)
+            {
                 throw new Exception("Selecione o fornecedor da compra.");
+            }
 
             if (compra.IdConta == 0)
+            {
                 throw new Exception("Selecione o plano de conta da compra.");
+            }
 
-            ValidarCompra(compra);
-            
+            this.ValidarCompra(compra);
+
             if (alterarDadosFinanceiro)
             {
                 if (compra.TipoCompra == (int)Glass.Data.Model.Compra.TipoCompraEnum.APrazo)
                 {
-                    //Verifica se a compra tem sinal e não foi pago,
-                    //para redirecionar para tela de pagamento de sinal
+                    // Verifica se a compra tem sinal e não foi pago,
+                    // para redirecionar para tela de pagamento de sinal
                     if (compra.ValorEntrada > 0 && CompraDAO.Instance.TemSinalPagar(compra.IdCompra))
                     {
-                        scriptExecutar = "redirectUrl('../Cadastros/CadPagSinalCompra.aspx?idCompra=" + compra.IdCompra + "');";
+                        if (Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
+                        {
+                            scriptExecutar = "redirectUrl('../Cadastros/CadPagSinalCompra.aspx?idCompra=" + compra.IdCompra + "');";
+                        }
+                        else if (isPcp)
+                        {
+                            scriptExecutar = "redirectUrl('../Listas/LstCompraPcp.aspx')";
+                        }
+                        else
+                        {
+                            scriptExecutar = "redirectUrl('../Listas/LstCompras.aspx')";
+                        }
+
                         return;
                     }
                 }
@@ -105,15 +122,17 @@ namespace WebGlass.Business.Compra.Fluxo
                 CompraDAO.Instance.FinalizarCompraComTransacao(compra.IdCompra);
             }
 
-            scriptExecutar = String.Empty;
+            scriptExecutar = string.Empty;
             string pathName = "../Listas/LstCompras.aspx";
 
-            if ((compra.TipoCompra == (int)Glass.Data.Model.Compra.TipoCompraEnum.AVista || compra.ValorEntrada > 0) &&
-                ContasPagarDAO.Instance.TemContaAVista(compra.IdCompra))
+            if ((compra.TipoCompra == (int)Glass.Data.Model.Compra.TipoCompraEnum.AVista || compra.ValorEntrada > 0) && ContasPagarDAO.Instance.TemContaAVista(compra.IdCompra) && Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
+            {
                 pathName = "../Cadastros/CadContaPagar.aspx?idCompra=" + compra.IdCompra;
-
+            }
             else if (isPcp)
+            {
                 pathName = "../Listas/LstCompraPcp.aspx";
+            }
 
             scriptExecutar += "redirectUrl('" + pathName + "');";
         }
@@ -129,7 +148,7 @@ namespace WebGlass.Business.Compra.Fluxo
                 if (CompraDAO.Instance.TemSinalPagar(idCompra))
                     idsComprasSinalPagar += idCompra + ", ";
             }
-                
+
 
             if (!string.IsNullOrEmpty(idsComprasSinalPagar))
                 throw new Exception("A(s) compra(s): " + idsComprasSinalPagar.TrimEnd(' ').TrimEnd(',') + " possui(em) sinal a pagar.");

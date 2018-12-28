@@ -20,7 +20,7 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.Itens.Pendencias
     /// Classe que encapsula os dados das pendências de carregamentos.
     /// </summary>
     [DataContract(Name = "PendenciaCarregamento")]
-    public class ListaDto
+    public class ListaDto : IdDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto" />
@@ -43,13 +43,6 @@ namespace Glass.API.Backend.Models.Carregamentos.V1.Itens.Pendencias
 
             this.Peso = pendenciaCarregamento.PesoTotal;
         }
-
-        /// <summary>
-        /// Obtém ou define o identificador da pendencia.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("id")]
-        public int Id { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador do cliente associado ao carregamento pendente.

@@ -339,18 +339,30 @@ namespace Glass.Data.DAL
 
         #region Busca Instalações abertas e canceladas para serem adicionadas
 
-        private string SqlAbertas(uint idCli, uint idPedido, string nomeCli, string dataIniConf, string dataFimConf, uint idLoja, bool selecionar)
+        private string SqlAbertas(uint idCli, uint idPedido, string nomeCli, string dataIniConf, string dataFimConf, uint idLoja, bool selecionar, bool buscarCanceladas)
         {
             string campos = selecionar ? "i.*, c.Nome as NomeCliente, l.NomeFantasia as NomeLoja, p.DataConf as DataConfPedido, " +
                 "Concat(p.EnderecoObra, ' - ', p.BairroObra, ' - ', p.CidadeObra) as LocalObra, '$$$' as Criterio" : "Count(*)";
 
             string criterio = String.Empty;
 
-            string sql = "Select " + campos + " From instalacao i " +
-                "Left Join pedido p On (i.idPedido=p.idPedido) " +
-                "Left Join loja l On (p.idLoja=l.idLoja) " +
-                "Left Join cliente c On (p.idCli=c.id_Cli) Where (i.Situacao=" + (int)Instalacao.SituacaoInst.Aberta + " Or i.Situacao=" + 
-                    (int)Instalacao.SituacaoInst.Cancelada + " Or i.Situacao=" + (int)Instalacao.SituacaoInst.Agendar + " Or i.Situacao=" + ")";
+            var situacoes = new List<int>
+            {
+                (int)Instalacao.SituacaoInst.Aberta,
+                (int)Instalacao.SituacaoInst.Agendar,
+                (int)Instalacao.SituacaoInst.Colagem,
+                (int)Instalacao.SituacaoInst.DeptoTecnico
+            };
+
+            if (buscarCanceladas)
+            {
+                situacoes.Add((int)Instalacao.SituacaoInst.Cancelada);
+            }
+
+            string sql = $@"Select {campos} From instalacao i 
+                Left Join pedido p On (i.idPedido=p.idPedido)
+                Left Join loja l On (p.idLoja=l.idLoja)
+                Left Join cliente c On (p.idCli=c.id_Cli) Where i.Situacao in ({string.Join(",",situacoes)})";
 
             if (idCli > 0)
                 sql += " And p.idCli=" + idCli;
@@ -389,20 +401,20 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public IList<Instalacao> GetAbertasByPedido(uint idPedido)
         {
-            return objPersistence.LoadData(SqlAbertas(0, idPedido, null, null, null, 0, true)).ToList();
+            return objPersistence.LoadData(SqlAbertas(0, idPedido, null, null, null, 0, true, true)).ToList();
         }
 
-        public IList<Instalacao> GetListAbertas(uint idCli, uint idPedido, string nomeCli, string dataIniConf, string dataFimConf, uint idLoja, string sortExpression, int startRow, int pageSize)
+        public IList<Instalacao> GetListAbertas(uint idCli, uint idPedido, string nomeCli, string dataIniConf, string dataFimConf, uint idLoja, bool buscarCanceladas,string sortExpression, int startRow, int pageSize)
         {
-            string sql = SqlAbertas(idCli, idPedido, nomeCli, dataIniConf, dataFimConf, idLoja, true);
+            string sql = SqlAbertas(idCli, idPedido, nomeCli, dataIniConf, dataFimConf, idLoja, true, buscarCanceladas);
             string sort = String.IsNullOrEmpty(sortExpression) ? "i.tipoInstalacao desc, i.DataCad" : sortExpression;
 
             return LoadDataWithSortExpression(sql, sort, startRow, pageSize, GetParam(dataIniConf, dataFimConf, null, null, nomeCli, null, null, null));
         }
 
-        public int GetCountAbertas(uint idCli, uint idPedido, string nomeCli, string dataIniConf, string dataFimConf, uint idLoja)
+        public int GetCountAbertas(uint idCli, uint idPedido, string nomeCli, string dataIniConf, string dataFimConf, uint idLoja, bool buscarCanceladas)
         {
-            return objPersistence.ExecuteSqlQueryCount(SqlAbertas(idCli, idPedido, nomeCli, dataIniConf, dataFimConf, idLoja, false),
+            return objPersistence.ExecuteSqlQueryCount(SqlAbertas(idCli, idPedido, nomeCli, dataIniConf, dataFimConf, idLoja, false, buscarCanceladas),
                 GetParam(dataIniConf, dataFimConf, null, null, nomeCli, null, null, null));
         }
 

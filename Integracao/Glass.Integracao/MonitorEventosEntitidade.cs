@@ -25,7 +25,13 @@ namespace Glass.Integracao
             : base(domainEvents)
         {
             domainEvents.GetEvent<Colosoft.Business.EntityPersistingEvent>()
-                .Subscribe(this.EntityPersisting);
+                .Subscribe(
+                this.EntityPersisting,
+                Colosoft.Domain.DomainEventThreadOption.PublisherThread,
+                true,
+                null,
+                false,
+                Guid.NewGuid().ToString());
         }
 
         private void EntityPersisting(Colosoft.Business.EntityPersistingEventArgs e)

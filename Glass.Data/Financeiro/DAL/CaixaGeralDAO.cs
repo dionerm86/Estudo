@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
@@ -12,11 +12,11 @@ namespace Glass.Data.DAL
     {
         //private CaixaGeralDAO() { }
 
-        #region Busca as movimentações do caixa geral no período passado
+        #region Busca as movimentaÃ§Ãµes do caixa geral no perÃ­odo passado
 
         /// <summary>
-        /// Busca as movimentações do caixa geral no período informado, sobrecarga criada para receber por parâmetro o LoginUsuario,
-        /// no caso em que este relatório é chamado pela thread do relatório
+        /// Busca as movimentaÃ§Ãµes do caixa geral no perÃ­odo informado, sobrecarga criada para receber por parÃ¢metro o LoginUsuario,
+        /// no caso em que este relatÃ³rio Ã© chamado pela thread do relatÃ³rio
         /// </summary>
         /// <param name="idCaixaGeral"></param>
         /// <param name="idFunc"></param>
@@ -41,13 +41,13 @@ namespace Glass.Data.DAL
             if (idCaixaGeral > 0)
             {
                 where += " and idCaixaGeral=" + idCaixaGeral;
-                criterioRpt += "Cód. Mov.: " + idCaixaGeral + "    ";
+                criterioRpt += "CÃ³d. Mov.: " + idCaixaGeral + "    ";
             }
 
             if (!String.IsNullOrEmpty(dtIni))
             {
                 where += " And DataMov>=?dtIni";
-                criterioRpt += "Movimentações do dia: " + (dtIni.Length == 10 ? DateTime.Parse(dtIni = dtIni.Substring(0, 10)) : DateTime.Parse(dtIni)) + "    ";
+                criterioRpt += "MovimentaÃ§Ãµes do dia: " + (dtIni.Length == 10 ? DateTime.Parse(dtIni = dtIni.Substring(0, 10)) : DateTime.Parse(dtIni)) + "    ";
             }
 
             if (!String.IsNullOrEmpty(dtFim))
@@ -59,7 +59,7 @@ namespace Glass.Data.DAL
             if (idFunc > 0)
             {
                 where += " And c.UsuCad=" + idFunc;
-                criterioRpt += "Funcionário: " + FuncionarioDAO.Instance.GetNome(idFunc) + "    ";
+                criterioRpt += "FuncionÃ¡rio: " + FuncionarioDAO.Instance.GetNome(idFunc) + "    ";
             }
 
             if (idLoja > 0)
@@ -104,7 +104,7 @@ namespace Glass.Data.DAL
                     UtilsPlanoConta.GetLstEstornoSaidaByFormaPagto(Pagto.FormaPagto.Dinheiro, 0) + "," +
                     UtilsPlanoConta.GetLstSaidaByFormaPagto(Pagto.FormaPagto.Dinheiro, 0, 1) + "))";
 
-                criterioRpt += "Apenas movimentações em dinheiro    ";
+                criterioRpt += "Apenas movimentaÃ§Ãµes em dinheiro    ";
             }
             else if (apenasCheque)
             {
@@ -113,7 +113,7 @@ namespace Glass.Data.DAL
                     UtilsPlanoConta.GetLstEstornoSaidaByFormaPagto(Pagto.FormaPagto.ChequeTerceiro, 0) + "," +
                     UtilsPlanoConta.GetLstSaidaByFormaPagto(Pagto.FormaPagto.ChequeTerceiro, 0, 1) + "))";
 
-                criterioRpt += "Apenas movimentações em cheque    ";
+                criterioRpt += "Apenas movimentaÃ§Ãµes em cheque    ";
             }
 
             if (semEstorno)
@@ -154,22 +154,22 @@ namespace Glass.Data.DAL
                     where += @" and c.idCaixaGeral not in (" + itens + ")";
 
                 where += @" and c.tipoMov=1";
-                criterioRpt += "Movimentações de Entrada sem Estorno    ";
+                criterioRpt += "MovimentaÃ§Ãµes de Entrada sem Estorno    ";
             }
 
             if (tipoMov > 0)
             {
                 where += " And c.tipoMov=" + tipoMov;
-                criterioRpt += "Apenas movimentações de " + (tipoMov == 1 ? "entrada" : "saída") + "    ";
+                criterioRpt += "Apenas movimentaÃ§Ãµes de " + (tipoMov == 1 ? "entrada" : "saÃ­da") + "    ";
             }
 
             if (tipoConta > 0)
             {
                 where += (tipoConta == 1 ? " And cp.paga = 1 And cp.contabil = 1" : " And coalesce(cp.contabil, 0) = 0");
-                criterioRpt += tipoConta == 1 ? "Tipos de contas: Contábeis    " : "Tipos de contas: Não Contábeis    ";
+                criterioRpt += tipoConta == 1 ? "Tipos de contas: ContÃ¡beis    " : "Tipos de contas: NÃ£o ContÃ¡beis    ";
             }
 
-            // Se o funcionário logado for financeiro, retorna apenas as movimentações feitas pelo mesmo e de estorno
+            // Se o funcionÃ¡rio logado for financeiro, retorna apenas as movimentaÃ§Ãµes feitas pelo mesmo e de estorno
             if (Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento) && !FinanceiroConfig.CaixaGeral.CxGeralSaldoTotal)
             {
                 where += " And (c.UsuCad In (select idFunc from config_funcao_func where idFuncaoMenu=" + Config.ObterIdFuncaoMenu(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) +
@@ -212,9 +212,9 @@ namespace Glass.Data.DAL
             if (apenasDinheiro)
                 saldoInicialApenasDinheiro = GetSaldoByFormaPagto(Pagto.FormaPagto.Dinheiro, 0, "01/01/1990", lstCaixa[0].DataMov.AddDays(-1).ToString("dd/MM/yyyy"), 1, idLoja);
 
-            // Se o funcionário logado for financeiro, ou se houver filtro por funcionário ou apenas dinheiro, calcula o saldo de
-            // cada operação realizada por ele e estornos, uma vez que o que está salvo no BD considera todas
-            // as movimentações do caixa geral
+            // Se o funcionÃ¡rio logado for financeiro, ou se houver filtro por funcionÃ¡rio ou apenas dinheiro, calcula o saldo de
+            // cada operaÃ§Ã£o realizada por ele e estornos, uma vez que o que estÃ¡ salvo no BD considera todas
+            // as movimentaÃ§Ãµes do caixa geral
             if ((Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento)) || idFunc > 0 || idLoja > 0 ||
                 apenasDinheiro)
             {
@@ -222,7 +222,7 @@ namespace Glass.Data.DAL
                 {
                     if (i == 0)
                     {
-                        // O idloja não deve ser passado para buscar a movimentação anterior, pois o que se deseja saber é se a movimentação alterou o saldo ou não
+                        // O idloja nÃ£o deve ser passado para buscar a movimentaÃ§Ã£o anterior, pois o que se deseja saber Ã© se a movimentaÃ§Ã£o alterou o saldo ou nÃ£o
                         CaixaGeral movAnterior = BuscaMovAnterior(lstCaixa[0].IdCaixaGeral, 0);
 
                         if (movAnterior != null && movAnterior.Saldo == lstCaixa[0].Saldo)
@@ -240,7 +240,7 @@ namespace Glass.Data.DAL
                         continue;
                     }
 
-                    // Só altera se o saldo tiver sido alterado
+                    // SÃ³ altera se o saldo tiver sido alterado
                     if (lstCaixa[i].Saldo != ObtemSaldoMovAnterior(lstCaixa[i].IdCaixaGeral, 0))
                     {
                         if (lstCaixa[i].TipoMov == 1)
@@ -294,7 +294,7 @@ namespace Glass.Data.DAL
         {
             var caixaGeral = new CaixaGeral();
 
-            // Usado apenas se a empresa não possuir caixa diário
+            // Usado apenas se a empresa nÃ£o possuir caixa diÃ¡rio
             caixaGeral.TotalDinheiro = !FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo ? 0 : GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, idFunc, null, null, !semEstorno ? 1 : 4, idLoja);
             caixaGeral.SaldoDinheiro = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
             caixaGeral.TotalSaidaDinheiro = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
@@ -344,7 +344,7 @@ namespace Glass.Data.DAL
                     .GetTotalRecebidasPeriodo(dtIni, dtFim, ((int)ContasReceber.TipoContaEnum.NaoContabil).ToString(), idLoja);
             }
 
-            // Irá mostrar total de dinheiro, cheque e cheques de terc em aberto se a empresa tiver caixa único
+            // IrÃ¡ mostrar total de dinheiro, cheque e cheques de terc em aberto se a empresa tiver caixa Ãºnico
             caixaGeral.MostrarTotalGeral = FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo
                 && Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento)
                 && Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento);
@@ -367,10 +367,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna movimentação
+        #region Retorna movimentaÃ§Ã£o
 
         /// <summary>
-        /// Retorna uma única movimentação
+        /// Retorna uma Ãºnica movimentaÃ§Ã£o
         /// </summary>
         /// <param name="idCxGeral"></param>
         /// <returns></returns>
@@ -394,7 +394,7 @@ namespace Glass.Data.DAL
         #region Movimenta Caixa
 
         /// <summary>
-        /// Movimentação geral
+        /// MovimentaÃ§Ã£o geral
         /// </summary>
         public uint MovCxGeral(uint? idLoja, uint? idCliente, uint? idFornec, uint idConta, int tipoMov, int formaSaida, decimal valorMov,
             decimal juros, string numAutConstrucard, bool mudarSaldo, string obs, DateTime? dataMovBanco)
@@ -404,26 +404,26 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação geral
+        /// MovimentaÃ§Ã£o geral
         /// </summary>
         public uint MovCxGeral(GDASession sessao, uint? idLoja, uint? idCliente, uint? idFornec, uint idConta, int tipoMov, int formaSaida, decimal valorMov, decimal juros, string numAutConstrucard,
-            bool mudarSaldo, string obs, DateTime? dataMovBanco)
+            bool mudarSaldo, string obs, DateTime? dataMovBanco, int? idCaixaDiario = null)
         {
-            return MovCxGeral(sessao, idLoja, idCliente, idFornec, idConta, tipoMov, formaSaida, valorMov, juros, numAutConstrucard, mudarSaldo, obs, dataMovBanco, false, null);
+            return MovCxGeral(sessao, idLoja, idCliente, idFornec, idConta, tipoMov, formaSaida, valorMov, juros, numAutConstrucard, mudarSaldo, obs, dataMovBanco, false, null, idCaixaDiario);
         }
 
         /// <summary>
-        /// Movimentação geral
+        /// MovimentaÃ§Ã£o geral
         /// </summary>
         public uint MovCxGeral(GDASession sessao, uint? idLoja, uint? idCliente, uint? idFornec, uint idConta, int tipoMov, int formaSaida, decimal valorMov, decimal juros, string numAutConstrucard,
-            bool mudarSaldo, string obs, DateTime? dataMovBanco, bool lancManual, int? contadorDataUnica)
+            bool mudarSaldo, string obs, DateTime? dataMovBanco, bool lancManual, int? contadorDataUnica, int? idCaixaDiario = null)
         {
             return MovimentaCaixa(sessao, null, idLoja, idCliente, idFornec, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, idConta, tipoMov, formaSaida,
-                valorMov, juros, numAutConstrucard, mudarSaldo, null, null, obs, lancManual, dataMovBanco, contadorDataUnica);
+                valorMov, juros, numAutConstrucard, mudarSaldo, null, null, obs, lancManual, dataMovBanco, contadorDataUnica, idCaixaDiario);
         }
 
         /// <summary>
-        /// Movimentação proveniente de pedido
+        /// MovimentaÃ§Ã£o proveniente de pedido
         /// </summary>
         public uint MovCxPedido(GDASession sessao, uint idPedido, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, bool mudarSaldo, DateTime? dataMovBanco, string obs)
@@ -432,7 +432,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de pedido
+        /// MovimentaÃ§Ã£o proveniente de pedido
         /// </summary>
         public uint MovCxPedido(GDASession sessao, uint idPedido, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, bool mudarSaldo, DateTime? dataMovBanco, string obs, int? contadorDataUnica)
@@ -442,7 +442,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de sinal
+        /// MovimentaÃ§Ã£o proveniente de sinal
         /// </summary>
         public uint MovCxSinal(GDASession sessao, uint idSinal, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, bool mudarSaldo, DateTime? dataMovBanco, string obs)
@@ -451,7 +451,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de sinal
+        /// MovimentaÃ§Ã£o proveniente de sinal
         /// </summary>
         public uint MovCxSinal(GDASession sessao, uint idSinal, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, bool mudarSaldo, DateTime? dataMovBanco, string obs, int? contadorDataUnica)
@@ -461,7 +461,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de pedido
+        /// MovimentaÃ§Ã£o proveniente de pedido
         /// </summary>
         public uint MovCxPedido(GDASession session, uint idPedido, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros, string numAutConstrucard, string obs, bool mudarSaldo, DateTime? dataMovBanco)
         {
@@ -470,7 +470,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de acerto
+        /// MovimentaÃ§Ã£o proveniente de acerto
         /// </summary>
         public uint MovCxAcerto(GDASession sessao, uint idAcerto, uint? idCliente, uint idConta, int tipoMov, decimal valorMov,
             decimal juros, string numAutConstrucard, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco, string obs)
@@ -479,7 +479,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de acerto
+        /// MovimentaÃ§Ã£o proveniente de acerto
         /// </summary>
         public uint MovCxAcerto(GDASession sessao, uint idAcerto, uint? idCliente, uint idConta, int tipoMov, decimal valorMov,
             decimal juros, string numAutConstrucard, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco, string obs, int? contadorDataUnica)
@@ -489,8 +489,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Movimentação proveniente de conta a receber
+        /// (APAGAR: quando alterar para utilizar transaÃ§Ã£o)
+        /// MovimentaÃ§Ã£o proveniente de conta a receber
         /// </summary>
         public uint MovCxContaRec(uint? idPedido, uint? idLiberarPedido, uint idContaR, uint? idCliente, uint idConta,
             int tipoMov, decimal valorMov, decimal juros, string numAutConstrucard, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco, string obs)
@@ -500,7 +500,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de conta a receber
+        /// MovimentaÃ§Ã£o proveniente de conta a receber
         /// </summary>
         public uint MovCxContaRec(GDASession sessao, uint? idPedido, uint? idLiberarPedido, uint idContaR, uint? idCliente, uint idConta,
             int tipoMov, decimal valorMov, decimal juros, string numAutConstrucard, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco, string obs)
@@ -509,7 +509,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de conta a receber
+        /// MovimentaÃ§Ã£o proveniente de conta a receber
         /// </summary>
         public uint MovCxContaRec(GDASession sessao, uint? idPedido, uint? idLiberarPedido, uint idContaR, uint? idCliente, uint idConta,
             int tipoMov, decimal valorMov, decimal juros, string numAutConstrucard, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco, string obs, int? contadorDataUnica)
@@ -519,7 +519,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de pagamento
+        /// MovimentaÃ§Ã£o proveniente de pagamento
         /// </summary>
         public uint MovCxPagto(GDASession sessao, uint idPagto, uint? idContaPg, uint? idFornec, uint idConta, int tipoMov, decimal valorMov,
             decimal juros, string numAutConstrucard, string obs, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco)
@@ -529,7 +529,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de pagamento
+        /// MovimentaÃ§Ã£o proveniente de pagamento
         /// </summary>
         public uint MovCxPagto(GDASession sessao, uint idPagto, int? idAcertoCheque, uint? idContaPg, uint? idFornec, uint idConta, int tipoMov, decimal valorMov,
             decimal juros, string numAutConstrucard, string obs, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco)
@@ -539,7 +539,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proviniente do pagamento de sinal da compra
+        /// MovimentaÃ§Ã£o proviniente do pagamento de sinal da compra
         /// </summary>
         public uint MovCxSinalCompra(GDASession session, uint idSinalCompra, uint? idContaPg, uint? idFornec, uint idConta, int tipoMov,
             decimal valorMov, string obs, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco)
@@ -549,7 +549,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proviniente do pagamento de antecipação fornecedor
+        /// MovimentaÃ§Ã£o proviniente do pagamento de antecipaÃ§Ã£o fornecedor
         /// </summary>
         /// <param name="idSinalCompra"></param>
         /// <returns></returns>
@@ -561,7 +561,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de cheque
+        /// MovimentaÃ§Ã£o proveniente de cheque
         /// </summary>
         public uint MovCxCheque(uint idCheque, uint? idCliente, uint? idFornec, uint idConta, int formaSaida, int tipoMov,
             decimal valorMov, decimal juros, string numAutConstrucard, bool mudarSaldo, DateTime? dataMovBanco)
@@ -571,7 +571,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de cheque
+        /// MovimentaÃ§Ã£o proveniente de cheque
         /// </summary>
         public uint MovCxCheque(GDASession sessao, uint idCheque, uint? idDeposito, uint? idAcertoCheque, uint? idCliente, uint? idFornec, uint idConta, int tipoMov, decimal valorMov, decimal juros, string numAutConstrucard, bool mudarSaldo, string obs, DateTime? dataMovBanco)
         {
@@ -580,7 +580,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação de depósito
+        /// MovimentaÃ§Ã£o de depÃ³sito
         /// </summary>
         public uint MovCxDeposito(uint? idDeposito, uint? idLoja, uint? idCliente, uint? idFornec, uint idConta,
             int tipoMov, int formaSaida, decimal valorMov, decimal juros, string numAutConstrucard, bool mudarSaldo,
@@ -591,7 +591,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação de depósito
+        /// MovimentaÃ§Ã£o de depÃ³sito
         /// </summary>
         public uint MovCxDeposito(GDASession sessao, uint? idDeposito, uint? idLoja, uint? idCliente, uint? idFornec,
             uint idConta, int tipoMov, int formaSaida, decimal valorMov, decimal juros, string numAutConstrucard,
@@ -603,7 +603,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
+        /// (APAGAR: quando alterar para utilizar transaÃ§Ã£o)
         /// </summary>
         public uint MovCxAcertoCheque(GDASession sessao, uint idAcertoCheque, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco, string obs)
@@ -613,7 +613,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
+        /// (APAGAR: quando alterar para utilizar transaÃ§Ã£o)
         /// </summary>
         public uint MovCxAcertoCheque(GDASession sessao, uint idAcertoCheque, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco, string obs, int? contadorDataUnica)
@@ -624,7 +624,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
+        /// (APAGAR: quando alterar para utilizar transaÃ§Ã£o)
         /// </summary>
         public uint MovCxAcertoCheque(GDASession sessao, uint idAcertoCheque, uint? idCheque, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco, string obs)
@@ -634,7 +634,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
+        /// (APAGAR: quando alterar para utilizar transaÃ§Ã£o)
         /// </summary>
         public uint MovCxAcertoCheque(GDASession sessao, uint idAcertoCheque, uint? idCheque, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, int formaSaida, bool mudarSaldo, DateTime? dataMovBanco, string obs, int? contadorDataUnica)
@@ -644,7 +644,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de cheque
+        /// MovimentaÃ§Ã£o proveniente de cheque
         /// </summary>
         public uint MovCxLiberarPedido(GDASession sessao, uint idLiberarPedido, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, bool mudarSaldo, DateTime? dataMovBanco, string obs)
@@ -653,7 +653,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de cheque
+        /// MovimentaÃ§Ã£o proveniente de cheque
         /// </summary>
         public uint MovCxLiberarPedido(GDASession sessao, uint idLiberarPedido, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, bool mudarSaldo, DateTime? dataMovBanco, string obs, int? contadorDataUnica)
@@ -663,7 +663,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de obra.
+        /// MovimentaÃ§Ã£o proveniente de obra.
         /// </summary>
         public uint MovCxObra(GDASession sessao, uint idObra, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, bool mudarSaldo, DateTime? dataMovBanco, string obs)
@@ -672,7 +672,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de obra.
+        /// MovimentaÃ§Ã£o proveniente de obra.
         /// </summary>
         public uint MovCxObra(GDASession sessao, uint idObra, uint? idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, bool mudarSaldo, DateTime? dataMovBanco, string obs, int? contadorDataUnica)
@@ -682,7 +682,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de troca/devolução.
+        /// MovimentaÃ§Ã£o proveniente de troca/devoluÃ§Ã£o.
         /// </summary>
         public uint MovCxTrocaDev(GDASession sessao, uint idTrocaDevolucao, uint? idPedido, uint idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, bool mudarSaldo, DateTime? dataMovBanco, string obs)
@@ -691,7 +691,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de troca/devolução.
+        /// MovimentaÃ§Ã£o proveniente de troca/devoluÃ§Ã£o.
         /// </summary>
         public uint MovCxTrocaDev(GDASession sessao, uint idTrocaDevolucao, uint? idPedido, uint idCliente, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, bool mudarSaldo, DateTime? dataMovBanco, string obs, int? contadorDataUnica)
@@ -701,7 +701,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de conta bancária.
+        /// MovimentaÃ§Ã£o proveniente de conta bancÃ¡ria.
         /// </summary>
         public uint MovCxContaBanco(uint idContaBanco, uint idConta, int tipoMov, decimal valorMov, decimal juros, string obs, bool mudarSaldo, DateTime? dataMovBanco)
         {
@@ -709,7 +709,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação proveniente de conta bancária.
+        /// MovimentaÃ§Ã£o proveniente de conta bancÃ¡ria.
         /// </summary>
         public uint MovCxContaBanco(GDASession session, uint idContaBanco, uint idConta, int tipoMov, decimal valorMov, decimal juros, string obs, bool mudarSaldo, DateTime? dataMovBanco)
         {
@@ -717,7 +717,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação manual de crédito
+        /// MovimentaÃ§Ã£o manual de crÃ©dito
         /// </summary>
         public uint MovCxCredito(uint idConta, int tipoMov, int formaSaida, decimal valorMov, bool mudarSaldo, string obs, DateTime? dataMovBanco)
         {
@@ -725,7 +725,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação manual de débito
+        /// MovimentaÃ§Ã£o manual de dÃ©bito
         /// </summary>
         public uint MovCxDebito(GDASession session, uint? idFornec, uint? idCheque, uint idConta, int formaSaida, decimal valorMov, string obs)
         {
@@ -734,7 +734,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Movimentação de vale de funcionário.
+        /// MovimentaÃ§Ã£o de vale de funcionÃ¡rio.
         /// </summary>
         public uint MovCxMovFunc(GDASession sessao, uint? idCliente, uint? idPedido, uint? idLiberarPedido, uint idConta, int tipoMov, decimal valorMov, decimal juros,
             string numAutConstrucard, DateTime? dataMovBanco, string obs, int? contadorDataUnica)
@@ -771,7 +771,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Gera movimentação no caixa geral
+        /// Gera movimentaÃ§Ã£o no caixa geral
         /// </summary>
         private uint MovimentaCaixa(uint? idCredFornec, uint? idLoja, uint? idCliente, uint? idFornec, uint? idPedido, uint? idSinal, uint? idSinalCompra, uint? idCompra, uint? idAcerto,
             uint? idPagto, uint? idContaR, uint? idContaPg, uint? idCheque, uint? idLiberarPedido, uint? idObra, uint? idAntecipFornec, uint? idTrocaDevolucao,
@@ -785,7 +785,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Gera movimentação no caixa geral
+        /// Gera movimentaÃ§Ã£o no caixa geral
         /// </summary>
         private uint MovimentaCaixa(GDASession sessao, uint? idCredFornec, uint? idLoja, uint? idCliente, uint? idFornec, uint? idPedido, uint? idSinal, uint? idSinalCompra, uint? idCompra, uint? idAcerto,
             uint? idPagto, uint? idContaR, uint? idContaPg, uint? idCheque, uint? idLiberarPedido, uint? idObra, uint? idAntecipFornec, uint? idTrocaDevolucao,
@@ -799,31 +799,31 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Gera movimentação no caixa geral
+        /// Gera movimentaÃ§Ã£o no caixa geral
         /// </summary>
         private uint MovimentaCaixa(GDASession sessao, uint? idCredFornec, uint? idLoja, uint? idCliente, uint? idFornec, uint? idPedido, uint? idSinal, uint? idSinalCompra, uint? idCompra, uint? idAcerto,
             uint? idPagto, uint? idContaR, uint? idContaPg, uint? idCheque, uint? idLiberarPedido, uint? idObra, uint? idAntecipFornec, uint? idTrocaDevolucao,
             uint? idDeposito, uint? idContaBanco, uint idConta, int tipoMov, int formaSaida, decimal valorMov, decimal juros, string numAutConstrucard, bool mudarSaldo,
-            uint? idAcertoCheque, uint? idDevolucaoPagto, string obs, bool lancManual, DateTime? dataMovBanco, int? contadorDataUnica)
+            uint? idAcertoCheque, uint? idDevolucaoPagto, string obs, bool lancManual, DateTime? dataMovBanco, int? contadorDataUnica, int? idCaixaDiario = null)
         {
             return MovimentaCaixa(sessao, idCredFornec, idLoja, idCliente, idFornec, idPedido, idSinal, idSinalCompra, idCompra, idAcerto,
                 idPagto, idContaR, idContaPg, idCheque, idLiberarPedido, idObra, idAntecipFornec, idTrocaDevolucao, idDeposito,
                 idContaBanco, idConta, tipoMov, formaSaida, valorMov, juros, numAutConstrucard, mudarSaldo, idAcertoCheque,
-                idDevolucaoPagto, null, obs, lancManual, dataMovBanco, contadorDataUnica);
+                idDevolucaoPagto, null, obs, lancManual, dataMovBanco, contadorDataUnica, idCaixaDiario);
         }
 
         /// <summary>
-        /// Gera movimentação no caixa geral
+        /// Gera movimentaÃ§Ã£o no caixa geral
         /// </summary>
         private uint MovimentaCaixa(GDASession sessao, uint? idCredFornec, uint? idLoja, uint? idCliente, uint? idFornec, uint? idPedido, uint? idSinal, uint? idSinalCompra, uint? idCompra, uint? idAcerto,
             uint? idPagto, uint? idContaR, uint? idContaPg, uint? idCheque, uint? idLiberarPedido, uint? idObra, uint? idAntecipFornec, uint? idTrocaDevolucao,
             uint? idDeposito, uint? idContaBanco, uint idConta, int tipoMov, int formaSaida, decimal valorMov, decimal juros, string numAutConstrucard, bool mudarSaldo,
-            uint? idAcertoCheque, uint? idDevolucaoPagto, uint? idCartaoNaoIdentificado, string obs, bool lancManual, DateTime? dataMovBanco, int? contadorDataUnica)
+            uint? idAcertoCheque, uint? idDevolucaoPagto, uint? idCartaoNaoIdentificado, string obs, bool lancManual, DateTime? dataMovBanco, int? contadorDataUnica, int? idCaixaDiario = null)
         {
             if (idConta == 0)
-                throw new Exception("O plano de contas não pode ser 0.");
+                throw new Exception("O plano de contas nÃ£o pode ser 0.");
 
-            // Se for utilização de crédito, não gera movimentação no caixa
+            // Se for utilizaÃ§Ã£o de crÃ©dito, nÃ£o gera movimentaÃ§Ã£o no caixa
             if (new List<uint>(UtilsPlanoConta.GetLstCredito(3)).Contains(idConta))
                 mudarSaldo = false;
 
@@ -856,6 +856,7 @@ namespace Glass.Data.DAL
             caixaGeral.TipoMov = tipoMov;
             caixaGeral.DataMov = DateTime.Now;
             caixaGeral.DataMovBanco = dataMovBanco;
+            caixaGeral.IdCaixaDiario = idCaixaDiario;
             caixaGeral.NumAutConstrucard = numAutConstrucard;
             caixaGeral.Saldo = mudarSaldo ? (tipoMov == 1 ? GetSaldo(sessao) + valorMov : GetSaldo(sessao) - valorMov) : GetSaldo(sessao);
             caixaGeral.ValorMov = valorMov;
@@ -881,7 +882,53 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Associa um cartão não identificado ao caixa geral
+        /// Remove as movimentaÃ§Ãµes do caixa geral com base no Identificador do Caixa DiÃ¡rio
+        /// </summary>
+        /// <param name="sessao">SessÃ£o do GDA.</param>
+        /// <param name="idCaixaDiario">Identificador da movimentaÃ§Ã£o do caixa diÃ¡rio.</param>
+        public void RemoverMovimentacoesFechamanto(GDASession sessao, int idCaixaDiario)
+        {
+            var sql = $@"
+                SELECT IdCaixaGeral
+                FROM caixa_geral
+                WHERE IdCaixaDiario = {idCaixaDiario}";
+
+            try
+            {
+                var idsCaixaGeralExcluir = this.ExecuteMultipleScalar<int>(sessao, sql);
+
+                if (!idsCaixaGeralExcluir.Any(c => c > 0))
+                {
+                    throw new Exception("NÃ£o foram transferidos valores para o Caixa Geral com este fechamento.");
+                }
+
+                sql = $@"
+                    SELECT (SELECT Saldo FROM caixa_geral WHERE IdCaixaGeral <
+		                ALL (SELECT IdCaixaGeral FROM caixa_geral
+		            	WHERE IdCaixaGeral IN ({string.Join(",", idsCaixaGeralExcluir)})) ORDER BY IdCaixaGeral DESC LIMIT 1)-(
+                        SELECT Saldo
+		            	FROM caixa_geral
+                        WHERE IdCaixaGeral IN ({string.Join(",", idsCaixaGeralExcluir)}) ORDER BY IdCaixaGeral DESC LIMIT 1)";
+
+                var valorMov = this.ExecuteScalar<float>(sessao, sql);
+
+                sql = $@"
+                    UPDATE caixa_geral
+                    SET Saldo = Saldo - {valorMov}
+                    WHERE IdCaixaGeral > {idsCaixaGeralExcluir.OrderByDescending(item => item).First()}";
+
+                this.objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?valor", valorMov));
+
+                this.DeleteByPKs(sessao, idsCaixaGeralExcluir);
+            }
+            catch
+            {
+                throw new Exception("Falha ao ajustar os valores do caixa geral.");
+            }
+        }
+
+        /// <summary>
+        /// Associa um cartÃ£o nÃ£o identificado ao caixa geral
         /// </summary>
         public void AssociarCaixaGeralIdCartaoNaoIdentificado(GDASession sessao, uint idCxGeral, uint idCartaoNaoIdentificado)
         {
@@ -894,7 +941,7 @@ namespace Glass.Data.DAL
         #region Retorna o saldo
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
+        /// (APAGAR: quando alterar para utilizar transaÃ§Ã£o)
         /// Recupera o saldo do caixa geral
         /// </summary>
         /// <returns></returns>
@@ -915,7 +962,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
+        /// (APAGAR: quando alterar para utilizar transaÃ§Ã£o)
         /// Recupera o saldo do caixa geral do dia passado
         /// </summary>
         /// <param name="dataSaldo"></param>
@@ -951,14 +998,14 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o saldo de lançamentos avulsos do caixa geral pelo período informado.
+        /// Recupera o saldo de lanÃ§amentos avulsos do caixa geral pelo perÃ­odo informado.
         /// </summary>
-        /// <param name="dataIni">Data de inicio da busca de lançamentos.</param>
-        /// <param name="dataFim">Data fim da busca de lançamentos.</param>
+        /// <param name="dataIni">Data de inicio da busca de lanÃ§amentos.</param>
+        /// <param name="dataFim">Data fim da busca de lanÃ§amentos.</param>
         /// <param name="idFornec">Identificador do fornecedor a ser filtrado.</param>
         /// <param name="idLoja">Identificador da loja a ser filtrada.</param>
-        /// <param name="planoConta">Descrição do plano de conta a ser filtrado.</param>
-        /// <returns>Saldo de lançamentos avulsos do caixa geral.</returns>
+        /// <param name="planoConta">DescriÃ§Ã£o do plano de conta a ser filtrado.</param>
+        /// <returns>Saldo de lanÃ§amentos avulsos do caixa geral.</returns>
         public decimal GetSaldoLancAvulsos(DateTime? dataIni, DateTime? dataFim, uint? idFornec, int? idLoja, string planoConta)
         {
             if ((dataIni == null) &&
@@ -1013,10 +1060,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna o saldo/entrada/saída por forma de pagamento e período
+        #region Retorna o saldo/entrada/saÃ­da por forma de pagamento e perÃ­odo
 
         /// <summary>
-        /// Retorna o saldo/entrada/saída por forma de pagamento e período
+        /// Retorna o saldo/entrada/saÃ­da por forma de pagamento e perÃ­odo
         /// </summary>
         public decimal GetSaldoByFormaPagto(Pagto.FormaPagto formaPagto, uint idFunc, string dataIni, string dataFim, int tipo, uint idLoja)
         {
@@ -1024,7 +1071,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o saldo/entrada/saída por forma de pagamento e período
+        /// Retorna o saldo/entrada/saÃ­da por forma de pagamento e perÃ­odo
         /// </summary>
         public decimal GetSaldoByFormaPagto(GDASession session, Pagto.FormaPagto formaPagto, uint idFunc, string dataIni, string dataFim, int tipo, uint idLoja)
         {
@@ -1068,7 +1115,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna os valores de crédito gerado/recebido por período
+        #region Retorna os valores de crÃ©dito gerado/recebido por perÃ­odo
 
         private decimal GetCreditoPeriodo(GDASession sessao, string idsContas, string idsContasEstorno, uint idFunc, string dtIni, string dtFim, uint idLoja)
         {
@@ -1089,7 +1136,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o valor de crédito recebido em um período.
+        /// Retorna o valor de crÃ©dito recebido em um perÃ­odo.
         /// </summary>
         /// <param name="idFunc"></param>
         /// <param name="dtIni"></param>
@@ -1104,7 +1151,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o valor de crédito gerado em um período.
+        /// Retorna o valor de crÃ©dito gerado em um perÃ­odo.
         /// </summary>
         /// <param name="idFunc"></param>
         /// <param name="dtIni"></param>
@@ -1177,7 +1224,7 @@ namespace Glass.Data.DAL
         #region Busca o sinal recebido pelo caixa geral referente a um pedido
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
+        /// (APAGAR: quando alterar para utilizar transaÃ§Ã£o)
         /// Busca o sinal recebido pelo caixa geral referente ao pedido passado
         /// </summary>
         /// <param name="idPedido"></param>
@@ -1208,10 +1255,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentações relacionadas a um pedido à vista
+        #region Busca movimentaÃ§Ãµes relacionadas a um pedido Ã  vista
 
         /// <summary>
-        /// Busca movimentações relacionadas a um pedido à vista
+        /// Busca movimentaÃ§Ãµes relacionadas a um pedido Ã  vista
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -1221,7 +1268,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca movimentações relacionadas a um pedido à vista
+        /// Busca movimentaÃ§Ãµes relacionadas a um pedido Ã  vista
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idPedido"></param>
@@ -1239,10 +1286,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentações relacionadas a um sinal de pedido
+        #region Busca movimentaÃ§Ãµes relacionadas a um sinal de pedido
 
         /// <summary>
-        /// Busca movimentações relacionadas a um sinal de pedido
+        /// Busca movimentaÃ§Ãµes relacionadas a um sinal de pedido
         /// </summary>
         /// <param name="idSinal"></param>
         /// <returns></returns>
@@ -1252,7 +1299,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca movimentações relacionadas a um sinal de pedido
+        /// Busca movimentaÃ§Ãµes relacionadas a um sinal de pedido
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idSinal"></param>
@@ -1270,10 +1317,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentações relacionadas a uma liberação
+        #region Busca movimentaÃ§Ãµes relacionadas a uma liberaÃ§Ã£o
 
         /// <summary>
-        /// Busca movimentações relacionadas a um pedido à vista
+        /// Busca movimentaÃ§Ãµes relacionadas a um pedido Ã  vista
         /// </summary>
         /// <param name="idLiberacao"></param>
         /// <param name="tipo">1-A Vista, 2-Sinal</param>
@@ -1284,7 +1331,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca movimentações relacionadas a um pedido à vista
+        /// Busca movimentaÃ§Ãµes relacionadas a um pedido Ã  vista
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idLiberacao"></param>
@@ -1307,10 +1354,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentações relacionadas a um acerto
+        #region Busca movimentaÃ§Ãµes relacionadas a um acerto
 
         /// <summary>
-        /// Retorna movimentações relacionadas ao acerto passado
+        /// Retorna movimentaÃ§Ãµes relacionadas ao acerto passado
         /// </summary>
         /// <param name="idAcerto"></param>
         /// <returns></returns>
@@ -1324,10 +1371,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentações relacionadas à uma conta recebida
+        #region Busca movimentaÃ§Ãµes relacionadas Ã  uma conta recebida
 
         /// <summary>
-        /// Busca movimentações relacionadas à uma conta recebida
+        /// Busca movimentaÃ§Ãµes relacionadas Ã  uma conta recebida
         /// </summary>
         /// <param name="idContaR"></param>
         /// <returns></returns>
@@ -1347,10 +1394,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna movimentações relacionadas à um cheque
+        #region Retorna movimentaÃ§Ãµes relacionadas Ã  um cheque
 
         /// <summary>
-        /// Retorna movimentações relacionadas à uma conta recebida
+        /// Retorna movimentaÃ§Ãµes relacionadas Ã  uma conta recebida
         /// </summary>
         /// <param name="idCheque"></param>
         /// <returns></returns>
@@ -1363,10 +1410,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna movimentações relacionadas à um pagamento
+        #region Retorna movimentaÃ§Ãµes relacionadas Ã  um pagamento
 
         /// <summary>
-        /// Retorna movimentações relacionadas à um pagamento
+        /// Retorna movimentaÃ§Ãµes relacionadas Ã  um pagamento
         /// </summary>
         public CaixaGeral[] GetByPagto(uint idPagto)
         {
@@ -1374,7 +1421,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna movimentações relacionadas à um pagamento
+        /// Retorna movimentaÃ§Ãµes relacionadas Ã  um pagamento
         /// </summary>
         public CaixaGeral[] GetByPagto(GDASession session, uint idPagto)
         {
@@ -1385,10 +1432,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna movimentações relacionadas à um sinal de compra
+        #region Retorna movimentaÃ§Ãµes relacionadas Ã  um sinal de compra
 
         /// <summary>
-        /// Retorna movimentações relacionadas à um sinal de compra
+        /// Retorna movimentaÃ§Ãµes relacionadas Ã  um sinal de compra
         /// </summary>
         public CaixaGeral[] GetBySinalCompra(GDASession session, uint idSinalCompra)
         {
@@ -1399,10 +1446,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna movimentações relacionadas à uma antecipação de pagamento de fornecedor
+        #region Retorna movimentaÃ§Ãµes relacionadas Ã  uma antecipaÃ§Ã£o de pagamento de fornecedor
 
         /// <summary>
-        /// Retorna movimentações relacionadas à uma antecipação de fornecedor
+        /// Retorna movimentaÃ§Ãµes relacionadas Ã  uma antecipaÃ§Ã£o de fornecedor
         /// </summary>
         public CaixaGeral[] GetByAntecipFornec(GDASession session, uint idAntecipFornec)
         {
@@ -1413,10 +1460,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentações relacionadas a um acerto de cheques
+        #region Busca movimentaÃ§Ãµes relacionadas a um acerto de cheques
 
         /// <summary>
-        /// Retorna movimentações relacionadas ao acerto de cheques passado
+        /// Retorna movimentaÃ§Ãµes relacionadas ao acerto de cheques passado
         /// </summary>
         /// <param name="idAcerto"></param>
         /// <returns></returns>
@@ -1426,7 +1473,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna movimentações relacionadas ao acerto de cheques passado
+        /// Retorna movimentaÃ§Ãµes relacionadas ao acerto de cheques passado
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idAcerto"></param>
@@ -1440,10 +1487,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentações relacionadas a uma obra
+        #region Busca movimentaÃ§Ãµes relacionadas a uma obra
 
         /// <summary>
-        /// Retorna movimentações relacionadas a uma obra
+        /// Retorna movimentaÃ§Ãµes relacionadas a uma obra
         /// </summary>
         /// <param name="idObra"></param>
         /// <returns></returns>
@@ -1453,7 +1500,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna movimentações relacionadas a uma obra
+        /// Retorna movimentaÃ§Ãµes relacionadas a uma obra
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idObra"></param>
@@ -1469,10 +1516,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentações relacionadas a uma troca/devolução
+        #region Busca movimentaÃ§Ãµes relacionadas a uma troca/devoluÃ§Ã£o
 
         /// <summary>
-        /// Retorna movimentações relacionadas a uma troca/devolução
+        /// Retorna movimentaÃ§Ãµes relacionadas a uma troca/devoluÃ§Ã£o
         /// </summary>
         /// <param name="idTrocaDevolucao"></param>
         /// <returns></returns>
@@ -1482,7 +1529,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna movimentações relacionadas a uma troca/devolução
+        /// Retorna movimentaÃ§Ãµes relacionadas a uma troca/devoluÃ§Ã£o
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idTrocaDevolucao"></param>
@@ -1497,10 +1544,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentações relacionadas a uma devolução de pagamento
+        #region Busca movimentaÃ§Ãµes relacionadas a uma devoluÃ§Ã£o de pagamento
 
         /// <summary>
-        /// Retorna movimentações relacionadas a uma devolução de pagamento
+        /// Retorna movimentaÃ§Ãµes relacionadas a uma devoluÃ§Ã£o de pagamento
         /// </summary>
         /// <param name="idDevolucaoPagto"></param>
         /// <returns></returns>
@@ -1510,7 +1557,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna movimentações relacionadas a uma devolução de pagamento
+        /// Retorna movimentaÃ§Ãµes relacionadas a uma devoluÃ§Ã£o de pagamento
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idDevolucaoPagto"></param>
@@ -1525,10 +1572,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentação anterior
+        #region Busca movimentaÃ§Ã£o anterior
 
         /// <summary>
-        /// Busca movimentação anterior
+        /// Busca movimentaÃ§Ã£o anterior
         /// </summary>
         /// <param name="idCaixaGeral"></param>
         /// <returns></returns>
@@ -1554,7 +1601,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca o saldo da movimentação anterior
+        /// Busca o saldo da movimentaÃ§Ã£o anterior
         /// </summary>
         /// <param name="idCaixaGeral"></param>
         /// <returns></returns>
@@ -1581,10 +1628,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca crédito utilizado em um pedido
+        #region Busca crÃ©dito utilizado em um pedido
 
         /// <summary>
-        /// Busca crédito utilizado em um pedido
+        /// Busca crÃ©dito utilizado em um pedido
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -1610,10 +1657,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca crédito utilizado em uma liberação de pedido
+        #region Busca crÃ©dito utilizado em uma liberaÃ§Ã£o de pedido
 
         /// <summary>
-        /// Busca crédito utilizado em uma liberação de pedido
+        /// Busca crÃ©dito utilizado em uma liberaÃ§Ã£o de pedido
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -1623,7 +1670,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca crédito utilizado em uma liberação de pedido
+        /// Busca crÃ©dito utilizado em uma liberaÃ§Ã£o de pedido
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -1639,10 +1686,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca crédito gerado em um pedido
+        #region Busca crÃ©dito gerado em um pedido
 
         /// <summary>
-        /// Busca crédito gerado em um pedido
+        /// Busca crÃ©dito gerado em um pedido
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -1668,10 +1715,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca crédito gerado em uma liberação de pedido
+        #region Busca crÃ©dito gerado em uma liberaÃ§Ã£o de pedido
 
         /// <summary>
-        /// Busca crédito gerado em uma liberação de pedido
+        /// Busca crÃ©dito gerado em uma liberaÃ§Ã£o de pedido
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -1686,10 +1733,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca crédito utilizado em um pagto
+        #region Busca crÃ©dito utilizado em um pagto
 
         /// <summary>
-        /// Busca crédito utilizado em um pagto
+        /// Busca crÃ©dito utilizado em um pagto
         /// </summary>
         /// <param name="idPagto"></param>
         /// <returns></returns>
@@ -1703,10 +1750,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca crédito gerado em um pagto
+        #region Busca crÃ©dito gerado em um pagto
 
         /// <summary>
-        /// Busca crédito gerado em um pagto
+        /// Busca crÃ©dito gerado em um pagto
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -1736,7 +1783,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se a conta paga passada já foi estornada
+        #region Verifica se a conta paga passada jÃ¡ foi estornada
 
         /// <summary>
         /// Verifica se a conta passada foi paga no caixa geral
@@ -1752,31 +1799,34 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Exclui movimentações por PKs
+        #region Exclui movimentaÃ§Ãµes por PKs
 
         /// <summary>
-        /// Exclui movimentações com as PKs passadas
+        /// MÃ©todo que deleta movimentaÃ§Ãµes com base em uma listagem de Identificadores de movimentaÃ§Ãµes.
         /// </summary>
-        /// <param name="pks"></param>
-        public void DeleteByPKs(string pks)
+        /// <param name="sessao">SessÃ£o do GDA.</param>
+        /// <param name="idsCaixaDiario">Listagem de Identificadores de movimentaÃ§Ãµes.</param>
+        public void DeleteByPKs(GDASession sessao, List<int> idsCaixaDiario)
         {
-            if (String.IsNullOrEmpty(pks))
+            if (!idsCaixaDiario.Any(c => c > 0))
+            {
                 return;
+            }
 
-            string sql = "Delete From caixa_geral Where idCaixaGeral In (" + pks.TrimEnd(',') + ")";
+            string sql = $"DELETE FROM caixa_geral WHERE IdCaixaGeral IN ({string.Join(",", idsCaixaDiario)})";
 
-            objPersistence.ExecuteCommand(sql);
+            this.objPersistence.ExecuteCommand(sessao, sql);
         }
 
         #endregion
 
-        #region Recupera as movimentações por cliente
+        #region Recupera as movimentaÃ§Ãµes por cliente
 
         /// <summary>
-        /// Retorna as movimentações por cliente.
+        /// Retorna as movimentaÃ§Ãµes por cliente.
         /// </summary>
         /// <param name="idCliente"></param>
-        /// <param name="planosConta">Os planos de conta usados como filtro. Pode ser omitido para não filtrar pelos planos de conta.</param>
+        /// <param name="planosConta">Os planos de conta usados como filtro. Pode ser omitido para nÃ£o filtrar pelos planos de conta.</param>
         /// <returns></returns>
         public CaixaGeral[] GetByCliente(uint idCliente, DateTime inicio, DateTime fim, params uint[] planosConta)
         {
@@ -1798,13 +1848,13 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera as movimentações por fornecedor
+        #region Recupera as movimentaÃ§Ãµes por fornecedor
 
         /// <summary>
-        /// Retorna as movimentações por fornecedor.
+        /// Retorna as movimentaÃ§Ãµes por fornecedor.
         /// </summary>
         /// <param name="idFornec"></param>
-        /// <param name="planosConta">Os planos de conta usados como filtro. Pode ser omitido para não filtrar pelos planos de conta.</param>
+        /// <param name="planosConta">Os planos de conta usados como filtro. Pode ser omitido para nÃ£o filtrar pelos planos de conta.</param>
         /// <returns></returns>
         public CaixaGeral[] GetByFornecedor(uint idFornec, DateTime inicio, DateTime fim, params uint[] planosConta)
         {
@@ -1826,10 +1876,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Existe movimentação por pedido?
+        #region Existe movimentaÃ§Ã£o por pedido?
 
         /// <summary>
-        /// Existe movimentação por pedido?
+        /// Existe movimentaÃ§Ã£o por pedido?
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -1857,7 +1907,7 @@ namespace Glass.Data.DAL
 
                     // Verifica se o caixa possui saldo para realizar esta retirada
                     if (saldo - valor < 0 && formaSaida == (int)CaixaGeral.FormaSaidaEnum.Dinheiro)
-                        throw new Exception(string.Format("Não há saldo suficiente em {0} para realizar esta retirada.", formaSaida == 1 ? "dinheiro" : "cheque"));
+                        throw new Exception(string.Format("NÃ£o hÃ¡ saldo suficiente em {0} para realizar esta retirada.", formaSaida == 1 ? "dinheiro" : "cheque"));
 
                     MovCxDebito(transaction, (uint?)idFornec, formaSaida == 2 ? (uint?)idCheque : null, (uint)idConta, formaSaida, valor, obs);
 
@@ -1878,10 +1928,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Cancela movimentação
+        #region Cancela movimentaÃ§Ã£o
 
         /// <summary>
-        /// Cancela movimentação.
+        /// Cancela movimentaÃ§Ã£o.
         /// </summary>
         /// <param name="mov"></param>
         public void CancelaMovimentacao(CaixaGeral mov, string motivo)
@@ -1895,7 +1945,7 @@ namespace Glass.Data.DAL
                     if (!mov.LancManual ||
                         mov.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro) ||
                         mov.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque))
-                        throw new Exception("Essa movimentação foi gerada pelo sistema. Só é possível cancelar movimentações manuais.");
+                        throw new Exception("Essa movimentaÃ§Ã£o foi gerada pelo sistema. SÃ³ Ã© possÃ­vel cancelar movimentaÃ§Ãµes manuais.");
 
                     // Atualiza o saldo
                     objPersistence.ExecuteCommand(transaction, string.Format("UPDATE caixa_geral SET Saldo=Saldo {0} ?valor WHERE IdCaixaGeral>{1}",
@@ -1921,11 +1971,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca movimentações por data
+        #region Busca movimentaÃ§Ãµes por data
 
         /// <summary>
-        /// Obtém as movimentações do caixa geral pela sua data de cadastro.
-        /// Método utilizado principalmente para ajustar a tabela pagto_contas_receber.
+        /// ObtÃ©m as movimentaÃ§Ãµes do caixa geral pela sua data de cadastro.
+        /// MÃ©todo utilizado principalmente para ajustar a tabela pagto_contas_receber.
         /// </summary>
         public IList<CaixaGeral> ObterMovimentacoesPorData(string dataInicio, string dataFim)
         {
@@ -1950,10 +2000,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Transferência para conta bancária
+        #region TransferÃªncia para conta bancÃ¡ria
 
         /// <summary>
-        /// Cancela movimentação.
+        /// Cancela movimentaÃ§Ã£o.
         /// </summary>
         public void TransferenciaParaContaBancaria(int idContaBanco, decimal valorMov, DateTime dataMov, string obs)
         {
@@ -1967,7 +2017,7 @@ namespace Glass.Data.DAL
                         UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCxGeralParaContaBancariaDinheiro),
                         2, valorMov, 0, obs, true, null);
 
-                    // Credita valor da conta bancária
+                    // Credita valor da conta bancÃ¡ria
                     ContaBancoDAO.Instance.MovContaSaida(transaction, (uint)idContaBanco,
                         UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCxGeralParaContaBancariaDinheiro), (int)UserInfo.GetUserInfo.IdLoja,
                         1, valorMov, dataMov, obs);
@@ -1995,7 +2045,7 @@ namespace Glass.Data.DAL
         #endregion
 
         /// <summary>
-        /// recupera movimentações a partir do cartão não identificado
+        /// recupera movimentaÃ§Ãµes a partir do cartÃ£o nÃ£o identificado
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idCartaoNaoIdentificado"></param>

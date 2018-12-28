@@ -172,6 +172,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("BCICMS")]
         public decimal BcIcms { get; set; }
 
+        [PersistenceProperty("BCICMSSEMREDUCAO")]
+        public decimal BcIcmsSemReducao { get; set; }
+
         [Log("Alíquota ICMS")]
         [PersistenceProperty("ALIQICMS")]
         public Single AliqIcms { get; set; }

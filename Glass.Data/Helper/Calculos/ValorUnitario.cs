@@ -190,7 +190,7 @@ namespace Glass.Data.Helper.Calculos
         {
             var calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2;
 
-            if (produto.Container is Pedido)
+            if (produto.Container is Pedido || produto.Container is PedidoEspelho)
             {
                 calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2 && !produto.Container.IsPedidoProducaoCorte;
             }
