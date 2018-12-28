@@ -9,7 +9,7 @@ namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.TiposMovimentacao
     /// <summary>
     /// Enumerador com o tipo de movimentação.
     /// </summary>
-    public enum TipoMovimentação
+    public enum TipoMovimentacao
     {
         /// <summary>
         /// Entrada.

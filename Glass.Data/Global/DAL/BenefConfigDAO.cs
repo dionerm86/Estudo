@@ -502,19 +502,21 @@ namespace Glass.Data.DAL
 
         private string SqlPeriodoLoja(string dtIni, string dtFim, uint idLoja, uint idFunc, bool selecionar)
         {
+            var fluxo = PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido";
+
             var campos = selecionar ?
-                @"b.*, cast(sum(ppb.Valor) as decimal(12,2)) as SumValor, sum(pp.TotM) as SumTotM,
+                @"b.*, cast(sum(ppb.Valor) as decimal(12,2)) as SumValor, sum(pp.TotM2Calc) as SumTotM,
                 /* Chamado 13216. A quantidade de beneficiamentos no relatório deve ser a quantidade no pedido.
                 count(b.idBenefConfig)*/ SUM(pp.Qtde) as QtdBenef" :
                 "count(distinct b.Descricao)";
 
-            var sql = @"
-                Select " + campos + @"
-                From benef_config b
-                    Left join produto_pedido_benef ppb on (b.idBenefConfig=ppb.idBenefConfig)
-                    Left join produtos_pedido pp on (ppb.idProdPed=pp.idProdPed)
-                    Left join pedido p on (pp.idPedido=p.idPedido)
-                Where p.IdLoja=" + idLoja;
+            var sql = $@"
+                Select {campos}
+                From benef_config b 
+                    Left join produto_pedido_benef ppb on (b.idBenefConfig=ppb.idBenefConfig) 
+                    Left join produtos_pedido pp on (ppb.idProdPed=pp.idProdPed) 
+                    Left join pedido p on (pp.idPedido=p.idPedido) 
+                Where p.IdLoja={idLoja} AND (pp.Invisivel{fluxo} = FALSE OR pp.Invisivel{fluxo} = NULL)";
 
             var dateFormat = "str_to_date('{0} {1}', '%d/%m/%Y %H:%i')";
 

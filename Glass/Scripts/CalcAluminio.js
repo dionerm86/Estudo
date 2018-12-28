@@ -1,38 +1,45 @@
-﻿function arredondaAltura(controle, tipoCalculo)
+﻿function arredondaAltura(controle)
 {
-    if (tipoCalculo != 4 && tipoCalculo != 6 && tipoCalculo != 7 && tipoCalculo != 8 && tipoCalculo != 9)
+    if (dadosProduto.IsAluminio === false) {
         return;
-    
-    var altura = new Number(controle.value.replace(',', '.'));
-    var alturaTemp = altura - parseInt(altura, 10);
-    
-    var arredondar = tipoCalculo == 4 ? 0.5 : tipoCalculo == 6 ? 1 : 0;
-    
-    if (tipoCalculo < 7)
-    {
-        if (alturaTemp > 0 && alturaTemp < arredondar)
-            altura = parseInt(altura, 10) + arredondar;
-        else if (alturaTemp > arredondar)
-            altura = parseInt(altura, 10) + (arredondar * 2);
     }
-    else if (tipoCalculo == 7 && altura < 6)
+
+    var altura = new Number(controle.value.replace(',', '.'));
+    var alturaTemp = altura - parseInt(altura, 10);    
+    var arredondar = 0;
+
+    if (dadosProduto.TipoCalculo == 4) {
+        arredondar = 0.5;
+    }
+    else if (dadosProduto.TipoCalculo == 6) {
+        arredondar = 1;
+    }
+
+    if (dadosProduto.TipoCalculo < 7) {
+        if (alturaTemp > 0 && alturaTemp < arredondar) {
+            altura = parseInt(altura, 10) + arredondar;
+        }
+        else if (alturaTemp > arredondar) {
+            altura = parseInt(altura, 10) + (arredondar * 2);
+        }
+    }
+    else if (dadosProduto.TipoCalculo == 7 && altura < 6) {
         altura = 6;
+    }
     
-    if (controle !== undefined && controle != null)
+    if (controle !== undefined && controle != null) {
         controle.value = altura.toString().replace('.', ',');
+    }
 }
 
-function valorAluminio(controleAltura, valor, qtde,  arredondar, tipoCalculo)
+function valorAluminio(controleAltura, valor, qtde,  arredondar)
 {
-    if (tipoCalculo != 4 && tipoCalculo != 6 && tipoCalculo != 7 && tipoCalculo != 8 && tipoCalculo != 9)
-        return;
-    
     // Coloca um valor padrão para a variável, se ela não tiver valor
     arredondar = arredondar == false ? false : true;
 
     // Arredonda altura
     if (arredondar)
-        arredondaAltura(controleAltura, tipoCalculo);
+        arredondaAltura(controleAltura);
     
     var total = new Number(valor.replace(',', '.'));
     var altura = new Number(controleAltura.value.replace(',', '.'));
@@ -47,14 +54,14 @@ function valorAluminio(controleAltura, valor, qtde,  arredondar, tipoCalculo)
     return total;
 }
 
-function valorUnitAluminio(controleAltura, valor, qtde, arredondar, tipoCalculo)
+function valorUnitAluminio(controleAltura, valor, qtde, arredondar)
 {
     // Coloca um valor padrão para a variável, se ela não tiver valor
     arredondar = arredondar == false ? false : true;
 
     // Arredonda altura
     if (arredondar)
-        arredondaAltura(controleAltura, tipoCalculo);
+        arredondaAltura(controleAltura);
 
     var total = new Number(valor.replace(',', '.'));
     var altura = new Number(controleAltura.value.replace(',', '.'));

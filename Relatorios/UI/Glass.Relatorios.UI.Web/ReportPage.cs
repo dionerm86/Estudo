@@ -549,27 +549,39 @@ namespace Glass.Relatorios.UI.Web
                 #region Monta o nome do arquivo
                 
                 var nomeRelatorio = string.Empty;
-                
+
                 if (!string.IsNullOrEmpty(Request["rel"]))
+                {
                     nomeRelatorio = string.Format("; filename={0}.{1}", Request["rel"], Extension);
+
+                    if (Request["rel"] != null && Request["rel"].ToLower() == "imagemprojeto" && Request["idItemProjeto"] != null)
+                    {
+                        uint idItemProjeto = Conversoes.StrParaUint(Request["idItemProjeto"].Split(',')[0]);
+
+                        if (idItemProjeto > 0)
+                        {
+                            uint? idPedido = Glass.Data.DAL.ItemProjetoDAO.Instance.ObtemIdPedido(idItemProjeto);
+
+                            uint? idPedidoEspelho = Glass.Data.DAL.ItemProjetoDAO.Instance.ObtemIdPedidoEspelho(idItemProjeto);
+
+                            if (idPedido > 0)
+                            {
+                                nomeRelatorio = "; filename=PJ" + idPedido + (Request["ExportarExcel"] == "true" ? ".xls" : ".pdf");
+                            }
+
+                            else if (idPedidoEspelho > 0)
+                            {
+                                nomeRelatorio = "; filename=PJ" + idPedidoEspelho + (Request["ExportarExcel"] == "true" ? ".xls" : ".pdf");
+                            }
+
+                        }
+                    }
+                }
+
                 else if (Request.Path.ToLower().Contains("relpedido.aspx") && !Request["idPedido"].Contains(","))
                     nomeRelatorio = "; filename=PD" + Request["idPedido"] + (Request["ExportarExcel"] == "true" ? ".xls" : ".pdf");
                 else if (Request.Path.ToLower().Contains("relorcamento.aspx"))
                     nomeRelatorio = "; filename=OR" + Request["idOrca"] + (Request["ExportarExcel"] == "true" ? ".xls" : ".pdf");
-                else if (Request["rel"] != null && Request["rel"].ToLower() == "imagemprojeto" && Request["idItemProjeto"] != null)
-                {
-                    uint idItemProjeto = Conversoes.StrParaUint(Request["idItemProjeto"].Split(',')[0]);
-                    if (idItemProjeto > 0)
-                    {
-                        uint? idPedido = Glass.Data.DAL.ItemProjetoDAO.Instance.ObtemIdPedido(idItemProjeto);
-                        uint? idPedidoEspelho = Glass.Data.DAL.ItemProjetoDAO.Instance.ObtemIdPedidoEspelho(idItemProjeto);
-
-                        if (idPedido > 0)
-                            nomeRelatorio = "; filename=PJ" + idPedido + (Request["ExportarExcel"] == "true" ? ".xls" : ".pdf");
-                        else if (idPedidoEspelho > 0)
-                            nomeRelatorio = "; filename=PJ" + idPedidoEspelho + (Request["ExportarExcel"] == "true" ? ".xls" : ".pdf");
-                    }
-                }
                 else
                     nomeRelatorio = string.Format("; filename=Relatorio.{0}", Extension);
 
