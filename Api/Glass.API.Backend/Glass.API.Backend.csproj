@@ -257,6 +257,8 @@
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\TiposMovimentacao\GetTiposMovimentacaoController.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Fiscais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueFiscal.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Fiscais\TraducaoOrdenacaoMovimentacoesEstoqueFiscal.cs" />
+    <Compile Include="Controllers\Pagamentos\V1\GetPagamentosController.cs" />
+    <Compile Include="Controllers\Pagamentos\V1\PagamentosController.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Fiscais\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Fiscais\Configuracoes\ListaDto.cs" />
@@ -270,6 +272,7 @@
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\SituacoesOrdemCarga\SituacoesOrdemCarga.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\TiposOrdemCarga\TiposOrdemCarga.cs" />
+    <Compile Include="Helper\Pagamentos\TraducaoOrdenacaoListaPagamentos.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\PostMovimentacaoEstoqueRealController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Reais\DeleteMovimentacaoEstoqueRealController.cs" />
@@ -759,6 +762,9 @@
     <Compile Include="Models\Contabilistas\Lista\DadosContatoDto.cs" />
     <Compile Include="Models\Contabilistas\Lista\FiltroDto.cs" />
     <Compile Include="Models\Contabilistas\Lista\ListaDto.cs" />
+    <Compile Include="Models\Pagamentos\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Pagamentos\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Pagamentos\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Parcelas\V1\Configurações\CadastroDto.cs" />
     <Compile Include="Models\Parcelas\V1\Configurações\TipoPagamento.cs" />
     <Compile Include="Models\Parcelas\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
