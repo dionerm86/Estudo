@@ -56,7 +56,7 @@
       ),
       lojaAtual: null,
       situacaoAtual: null,
-      subgrupoAtual: null
+      subgrupoProdutoAtual: null
     };
   },
 
@@ -137,12 +137,12 @@
     },
 
     /**
-     * Observador para a variável 'idSubgrupoProdutoAtual'.
+     * Observador para a variável 'subgrupoProdutoAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */
-    idSubgrupoProdutoAtual: {
+    subgrupoProdutoAtual: {
       handler: function (atual) {
-        this.filtroAtual.idSubgrupoProdutoAtual = atual ? atual.id : null;
+        this.filtroAtual.idSubgrupoProduto = atual ? atual.id : null;
       },
       deep: true
     }

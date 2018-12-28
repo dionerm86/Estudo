@@ -60,7 +60,7 @@ namespace Glass.API.Backend.Helper.Compras
                     return "DataCad";
 
                 case "situacao":
-                    return "DescrSituacao";
+                    return "Situacao";
 
                 case "contabil":
                     return "Contabil";

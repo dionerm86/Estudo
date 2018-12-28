@@ -12,7 +12,7 @@
     <div id="app">
         <compras-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></compras-filtros>
         <section>
-            <a :href="obterLinkNovaCompra()">
+            <a :href="obterLinkInserirEditarCompra()" v-if="configuracoes.controleFinanceiroPagamento">
                 Nova Compra
             </a>
         </section>
@@ -21,47 +21,47 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Num')">Num</a>
+                        <a href="#" @click.prevent="ordenar('num')">Num</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Cotacao')">Cotação</a>
+                        <a href="#" @click.prevent="ordenar('cotacao')">Cotação</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Pedido')">Pedido</a>
+                        <a href="#" @click.prevent="ordenar('pedido')">Pedido</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Fornecedor')">Fornecedor</a>
+                        <a href="#" @click.prevent="ordenar('fornecedor')">Fornecedor</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Loja')">Loja</a>
+                        <a href="#" @click.prevent="ordenar('loja')">Loja</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Funcionario')">Funcionário</a>
+                        <a href="#" @click.prevent="ordenar('funcionario')">Funcionário</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Total')">Total</a>
+                        <a href="#" @click.prevent="ordenar('total')">Total</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('DataEntradaFabrica')">Data Ent. Fábrica</a>
+                        <a href="#" @click.prevent="ordenar('dataEntradaFabrica')">Data Ent. Fábrica</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Pagto')">Pagto</a>
+                        <a href="#" @click.prevent="ordenar('pagto')">Pagto</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Data')">Data</a>
+                        <a href="#" @click.prevent="ordenar('data')">Data</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Situacao')">Situação</a>
+                        <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Contabil')">Contabil</a>
+                        <a href="#" @click.prevent="ordenar('contabil')">Contabil</a>
                     </th>
                     <th></th>
                     <th></th>             
                 </template>
                 <template slot="item" slot-scope="{ item }">
                     <td style="white-space: nowrap">
-                        <a :href="obterLinkEditarCompra(item)" title="Editar" v-if="item.permissoes.editar">
+                        <a :href="obterLinkInserirEditarCompra(item.id)" title="Editar" v-if="item.permissoes.editar">
                             <img src="../Images/Edit.gif">
                         </a>
                         <button @click.prevent="abrirRelatorioCompra(item, false)" title="Visualizar dados da compra">
@@ -76,7 +76,7 @@
                         <button @click.prevent="abrirGerenciamentoDeFotos(item)" v-if="item.permissoes.gerenciarFotos" title="Gerenciar fotos">
                             <img src="../Images/Clipe.gif" />
                         </button>
-                        <button @click.prevent="gerarNFe(item)" v-if="item.permissoes.gerarNotaFiscal" title="Gerar NF de entrada" >
+                        <button @click.prevent="gerarNotaFiscal(item)" v-if="item.permissoes.gerarNotaFiscal" title="Gerar NF de entrada" >
                             <img src="../Images/script_go.gif" />
                         </button>
                     </td>
@@ -102,9 +102,7 @@
                     <td style="white-space: nowrap">{{ item.tipo }}</td>
                     <td>{{ item.datas.cadastro | data }}</td>
                     <td>{{ item.situacao }}</td>
-                    <td style="text-align: center">
-                        <input type="checkbox" :checked="item.contabil" disabled />
-                    </td>
+                    <td style="text-align: center">{{ item.contabil | indicaMarcado }}</td>
                     <td style="white-space: nowrap">
                         <div>
                             <controle-tooltip titulo="Nota fiscal gerada:" v-if="item.permissoes.exibirNotasFiscaisGeradas">

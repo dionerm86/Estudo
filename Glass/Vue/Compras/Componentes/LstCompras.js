@@ -22,18 +22,11 @@
     },
 
     /**
-     * Obtem o link para edição dos dados da compra.
-     * @param {Object} item A compra que será editada.
+     * Obtem o link para inserção/edição de compras.
+     * @param {number} id O identificador da compra que será editada.
      */
-    obterLinkEditarCompra: function (item) {
-      return '../Cadastros/CadCompra.aspx?idCompra=' + item.id;
-    },
-
-    /**
-     * Obtem o link para edição dos dados da compra.
-     */
-    obterLinkNovaCompra: function () {
-      return '../Cadastros/CadCompra.aspx';
+    obterLinkInserirEditarCompra: function (id) {
+      return '../Cadastros/CadCompra.aspx' + (!!id ? '?idCompra=' + id : '');
     },
 
     /**
@@ -75,8 +68,8 @@
     },
 
     /**
-     * Exibe a tela .
-     * @param {Object} item A compra que será finalizada.
+     * Exibe um popup onde a compra poderá ser finalizada utilizando uma nota fiscal.
+     * @param {Object} item A compra a ser finalizada através da nota fiscal.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     produtoChegou: function (item) {
@@ -84,11 +77,11 @@
     },
 
     /**
-     * Abre um popup com o gerenciamento de fotos para a compra.
-     * @param {Object} item A compra que terá as fotos gerenciadas.
+     * Abre um popup onde poderá ser gerada uma nota fiscal para a compra.
+     * @param {Object} item A compra que terá uma nota fiscal gerada.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    gerarNFe: function (item) {
+    gerarNotaFiscal: function (item) {
       if (!confirm('Deseja gerar a nota fiscal para a compra de número ' + item.id + '?')) {
         return;
       }

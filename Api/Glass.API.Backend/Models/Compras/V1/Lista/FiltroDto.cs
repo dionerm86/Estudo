@@ -36,7 +36,7 @@ namespace Glass.API.Backend.Models.Compras.V1.Lista
         public int? IdPedido { get; set; }
 
         /// <summary>
-        /// Obtém ou define o identificador do motorista.
+        /// Obtém ou define o identificador da cotação de compra.
         /// </summary>
         [JsonProperty("idCotacaoCompra")]
         public int? IdCotacaoCompra { get; set; }
@@ -146,8 +146,8 @@ namespace Glass.API.Backend.Models.Compras.V1.Lista
         /// <summary>
         /// Obtém ou define os identificadores dos subgrupos de produto.
         /// </summary>
-        [JsonProperty("idSubGrupoProduto")]
-        public int? IdSubGrupoProduto { get; set; }
+        [JsonProperty("idSubgrupoProduto")]
+        public int? IdSubgrupoProduto { get; set; }
 
         /// <summary>
         /// Obtém ou define o código do produto.

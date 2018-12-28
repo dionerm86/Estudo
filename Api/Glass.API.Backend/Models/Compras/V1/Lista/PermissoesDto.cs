@@ -18,21 +18,21 @@ namespace Glass.API.Backend.Models.Compras.V1.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("editar")]
-        public bool? Editar { get; set; }
+        public bool Editar { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se a compra pode ser cancelada.
         /// </summary>
         [DataMember]
         [JsonProperty("cancelar")]
-        public bool? Cancelar { get; set; }
+        public bool Cancelar { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se as fotos associadas a compra podem ser gerenciadas.
         /// </summary>
         [DataMember]
         [JsonProperty("gerenciarFotos")]
-        public bool? GerenciarFotos { get; set; }
+        public bool GerenciarFotos { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se pode ser gerada uma nota fiscal a partir da compra.
@@ -46,41 +46,41 @@ namespace Glass.API.Backend.Models.Compras.V1.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("reabrir")]
-        public bool? Reabrir { get; set; }
+        public bool Reabrir { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se podem ser exibidas as notas fiscais geradas para a compra.
         /// </summary>
         [DataMember]
         [JsonProperty("exibirNotasFiscaisGeradas")]
-        public bool? ExibirNotasFiscaisGeradas { get; set; }
+        public bool ExibirNotasFiscaisGeradas { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se o link 'Produto chegou' será exibido.
         /// </summary>
         [DataMember]
         [JsonProperty("exibirLinkProdutoChegou")]
-        public bool? ExibirLinkProdutoChegou { get; set; }
+        public bool ExibirLinkProdutoChegou { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se pode ser exibida a finalização da entrega para a compra.
         /// </summary>
         [DataMember]
         [JsonProperty("exibirFinalizacaoEntrega")]
-        public bool? ExibirFinalizacaoEntrega { get; set; }
+        public bool ExibirFinalizacaoEntrega { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se pode ser exibido o centro de custo para a compra.
         /// </summary>
         [DataMember]
         [JsonProperty("exibirCentroCusto")]
-        public bool? ExibirCentroCusto { get; set; }
+        public bool ExibirCentroCusto { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se a compra possui log de alteracoes.
         /// </summary>
         [DataMember]
         [JsonProperty("logAlteracoes")]
-        public bool? LogAlteracoes { get; set; }
+        public bool LogAlteracoes { get; set; }
     }
 }

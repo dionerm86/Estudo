@@ -42,14 +42,14 @@ namespace Glass.API.Backend.Controllers.Compras.V1
                         return validacao;
                     }
 
-                    var compra = CompraDAO.Instance.GetElementByPrimaryKey(id);
+                    var compra = CompraDAO.Instance.GetElementByPrimaryKey(sessao, id);
 
                     motivo = "Motivo do cancelamento: " + motivo;
                     compra.Obs = !string.IsNullOrEmpty(compra.Obs) ? compra.Obs + " " + motivo : motivo;
 
                     compra.Obs = compra.Obs.Length > 300 ? compra.Obs.Substring(0, 300) : compra.Obs;
 
-                    CompraDAO.Instance.CancelarCompra(compra.IdCompra, compra.Obs);
+                    CompraDAO.Instance.CancelarCompra(sessao, compra.IdCompra, compra.Obs);
 
                     sessao.Commit();
                     sessao.Close();

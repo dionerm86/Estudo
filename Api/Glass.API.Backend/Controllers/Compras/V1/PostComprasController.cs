@@ -67,25 +67,32 @@ namespace Glass.API.Backend.Controllers.Compras.V1
         [SwaggerResponse(404, "Compra não encontrada para o id informado.", Type = typeof(MensagemDto))]
         public IHttpActionResult ReabrirCompra(int id)
         {
-            try
+            using (var sessao = new GDATransaction())
             {
-                using (var sessao = new GDATransaction())
+                try
                 {
+                    sessao.BeginTransaction();
+
                     var validacao = this.ValidarExistenciaIdCompra(sessao, id);
 
                     if (validacao != null)
                     {
                         return validacao;
                     }
+
+                    CompraDAO.Instance.ReabrirCompra(sessao, (uint)id);
+
+                    sessao.Commit();
+                    sessao.Close();
+
+                    return this.Aceito($"Compra reaberta.");
                 }
-
-                CompraDAO.Instance.ReabrirCompra((uint)id);
-
-                return this.Aceito($"Compra reaberta.");
-            }
-            catch (Exception ex)
-            {
-                return this.ErroValidacao($"Erro ao reabrir compra.", ex);
+                catch (Exception ex)
+                {
+                    sessao.Rollback();
+                    sessao.Close();
+                    return this.ErroValidacao($"Erro ao reabrir compra.", ex);
+                }
             }
         }
     }
