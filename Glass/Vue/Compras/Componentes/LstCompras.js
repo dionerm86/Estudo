@@ -22,15 +22,22 @@
     },
 
     /**
-     * Obtem o link para inserção/edição de compras.
-     * @param {number} id O identificador da compra que será editada.
+     * Obtem o link para inserção de compras.
      */
-    obterLinkInserirEditarCompra: function (id) {
-      return '../Cadastros/CadCompra.aspx' + (!!id ? '?idCompra=' + id : '');
+    obterLinkInserirCompra: function (id) {
+      return '../Cadastros/CadCompra.aspx';
     },
 
     /**
-     * Exibe um os dados detalhados da compra em um relatório.
+     * Obtem o link para edição de compras.
+     * @param {number} id O identificador da compra que será editada.
+     */
+    obterLinkEditarCompra: function (id) {
+      return this.obterLinkInserirCompra + '?idCompra=' + id;
+    },
+
+    /**
+     * Exibe os dados detalhados da compra em um relatório.
      * @param {Object} item A compra que será exibida.
      * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
      */
@@ -40,7 +47,7 @@
     },
 
     /**
-     * Exibe um os dados detalhados da compra em um relatório.
+     * Exibe os dados detalhados da compra em um relatório.
      * @param {Object} item A compra que será exibida.
      * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
      */
@@ -68,7 +75,7 @@
     },
 
     /**
-     * Exibe um popup onde a compra poderá ser finalizada utilizando uma nota fiscal.
+     * Abre um popup onde a compra poderá ser finalizada utilizando uma nota fiscal.
      * @param {Object} item A compra a ser finalizada através da nota fiscal.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
@@ -77,7 +84,7 @@
     },
 
     /**
-     * Abre um popup onde poderá ser gerada uma nota fiscal para a compra.
+     * Redireciona o usuário para uma tela onde poderá ser gerada uma nota fiscal para a compra.
      * @param {Object} item A compra que terá uma nota fiscal gerada.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
