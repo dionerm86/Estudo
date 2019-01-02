@@ -33,7 +33,7 @@
      * @param {number} id O identificador da compra que será editada.
      */
     obterLinkEditarCompra: function (id) {
-      return this.obterLinkInserirCompra + '?idCompra=' + id;
+      return this.obterLinkInserirCompra() + '?idCompra=' + id;
     },
 
     /**
@@ -75,7 +75,7 @@
     },
 
     /**
-     * Abre um popup onde a compra poderá ser finalizada utilizando uma nota fiscal.
+     * Abre um popup onde o usuário poderá finalizar compra gerando uma nota fiscal.
      * @param {Object} item A compra a ser finalizada através da nota fiscal.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */

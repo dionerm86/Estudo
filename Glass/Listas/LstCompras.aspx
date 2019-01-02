@@ -1,3 +1,4 @@
+
 <%@ Page Title="Compras" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="LstCompras.aspx.cs" Inherits="Glass.UI.Web.Listas.LstCompras" 
     EnableViewState="false" EnableViewStateMac="false"%>
@@ -12,7 +13,7 @@
     <div id="app">
         <compras-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></compras-filtros>
         <section>
-            <a :href="obterLinkInserirEditarCompra()" v-if="configuracoes.controleFinanceiroPagamento">
+            <a :href="obterLinkInserirCompra()" v-if="configuracoes.controleFinanceiroPagamento">
                 Nova Compra
             </a>
         </section>
@@ -61,7 +62,7 @@
                 </template>
                 <template slot="item" slot-scope="{ item }">
                     <td style="white-space: nowrap">
-                        <a :href="obterLinkInserirEditarCompra(item.id)" title="Editar" v-if="item.permissoes.editar">
+                        <a :href="obterLinkEditarCompra(item.id)" title="Editar" v-if="item.permissoes.editar">
                             <img src="../Images/Edit.gif">
                         </a>
                         <button @click.prevent="abrirRelatorioCompra(item, false)" title="Visualizar dados da compra">
