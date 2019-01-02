@@ -1,0 +1,72 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label for="idCarregamento">Carregamento</label>
+            <input id="id" style="width: 60px" type="number" v-model.number="filtroAtual.idCarregamento" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idOrdemCarga">Cód. OC</label>
+            <input id="idOrdemCarga" style="width: 60px" type="number" v-model.number="filtroAtual.id" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Rota</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="rotaAtual" texto-selecionar="Selecione uma Rota"
+                v-bind:funcao-recuperar-itens="obterItensFiltroRotas"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Cliente</label>
+            <input type="number" style="width: 50px" v-model.number="filtroAtual.idCliente" />
+            <input type="text" style="width: 200px" v-model.number="filtroAtual.nomeCliente" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label for="idPedido">Pedido</label>
+            <input id="idPedido" style="width: 60px" type="number" v-model.number="filtroAtual.idPedido" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoEntregaPedidoInicio" 
+                v-bind:data-hora-final.sync="filtroAtual.periodoMovimentacaoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Loja</label>
+            <lista-selecao-lojas v-bind:loja.sync="lojaAtual" v-bind:ativas="true"></lista-selecao-lojas>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Tipo da OC</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.tiposOrdemCarga" 
+                v-bind:funcao-recuperar-itens="obterItensFiltroTiposOrdemCarga" v-bind:ordenar="false"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Situação</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.situacoesOrdemCarga" v-bind:funcao-recuperar-itens="obterItensFiltroSituacoesOrdemCarga"
+                v-bind:ordenar="false"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group" v-if="configuracoes.controlarPedidosImportados">
+            <label for="idClienteExterno">Cliente Externo</label>
+            <input id="idClienteExterno" type="number" v-model.number="filtroAtual.idClienteExterno" style="width: 50px" />
+            <input id="nomeClienteExterno" type="text" v-model.number="filtroAtual.nomeClienteExterno" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group" v-if="configuracoes.controlarPedidosImportados">
+            <label>Rota Externa</label>
+            <lista-selecao-multipla v-bind:funcao-recuperar-itens="obterItensFiltroRotasExternas" v-bind:ids-selecionados.sync="filtroAtual.idsRotaExterna"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

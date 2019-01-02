@@ -1,4 +1,4 @@
-﻿// <copyright file="DataCadastroMovimentacao.cs" company="Sync Softwares">
+﻿// <copyright file="DataCadastroMovimentacaoDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Genericas.V1
+namespace Glass.API.Backend.Models.Estoques.V1.Movimentacoes.Reais
 {
     /// <summary>
     /// Classe que encapsula data de cadastro e movimentação de estoque.
