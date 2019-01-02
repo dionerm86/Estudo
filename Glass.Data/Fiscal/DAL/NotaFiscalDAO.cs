@@ -4055,7 +4055,7 @@ namespace Glass.Data.DAL
                                     valorDifal = Math.Round(valorDifal / (1 - ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)), 4);
                                 }
 
-                                var percentualIcmsUFDestino = DateTime.Now.Year == 2018 ? 0.8M : 100;
+                                var percentualIcmsUFDestino = DateTime.Now.Year == 2018 ? 0.8M : 1;
                                 var percentualIcmsUFRemetente = DateTime.Now.Year == 2018 ? 0.2M : 0;
                                 valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
                                 valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
