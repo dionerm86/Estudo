@@ -120,12 +120,12 @@
                     </td>
                     <td>
                         {{ item.observacoes.contaAPagar }}
-                        <span v-if="item && item.observacoes && item.observacoes.desconto">
+                        <template v-if="item && item.observacoes && item.observacoes.desconto">
                             {{ item.observacoes.desconto }}
-                        </span>
-                        <span v-else-if="item && item.observacoes && item.observacoes.acrescimo">
+                        </template>
+                        <template v-else-if="item && item.observacoes && item.observacoes.acrescimo">
                             {{ item.observacoes.acrescimo }}
-                        </span>
+                        </template>
                     </td>
                     <td>
                         {{ item.contaContabil }}
