@@ -5,8 +5,10 @@
 using GDA;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.API.Backend.Models.Parcelas.V1.Filtro;
+using Glass.API.Backend.Models.PlanosConta.V1.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -84,6 +86,33 @@ namespace Glass.API.Backend.Controllers.FormasPagamento.V1
                     });
 
                 return this.Lista(formasPagamento);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de formas de pagamento de compra.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados das formas de pagamentos de compra.</returns>
+        [HttpGet]
+        [Route("filtroCompras")]
+        [SwaggerResponse(200, "Formas de pagamento de compras encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Formas de pagamento de compras não encontradas")]
+        public IHttpActionResult ObterListaFormasPagamentoCompra()
+        {
+            try
+            {
+                var formasPagamentoCompra = FormaPagtoDAO.Instance.GetForCompra()
+                    .Select(fpc => new IdNomeDto
+                    {
+                        Id = (int)fpc.IdFormaPagto,
+                        Nome = fpc.Descricao,
+                    });
+
+                return this.Lista(formasPagamentoCompra);
+            }
+            catch (Exception ex)
+            {
+                return this.ErroValidacao("Erro ao obter lista de formas de pagamento de compras.", ex);
             }
         }
     }
