@@ -9,6 +9,7 @@ Vue.mixin({
      * @returns {string} A URL com o caminho relativo.
      */
     caminhoRelativo: function (url) {
+      debugger;
       if (!url) {
         throw new Error('URL é obrigatória para o cálculo do caminho relativo.');
       }
@@ -22,9 +23,13 @@ Vue.mixin({
         return url;
       }
 
-      const urlFinal = url.replace(/^\/*/, '');
+      const urlFinal = url;
 
-      return url !== urlFinal
+      if (caminhoSite.endsWith("/")) {
+        urlFinal = url.replace(/^\/*/, '');
+      }
+
+      return url !== urlFinal.replace(/^\/*/, '')
         ? caminhoSite + urlFinal
         : url;
     }
