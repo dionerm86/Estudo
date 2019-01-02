@@ -494,6 +494,7 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\ConhecimentosTransporte\Veiculos\Proprietarios\Componentes\ListaProprietariosVeiculo.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.Filtro.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Templates\LstTrocaDevolucao.Filtro.html" />
@@ -1867,6 +1868,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Carregamentos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\ConhecimentosTransporte.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ImpressoesEtiquetas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Pagamentos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Projetos.js" />

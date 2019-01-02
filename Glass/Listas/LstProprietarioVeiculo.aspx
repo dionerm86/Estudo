@@ -1,41 +1,72 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstProprietarioVeiculo.aspx.cs"
-    Inherits="Glass.UI.Web.Listas.LstProprietarioVeiculo" Title="Proprietários Veículos" %>
+<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" 
+    CodeBehind="LstProprietarioVeiculo.aspx.cs" Inherits="Glass.UI.Web.Listas.LstProprietarioVeiculo"
+    Title="Proprietários Veículos" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="Conteudo" runat="Server">
-    <div>
-        <asp:LinkButton ID="lnkInserir" runat="server" OnClick="lnkInserir_Click">Inserir Proprietário</asp:LinkButton>
+    <div id="app">
+        <div>
+            <a v-bind:href="obterLinkInserirProprietarioVeiculo()">Inserir Proprietário</a>
+        </div>
+        <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :ordenacao="ordenacao" 
+            mensagem-lista-vazia="Nenhum proprietário de veículo encontrado." :numero-registros="15">
+            <template slot="cabecalho">
+                <th></th>
+                <th>
+                    <a href="#" @click.prevent="ordenar('nome')">
+                        Nome
+                    </a>
+                </th>
+                <th>
+                    <a href="#" @click.prevent="ordenar('rntrc')">
+                        RNTRC
+                    </a>
+                </th>
+                <th>
+                    <a href="#" @click.prevent="ordenar('ie')">
+                        Insc. Estadual
+                    </a>
+                </th>
+                <th>
+                    <a href="#" @click.prevent="ordenar('uf')">
+                        UF
+                    </a>
+                </th>
+                <th>
+                    <a href="#" @click.prevent="ordenar('tipoProp')">
+                        TipoProp
+                    </a>
+                </th>
+            </template>
+            <template slot="item" slot-scope="{ item }">
+                <td style="white-space: nowrap">
+                    <a v-bind:href="obterLinkEditarProprietarioVeiculo(item.id)">
+                        <img src="../Images/edit.gif" />
+                    </a>
+                    <button @click.prevent="excluir(item)">
+                        <img src="../Images/ExcluirGrid.gif" />
+                    </button>
+                </td>
+                <td>
+                    {{ item.nome }}
+                </td>
+                <td>
+                    {{ item.rntrc }}
+                </td>
+                <td>
+                    {{ item.inscricaoEstadual }}
+                </td>
+                <td>
+                    {{ item.uf }}
+                </td>
+                <td>
+                    {{ item.tipo }}
+                </td>
+            </template>
+        </lista-paginada>
     </div>
-    <div>
-        <asp:GridView GridLines="None" ID="grdProprietarioVeiculo" runat="server" AllowPaging="True"
-            AllowSorting="True" AutoGenerateColumns="False" DataSourceID="odsProprietarioVeiculo"
-            CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
-            EditRowStyle-CssClass="edit" DataKeyNames="IdPropVeic" EmptyDataText="Não há proprietário cadastrado">
-            <Columns>
-                <asp:TemplateField>
-                    <ItemTemplate>
-                        <asp:HyperLink ID="lnkEditar" runat="server" ToolTip="Editar" NavigateUrl='<%# "../Cadastros/CadProprietarioVeiculo.aspx?idPropVeiculo=" + Eval("IdPropVeic") %>'>
-                                    <img border="0" src="../Images/EditarGrid.gif" /></asp:HyperLink>
-                        <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                            OnClientClick="return confirm(&quot;Tem certeza que deseja excluir este proprietário?&quot;);"
-                            ToolTip="Excluir" />
-                    </ItemTemplate>
-                    <HeaderStyle Wrap="False" />
-                    <ItemStyle Wrap="False" />
-                </asp:TemplateField>
-                <asp:BoundField DataField="Nome" HeaderText="Nome" SortExpression="Nome" />
-                <asp:BoundField DataField="RNTRC" HeaderText="RNTRC" SortExpression="RNTRC" />
-                <asp:BoundField DataField="IE" HeaderText="Insc. Estadual" SortExpression="IE" />
-                <asp:BoundField DataField="UF" HeaderText="UF" SortExpression="UF" />
-                <asp:BoundField DataField="TipoProp" HeaderText="TipoProp" SortExpression="TipoProp" />
-            </Columns>
-            <PagerStyle />
-            <EditRowStyle />
-            <AlternatingRowStyle />
-        </asp:GridView>
-        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsProprietarioVeiculo" runat="server" DataObjectTypeName="Glass.Data.Model.CTe.ProprietarioVeiculo"
-            DeleteMethod="Delete" SelectMethod="GetList" TypeName="Glass.Data.DAL.CTe.ProprietarioVeiculoDAO"
-            EnablePaging="True" MaximumRowsParameterName="pageSize" SelectCountMethod="GetCount"
-            SortParameterName="sortExpression" StartRowIndexParameterName="startRow" OnDeleted="odsProprietarioVeiculo_Deleted">
-        </colo:VirtualObjectDataSource>
-    </div>
+    <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/ConhecimentosTransporte/Veiculos/Proprietarios/Componentes/ListaProprietariosVeiculo.js" />
+        </Scripts>
+    </asp:ScriptManager>
 </asp:Content>
