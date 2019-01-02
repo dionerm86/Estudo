@@ -29,7 +29,7 @@ namespace Glass.API.Backend.Helper.ContasPagar
         {
             switch (campo.ToLowerInvariant())
             {
-                case "idContaAPagar":
+                case "id":
                     return "IdContaPg";
 
                 case "referencia":

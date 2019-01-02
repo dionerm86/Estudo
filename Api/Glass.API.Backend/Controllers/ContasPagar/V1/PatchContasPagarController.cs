@@ -45,7 +45,7 @@ namespace Glass.API.Backend.Controllers.ContasPagar.V1
                         return validacao;
                     }
 
-                    var contaAPagarAtual = Data.DAL.ContasPagarDAO.Instance.GetElementByPrimaryKey(id);
+                    var contaAPagarAtual = Data.DAL.ContasPagarDAO.Instance.GetElementByPrimaryKey(sessao, id);
 
                     contaAPagarAtual = new ConverterCadastroAtualizacaoParaContasPagar(dados, contaAPagarAtual)
                         .ConverterParaContasPagar();

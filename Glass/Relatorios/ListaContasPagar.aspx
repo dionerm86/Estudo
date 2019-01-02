@@ -16,62 +16,62 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('IdContaAPagar')">
+                        <a href="#" @click.prevent="ordenar('id')">
                             Cód.
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Referencia')">
+                        <a href="#" @click.prevent="ordenar('referencia')">
                             Referência
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Fornecedor/Transportador/Funcionario')">
+                        <a href="#" @click.prevent="ordenar('fornecedor/transportador/funcionario')">
                             Fornecedor/Transportador/Func.
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Referente')">
+                        <a href="#" @click.prevent="ordenar('referente')">
                             Referente a
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('FormaPagamento')">
+                        <a href="#" @click.prevent="ordenar('formaPagamento')">
                             Forma Pagto.
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Parcelas')">
+                        <a href="#" @click.prevent="ordenar('parcelas')">
                             Parc.
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Valor')">
+                        <a href="#" @click.prevent="ordenar('valor')">
                             Valor
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Vencimento')">
+                        <a href="#" @click.prevent="ordenar('vencimento')">
                             Vencimento
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('DataCadastro')">
+                        <a href="#" @click.prevent="ordenar('dataCadastro')">
                             Data Cad.
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('BoletoChegou')">
+                        <a href="#" @click.prevent="ordenar('boletoChegou')">
                             Boleto Chegou?
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Obs')">
+                        <a href="#" @click.prevent="ordenar('obs')">
                             Obs
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('Tipo')">
+                        <a href="#" @click.prevent="ordenar('tipo')">
                             Tipo
                         </a>
                     </th>
@@ -120,7 +120,12 @@
                     </td>
                     <td>
                         {{ item.observacoes.contaAPagar }}
-                        {{ item.observacoes.desconto || item.observacoes.acrescimo }}
+                        <span v-if="item && item.observacoes && item.observacoes.desconto">
+                            {{ item.observacoes.desconto }}
+                        </span>
+                        <span v-else-if="item && item.observacoes && item.observacoes.acrescimo">
+                            {{ item.observacoes.acrescimo }}
+                        </span>
                     </td>
                     <td>
                         {{ item.contaContabil }}

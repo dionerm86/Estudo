@@ -38,7 +38,7 @@ namespace Glass.API.Backend.Controllers.ContasPagar.V1
             {
                 filtro = filtro ?? new FiltroDto();
 
-                var carregamentos = ContasPagarDAO.Instance.GetPagtos(
+                var contasAPagar = ContasPagarDAO.Instance.GetPagtos(
                     filtro.Id ?? 0,
                     (uint)(filtro.IdCompra ?? 0),
                     filtro.NumeroNotaFiscal,
@@ -76,7 +76,7 @@ namespace Glass.API.Backend.Controllers.ContasPagar.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    carregamentos.Select(c => new ListaDto(c)),
+                    contasAPagar.Select(c => new ListaDto(c)),
                     filtro,
                     () => ContasPagarDAO.Instance.GetPagtosCount(
                         filtro.Id ?? 0,

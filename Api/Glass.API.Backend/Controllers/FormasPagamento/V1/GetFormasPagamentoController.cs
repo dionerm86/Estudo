@@ -90,30 +90,6 @@ namespace Glass.API.Backend.Controllers.FormasPagamento.V1
         }
 
         /// <summary>
-        /// Recupera os planos de conta do sistema para os controles de filtro das telas.
-        /// </summary>
-        /// <param name="tipo">Tipo do plano de conta (Crédito ou débito).</param>
-        /// <returns>Uma lista JSON com as parcelas encontradas.</returns>
-        [HttpGet]
-        [Route("filtro")]
-        [SwaggerResponse(200, "Planos de conta encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Planos de conta não encontrados.")]
-        public IHttpActionResult ObterPlanosConta(Tipo tipo)
-        {
-            using (var sessao = new GDATransaction())
-            {
-                var planosConta = PlanoContasDAO.Instance.GetPlanoContas((int)tipo)
-                    .Select(p => new IdNomeDto
-                    {
-                        Id = p.IdConta,
-                        Nome = p.DescrPlanoGrupo,
-                    });
-
-                return this.Lista(planosConta);
-            }
-        }
-
-        /// <summary>
         /// Recupera a lista de formas de pagamento de compra.
         /// </summary>
         /// <returns>Uma lista JSON com os dados das formas de pagamentos de compra.</returns>

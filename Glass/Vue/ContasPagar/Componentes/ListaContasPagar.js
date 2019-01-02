@@ -32,6 +32,10 @@
       return Servicos.ContasPagar.obterLista(filtro, pagina, numeroRegistros, ordenacao);
     },
 
+    /**
+     * Exibe um relatório com dados detalhados referentes a conta a pagar.
+     * @param {boolean} exportarExcel Define se o relatório será gerado na tela ou exportado para o excel.
+     */
     abrirRelatorio: function (exportarExcel) {
       this.abrirJanela(600, 800, 'RelBase.aspx?rel=ContasPagar' + this.formatarFiltros_() + '&exportarExcel=' + exportarExcel);
     },
@@ -83,8 +87,8 @@
 
     /**
      * Indica que uma conta a pagar será editada.
-     * @param {Object} grupoMedidaProjeto O grupo de medida de projeto que será editado.
-     * @param {number} numeroLinha O número da linha que contém o processo que será editado.
+     * @param {Object} contaAPagar A conta a pagar que será editada.
+     * @param {number} numeroLinha O número da linha que contém a conta a pagar que será editada.
      */
     editar: function (contaAPagar, numeroLinha) {
       this.iniciarCadastroOuAtualizacao_(contaAPagar);
@@ -177,6 +181,10 @@
   },
 
   watch: {
+    /**
+     * Observador para a variável 'formaPagamentoAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
     formaPagamentoAtual: {
       handler: function (atual) {
         this.contaAPagar.idFormaPagamento = atual ? atual.id : null;
@@ -184,6 +192,10 @@
       deep: true
     },
 
+    /**
+     * Observador para a variável 'planoContaAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
     planoContaAtual: {
       handler: function (atual) {
         this.contaAPagar.idPlanoConta = atual ? atual.id : null;
