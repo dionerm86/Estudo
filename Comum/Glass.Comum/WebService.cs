@@ -151,11 +151,21 @@ namespace Glass
                 client.Login(idCliente.ToString() + "|cliente");
 
                 if (methodName == "CancelarPedido")
+                {
                     return client.CancelarPedido((string)args[0], (int)args[1], (int)args[2]);
+                }
+                else if (methodName == "MarcarPedidoPronto")
+                {
+                    return new string[] { };
+                }
                 else if (methodName == "VerificarExportacaoPedidos")
+                {
                     return client.VerificarExportacaoPedidos((string)args[0], (int)args[1], (byte[])args[2]);
+                }
                 else
+                {
                     return client.EnviarPedidosFornecedor((string)args[0], (int)args[1], (byte[])args[2]);
+                }
             }
             catch (Exception ex)
             {
