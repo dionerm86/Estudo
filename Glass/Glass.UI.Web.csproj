@@ -494,6 +494,9 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\ContasPagar\Componentes\ListaContasPagar.Filtro.js" />
+    <Content Include="Vue\ContasPagar\Componentes\ListaContasPagar.js" />
+    <Content Include="Vue\ContasPagar\Templates\ListaContasPagar.Filtro.html" />
     <Content Include="Vue\ConhecimentosTransporte\Veiculos\Proprietarios\Componentes\ListaProprietariosVeiculo.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.Filtro.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.js" />
@@ -501,6 +504,9 @@
     <Content Include="Vue\Estoques\Movimentacoes\Fiscais\Componentes\ListaMovimentacoesEstoqueFiscal.Filtro.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Fiscais\Componentes\ListaMovimentacoesEstoqueFiscal.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Fiscais\Templates\ListaMovimentacoesEstoqueFiscal.Filtro.html" />
+    <Content Include="Vue\Compras\Componentes\LstCompras.Filtro.js" />
+    <Content Include="Vue\Compras\Componentes\LstCompras.js" />
+    <Content Include="Vue\Compras\Templates\LstCompras.Filtro.html" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.Filtro.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Templates\ListaMovimentacoesEstoqueReal.Filtro.html" />
@@ -1868,6 +1874,8 @@
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Carregamentos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Compras.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\ContasPagar.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ConhecimentosTransporte.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ImpressoesEtiquetas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Pagamentos.js" />
