@@ -254,6 +254,10 @@
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Fiscais\GetMovimentacoesEstoqueFiscalController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Fiscais\MovimentacoesEstoqueFiscalController.cs" />
     <Compile Include="Controllers\Estoques\V1\Movimentacoes\Fiscais\PostMovimentacoesEstoqueFiscalController.cs" />
+    <Compile Include="Controllers\Compras\V1\ComprasController.cs" />
+    <Compile Include="Controllers\Compras\V1\DeleteComprasController.cs" />
+    <Compile Include="Controllers\Compras\V1\GetComprasController.cs" />
+    <Compile Include="Controllers\Compras\V1\PostComprasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\ContasPagarController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\GetContasPagarController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\PatchContasPagarController.cs" />
@@ -262,6 +266,7 @@
     <Compile Include="Helper\Estoques\Movimentacoes\Fiscais\TraducaoOrdenacaoMovimentacoesEstoqueFiscal.cs" />
     <Compile Include="Controllers\Pagamentos\V1\GetPagamentosController.cs" />
     <Compile Include="Controllers\Pagamentos\V1\PagamentosController.cs" />
+    <Compile Include="Helper\Compras\TraducaoOrdenacaoListaCompras.cs" />
     <Compile Include="Helper\ContasPagar\ConverterCadastroAtualizacaoParaContasPagar.cs" />
     <Compile Include="Helper\ContasPagar\TraducaoOrdenacaoListaContasPagar.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
@@ -278,6 +283,11 @@
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\SituacoesOrdemCarga\SituacoesOrdemCarga.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\TiposOrdemCarga\TiposOrdemCarga.cs" />
     <Compile Include="Helper\Pagamentos\TraducaoOrdenacaoListaPagamentos.cs" />
+    <Compile Include="Models\Compras\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Compras\V1\Lista\DatasDto.cs" />
+    <Compile Include="Models\Compras\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Compras\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Compras\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ContasPagar\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\ContasPagar\V1\Lista\DatasDto.cs" />
     <Compile Include="Models\ContasPagar\V1\Lista\FiltroDto.cs" />
