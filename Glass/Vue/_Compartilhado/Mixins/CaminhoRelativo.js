@@ -9,7 +9,6 @@ Vue.mixin({
      * @returns {string} A URL com o caminho relativo.
      */
     caminhoRelativo: function (url) {
-      debugger;
       if (!url) {
         throw new Error('URL é obrigatória para o cálculo do caminho relativo.');
       }
