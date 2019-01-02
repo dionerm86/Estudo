@@ -147,7 +147,7 @@
       this.contaAPagarAtual = contaAPagar;
 
       this.contaAPagar = {
-        idPlanoConta: null,
+        idPlanoConta: contaAPagar ? contaAPagar.idPlanoConta : null,
         idFormaPagamento: contaAPagar ? contaAPagar.formaPagamento.id : null,
         dataVencimento: contaAPagar ? contaAPagar.datas.vencimento : null,
         observacao: contaAPagar ? contaAPagar.observacoes.contaAPagar : null,

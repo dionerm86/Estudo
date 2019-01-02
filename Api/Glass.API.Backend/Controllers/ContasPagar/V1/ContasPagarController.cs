@@ -33,7 +33,7 @@ namespace Glass.API.Backend.Controllers.ContasPagar.V1
                 return this.NaoEncontrado("Conta a pagar não encontrada.");
             }
 
-            return null;
+            return validacao;
         }
     }
 }

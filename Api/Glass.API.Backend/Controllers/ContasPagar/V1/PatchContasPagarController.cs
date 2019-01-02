@@ -52,6 +52,9 @@ namespace Glass.API.Backend.Controllers.ContasPagar.V1
 
                     ContasPagarDAO.Instance.Update(sessao, contaAPagarAtual);
 
+                    sessao.Commit();
+                    sessao.Close();
+
                     return this.Aceito("Conta a pagar atualizada com sucesso!");
                 }
                 catch (Exception ex)

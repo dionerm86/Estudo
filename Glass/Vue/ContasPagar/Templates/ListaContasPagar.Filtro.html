@@ -93,14 +93,8 @@
     </div>
     <div>
         <span class="form-group">
-            <label>Transportadora</label>
-            <lista-selecao-id-valor :item-selecionado.sync="formaPagamentoAtual"
-                :funcao-recuperar-itens="obterTransportadoras"></lista-selecao-id-valor>
-            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>
-        <span class="form-group">
             <label>Forma Pagto.</label>
-            <lista-selecao-multipla :ids-selecionados.sync="filtroAtual.idsFormaPagamento"
+            <lista-selecao-multipla :ids-selecionados.sync="formaPagamentoAtual"
                 :funcao-recuperar-itens="obterFormasPagamentoCompras"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>

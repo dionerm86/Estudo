@@ -32,7 +32,6 @@ namespace Glass.API.Backend.Controllers.ContasPagar.V1
         [SwaggerResponse(200, "Contas a pagar encontradas sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<ListaDto>))]
         [SwaggerResponse(204, "Contas a pagar não encontradas.")]
         [SwaggerResponse(206, "Contas a pagar paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<ListaDto>))]
-        [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
         public IHttpActionResult ObterListaContasPagar([FromUri] FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())

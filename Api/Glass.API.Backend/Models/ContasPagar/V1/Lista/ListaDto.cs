@@ -47,7 +47,7 @@ namespace Glass.API.Backend.Models.ContasPagar.V1.Lista
             this.FormaPagamento = new IdNomeDto
             {
                 Id = (int)(contaPagar.IdFormaPagto ?? 0),
-                Nome = contaPagar.DescrFormaPagto,
+                Nome = contaPagar.FormaPagtoCompra,
             };
 
             this.Parcela = new ParcelasDto
@@ -64,7 +64,7 @@ namespace Glass.API.Backend.Models.ContasPagar.V1.Lista
 
             this.Observacoes = new ObservacoesDto
             {
-                ContaAPagar = contaPagar.DescrContaPagar,
+                ContaAPagar = contaPagar.Obs,
                 Desconto = contaPagar.ObsDescAcresc,
                 Acrescimo = contaPagar.ObsDescAcresc,
             };
@@ -74,7 +74,7 @@ namespace Glass.API.Backend.Models.ContasPagar.V1.Lista
             {
                 Editar = contaPagar.EditVisible,
                 EditarDataVencimento = Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.EditarDataVencimentoContaPagar),
-                LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.ContaPagar, contaPagar.IdPagto ?? 0, null),
+                LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.ContaPagar, contaPagar.IdContaPg, null),
             };
         }
 
