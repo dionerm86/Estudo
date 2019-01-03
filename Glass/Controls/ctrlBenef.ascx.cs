@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Collections;
 using System.Data;
 using System.Web.UI;
@@ -64,10 +64,10 @@ namespace Glass.UI.Web.Controls
     
         #endregion
     
-        #region M√©todos dos controles
+        #region MÈtodos dos controles
     
         /// <summary>
-        /// Retorna os controles do bisot√™.
+        /// Retorna os controles do bisotÍ.
         /// </summary>
         /// <returns></returns>
         private WebControl[] GetControlsBisote(BenefConfig benef, string prefixo)
@@ -85,7 +85,7 @@ namespace Glass.UI.Web.Controls
             txtEspessura.Enabled = !_bloquearBeneficiamentos;
             txtEspessura.EnableViewState = this.EnableViewState;
     
-            // Cria o CustomValidator para a espessura do bisot√™
+            // Cria o CustomValidator para a espessura do bisotÍ
             CustomValidator ctvEspessura = new CustomValidator();
             ctvEspessura.ID = prefixo + "ctvEspessura";
             ctvEspessura.ClientValidationFunction = "validaEspessuraBisote";
@@ -95,13 +95,13 @@ namespace Glass.UI.Web.Controls
             ctvEspessura.ValidateEmptyText = true;
             ctvEspessura.ValidationGroup = vsuSumario.ValidationGroup;
     
-            // Recupera os controles da lapida√ß√£o
+            // Recupera os controles da lapidaÁ„o
             WebControl[] lapidacao = GetControlsLapidacao(benef, prefixo);
     
             // Cria o vetor de retorno
             WebControl[] retorno = new WebControl[lapidacao.Length + 3];
     
-            // Adiciona os controles da lapida√ß√£o ao vetor
+            // Adiciona os controles da lapidaÁ„o ao vetor
             for (int i = 0; i < lapidacao.Length; i++)
                 retorno[i] = lapidacao[i];
     
@@ -115,7 +115,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna os controles da lapida√ß√£o.
+        /// Retorna os controles da lapidaÁ„o.
         /// </summary>
         /// <returns></returns>
         private WebControl[] GetControlsLapidacao(BenefConfig benef, string prefixo)
@@ -138,13 +138,13 @@ namespace Glass.UI.Web.Controls
             drpLargura.Enabled = !_bloquearBeneficiamentos;
             drpLargura.EnableViewState = this.EnableViewState;
     
-            // Recupera os controles da lista de sele√ß√£o
+            // Recupera os controles da lista de seleÁ„o
             WebControl[] listaSelecao = GetControlsListaSelecao(benef, prefixo, true);
     
             // Cria o vetor de retorno
             WebControl[] retorno = new WebControl[listaSelecao.Length + 2];
     
-            // Adiciona os controles da lista de sele√ß√£o ao vetor
+            // Adiciona os controles da lista de seleÁ„o ao vetor
             for (int i = 0; i < listaSelecao.Length; i++)
                 retorno[i] = listaSelecao[i];
     
@@ -157,7 +157,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna os controles da lista de sele√ß√£o.
+        /// Retorna os controles da lista de seleÁ„o.
         /// </summary>
         /// <returns></returns>
         private WebControl[] GetControlsListaSelecao(BenefConfig benef, string prefixo, bool addVazio)
@@ -176,12 +176,12 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna os controles da lista de sele√ß√£o e quantidade.
+        /// Retorna os controles da lista de seleÁ„o e quantidade.
         /// </summary>
         /// <returns></returns>
         private WebControl[] GetControlsListaSelecaoQtd(BenefConfig benef, string prefixo)
         {
-            // Recupera os controles de lista de sele√ß√£o e de quantidade
+            // Recupera os controles de lista de seleÁ„o e de quantidade
             WebControl[] listaSelecao = GetControlsListaSelecao(benef, prefixo, false);
             WebControl[] quantidade = GetControlsQuantidade(benef, prefixo);
             
@@ -278,12 +278,12 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna os controles da sele√ß√£o m√∫ltipla exclusiva.
+        /// Retorna os controles da seleÁ„o m˙ltipla exclusiva.
         /// </summary>
         /// <returns></returns>
         private WebControl[] GetControlsSelecaoMultiplaExclusiva(BenefConfig benef, string prefixo)
         {
-            // Recupera os controles da lista de sele√ß√£o inclusiva
+            // Recupera os controles da lista de seleÁ„o inclusiva
             WebControl[] selecaoMultiplaExclusiva = GetControlsSelecaoMultiplaInclusiva(benef, prefixo);
     
             // Adiciona um JavaScript para fazer com que apenas um controle seja marcado de cada vez
@@ -295,7 +295,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna os controles da sele√ß√£o m√∫ltipla inclusiva.
+        /// Retorna os controles da seleÁ„o m˙ltipla inclusiva.
         /// </summary>
         /// <returns></returns>
         private WebControl[] GetControlsSelecaoMultiplaInclusiva(BenefConfig benef, string prefixo)
@@ -324,7 +324,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna os controels da sele√ß√£o simples.
+        /// Retorna os controels da seleÁ„o simples.
         /// </summary>
         /// <returns></returns>
         private WebControl[] GetControlsSelecaoSimples(BenefConfig benef, string prefixo)
@@ -343,10 +343,10 @@ namespace Glass.UI.Web.Controls
     
         #endregion
     
-        #region M√©todos de suporte
+        #region MÈtodos de suporte
     
         /// <summary>
-        /// Indica se o browser que exibe o controle √© o Chrome.
+        /// Indica se o browser que exibe o controle È o Chrome.
         /// </summary>
         /// <returns></returns>
         private bool IsChrome()
@@ -377,13 +377,13 @@ namespace Glass.UI.Web.Controls
                 "TipoCalculo: {2}, " +
                 "TipoEspessura: 0";
     
-            // Vari√°vel de retorno
+            // Vari·vel de retorno
             StringBuilder retorno = new StringBuilder();
     
             // Cria um objeto no retorno para cada item vazio
             foreach (KeyValuePair<int, KeyValuePair<int, int>> item in itensNenhum)
             {
-                // Vari√°vel com os dados usados para formatar a string
+                // Vari·vel com os dados usados para formatar a string
                 object[] dadosFormato = new object[3];
                 dadosFormato[0] = item.Key;
                 dadosFormato[1] = item.Value.Key;
@@ -396,16 +396,16 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Formata um controle da p√°gina.
+        /// Formata um controle da p·gina.
         /// </summary>
-        /// <param name="campo">O controle da p√°gina.</param>
+        /// <param name="campo">O controle da p·gina.</param>
         private void FormatControl(Control campo)
         {
-            // Garante que o campo seja v√°lido
+            // Garante que o campo seja v·lido
             if (campo == null || !(campo is WebControl))
                 return;
     
-            // String com o atributo que ser√° alterado
+            // String com o atributo que ser· alterado
             string atributo;
             if (campo is DropDownList)
                 atributo = "OnChange";
@@ -414,47 +414,47 @@ namespace Glass.UI.Web.Controls
             else
                 atributo = "OnBlur";
     
-            // String com a fun√ß√£o que ser√° executada
+            // String com a funÁ„o que ser· executada
             string funcao = "";
     
-            // Verifica se o controle j√° possui uma fun√ß√£o atribu√≠da ao evento OnBlur
+            // Verifica se o controle j· possui uma funÁ„o atribuÌda ao evento OnBlur
             if (!String.IsNullOrEmpty(((WebControl)campo).Attributes[atributo]))
             {
-                // Recupera a fun√ß√£o do controle
+                // Recupera a funÁ„o do controle
                 funcao = ((WebControl)campo).Attributes[atributo];
     
-                // Verifica se a fun√ß√£o desejada j√° est√° no controle
+                // Verifica se a funÁ„o desejada j· est· no controle
                 if (funcao.IndexOf(GetFuncaoCalculo(null)) > -1)
                     return;
     
-                // Coloca a fun√ß√£o de c√°lculo junto √† fun√ß√£o original
+                // Coloca a funÁ„o de c·lculo junto ‡ funÁ„o original
                 if (funcao.IndexOf("return") > -1)
                     funcao = funcao.Replace("return", GetFuncaoCalculo(null) + "; return");
                 else
                     funcao += "; " + GetFuncaoCalculo(null);
             }
     
-            // Indica que apenas essa fun√ß√£o ser√° executada
+            // Indica que apenas essa funÁ„o ser· executada
             else
                 funcao = GetFuncaoCalculo(null);
     
-            // Atribui a fun√ß√£o ao controle
+            // Atribui a funÁ„o ao controle
             if (((WebControl)campo).Attributes[atributo] == null || !((WebControl)campo).Attributes[atributo].Contains(funcao))
                 ((WebControl)campo).Attributes[atributo] = funcao;
         }
     
         /// <summary>
-        /// Retorna o ClientID de um controle da p√°gina.
+        /// Retorna o ClientID de um controle da p·gina.
         /// </summary>
-        /// <param name="campo">O controle da p√°gina.</param>
+        /// <param name="campo">O controle da p·gina.</param>
         /// <returns>Uma string com o ClientID do controle.</returns>
         private string GetControlID(Control campo)
         {
-            // Garante que o campo seja v√°lido
+            // Garante que o campo seja v·lido
             if (campo == null)
                 return "";
     
-            // Retorna o identificador do campo na p√°gina cliente
+            // Retorna o identificador do campo na p·gina cliente
             return campo.ClientID;
         }
     
@@ -466,27 +466,27 @@ namespace Glass.UI.Web.Controls
         private string PrefixoControles(BenefConfig benef)
         {
             // Retorna uma string com o nome do beneficiamento formatado
-            return benef.Nome.Trim().Replace(" ", "_").Replace("¬≤", "2") + "_";
+            return benef.Nome.Trim().Replace(" ", "_").Replace("≤", "2") + "_";
         }
     
         /// <summary>
-        /// Cria os beneficiamentos nas c√©lulas.
+        /// Cria os beneficiamentos nas cÈlulas.
         /// </summary>
-        /// <param name="cabecalho">A c√©lula do cabe√ßalho.</param>
-        /// <param name="controles">A c√©lula dos controles.</param>
+        /// <param name="cabecalho">A cÈlula do cabeÁalho.</param>
+        /// <param name="controles">A cÈlula dos controles.</param>
         /// <param name="benef">O beneficiamento.</param>
         private void CreateBenef(TableCell cabecalho, TableCell controles, BenefConfig benef)
         {
-            // Cria um Label com o nome do beneficiamento para o cabe√ßalho
+            // Cria um Label com o nome do beneficiamento para o cabeÁalho
             Label lblNome = new Label();
             lblNome.ID = PrefixoControles(benef) + "lblNome";
             lblNome.Text = benef.Nome;
             cabecalho.Controls.Add(lblNome);
     
-            // Verifica se a cobran√ßa √© opcional
+            // Verifica se a cobranÁa È opcional
             if (benef.CobrancaOpcional)
             {
-                // Cria um CheckBox para a cobran√ßa opcional
+                // Cria um CheckBox para a cobranÁa opcional
                 CheckBox chkOpcional = new CheckBox();
                 chkOpcional.ID = PrefixoControles(benef) + "chkOpcional";
                 chkOpcional.Text = "Cobrar?";
@@ -504,23 +504,23 @@ namespace Glass.UI.Web.Controls
                 cabecalho.Controls.Add(chkOpcional);
             }
     
-            // Indica na c√©lula do cabe√ßalho se a cobran√ßa √© opcional
+            // Indica na cÈlula do cabeÁalho se a cobranÁa È opcional
             cabecalho.Attributes.Add("Opcional", benef.CobrancaOpcional.ToString().ToLower());
     
-            // Formata a c√©lula do cabe√ßalho
+            // Formata a cÈlula do cabeÁalho
             cabecalho.Style.Add("White-space", "nowrap");
             cabecalho.Style.Add("Padding", "3px");
             if (!String.IsNullOrEmpty(_cssClassCabecalho))
                 cabecalho.CssClass = _cssClassCabecalho;
     
-            // Indica na c√©lula dos controles o ID do beneficiamento
+            // Indica na cÈlula dos controles o ID do beneficiamento
             controles.Attributes.Add("IdBeneficiamento", benef.IdBenefConfig.ToString());
     
-            // Formata a c√©lula dos controles
+            // Formata a cÈlula dos controles
             controles.Style.Add("White-space", "nowrap");
             controles.Style.Add("Padding-right", "4px");
     
-            // Adiciona os controles √† c√©lula
+            // Adiciona os controles ‡ cÈlula
             foreach (Control c in GetControls(benef))
                 controles.Controls.Add(c);
     
@@ -529,7 +529,7 @@ namespace Glass.UI.Web.Controls
             hdfIdBenefAplicado.ID = PrefixoControles(benef) + "hdfIdBenefAplicado";
             hdfIdBenefAplicado.Value = "0";
     
-            // Cria o HiddenField com o valor unit√°rio do beneficiamento
+            // Cria o HiddenField com o valor unit·rio do beneficiamento
             HiddenField hdfValorUnit = new HiddenField();
             hdfValorUnit.ID = PrefixoControles(benef) + "hdfValorUnit1";
             hdfValorUnit.Value = "0";
@@ -544,25 +544,25 @@ namespace Glass.UI.Web.Controls
             hdfCusto.ID = PrefixoControles(benef) + "hdfCusto1";
             hdfCusto.Value = "0";
     
-            // Cria o HiddenField com a descri√ß√£o do beneficiamento
+            // Cria o HiddenField com a descriÁ„o do beneficiamento
             HiddenField hdfDescricao = new HiddenField();
             hdfDescricao.ID = PrefixoControles(benef) + "hdfDescricao";
     
-            // Cria o HiddenField com os dados do servi√ßo
+            // Cria o HiddenField com os dados do serviÁo
             HiddenField hdfInfo = new HiddenField();
             hdfInfo.ID = PrefixoControles(benef) + "hdfInfo";
     
-            // Cria o HiddenField que indica se o beneficiamento √© padr√£o do produto
+            // Cria o HiddenField que indica se o beneficiamento È padr„o do produto
             HiddenField hdfBenefPadrao = new HiddenField();
             hdfBenefPadrao.ID = PrefixoControles(benef) + "hdfBenefPadrao";
             hdfBenefPadrao.Value = "false";
     
-            // Cria o HiddenField que indica se o beneficiamento √© associado
+            // Cria o HiddenField que indica se o beneficiamento È associado
             HiddenField hdfNaoCobrarBenef = new HiddenField();
             hdfNaoCobrarBenef.ID = PrefixoControles(benef) + "hdfNaoCobrarBenef";
             hdfNaoCobrarBenef.Value = "false";
     
-            // Adiciona os HiddenFields √† c√©lula de controles
+            // Adiciona os HiddenFields ‡ cÈlula de controles
             controles.Controls.Add(hdfIdBenefAplicado);
             controles.Controls.Add(hdfValorUnit);
             controles.Controls.Add(hdfValor);
@@ -575,13 +575,13 @@ namespace Glass.UI.Web.Controls
             // Se o tipo de controle do beneficiamento for SelecaoMultiplaInclusiva
             if (benef.TipoControle == TipoControleBenef.SelecaoMultiplaInclusiva)
             {
-                // Lista com os campos que ser√£o criados
+                // Lista com os campos que ser„o criados
                 List<HiddenField> valoresCustos = new List<HiddenField>();
     
-                // Cria um controle de valor e custo para cada controle de sele√ß√£o
+                // Cria um controle de valor e custo para cada controle de seleÁ„o
                 for (int i = 1; i < benef.NumChild; i++)
                 {
-                    // Cria o HiddenField de valor unit√°rio
+                    // Cria o HiddenField de valor unit·rio
                     HiddenField hdfNovoValorUnit = new HiddenField();
                     hdfNovoValorUnit.ID = PrefixoControles(benef) + "hdfValorUnit" + (i + 1);
                     hdfNovoValorUnit.Value = "0";
@@ -596,11 +596,11 @@ namespace Glass.UI.Web.Controls
                     hdfNovoCusto.ID = PrefixoControles(benef) + "hdfCusto" + (i + 1);
                     hdfNovoCusto.Value = "0";
     
-                    // Adiciona os controles √† lista
+                    // Adiciona os controles ‡ lista
                     valoresCustos.AddRange(new HiddenField[] { hdfNovoValorUnit, hdfNovoValor, hdfNovoCusto });
                 }
     
-                // Adiciona os controles da lista √† c√©lula de controles
+                // Adiciona os controles da lista ‡ cÈlula de controles
                 foreach (HiddenField h in valoresCustos)
                     controles.Controls.Add(h);
             }
@@ -609,11 +609,11 @@ namespace Glass.UI.Web.Controls
         /// <summary>
         /// Retorna a lista de controles do beneficiamento.
         /// </summary>
-        /// <param name="benef">O beneficiamento que ser√° criado.</param>
+        /// <param name="benef">O beneficiamento que ser· criado.</param>
         /// <returns>Um vetor com os controles do beneficiamento.</returns>
         private Control[] GetControls(BenefConfig benef)
         {
-            // Vari√°vel de retorno
+            // Vari·vel de retorno
             List<Control> retorno = new List<Control>();
             string prefixo = PrefixoControles(benef);
     
@@ -659,7 +659,7 @@ namespace Glass.UI.Web.Controls
     
             if (_exibirValorBeneficiamento)
             {
-                // Cria o SPAN que cont√©m o valor
+                // Cria o SPAN que contÈm o valor
                 var span = new HtmlGenericControl("span");
                 span.Style.Add("float", "right");
                 if (!IsChrome()) span.Style.Add("Position", "relative");
@@ -668,7 +668,7 @@ namespace Glass.UI.Web.Controls
                 span.Style.Add("Padding-left", "5px");
                 span.Style.Add("Text-align", "right");
     
-                // Cria os label com a descri√ß√£o do beneficiamento
+                // Cria os label com a descriÁ„o do beneficiamento
                 var lblValorBenef = new Label();
                 lblValorBenef.ID = prefixo + "lblTituloValorBenef";
                 lblValorBenef.Text = "&nbsp;Valor " + benef.DescrTipoCalculo + (benef.TipoCalculo != TipoCalculoBenef.Porcentagem ? " R$&nbsp;" : " ");
@@ -686,7 +686,7 @@ namespace Glass.UI.Web.Controls
                 span.Controls.Add(lblValorBenef);
                 span.Controls.Add(txtValorBenef);
     
-                // Adiciona o SPAN √† lista
+                // Adiciona o SPAN ‡ lista
                 retorno.Add(span);
             }
     
@@ -721,20 +721,20 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Cria uma liga√ß√£o com o banco de dados no DropDownList.
+        /// Cria uma ligaÁ„o com o banco de dados no DropDownList.
         /// </summary>
         /// <param name="benef">O beneficiamento pai.</param>
-        /// <param name="controle">O controle que ser√° ligado.</param>
-        /// <param name="addVazio">Deve ser adicionado um item vazio no come√ßo da lista?</param>
+        /// <param name="controle">O controle que ser· ligado.</param>
+        /// <param name="addVazio">Deve ser adicionado um item vazio no comeÁo da lista?</param>
         private void SetDropDownListData(BenefConfig benef, DropDownList controle, bool addVazio)
         {
             // Limpa os itens do controle
             controle.Items.Clear();
     
-            // Verifica se ser√° adicionado um item vazio √† lista
+            // Verifica se ser· adicionado um item vazio ‡ lista
             if (addVazio)
             {
-                // Adiciona um item √† lista de itens vazios
+                // Adiciona um item ‡ lista de itens vazios
                 itensNenhum.Add(new KeyValuePair<int,KeyValuePair<int,int>>(-(itensNenhum.Count + 1), new KeyValuePair<int,int>((int)benef.TipoControle, (int)benef.TipoCalculo)));
                 
                 // Cria o item vazio
@@ -752,10 +752,10 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Muda algumas configura√ß√µes do controle para que ele fique padronizado.
+        /// Muda algumas configuraÁıes do controle para que ele fique padronizado.
         /// </summary>
-        /// <param name="benef">O beneficiamento que ser√° criado.</param>
-        /// <param name="controles">O controle que ser√° alterado.</param>
+        /// <param name="benef">O beneficiamento que ser· criado.</param>
+        /// <param name="controles">O controle que ser· alterado.</param>
         private void SetControlsParameters(BenefConfig benef, IEnumerable<Control> controles)
         {
             // Altera todos os controles
@@ -764,24 +764,24 @@ namespace Glass.UI.Web.Controls
                 if (!(c is WebControl))
                     continue;
     
-                // Se o controle n√£o for um ImageButton ou um Table adiciona um espa√ßo √† sua esquerda
+                // Se o controle n„o for um ImageButton ou um Table adiciona um espaÁo ‡ sua esquerda
                 if (!(c is ImageButton) && !(c is Table))
                     ((WebControl)c).Style.Add("margin-left", "3px");
     
-                // Se o controle n√£o for um CheckBox ou um ImageButton
+                // Se o controle n„o for um CheckBox ou um ImageButton
                 if (!(c is CheckBox) && !(c is ImageButton))
                 {
-                    // Se n√£o for um Table
+                    // Se n„o for um Table
                     if (!(c is Table))
                         ((WebControl)c).Attributes.Add("OnChange", GetFuncaoCalculo(benef));
     
-                    // Altera os controles que est√£o dentro da tabela
+                    // Altera os controles que est„o dentro da tabela
                     else
                     {
                         foreach (TableRow linha in ((Table)c).Rows)
                             foreach (TableCell celula in linha.Cells)
                             {
-                                // Procura todos os controles que dever√£o ser mudados
+                                // Procura todos os controles que dever„o ser mudados
                                 List<WebControl> controlesMudar = new List<WebControl>();
                                 foreach (Control control in celula.Controls)
                                     if (control is WebControl)
@@ -796,13 +796,13 @@ namespace Glass.UI.Web.Controls
                 {
                     string onClick = "";
     
-                    // Verifica se o controle √© um ImageButton e se possui a propriedade OnClientClick com algum valor
+                    // Verifica se o controle È um ImageButton e se possui a propriedade OnClientClick com algum valor
                     if (c is ImageButton && !String.IsNullOrEmpty(((ImageButton)c).OnClientClick))
                     {
                         // Recupera o valor da propriedade
                         onClick = ((ImageButton)c).OnClientClick;
     
-                        // Inclui a fun√ß√£o no controle
+                        // Inclui a funÁ„o no controle
                         if (onClick.ToLower().IndexOf("return") > -1)
                             onClick = onClick.Replace("return", GetFuncaoCalculo(benef) + "; return");
                         else
@@ -812,7 +812,7 @@ namespace Glass.UI.Web.Controls
                     }
                     else
                     {
-                        // Verifica se o controle j√° possui uma fun√ß√£o OnClick
+                        // Verifica se o controle j· possui uma funÁ„o OnClick
                         if (!String.IsNullOrEmpty(((WebControl)c).Attributes["OnClick"]))
                             onClick = ((WebControl)c).Attributes["OnClick"] + "; ";
     
@@ -823,9 +823,9 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna o texto da fun√ß√£o de c√°lculo JavaScript.
-        /// Se um beneficiamento for passado o retorno ser√° o c√°lculo para esse beneficiamento.
-        /// Sen√£o, ser√° um c√°lculo para todos os beneficiamentos.
+        /// Retorna o texto da funÁ„o de c·lculo JavaScript.
+        /// Se um beneficiamento for passado o retorno ser· o c·lculo para esse beneficiamento.
+        /// Sen„o, ser· um c·lculo para todos os beneficiamentos.
         /// </summary>
         /// <returns></returns>
         private string GetFuncaoCalculo(BenefConfig benef)
@@ -833,7 +833,7 @@ namespace Glass.UI.Web.Controls
             // Recupera o prefixo da tabela
             string prefixoTabela = this.ClientID + "_";
             
-            // Se h√° um beneficiamento retorna a fun√ß√£o para o c√°lculo dele
+            // Se h· um beneficiamento retorna a funÁ„o para o c·lculo dele
             if (benef != null)
             {
                 string prefixoItem = prefixoTabela + PrefixoControles(benef);
@@ -842,16 +842,16 @@ namespace Glass.UI.Web.Controls
                     _callbackCalculoValorTotal + "', '" + _callbackSelecaoItem + "')";
             }
     
-            // Retorna a fun√ß√£o para o c√°lculo de todos os beneficiamentos
+            // Retorna a funÁ„o para o c·lculo de todos os beneficiamentos
             else
                 return "calculaTodos('" + prefixoTabela + "')";
         }
     
         /// <summary>
-        /// Retorna o texto da vari√°vel de configura√ß√£o dos beneficiamentos.
+        /// Retorna o texto da vari·vel de configuraÁ„o dos beneficiamentos.
         /// </summary>
-        /// <param name="calculaveis">Os itens retornados devem ser os calcul√°veis?</param>
-        /// <returns>Uma string com a vari√°vel para ser usada no JavaScript.</returns>
+        /// <param name="calculaveis">Os itens retornados devem ser os calcul·veis?</param>
+        /// <returns>Uma string com a vari·vel para ser usada no JavaScript.</returns>
         private string GetConfig(bool calculaveis)
         {
             // Recupera a lista de beneficiamentos usados para gerar o retorno
@@ -882,14 +882,14 @@ namespace Glass.UI.Web.Controls
             if (!calculaveis)
                 formato += ", CobrarAreaMinima: {19}";
     
-            // Vari√°vel de retorno
+            // Vari·vel de retorno
             StringBuilder retorno = new StringBuilder();
             List<BenefConfigPreco> precos = new List<BenefConfigPreco>(BenefConfigPrecoDAO.Instance.GetByIdBenefConfig(0));
     
             // Percorre cada beneficiamento da lista
             foreach (BenefConfig b in benef)
             {
-                // Vari√°vel com os dados usados para formatar a string
+                // Vari·vel com os dados usados para formatar a string
                 object[] dadosFormato = new object[20];
     
                 List<BenefConfigPreco> precosBenef = precos.FindAll(new Predicate<BenefConfigPreco>(
@@ -959,9 +959,9 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna o texto da vari√°vel de beneficiamentos associados.
+        /// Retorna o texto da vari·vel de beneficiamentos associados.
         /// </summary>
-        /// <returns>Uma string com a vari√°vel para ser usada no JavaScript.</returns>
+        /// <returns>Uma string com a vari·vel para ser usada no JavaScript.</returns>
         private string GetConfigAssoc()
         {
             // Recupera a lista de beneficiamentos usados para gerar o retorno
@@ -981,13 +981,13 @@ namespace Glass.UI.Web.Controls
                 "QtdeBenef: {9}, " +
                 "PrefixoBenefAssoc: '{10}'";
     
-            // Vari√°vel de retorno
+            // Vari·vel de retorno
             StringBuilder retorno = new StringBuilder();
     
             // Percorre cada beneficiamento da lista
             foreach (BenefConfigAssoc b in benefAssoc)
             {
-                // Vari√°vel com os dados usados para formatar a string
+                // Vari·vel com os dados usados para formatar a string
                 object[] dadosFormato = new object[11];
                 dadosFormato[0] = b.IdBenefConfig;
                 dadosFormato[1] = b.IdBenefConfigAssoc;
@@ -1011,14 +1011,14 @@ namespace Glass.UI.Web.Controls
     
         #endregion
     
-        #region Gera√ß√£o e recupera√ß√£o dos beneficiamentos
+        #region GeraÁ„o e recuperaÁ„o dos beneficiamentos
     
-        #region M√©todos de recupera√ß√£o do identificador do beneficiamento
+        #region MÈtodos de recuperaÁ„o do identificador do beneficiamento
     
         /// <summary>
         /// Retorna o identificador do beneficiamento de um controle.
         /// </summary>
-        /// <param name="controle">O controle que ser√° pesquisado.</param>
+        /// <param name="controle">O controle que ser· pesquisado.</param>
         /// <returns></returns>
         private uint GetBenefID(WebControl controle)
         {
@@ -1027,7 +1027,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna o identificador do beneficiamento aplicado da c√©lula.
+        /// Retorna o identificador do beneficiamento aplicado da cÈlula.
         /// </summary>
         /// <param name="idBenefConfig"></param>
         /// <returns></returns>
@@ -1063,10 +1063,10 @@ namespace Glass.UI.Web.Controls
     
         #endregion
     
-        #region Recupera√ß√£o dos controles
+        #region RecuperaÁ„o dos controles
     
         /// <summary>
-        /// Recupera o controle de indica√ß√£o da aplica√ß√£o do beneficiamento.
+        /// Recupera o controle de indicaÁ„o da aplicaÁ„o do beneficiamento.
         /// </summary>
         /// <param name="prefixo"></param>
         /// <param name="celula"></param>
@@ -1077,7 +1077,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Recupera o controle que indica se o beneficiamento √© padr√£o.
+        /// Recupera o controle que indica se o beneficiamento È padr„o.
         /// </summary>
         /// <param name="prefixo"></param>
         /// <param name="celula"></param>
@@ -1088,7 +1088,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Recupera o controle do valor unit√°rio do beneficiamento.
+        /// Recupera o controle do valor unit·rio do beneficiamento.
         /// </summary>
         /// <param name="prefixo"></param>
         /// <param name="celula"></param>
@@ -1154,7 +1154,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna o controle de espessura do bisot√™.
+        /// Retorna o controle de espessura do bisotÍ.
         /// </summary>
         /// <param name="prefixo"></param>
         /// <param name="celula"></param>
@@ -1176,7 +1176,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna os controles de sele√ß√£o m√∫ltipla.
+        /// Retorna os controles de seleÁ„o m˙ltipla.
         /// </summary>
         /// <param name="prefixo"></param>
         /// <param name="celula"></param>
@@ -1197,7 +1197,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna o controle de sele√ß√£o simples.
+        /// Retorna o controle de seleÁ„o simples.
         /// </summary>
         /// <param name="prefixo"></param>
         /// <param name="celula"></param>
@@ -1209,14 +1209,14 @@ namespace Glass.UI.Web.Controls
     
         #endregion
     
-        #region Gera√ß√£o
+        #region GeraÁ„o
     
         /// <summary>
-        /// Marca o CheckBox de cobran√ßa opcional para o beneficiamento.
+        /// Marca o CheckBox de cobranÁa opcional para o beneficiamento.
         /// </summary>
-        /// <param name="benef">O beneficiamento que a c√©lula representa.</param>
-        /// <param name="beneficiamentos">Os beneficiamentos que ser√£o aplicados aos controles de bisot√™.</param>
-        /// <param name="celula">A c√©lula que cont√©m os controles.</param>
+        /// <param name="benef">O beneficiamento que a cÈlula representa.</param>
+        /// <param name="beneficiamentos">Os beneficiamentos que ser„o aplicados aos controles de bisotÍ.</param>
+        /// <param name="celula">A cÈlula que contÈm os controles.</param>
         private void AplicarCobrancaOpcional(BenefConfig benef, GenericBenef[] beneficiamentos, TableCell celula)
         {
             TableRow linha = celula.Parent as TableRow;
@@ -1239,11 +1239,11 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Aplica os beneficiamentos aos controles de bisot√™.
+        /// Aplica os beneficiamentos aos controles de bisotÍ.
         /// </summary>
-        /// <param name="benef">O beneficiamento que a c√©lula representa.</param>
-        /// <param name="beneficiamentos">Os beneficiamentos que ser√£o aplicados aos controles de bisot√™.</param>
-        /// <param name="celula">A c√©lula que cont√©m os controles.</param>
+        /// <param name="benef">O beneficiamento que a cÈlula representa.</param>
+        /// <param name="beneficiamentos">Os beneficiamentos que ser„o aplicados aos controles de bisotÍ.</param>
+        /// <param name="celula">A cÈlula que contÈm os controles.</param>
         private void AplicarTipoControleBisote(BenefConfig benef, GenericBenef[] beneficiamentos, TableCell celula)
         {
             // Cria o prefixo
@@ -1261,7 +1261,7 @@ namespace Glass.UI.Web.Controls
             drpLargura.SelectedValue = beneficiamentos[0].BisLarg.ToString();
             txtEspessura.Text = beneficiamentos[0].EspBisote.ToString();
     
-            // Desabilita os controles se o beneficiamento for padr√£o
+            // Desabilita os controles se o beneficiamento for padr„o
             drpTipo.Enabled = !beneficiamentos[0].Padrao;
             drpAltura.Enabled = !beneficiamentos[0].Padrao;
             drpLargura.Enabled = !beneficiamentos[0].Padrao;
@@ -1269,11 +1269,11 @@ namespace Glass.UI.Web.Controls
         }
     
         //// <summary>
-        /// Aplica os beneficiamentos aos controles de bisot√™.
+        /// Aplica os beneficiamentos aos controles de bisotÍ.
         /// </summary>
-        /// <param name="benef">O beneficiamento que a c√©lula representa.</param>
-        /// <param name="beneficiamentos">Os beneficiamentos que ser√£o aplicados aos controles de bisot√™.</param>
-        /// <param name="celula">A c√©lula que cont√©m os controles.</param>
+        /// <param name="benef">O beneficiamento que a cÈlula representa.</param>
+        /// <param name="beneficiamentos">Os beneficiamentos que ser„o aplicados aos controles de bisotÍ.</param>
+        /// <param name="celula">A cÈlula que contÈm os controles.</param>
         private void AplicarTipoControleLapidacao(BenefConfig benef, GenericBenef[] beneficiamentos, TableCell celula)
         {
             // Cria o prefixo
@@ -1289,18 +1289,18 @@ namespace Glass.UI.Web.Controls
             drpAltura.SelectedValue = beneficiamentos[0].LapAlt.ToString();
             drpLargura.SelectedValue = beneficiamentos[0].LapLarg.ToString();
     
-            // Desabilita os controles se o beneficiamento for padr√£o
+            // Desabilita os controles se o beneficiamento for padr„o
             drpTipo.Enabled = !beneficiamentos[0].Padrao;
             drpAltura.Enabled = !beneficiamentos[0].Padrao;
             drpLargura.Enabled = !beneficiamentos[0].Padrao;
         }
     
         /// <summary>
-        /// Aplica os beneficiamentos aos controles de bisot√™.
+        /// Aplica os beneficiamentos aos controles de bisotÍ.
         /// </summary>
-        /// <param name="benef">O beneficiamento que a c√©lula representa.</param>
-        /// <param name="beneficiamentos">Os beneficiamentos que ser√£o aplicados aos controles de bisot√™.</param>
-        /// <param name="celula">A c√©lula que cont√©m os controles.</param>
+        /// <param name="benef">O beneficiamento que a cÈlula representa.</param>
+        /// <param name="beneficiamentos">Os beneficiamentos que ser„o aplicados aos controles de bisotÍ.</param>
+        /// <param name="celula">A cÈlula que contÈm os controles.</param>
         private void AplicarTipoControleListaSelecao(BenefConfig benef, GenericBenef[] beneficiamentos, TableCell celula)
         {
             // Cria o prefixo
@@ -1312,16 +1312,16 @@ namespace Glass.UI.Web.Controls
             // Atribui os valores aos controles
             drpTipo.SelectedValue = GetBenefID(beneficiamentos[0], true).ToString();
     
-            // Desabilita os controles se o beneficiamento for padr√£o
+            // Desabilita os controles se o beneficiamento for padr„o
             drpTipo.Enabled = !beneficiamentos[0].Padrao;
         }
     
         /// <summary>
-        /// Aplica os beneficiamentos aos controles de bisot√™.
+        /// Aplica os beneficiamentos aos controles de bisotÍ.
         /// </summary>
-        /// <param name="benef">O beneficiamento que a c√©lula representa.</param>
-        /// <param name="beneficiamentos">Os beneficiamentos que ser√£o aplicados aos controles de bisot√™.</param>
-        /// <param name="celula">A c√©lula que cont√©m os controles.</param>
+        /// <param name="benef">O beneficiamento que a cÈlula representa.</param>
+        /// <param name="beneficiamentos">Os beneficiamentos que ser„o aplicados aos controles de bisotÍ.</param>
+        /// <param name="celula">A cÈlula que contÈm os controles.</param>
         private void AplicarTipoControleListaSelecaoQtd(BenefConfig benef, GenericBenef[] beneficiamentos, TableCell celula)
         {
             // Cria o prefixo
@@ -1335,7 +1335,7 @@ namespace Glass.UI.Web.Controls
             drpTipo.SelectedValue = GetBenefID(beneficiamentos[0], true).ToString();
             txtQtd.Text = beneficiamentos[0].Qtd.ToString();
     
-            // Desabilita os controles se o beneficiamento for padr√£o
+            // Desabilita os controles se o beneficiamento for padr„o
             drpTipo.Enabled = !beneficiamentos[0].Padrao;
             txtQtd.Enabled = !beneficiamentos[0].Padrao;
         }
@@ -1343,9 +1343,9 @@ namespace Glass.UI.Web.Controls
         /// <summary>
         /// Aplica os beneficiamentos aos controles de quantidade.
         /// </summary>
-        /// <param name="benef">O beneficiamento que a c√©lula representa.</param>
-        /// <param name="beneficiamentos">Os beneficiamentos que ser√£o aplicados aos controles de quantidade.</param>
-        /// <param name="celula">A c√©lula que cont√©m os controles.</param>
+        /// <param name="benef">O beneficiamento que a cÈlula representa.</param>
+        /// <param name="beneficiamentos">Os beneficiamentos que ser„o aplicados aos controles de quantidade.</param>
+        /// <param name="celula">A cÈlula que contÈm os controles.</param>
         private void AplicarTipoControleQuantidade(BenefConfig benef, GenericBenef[] beneficiamentos, TableCell celula)
         {
             // Cria o prefixo
@@ -1357,16 +1357,16 @@ namespace Glass.UI.Web.Controls
             // Atribui os valores aos controles
             txtQtd.Text = beneficiamentos[0].Qtd.ToString();
     
-            // Desabilita os controles se o beneficiamento for padr√£o
+            // Desabilita os controles se o beneficiamento for padr„o
             txtQtd.Enabled = !beneficiamentos[0].Padrao;
         }
     
         /// <summary>
-        /// Aplica os beneficiamentos aos controles de sele√ß√£o m√∫ltipla exclusiva.
+        /// Aplica os beneficiamentos aos controles de seleÁ„o m˙ltipla exclusiva.
         /// </summary>
-        /// <param name="benef">O beneficiamento que a c√©lula representa.</param>
-        /// <param name="beneficiamentos">Os beneficiamentos que ser√£o aplicados aos controles de sele√ß√£o m√∫ltipla exclusiva.</param>
-        /// <param name="celula">A c√©lula que cont√©m os controles.</param>
+        /// <param name="benef">O beneficiamento que a cÈlula representa.</param>
+        /// <param name="beneficiamentos">Os beneficiamentos que ser„o aplicados aos controles de seleÁ„o m˙ltipla exclusiva.</param>
+        /// <param name="celula">A cÈlula que contÈm os controles.</param>
         private void AplicarTipoControleSelecaoMultiplaExclusiva(BenefConfig benef, GenericBenef[] beneficiamentos, TableCell celula)
         {
             // Cria o prefixo
@@ -1382,7 +1382,7 @@ namespace Glass.UI.Web.Controls
                         // Atribui o valor ao controle
                         chkSelecao.Checked = true;
     
-                        // Desabilita o controle se o beneficiamento for padr√£o
+                        // Desabilita o controle se o beneficiamento for padr„o
                         chkSelecao.Enabled = !b.Padrao;
                         return;
                     }
@@ -1390,11 +1390,11 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Aplica os beneficiamentos aos controles de sele√ß√£o m√∫ltipla inclusiva.
+        /// Aplica os beneficiamentos aos controles de seleÁ„o m˙ltipla inclusiva.
         /// </summary>
-        /// <param name="benef">O beneficiamento que a c√©lula representa.</param>
-        /// <param name="beneficiamentos">Os beneficiamentos que ser√£o aplicados aos controles de sele√ß√£o m√∫ltipla inclusiva.</param>
-        /// <param name="celula">A c√©lula que cont√©m os controles.</param>
+        /// <param name="benef">O beneficiamento que a cÈlula representa.</param>
+        /// <param name="beneficiamentos">Os beneficiamentos que ser„o aplicados aos controles de seleÁ„o m˙ltipla inclusiva.</param>
+        /// <param name="celula">A cÈlula que contÈm os controles.</param>
         private void AplicarTipoControleSelecaoMultiplaInclusiva(BenefConfig benef, GenericBenef[] beneficiamentos, TableCell celula)
         {
             // Cria o prefixo
@@ -1410,18 +1410,18 @@ namespace Glass.UI.Web.Controls
                         // Atribui o valor ao controle
                         chkSelecao.Checked = true;
     
-                        // Desabilita o controle se o beneficiamento for padr√£o
+                        // Desabilita o controle se o beneficiamento for padr„o
                         break;
                     }
             }
         }
     
         /// <summary>
-        /// Aplica os beneficiamentos aos controles de sele√ß√£o simples.
+        /// Aplica os beneficiamentos aos controles de seleÁ„o simples.
         /// </summary>
-        /// <param name="benef">O beneficiamento que a c√©lula representa.</param>
-        /// <param name="beneficiamentos">Os beneficiamentos que ser√£o aplicados aos controles de sele√ß√£o simples.</param>
-        /// <param name="celula">A c√©lula que cont√©m os controles.</param>
+        /// <param name="benef">O beneficiamento que a cÈlula representa.</param>
+        /// <param name="beneficiamentos">Os beneficiamentos que ser„o aplicados aos controles de seleÁ„o simples.</param>
+        /// <param name="celula">A cÈlula que contÈm os controles.</param>
         private void AplicarTipoControleSelecaoSimples(BenefConfig benef, GenericBenef[] beneficiamentos, TableCell celula)
         {
             // Cria o prefixo
@@ -1433,23 +1433,23 @@ namespace Glass.UI.Web.Controls
             // Atribui os valores aos controles
             chkSelecao.Checked = true;
     
-            // Desabilita os controles se o beneficiamento for padr√£o
+            // Desabilita os controles se o beneficiamento for padr„o
             chkSelecao.Enabled = !beneficiamentos[0].Padrao;
         }
     
         /// <summary>
-        /// Define os beneficiamentos para uma c√©lula da tabela do controle.
+        /// Define os beneficiamentos para uma cÈlula da tabela do controle.
         /// </summary>
-        /// <param name="beneficiamentos">Os beneficiamentos que ser√£o usados pelo controle.</param>
-        /// <param name="celula">A c√©lula que receber√° os beneficiamentos.</param>
+        /// <param name="beneficiamentos">Os beneficiamentos que ser„o usados pelo controle.</param>
+        /// <param name="celula">A cÈlula que receber· os beneficiamentos.</param>
         private void SetBeneficiamentosToCell(IList<GenericBenef> beneficiamentos, TableCell celula)
         {
-            // Vari√°vel com o beneficiamento
+            // Vari·vel com o beneficiamento
             BenefConfig benef = null;
     
             try
             {
-                // Recupera o beneficiamento da c√©lula
+                // Recupera o beneficiamento da cÈlula
                 benef = BenefConfigDAO.Instance.GetElement(GetBenefID(celula));
             }
             catch
@@ -1464,21 +1464,21 @@ namespace Glass.UI.Web.Controls
     
             });
     
-            // Vari√°vel com os beneficiamentos aplicados √† c√©lula
+            // Vari·vel com os beneficiamentos aplicados ‡ cÈlula
             GenericBenef[] dados = null;
     
             // Se o beneficiamento foi encontrado na lista indica-o nos dados
             if (item != null)
                 dados = new GenericBenef[] { item };
     
-            // Recupera os beneficiamentos filhos do beneficiamento da c√©lula
+            // Recupera os beneficiamentos filhos do beneficiamento da cÈlula
             else
             {
-                // Se o beneficiamento da c√©lula n√£o tem filhos sai do m√©todo
+                // Se o beneficiamento da cÈlula n„o tem filhos sai do mÈtodo
                 if (benef.NumChild == 0)
                     return;
     
-                // Recupera os filhos do beneficiamento da c√©lula
+                // Recupera os filhos do beneficiamento da cÈlula
                 BenefConfig[] child = BenefConfigDAO.Instance.GetByBenefConfigItens((uint)benef.IdBenefConfig);
     
                 // Procura entre os filhos o beneficiamento aplicado
@@ -1493,13 +1493,13 @@ namespace Glass.UI.Web.Controls
                 }).ToArray();
             }
     
-            // Se o beneficiamento n√£o foi encontrado sai do m√©todo
+            // Se o beneficiamento n„o foi encontrado sai do mÈtodo
             if (dados.Length == 0)
                 return;
     
             try
             {
-                // Marca ou desmarca o CheckBox de cobran√ßa opcional
+                // Marca ou desmarca o CheckBox de cobranÁa opcional
                 AplicarCobrancaOpcional(benef, dados, celula);
     
                 // Aplica o beneficiamento de acordo com o tipo de controle
@@ -1538,7 +1538,7 @@ namespace Glass.UI.Web.Controls
                         break;
                 }
     
-                // Indica √† c√©lula se o beneficiamento √© padr√£o
+                // Indica ‡ cÈlula se o beneficiamento È padr„o
                 string prefixo = PrefixoControles(benef);
                 GetControleBenefPadrao(prefixo, celula).Value = dados[0].Padrao.ToString().ToLower();
     
@@ -1547,14 +1547,14 @@ namespace Glass.UI.Web.Controls
                 {
                     decimal valor = dados[0].ValorUnit;
     
-                    // Calcula o valor unit√°rio se este ainda n√£o estiver salvo no banco de dados
+                    // Calcula o valor unit·rio se este ainda n„o estiver salvo no banco de dados
                     if (valor == 0)
                     {
                         // Recupera os dados do produto
                         GenericBenef.DadosProduto dadosProduto = dados[0].GetProduto();
                         valor = dados[0].Valor;
     
-                        // Calcula o valor unit√°rio dependendo do tipo de c√°lculo
+                        // Calcula o valor unit·rio dependendo do tipo de c·lculo
                         switch (benef.TipoCalculo)
                         {
                             case TipoCalculoBenef.MetroLinear:
@@ -1586,12 +1586,12 @@ namespace Glass.UI.Web.Controls
                         campoValor.Text = valor.ToString("0.00");
                 }
     
-                // Verifica se o ID antigo ser√° usado
+                // Verifica se o ID antigo ser· usado
                 if (!String.IsNullOrEmpty(_propriedadeIdAntigo))
                 {
                     try
                     {
-                        // Altera o valor do campo que cont√©m o ID antigo
+                        // Altera o valor do campo que contÈm o ID antigo
                         HiddenField hidden = celula.FindControl(prefixo + "hdfIdAntigo") as HiddenField;
                         if (hidden != null)
                             hidden.Value = typeof(GenericBenef).GetProperty(_propriedadeIdAntigo).GetValue(dados[0], null).ToString();
@@ -1604,7 +1604,7 @@ namespace Glass.UI.Web.Controls
     
         #endregion
     
-        #region Recupera√ß√£o
+        #region RecuperaÁ„o
     
         /// <summary>
         /// Indica se o beneficiamento foi aplicado.
@@ -1666,7 +1666,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna o valor do campo valor unit√°rio.
+        /// Retorna o valor do campo valor unit·rio.
         /// </summary>
         /// <param name="celula"></param>
         /// <param name="posicao"></param>
@@ -1702,7 +1702,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Indica se o beneficiamento √© padr√£o.
+        /// Indica se o beneficiamento È padr„o.
         /// </summary>
         /// <param name="prefixo"></param>
         /// <param name="celula"></param>
@@ -1714,13 +1714,13 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna os beneficiamentos feitos em uma c√©lula.
+        /// Retorna os beneficiamentos feitos em uma cÈlula.
         /// </summary>
-        /// <param name="celula">A c√©lula com os controles do beneficiamento.</param>
+        /// <param name="celula">A cÈlula com os controles do beneficiamento.</param>
         /// <returns>Um vetor com os beneficiamentos feitos</returns>
         private GenericBenef[] GetBeneficiamentosFromCell(TableCell celula)
         {
-            // Recupera o beneficiamento da c√©lula
+            // Recupera o beneficiamento da cÈlula
             BenefConfig benef = BenefConfigDAO.Instance.GetElement(GetBenefID(celula));
     
             // Cria o prefixo
@@ -1729,7 +1729,7 @@ namespace Glass.UI.Web.Controls
             // Cria a lista de retorno
             List<GenericBenef> retorno = new List<GenericBenef>();
     
-            // Verifica se a c√©lula possui beneficiamento
+            // Verifica se a cÈlula possui beneficiamento
             if (IsBeneficiado(prefixo, celula))
             {
                 // Recupera os beneficiamentos de acordo com o tipo de controle
@@ -1835,7 +1835,7 @@ namespace Glass.UI.Web.Controls
                 {
                     try
                     {
-                        // Recupera o valor do campo que cont√©m o ID antigo
+                        // Recupera o valor do campo que contÈm o ID antigo
                         HiddenField hidden = celula.FindControl(PrefixoControles(benef) + "hdfIdAntigo") as HiddenField;
                         if (hidden != null)
                         {
@@ -1856,13 +1856,13 @@ namespace Glass.UI.Web.Controls
     
         #endregion
     
-        #region M√©todos Ajax
+        #region MÈtodos Ajax
     
         /// <summary>
         /// Retorna o identificador do grupo do produto.
         /// </summary>
         /// <param name="idClienteStr">O id do cliente.</param>
-        /// <param name="codInterno">O c√≥digo interno do produto.</param>
+        /// <param name="codInterno">O cÛdigo interno do produto.</param>
         /// <returns></returns>
         [Ajax.AjaxMethod]
         public string GetDadosProduto(string idClienteStr, string codInterno)
@@ -1890,17 +1890,17 @@ namespace Glass.UI.Web.Controls
                 "IsSubgrupoEstoque: {9}, " +
                 "IsChapaVidro: {10}";
 
-            // Recupera o desconto/acr√©scimo do cliente
+            // Recupera o desconto/acrÈscimo do cliente
             DescontoAcrescimoCliente desconto = idCliente > 0 ? 
                 DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(idCliente, p.IdGrupoProd, p.IdSubgrupoProd, p.IdProd, null, null) : null;
     
-            // Vetor com os dados usados na formata√ß√£o da string
+            // Vetor com os dados usados na formataÁ„o da string
             object[] dadosFormato = new object[11];
             dadosFormato[0] = p.IdProd;
             dadosFormato[1] = p.IdGrupoProd;
             dadosFormato[2] = p.IdSubgrupoProd != null ? p.IdSubgrupoProd.Value.ToString() : "null";
             dadosFormato[3] = p.CustoCompra.ToString().Replace(",", ".");
-            dadosFormato[4] = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, p.IdGrupoProd, p.IdSubgrupoProd, false);
+            dadosFormato[4] = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(p.IdGrupoProd, p.IdSubgrupoProd);
             dadosFormato[5] = p.CodInterno;
             dadosFormato[6] = idCliente > 0 ? desconto.PercMultiplicar.ToString().Replace(',', '.') : "0";
             dadosFormato[7] = idCliente > 0 ? desconto.AplicarBeneficiamentos.ToString().ToLower() : "0";
@@ -1919,11 +1919,11 @@ namespace Glass.UI.Web.Controls
             string formato = "" +
                 "ID: {0}";
     
-            // Vetor com os dados usados na formata√ß√£o da string
+            // Vetor com os dados usados na formataÁ„o da string
             object[] dadosFormato = new object[1];
             dadosFormato[0] = idPecaItemProjeto;
             
-            // Retorna os dados da pe√ßa
+            // Retorna os dados da peÁa
             return "{ " + String.Format(formato, dadosFormato) + " }";
         }
 
@@ -1942,7 +1942,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Retorna os beneficiamentos b√°sicos de um produto.
+        /// Retorna os beneficiamentos b·sicos de um produto.
         /// </summary>
         /// <param name="idProdStr">O id do produto.</param>
         /// <returns></returns>
@@ -1965,7 +1965,7 @@ namespace Glass.UI.Web.Controls
     
             string retorno = "";
     
-            // Vari√°vel de controle
+            // Vari·vel de controle
             GenericBenefCollection beneficiamentos = new GenericBenefCollection();
     
             switch (tipo.ToLower())
@@ -1978,7 +1978,7 @@ namespace Glass.UI.Web.Controls
                     beneficiamentos = PecaItemProjBenefDAO.Instance.GetByPecaItemProj(idProd);
                     break;
     
-                case "or√ßamento":
+                case "orÁamento":
                     beneficiamentos = ProdutoOrcamentoBenefDAO.Instance.GetByProdutoOrcamento(idProd);
                     break;
     
@@ -2005,12 +2005,12 @@ namespace Glass.UI.Web.Controls
 
                 BenefConfig parent = benef.IdParent != null ? BenefConfigDAO.Instance.GetElementByPrimaryKey((uint)benef.IdParent.Value) : null;
     
-                // ANDR√â: O tipo controle ficando vazio, n√£o recalculava corretamente os beneficiamentos, 
-                // na op√ß√£o recalcular or√ßamento.
+                // ANDR…: O tipo controle ficando vazio, n„o recalculava corretamente os beneficiamentos, 
+                // na opÁ„o recalcular orÁamento.
                 if (benef.TipoControle == 0 && parent != null)
                     benef.TipoControle = parent.TipoControle;
     
-                // Vetor com os dados usados na formata√ß√£o da string
+                // Vetor com os dados usados na formataÁ„o da string
                 object[] dadosFormato = new object[8];
                 dadosFormato[0] = benef.IdBenefConfig;
                 dadosFormato[1] = benef.IdParent != null ? benef.IdParent.ToString() : "null";
@@ -2023,7 +2023,7 @@ namespace Glass.UI.Web.Controls
                 dadosFormato[6] = (int)benef.TipoControle;
                 dadosFormato[7] = PrefixoControles(parent != null ? parent : benef);
     
-                // Adiciona o beneficiamento √† string de retorno
+                // Adiciona o beneficiamento ‡ string de retorno
                 retorno += ", {" + String.Format(formato, dadosFormato) + "}";
             }
     
@@ -2032,7 +2032,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Verifica se um vidro √© redondo.
+        /// Verifica se um vidro È redondo.
         /// </summary>
         /// <param name="idProdStr">O id do produto.</param>
         /// <returns></returns>
@@ -2042,10 +2042,10 @@ namespace Glass.UI.Web.Controls
             // Converte o ID do produto para UInt
             uint idProd = !String.IsNullOrEmpty(idProdStr) ? Glass.Conversoes.StrParaUint(idProdStr) : 0;
     
-            // Vari√°vel de retorno
+            // Vari·vel de retorno
             bool redondo = false;
     
-            // Retorna se o produto √© redondo
+            // Retorna se o produto È redondo
             switch (tipo.ToLower())
             {
                 case "produto": 
@@ -2056,7 +2056,7 @@ namespace Glass.UI.Web.Controls
                     redondo = PecaItemProjetoDAO.Instance.IsRedondo(idProd);
                     break;
     
-                case "or√ßamento": 
+                case "orÁamento": 
                     redondo = ProdutosOrcamentoDAO.Instance.ObterRedondo(null, (int)idProd);
                     break;
     
@@ -2073,7 +2073,7 @@ namespace Glass.UI.Web.Controls
         #region Propriedades
     
         /// <summary>
-        /// Define o grupo de valida√ß√£o do controle.
+        /// Define o grupo de validaÁ„o do controle.
         /// </summary>
         public string ValidationGroup
         {
@@ -2082,7 +2082,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Os beneficiamentos padr√£o do produto devem ser carregados pelo controle?
+        /// Os beneficiamentos padr„o do produto devem ser carregados pelo controle?
         /// </summary>
         public bool CarregarBenefPadrao
         {
@@ -2091,7 +2091,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// O controle ser√° usado na compra?
+        /// O controle ser· usado na compra?
         /// </summary>
         public bool IsCompra
         {
@@ -2100,7 +2100,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Mensagem que ser√° exibida se os beneficiamentos estiverem bloqueados.
+        /// Mensagem que ser· exibida se os beneficiamentos estiverem bloqueados.
         /// </summary>
         public string MensagemBloqueioBenef
         {
@@ -2109,7 +2109,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Nome da propriedade que cont√©m o ID do beneficiamento antigo.
+        /// Nome da propriedade que contÈm o ID do beneficiamento antigo.
         /// Usado na tela de compras.
         /// </summary>
         public string PropriedadeIdAntigo
@@ -2128,7 +2128,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Define se os beneficiamentos ser√£o bloqueados para altera√ß√£o.
+        /// Define se os beneficiamentos ser„o bloqueados para alteraÁ„o.
         /// </summary>
         public bool BloquearBeneficiamentos
         {
@@ -2140,7 +2140,7 @@ namespace Glass.UI.Web.Controls
                 // Percorre as linhas da tabela
                 for (int i = 0; i < tblBenef.Rows.Count; i++)
                 {
-                    // Bloqueia/libera os controles da primeira c√©lula
+                    // Bloqueia/libera os controles da primeira cÈlula
                     foreach (Control c in tblBenef.Rows[i].Cells[1].Controls)
                     {
                         if (!(c is WebControl))
@@ -2149,11 +2149,11 @@ namespace Glass.UI.Web.Controls
                         ((WebControl)c).Enabled = !value;
                     }
     
-                    // Garante que haja a pr√≥xima c√©lula
+                    // Garante que haja a prÛxima cÈlula
                     if (tblBenef.Rows[i].Cells[3].Controls.Count == 0)
                         break;
     
-                    // Bloqueia/libera os controles da segunda c√©lula
+                    // Bloqueia/libera os controles da segunda cÈlula
                     foreach (Control c in tblBenef.Rows[i].Cells[1].Controls)
                     {
                         if (!(c is WebControl))
@@ -2166,7 +2166,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Nome da fun√ß√£o usada para receber valor adicional de c√°lculo de beneficiamento.
+        /// Nome da funÁ„o usada para receber valor adicional de c·lculo de beneficiamento.
         /// </summary>
         public string FuncaoCalculoValorAdicional
         {
@@ -2176,7 +2176,7 @@ namespace Glass.UI.Web.Controls
     
         /// <summary>
         /// O valor adicional deve ser calculado ao calcular o beneficiamento?
-        /// (Se falso ser√° aplicado ap√≥s o c√°lculo.)
+        /// (Se falso ser· aplicado apÛs o c·lculo.)
         /// </summary>
         public bool CalcularValorAdicionalBenef
         {
@@ -2212,7 +2212,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Classe CSS do cabe√ßalho.
+        /// Classe CSS do cabeÁalho.
         /// </summary>
         public string CssClassCabecalho
         {
@@ -2263,21 +2263,21 @@ namespace Glass.UI.Web.Controls
         {
             get
             {
-                // Cria a vari√°vel de retorno
+                // Cria a vari·vel de retorno
                 GenericBenefCollection retorno = new GenericBenefCollection();
     
                 // Percorre as linhas da tabela
                 for (int i = 0; i < tblBenef.Rows.Count; i++)
                 {
-                    // Inclui no retorno os beneficiamentos da primeira c√©lula
+                    // Inclui no retorno os beneficiamentos da primeira cÈlula
                     foreach (var beneficiamento in GetBeneficiamentosFromCell(tblBenef.Rows[i].Cells[1]))
                         retorno.Add(beneficiamento);
                     
-                    // Garante que haja a pr√≥xima c√©lula
+                    // Garante que haja a prÛxima cÈlula
                     if (tblBenef.Rows[i].Cells[3].Controls.Count == 0)
                         break;
 
-                    // Inclui no retorno os beneficiamentos da segunda c√©lula
+                    // Inclui no retorno os beneficiamentos da segunda cÈlula
                     foreach (var beneficiamento in GetBeneficiamentosFromCell(tblBenef.Rows[i].Cells[3]))
                         retorno.Add(beneficiamento);
                 }
@@ -2289,14 +2289,14 @@ namespace Glass.UI.Web.Controls
                 // Percorre as linhas da coluna
                 for (int i = 0; i < tblBenef.Rows.Count; i++)
                 {
-                    // Inclui na primeira c√©lula os beneficiamentos
+                    // Inclui na primeira cÈlula os beneficiamentos
                     SetBeneficiamentosToCell(value, tblBenef.Rows[i].Cells[1]);
     
-                    // Garante que haja a pr√≥xima c√©lula
+                    // Garante que haja a prÛxima cÈlula
                     if (tblBenef.Rows[i].Cells[3].Controls.Count == 0)
                         break;
     
-                    // Inclui na segunda c√©lula os beneficiamentos
+                    // Inclui na segunda cÈlula os beneficiamentos
                     SetBeneficiamentosToCell(value, tblBenef.Rows[i].Cells[3]);
                 }
             }
@@ -2377,7 +2377,7 @@ namespace Glass.UI.Web.Controls
         }
 
         /// <summary>
-        /// IdProdPed do pai do produto da composi√ß√£o
+        /// IdProdPed do pai do produto da composiÁ„o
         /// </summary>
         public object IdProdPed
         {
@@ -2393,10 +2393,10 @@ namespace Glass.UI.Web.Controls
 
         #endregion
 
-        #region Propriedades de controles da p√°gina
+        #region Propriedades de controles da p·gina
 
         /// <summary>
-        /// Campo com o ID da pe√ßa item projeto.
+        /// Campo com o ID da peÁa item projeto.
         /// </summary>
         public Control CampoPecaItemProjetoID
         {
@@ -2432,7 +2432,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Campo com o percentual de comiss√£o.
+        /// Campo com o percentual de comiss„o.
         /// </summary>
         public Control CampoPercComissao
         {
@@ -2459,7 +2459,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Campo com o total de m¬≤ do vidro.
+        /// Campo com o total de m≤ do vidro.
         /// </summary>
         public Control CampoTotalM2
         {
@@ -2468,7 +2468,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Campo com o valor unit√°rio do vidro.
+        /// Campo com o valor unit·rio do vidro.
         /// </summary>
         public Control CampoValorUnitario
         {
@@ -2504,7 +2504,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Campo com a indica√ß√£o de cliente de revenda.
+        /// Campo com a indicaÁ„o de cliente de revenda.
         /// </summary>
         public Control CampoRevenda
         {
@@ -2522,7 +2522,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Campo com o ID da aplica√ß√£o.
+        /// Campo com o ID da aplicaÁ„o.
         /// </summary>
         public Control CampoAplicacaoID
         {
@@ -2540,7 +2540,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Campo com o c√≥digo da aplica√ß√£o.
+        /// Campo com o cÛdigo da aplicaÁ„o.
         /// </summary>
         public Control CampoAplicacao
         {
@@ -2549,7 +2549,7 @@ namespace Glass.UI.Web.Controls
         }
     
         /// <summary>
-        /// Campo com o c√≥digo do processo.
+        /// Campo com o cÛdigo do processo.
         /// </summary>
         public Control CampoProcesso
         {
@@ -2559,7 +2559,7 @@ namespace Glass.UI.Web.Controls
     
         #endregion
 
-        #region M√©todos Privados
+        #region MÈtodos Privados
 
         /// <summary>
         /// Cria um novo beneficiamento.
@@ -2568,12 +2568,12 @@ namespace Glass.UI.Web.Controls
         private Glass.Global.Negocios.Entidades.IBeneficiamento CriarBeneficiamento()
         {
             if (string.IsNullOrEmpty(TipoBeneficiamento))
-                throw new InvalidOperationException(string.Format("N√£o foi informado o tipo do beneficiamento no controle {0}", ID));
+                throw new InvalidOperationException(string.Format("N„o foi informado o tipo do beneficiamento no controle {0}", ID));
 
             Type type = System.Web.Compilation.BuildManager.GetType(TipoBeneficiamento, false, true);
 
             if (type == null)
-                throw new InvalidOperationException(string.Format("O tipo {0} n√£o foi encontrado para criar o beneficiamento no controle {1}.", TipoBeneficiamento, ID));
+                throw new InvalidOperationException(string.Format("O tipo {0} n„o foi encontrado para criar o beneficiamento no controle {1}.", TipoBeneficiamento, ID));
 
             try
             {
@@ -2629,7 +2629,7 @@ namespace Glass.UI.Web.Controls
         {
             base.OnInit(e);
 
-            // Cria a vari√°vel que cont√©m os itens vazios dos DropDownLists de sele√ß√£o de tipo
+            // Cria a vari·vel que contÈm os itens vazios dos DropDownLists de seleÁ„o de tipo
             itensNenhum = new List<KeyValuePair<int, KeyValuePair<int, int>>>();
 
             // Registra os scripts
@@ -2647,15 +2647,15 @@ namespace Glass.UI.Web.Controls
 
             Page.ClientScript.RegisterStartupScript(GetType(), "ctrlBenef_Habilitar_" + this.ID, "benef_habilitar.push('" + this.ClientID + "');\n", true);
 
-            // Indica o evento de PreRender da p√°gina
+            // Indica o evento de PreRender da p·gina
             this.PreRender += new EventHandler(ctrlBenef_PreRender);
 
-            // Define as fun√ß√µes JavaScript de callback para c√°lculo
+            // Define as funÁıes JavaScript de callback para c·lculo
             this.CallbackSelecaoItem = "callbackSelecao";
             this.FuncaoCalculoValorAdicional = Glass.Configuracoes.Beneficiamentos.ControleBeneficiamento.NomeFuncaoJavascriptCalculoValorAdicional;
             this.CalcularValorAdicionalBenef = !string.IsNullOrEmpty(this.FuncaoCalculoValorAdicional);
 
-            // Recupera a lista de beneficiamentos e define o n√∫mero de linhas
+            // Recupera a lista de beneficiamentos e define o n˙mero de linhas
             var lstBenef = BenefConfigDAO.Instance.GetForControl(TipoBenef);
             int numLinhas = (int)Math.Floor((double)lstBenef.Count / 2);
             if ((float)lstBenef.Count % 2 > 0)
@@ -2664,10 +2664,10 @@ namespace Glass.UI.Web.Controls
             if (_bloquearBeneficiamentos && !String.IsNullOrEmpty(_mensagemBloqueioBenef))
                 tblBenef.Caption = "<div style=\"padding: 8px; font-size: 120%; font-weight: bold\">" + _mensagemBloqueioBenef + "</div>";
 
-            // Percorre o n√∫mero de linhas
+            // Percorre o n˙mero de linhas
             for (int i = 0; i < numLinhas; i++)
             {
-                // Cria a linha e as c√©lulas e adiciona-os √† tabela
+                // Cria a linha e as cÈlulas e adiciona-os ‡ tabela
                 TableRow linha = new TableRow();
                 TableCell cabecalho1 = new TableCell();
                 TableCell cabecalho2 = new TableCell();
@@ -2688,17 +2688,17 @@ namespace Glass.UI.Web.Controls
                         linha.CssClass = _cssClassLinhaAlternada;
                 }
 
-                // Cria os controles do beneficiamento para as primeiras c√©lulas
+                // Cria os controles do beneficiamento para as primeiras cÈlulas
                 CreateBenef(cabecalho1, controles1, lstBenef[i]);
 
                 // Define o estilo dos controles da primeira coluna
                 controles1.Style.Add("Padding-right", "8px");
 
-                // Verifica se h√° um beneficiamento para as pr√≥ximas colunas
+                // Verifica se h· um beneficiamento para as prÛximas colunas
                 if ((i + numLinhas) >= lstBenef.Count)
                     break;
 
-                // Cria os controles do beneficiamento para as √∫ltimas c√©lulas
+                // Cria os controles do beneficiamento para as ˙ltimas cÈlulas
                 CreateBenef(cabecalho2, controles2, lstBenef[i + numLinhas]);
             }
         }
@@ -2707,20 +2707,20 @@ namespace Glass.UI.Web.Controls
         {
             if (_beneficiamentos2 != null && IsPostBack)
             {
-                // Cria a vari√°vel de retorno
+                // Cria a vari·vel de retorno
                 var retorno = new List<Glass.Global.Negocios.Entidades.IBeneficiamento>();
 
                 // Percorre as linhas da tabela
                 for (int i = 0; i < tblBenef.Rows.Count; i++)
                 {
-                    // Inclui no retorno os beneficiamentos da primeira c√©lula
+                    // Inclui no retorno os beneficiamentos da primeira cÈlula
                     retorno.AddRange(Converter(GetBeneficiamentosFromCell(tblBenef.Rows[i].Cells[1])));
 
-                    // Garante que haja a pr√≥xima c√©lula
+                    // Garante que haja a prÛxima cÈlula
                     if (tblBenef.Rows[i].Cells[3].Controls.Count == 0)
                         break;
 
-                    // Inclui no retorno os beneficiamentos da segunda c√©lula
+                    // Inclui no retorno os beneficiamentos da segunda cÈlula
                     retorno.AddRange(Converter(GetBeneficiamentosFromCell(tblBenef.Rows[i].Cells[3])));
                 }
 
@@ -2731,7 +2731,7 @@ namespace Glass.UI.Web.Controls
     
         protected void ctrlBenef_PreRender(object sender, EventArgs e)
         {
-            // Registra os controles que ser√£o usados pelo JavaScript
+            // Registra os controles que ser„o usados pelo JavaScript
             string formato = @"
                 Altura: '{0}', 
                 Largura: '{1}', 
@@ -2765,7 +2765,7 @@ namespace Glass.UI.Web.Controls
                 CalcularBeneficiamentoPadrao: {29},
                 QuantidadeAmbiente: '{30}'";
                 
-            // Formata os controles, colocando a fun√ß√£o de c√°lculo quando os campos forem alterados
+            // Formata os controles, colocando a funÁ„o de c·lculo quando os campos forem alterados
             FormatControl(_campoAltura);
             FormatControl(_campoEspessura);
             FormatControl(_campoLargura);
@@ -2780,10 +2780,10 @@ namespace Glass.UI.Web.Controls
             FormatControl(_campoIdCliente);
             FormatControl(_campoIdPecaItemProjeto);
     
-            // Define o grupo de valida√ß√£o da espessura do vidro
+            // Define o grupo de validaÁ„o da espessura do vidro
             ctvEspessura.ValidationGroup = vsuSumario.ValidationGroup;
     
-            // Cria a linha do script com a vari√°vel do controle
+            // Cria a linha do script com a vari·vel do controle
             object[] dadosFormato = new object[] {
                 GetControlID(_campoAltura),
                 GetControlID(_campoLargura),
@@ -2818,11 +2818,11 @@ namespace Glass.UI.Web.Controls
                 GetControlID(_campoQuantidadeAmbiente)
             };
     
-            // Define o script da vari√°vel na tela
+            // Define o script da vari·vel na tela
             string script = "var " + this.ClientID + " = { " + String.Format(formato, dadosFormato) + " };\n";
             Page.ClientScript.RegisterClientScriptBlock(GetType(), this.ClientID, script, true);
     
-            // Define o script de inicializa√ß√£o do controle na tela
+            // Define o script de inicializaÁ„o do controle na tela
             script = GetFuncaoCalculo(null) + ";\niniciando = false;\n";
             Page.ClientScript.RegisterStartupScript(GetType(), this.ClientID + "_Load", script, true);
 
@@ -2854,14 +2854,14 @@ namespace Glass.UI.Web.Controls
                 // Percorre as linhas da coluna
                 for (int i = 0; i < tblBenef.Rows.Count; i++)
                 {
-                    // Inclui na primeira c√©lula os beneficiamentos
+                    // Inclui na primeira cÈlula os beneficiamentos
                     SetBeneficiamentosToCell(beneficiamentos, tblBenef.Rows[i].Cells[1]);
 
-                    // Garante que haja a pr√≥xima c√©lula
+                    // Garante que haja a prÛxima cÈlula
                     if (tblBenef.Rows[i].Cells[3].Controls.Count == 0)
                         break;
 
-                    // Inclui na segunda c√©lula os beneficiamentos
+                    // Inclui na segunda cÈlula os beneficiamentos
                     SetBeneficiamentosToCell(beneficiamentos, tblBenef.Rows[i].Cells[3]);
                 }
             }

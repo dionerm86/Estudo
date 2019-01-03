@@ -138,6 +138,28 @@ namespace Glass.Data.DAL
             return ExecuteScalar<int>(session, $"SELECT IdLeituraProd FROM leitura_producao WHERE IdSetor={ idSetor } AND IdProdPedProducao={ idProdPedProducao }");
         }
 
+        /// <summary>
+        /// Obtém os IDs dos funcionários que fizeram leitura no setor informado.
+        /// </summary>
+        public List<int> ObterIdsProdPedProducaoPeloIdSetorDataLeitura(GDASession session, int idSetor, DateTime dataLeituraInicial, DateTime dataLeituraFinal)
+        {
+            if (idSetor == 0 || dataLeituraInicial == DateTime.MinValue || dataLeituraFinal == DateTime.MinValue)
+            {
+                return new List<int>();
+            }
+
+            var idsProdPedProducao = ExecuteMultipleScalar<int>(session, $@"
+                SELECT lp.IdProdPedProducao FROM leitura_producao lp
+		        WHERE lp.DataLeitura >= ?dataLeituraInicial
+        	        AND lp.DataLeitura <= ?dataLeituraFinal
+        	        AND lp.IdSetor = { idSetor }
+                GROUP BY lp.IdProdPedProducao",
+                new GDAParameter("?dataLeituraInicial", dataLeituraInicial),
+                new GDAParameter("?dataLeituraFinal", dataLeituraFinal));
+
+            return idsProdPedProducao ?? new List<int>();
+        }
+
         public List<int> ObterIdsProdPedProducaoPeloIdFunc(GDASession sessao, int idFunc)
         {
             if (idFunc == 0)

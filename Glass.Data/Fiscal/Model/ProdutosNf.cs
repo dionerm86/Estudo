@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using GDA;
 using Glass.Data.EFD;
 using Glass.Data.DAL;
@@ -10,7 +10,7 @@ namespace Glass.Data.Model
     public enum ViaTransporteInternacional
     {
         /// <summary>
-        /// Mar√≠tima.
+        /// MarÌtima.
         /// </summary>
         Maritima = 1,
         /// <summary>
@@ -30,11 +30,11 @@ namespace Glass.Data.Model
         /// </summary>
         Postal,
         /// <summary>
-        /// Ferrovi√°ria.
+        /// Ferrovi·ria.
         /// </summary>
         Ferroviaria,
         /// <summary>
-        /// Rodoovi√°ria.
+        /// Rodoovi·ria.
         /// </summary>
         Rodoviaria,
         /// <summary>
@@ -42,11 +42,11 @@ namespace Glass.Data.Model
         /// </summary>
         Conduto,
         /// <summary>
-        /// Meios Pr√≥prios.
+        /// Meios PrÛprios.
         /// </summary>
         MeiosProprios,
         /// <summary>
-        /// Entrada/Sa√≠da Ficta.
+        /// Entrada/SaÌda Ficta.
         /// </summary>        
         EntradaSaidaFicta
     }
@@ -54,15 +54,15 @@ namespace Glass.Data.Model
     public enum TpIntermedio
     {
         /// <summary>
-        /// Importa√ß√£o Por Conta Pr√≥pria.
+        /// ImportaÁ„o Por Conta PrÛpria.
         /// </summary>
         ImportacaoContaPropria = 1,
         /// <summary>
-        /// Importa√ß√£o Por Conta e Ordem.
+        /// ImportaÁ„o Por Conta e Ordem.
         /// </summary>
         ImportacaoContaOrdem,
         /// <summary>
-        /// Importa√ß√£o Por Conta e Ordem.
+        /// ImportaÁ„o Por Conta e Ordem.
         /// </summary>        
         ImportacaoEncomenda
     }
@@ -91,7 +91,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDPROD")]
         public uint IdProd { get; set; }
 
-        [Log("Natureza da Opera√ß√£o", "CodCompleto", typeof(NaturezaOperacaoDAO), "IdNaturezaOperacao", "ObtemElemento", true)]
+        [Log("Natureza da OperaÁ„o", "CodCompleto", typeof(NaturezaOperacaoDAO), "IdNaturezaOperacao", "ObtemElemento", true)]
         [PersistenceProperty("IDNATUREZAOPERACAO")]
         public uint? IdNaturezaOperacao { get; set; }
 
@@ -107,11 +107,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("QTDEENTRADA")]
         public Single QtdeEntrada { get; set; }
 
-        [Log("Valor unit√°rio")]
+        [Log("Valor unit·rio")]
         [PersistenceProperty("VALORUNITARIO")]
         public decimal ValorUnitario { get; set; }
 
-        [Log("Valor unit√°rio trib.")]
+        [Log("Valor unit·rio trib.")]
         [PersistenceProperty("VALORUNITARIOTRIB")]
         public decimal ValorUnitarioTrib { get; set; }
 
@@ -123,7 +123,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("LARGURA")]
         public int Largura { get; set; }
 
-        [Log("Total m¬≤")]
+        [Log("Total m≤")]
         [PersistenceProperty("TOTM")]
         public float TotM { get; set; }
 
@@ -137,7 +137,7 @@ namespace Glass.Data.Model
 
         /// <summary>
         /// 0 - Nacional
-        /// 1 - Estrangeira - Importa√ß√£o direta
+        /// 1 - Estrangeira - ImportaÁ„o direta
         /// 2 - Estrangeira - Adquirida no mercado interno
         /// </summary>
         [Log("CST Orig.")]
@@ -168,14 +168,14 @@ namespace Glass.Data.Model
         [PersistenceProperty("PERCDIFERIMENTO")]
         public float PercDiferimento { get; set; }
 
-        [Log("Base c√°lc. ICMS")]
+        [Log("Base c·lc. ICMS")]
         [PersistenceProperty("BCICMS")]
         public decimal BcIcms { get; set; }
 
         [PersistenceProperty("BCICMSSEMREDUCAO")]
         public decimal BcIcmsSemReducao { get; set; }
 
-        [Log("Al√≠quota ICMS")]
+        [Log("AlÌquota ICMS")]
         [PersistenceProperty("ALIQICMS")]
         public Single AliqIcms { get; set; }
 
@@ -183,11 +183,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORICMS")]
         public decimal ValorIcms { get; set; }
 
-        [Log("Base c√°lc. FCP")]
+        [Log("Base c·lc. FCP")]
         [PersistenceProperty("BCFCP")]
         public decimal BcFcp { get; set; }
 
-        [Log("Al√≠quota FCP")]
+        [Log("AlÌquota FCP")]
         [PersistenceProperty("ALIQFCP")]
         public Single AliqFcp { get; set; }
 
@@ -195,7 +195,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORFCP")]
         public decimal ValorFcp { get; set; }
 
-        [Log("Al√≠quota IPI")]
+        [Log("AlÌquota IPI")]
         [PersistenceProperty("ALIQIPI")]
         public Single AliqIpi { get; set; }
 
@@ -211,11 +211,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("MVA")]
         public float Mva { get; set; }
 
-        [Log("Base c√°lc. ICMS ST")]
+        [Log("Base c·lc. ICMS ST")]
         [PersistenceProperty("BCICMSST")]
         public decimal BcIcmsSt { get; set; }
 
-        [Log("Al√≠quota ICMS ST")]
+        [Log("AlÌquota ICMS ST")]
         [PersistenceProperty("ALIQICMSST")]
         public Single AliqIcmsSt { get; set; }
 
@@ -223,11 +223,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORICMSST")]
         public decimal ValorIcmsSt { get; set; }
 
-        [Log("Base c√°lc. FCP ST")]
+        [Log("Base c·lc. FCP ST")]
         [PersistenceProperty("BCFCPST")]
         public decimal BcFcpSt { get; set; }
 
-        [Log("Al√≠quota FCP ST")]
+        [Log("AlÌquota FCP ST")]
         [PersistenceProperty("ALIQFCPST")]
         public Single AliqFcpSt { get; set; }
 
@@ -239,7 +239,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("PESO")]
         public Single Peso { get; set; }
 
-        [Log("Plano de Conta Cont√°bil", "Descricao", typeof(PlanoContaContabilDAO))]
+        [Log("Plano de Conta Cont·bil", "Descricao", typeof(PlanoContaContabilDAO))]
         [PersistenceProperty("IDCONTACONTABIL")]
         public uint? IdContaContabil { get; set; }
 
@@ -247,7 +247,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("LOTE")]
         public string Lote { get; set; }
 
-        [Log("Informa√ß√£o Adicional")]
+        [Log("InformaÁ„o Adicional")]
         [PersistenceProperty("INFADIC")]
         public string InfAdic { get; set; }
 
@@ -286,7 +286,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORIOF")]
         public decimal ValorIof { get; set; }
 
-        [Log("Natureza da Base de C√°lculo de Cr√©dito", "Descr", typeof(DataSourcesEFD), "Id", "GetDescrNaturezaBcCredito", true)]
+        [Log("Natureza da Base de C·lculo de CrÈdito", "Descr", typeof(DataSourcesEFD), "Id", "GetDescrNaturezaBcCredito", true)]
         [PersistenceProperty("NATUREZABCCRED")]
         public int? NaturezaBcCred { get; set; }
 
@@ -294,11 +294,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("INDNATUREZAFRETE")]
         public int? IndNaturezaFrete { get; set; }
 
-        [Log("Tipo de Contribui√ß√£o Social", "Descr", typeof(DataSourcesEFD), "Id", "GetDescrCodCont", true)]
+        [Log("Tipo de ContribuiÁ„o Social", "Descr", typeof(DataSourcesEFD), "Id", "GetDescrCodCont", true)]
         [PersistenceProperty("CODCONT")]
         public int? CodCont { get; set; }
 
-        [Log("Tipo de Cr√©dito", "Descr", typeof(DataSourcesEFD), "Id", "GetDescrCodCred", true)]
+        [Log("Tipo de CrÈdito", "Descr", typeof(DataSourcesEFD), "Id", "GetDescrCodCred", true)]
         [PersistenceProperty("CODCRED")]
         public int? CodCred { get; set; }
 
@@ -306,11 +306,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("CSTPIS")]
         public int? CstPis { get; set; }
 
-        [Log("Base de c√°lculo PIS")]
+        [Log("Base de c·lculo PIS")]
         [PersistenceProperty("BCPIS")]
         public decimal BcPis { get; set; }
 
-        [Log("Al√≠quota PIS")]
+        [Log("AlÌquota PIS")]
         [PersistenceProperty("ALIQPIS")]
         public float AliqPis { get; set; }
 
@@ -322,11 +322,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("CSTCOFINS")]
         public int? CstCofins { get; set; }
 
-        [Log("Base de c√°lculo Cofins")]
+        [Log("Base de c·lculo Cofins")]
         [PersistenceProperty("BCCOFINS")]
         public decimal BcCofins { get; set; }
 
-        [Log("Al√≠quota Cofins")]
+        [Log("AlÌquota Cofins")]
         [PersistenceProperty("ALIQCOFINS")]
         public float AliqCofins { get; set; }
 
@@ -334,15 +334,15 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORCOFINS")]
         public decimal ValorCofins { get; set; }
 
-        [Log("N√∫mero Ato Concession√°rio Drawback")]
+        [Log("N˙mero Ato Concession·rio Drawback")]
         [PersistenceProperty("NUMACDRAWBACK")]
         public string NumACDrawback { get; set; }
 
-        [Log("N√∫mero do Registro de Exporta√ß√£o")]
+        [Log("N˙mero do Registro de ExportaÁ„o")]
         [PersistenceProperty("NumRegExportacao")]
         public string NumRegExportacao { get; set; }
 
-        [Log("Chave de Acesso da NF-e recebida para exporta√ß√£o")]
+        [Log("Chave de Acesso da NF-e recebida para exportaÁ„o")]
         [PersistenceProperty("ChaveAcessoExportacao")]
         public string ChaveAcessoExportacao { get; set; }
 
@@ -350,7 +350,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("QtdeExportada")]
         public decimal QtdeExportada { get; set; }
 
-        [Log("Tipo de Documento Importa√ß√£o")]
+        [Log("Tipo de Documento ImportaÁ„o")]
         [PersistenceProperty("TIPODOCUMENTOIMP")]
         public int? TipoDocumentoImportacao { get; set; }
 
@@ -364,19 +364,19 @@ namespace Glass.Data.Model
         [PersistenceProperty("ISCHAPAIMPORTADA")]
         public bool IsChapaImportada { get; set; }
 
-        [Log("C√≥d. Valor Fiscal")]
+        [Log("CÛd. Valor Fiscal")]
         [PersistenceProperty("CODVALORFISCAL")]
         public uint? CodValorFiscal { get; set; }
 
         private uint? _codValorFiscalIPI;
 
         /// <summary>
-        /// C√≥digo de valores fiscais. Define se haver√° cr√©dito ICMS/IPI
-        /// 1 - Oper. com cr√©dito do Imposto
-        /// 2 - Oper. sem cr√©dito do Imposto - Isentas ou n√£o Tributadas
-        /// 3 - Oper. sem cr√©dito do Imposto - Outras
+        /// CÛdigo de valores fiscais. Define se haver· crÈdito ICMS/IPI
+        /// 1 - Oper. com crÈdito do Imposto
+        /// 2 - Oper. sem crÈdito do Imposto - Isentas ou n„o Tributadas
+        /// 3 - Oper. sem crÈdito do Imposto - Outras
         /// </summary>
-        [Log("C√≥d. Valor Fiscal IPI")]
+        [Log("CÛd. Valor Fiscal IPI")]
         [PersistenceProperty("CODVALORFISCALIPI")]
         public uint? CodValorFiscalIPI
         {
@@ -398,7 +398,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("ValorTotalTrib")]
         public decimal ValorTotalTrib { get; set; }
 
-        [Log("Descri√ß√£o item gen√©rico")]
+        [Log("DescriÁ„o item genÈrico")]
         [PersistenceProperty("DESCRICAOITEMGENERICO")]
         public string DescricaoItemGenerico { get; set; }
 
@@ -406,11 +406,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("PARCELAIMPORTADA")]
         public decimal ParcelaImportada { get; set; }
 
-        [Log("Valor da sa√≠da interestadual")]
+        [Log("Valor da saÌda interestadual")]
         [PersistenceProperty("SAIDAINTERESTADUAL")]
         public decimal SaidaInterestadual { get; set; }
 
-        [Log("Valor do conte√∫do de importa√ß√£o")]
+        [Log("Valor do conte˙do de importaÁ„o")]
         [PersistenceProperty("CONTEUDOIMPORTACAO")]
         public decimal ConteudoImportacao { get; set; }
 
@@ -540,7 +540,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("DATAEMISSAONFE", DirectionParameter.InputOptional)]
         public DateTime DataEmissaoNfe { get; set; }
 
-        [Log("Ajuste/Benef√≠cio/Incentivo")]
+        [Log("Ajuste/BenefÌcio/Incentivo")]
         [PersistenceProperty("CODAJBENINC", DirectionParameter.InputOptional)]
         public string CodAjBenInc { get; set; }
 
@@ -627,7 +627,7 @@ namespace Glass.Data.Model
 
         public int TipoCalc
         {
-            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int)IdSubgrupoProd, true); }
+            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int)IdSubgrupoProd, true); }
         }
 
         public bool AlturaEnabled
@@ -696,7 +696,7 @@ namespace Glass.Data.Model
             get { return !String.IsNullOrEmpty(EmitenteNfe) ? EmitenteNfe : DestinatarioNfe; }
         }
 
-        [Log("Natureza BC do Cr√©dito")]
+        [Log("Natureza BC do CrÈdito")]
         public string DescrNaturezaBcCred
         {
             get { return DataSourcesEFD.Instance.GetDescrNaturezaBcCredito(NaturezaBcCred); }
@@ -708,13 +708,13 @@ namespace Glass.Data.Model
             get { return DataSourcesEFD.Instance.GetDescrIndNaturezaFrete(IndNaturezaFrete); }
         }
 
-        [Log("Tipo de Contribui√ß√£o Social")]
+        [Log("Tipo de ContribuiÁ„o Social")]
         public string DescrCodCont
         {
             get { return DataSourcesEFD.Instance.GetDescrCodCont(CodCont); }
         }
 
-        [Log("Tipo de Cr√©dito")]
+        [Log("Tipo de CrÈdito")]
         public string DescrCodCred
         {
             get { return DataSourcesEFD.Instance.GetDescrCodCred(CodCred); }
@@ -770,10 +770,10 @@ namespace Glass.Data.Model
         internal string CfopNf { get; set; }
 
         /// <summary>
-        /// C√≥digo de valores fiscais. Define se haver√° cr√©dito ICMS/IPI
-        /// 1 - Oper. com cr√©dito do Imposto
-        /// 2 - Oper. sem cr√©dito do Imposto - Isentas ou n√£o Tributadas
-        /// 3 - Oper. sem cr√©dito do Imposto - Outras
+        /// CÛdigo de valores fiscais. Define se haver· crÈdito ICMS/IPI
+        /// 1 - Oper. com crÈdito do Imposto
+        /// 2 - Oper. sem crÈdito do Imposto - Isentas ou n„o Tributadas
+        /// 3 - Oper. sem crÈdito do Imposto - Outras
         /// </summary>
         public string CodValorFiscalString
         {
@@ -783,16 +783,16 @@ namespace Glass.Data.Model
 
                 switch (CodValorFiscal)
                 {
-                    case 1: ret = TipoDocumento != 2 ? "Oper. com cr√©dito do Imposto" : "Imposto Debitado"; break;
-                    case 2: ret = TipoDocumento != 2 ? "Oper. sem cr√©dito do Imposto - Isentas ou n√£o Tributadas" : "Isentas ou n√£o Tributadas"; break;
-                    case 3: ret = TipoDocumento != 2 ? "Oper. sem cr√©dito do Imposto - Outras" : "Outras"; break;
+                    case 1: ret = TipoDocumento != 2 ? "Oper. com crÈdito do Imposto" : "Imposto Debitado"; break;
+                    case 2: ret = TipoDocumento != 2 ? "Oper. sem crÈdito do Imposto - Isentas ou n„o Tributadas" : "Isentas ou n„o Tributadas"; break;
+                    case 3: ret = TipoDocumento != 2 ? "Oper. sem crÈdito do Imposto - Outras" : "Outras"; break;
                 }
 
                 return ret;
             }
         }
 
-        [Log("N√∫mero de Controle FCI")]
+        [Log("N˙mero de Controle FCI")]
         public string NumControleFciStr
         {
             get { return NumControleFci != null && NumControleFci.Length > 0 ? new Guid(NumControleFci).ToString().ToUpper() : null; }
@@ -870,7 +870,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_quantidade == null)
-                    _quantidade = ProdutosNfDAO.Instance.ObtemQtdDanfe(null, this, true);
+                    _quantidade = ProdutosNfDAO.Instance.ObtemQtdDanfe(this, true);
 
                 return _quantidade.GetValueOrDefault();
             }

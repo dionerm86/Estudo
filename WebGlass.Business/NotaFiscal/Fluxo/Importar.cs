@@ -670,7 +670,7 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                     produtoNF.Altura = produtoAssociado.Altura.GetValueOrDefault();
                     produtoNF.Largura = produtoAssociado.Largura.GetValueOrDefault();
 
-                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)produtoNF.IdProd, true);
+                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)produtoNF.IdProd, true);
                     bool calcM2 = tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
                     try { produtoNF.Qtde = calcM2 ? 1 : float.Parse(xel["prod"]["qCom"].InnerText, CultureInfo.InvariantCulture); }

@@ -765,7 +765,7 @@ namespace Glass.Data.DAL
                 pp.Total = (decimal)pp.TotalNf;
                 pp.ValorBenef = (decimal)pp.ValorBenefNf;
 
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)pp.IdGrupoProd, (int?)pp.IdSubgrupoProd, true);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)pp.IdGrupoProd, (int?)pp.IdSubgrupoProd, true);
 
                 if (tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.Qtd || tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.QtdM2)
                     pp.ValorVendido = pp.Total / (decimal)pp.Qtde;
@@ -3220,7 +3220,7 @@ namespace Glass.Data.DAL
 
                         // Tira produtos da reserva ou estorna se já tiver dado baixa
                         var m2Saida = prodPed.TotM / prodPed.Qtde * qtdeRemover;
-                        var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdProd, false);
+                        var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdProd);
                         var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 || tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
 
                         var qtdSaida = qtdeRemover;
@@ -3394,7 +3394,7 @@ namespace Glass.Data.DAL
 
                         // Tira produtos da reserva ou estorna se já tiver dado baixa
                         var m2Entrada = prodPed.TotM / (prodPed.Qtde > 0 ? prodPed.Qtde : 1) * qtdeRestaurar;
-                        var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdProd, false);
+                        var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPed.IdProd);
                         var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 || tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
 
                         var qtdEntrada = qtdeRestaurar;
@@ -4319,7 +4319,7 @@ namespace Glass.Data.DAL
             );
 
             objInsert.TipoCalculoUsadoPedido =
-                Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objInsert.IdProd, false);
+                Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objInsert.IdProd);
 
             if (ProdutoDAO.Instance.ObtemIdGrupoProd(session, (int)objInsert.IdProd) ==
                 (int)Glass.Data.Model.NomeGrupoProd.Vidro && objInsert.Espessura == 0)
@@ -4909,7 +4909,7 @@ namespace Glass.Data.DAL
                     objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao)
                 );
 
-                objUpdate.TipoCalculoUsadoPedido = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)objUpdate.IdProd, false);
+                objUpdate.TipoCalculoUsadoPedido = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)objUpdate.IdProd);
                 objUpdate.ValorTabelaPedido = (objUpdate as IProdutoCalculo).DadosProduto.ValorTabela();
 
                 if (ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, (int)objUpdate.IdProd) == (int)Glass.Data.Model.NomeGrupoProd.Vidro && objUpdate.Espessura == 0)
@@ -5558,7 +5558,7 @@ namespace Glass.Data.DAL
                             null,
                             produtoPedido.Altura);
                         produtoPedido.TipoCalculoUsadoOrcamento = produtoOrcamento.TipoCalculoUsado;
-                        produtoPedido.TipoCalculoUsadoPedido = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoPedido.IdProd, false);
+                        produtoPedido.TipoCalculoUsadoPedido = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoPedido.IdProd);
                         produtoPedido.PercDescontoQtde = produtoOrcamento.PercDescontoQtde;
                         produtoPedido.ValorDescontoQtde = produtoOrcamento.ValorDescontoQtde;
                         produtoPedido.ValorDescontoCliente = produtoOrcamento.ValorDescontoCliente;
@@ -5709,7 +5709,7 @@ namespace Glass.Data.DAL
                     null,
                     null,
                     produtoOrcamento.Altura);
-                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoOrcamento.IdProduto.Value, false);
+                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoOrcamento.IdProduto.Value);
 
                 var produtoPedido = new ProdutosPedido();
                 produtoPedido.IdPedido = pedido.IdPedido;

@@ -4536,7 +4536,7 @@ namespace Glass.Data.DAL
                                 pp.Qtde = qtdeOriginal;
                             }
 
-                            bool m2 = new List<int> { (int)Glass.Data.Model.TipoCalculoGrupoProd.M2, (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto }.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)pp.IdProd, false));
+                            bool m2 = new List<int> { (int)Glass.Data.Model.TipoCalculoGrupoProd.M2, (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto }.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)pp.IdProd));
 
                             // Baixa o box
                             MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, pp.IdProd, idLojaConsiderar, idProdPedProducao, 1, 0, false, true, true);
@@ -4619,7 +4619,7 @@ namespace Glass.Data.DAL
                         ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevendaSaida.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, ObtemEtiqueta(idProdPedProducao));
 
                         // Verifica o tipo de cálculo do produto.
-                        var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoRevendaSaida.IdProd, false);
+                        var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoRevendaSaida.IdProd);
 
                         // Verifica o tipo de cálculo do produto.
                         var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, produtoPedidoRevendaSaida.Largura, (int)produtoPedidoRevendaSaida.Altura, produtoPedidoRevendaSaida.Qtde, 0, produtoPedidoRevendaSaida.Redondo, 0, true);
@@ -4997,7 +4997,7 @@ namespace Glass.Data.DAL
                 calcularMultiploDe5);
 
             var m2 = new List<int> { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto }
-                .Contains(GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd, false));
+                .Contains(GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd));
 
             // Se for pedido de produção e o setor estiver marcado para dar entrada de estoque
             if (SetorDAO.Instance.IsEntradaEstoque(sessao, idSetor) && PedidoDAO.Instance.IsProducao(sessao, idPedido) &&
@@ -5158,7 +5158,7 @@ namespace Glass.Data.DAL
                 float m2Calc = CalculoM2.Instance.Calcular(null, pedido, pp, true);
 
                 bool m2 = new[] { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto }
-                    .Contains(GrupoProdDAO.Instance.TipoCalculo(null, (int)pp.IdProd, false));
+                    .Contains(GrupoProdDAO.Instance.TipoCalculo((int)pp.IdProd));
 
                 float m2CalcAreaMinima = CalculoM2.Instance.CalcularM2Calculo(null, pedido, pp,
                     false, true, pp.Beneficiamentos.CountAreaMinima);
@@ -5469,13 +5469,13 @@ namespace Glass.Data.DAL
                 string codEtiqueta = ObtemEtiqueta(transaction, idProdPedProducao);
                 LoginUsuario login = UserInfo.GetUserInfo;
 
-                float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(transaction, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo, 0, true);
+                float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(transaction, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
                 bool m2 = new List<int>
                 {
                     (int)Glass.Data.Model.TipoCalculoGrupoProd.M2,
                     (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto
                 }
-                .Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd, false));
+                .Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd));
 
                 MovEstoqueDAO.Instance.BaixaEstoqueProducao(transaction, prodPedEsp.IdProd, login.IdLoja, idProdPedProducao, 1, 0, false, false, true);
 
@@ -6754,8 +6754,8 @@ namespace Glass.Data.DAL
                     string codEtiqueta = ObtemEtiqueta(sessao, idProdPedProducao);
                     ProdutosPedidoEspelho prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(sessao, null, ObtemIdProdPed(sessao, idProdPedProducao), true);
 
-                    float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo, 0, true);
-                    bool m2 = new List<int> { (int)Glass.Data.Model.TipoCalculoGrupoProd.M2, (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto }.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd, false));
+                    float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
+                    bool m2 = new List<int> { (int)Glass.Data.Model.TipoCalculoGrupoProd.M2, (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto }.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd));
 
                     MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, prodPedEsp.IdProd, idLojaConsiderar, idProdPedProducao, 1, 0, false, false, true);
 
@@ -6782,8 +6782,8 @@ namespace Glass.Data.DAL
                     //if (!ProdutoSaiuEstoque(idLiberacao.GetValueOrDefault(0), idPedido, prodPedEsp.IdProdPed))
                     //return;
 
-                    float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo, 0, true);
-                    bool m2 = new List<int> { (int)Glass.Data.Model.TipoCalculoGrupoProd.M2, (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto }.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd, false));
+                    float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
+                    bool m2 = new List<int> { (int)Glass.Data.Model.TipoCalculoGrupoProd.M2, (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto }.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd));
 
                     MovEstoqueDAO.Instance.CreditaEstoqueProducao(sessao, prodPedEsp.IdProd, idLojaConsiderar, idProdPedProducao, (decimal)(m2 ? m2Calc : 1),
                         !SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd), true);
@@ -6871,7 +6871,7 @@ namespace Glass.Data.DAL
                             ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevenda.IdProdPed, -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiquetaChapa);
 
                             // Verifica o tipo de cálculo do produto.
-                            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoRevenda.IdProd, false);
+                            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoRevenda.IdProd);
 
                             // Verifica o tipo de cálculo do produto.
                             var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, produtoPedidoRevenda.Largura, (int)produtoPedidoRevenda.Altura, produtoPedidoRevenda.Qtde, 0,
@@ -7033,13 +7033,13 @@ namespace Glass.Data.DAL
                 // Busca o produto ao qual se refere a etiqueta
                 var prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(sessao, null, ObtemIdProdPed(sessao, idProdPedProducao), true);
 
-                float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo, 0, true);
+                float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
                 bool m2 = new List<int>
                         {
                             (int)Glass.Data.Model.TipoCalculoGrupoProd.M2,
                             (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto
                         }
-                .Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd, false));
+                .Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd));
 
                 var areaMinimaProd = ProdutoDAO.Instance.ObtemAreaMinima(sessao, (int)prodPedEsp.IdProd);
                 var idCliente = PedidoDAO.Instance.ObtemIdCliente(sessao, idPedido);

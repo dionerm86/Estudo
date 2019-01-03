@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
@@ -10,7 +10,7 @@ namespace Glass.Data.DAL
     {
         //private GrupoProdDAO() { }
 
-        #region Busca padr√£o
+        #region Busca padr„o
 
         private string SqlList(bool selecionar)
         {
@@ -48,7 +48,7 @@ namespace Glass.Data.DAL
         #endregion
 
         /// <summary>
-        /// Verifica se a venda de produto do grupo/subgrupo passado ser√° bloqueada caso n√£o exista em estoque.
+        /// Verifica se a venda de produto do grupo/subgrupo passado ser· bloqueada caso n„o exista em estoque.
         /// </summary>
         public bool BloquearEstoque(int idGrupoProd, int? idSubgrupoProd)
         {
@@ -56,7 +56,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a venda de produto do grupo/subgrupo passado ser√° bloqueada caso n√£o exista em estoque.
+        /// Verifica se a venda de produto do grupo/subgrupo passado ser· bloqueada caso n„o exista em estoque.
         /// </summary>
         public bool BloquearEstoque(GDASession session, int idGrupoProd, int? idSubgrupoProd)
         {
@@ -127,7 +127,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// (APAGAR: quando alterar para utilizar transaÁ„o)
         /// </summary>
         /// <param name="idGrupoProd"></param>
         /// <param name="nf"></param>
@@ -144,7 +144,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// (APAGAR: quando alterar para utilizar transaÁ„o)
         /// </summary>
         /// <param name="idGrupoProd"></param>
         /// <returns></returns>
@@ -186,17 +186,17 @@ namespace Glass.Data.DAL
         {
             throw new NotImplementedException();
             /*if (CurrentPersistenceObject.ExecuteSqlQueryCount("Select Count(*) From produto Where idGrupoProd=" + Key) > 0)
-                throw new Exception("Este grupo n√£o pode ser exclu√≠do. Existem produtos relacionados ao mesmo.");
+                throw new Exception("Este grupo n„o pode ser excluÌdo. Existem produtos relacionados ao mesmo.");
 
             if (CurrentPersistenceObject.ExecuteSqlQueryCount("Select Count(*) From subgrupo_prod Where idGrupoProd=" + Key) > 0)
-                throw new Exception("Este grupo n√£o pode ser exclu√≠do. Existem subgrupos relacionados ao mesmo.");
+                throw new Exception("Este grupo n„o pode ser excluÌdo. Existem subgrupos relacionados ao mesmo.");
 
             LogAlteracaoDAO.Instance.ApagaLogGrupoProduto(Key);
             return GDAOperations.Delete(new GrupoProd { IdGrupoProd = (int)Key });*/
         }
 
         /// <summary>
-        /// Retorna o c√≥digo do grupo passado
+        /// Retorna o cÛdigo do grupo passado
         /// </summary>
         /// <param name="formaPagto"></param>
         /// <returns></returns>
@@ -207,129 +207,126 @@ namespace Glass.Data.DAL
                 case NomeGrupoProd.Vidro:
                     return 1;
                 default:
-                    throw new Exception("Grupo de Produtos n√£o definido.");
+                    throw new Exception("Grupo de Produtos n„o definido.");
             }
         }
 
-        #region Verifica se Grupo √© Vidro/Alum√≠nio/Ferragem
+        #region Verifica se Grupo È Vidro/AlumÌnio/Ferragem
 
         /// <summary>
-        /// Verifica o tipo de c√°lculo que ser√° aplicado no produto.
+        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// Verifica o tipo de c·lculo que ser· aplicado no produto.
         /// </summary>
-        /// <param name="session">session.</param>
-        /// <param name="idProd">idProd.</param>
-        /// <param name="nf">nf.</param>
-        /// <returns>Retorna o tipo de c√°lculo que ser√° aplicado no produto.</returns>
-        public int TipoCalculo(GDASession session, int idProd, bool nf)
+        /// <param name="idProd"></param>
+        /// <returns></returns>
+        public int TipoCalculo(int idProd)
         {
-            var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(session, idProd);
-            var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, idProd);
-
-            return this.TipoCalculo(session, idGrupoProd, idSubgrupoProd, nf);
+            return TipoCalculo(null, idProd);
         }
 
         /// <summary>
-        /// Verifica o tipo de c√°lculo que ser√° aplicado no produto.
+        /// Verifica o tipo de c·lculo que ser· aplicado no produto.
         /// </summary>
-        /// <param name="session">session.</param>
-        /// <param name="idGrupo">idGrupo.</param>
-        /// <param name="idSubgrupo">idSubgrupo.</param>
-        /// <param name="nf">nf.</param>
-        /// <returns>Retorna o tipo de c√°lculo que ser√° aplicado no produto.</returns>
-        public int TipoCalculo(
-            GDASession session,
-            int idGrupo,
-            int? idSubgrupo,
-            bool nf)
+        /// <param name="idProd"></param>
+        /// <returns></returns>
+        public int TipoCalculo(GDASession sessao, int idProd)
+        {
+            return TipoCalculo(sessao, idProd, false);
+        }
+
+        /// <summary>
+        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// Verifica o tipo de c·lculo que ser· aplicado no produto.
+        /// </summary>
+        /// <param name="idProd"></param>
+        /// <param name="nf"></param>
+        /// <returns></returns>
+        public int TipoCalculo(int idProd, bool nf)
+        {
+            return TipoCalculo(null, idProd, nf);
+        }
+
+        /// <summary>
+        /// Verifica o tipo de c·lculo que ser· aplicado no produto.
+        /// </summary>
+        /// <param name="idProd"></param>
+        /// <param name="nf"></param>
+        /// <returns></returns>
+        public int TipoCalculo(GDASession sessao, int idProd, bool nf)
+        {
+            var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, idProd);
+            var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, idProd);
+
+            return TipoCalculo(sessao, idGrupoProd, idSubgrupoProd, nf);
+        }
+
+        /// <summary>
+        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// Verifica o tipo de c·lculo que ser· aplicado no produto
+        /// </summary>
+        /// <param name="idGrupo"></param>
+        /// <param name="idSubgrupo"></param>
+        public int TipoCalculo(int idGrupo, int? idSubgrupo)
+        {
+            return TipoCalculo(null, idGrupo, idSubgrupo);
+        }
+
+        /// <summary>
+        /// Verifica o tipo de c·lculo que ser· aplicado no produto
+        /// </summary>
+        /// <param name="idGrupo"></param>
+        /// <param name="idSubgrupo"></param>
+        public int TipoCalculo(GDASession sessao, int idGrupo, int? idSubgrupo)
+        {
+            return TipoCalculo(sessao, idGrupo, idSubgrupo, false);
+        }
+
+        /// <summary>
+        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// Verifica o tipo de c·lculo que ser· aplicado no produto
+        /// </summary>
+        /// <param name="idGrupo"></param>
+        /// <param name="idSubgrupo"></param>
+        public int TipoCalculo(int idGrupo, int? idSubgrupo, bool nf)
+        {
+            return TipoCalculo(null, idGrupo, idSubgrupo, nf);
+        }
+
+        /// <summary>
+        /// Verifica o tipo de c·lculo que ser· aplicado no produto
+        /// </summary>
+        /// <param name="idGrupo"></param>
+        /// <param name="idSubgrupo"></param>
+        public int TipoCalculo(GDASession sessao, int idGrupo, int? idSubgrupo, bool nf)
         {
             try
             {
-                TipoCalculoGrupoProd? tipoCalculoGrupo = null;
-                TipoCalculoGrupoProd? tipoCalculoNfGrupo = null;
-                TipoCalculoGrupoProd? tipoCalculoSubgrupo = null;
-                TipoCalculoGrupoProd? tipoCalculoNfSubgrupo = null;
-
-                if (idGrupo > 0)
-                {
-                    tipoCalculoGrupo = (TipoCalculoGrupoProd?)this.ObtemTipoCalculo(session, idGrupo, false);
-                    tipoCalculoNfGrupo = (TipoCalculoGrupoProd?)this.ObtemTipoCalculo(session, idGrupo, true);
-                }
+                int? tipoCalc = null;
+                int? tipoCalcGrupo = GrupoProdDAO.Instance.ObtemTipoCalculo(sessao, idGrupo, false);
+                int? tipoCalcGrupoNf = nf ? GrupoProdDAO.Instance.ObtemTipoCalculo(sessao, idGrupo, true) : null;
+                int? tipoCalcSubgrupo = idSubgrupo > 0 ? SubgrupoProdDAO.Instance.ObtemTipoCalculo(sessao, idSubgrupo.Value, false) : null;
+                int? tipoCalcSubgrupoNf = nf && idSubgrupo > 0 ? SubgrupoProdDAO.Instance.ObtemTipoCalculo(sessao, idSubgrupo.Value, true) : null;
 
                 if (idSubgrupo > 0)
-                {
-                    tipoCalculoSubgrupo = (TipoCalculoGrupoProd?)SubgrupoProdDAO.Instance.ObtemTipoCalculo(session, idSubgrupo.Value, false);
-                    tipoCalculoNfSubgrupo = (TipoCalculoGrupoProd?)SubgrupoProdDAO.Instance.ObtemTipoCalculo(session, idSubgrupo.Value, true);
-                }
+                    tipoCalc = !nf ? tipoCalcSubgrupo : tipoCalcSubgrupoNf;
 
-                return this.TipoCalculo(
-                    idGrupo,
-                    idSubgrupo,
-                    nf,
-                    tipoCalculoGrupo,
-                    tipoCalculoNfGrupo,
-                    tipoCalculoSubgrupo,
-                    tipoCalculoNfSubgrupo);
+                if ((tipoCalc == null || tipoCalc <= 0) && idGrupo > 0)
+                    tipoCalc = !nf ? tipoCalcGrupo : tipoCalcGrupoNf;
+
+                if (nf && (tipoCalc == null || tipoCalc <= 0))
+                    tipoCalc = idSubgrupo > 0 && tipoCalcSubgrupo > 0 ? tipoCalcSubgrupo : tipoCalcGrupo;
+
+                return tipoCalc > 0 ? tipoCalc.Value : (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd;
             }
             catch
             {
-                return (int)TipoCalculoGrupoProd.Qtd;
+                return (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd;
             }
         }
 
         /// <summary>
-        /// Verifica o tipo de c√°lculo que ser√° aplicado no produto.
-        /// </summary>
-        /// <param name="idGrupo">idGrupo.</param>
-        /// <param name="idSubgrupo">idSubgrupo.</param>
-        /// <param name="nf">nf.</param>
-        /// <param name="tipoCalculoGrupo">tipoCalculoGrupo.</param>
-        /// <param name="tipoCalculoNfGrupo">tipoCalculoNfGrupo.</param>
-        /// <param name="tipoCalculoSubgrupo">tipoCalculoSubgrupo.</param>
-        /// <param name="tipoCalculoNfSubgrupo">tipoCalculoNfSubgrupo.</param>
-        /// <returns>Retorna o tipo de c√°lculo que ser√° aplicado no produto.</returns>
-        public int TipoCalculo(
-            int idGrupo,
-            int? idSubgrupo,
-            bool nf,
-            TipoCalculoGrupoProd? tipoCalculoGrupo,
-            TipoCalculoGrupoProd? tipoCalculoNfGrupo,
-            TipoCalculoGrupoProd? tipoCalculoSubgrupo,
-            TipoCalculoGrupoProd? tipoCalculoNfSubgrupo)
-        {
-            TipoCalculoGrupoProd? tipoCalculo = null;
-
-            if (nf)
-            {
-                if (idSubgrupo > 0)
-                {
-                    tipoCalculo = tipoCalculoNfSubgrupo;
-                }
-
-                if (!tipoCalculo.HasValue)
-                {
-                    tipoCalculo = tipoCalculoNfGrupo;
-                }
-            }
-
-            if (!tipoCalculo.HasValue)
-            {
-                if (idSubgrupo > 0)
-                {
-                    tipoCalculo = tipoCalculoSubgrupo;
-                }
-
-                if (!tipoCalculo.HasValue)
-                {
-                    tipoCalculo = tipoCalculoGrupo;
-                }
-            }
-
-            return (int)tipoCalculo;
-        }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
-        /// Verifica se o estoque ser√° alterado para o produto.
+        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// Verifica se o estoque ser· alterado para o produto.
         /// </summary>
         /// <param name="idGrupo"></param>
         /// <param name="idSubgrupo"></param>
@@ -339,7 +336,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o estoque ser√° alterado para o produto.
+        /// Verifica se o estoque ser· alterado para o produto.
         /// </summary>
         /// <param name="idGrupo"></param>
         /// <param name="idSubgrupo"></param>
@@ -355,7 +352,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o estoque fiscal ser√° alterado para o produto.
+        /// Verifica se o estoque fiscal ser· alterado para o produto.
         /// </summary>
         public bool NaoAlterarEstoqueFiscal(int idGrupo, int? idSubgrupo)
         {
@@ -363,7 +360,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o estoque fiscal ser√° alterado para o produto.
+        /// Verifica se o estoque fiscal ser· alterado para o produto.
         /// </summary>
         public bool NaoAlterarEstoqueFiscal(GDASession session, int idGrupo, int? idSubgrupo)
         {
@@ -377,7 +374,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se Grupo passado √© Vidro
+        /// Verifica se Grupo passado È Vidro
         /// </summary>
         /// <param name="idGrupo"></param>
         public bool IsVidro(int idGrupo)
@@ -386,16 +383,16 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se Grupo passado √© Alum√≠nio
+        /// Verifica se Grupo passado È AlumÌnio
         /// </summary>
         /// <param name="idGrupo"></param>
         public bool IsAluminio(int idGrupo)
         {
-            return idGrupo == (int)NomeGrupoProd.Alum√≠nio;
+            return idGrupo == (int)NomeGrupoProd.AlumÌnio;
         }
 
         /// <summary>
-        /// Verifica se Grupo passado √© Ferragem
+        /// Verifica se Grupo passado È Ferragem
         /// </summary>
         /// <param name="idGrupo"></param>
         public bool IsFerragem(int idGrupo)
@@ -404,7 +401,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se produto √© m√£o de obra
+        /// Verifica se produto È m„o de obra
         /// </summary>
         /// <param name="idGrupo"></param>
         /// <returns></returns>
@@ -414,7 +411,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se produto √© vidro temperado
+        /// Verifica se produto È vidro temperado
         /// </summary>
         /// <param name="idGrupo"></param>
         /// <returns></returns>
