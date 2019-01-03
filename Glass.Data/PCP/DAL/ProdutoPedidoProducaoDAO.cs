@@ -6666,6 +6666,8 @@ namespace Glass.Data.DAL
 
                 ProdutoImpressaoDAO.Instance.ExecuteScalar<int>(sessao, "update produto_impressao set idImpressao=" +
                     Glass.Conversoes.StrParaUintNullable(dadosReposicao[4]) + " where idProdImpressao=" + idProdImpressao);
+
+                this.AtualizaIdImpressao(sessao, (int)idProdPedProducao, Glass.Conversoes.StrParaInt(dadosReposicao[4]));
             }
 
             // Apaga as leituras dessa peça
@@ -6691,6 +6693,16 @@ namespace Glass.Data.DAL
 
             AtualizaSituacaoPecaNaProducao(sessao, idProdPedProducao, null, true);
             LogAlteracaoDAO.Instance.LogProdPedProducao(sessao, item, LogAlteracaoDAO.SequenciaObjeto.Atual);
+        }
+
+        private void AtualizaIdImpressao(GDASession sessao, int idProdPedProducao, int idImpressao)
+        {
+            if (idProdPedProducao == 0 || idImpressao == 0)
+            {
+                return;
+            }
+
+            this.objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET IdImpressao = {idImpressao} WHERE IdProdPedProducao = {idProdPedProducao}");
         }
 
         #endregion

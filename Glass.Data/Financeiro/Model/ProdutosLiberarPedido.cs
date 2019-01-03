@@ -389,8 +389,9 @@ namespace Glass.Data.Model
                         return b.Valor / divisor;
                     });
 
-                    var calcMult5 = ( PedidoMaoDeObra || IsVidro )
-                        && ProdutoPedido.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto;
+                    var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(null, IdPedido);
+
+                    var calcMult5 =  ProdutoPedido.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
                     decimal? valorUnitario;
 

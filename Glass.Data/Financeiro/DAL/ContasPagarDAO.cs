@@ -4223,58 +4223,84 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza os dados da conta a pagar/paga.
         /// </summary>
+        /// <param name="contaPagar">A conta a pagar com os dados que serão alterados.</param>
+        /// <returns>O número de linhas afetadas pela alteração.</returns>
         public override int Update(ContasPagar contaPagar)
         {
-            using (var transaction = new GDATransaction())
+            using (var sessao = new GDATransaction())
             {
                 try
                 {
-                    transaction.BeginTransaction();
+                    sessao.BeginTransaction();
 
-                    var contaPagarOld = GetElementByPrimaryKey(transaction, contaPagar.IdContaPg);
+                    var resultado = this.Update(sessao, contaPagar);
 
-                    // Recupera a descrição da forma de pagamento para alterar o log.
-                    if (contaPagarOld.IdFormaPagto > 0)
-                        contaPagarOld.FormaPagtoCompra = FormaPagtoDAO.Instance.GetDescricao((Pagto.FormaPagto)contaPagarOld.IdFormaPagto);
+                    sessao.Commit();
 
-                    if (contaPagar.IdFormaPagto > 0)
-                        contaPagar.FormaPagtoCompra = FormaPagtoDAO.Instance.GetDescricao((Pagto.FormaPagto)contaPagar.IdFormaPagto);
-
-                    if (!contaPagarOld.Paga && FuncoesData.DateDiff(DateInterval.Year, contaPagarOld.DataVenc, contaPagar.DataVenc) > 2)
-                        throw new Exception("A data de vencimento não pode ser alterada com mais de 2 anos de diferença da data original nesta opção.");
-
-                    // Caso a conta esteja paga, não é permitido alterar a Data de Vencimento, Número do Boleto ou a Forma de Pagamento.
-                    if (contaPagarOld.Paga)
-                    {
-                        var mensagemAlerta = "A conta está paga, portanto, não é possível alterar {0}";
-
-                        if (contaPagarOld.DataVenc != contaPagar.DataVenc)
-                            throw new Exception(string.Format(mensagemAlerta, "a data de vencimento."));
-
-                        if (contaPagarOld.NumBoleto != contaPagar.NumBoleto)
-                            throw new Exception(string.Format(mensagemAlerta, "o número do boleto."));
-
-                        if (contaPagarOld.IdFormaPagto != contaPagar.IdFormaPagto)
-                            throw new Exception(string.Format(mensagemAlerta, "a forma de pagamento."));
-                    }
-
-                    var retorno = base.Update(transaction, contaPagar);
-
-                    /* Chamado 49106. */
-                    LogAlteracaoDAO.Instance.LogContaPagar(transaction, contaPagarOld, contaPagar);
-
-                    transaction.Commit();
-                    transaction.Close();
-
-                    return retorno;
+                    return resultado;
                 }
                 catch
                 {
-                    transaction.Rollback();
-                    transaction.Close();
+                    sessao.Rollback();
+                    sessao.Close();
                     throw;
                 }
             }
+        }
+
+        /// <summary>
+        /// Atualiza os dados da conta a pagar/paga.
+        /// </summary>
+        /// <param name="sessao">A transação atual.</param>
+        /// <param name="contaPagar">A conta a pagar com os dados que serão alterados.</param>
+        /// <returns>O número de linhas afetadas pela alteração.</returns>
+        public int Update(GDATransaction sessao, ContasPagar contaPagar)
+        {
+            var contaPagarOld = this.GetElementByPrimaryKey(sessao, contaPagar.IdContaPg);
+
+            // Recupera a descrição da forma de pagamento para alterar o log.
+            if (contaPagarOld.IdFormaPagto > 0)
+            {
+                contaPagarOld.FormaPagtoCompra = FormaPagtoDAO.Instance.GetDescricao((Pagto.FormaPagto)contaPagarOld.IdFormaPagto);
+            }
+
+            if (contaPagar.IdFormaPagto > 0)
+            {
+                contaPagar.FormaPagtoCompra = FormaPagtoDAO.Instance.GetDescricao((Pagto.FormaPagto)contaPagar.IdFormaPagto);
+            }
+
+            if (!contaPagarOld.Paga && FuncoesData.DateDiff(DateInterval.Year, contaPagarOld.DataVenc, contaPagar.DataVenc) > 2)
+            {
+                throw new Exception("A data de vencimento não pode ser alterada com mais de 2 anos de diferença da data original nesta opção.");
+            }
+
+            // Caso a conta esteja paga, não é permitido alterar a Data de Vencimento, Número do Boleto ou a Forma de Pagamento.
+            if (contaPagarOld.Paga)
+            {
+                var mensagemAlerta = "A conta está paga, portanto, não é possível alterar {0}";
+
+                if (contaPagarOld.DataVenc != contaPagar.DataVenc)
+                {
+                    throw new Exception(string.Format(mensagemAlerta, "a data de vencimento."));
+                }
+
+                if (contaPagarOld.NumBoleto != contaPagar.NumBoleto)
+                {
+                    throw new Exception(string.Format(mensagemAlerta, "o número do boleto."));
+                }
+
+                if (contaPagarOld.IdFormaPagto != contaPagar.IdFormaPagto)
+                {
+                    throw new Exception(string.Format(mensagemAlerta, "a forma de pagamento."));
+                }
+            }
+
+            var retorno = base.Update(sessao, contaPagar);
+
+            /* Chamado 49106. */
+            LogAlteracaoDAO.Instance.LogContaPagar(sessao, contaPagarOld, contaPagar);
+
+            return retorno;
         }
 
         public override int Delete(ContasPagar objDelete)

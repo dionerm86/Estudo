@@ -624,6 +624,11 @@ namespace Glass.Data.DAL
             {
                 var saldoDisponivelObra = ObraDAO.Instance.GetSaldo(sessao, idObra.Value);
 
+                if (saldoDisponivelObra < totalPedidoAtual)
+                {
+                    throw new Exception("Não é possível confirmar este pedido pois a obra não possui saldo suficiente.");
+                }
+
                 // Chamado 27270: Se o pedido já estiver considerado no saldo da obra, seu valor deve ser deduzido do saldo da obra que está no banco de dados,
                 // para que atualize seu total de forma correta
                 if (pedidoJaCalculadoNoSaldoDaObra)
