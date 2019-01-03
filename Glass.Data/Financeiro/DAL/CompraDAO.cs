@@ -1410,9 +1410,6 @@ namespace Glass.Data.DAL
 
         #region Cancelar/reabrir Compra
 
-        /// <summary>
-        /// Cancela a compra
-        /// </summary>
         private void EstornarCompra(uint idCompra, Compra.SituacaoEnum situacaoFinal, string obs)
         {
             using (var transaction = new GDATransaction())
@@ -1421,119 +1418,125 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    Compra compra = GetElementByPrimaryKey(transaction, idCompra);
-
-                    #region Operações de cancelamento da compra
-
-                    if (situacaoFinal == Compra.SituacaoEnum.Cancelada)
-                    {
-                        // Se a compra já estiver cancelada, não pode ser cancelada novamente
-                        if (compra.Situacao == Compra.SituacaoEnum.Cancelada)
-                            throw new Exception("Esta compra já foi cancelada.");
-
-                        // Se a compra estiver ativa, apenas altera sua situação para cancelada
-                        if (compra.Situacao == Compra.SituacaoEnum.Ativa)
-                        {
-                            objPersistence.ExecuteCommand(transaction, "update compra set obs=?obs where idCompra=" + idCompra,
-                                new GDAParameter("?obs", obs));
-
-                            AlteraSituacao(transaction, idCompra, Compra.SituacaoEnum.Cancelada);
-                        }
-                        else
-                        {
-                            // Se a compra possuir alguma conta paga, não permite cancelamento
-                            if (ContasPagarDAO.Instance.GetPagasCount(transaction, idCompra) > 0)
-                                throw new Exception("Esta compra possui contas pagas, cancele os pagamentos antes de cancelar a compra.");
-
-                            objPersistence.ExecuteCommand(transaction, "update compra set obs=?obs where idCompra=" + idCompra,
-                                new GDAParameter("?obs", obs));
-                        }
-                    }
-                    // Se a compra possuir alguma conta paga, não permite a reabertura.
-                    else if (situacaoFinal == Compra.SituacaoEnum.Ativa &&
-                        ContasPagarDAO.Instance.GetPagasCount(transaction, idCompra) > 0)
-                        throw new Exception("Esta compra possui contas pagas, cancele os pagamentos antes de reabrir a compra.");
-
-                    #endregion
-
-                    #region Exclui Contas a Pagar
-
-                    try
-                    {
-                        // Busca as contas pagas relacionadas à esta compra
-                        ContasPagar[] lstContas = ContasPagarDAO.Instance.GetByCompra(transaction, idCompra);
-
-                        // Exclui contas a pagar que não foram pagas
-                        foreach (ContasPagar c in lstContas)
-                            if (!c.Paga) ContasPagarDAO.Instance.DeleteByPrimaryKey(transaction, c.IdContaPg);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao excluir contas a pagar relacionadas com a compra.", ex));
-                    }
-
-                    #endregion
-
-                    #region Debita produtos no estoque
-
-                    try
-                    {
-                        MovEstoqueDAO.Instance.BaixaEstoqueCancelamentoCompra(
-                            transaction,
-                            (int)idCompra,
-                            ProdutosCompraDAO.Instance.GetByCompra(transaction, idCompra));
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("Falha ao debitar produtos no estoque. Erro: " + ex.Message);
-                    }
-
-                    #endregion
-
-                    #region Exclui os registros da tabela pedidos_compra
-
-                    try
-                    {
-                        objPersistence.ExecuteCommand(transaction, "Delete From pedidos_compra Where idCompra=" + idCompra);
-                    }
-                    catch { }
-
-                    #endregion
-
-                    objPersistence.ExecuteCommand(transaction, "update compra set dataFinalizada=null, idFuncFinal=null, dataSaida=null where idCompra=" + idCompra);
-                    AlteraSituacao(transaction, idCompra, situacaoFinal);
-
-                    //Se foi paga com antecipação, atualiza o saldo.
-                    if (compra.TipoCompra == (uint)Compra.TipoCompraEnum.AntecipFornec)
-                        AntecipacaoFornecedorDAO.Instance.AtualizaSaldo(transaction, compra.IdAntecipFornec.GetValueOrDefault(0));
-
-                    var logFuncReabrir = new LogAlteracao
-                    {
-                        Campo = "Situação",
-                        IdRegistroAlt = (int)idCompra,
-                        Tabela = (int)LogAlteracao.TabelaAlteracao.Compra,
-                        Referencia = idCompra.ToString(),
-                        IdFuncAlt = UserInfo.GetUserInfo.CodUser,
-                        ValorAnterior = compra.Situacao.ToString(),
-                        ValorAtual = Glass.Data.Model.Compra.SituacaoEnum.Ativa.ToString(),
-                        NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(transaction, LogAlteracao.TabelaAlteracao.Compra, (int)idCompra),
-                        DataAlt = DateTime.Now
-
-                    };
-
-                    LogAlteracaoDAO.Instance.Insert(transaction, logFuncReabrir);
+                    this.EstornarCompra(transaction, idCompra, situacaoFinal, obs);
 
                     transaction.Commit();
                     transaction.Close();
                 }
-                catch(Exception ex)
+                catch
                 {
                     transaction.Rollback();
                     transaction.Close();
-
-                    ErroDAO.Instance.InserirFromException("Cancelar Compra: " + idCompra, ex);
-                    throw ex;
+                    throw;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Cancela a compra
+        /// </summary>
+        private void EstornarCompra(GDASession sessao, uint idCompra, Compra.SituacaoEnum situacaoFinal, string obs)
+        {
+            try
+            {
+                Compra compra = GetElementByPrimaryKey(sessao, idCompra);
+
+                #region Operações de cancelamento da compra
+
+                if (situacaoFinal == Compra.SituacaoEnum.Cancelada)
+                {
+                    // Se a compra já estiver cancelada, não pode ser cancelada novamente
+                    if (compra.Situacao == Compra.SituacaoEnum.Cancelada)
+                        throw new Exception("Esta compra já foi cancelada.");
+
+                    // Se a compra estiver ativa, apenas altera sua situação para cancelada
+                    if (compra.Situacao == Compra.SituacaoEnum.Ativa)
+                    {
+                        objPersistence.ExecuteCommand(sessao, "update compra set obs=?obs where idCompra=" + idCompra,
+                            new GDAParameter("?obs", obs));
+
+                        AlteraSituacao(sessao, idCompra, Compra.SituacaoEnum.Cancelada);
+                    }
+                    else
+                    {
+                        // Se a compra possuir alguma conta paga, não permite cancelamento
+                        if (ContasPagarDAO.Instance.GetPagasCount(sessao, idCompra) > 0)
+                            throw new Exception("Esta compra possui contas pagas, cancele os pagamentos antes de cancelar a compra.");
+
+                        objPersistence.ExecuteCommand(sessao, "update compra set obs=?obs where idCompra=" + idCompra,
+                            new GDAParameter("?obs", obs));
+                    }
+                }
+                // Se a compra possuir alguma conta paga, não permite a reabertura.
+                else if (situacaoFinal == Compra.SituacaoEnum.Ativa &&
+                    ContasPagarDAO.Instance.GetPagasCount(sessao, idCompra) > 0)
+                    throw new Exception("Esta compra possui contas pagas, cancele os pagamentos antes de reabrir a compra.");
+
+                #endregion
+
+                #region Exclui Contas a Pagar
+
+                try
+                {
+                    // Busca as contas pagas relacionadas à esta compra
+                    ContasPagar[] lstContas = ContasPagarDAO.Instance.GetByCompra(sessao, idCompra);
+
+                    // Exclui contas a pagar que não foram pagas
+                    foreach (ContasPagar c in lstContas)
+                        if (!c.Paga) ContasPagarDAO.Instance.DeleteByPrimaryKey(sessao, c.IdContaPg);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao excluir contas a pagar relacionadas com a compra.", ex));
+                }
+
+                #endregion
+
+                #region Debita produtos no estoque
+
+                try
+                {
+                    MovEstoqueDAO.Instance.BaixaEstoqueCancelamentoCompra(
+                        sessao,
+                        (int)idCompra,
+                        ProdutosCompraDAO.Instance.GetByCompra(sessao, idCompra));
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Falha ao debitar produtos no estoque. Erro: " + ex.Message);
+                }
+
+                #endregion
+
+                objPersistence.ExecuteCommand(sessao, "Delete From pedidos_compra Where idCompra=" + idCompra);
+
+                objPersistence.ExecuteCommand(sessao, "update compra set dataFinalizada=null, idFuncFinal=null, dataSaida=null where idCompra=" + idCompra);
+                AlteraSituacao(sessao, idCompra, situacaoFinal);
+
+                //Se foi paga com antecipação, atualiza o saldo.
+                if (compra.TipoCompra == (uint)Compra.TipoCompraEnum.AntecipFornec)
+                    AntecipacaoFornecedorDAO.Instance.AtualizaSaldo(sessao, compra.IdAntecipFornec.GetValueOrDefault(0));
+
+                var logFuncReabrir = new LogAlteracao
+                {
+                    Campo = "Situação",
+                    IdRegistroAlt = (int)idCompra,
+                    Tabela = (int)LogAlteracao.TabelaAlteracao.Compra,
+                    Referencia = idCompra.ToString(),
+                    IdFuncAlt = UserInfo.GetUserInfo.CodUser,
+                    ValorAnterior = compra.Situacao.ToString(),
+                    ValorAtual = Glass.Data.Model.Compra.SituacaoEnum.Ativa.ToString(),
+                    NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(sessao, LogAlteracao.TabelaAlteracao.Compra, (int)idCompra),
+                    DataAlt = DateTime.Now
+
+                };
+
+                LogAlteracaoDAO.Instance.Insert(sessao, logFuncReabrir);
+            }
+            catch (Exception ex)
+            {
+                ErroDAO.Instance.InserirFromException("Cancelar Compra: " + idCompra, ex);
+                throw;
             }
         }
 
@@ -1542,10 +1545,39 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela a compra.
         /// </summary>
-        /// <param name="idCompra"></param>
+        /// <param name="idCompra">Identificador da compra.</param>
+        /// <param name="obs">Observação de cancelamento da compra.</param>
         public void CancelarCompra(uint idCompra, string obs)
         {
-            EstornarCompra(idCompra, Compra.SituacaoEnum.Cancelada, obs);
+            using (var sessao = new GDATransaction())
+            {
+                try
+                {
+                    sessao.BeginTransaction();
+
+                    this.CancelarCompra(sessao, idCompra, obs);
+
+                    sessao.Commit();
+                    sessao.Close();
+                }
+                catch
+                {
+                    sessao.Rollback();
+                    sessao.Close();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cancela a compra.
+        /// </summary>
+        /// <param name="sessao">Transação utilizada.</param>
+        /// <param name="idCompra">Identificador da compra.</param>
+        /// <param name="obs">Observação de cancelamento da compra.</param>
+        public void CancelarCompra(GDATransaction sessao, uint idCompra, string obs)
+        {
+            this.EstornarCompra(sessao, idCompra, Compra.SituacaoEnum.Cancelada, obs);
         }
 
         #endregion
@@ -1558,10 +1590,37 @@ namespace Glass.Data.DAL
         /// <param name="idCompra"></param>
         public void ReabrirCompra(uint idCompra)
         {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    this.ReabrirCompra(transaction, idCompra);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reabre a compra.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="idCompra"></param>
+        public void ReabrirCompra(GDATransaction session, uint idCompra)
+        {
             if (CompraNotaFiscalDAO.Instance.PossuiNFe(idCompra))
                 throw new Exception("Não é possível reabrir a compra porque ela possui NF-e vinculada.");
 
-            EstornarCompra(idCompra, Compra.SituacaoEnum.Ativa, null);
+            this.EstornarCompra(session, idCompra, Compra.SituacaoEnum.Ativa, null);
         }
 
         #endregion
