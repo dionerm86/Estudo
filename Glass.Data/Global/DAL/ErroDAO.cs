@@ -6,6 +6,7 @@ using System.Web;
 using System.Reflection;
 using System.Linq;
 using Glass.Configuracoes;
+using System.Text.RegularExpressions;
 
 namespace Glass.Data.DAL
 {
@@ -95,9 +96,13 @@ namespace Glass.Data.DAL
             // como esta função geralmente é chamada no catch dos métodos, não pode lançar erro de forma alguma
             try
             {
+
+
                 erro = GetUsableException(erro);
-                if (erro == null)
+                if (erro == null || !this.SalvarMensagem(erro.Message))
+                {
                     return;
+                }
 
                 Erro novo = new Erro();
                 novo.IdParent = idParent;
@@ -115,7 +120,6 @@ namespace Glass.Data.DAL
 
                 novo.Trace = trace.StackTrace;
                 //novo.Trace = novo.Trace != null && novo.Trace.Length > 1500 ? novo.Trace.Substring(0, 1497) + "..." : novo.Trace;
-
                 uint idErro = ErroDAO.Instance.Insert(novo);
 
                 if (erro.InnerException != null)
@@ -125,6 +129,37 @@ namespace Glass.Data.DAL
             {
 
             }
+        }
+
+        private List<string> MensagensNaoSalvar()
+        {
+            return new List<string>
+            {
+                "Esta peça não pode ser lida neste setor, pois já foi lida em um setor posterior.",
+                "A peça informada ainda não está pronta.",
+                "A leitura desta etiqueta já foi efetuada.",
+                "Apenas o Gerente pode confirmar pedidos.",
+                "Não foi possível recuperar o login do usuário.Efetue o login no sistema novamente.",
+                "Falha de validação da separação. Erro: Configuração está desabilitada.",
+                "[A-Za-z0-9]*A conta \\d* já foi recebida.",
+                "O número do celular do cliente não foi informado.",
+                "Informe a matéria-prima usada para o corte.",
+            };
+        }
+
+        private bool SalvarMensagem(string exceptionMessage)
+        {
+            foreach (var mensagem in this.MensagensNaoSalvar())
+            {
+                var encontrou = Regex.Matches(exceptionMessage, mensagem).Count > 0;
+
+                if (encontrou)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 ﻿<span style="white-space: nowrap">
     <input type="number" min="0" v-model="idInterno" style="width: 50px" v-on:change.prevent="idCliente = idInterno" v-bind="$attrs">
     <campo-busca-com-popup v-bind:id.sync="idCliente" v-bind:nome.sync="nomeCliente" v-bind:funcao-buscar-itens="buscarClientes"
-        v-bind:item-selecionado.sync="clienteAtual" v-bind:url-popup="caminhoRelativo('/Utils/SelCliente.aspx') + (tipoValidacao ? '?tipo=' + tipoValidacao : '')" style="width: 200px" v-bind="$attrs"></campo-busca-com-popup>
+        v-bind:item-selecionado.sync="clienteAtual" v-bind:url-popup="'/Utils/SelCliente.aspx' + (tipoValidacao ? '?tipo=' + tipoValidacao : '')" style="width: 200px" v-bind="$attrs"></campo-busca-com-popup>
     <div v-if="exibirInformacoesCompra && clienteAtual && clienteAtual.observacoes">
         <span v-html="clienteAtual.observacoes" v-bind:style="'padding: 0' + (corTextoObservacoes ? '; color: ' + corTextoObservacoes : '')"></span>
     </div>

@@ -4265,8 +4265,9 @@ namespace Glass.Data.DAL
                 {
                     pedidoEspelho.Desconto = descontoFormPagtoProd.Desconto;
                     pedidoEspelho.TipoDesconto = 1;
-                    PedidoEspelhoDAO.Instance.UpdateDados(session, pedidoEspelho);
                 }
+
+                PedidoEspelhoDAO.Instance.UpdateDados(session, pedidoEspelho);
 
                 // Cria uma cópia do produto na tabela ProdutosPedido, com referência ao produto que está sendo inserido e invisível ao pedido
                 objInsert.IdProdPed = returnValue;
