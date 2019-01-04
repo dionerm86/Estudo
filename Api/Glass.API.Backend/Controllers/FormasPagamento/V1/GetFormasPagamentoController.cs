@@ -115,5 +115,32 @@ namespace Glass.API.Backend.Controllers.FormasPagamento.V1
                 return this.ErroValidacao("Erro ao obter lista de formas de pagamento de compras.", ex);
             }
         }
+
+        /// <summary>
+        /// Recupera a lista de formas de pagamento de pagamentos.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados das formas de pagamentos de pagamentos.</returns>
+        [HttpGet]
+        [Route("filtroPagamentos")]
+        [SwaggerResponse(200, "Formas de pagamento encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Formas de pagamento não encontradas.")]
+        public IHttpActionResult ObterListaFormasPagamentoPagamentos()
+        {
+            try
+            {
+                var formasPagamentoPagamentos = FormaPagtoDAO.Instance.GetForPagto(false)
+                    .Select(fpp => new IdNomeDto
+                    {
+                        Id = (int)fpp.IdFormaPagto,
+                        Nome = fpp.Descricao,
+                    });
+
+                return this.Lista(formasPagamentoPagamentos);
+            }
+            catch (Exception ex)
+            {
+                return this.ErroValidacao("Erro ao obter lista de formas de pagamento de pagamentos.", ex);
+            }
+        }
     }
 }

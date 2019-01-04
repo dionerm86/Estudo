@@ -496,6 +496,9 @@
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
     <Content Include="Vue\ContasPagar\Componentes\ListaContasPagar.Filtro.js" />
     <Content Include="Vue\ContasPagar\Componentes\ListaContasPagar.js" />
+    <Content Include="Vue\ContasPagar\Pagas\Componentes\ListaContasPagas.Filtro.js" />
+    <Content Include="Vue\ContasPagar\Pagas\Componentes\ListaContasPagas.js" />
+    <Content Include="Vue\ContasPagar\Pagas\Templates\ListaContasPagas.Filtro.html" />
     <Content Include="Vue\ContasPagar\Templates\ListaContasPagar.Filtro.html" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.Filtro.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.js" />

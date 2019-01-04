@@ -205,10 +205,12 @@ namespace Glass.Data.DAL
                     bool chaveComposta;
                     string campo = GetCampoChave(session, tabela, out chaveComposta);
 
-                    // Recupera os valores dos campos chave usando o WHERE e LIMIT
-                    string retorno = GetValoresCampo(session, "select " + (!string.IsNullOrWhiteSpace(alias) ? alias + "." : string.Empty) + campo
+                    var consulta = "select " + (!string.IsNullOrWhiteSpace(alias) ? alias + "." : string.Empty) + campo
                         + sql.Substring(sql.IndexOf(from)) + (!temWhere ? " where 1" : string.Empty)
-                        + where + ordenar + limitar, campo, parameters);
+                        + (string.IsNullOrWhiteSpace(groupBy) ? where : string.Empty) + ordenar + limitar;
+
+                    // Recupera os valores dos campos chave usando o WHERE e LIMIT
+                    string retorno = GetValoresCampo(session, consulta, campo, parameters);
 
                     numeroRegistros = retorno.Split(',').Length;
 

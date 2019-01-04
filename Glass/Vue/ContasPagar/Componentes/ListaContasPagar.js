@@ -159,7 +159,7 @@
     },
 
     /**
-     * Função que indica se o formulário de grupo de medida de projeto possui valores válidos de acordo com os controles.
+     * Função que indica se o formulário de contas a pagar possui valores válidos de acordo com os controles.
      * @param {Object} botao O botão que foi disparado no controle.
      * @returns {boolean} Um valor que indica se o formulário está válido.
      */
