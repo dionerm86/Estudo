@@ -619,70 +619,37 @@ namespace Glass.Data.DAL
         #region Retorna a quantidade que será usada no DANFE
 
         /// <summary>
-        /// Obtém a quantidade que será usada no DANFE.
+        /// Retorna a quantidade que será usada no DANFE
         /// </summary>
-        /// <param name="pnf">pnf.</param>
-        /// <returns>Retorna a quantidade que será usada no DANFE.</returns>
         public float ObtemQtdDanfe(ProdutosNf pnf)
         {
-            return this.ObtemQtdDanfe(null, pnf.IdProd, pnf.TotM, pnf.Qtde, pnf.Altura, pnf.Largura, false, true);
+            return ObtemQtdDanfe(null, pnf);
         }
 
         /// <summary>
-        /// Obtém a quantidade que será usada no DANFE.
+        /// Retorna a quantidade que será usada no DANFE
         /// </summary>
-        /// <param name="session">session.</param>
-        /// <param name="pnf">pnf.</param>
-        /// <returns>Retorna a quantidade que será usada no DANFE.</returns>
         public float ObtemQtdDanfe(GDASession session, ProdutosNf pnf)
         {
-            return this.ObtemQtdDanfe(session, pnf.IdProd, pnf.TotM, pnf.Qtde, pnf.Altura, pnf.Largura, false, true);
+            return ObtemQtdDanfe(session, pnf, false);
         }
 
-        /// <summary>
-        /// Obtém a quantidade que será usada no DANFE.
-        /// </summary>
-        /// <param name="pnf">pnf.</param>
-        /// <param name="nfQtdBaixaM2">nfQtdBaixaM2.</param>
-        /// <returns>Retorna a quantidade que será usada no DANFE.</returns>
         public float ObtemQtdDanfe(ProdutosNf pnf, bool nfQtdBaixaM2)
         {
-            return this.ObtemQtdDanfe(null, pnf, nfQtdBaixaM2);
+            return ObtemQtdDanfe(null, pnf, nfQtdBaixaM2);
         }
 
-        /// <summary>
-        /// Obtém a quantidade que será usada no DANFE.
-        /// </summary>
-        /// <param name="session">session.</param>
-        /// <param name="pnf">pnf.</param>
-        /// <param name="nfQtdBaixaM2">nfQtdBaixaM2.</param>
-        /// <returns>Retorna a quantidade que será usada no DANFE.</returns>
         public float ObtemQtdDanfe(GDASession session, ProdutosNf pnf, bool nfQtdBaixaM2)
         {
-            return this.ObtemQtdDanfe(session, pnf.IdProd, pnf.TotM, pnf.Qtde, pnf.Altura, pnf.Largura, nfQtdBaixaM2, true);
+            return ObtemQtdDanfe(session, pnf.IdProd, pnf.TotM, pnf.Qtde, pnf.Altura, pnf.Largura, nfQtdBaixaM2, true);
         }
 
         /// <summary>
-        /// Obtém a quantidade que será usada no DANFE.
+        /// Retorna a quantidade que será usada no DANFE
         /// </summary>
-        /// <param name="idProd">idProd.</param>
-        /// <param name="totM2">totM2.</param>
-        /// <param name="qtde">qtde.</param>
-        /// <param name="altura">altura.</param>
-        /// <param name="largura">largura.</param>
-        /// <param name="nfQtdBaixaM2">nfQtdBaixaM2.</param>
-        /// <param name="tipoCalcFiscal">tipoCalcFiscal.</param>
-        /// <returns>Retorna a quantidade que será usada no DANFE.</returns>
-        public float ObtemQtdDanfe(
-            uint idProd,
-            float totM2,
-            float qtde,
-            float altura,
-            int largura,
-            bool nfQtdBaixaM2,
-            bool tipoCalcFiscal)
+        public float ObtemQtdDanfe(uint idProd, float totM2, float qtde, float altura, int largura, bool nfQtdBaixaM2, bool tipoCalcFiscal)
         {
-            return this.ObtemQtdDanfe(null, idProd, totM2, qtde, altura, largura, nfQtdBaixaM2, tipoCalcFiscal);
+            return ObtemQtdDanfe(null, idProd, totM2, qtde, altura, largura, nfQtdBaixaM2, tipoCalcFiscal);
         }
 
         /// <summary>
