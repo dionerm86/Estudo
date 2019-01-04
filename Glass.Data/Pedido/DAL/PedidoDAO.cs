@@ -624,11 +624,6 @@ namespace Glass.Data.DAL
             {
                 var saldoDisponivelObra = ObraDAO.Instance.GetSaldo(sessao, idObra.Value);
 
-                if (saldoDisponivelObra < totalPedidoAtual)
-                {
-                    throw new Exception("Não é possível confirmar este pedido pois a obra não possui saldo suficiente.");
-                }
-
                 // Chamado 27270: Se o pedido já estiver considerado no saldo da obra, seu valor deve ser deduzido do saldo da obra que está no banco de dados,
                 // para que atualize seu total de forma correta
                 if (pedidoJaCalculadoNoSaldoDaObra)
@@ -5942,9 +5937,10 @@ namespace Glass.Data.DAL
                             throw new Exception("Um ou mais produtos estão com o valor vendido diferente do valor unitário definido na obra.");
                 }
 
-                /* Chamado 19272. */
-                if (ObraDAO.Instance.GetSaldo(session, pedido.IdObra.Value) < pedido.Total)
+                if (ObraDAO.Instance.ObtemSaldoComPedConf(session, pedido.IdObra.Value) < pedido.Total)
+                {
                     throw new Exception("Não é possível finalizar este pedido pois a obra não possui saldo suficiente.");
+                }
 
                 // Atualiza o campo pagamento antecipado
                 var valorPagamentoAntecipado = pedido.Total;
