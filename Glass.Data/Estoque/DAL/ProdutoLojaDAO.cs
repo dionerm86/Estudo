@@ -14,14 +14,14 @@ namespace Glass.Data.DAL
 
         #region Busca padrão
 
-        private string Sql(uint idLoja, uint idProd, bool forEFD, bool selecionar)
+        private string Sql(uint idLoja, uint idProd, bool selecionar)
         {
             string campos = selecionar ? @"pl.*, p.Descricao as DescrProduto, p.IdGrupoProd, p.IdSubgrupoProd,
                 g.Descricao as DescrGrupoProd, u.codigo as unidadeProd, pcc.codInterno as codInternoContaContabil,
                 p.idContaContabil, c.nome as nomeCliente, f.nomeFantasia as nomeFornec, t.nome as nomeTransportador,
                 l.nomeFantasia as nomeLoja, a.nome as nomeAdminCartao" : "Count(*)";
 
-            if (selecionar && !forEFD)
+            if (selecionar)
                 campos += ", pc.totMComprando, pc.qtdeComprando, pped.totMProduzindo, pped.qtdeProduzindo";
 
             bool agruparEstoqueLoja = idLoja > 0;
@@ -36,8 +36,8 @@ namespace Glass.Data.DAL
                 Left join transportador t on (pl.idTransportador=t.idTransportador)
                 Left join loja l on (pl.idLojaTerc=l.idLoja)
                 Left join administradora_cartao a on (pl.idAdminCartao=a.idAdminCartao)
-                " + (!forEFD ? ProdutoDAO.Instance.SqlPendenteCompra("p", agruparEstoqueLoja ? "pl" : null) : "") + @"
-                " + (!forEFD ? ProdutoDAO.Instance.SqlPendenteProducao("p", agruparEstoqueLoja ? "pl" : null, null) : "") + @"
+                " + ProdutoDAO.Instance.SqlPendenteCompra("p", agruparEstoqueLoja ? "pl" : null) + @"
+                " + ProdutoDAO.Instance.SqlPendenteProducao("p", agruparEstoqueLoja ? "pl" : null, null) + @"
                 Where 1";
 
             if (idLoja > 0)
@@ -51,12 +51,12 @@ namespace Glass.Data.DAL
 
         public IList<ProdutoLoja> GetList(uint idLoja, string sortExpression, int startRow, int pageSize)
         {
-            return LoadDataWithSortExpression(Sql(idLoja, 0, false, true), sortExpression, startRow, pageSize, null);
+            return LoadDataWithSortExpression(Sql(idLoja, 0, true), sortExpression, startRow, pageSize, null);
         }
 
         public int GetCount(uint idLoja)
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(idLoja, 0, false, false), null);
+            return objPersistence.ExecuteSqlQueryCount(Sql(idLoja, 0, false), null);
         }
 
         public ProdutoLoja GetElement(uint idLoja, uint idProd)
@@ -66,18 +66,50 @@ namespace Glass.Data.DAL
 
         public ProdutoLoja GetElement(GDASession session, uint idLoja, uint idProd)
         {
-            return GetElement(session, idLoja, idProd, false);
-        }
-
-        public ProdutoLoja GetElement(uint idLoja, uint idProd, bool forEFD)
-        {
-            return GetElement(null, idLoja, idProd, forEFD);
-        }
-
-        public ProdutoLoja GetElement(GDASession session, uint idLoja, uint idProd, bool forEFD)
-        {
-            List<ProdutoLoja> item = objPersistence.LoadData(session, Sql(idLoja, idProd, forEFD, true));
+            List<ProdutoLoja> item = objPersistence.LoadData(session, Sql(idLoja, idProd, true));
             return item.Count > 0 ? item[0] : null;
+        }
+
+        #endregion
+
+        #region Busca para EFD
+
+        private string SqlParaEfd(int idLoja, int idProd, bool selecionar)
+        {
+            var agruparEstoqueLoja = idLoja > 0;
+            var campos = selecionar ? "pl.*" : "COUNT(*)";
+            var sql = $@"SELECT {campos}
+                FROM produto_loja pl
+                WHERE 1";
+
+            if (idLoja > 0)
+            {
+                sql += $" AND pl.IdLoja = {idLoja}";
+            }
+
+            if (idProd > 0)
+            {
+                sql += $" AND pl.IdProd = {idProd}";
+            }
+
+            return sql;
+        }
+
+        /// <summary>
+        /// Obtém um produto de loja com base nos parâmetros informados.
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <param name="idLoja">idLoja.</param>
+        /// <param name="idProd">idProd.</param>
+        /// <returns>Retorna um produto de loja com base nos parâmetros informados.</returns>
+        public ProdutoLoja ObterParaEfd(GDASession session, int idLoja, int idProd)
+        {
+            if (idLoja == 0 || idProd == 0)
+            {
+                return null;
+            }
+
+            return this.objPersistence.LoadData(session, this.SqlParaEfd(idLoja, idProd, true))?.FirstOrDefault();
         }
 
         #endregion
