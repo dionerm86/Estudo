@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Data.DAL;
@@ -66,7 +66,7 @@ namespace Glass.UI.Web.Utils
 
                         uint idPecaItemProj = Glass.Conversoes.StrParaUint(tblImagens.Rows[j].Cells[0].Attributes["idPecaItemProj"]);
 
-                        // Garante que a imagem pode ser alterada na peÁa
+                        // Garante que a imagem pode ser alterada na pe√ßa
                         if (idPecaItemProj > 0 && !UtilsProjeto.PodeAlterarImagemPeca(PecaItemProjetoDAO.Instance.GetElementExt(null, idPecaItemProj, true), item, j + 1, false))
                             continue;
 
@@ -84,7 +84,7 @@ namespace Glass.UI.Web.Utils
                             var urlImagem = ProdutosPedidoDAO.Instance.ObterUrlImagemSalvar(idProdPed);
                             ManipulacaoImagem.SalvarImagem(urlImagem, f.FileBytes);
 
-                            // Cria Log de alteraÁ„o da Imagem do Produto Pedido
+                            // Cria Log de altera√ß√£o da Imagem do Produto Pedido
                             LogAlteracaoDAO.Instance.Insert(new LogAlteracao
                             {
                                 Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
@@ -116,7 +116,7 @@ namespace Glass.UI.Web.Utils
 
                                 ManipulacaoImagem.SalvarImagem(Server.MapPath(nomeImagem), f.FileBytes);
 
-                                // Cria Log de alteraÁ„o da Imagem do Produto Pedido Espelho
+                                // Cria Log de altera√ß√£o da Imagem do Produto Pedido Espelho
                                 LogAlteracaoDAO.Instance.Insert(new LogAlteracao
                                 {
                                     Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPedEsp,
@@ -130,7 +130,7 @@ namespace Glass.UI.Web.Utils
                                 });
 
                                 if (idPecaItemProj > 0)
-                                    LogAlteracaoDAO.Instance.LogImagemProducao(idPecaItemProj, item.ToString(), "Nova imagem atribuÌda ‡ peÁa");
+                                    LogAlteracaoDAO.Instance.LogImagemProducao(idPecaItemProj, item.ToString(), "Nova imagem atribu√≠da √† pe√ßa");
                             }
                         }                       
                     }
@@ -181,7 +181,7 @@ namespace Glass.UI.Web.Utils
     
                 uint idPecaItemProj = Glass.Conversoes.StrParaUint(linha.Cells[0].Attributes["idPecaItemProj"]);
                 if (idPecaItemProj > 0)
-                    LogAlteracaoDAO.Instance.LogImagemProducao(idPecaItemProj, ppe.Item.ToString(), "RemoÁ„o da imagem atribuÌda ‡ peÁa");
+                    LogAlteracaoDAO.Instance.LogImagemProducao(idPecaItemProj, ppe.Item.ToString(), "Remo√ß√£o da imagem atribu√≠da √† pe√ßa");
     
                 Response.Redirect(Request.Url.ToString());
             }
@@ -252,15 +252,15 @@ namespace Glass.UI.Web.Utils
                     peca = PecaItemProjetoDAO.Instance.GetElementExt(null, idPecaItemProj.Value, true);
                 }
 
-                string msgErro = "Item possui arquivo de otimizaÁ„o (mesa de<br/ >corte) gerado. N„o È possÌvel alter·-lo.";
+                string msgErro = "Item possui arquivo de otimiza√ß√£o (mesa de<br/ >corte) gerado. N√£o √© poss√≠vel alter√°-lo.";
 
-                // Mostra imagem apenas se for instalaÁ„o
+                // Mostra imagem apenas se for instala√ß√£o
                 if (peca != null && peca.Tipo == 1)
                 {
-                    // Controla o n˙mero da etiqueta de acordo com a quantidade (1/3)
+                    // Controla o n√∫mero da etiqueta de acordo com a quantidade (1/3)
                     int itemEtiqueta = 1;
 
-                    // Para cada item desta peÁa. Ex.: 1 e 2 ou 3 e 4
+                    // Para cada item desta pe√ßa. Ex.: 1 e 2 ou 3 e 4
                     foreach (string item in UtilsProjeto.GetItensFromPeca(peca.Item))
                     {
                         ppe.Item = Glass.Conversoes.StrParaInt(item);
@@ -269,7 +269,7 @@ namespace Glass.UI.Web.Utils
                         if (permitirAlterarImagem && Request["tipo"] != "pcp")
                         {
                             permitirAlterarImagem = false;
-                            msgErro = "AlteraÁ„o de imagem apenas no PCP";
+                            msgErro = "Altera√ß√£o de imagem apenas no PCP";
                         }
 
                         CriaLinhaTabela(tblImagens, permitirAlterarImagem, item, peca, ppe, null, msgErro);
@@ -280,7 +280,7 @@ namespace Glass.UI.Web.Utils
                     string result = ppe.EtiquetasLegenda;
                     msgErro = String.IsNullOrEmpty(ppe.EtiquetasLegenda) ? String.Empty : msgErro;
 
-                    // Verifica se È permitido alterar imagem da peÁa
+                    // Verifica se √© permitido alterar imagem da pe√ßa
                     var situacaoPedidoEspelho = PedidoEspelhoDAO.Instance.ObtemSituacao(ppe.IdPedido);
                     var permitirAlterarImagem = situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Finalizado || 
                         Config.PossuiPermissao(Config.FuncaoMenuPCP.AlterarImagemPecaAposImpressao);
@@ -292,10 +292,10 @@ namespace Glass.UI.Web.Utils
 
                         permitirAlterarImagem = itens != null && itens.Length > 0 && !string.IsNullOrEmpty(itens[0]);
 
-                        // Recupera o setor de marcaÁ„o
-                        Setor setor = SetorDAO.Instance.ObterSetorPorNome(null, "MarcaÁ„o");
+                        // Recupera o setor de marca√ß√£o
+                        Setor setor = SetorDAO.Instance.ObterSetorPorNome(null, "Marca√ß√£o");
 
-                        // Se for permitido alterar imagem da peÁa, verifica se o item n„o tem arquivo sag e se n„o passou pelo setor de marcaÁ„o
+                        // Se for permitido alterar imagem da pe√ßa, verifica se o item n√£o tem arquivo sag e se n√£o passou pelo setor de marca√ß√£o
                         if (setor != null && setor.IdSetor > 0 && permitirAlterarImagem && itens != null && itens.Length > 0)
                             foreach (string etiq in itens)
                                 permitirAlterarImagem = permitirAlterarImagem && !EtiquetaArquivoOtimizacaoDAO.Instance.TemArquivoSAG(etiq) &&
@@ -304,8 +304,8 @@ namespace Glass.UI.Web.Utils
                     else if (PedidoDAO.Instance.IsMaoDeObra(null, ppe.IdPedido))
                         permitirAlterarImagem = true;
                     else
-                        msgErro = String.IsNullOrEmpty(result) ? "Apenas vidros que ser„o produzidos<br/ >podem ter imagens anexadas." :
-                            "Etiqueta j· impressa. N„o È<br />possÌvel alterar a imagem";
+                        msgErro = String.IsNullOrEmpty(result) ? "Apenas vidros que ser√£o produzidos<br/ >podem ter imagens anexadas." :
+                            "Etiqueta j√° impressa. N√£o √©<br />poss√≠vel alterar a imagem";
 
                     CriaLinhaTabela(tblImagens, permitirAlterarImagem, "", null, ppe, null, msgErro);
                 }
@@ -313,7 +313,7 @@ namespace Glass.UI.Web.Utils
             catch (Exception ex)
             {
                 MensagemAlerta.ErrorMsg("Falha ao exibir imagens.", ex, Page);
-                var urlErro = Request.Url.ToString() == null || Request.Url.ToString() == "" ? "Sel Imagem PeÁa" : Request.Url.ToString();
+                var urlErro = Request.Url.ToString() == null || Request.Url.ToString() == "" ? "Sel Imagem Pe√ßa" : Request.Url.ToString();
                 ErroDAO.Instance.InserirFromException(urlErro, ex);
             }
         }
@@ -337,12 +337,12 @@ namespace Glass.UI.Web.Utils
                 botoes.Controls.Add(ctrl);
 
                 ImageButton exc = new ImageButton();
-                exc.OnClientClick = "if (!confirm('Deseja excluir a imagem atribuÌda ‡ peÁa?')) return false;";
+                exc.OnClientClick = "if (!confirm('Deseja excluir a imagem atribu√≠da √† pe√ßa?')) return false;";
                 exc.ImageUrl = "~/Images/ExcluirGrid.gif";
                 exc.Click += new ImageClickEventHandler(imgExcluir_Click);
                 exc.PreRender += new EventHandler(imgExcluir_PreRender);
 
-                // Exibe o Log de alteraÁ„o da Imagem do Produto Pedido
+                // Exibe o Log de altera√ß√£o da Imagem do Produto Pedido
                 Controls.ctrlLogPopup logPP = (Controls.ctrlLogPopup)LoadControl("~/Controls/ctrlLogPopup.ascx");
                 logPP.Tabela = LogAlteracao.TabelaAlteracao.ImagemProdPed;
                 logPP.IdRegistro = pp.IdProdPed;
@@ -364,7 +364,7 @@ namespace Glass.UI.Web.Utils
             if (peca != null)
                 tipoArquivo = PecaProjetoModeloDAO.Instance.ObtemTipoArquivoMesaCorte(peca.IdPecaProjMod);
 
-            // Caso seja permitido alterar a imagem da peÁa, È necess·rio verificar ainda se a peÁa possui fml associado.
+            // Caso seja permitido alterar a imagem da pe√ßa, √© necess√°rio verificar ainda se a pe√ßa possui fml associado.
             if (permitirAlterarImagem &&
                 (tipoArquivo == null ||
                 (tipoArquivo.Value != TipoArquivoMesaCorte.FML &&
@@ -382,6 +382,15 @@ namespace Glass.UI.Web.Utils
                 else
                     linha.Cells.Add(upload);
             }
+            else if (permitirAlterarImagem)
+            {
+                permitirAlterarImagem = false;
+
+                var geraDXF = PCPConfig.EmpresaGeraArquivoDxf ? "DXF" : string.Empty;
+                var geraFML = PCPConfig.EmpresaGeraArquivoDxf ? "FML" : string.Empty;
+                var tiposArquivoBloquear = !string.IsNullOrEmpty(geraDXF) && !string.IsNullOrEmpty(geraFML) ? $"{geraDXF} ou {geraFML}" : geraDXF + geraFML;
+                msgErro = $@"N√£o √© poss√≠vel alterar imagens de pe√ßas que tenham arquivos de mesa associados {tiposArquivoBloquear}.";
+            }
 
             if (!String.IsNullOrEmpty(item))
                 cabecalho.Text = "Item " + item;
@@ -398,7 +407,7 @@ namespace Glass.UI.Web.Utils
                 logPopup.Controls.Add(log);
             }
 
-            // Exibe o Log de alteraÁ„o da Imagem do Produto Pedido Espelho
+            // Exibe o Log de altera√ß√£o da Imagem do Produto Pedido Espelho
             Controls.ctrlLogPopup logPPE = (Controls.ctrlLogPopup)LoadControl("~/Controls/ctrlLogPopup.ascx");
             logPPE.Tabela = LogAlteracao.TabelaAlteracao.ImagemProdPedEsp;
             logPPE.IdRegistro = ppe.IdProdPed;
@@ -432,14 +441,14 @@ namespace Glass.UI.Web.Utils
             if (permitirAlterarImagem)
             {
                 ImageButton exc = new ImageButton();
-                exc.OnClientClick = "if (!confirm('Deseja excluir a imagem atribuÌda ‡ peÁa?')) return false;";
+                exc.OnClientClick = "if (!confirm('Deseja excluir a imagem atribu√≠da √† pe√ßa?')) return false;";
                 exc.ImageUrl = "~/Images/ExcluirGrid.gif";
                 exc.Click += new ImageClickEventHandler(imgExcluir_Click);
                 exc.PreRender += new EventHandler(imgExcluir_PreRender);
     
                 botoes.Controls.Add(exc);
     
-                // Se o processo da peÁa for fixo, n„o permite anexar imagem
+                // Se o processo da pe√ßa for fixo, n√£o permite anexar imagem
                 if (ppe.IdProcesso == null || ppe.IdProcesso != ProjetoConfig.Caixilho.ProcessoCaixilho)
                 {
                     FileUpload upl = new FileUpload();
@@ -450,7 +459,7 @@ namespace Glass.UI.Web.Utils
             else
             {
                 if (ppe.IdProcesso == ProjetoConfig.Caixilho.ProcessoCaixilho)
-                    msgErro = "Caixilhos n„o tem imagens associadas";
+                    msgErro = "Caixilhos n√£o tem imagens associadas";
     
                 Label msg = new Label();
                 msg.Text = msgErro;

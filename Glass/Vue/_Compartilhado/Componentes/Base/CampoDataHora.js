@@ -79,8 +79,8 @@ Vue.component('campo-data-hora', {
 
   data: function() {
     return {
-      dataAtual: this.dataHora ? this.formataData(this.dataHora - Data.offset) : '',
-      horaAtual: this.dataHora ? this.formataHora(this.dataHora - Data.offset) : ''
+      dataAtual: this.dataHora ? this.formataData(this.dataHora) : '',
+      horaAtual: this.dataHora ? this.formataHora(this.dataHora) : ''
     };
   },
 

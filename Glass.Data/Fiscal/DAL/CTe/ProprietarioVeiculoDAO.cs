@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GDA;
 using Glass.Data.Model.Cte;
 
 namespace Glass.Data.DAL.CTe
@@ -69,8 +70,22 @@ namespace Glass.Data.DAL.CTe
             return base.Delete(objDelete);
         }
 
+        /// <summary>
+        /// Exclui um proprietário de veículo.
+        /// </summary>
+        /// <param name="sessao">A transação atual.</param>
+        /// <param name="key">O identificador do proprietário de veículo que será excluido.</param>
+        /// <returns>Um número inteiro contendo o número de linhas afetadas pela execução do sql.</returns>
+        public override int DeleteByPrimaryKey(GDASession sessao, int key)
+        {
+            if (ExecuteScalar<int>("Select COUNT(*) FROM proprietario_veiculo_veiculo WHERE IdPropVeic=" + key) > 0)
+                throw new System.Exception("Este proprietário está associado à uma veículo e não pode ser excluído");
+
+            return base.DeleteByPrimaryKey(sessao, key);
+        }
+
         public override int Update(ProprietarioVeiculo objUpdate)
-        {           
+        {
             return base.Update(objUpdate);
         }
     }

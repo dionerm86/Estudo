@@ -219,10 +219,14 @@
     <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\Lista\DeleteOrdensCargaController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\Lista\GetOrdensCargaController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\OrdensCarga\Lista\OrdensCargaController.cs" />
+    <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\DeleteProprietariosDeVeiculosController.cs" />
+    <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\GetProprietariosDeVeiculosController.cs" />
+    <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\ProprietariosDeVeiculosController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\ContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\GetContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\PatchContasPagasController.cs" />
     <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
+    <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\ConverterCadastroAtualizacaoParaContasPagas.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\TraducaoOrdenacaoListaContasPagas.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Configuracoes\ListaDto.cs" />
@@ -275,6 +279,8 @@
     <Compile Include="Helper\ContasPagar\ConverterCadastroAtualizacaoParaContasPagar.cs" />
     <Compile Include="Helper\ContasPagar\TraducaoOrdenacaoListaContasPagar.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
+    <Compile Include="Models\ConhecimentosTransporte\V1\Veiculos\Proprietarios\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ConhecimentosTransporte\V1\Veiculos\Proprietarios\Lista\ListaDto.cs" />
     <Compile Include="Models\ContasPagar\V1\Pagas\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\ContasPagar\V1\Pagas\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\ContasPagar\V1\Pagas\Lista\DatasDto.cs" />

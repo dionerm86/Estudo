@@ -4055,14 +4055,10 @@ namespace Glass.Data.DAL
                                     valorDifal = Math.Round(valorDifal / (1 - ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)), 4);
                                 }
 
-                                var percentualIcmsUFDestino = DateTime.Now.Year == 2018 ? 0.8M : 100;
-                                var percentualIcmsUFRemetente = DateTime.Now.Year == 2018 ? 0.2M : 0;
-                                valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
-                                valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
+                                valorIcmsUFDestino = Math.Round(valorDifal, 2);
                                 var valorIcmsFCP = Math.Round(baseIcmsCalculoDifal * (aliqFcp / 100), 2);
 
                                 totalIcmsUFDestino += valorIcmsUFDestino;
-                                totalIcmsUFRemetente += valorIcmsUFRemetente;
                                 totalIcmsFCP += valorIcmsFCP;
 
                                 XmlElement icmsUfDest = doc.CreateElement("ICMSUFDest");
@@ -4072,10 +4068,10 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(aliqFcp, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInternaDestinatario, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal(percentualIcmsInterestadual, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart", Formatacoes.TrataValorDecimal(percentualIcmsUFDestino * 100, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart", Formatacoes.TrataValorDecimal(100, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vFCPUFDest", Formatacoes.TrataValorDecimal(valorIcmsFCP, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFDest", Formatacoes.TrataValorDecimal(valorIcmsUFDestino, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFRemet", Formatacoes.TrataValorDecimal(valorIcmsUFRemetente, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFRemet", Formatacoes.TrataValorDecimal(0, 2));
 
                                 imposto.AppendChild(icmsUfDest);
                             }
@@ -6442,6 +6438,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN transportador transp ON (n.IdTransportador=transp.IdTransportador)
                     Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
+                    Left Join plano_contas pc on (n.idConta=pc.idConta)
                     Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
             else
@@ -6454,6 +6451,7 @@ namespace Glass.Data.DAL
                     Left Join fornecedor f On (n.idFornec=f.idFornec)
                     Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
+                    Left Join plano_contas pc on (n.idConta=pc.idConta)
                     Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
 
