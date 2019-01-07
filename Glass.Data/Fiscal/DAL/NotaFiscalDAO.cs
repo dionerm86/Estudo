@@ -6438,6 +6438,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN transportador transp ON (n.IdTransportador=transp.IdTransportador)
                     Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
+                    Left Join plano_contas pc on (n.idConta=pc.idConta)
                     Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
             else
@@ -6450,6 +6451,7 @@ namespace Glass.Data.DAL
                     Left Join fornecedor f On (n.idFornec=f.idFornec)
                     Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
+                    Left Join plano_contas pc on (n.idConta=pc.idConta)
                     Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
 
