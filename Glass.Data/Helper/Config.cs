@@ -758,7 +758,7 @@ namespace Glass.Data.Helper
             UsarTLS12NFe = 1533,
             TextoEmailAdministradores = 1534,
             IgnorarReducaoBcIcmsCalculoDifal = 1535,
-
+            AbaterICMSDoTotalProdNfMovEstoqueFiscal = 1536,
             #endregion
         }
 
