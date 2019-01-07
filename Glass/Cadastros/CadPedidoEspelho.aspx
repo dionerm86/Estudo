@@ -1,4 +1,4 @@
-<%@ Page Title="Pedido em ConferÍncia" Language="C#" MasterPageFile="~/Painel.master"
+Ôªø<%@ Page Title="Pedido em Confer√™ncia" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="CadPedidoEspelho.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadPedidoEspelho" %>
 
 <%@ Register Src="../Controls/ctrlBenef.ascx" TagName="ctrlBenef" TagPrefix="uc1" %>
@@ -18,7 +18,7 @@
 
     <script type="text/javascript">
 
-        // Verifica se o produto que est· sendo inserido È um alumÌnio
+        // Verifica se o produto que est√° sendo inserido √© um alum√≠nio
         var prodInsAluminio = false;
 
         var produtoAmbiente = false;
@@ -26,7 +26,7 @@
         var procAmbiente = false;
         var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
         var pedidoReposicao = <%= VerificaPedidoReposicao() %>;
-        // Guarda a quantidade disponÌvel em estoque do produto buscado
+        // Guarda a quantidade dispon√≠vel em estoque do produto buscado
         var qtdEstoque = 0;
         var exibirMensagemEstoque = false;
         var qtdEstoqueMensagem = 0;
@@ -84,7 +84,7 @@
                     return;
                 }
                 else if(retorno == null){
-                    alert("Erro na recuperaÁ„o do valor de tabela do produto.");
+                    alert("Erro na recupera√ß√£o do valor de tabela do produto.");
                     return;
                 }
 
@@ -116,7 +116,7 @@
 
                 if (totM2 > tamanhoMaximo)
                 {
-                    alert("O total de m≤ da peÁa ultrapassa o m·ximo definido no pagamento antecipado. Tamanho m·ximo: " + tamanhoMaximo.toString().replace(".", ",") + " m≤");
+                    alert("O total de m¬≤ da pe√ßa ultrapassa o m√°ximo definido no pagamento antecipado. Tamanho m√°ximo: " + tamanhoMaximo.toString().replace(".", ",") + " m¬≤");
                     return false;
                 }
             }
@@ -148,7 +148,7 @@
             {
                 if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
                 {
-                    alert("Informe a aplicaÁ„o.");
+                    alert("Informe a aplica√ß√£o.");
                     return false;
                 }
 
@@ -173,7 +173,7 @@
 
                 valor = parseInt(valor, 10);
                 if (isNaN(valor) || valor == 0 || valor > (qtde - 1))
-                    alert("N˙mero inv·lido. Digite um n˙mero entre 1 e " + (qtde - 1) + ".");
+                    alert("N√∫mero inv√°lido. Digite um n√∫mero entre 1 e " + (qtde - 1) + ".");
                 else
                     break;
             }
@@ -195,9 +195,9 @@
             if (estoqueMenor)
             {
                 if (qtdEstoque == 0)
-                    alert("N„o h· nenhuma peÁa deste produto no estoque.");
+                    alert("N√£o h√° nenhuma pe√ßa deste produto no estoque.");
                 else
-                    alert("H· apenas " + qtdEstoque + " peÁa(s) deste produto no estoque.");
+                    alert("H√° apenas " + qtdEstoque + " pe√ßa(s) deste produto no estoque.");
 
                 FindControl("txtQtdeIns", "input").value = "";
             }
@@ -219,7 +219,7 @@
             openWindow(450, 700, '../Utils/SelProd.aspx?IdPedido=<%= Request["IdPedido"] %>' + (produtoAmbiente ? "&ambiente=true" : ""));
         }
 
-        // FunÁ„o chamada para mostrar/esconder controles para inserÁ„o de novo ambiente
+        // Fun√ß√£o chamada para mostrar/esconder controles para inser√ß√£o de novo ambiente
         function exibirEsconderAmbiente(value) {
             var ambiente = FindControl("txtAmbiente", "input");
             if (ambiente == null)
@@ -260,7 +260,7 @@
                     if (altura.value != "" && largura != "" &&
                         altura.value != largura.value &&
                         redondo.checked) {
-                        alert('O beneficiamento Redondo pode ser marcado somente em peÁas de medidas iguais.');
+                        alert('O beneficiamento Redondo pode ser marcado somente em pe√ßas de medidas iguais.');
                         redondo.checked = false;
                     }
                 }
@@ -284,7 +284,7 @@
             }
         }
 
-        // FunÁ„o chamada apÛs selecionar produto pelo popup
+        // Fun√ß√£o chamada ap√≥s selecionar produto pelo popup
         function setProduto(codInterno) {
             try {
                 if (!produtoAmbiente)
@@ -299,9 +299,9 @@
             }
         }
 
-        // Carrega dados do produto com base no cÛdigo do produto passado
+        // Carrega dados do produto com base no c√≥digo do produto passado
         function loadProduto(codInterno) {
-            // Esconde link para inserir v·rios alumÌnios
+            // Esconde link para inserir v√°rios alum√≠nios
             if (FindControl("lnkAddAluminio", "a") != null)
                 FindControl("lnkAddAluminio", "a").style.visibility = "hidden";
 
@@ -315,7 +315,7 @@
             if (verificaProduto[0] == "Erro")
             {
                 FindControl("txtCodProd", "input").value = "";
-                alert("Esse produto n„o pode ser usado no pedido. " + verificaProduto[1]);
+                alert("Esse produto n√£o pode ser usado no pedido. " + verificaProduto[1]);
                 return false;
             }
             else if (parseFloat(verificaProduto[1].replace(",", ".")) > 0)
@@ -323,7 +323,7 @@
                 if (FindControl("txtValorIns", "input") != null)
                     FindControl("txtValorIns", "input").disabled = true;
 
-                // Se for ediÁ„o de produto, chama o mÈtodo padr„o de c·lculo da metragem m·xima permitida
+                // Se for edi√ß√£o de produto, chama o m√©todo padr√£o de c√°lculo da metragem m√°xima permitida
                 if (FindControl("hdfProdPed", "input") != null)
                     calculaTamanhoMaximo();
                 else if (FindControl("hdfTamanhoMaximoObra", "input") != null)
@@ -354,7 +354,7 @@
                 if (FindControl("txtCodProd", "input") != null)
                     FindControl("txtCodProd", "input").value = "";
 
-                alert('Esse produto n„o pode ser utilizado, pois a loja do seu subgrupo È diferente da loja do pedido.');
+                alert('Esse produto n√£o pode ser utilizado, pois a loja do seu subgrupo √© diferente da loja do pedido.');
                 return false;
             }
 
@@ -394,11 +394,11 @@
                 else if (!produtoAmbiente) {
                     if (retorno[0] == "Prod") {
                         FindControl("hdfIdProd", "input").value = retorno[1];
-                        FindControl("lblValorIns", "span").innerHTML = verificaProduto[1] != "0" ? verificaProduto[1] : retorno[3]; // Exibe no cadastro o valor mÌnimo do produto
+                        FindControl("lblValorIns", "span").innerHTML = verificaProduto[1] != "0" ? verificaProduto[1] : retorno[3]; // Exibe no cadastro o valor m√≠nimo do produto
                         FindControl("hdfValorIns", "input").value = verificaProduto[1] != "0" ? verificaProduto[1] : retorno[3];;
-                        FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto È vidro
-                        FindControl("hdfIsAluminio", "input").value = retorno[5]; // Informa se o produto È alumÌnio
-                        FindControl("hdfM2Minimo", "input").value = retorno[6]; // Informa se o produto possui m≤ mÌnimo
+                        FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto √© vidro
+                        FindControl("hdfIsAluminio", "input").value = retorno[5]; // Informa se o produto √© alum√≠nio
+                        FindControl("hdfM2Minimo", "input").value = retorno[6]; // Informa se o produto possui m¬≤ m√≠nimo
                         FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como deve ser calculado o produto
                         var tipoCalc = retorno[7];
 
@@ -406,13 +406,13 @@
                             GetAdicionalAlturaChapa();
                         }
 
-                        qtdEstoque = retorno[13]; // Pega a quantidade disponÌvel em estoque deste produto
+                        qtdEstoque = retorno[13]; // Pega a quantidade dispon√≠vel em estoque deste produto
                         exibirMensagemEstoque = retorno[14] == "true";
                         qtdEstoqueMensagem = retorno[15];
 
                         atualizaValMin();
 
-                        // Se o produto for alumÌnio, mostra link para inserir v·rios alumÌnios
+                        // Se o produto for alum√≠nio, mostra link para inserir v√°rios alum√≠nios
                         if (retorno[5] == "true")
                         {
                             if (FindControl("lnkAddAluminio", "a") != null)
@@ -429,8 +429,8 @@
                         if (FindControl("lnkBenef", "a") != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1)
                             FindControl("lnkBenef", "a").style.display = exibirControleBenef(nomeControle) ? "" : "none";
 
-                        // Se o produto n„o for vidro, desabilita os textboxes largura e altura,
-                        // mas se o produto for tipoCalc=ML AL e a empresa trabalhar com venda de alumÌnio, deixa o campo altura habilitado
+                        // Se o produto n√£o for vidro, desabilita os textboxes largura e altura,
+                        // mas se o produto for tipoCalc=ML AL e a empresa trabalhar com venda de alum√≠nio, deixa o campo altura habilitado
                         // no metro linear ou se o produto for tipoCalc=ML, deixa os campos altura e largura habilitados
                         var cAltura = FindControl("txtAlturaIns", "input");
                         var cLargura = FindControl("txtLarguraIns", "input");
@@ -485,7 +485,7 @@
             produtoAmbiente = false;
         }
 
-        // FunÁ„o chamada pelo popup de escolha da AplicaÁ„o do produto
+        // Fun√ß√£o chamada pelo popup de escolha da Aplica√ß√£o do produto
         function setApl(idAplicacao, codInterno) {
 
             var idPedido = '<%= Request["idPedido"] %>';
@@ -532,7 +532,7 @@
                 var response = MetodosAjax.GetEtiqAplicacao(codInterno).value;
 
                 if (response == null || response == "") {
-                    alert("Falha ao buscar AplicaÁ„o. Ajax Error.");
+                    alert("Falha ao buscar Aplica√ß√£o. Ajax Error.");
                     setApl("", "");
                     return false
                 }
@@ -552,7 +552,7 @@
             }
         }
 
-        // FunÁ„o chamada pelo popup de escolha do Processo do produto
+        // Fun√ß√£o chamada pelo popup de escolha do Processo do produto
         function setProc(idProcesso, codInterno, codAplicacao) {
 
             var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfIdProd", "input").value);
@@ -561,7 +561,7 @@
             if(idSubgrupo.value != "" && retornoValidacao.value == "false" && FindControl("txtProcIns", "input").value != "")
             {
                 FindControl("txtProcIns", "input").value = "";
-                alert("Este processo n„o pode ser selecionado para este produto.")
+                alert("Este processo n√£o pode ser selecionado para este produto.")
                 return false;
             }
 
@@ -637,7 +637,7 @@
             }
         }
 
-        // Chamado quando um produto est· para ser inserido no pedido
+        // Chamado quando um produto est√° para ser inserido no pedido
         function onSaveProd() {
             if (!validate("produto"))
                 return false;
@@ -658,13 +658,13 @@
             // Verifica se foi clicado no aplicar na telinha de beneficiamentos
             if (FindControl("tbConfigVidro", "table").style.display == "block")
             {
-                alert("Aplique as alteraÁıes no beneficiamento antes de salvar o item.");
+                alert("Aplique as altera√ß√µes no beneficiamento antes de salvar o item.");
                 return false;
             }
 
             valMin = new Number(valMin.replace(',', '.'));
             if (codProd == "") {
-                alert("Informe o cÛdigo do produto.");
+                alert("Informe o c√≥digo do produto.");
                 return false;
             }
             else if (!pedidoProducao && (valor == "" || parseFloat(valor.replace(",", ".")) == 0)) {
@@ -676,7 +676,7 @@
                 return false;
             }
             else if (new Number(valor.replace(',', '.')) < valMin) {
-                alert("Valor especificado abaixo do valor mÌnimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
+                alert("Valor especificado abaixo do valor m√≠nimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
                 return false;
             }
             else if (FindControl("txtAlturaIns", "input").disabled == false) {
@@ -686,11 +686,11 @@
                 }
 
                 if (FindControl("hdfIsAluminio", "input").value == "true" && altura > 6) {
-                    alert("A altura deve ser no m·ximo 6ml.");
+                    alert("A altura deve ser no m√°ximo 6ml.");
                     return false;
                 }
             }
-            // Se o textbox da largura estiver habilitado, dever· ser informada
+            // Se o textbox da largura estiver habilitado, dever√° ser informada
             else if (FindControl("txtLarguraIns", "input").disabled == false && largura == "") {
                 alert("Informe a largura.");
                 return false;
@@ -702,7 +702,7 @@
             if (!validaTamanhoMax())
                 return false;
 
-            // Faz verificaÁıes do beneficiamento
+            // Faz verifica√ß√µes do beneficiamento
             //if (!checkBenef(FindControl("txtEspessura", "input").value))
             //    return false;
 
@@ -731,7 +731,7 @@
             return true;
         }
 
-        // FunÁ„o chamada quando o produto est· para ser atualizado
+        // Fun√ß√£o chamada quando o produto est√° para ser atualizado
         function onUpdateProd() {
             if (!validate("produto"))
                 return false;
@@ -753,7 +753,7 @@
             // Verifica se foi clicado no aplicar na telinha de beneficiamentos
             if (FindControl("tbConfigVidro", "table").style.display == "block")
             {
-                alert("Aplique as alteraÁıes no beneficiamento antes de salvar o item.");
+                alert("Aplique as altera√ß√µes no beneficiamento antes de salvar o item.");
                 return false;
             }
 
@@ -766,7 +766,7 @@
                 return false;
             }
             else if (new Number(valor.replace(',', '.')) < valMin) {
-                alert("Valor especificado abaixo do valor mÌnimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
+                alert("Valor especificado abaixo do valor m√≠nimo (R$ " + valMin.toFixed(2).replace(".", ",") + ")");
                 return false;
             }
             else if (FindControl("txtAlturaIns", "input").disabled == false) {
@@ -776,7 +776,7 @@
                 }
 
                 if (FindControl("hdfIsAluminio", "input").value == "true" && altura > 6) {
-                    alert("A altura deve ser no m·ximo 6ml.");
+                    alert("A altura deve ser no m√°ximo 6ml.");
                     return false;
                 }
             }
@@ -787,7 +787,7 @@
             if (!validaTamanhoMax())
                 return false;
 
-            // Faz verificaÁıes do beneficiamento
+            // Faz verifica√ß√µes do beneficiamento
             //if (!checkBenef(FindControl("txtEspessura", "input").value))
             //    return false;
 
@@ -874,7 +874,7 @@
                 if (altura != "" && largura != "" &&
                     parseInt(altura) > 0 && parseInt(largura) > 0 &&
                     parseInt(altura) != parseInt(largura) && redondo) {
-                    alert('O beneficiamento Redondo pode ser marcado somente em peÁas de medidas iguais.');
+                    alert('O beneficiamento Redondo pode ser marcado somente em pe√ßas de medidas iguais.');
 
                     if (FindControl("Redondo_chkSelecao", "input") != null && FindControl("Redondo_chkSelecao", "input").checked)
                         FindControl("Redondo_chkSelecao", "input").checked = false;
@@ -939,7 +939,7 @@
                 return;
             }
             else if(retorno == null){
-                alert("Erro na recuperaÁ„o do valor de tabela do produto.");
+                alert("Erro na recupera√ß√£o do valor de tabela do produto.");
                 return;
             }
             
@@ -949,7 +949,7 @@
                 hdfValorIns.value = retorno.value.replace(".", ",");
             } 
             else {
-                alert("N„o foi possÌvel encontrar o controle 'hdfValorIns'");
+                alert("N√£o foi poss√≠vel encontrar o controle 'hdfValorIns'");
                 return false;
             }
             
@@ -959,7 +959,7 @@
                 valorIns.innerHTML = retorno.value.replace(".", ",");
             }
             else{
-                alert("N„o foi possÌvel encontrar o controle 'lblValorIns'");
+                alert("N√£o foi poss√≠vel encontrar o controle 'lblValorIns'");
                 return false;
             }
         }
@@ -999,7 +999,7 @@
             }
         }
 
-        // Abre tela para inserir v·rios alumÌnios de uma sÛ vez
+        // Abre tela para inserir v√°rios alum√≠nios de uma s√≥ vez
         function openProdAluminio(idPedido) {
             var idProd = FindControl("txtCodProdIns", "input").value;
             var valor = FindControl("hdfValorIns", "input").value;
@@ -1036,15 +1036,15 @@
 
         function exibirObs(num, botao) {
             for (iTip = 0; iTip < 2; iTip++) {
-                TagToTip('tbObsCalc_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'ObservaÁ„o', CLOSEBTN, true,
-                    CLOSEBTNTEXT, 'Fechar (N„o salva as alteraÁıes)', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, false,
+                TagToTip('tbObsCalc_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'Observa√ß√£o', CLOSEBTN, true,
+                    CLOSEBTNTEXT, 'Fechar (N√£o salva as altera√ß√µes)', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, false,
                     FIX, [botao, 9 - getTableWidth('tbObsCalc_' + num), 7]);
             }
         }
 
         function exibirInfoAdicProd(num, botao) {
             for (iTip = 0; iTip < 2; iTip++) {
-                TagToTip('tbInfoAdicProd_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'InformaÁıes Adicionais', CLOSEBTN, true,
+                TagToTip('tbInfoAdicProd_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'Informa√ß√µes Adicionais', CLOSEBTN, true,
                     CLOSEBTNTEXT, 'Fechar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, false,
                     FIX, [botao, 9 - getTableWidth('tbInfoAdicProd_' + num), 7]);
             }
@@ -1060,9 +1060,15 @@
                 return false;
             }
             else {
-                alert("ObservaÁ„o salva.");
+                alert("Observa√ß√£o salva.");
                 window.opener.refreshPage();
             }
+        }
+
+        function mensagemProdutoComDesconto(editar) {
+            alert("N√£o √© poss√≠vel " + (editar ? "editar" : "remover") + " esse produto porque o pedido possui desconto.\n" +
+                "Aplique o desconto apenas ao terminar o cadastro dos produtos.\n" +
+                "Para continuar, remova o desconto do pedido.");
         }
 
     </script>
@@ -1092,7 +1098,7 @@
                                     </tr>
                                     <tr>
                                         <td align="left" nowrap="nowrap" style="font-weight: bold">
-                                            Funcion·rio
+                                            Funcion√°rio
                                         </td>
                                         <td align="left" nowrap="nowrap">
                                             <asp:Label ID="lblNomeFunc" runat="server" Text='<%# Eval("NomeFunc") %>'></asp:Label>
@@ -1132,7 +1138,7 @@
                                     </tr>
                                     <tr>
                                         <td align="left" nowrap="nowrap" style="font-weight: bold">
-                                            SituaÁ„o
+                                            Situa√ß√£o
                                         </td>
                                         <td align="left" nowrap="nowrap">
                                             <asp:Label ID="lblSituacao" runat="server" Text='<%# Eval("DescrSituacao") %>'></asp:Label>
@@ -1164,7 +1170,7 @@
                                             <asp:Label ID="lblTotalEsp" runat="server" Text='<%# Eval("Total", "{0:C}") %>' ForeColor="Blue"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap" style="font-weight: bold">
-                                            DiferenÁa
+                                            Diferen√ßa
                                         </td>
                                         <td align="left" nowrap="nowrap">
                                             <asp:Label ID="Label11" runat="server" Text='<%# String.Format("{0:C}", Math.Abs((decimal)Eval("Diferenca"))) %>'
@@ -1221,7 +1227,7 @@
                                 <table>
                                     <tr>
                                         <td>
-                                            Data de entrega da f·brica
+                                            Data de entrega da f√°brica
                                         </td>
                                         <td>
                                             <uc3:ctrlData ID="ctrlDataFabrica" runat="server" ReadOnly="ReadWrite" DataString='<%# Eval("DataFabrica", "{0:d}") %>'
@@ -1251,7 +1257,7 @@
                                 <asp:Button ID="btnAtualizar" runat="server" Text="Atualizar/Recalcular" CommandName="Atualizar" />
                                 <asp:Button ID="btnFinalizar" runat="server" CommandArgument='<%# Eval("IdPedido") %>'
                                     Text="Finalizar" OnClientClick="if (!finalizar()) return false" OnClick="btnFinalizar_Click" />
-                                <asp:Button ID="btnExcedente" runat="server" OnClick="btnExcedente_Click" OnClientClick="return confirm('Tem certeza que deseja gerar uma conta a receber com o valor excedente da ConferÍncia?');"
+                                <asp:Button ID="btnExcedente" runat="server" OnClick="btnExcedente_Click" OnClientClick="return confirm('Tem certeza que deseja gerar uma conta a receber com o valor excedente da Confer√™ncia?');"
                                     Text="Gerar Valor Excedente" OnLoad="btnExcedente_Load" />
                             </ItemTemplate>
                             <ItemStyle HorizontalAlign="Center" />
@@ -1267,7 +1273,7 @@
         </tr>
         <tr runat="server" id="inserirMaoObra" visible="false">
             <td align="center">
-                <asp:LinkButton ID="lbkInserirMaoObra" runat="server">Inserir v·rias peÁas de vidro com a mesma m„o de obra</asp:LinkButton>
+                <asp:LinkButton ID="lbkInserirMaoObra" runat="server">Inserir v√°rias pe√ßas de vidro com a mesma m√£o de obra</asp:LinkButton>
             </td>
         </tr>
         <tr>
@@ -1288,7 +1294,7 @@
                                     Visible='<%# Eval("EditDeleteVisible") %>'>
                                     <img border="0" src="../Images/Edit.gif"></img></asp:LinkButton>
                                 <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                                    ToolTip="Excluir" OnClientClick="return confirm(&quot;Excluir este ambiente far· com que todos os produtos do mesmo sejam excluÌdos tambÈm, confirma exclus„o?&quot;)"
+                                    ToolTip="Excluir" OnClientClick="return confirm(&quot;Excluir este ambiente far√° com que todos os produtos do mesmo sejam exclu√≠dos tamb√©m, confirma exclus√£o?&quot;)"
                                     CausesValidation="False" Visible='<%# Eval("EditDeleteVisible") %>' />
                             </ItemTemplate>
                             <EditItemTemplate>
@@ -1342,7 +1348,7 @@
                                 </asp:PlaceHolder>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="DescriÁ„o" SortExpression="Descricao">
+                        <asp:TemplateField HeaderText="Descri√ß√£o" SortExpression="Descricao">
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtEditDescricao" runat="server" Text='<%# Bind("Descricao") %>'
                                     MaxLength="1000" Rows="2" TextMode="MultiLine" Width="300px"></asp:TextBox>
@@ -1501,7 +1507,7 @@
                                 <asp:Label ID="Label8" runat="server" Text='<%# Bind("TotalProdutos", "{0:c}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="AcrÈscimo" SortExpression="Acrescimo">
+                        <asp:TemplateField HeaderText="Acr√©scimo" SortExpression="Acrescimo">
                             <EditItemTemplate>
                                 <asp:Label ID="Label6" runat="server" Text='<%# Eval("TextoAcrescimo") %>'></asp:Label>
                             </EditItemTemplate>
@@ -1562,10 +1568,12 @@
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit" Visible='<%# Eval("EditDeleteVisible") %>'>
+                                <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit" Visible='<%# Eval("EditDeleteVisible") %>'
+                                    OnClientClick='<%# !(bool)Eval("PodeEditar") ? "mensagemProdutoComDesconto(true); return false" : "" %>'>
                                     <img border="0" src="../Images/Edit.gif"></img></asp:LinkButton>
                                 <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" Visible='<%# Eval("EditDeleteVisible") %>'
-                                    ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Excluir" />
+                                    ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Excluir"
+                                    OnClientClick='<%# !(bool)Eval("PodeEditar") ? "mensagemProdutoComDesconto(false); return false" : "if (!confirm(\"Deseja remover esse produto do pedido?\")) return false" %>' />
                                 <asp:ImageButton ID="imbDesmembrar" runat="server" ImageUrl="../Images/Split.png"
                                     OnClientClick='<%# "desmembrar(" + Eval("IdProdPed") + ", " + Eval("Qtde") + "); return false;" %>'
                                     ToolTip="Dividir produtos" Visible='<%# Eval("DesmembrarVisible") %>' />
@@ -1587,7 +1595,7 @@
                             </EditItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="CÛd." SortExpression="CodInterno">
+                        <asp:TemplateField HeaderText="C√≥d." SortExpression="CodInterno">
                             <EditItemTemplate>
                                 <asp:Label ID="lblCodProdIns" runat="server" Text='<%# Bind("CodInterno") %>'></asp:Label>
                             </EditItemTemplate>
@@ -1619,7 +1627,7 @@
                                 <a href="#" onclick="getProduto(); return false;">
                                     <img src="../Images/Pesquisar.gif" border="0" /></a> <a id="lnkAddAluminio" href="#"
                                         onclick="openProdAluminio('<%= Request["IdPedido"] %>'); return false;" style="visibility: hidden;"
-                                        title="Adicionar V·rios">
+                                        title="Adicionar V√°rios">
                                         <img src="../Images/addMany.gif" border="0" /></a>
                                 <asp:HiddenField ID="hdfValMin" runat="server" />
                                 <asp:HiddenField ID="hdfIsVidro" runat="server" />
@@ -1854,7 +1862,7 @@
                             <ItemTemplate>
                                 <asp:ImageButton ID="imbImagemPeca" runat="server" ImageUrl="~/Images/imagem.gif"
                                     OnClientClick='<%# "openWindow(600, 800, \"../Utils/SelImagemPeca.aspx?tipo=pcp&idPedido=" + Eval("IdPedido") +"&idProdPed=" +  Eval("IdProdPed") + "&pecaAvulsa=True" + "\"); return false" %>'
-                                    ToolTip="Exibir imagem da peÁa"  Visible='<%# (Eval("IsVidro").ToString() == "true")%>'/>
+                                    ToolTip="Exibir imagem da pe√ßa"  Visible='<%# (Eval("IsVidro").ToString() == "true")%>'/>
                             </ItemTemplate>
                             <EditItemTemplate></EditItemTemplate>
                             <FooterTemplate></FooterTemplate>
@@ -1862,7 +1870,7 @@
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <a href="#" id="lnkObsCalc" onclick="exibirObs(<%# Eval("IdProdPed") %>, this); return false;" visible='<%# (Eval("IsVidro").ToString() == "true")%>'>
-                                    <img border="0" src="../../Images/blocodenotas.png" title="ObservaÁ„o da peÁa" /></a>
+                                    <img border="0" src="../../Images/blocodenotas.png" title="Observa√ß√£o da pe√ßa" /></a>
                                 <table id='tbObsCalc_<%# Eval("IdProdPed") %>' cellspacing="0" style="display: none;">
                                     <tr>
                                         <td align="center">
@@ -1878,10 +1886,10 @@
                                     </tr>
                                 </table>
                                 <a href="#" id="lnkInfoAdicProd" onclick="exibirInfoAdicProd(<%# Eval("IdProdPed") %>, this); return false;">
-                                    <img border="0" src="../../Images/tax.png" title="InformaÁıes Adicionais" width="16px"/></a>
+                                    <img border="0" src="../../Images/tax.png" title="Informa√ß√µes Adicionais" width="16px"/></a>
                                 <table id='tbInfoAdicProd_<%# Eval("IdProdPed") %>' cellspacing="0" style="display: none;">
                                      <tr>
-                                        <td align="left" style="font-weight: bold">Natureza de OperaÁ„o
+                                        <td align="left" style="font-weight: bold">Natureza de Opera√ß√£o
                                         </td>
                                         <td align="left" style="padding-left: 2px">
                                             <asp:label ID="lblNatOp" runat="server" Text='<%# Eval("CodNaturezaOperacao") %>'></asp:label>
@@ -2091,7 +2099,7 @@
                                         <span style="position: relative; top: -6px">campos usados para definir altura, largura
                                             e
                                             <br />
-                                            espessura da lapidaÁ„o e bisotÍ </span>
+                                            espessura da lapida√ß√£o e bisot√™ </span>
                                     </td>
                                 </tr>
                             </EditItemTemplate>
@@ -2105,7 +2113,7 @@
                                         <span style="position: relative; top: -6px">campos usados para definir altura, largura
                                             e
                                             <br />
-                                            espessura da lapidaÁ„o e bisotÍ </span>
+                                            espessura da lapida√ß√£o e bisot√™ </span>
                                     </td>
                                 </tr>
                             </FooterTemplate>
@@ -2148,7 +2156,7 @@
         if (FindControl("imbAtualizar", "input") != null && FindControl("lblCodProdIns", "span") != null)
             loadProduto(FindControl("lblCodProdIns", "span").innerHTML);
 
-        // Esconde controles de inserÁ„o de ambiente
+        // Esconde controles de inser√ß√£o de ambiente
         if (FindControl("lnkAddAmbiente", "input") != null)
             exibirEsconderAmbiente(false);
     </script>
