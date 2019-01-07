@@ -222,8 +222,11 @@
     <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\DeleteProprietariosDeVeiculosController.cs" />
     <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\GetProprietariosDeVeiculosController.cs" />
     <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\ProprietariosDeVeiculosController.cs" />
+    <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\GetPrecosTabelaClienteController.cs" />
+    <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\PrecosTabelaClienteController.cs" />
     <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
+    <Compile Include="Helper\Produtos\PrecosTabelaCliente\TraducaoOrdenacaoListaPrecoTabelaCliente.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Configuracoes\ListaDto.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PostCarregamentosController.cs" />
@@ -540,7 +543,6 @@
     <Compile Include="Controllers\Pedidos\V1\ProdutosPedido\ProdutosPedidoController.cs" />
     <Compile Include="Controllers\Pedidos\V1\ProdutosPedido\GetProdutosPedidoController.cs" />
     <Compile Include="Controllers\Produtos\V1\PostProdutosController.cs" />
-    <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
     <Compile Include="Controllers\Produtos\V1\ProdutosController.cs" />
     <Compile Include="Controllers\Publico\V1\GetPublicoController.cs" />
     <Compile Include="Controllers\Publico\V1\PublicoController.cs" />
@@ -847,6 +849,10 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\TipoValorTabelaEnum.cs" />
     <Compile Include="Models\Projetos\V1\Ferragens\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Projetos\V1\Ferragens\FabricantesFerragem\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Projetos\V1\Ferragens\FabricantesFerragem\Lista\FiltroDto.cs" />
