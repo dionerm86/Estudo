@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GDA;
 using Glass.Data.Model.Cte;
 
 namespace Glass.Data.DAL.CTe
@@ -11,25 +12,50 @@ namespace Glass.Data.DAL.CTe
 
         private string Sql(string placa, uint idProprietario, bool selecionar)
         {
-            string sql = "Select * From proprietario_veiculo_veiculo as prop Where 1";
+            string sql = @"SELECT pvv.*, pv.nome FROM proprietario_veiculo_veiculo pvv
+                               LEFT JOIN proprietario_veiculo pv ON (pv.idPropVeic = pvv.idPropVeic)
+                           WHERE 1";
 
             if(!selecionar)
-                sql = "Select count(*) From proprietario_veiculo_veiculo as prop Where 1";
+                sql = "Select count(*) From proprietario_veiculo_veiculo pvv Where 1";
 
             if (!string.IsNullOrEmpty(placa))
-                sql += " And Placa='" + placa + "'";
+                sql += " And pvv.Placa='" + placa + "'";
 
             if (idProprietario > 0)
-                sql += " And IDPROPVEIC=" + idProprietario;
-            
+                sql += " And pvv.IDPROPVEIC=" + idProprietario;
+
             return sql;
         }
 
         public ProprietarioVeiculo_Veiculo GetElement(string placa, uint idProprietario)
         {
+            using (var session = new GDATransaction())
+            {
+                try
+                {
+                    session.BeginTransaction();
+
+                    var associacaoProprietarioComVeiculo = this.GetElement(session, placa, idProprietario);
+
+                    session.Commit();
+                    session.Close();
+                    return associacaoProprietarioComVeiculo;
+                }
+                catch
+                {
+                    session.Close();
+                    session.Close();
+                    throw;
+                }
+            }
+        }
+
+        public ProprietarioVeiculo_Veiculo GetElement(GDATransaction session, string placa, uint idProprietario)
+        {
             try
             {
-                return objPersistence.LoadOneData(Sql(placa, idProprietario, true));
+                return objPersistence.LoadOneData(session, Sql(placa, idProprietario, true));
             }
             catch
             {
@@ -69,6 +95,11 @@ namespace Glass.Data.DAL.CTe
         public new int Delete(ProprietarioVeiculo_Veiculo objDelete)
         {
             return base.Delete(objDelete);
+        }
+
+        public override int Delete(GDASession session, ProprietarioVeiculo_Veiculo objDelete)
+        {
+            return base.Delete(session, objDelete);
         }
     }
 }

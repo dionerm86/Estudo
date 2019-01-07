@@ -1,4 +1,4 @@
-﻿// <copyright file="VeiculosController.cs" company="Sync Softwares">
+﻿// <copyright file="ConhecimentoTransporteVeiculosController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -9,13 +9,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.Veiculos.V1
+namespace Glass.API.Backend.Controllers.ConhecimentosTransporte.Veiculos
 {
     /// <summary>
-    /// Controller de veículos.
+    /// Controller de veículos para conhecimento de transporte.
     /// </summary>
-    [RoutePrefix("api/v1/veiculos")]
-    public partial class VeiculosController : BaseController
+    [RoutePrefix("api/v1/conhecimentosTransporte/veiculos")]
+    public partial class ConhecimentoTransporteVeiculosController : BaseController
     {
         private IHttpActionResult ValidarPlaca(string placa)
         {

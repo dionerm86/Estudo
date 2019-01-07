@@ -1,4 +1,4 @@
-﻿// <copyright file="DeleteVeiculosController.cs" company="Sync Softwares">
+﻿// <copyright file="DeleteConhecimentoTransporteVeiculosController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -8,58 +8,13 @@ using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.Veiculos.V1
+namespace Glass.API.Backend.Controllers.ConhecimentosTransporte.Veiculos
 {
     /// <summary>
-    /// Controller de veículos.
+    /// Controller de veículos para conhecimento de transporte.
     /// </summary>
-    public partial class VeiculosController : BaseController
+    public partial class ConhecimentoTransporteVeiculosController : BaseController
     {
-        /// <summary>
-        /// Exclui um veículo.
-        /// </summary>
-        /// <param name="placa">O identificador do veículo que será excluído.</param>
-        /// <returns>O status HTTP que representa o resultado da operação.</returns>
-        [HttpDelete]
-        [Route("{placa}")]
-        [SwaggerResponse(202, "Veículo excluído.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(404, "Veículo não encontrado para a placa informado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult ExcluirVeiculo(string placa)
-        {
-            using (var sessao = new GDATransaction())
-            {
-                try
-                {
-                    var validacao = this.ValidarExistenciaPlacaVeiculo(placa);
-
-                    if (validacao != null)
-                    {
-                        return validacao;
-                    }
-
-                    var fluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
-                        .Current.GetInstance<Global.Negocios.IVeiculoFluxo>();
-
-                    var veiculo = fluxo.ObtemVeiculo(placa);
-
-                    var resultado = fluxo.ApagarVeiculo(veiculo);
-
-                    if (!resultado)
-                    {
-                        return this.ErroValidacao($"Falha ao excluir veículo. {resultado.Message.ToString()}");
-                    }
-
-                    return this.Aceito($"Veículo excluído.");
-                }
-                catch (Exception ex)
-                {
-                    sessao.Rollback();
-                    return this.ErroValidacao($"Erro ao excluir veículo.", ex);
-                }
-            }
-        }
-
         /// <summary>
         /// Exclui uma associação entre proprietário e veículo.
         /// </summary>
