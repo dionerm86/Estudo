@@ -2454,8 +2454,7 @@ namespace Glass.Data.DAL
         {
             MovEstoque mov = GetElementByPrimaryKey(session, idMovEstoque);
 
-            /* Chamado 47777 e 48244. */
-            if (!mov.DeleteVisible && mov.IdNf == 0)
+            if (!mov.DeleteVisible && mov.IdNf.GetValueOrDefault() == 0)
             {
                 throw new Exception("Esta movimentação não foi gerada a partir de um lançamento manual, portanto, não é possível excluí-la.");
             }

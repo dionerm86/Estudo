@@ -560,11 +560,19 @@
         }
 
         function recalcular(idOrcamento, perguntar, tipoEntregaNovo, idClienteNovo) {
+            if (FindControl("btnEditar", "input") != null) {
+                FindControl("btnEditar", "input").style.display = "none";
+            }
+
             if (recalcularOrcamento(idOrcamento, perguntar, "loading", tipoEntregaNovo, idClienteNovo)) {
                 if (lnkGerarPedido == null) {
                     alert("Orçamento recalculado com sucesso!");
                     redirectUrl(window.location.href.replace("&atualizar=true",""));
                 }
+            }
+
+            if (FindControl("btnEditar", "input") != null) {
+                        FindControl("btnEditar", "input").style.display = "";
             }
         }
 

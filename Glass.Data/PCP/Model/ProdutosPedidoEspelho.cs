@@ -547,6 +547,25 @@ namespace Glass.Data.Model
 
         #region Propriedades de Suporte
 
+        /// <summary>
+        /// Indica se o produto pode ser editado no pedido
+        /// (se o pedido não tem desconto, ou se a empresa não rateia o desconto).
+        /// </summary>
+        public bool PodeEditar
+        {
+            get
+            {
+                if (!PedidoConfig.RatearDescontoProdutos)
+                {
+                    return true;
+                }
+
+                float descontoPedido = PedidoEspelhoDAO.Instance.ObtemValorCampo<float>("desconto", $"idPedido={IdPedido}");
+                float descontoAmbiente = AmbientePedidoEspelhoDAO.Instance.ObtemValorCampo<float>("desconto", $"idAmbientePedido={IdAmbientePedido.GetValueOrDefault()}");
+                return (descontoPedido + descontoAmbiente) == 0;
+            }
+        }
+
         public float TotM2Rpt
         {
             get { return PedidoConfig.RelatorioPedido.ExibirM2CalcRelatorio ? 
