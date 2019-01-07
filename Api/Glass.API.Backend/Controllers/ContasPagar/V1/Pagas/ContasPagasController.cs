@@ -14,7 +14,7 @@ namespace Glass.API.Backend.Controllers.ContasPagar.V1.Pagas
     [RoutePrefix("api/v1/contasPagar/pagas")]
     public partial class ContasPagasController : BaseController
     {
-        private IHttpActionResult ValidarIdContasPagas(int id)
+        private IHttpActionResult ValidarIdContaPaga(int id)
         {
             if (id <= 0)
             {
@@ -24,9 +24,9 @@ namespace Glass.API.Backend.Controllers.ContasPagar.V1.Pagas
             return null;
         }
 
-        private IHttpActionResult ValidarExistenciaIdContasPagas(GDASession sessao, int id)
+        private IHttpActionResult ValidarExistenciaIdContaPaga(GDASession sessao, int id)
         {
-            var validacao = this.ValidarIdContasPagas(id);
+            var validacao = this.ValidarIdContaPaga(id);
 
             if (validacao == null && !ContasPagarDAO.Instance.Exists(sessao, id))
             {

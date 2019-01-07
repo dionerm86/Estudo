@@ -11,7 +11,7 @@ namespace Glass.API.Backend.Models.ContasPagar.V1.Pagas.Lista
     /// <summary>
     /// Classe que encapsula os dados das datas para a lista de contas pagas.
     /// </summary>
-    [DataContract(Name = "Parcelas")]
+    [DataContract(Name = "Datas")]
     public class DatasDto
     {
         /// <summary>
