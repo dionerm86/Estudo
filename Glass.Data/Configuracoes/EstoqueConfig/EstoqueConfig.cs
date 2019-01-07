@@ -13,6 +13,15 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Define se será subtraído do valor da movimentação no extrato de estoque fiscal o valor do ICMS de operação própria.
+        /// </summary>
+        public static bool AbaterICMSDoTotalProdNfMovEstoqueFiscal
+        {
+        get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AbaterICMSDoTotalProdNfMovEstoqueFiscal); }
+        }
+        
+
+        /// <summary>
         /// A empresa controla estoque de vidros de clientes?
         /// </summary>
         public static bool ControlarEstoqueVidrosClientes

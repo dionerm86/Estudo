@@ -468,9 +468,14 @@ namespace Glass.Data.DAL
 
                         if (pbef.IdProdBaixa != idProd)
                         {
-                            if (!estorno && !usarValorProdNf)
+                            if (estorno || usarValorProdNf)
                             {
-                                totalMov = MovEstoqueDAO.Instance.GetTotalEstoqueManual(sessao, pbef.IdProdBaixa, qtde);
+                                /* Chamado 38441. */
+                                if (Configuracoes.EstoqueConfig.AbaterICMSDoTotalProdNfMovEstoqueFiscal && idProdNf > 0)
+                                {
+                                    var valorIcms = ProdutosNfDAO.Instance.ObterValorIcms(sessao, (int)idProdNf.GetValueOrDefault());
+                                    totalMov -= valorIcms;
+                                }
                             }
                         }
                         
