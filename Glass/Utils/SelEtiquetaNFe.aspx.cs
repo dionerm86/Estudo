@@ -30,10 +30,8 @@ namespace Glass.UI.Web.Utils
             // Chama a função de buscar etiquetas desta página (popup)
             foreach (ProdutosNf pnf in lstProd)
             {
-                float totM2 = pnf.TotM / pnf.Qtde * (pnf.Qtde - pnf.QtdImpresso);
-
                 script += "setProdEtiqueta(" + pnf.IdProdNf + "," + pnf.NumeroNfe + ",'" + pnf.DescrProduto + "'," +
-                    pnf.Qtde + "," + pnf.QtdImpresso + "," + pnf.Altura + "," + pnf.Largura + ",'" + totM2 + "','" + pnf.Lote + "');";
+                    pnf.Qtde + "," + pnf.QtdImpresso + "," + pnf.Altura + "," + pnf.Largura + ",'" + pnf.TotM + "','" + pnf.Lote + "');";
             }
     
             script += "closeWindow();";
