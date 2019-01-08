@@ -895,31 +895,34 @@ namespace Glass.Data.DAL
 
             try
             {
-                var idsCaixaGeralExcluir = this.ExecuteMultipleScalar<int>(sessao, sql);
-
-                if (!idsCaixaGeralExcluir.Any(c => c > 0))
+                if (CaixaDiarioDAO.Instance.ObterValorMov(sessao, idCaixaDiario) > 0)
                 {
-                    throw new Exception("Não foram transferidos valores para o Caixa Geral com este fechamento.");
+                    var idsCaixaGeralExcluir = this.ExecuteMultipleScalar<int>(sessao, sql);
+
+                    if (!idsCaixaGeralExcluir.Any(c => c > 0))
+                    {
+                        throw new Exception("Não foram transferidos valores para o Caixa Geral com este fechamento.");
+                    }
+
+                    sql = $@"
+                        SELECT (SELECT Saldo FROM caixa_geral WHERE IdCaixaGeral <
+		                    ALL (SELECT IdCaixaGeral FROM caixa_geral
+		            	    WHERE IdCaixaGeral IN ({string.Join(",", idsCaixaGeralExcluir)})) ORDER BY IdCaixaGeral DESC LIMIT 1)-(
+                            SELECT Saldo
+		            	    FROM caixa_geral
+                            WHERE IdCaixaGeral IN ({string.Join(",", idsCaixaGeralExcluir)}) ORDER BY IdCaixaGeral DESC LIMIT 1)";
+
+                    var valorMov = this.ExecuteScalar<float>(sessao, sql);
+
+                    sql = $@"
+                        UPDATE caixa_geral
+                        SET Saldo = Saldo - {valorMov}
+                        WHERE IdCaixaGeral > {idsCaixaGeralExcluir.OrderByDescending(item => item).First()}";
+
+                    this.objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?valor", valorMov));
+
+                    this.DeleteByPKs(sessao, idsCaixaGeralExcluir);
                 }
-
-                sql = $@"
-                    SELECT (SELECT Saldo FROM caixa_geral WHERE IdCaixaGeral <
-		                ALL (SELECT IdCaixaGeral FROM caixa_geral
-		            	WHERE IdCaixaGeral IN ({string.Join(",", idsCaixaGeralExcluir)})) ORDER BY IdCaixaGeral DESC LIMIT 1)-(
-                        SELECT Saldo
-		            	FROM caixa_geral
-                        WHERE IdCaixaGeral IN ({string.Join(",", idsCaixaGeralExcluir)}) ORDER BY IdCaixaGeral DESC LIMIT 1)";
-
-                var valorMov = this.ExecuteScalar<float>(sessao, sql);
-
-                sql = $@"
-                    UPDATE caixa_geral
-                    SET Saldo = Saldo - {valorMov}
-                    WHERE IdCaixaGeral > {idsCaixaGeralExcluir.OrderByDescending(item => item).First()}";
-
-                this.objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?valor", valorMov));
-
-                this.DeleteByPKs(sessao, idsCaixaGeralExcluir);
             }
             catch
             {
