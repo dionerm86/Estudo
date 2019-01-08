@@ -2,10 +2,10 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Data.Model;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
-using Glass.API.Backend.Models.Genericas.V1;
 
 namespace Glass.API.Backend.Models.Produtos.V1.PrecosTabelaCliente.Lista
 {

@@ -44,9 +44,9 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.PrecosTabelaCliente
         /// <returns>Uma lista JSON com os dados dos preços de tabela por cliente.</returns>
         [HttpGet]
         [Route("precosTabelaCliente")]
-        [SwaggerResponse(200, "Preços de tabela de cliente encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Produtos.V1.PrecosTabelaCliente.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Preços de tabela de cliente encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<ListaDto>))]
         [SwaggerResponse(204, "Preços de tabela de cliente não encontrados para o filtro informado.")]
-        [SwaggerResponse(206, "Preços de tabela de cliente paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Produtos.V1.PrecosTabelaCliente.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Preços de tabela de cliente paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
         public IHttpActionResult ObterListaPrecoTabelaCliente([FromUri] FiltroDto filtro)
         {
@@ -74,7 +74,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.PrecosTabelaCliente
                         filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    precosTabelaCliente.Select(c => new ListaDto(c)),
+                    precosTabelaCliente.Select(ptc => new ListaDto(ptc)),
                     filtro,
                     () => ProdutoDAO.Instance.GetCountPrecoTab(
                         (uint)(filtro.IdCliente ?? 0),

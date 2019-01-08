@@ -1,4 +1,4 @@
-<%@ Page Title="Preços de Tabela por Cliente" Language="C#" MasterPageFile="~/Painel.master"
+﻿<%@ Page Title="Preços de Tabela por Cliente" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="ListaPrecoTabCliente.aspx.cs" Inherits="Glass.UI.Web.Relatorios.ListaPrecoTabCliente"
     EnableViewState="false" EnableViewStateMac="false" %>
 
@@ -12,78 +12,78 @@
         <preco-tabela-cliente-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></preco-tabela-cliente-filtros>
         <section>
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" 
-                mensagem-lista-vazia="Nenhum preço de tabela por cliente encontrado, certifique-se de ter informado um cliente.">
+                mensagem-lista-vazia="Nenhum preço de tabela por cliente encontrado (Certifique-se de ter informado o cliente).">
                 <template slot="cabecalho">
-                    <th>
+                    <th style="white-space: nowrap">
                         <a href="#" @click.prevent="ordenar('codigo')">
                             Cód.
                         </a>
                     </th>
-                    <th>
+                    <th style="white-space: nowrap">
                         <a href="#" @click.prevent="ordenar('descricao')">
                             Descrição
                         </a>
                     </th>
-                    <th>
+                    <th style="white-space: nowrap">
                         <a href="#" @click.prevent="ordenar('grupo')">
                             Grupo
                         </a>
                     </th>
-                    <th>
+                    <th v-if="!configuracoes.usarLiberacaoPedido" style="white-space: nowrap">
                         <a href="#" @click.prevent="ordenar('tipoValorTabela')">
                             Tipo de Valor de Tabela
                         </a>
                     </th>
-                    <th>
+                    <th v-if="filtro && !filtro.naoExibirColunaValorOriginal" style="white-space: nowrap">
                         <a href="#" @click.prevent="ordenar('valorOriginal')">
                             Valor Original
                         </a>
                     </th>
-                    <th>
+                    <th style="white-space: nowrap">
                         <a href="#" @click.prevent="ordenar('valorTabela')">
                             Valor de Tabela
                         </a>
                     </th>
-                    <th>
+                    <th v-if="filtro && filtro.exibirPercentualDescontoAcrescimo" style="white-space: nowrap">
                         Desconto/Acréscimo
                     </th>
-                    <th>
+                    <th style="white-space: nowrap">
                         <a href="#" @click.prevent="ordenar('altura')">
                             Altura
                         </a>
                     </th>
-                    <th>
+                    <th style="white-space: nowrap">
                         <a href="#" @click.prevent="ordenar('largura')">
                             Largura
                         </a>
                     </th>
                 </template>
                 <template slot="item" slot-scope="{ item }">
-                    <td>
+                    <td style="white-space: nowrap">
                         {{ item.produto }}
                     </td>
-                    <td>
+                    <td style="white-space: nowrap">
                         {{ item.beneficiamentos }}
                     </td>
-                    <td>
+                    <td style="white-space: nowrap">
                         {{ item.grupo }} {{ item.subgrupo }}
                     </td>
-                    <td>
+                    <td v-if="!configuracoes.usarLiberacaoPedido" style="white-space: nowrap">
                         {{ item.tipoValorTabela }}
                     </td>
-                    <td>
+                    <td v-if="filtro && !filtro.naoExibirColunaValorOriginal" style="white-space: nowrap">
                         {{ item.valorOriginal | moeda }}
                     </td>
-                    <td>
+                    <td style="white-space: nowrap">
                         {{ item.valorTabela | moeda }}
                     </td>
-                    <td>
+                    <td v-if="filtro && filtro.exibirPercentualDescontoAcrescimo" style="white-space: nowrap">
                         {{ item.fatorDescontoAcrescimo }}%
                     </td>
-                    <td>
+                    <td style="white-space: nowrap">
                         {{ item.altura }}
                     </td>
-                    <td>
+                    <td style="white-space: nowrap">
                         {{ item.largura }}
                     </td>
                 </template>

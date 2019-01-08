@@ -41,7 +41,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.PrecosTabelaCliente.Lista
         public int? IdGrupoProduto { get; set; }
 
         /// <summary>
-        /// Obtém ou define o identificador do subgrupo do produto.
+        /// Obtém ou define os identificadores dos subgrupos de produto.
         /// </summary>
         [JsonProperty("idsSubgrupoProduto")]
         public IEnumerable<int> IdsSubgrupoProduto { get; set; }

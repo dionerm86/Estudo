@@ -2,80 +2,88 @@
     <div class="form-group">
         <span>
             <label>Cliente</label>
-            <input type="number" v-model="filtroAtual.idCliente" @blur.prevent="selecionarCliente" style="width: 50px" />
-            <input type="text" v-model="filtroAtual.nomeCliente" style="width: 200px" />
+            <campo-busca-cliente :cliente.sync="clienteAtual"mpra="false"
+                :disabled="clienteSelecionado"></campo-busca-cliente>
+        </span>
+        <span>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
-    <div class="form-group">
-        <span>
-            <label>Grupo</label>
-            <lista-selecao-id-valor :item-selecionado.sync="grupoAtual" texto-selecionar="Todos" 
-                :funcao-recuperar-itens="obterItensFiltroGrupos"></lista-selecao-id-valor>
-            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>
-        <span>
-            <label>Subgrupo</label>
-            <lista-selecao-multipla v-bind:ids-selecionados.sync="subgrupoAtual" texto-selecionar="Selecione o subgrupo"
-                :funcao-recuperar-itens="obterItensFiltroSubgrupos"></lista-selecao-multipla>
-            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>
-        <span>
-            <label>Tipo Valor</label>
-            <lista-selecao-id-valor :item-selecionado.sync="tipoAtual" texto-selecionar="Todos"
-                :funcao-recuperar-itens="obterTiposValorTabela"></lista-selecao-id-valor>
-            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>
-    </div>
-    <div class="form-group">
-        <span>
-            <label>Produto</label>
-            <input type="number" v-model="filtroAtual.codigoProduto" style="width: 50px" />
-            <input type="text" v-model="filtroAtual.descricaoProduto" style="width: 200px" />
-            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>
-        <span>
-            <label>Altura</label>
-            <input type="number" v-model="filtroAtual.valorAlturaInicio" style="width: 60px" /> Até
-            <input type="text" v-model="filtroAtual.valorAlturaFim" style="width: 60px" />
-            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>
-        <span>
-            <label>Largura</label>
-            <input type="number" v-model="filtroAtual.valorLarguraInicio" style="width: 60px" /> Até
-            <input type="text" v-model="filtroAtual.valorLarguraFim" style="width: 60px" />
-            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>
-    </div>
-    <div class="form-group">
-        <span>
-            <label>Ordenar por</label>
-            <select v-model="ordenacaoManualAtual">
-                <option value="0">Cód. Produto</option>
-                <option value="1">Descr. Produto</option>
-                <option value="2">Grupo</option>
-                <option value="3">Subgrupo</option>
-            </select>
-            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>
-        <span>
-            <input type="checkbox" v-model="exibirPercentualDescontoAcrescimo" />
-            <label>Exibir percentual de desconto/ascréscimo</label>
-            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>
-    </div>
-    <div class="form-group">
-        <span>
-            <input type="checkbox" v-model="filtroAtual.apenasComDesconto" />
-            <label>Exibir apenas produtos com desconto</label>
-        </span>
-        <span>
-            <input type="checkbox" v-model="filtroAtual.incluirBeneficiamentosRelatorio" />
-            <label>Incluir beneficiamentos no relatorio	</label>
-        </span>
-        <span>
-            <input type="checkbox" v-model="NaoExibirColunaValorOriginal" />
-            <label>Não exibir a coluna Valor Original</label>
-        </span>
+    <div v-if="clienteSelecionado">
+        <div class="form-group">
+            <span>
+                <label>Grupo</label>
+                <lista-selecao-id-valor :item-selecionado.sync="grupoAtual" texto-selecionar="Todos"
+                    :funcao-recuperar-itens="obterItensFiltroGrupos"></lista-selecao-id-valor>
+                <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+            </span>
+            <span>
+                <label>Subgrupo</label>
+                <lista-selecao-multipla :ids-selecionados.sync="filtroAtual.idsSubgrupoProduto" ref="filtroSubgrupos"
+                    texto-selecionar="Selecione o subgrupo" :funcao-recuperar-itens="obterItensFiltroSubgrupos" :filtro-recuperar-itens="filtroSubgrupos"></lista-selecao-multipla>
+                <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+            </span>
+            <span>
+                <label>Tipo Valor</label>
+                <lista-selecao-id-valor :item-selecionado.sync="tipoAtual" texto-selecionar="Todos"
+                    :funcao-recuperar-itens="obterTiposValorTabela"></lista-selecao-id-valor>
+                <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+            </span>
+        </div>
+        <div class="form-group">
+            <span>
+                <label>Produto</label>
+                <input type="number" v-model="filtroAtual.codigoProduto" style="width: 50px" />
+                <input type="text" v-model="filtroAtual.descricaoProduto" style="width: 200px" />
+                <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+            </span>
+            <span>
+                <label>Altura</label>
+                <input type="number" v-model="filtroAtual.valorAlturaInicio" style="width: 60px" /> Até
+                <input type="text" v-model="filtroAtual.valorAlturaFim" style="width: 60px" />
+                <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+            </span>
+            <span>
+                <label>Largura</label>
+                <input type="number" v-model="filtroAtual.valorLarguraInicio" style="width: 60px" /> Até
+                <input type="text" v-model="filtroAtual.valorLarguraFim" style="width: 60px" />
+                <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+            </span>
+        </div>
+        <div class="form-group">
+            <span>
+                <label>Ordenar por</label>
+                <select v-model="filtroAtual.ordenacaoManual">
+                    <option></option>
+                    <option value="0">Cód. Produto</option>
+                    <option value="1">Descr. Produto</option>
+                    <option value="2">Grupo</option>
+                    <option value="3">Subgrupo</option>
+                </select>
+                <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+            </span>
+            <span>
+                <input type="checkbox" v-model="filtroAtual.exibirPercentualDescontoAcrescimo" checked />
+                <label>Exibir percentual de desconto/ascréscimo</label>
+                <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+            </span>
+        </div>
+        <div class="form-group">
+            <span>
+                <input type="checkbox" v-model="filtroAtual.apenasComDesconto" />
+                <label>Exibir apenas produtos com desconto</label>
+            </span>
+            <span>
+                <input type="checkbox" v-model="filtroAtual.incluirBeneficiamentosRelatorio" />
+                <label>Incluir beneficiamentos no relatorio	</label>
+            </span>
+            <span>
+                <input type="checkbox" v-model="filtroAtual.naoExibirColunaValorOriginal" checked />
+                <label>Não exibir a coluna Valor Original</label>
+            </span>
+        </div>
+        <div class="form-group" style="margin-top: 5px">
+            <input type="button" value="Filtrar novo cliente" @click.prevent="selecionarNovoCliente" />
+        </div>
     </div>
 </section>
