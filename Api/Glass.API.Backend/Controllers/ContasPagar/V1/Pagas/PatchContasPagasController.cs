@@ -38,7 +38,7 @@ namespace Glass.API.Backend.Controllers.ContasPagar.V1.Pagas
                 {
                     sessao.BeginTransaction();
 
-                    var validacao = this.ValidarExistenciaIdContasPagas(sessao, id);
+                    var validacao = this.ValidarExistenciaIdContaPaga(sessao, id);
 
                     if (validacao != null)
                     {

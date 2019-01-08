@@ -20,11 +20,7 @@
                             Cód.
                         </a>
                     </th>
-                    <th>
-                        <a href="#" @click.prevent="ordenar('referencia')">
-                            Referência
-                        </a>
-                    </th>
+                    <th>Referência</th>
                     <th>
                         <a href="#" @click.prevent="ordenar('fornecedor/transportador/funcionario')">
                             Fornecedor/Transportador/Func.
@@ -66,7 +62,7 @@
                         </a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('boletoChegou')">
+                        <a href="#" @click.prevent="ordenar('localizacao')">
                             Localização
                         </a>
                     </th>

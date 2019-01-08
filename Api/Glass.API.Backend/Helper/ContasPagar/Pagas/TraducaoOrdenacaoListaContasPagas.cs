@@ -32,20 +32,17 @@ namespace Glass.API.Backend.Helper.ContasPagar.Pagas
                 case "id":
                     return "IdContaPg";
 
-                case "referencia":
-                    return "concat(coalesce(c.IdCompra,0), coalesce(c.IdPagto,0), coalesce(nf.NumeroNfe,0), coalesce(cmp.Nf,0), coalesce(c.NumBoleto,0), coalesce(c.IdCustoFixo,0))";
-
                 case "fornecedor/transportador/funcionario":
-                    return "coalesce(NomeFornec, NomeTransportador)";
+                    return "coalesce(f.nomeFantasia, f.razaoSocial, t.nomeFantasia, t.nome)";
 
                 case "referente":
                     return "concat(coalesce(g.descricao,''), coalesce(pl.descricao,''), coalesce(c.Obs,''), coalesce(cmp.Obs,''), coalesce(c.IdPagtoRestante,''), coalesce(c.IdCustoFixo,''))";
 
                 case "formapagamento":
-                    return "FormaPagto";
+                    return "GROUP_CONCAT(DISTINCT fp.descricao SEPARATOR ', ')";
 
                 case "parcelas":
-                    return "NumParc, NumParcMax";
+                    return "c.numParc, c.numParcMax";
 
                 case "valor":
                     return "ValorVenc";
@@ -58,6 +55,9 @@ namespace Glass.API.Backend.Helper.ContasPagar.Pagas
 
                 case "pagamento":
                     return "DataPagto";
+
+                case "localizacao":
+                    return "DestinoPagto";
 
                 case "obs":
                     return "Obs";
