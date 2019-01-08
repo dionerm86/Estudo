@@ -222,8 +222,12 @@
     <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\DeleteProprietariosDeVeiculosController.cs" />
     <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\GetProprietariosDeVeiculosController.cs" />
     <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\ProprietariosDeVeiculosController.cs" />
+    <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\DeletePerdasChapasVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\GetPerdasChapasVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\PerdasChapasVidroController.cs" />
     <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
+    <Compile Include="Helper\Produtos\ChapasVidro\Perdas\TraducaoOrdenacaoListaPerdasChapasVidro.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Configuracoes\ListaDto.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PostCarregamentosController.cs" />
@@ -847,6 +851,10 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\DadosPerdaDto.cs" />
+    <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Projetos\V1\Ferragens\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Projetos\V1\Ferragens\FabricantesFerragem\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Projetos\V1\Ferragens\FabricantesFerragem\Lista\FiltroDto.cs" />

@@ -376,47 +376,69 @@ namespace Glass.Data.DAL
         #region Cancelamento
 
         /// <summary>
-        /// Cencela um perda de chapa de vidro
+        /// Cancela uma perda de chapa de vidro.
         /// </summary>
+        /// <param name="perdaChapaVidro">A perda de chapa de vidro que será cancelada.</param>
         public void Cancelar(PerdaChapaVidro perdaChapaVidro)
+        {
+            using (var session = new GDATransaction())
+            {
+                try
+                {
+                    session.BeginTransaction();
+
+                    this.Cancelar(session, perdaChapaVidro);
+
+                    session.Commit();
+                    session.Close();
+                }
+                catch
+                {
+                    session.Rollback();
+                    session.Close();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cancela uma perda de chapa de vidro.
+        /// </summary>
+        /// <param name="session">A sessão atual.</param>
+        /// <param name="perdaChapaVidro">A perda de chapa de vidro que será cancelada.</param>
+        public void Cancelar(GDASession session, PerdaChapaVidro perdaChapaVidro)
         {
             lock (_cancelar)
             {
-                using (var transaction = new GDATransaction())
+                try
                 {
-                    try
+                    var pcv = this.GetPerdaChapaVidro(session, perdaChapaVidro.IdPerdaChapaVidro);
+
+                    var idNf = ProdutosNfDAO.Instance.ObtemIdNf(session, pcv.IdProdNf.Value);
+
+                    if (idNf == 0)
                     {
-                        transaction.BeginTransaction();
-
-                        var pcv = GetPerdaChapaVidro(transaction, perdaChapaVidro.IdPerdaChapaVidro);
-
-                        var idNf = ProdutosNfDAO.Instance.ObtemIdNf(transaction, pcv.IdProdNf.Value);
-
-                        if (idNf == 0)
-                            throw new Exception("Não foi possível recuperar a nota fiscal.");
-
-                        var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(transaction, idNf);
-
-                        if (idLoja == 0)
-                            throw new Exception("Não foi possível recuperar a loja da nota fiscal.");
-
-                        //Credita o estoque da chapa
-                        MovEstoqueDAO.Instance.CreditaEstoquePerdaChapa(transaction, pcv.IdProd, pcv.IdProdNf.Value, idLoja, pcv.IdPerdaChapaVidro);
-
-                        //Marca a perda como cancelada.
-                        objPersistence.ExecuteCommand(transaction, "UPDATE perda_chapa_vidro SET cancelado = 1 WHERE IdPerdaChapaVidro = " + perdaChapaVidro.IdPerdaChapaVidro);
-
-                        LogCancelamentoDAO.Instance.LogPerdaChapaVidro(transaction, pcv);
-
-                        transaction.Commit();
-                        transaction.Close();
+                        throw new Exception("Não foi possível recuperar a nota fiscal.");
                     }
-                    catch
+
+                    var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(session, idNf);
+
+                    if (idLoja == 0)
                     {
-                        transaction.Commit();
-                        transaction.Close();
-                        throw;
+                        throw new Exception("Não foi possível recuperar a loja da nota fiscal.");
                     }
+
+                    // Credita o estoque da chapa
+                    MovEstoqueDAO.Instance.CreditaEstoquePerdaChapa(session, pcv.IdProd, pcv.IdProdNf.Value, idLoja, pcv.IdPerdaChapaVidro);
+
+                    // Marca a perda como cancelada.
+                    this.objPersistence.ExecuteCommand(session, "UPDATE perda_chapa_vidro SET cancelado = 1 WHERE IdPerdaChapaVidro = " + perdaChapaVidro.IdPerdaChapaVidro);
+
+                    LogCancelamentoDAO.Instance.LogPerdaChapaVidro(session, pcv);
+                }
+                catch
+                {
+                    throw;
                 }
             }
         }
