@@ -1,4 +1,4 @@
-﻿// <copyright file="DeleteConhecimentoTransporteVeiculosController.cs" company="Sync Softwares">
+﻿// <copyright file="DeleteVeiculosController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 

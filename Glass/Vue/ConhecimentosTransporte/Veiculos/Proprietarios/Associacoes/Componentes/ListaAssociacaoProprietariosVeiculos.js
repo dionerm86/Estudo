@@ -56,7 +56,7 @@
     },
 
     /**
-     * Força a atualização da lista de processos, com base no filtro atual.
+     * Força a atualização da lista de associação entre proprietários e veículos, com base no filtro atual.
      */
     atualizarLista: function () {
       this.$refs.lista.atualizar(true);

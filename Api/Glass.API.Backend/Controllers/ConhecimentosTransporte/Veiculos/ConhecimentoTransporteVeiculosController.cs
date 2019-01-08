@@ -1,4 +1,4 @@
-﻿// <copyright file="ConhecimentoTransporteVeiculosController.cs" company="Sync Softwares">
+﻿// <copyright file="VeiculosController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -39,7 +39,7 @@ namespace Glass.API.Backend.Controllers.ConhecimentosTransporte.Veiculos
                 return this.NaoEncontrado("Veículo não encontrado.");
             }
 
-            return null;
+            return validacao;
         }
 
         private IHttpActionResult ValidarIdProprietarioVeiculo(int idProprietarioVeiculo)

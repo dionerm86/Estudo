@@ -30,28 +30,10 @@ namespace Glass.Data.DAL.CTe
 
         public ProprietarioVeiculo_Veiculo GetElement(string placa, uint idProprietario)
         {
-            using (var session = new GDATransaction())
-            {
-                try
-                {
-                    session.BeginTransaction();
-
-                    var associacaoProprietarioComVeiculo = this.GetElement(session, placa, idProprietario);
-
-                    session.Commit();
-                    session.Close();
-                    return associacaoProprietarioComVeiculo;
-                }
-                catch
-                {
-                    session.Close();
-                    session.Close();
-                    throw;
-                }
-            }
+            return this.GetElement(null, placa, idProprietario);
         }
 
-        public ProprietarioVeiculo_Veiculo GetElement(GDATransaction session, string placa, uint idProprietario)
+        public ProprietarioVeiculo_Veiculo GetElement(GDASession session, string placa, uint idProprietario)
         {
             try
             {
