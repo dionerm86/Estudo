@@ -573,7 +573,7 @@ namespace Glass.Financeiro.Negocios.Componentes
             if (idContaBancoRecebimento > 0)
             {
                 consulta
-                    .LeftJoin<Data.Model.PagtoContasReceber>("c.IdContaR = pcr.IdContaR", "pcr");
+                    .LeftJoin<Data.Model.PagtoContasReceber>("cr.IdContaR = pcr.IdContaR", "pcr");
 
                 consulta.WhereClause
                     .And("pcr.IdContaBanco = ?idContaBancoRecebimento")

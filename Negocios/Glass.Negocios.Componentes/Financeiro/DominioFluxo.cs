@@ -56,7 +56,7 @@ namespace Glass.Financeiro.Negocios.Componentes
                  .LeftJoin<Data.Model.Loja>("c.IdLoja = l.IdLoja", "l")
                  .LeftJoin<Data.Model.PlanoContaContabil>("cli.IdContaContabil = pcc.IdContaContabil", "pcc")
                  .Where("c.ValorVec>0 AND (c.IsParcelaCartao=0 OR c.IsParcelaCartao IS NULL)")
-                .GroupBy("cr.IdContaR");
+                .GroupBy("c.IdContaR");
 
             consulta
                 .Select(@"replace(replace(replace(replace(l.Cnpj, '.', ''), ' ', ''), '-', ''), '/', '') AS Cnpj, c.DataCad, c.ValorVec as ValorLancamento,
