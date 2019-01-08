@@ -6859,7 +6859,7 @@ namespace Glass.UI.Web.Utils
         {
             var contasRecebidas = ContasReceberDAO.Instance.GetForRpt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null,
                 null, null, null, null, null, null, null, null, null, 0, 0, 0, 0, null,
-                true, 0, 0, null, null, 0, false, 0, 0, 0, 0, 0, 0, false, false, null, null);
+                true, 0, 0, null, null, 0, false, 0, 0, 0, 0, 0, 0, false, false, null, null, null);
 
             using (var transaction = new GDATransaction())
             {

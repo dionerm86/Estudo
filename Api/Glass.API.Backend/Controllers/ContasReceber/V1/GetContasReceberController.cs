@@ -97,6 +97,7 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
                     buscarContasVinculadas,
                     filtro.BuscaNotaFiscal != null && filtro.BuscaNotaFiscal.Any() ? string.Join(",", filtro.BuscaNotaFiscal) : null,
                     filtro.NumeroAutorizacaoCartao,
+                    filtro.IdContaBancoRecebimento,
                     filtro.ObterTraducaoOrdenacao(),
                     filtro.ObterPrimeiroRegistroRetornar(),
                     filtro.NumeroRegistros);
@@ -145,7 +146,8 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
                         filtro.BuscarContasProtestadas,
                         buscarContasVinculadas,
                         filtro.BuscaNotaFiscal != null && filtro.BuscaNotaFiscal.Any() ? string.Join(",", filtro.BuscaNotaFiscal) : null,
-                        filtro.NumeroAutorizacaoCartao));
+                        filtro.NumeroAutorizacaoCartao,
+                        filtro.IdContaBancoRecebimento));
             }
         }
 

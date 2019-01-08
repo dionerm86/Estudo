@@ -173,6 +173,12 @@ namespace Glass.API.Backend.Models.ContasReceber.V1.ListaRecebidas
         public decimal? ValorRecebidoFim { get; set; }
 
         /// <summary>
+        /// Obtém ou define a conta bancária do recebimento.
+        /// </summary>
+        [JsonProperty("idContaBancoRecebimento")]
+        public int? IdContaBancoRecebimento { get; set; }
+
+        /// <summary>
         /// Obtém ou define o identificador da rota do cliente da conta recebida.
         /// </summary>
         [JsonProperty("idRota")]
