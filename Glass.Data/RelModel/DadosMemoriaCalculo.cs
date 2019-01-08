@@ -114,7 +114,7 @@ namespace Glass.Data.RelModel
             ValorTabela = ProdutoDAO.Instance.GetValorTabela((int)mip.IdProd, orcamento.TipoEntrega, orcamento.IdCliente, false, reposicao, 0F, (int?)idPedido, null, null, Altura);
             Custo = prod.CustoCompra;
             _valorTabelaCobrado = mip.Valor;
-            TipoCalculo = GrupoProdDAO.Instance.TipoCalculo(null, prod.IdProd, false);
+            TipoCalculo = GrupoProdDAO.Instance.TipoCalculo(prod.IdProd);
 
             ValorTotal = mip.Total;
             Valor = CalculaValorUnit(mip, orcamento, ValorTotal);

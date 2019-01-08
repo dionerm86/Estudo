@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using GDA;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
@@ -28,7 +28,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("QTDESTOQUE")]
         public double QtdEstoque { get; set; }
 
-        [Log("Estoque MÃ­nimo")]
+        [Log("Estoque Mínimo")]
         [PersistenceProperty("ESTMINIMO")]
         public double EstMinimo { get; set; }
 
@@ -38,7 +38,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("Liberacao")]
         public double Liberacao { get; set; }
 
-        [Log("MÂ²")]
+        [Log("M²")]
         [PersistenceProperty("M2")]
         public double M2 { get; set; }
 
@@ -160,7 +160,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_tipoCalc == null || _tipoCalc == 0)
-                    _tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int?)IdSubgrupoProd, false);
+                    _tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd);
 
                 return _tipoCalc.GetValueOrDefault((int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd);
             }

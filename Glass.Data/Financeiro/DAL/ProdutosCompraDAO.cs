@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
@@ -11,7 +11,7 @@ namespace Glass.Data.DAL
 	{
         //private ProdutosCompraDAO() { }
 
-        #region Busca produtos para listagem padr√£o
+        #region Busca produtos para listagem padr„o
 
         private string Sql(uint idCompra, string idsProdCompra, bool selecionar)
         {
@@ -49,8 +49,8 @@ namespace Glass.Data.DAL
 
             foreach (ProdutosCompra pc in lstProdCompra)
             {
-                // Caso esteja marcado para cobrar apenas beneficimentos, zera o valor unit√°rio e o total 
-                // para n√£o somar incorretamente na impress√£o da compra
+                // Caso esteja marcado para cobrar apenas beneficimentos, zera o valor unit·rio e o total 
+                // para n„o somar incorretamente na impress„o da compra
                 if (pc.NaoCobrarVidro)
                 {
                     pc.Valor = 0;
@@ -170,7 +170,7 @@ namespace Glass.Data.DAL
                         continue;
 
                     //Recalcula o valor unitario e atribui os valor calculados no sql nas propiedades
-                    //que v√£o ser utilizadas na nf.
+                    //que v„o ser utilizadas na nf.
                     if (pc.TotM2Nf > 0)
                         pc.TotM = (float)pc.TotM2Nf;
 
@@ -178,7 +178,7 @@ namespace Glass.Data.DAL
                     pc.Total = (decimal)pc.TotalNf;
                     pc.ValorBenef = (decimal)pc.ValorBenefNf;
 
-                    int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)pc.IdGrupoProd, (int)pc.IdSubgrupoProd, true);
+                    int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)pc.IdGrupoProd, (int)pc.IdSubgrupoProd, true);
 
                     if (tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.Qtd || tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.QtdM2)
                         pc.Valor = pc.Total / (decimal)pc.Qtde;
@@ -238,10 +238,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca produtos que est√£o sendo comprados
+        #region Busca produtos que est„o sendo comprados
 
         /// <summary>
-        /// Busca produtos que est√£o sendo comprados
+        /// Busca produtos que est„o sendo comprados
         /// </summary>
         /// <param name="idProd"></param>
         /// <param name="idLoja"></param>
@@ -338,7 +338,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Obt√©m dados do produto
+        #region ObtÈm dados do produto
 
         public uint ObtemIdProd(GDASession session, uint idProdCompra)
         {
@@ -357,10 +357,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region M√©todos sobrescritos
+        #region MÈtodos sobrescritos
 
         /// <summary>
-        /// Atualiza o valor da compra ao incluir um produto √† mesma
+        /// Atualiza o valor da compra ao incluir um produto ‡ mesma
         /// </summary>
         public override uint Insert(ProdutosCompra objInsert)
         {
@@ -368,7 +368,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza o valor da compra ao incluir um produto √† mesma
+        /// Atualiza o valor da compra ao incluir um produto ‡ mesma
         /// </summary>
         public override uint Insert(GDASession session, ProdutosCompra objInsert)
         {
@@ -377,7 +377,7 @@ namespace Glass.Data.DAL
             try
             {
                 if (CompraDAO.Instance.ObtemSituacao(session, objInsert.IdCompra) == (int)Compra.SituacaoEnum.Finalizada)
-                    throw new Exception("A compra est√° finalizada, n√£o √© poss√≠vel incluir produtos.");
+                    throw new Exception("A compra est· finalizada, n„o È possÌvel incluir produtos.");
 
                 decimal total = objInsert.Total, custoProd = 0;
                 float totM2 = objInsert.TotM, altura = objInsert.Altura, totM2Calc = objInsert.TotM;
@@ -394,7 +394,7 @@ namespace Glass.Data.DAL
                 ProdutosCompraBenefDAO.Instance.DeleteByProdCompra(session, objInsert.IdProdCompra);
                 foreach (ProdutosCompraBenef b in objInsert.Beneficiamentos.ToProdutosCompra(returnValue))
                 {
-                    // No cadastro de compra, o valor do custo est√° sendo buscado mas n√£o o valor de compra
+                    // No cadastro de compra, o valor do custo est· sendo buscado mas n„o o valor de compra
                     if (b.Valor == 0 && b.Custo > 0)
                     {
                         b.Valor = b.Custo;
@@ -438,7 +438,7 @@ namespace Glass.Data.DAL
                 return 0;
 
             if (CompraDAO.Instance.ObtemSituacao(null, objDelete.IdCompra) == (int)Compra.SituacaoEnum.Finalizada)
-                throw new Exception("A compra est√° finalizada, n√£o √© poss√≠vel apagar qualquer produto.");
+                throw new Exception("A compra est· finalizada, n„o È possÌvel apagar qualquer produto.");
 
             int returnValue = 0;
 
@@ -474,7 +474,7 @@ namespace Glass.Data.DAL
             try
             {
                 if (CompraDAO.Instance.ObtemSituacao(session, objUpdate.IdCompra) == (int)Compra.SituacaoEnum.Finalizada)
-                    throw new Exception("A compra est√° finalizada, n√£o √© poss√≠vel atualizar os produtos.");
+                    throw new Exception("A compra est· finalizada, n„o È possÌvel atualizar os produtos.");
 
                 decimal total = objUpdate.Total, custoProd = 0;
                 float totM2 = objUpdate.TotM, altura = objUpdate.Altura, totM2Calc = 0;
@@ -490,7 +490,7 @@ namespace Glass.Data.DAL
                 ProdutosCompraBenefDAO.Instance.DeleteByProdCompra(session, objUpdate.IdProdCompra);
                 foreach (ProdutosCompraBenef b in objUpdate.Beneficiamentos.ToProdutosCompra(objUpdate.IdProdCompra))
                 {
-                    // No cadastro de compra, o valor do custo est√° sendo buscado mas n√£o o valor de compra
+                    // No cadastro de compra, o valor do custo est· sendo buscado mas n„o o valor de compra
                     if (b.Valor == 0 && b.Custo > 0)
                     {
                         if (b.ValorUnit == 0 && b.Valor == 0)

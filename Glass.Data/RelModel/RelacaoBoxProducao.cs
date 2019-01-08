@@ -39,7 +39,7 @@ namespace Glass.Data.RelModel
 
         public float TotM
         {
-            get { return Glass.Global.CalculosFluxo.ArredondaM2(null, Largura, (int)Altura, 1F, 0, false, 0, true); }
+            get { return Glass.Global.CalculosFluxo.ArredondaM2(Largura, (int)Altura, 1, 0, false); }
         }
 
         #endregion

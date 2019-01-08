@@ -214,18 +214,82 @@ namespace Glass.Data.DAL
         #region Verifica se Grupo é Vidro/Alumínio/Ferragem
 
         /// <summary>
+        /// (APAGAR: quando alterar para utilizar transação)
         /// Verifica o tipo de cálculo que será aplicado no produto.
         /// </summary>
-        /// <param name="session">session.</param>
-        /// <param name="idProd">idProd.</param>
-        /// <param name="nf">nf.</param>
-        /// <returns>Retorna o tipo de cálculo que será aplicado no produto.</returns>
-        public int TipoCalculo(GDASession session, int idProd, bool nf)
+        /// <param name="idProd"></param>
+        /// <returns></returns>
+        public int TipoCalculo(int idProd)
         {
-            var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(session, idProd);
-            var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, idProd);
+            return TipoCalculo(null, idProd);
+        }
 
-            return this.TipoCalculo(session, idGrupoProd, idSubgrupoProd, nf);
+        /// <summary>
+        /// Verifica o tipo de cálculo que será aplicado no produto.
+        /// </summary>
+        /// <param name="idProd"></param>
+        /// <returns></returns>
+        public int TipoCalculo(GDASession sessao, int idProd)
+        {
+            return TipoCalculo(sessao, idProd, false);
+        }
+
+        /// <summary>
+        /// (APAGAR: quando alterar para utilizar transação)
+        /// Verifica o tipo de cálculo que será aplicado no produto.
+        /// </summary>
+        /// <param name="idProd"></param>
+        /// <param name="nf"></param>
+        /// <returns></returns>
+        public int TipoCalculo(int idProd, bool nf)
+        {
+            return TipoCalculo(null, idProd, nf);
+        }
+
+        /// <summary>
+        /// Verifica o tipo de cálculo que será aplicado no produto.
+        /// </summary>
+        /// <param name="idProd"></param>
+        /// <param name="nf"></param>
+        /// <returns></returns>
+        public int TipoCalculo(GDASession sessao, int idProd, bool nf)
+        {
+            var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, idProd);
+            var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, idProd);
+
+            return TipoCalculo(sessao, idGrupoProd, idSubgrupoProd, nf);
+        }
+
+        /// <summary>
+        /// (APAGAR: quando alterar para utilizar transação)
+        /// Verifica o tipo de cálculo que será aplicado no produto
+        /// </summary>
+        /// <param name="idGrupo"></param>
+        /// <param name="idSubgrupo"></param>
+        public int TipoCalculo(int idGrupo, int? idSubgrupo)
+        {
+            return TipoCalculo(null, idGrupo, idSubgrupo);
+        }
+
+        /// <summary>
+        /// Verifica o tipo de cálculo que será aplicado no produto
+        /// </summary>
+        /// <param name="idGrupo"></param>
+        /// <param name="idSubgrupo"></param>
+        public int TipoCalculo(GDASession sessao, int idGrupo, int? idSubgrupo)
+        {
+            return TipoCalculo(sessao, idGrupo, idSubgrupo, false);
+        }
+
+        /// <summary>
+        /// (APAGAR: quando alterar para utilizar transação)
+        /// Verifica o tipo de cálculo que será aplicado no produto
+        /// </summary>
+        /// <param name="idGrupo"></param>
+        /// <param name="idSubgrupo"></param>
+        public int TipoCalculo(int idGrupo, int? idSubgrupo, bool nf)
+        {
+            return TipoCalculo(null, idGrupo, idSubgrupo, nf);
         }
 
         /// <summary>
@@ -236,11 +300,7 @@ namespace Glass.Data.DAL
         /// <param name="idSubgrupo">idSubgrupo.</param>
         /// <param name="nf">nf.</param>
         /// <returns>Retorna o tipo de cálculo que será aplicado no produto.</returns>
-        public int TipoCalculo(
-            GDASession session,
-            int idGrupo,
-            int? idSubgrupo,
-            bool nf)
+        public int TipoCalculo(GDASession session, int idGrupo, int? idSubgrupo, bool nf)
         {
             try
             {
