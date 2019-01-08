@@ -11,7 +11,7 @@ namespace Glass.Financeiro.Negocios
             int? numeroNFe, int? idLoja, int? idFunc, int? idFuncRecebido, int? idCli, int? tipoEntrega,
             string nomeCli, DateTime? dtIniVenc, DateTime? dtFimVenc, DateTime? dtIniRec, DateTime? dtFimRec,
             DateTime? dataIniCad, DateTime? dataFimCad,
-            int? idFormaPagto, int? idTipoBoleto, decimal? precoInicial, decimal? precoFinal, bool? renegociadas,
+            int? idFormaPagto, int? idTipoBoleto, decimal? precoInicial, decimal? precoFinal, int? idContaBancoRecebimento, bool? renegociadas,
             bool? recebida, int? idComissionado, int? idRota, string obs, int? ordenacao, IEnumerable<int> tipoContaContabil,
             int? numArqRemessa, bool refObra, int? contasCnab, int? idVendedorAssociado, int? idVendedorObra, int? idComissao, int? numCte,
             bool protestadas, bool contasVinculadas);

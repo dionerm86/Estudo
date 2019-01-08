@@ -1,4 +1,4 @@
-Vue.component('contas-recebidas-filtros', {
+﻿Vue.component('contas-recebidas-filtros', {
   mixins: [Mixins.Objetos],
   props: {
     /**
@@ -51,6 +51,7 @@ Vue.component('contas-recebidas-filtros', {
           tipoEntrega: null,
           valorRecebidoInicio: null,
           valorRecebidoFim: null,
+          idContaBancoRecebimento: null,
           idRota: null,
           tiposContabeis: null,
           idComissionado: null,
@@ -75,6 +76,7 @@ Vue.component('contas-recebidas-filtros', {
       vendedorAssociadoAtual: null,
       vendedorObraAtual: null,
       tipoEntregaAtual: null,
+      idContaRecebimentoAtual: null,
       rotaAtual: null,
       comissionadoAtual: null
     };
@@ -129,6 +131,14 @@ Vue.component('contas-recebidas-filtros', {
      */
     obterItensFiltroTiposEntrega: function () {
       return Servicos.Pedidos.obterTiposEntrega();
+    },
+
+    /**
+     * Recupera as contas bancárias para exibição nos filtros de conta recebida.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterItensFiltroContasBancoRecebimento: function () {
+      return Servicos.ContasBancarias.obterBancos();
     },
 
     /**
@@ -243,6 +253,17 @@ Vue.component('contas-recebidas-filtros', {
     tipoEntregaAtual: {
       handler: function (atual) {
         this.filtroAtual.tipoEntrega = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'idContaBancoRecebimentoAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    idContaBancoRecebimentoAtual: {
+      handler: function (atual) {
+        this.filtroAtual.idContaBancoRecebimento = atual ? atual.id : null;
       },
       deep: true
     },

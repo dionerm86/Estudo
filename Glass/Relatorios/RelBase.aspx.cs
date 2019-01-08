@@ -498,7 +498,8 @@ namespace Glass.UI.Web.Relatorios
                             Request["renegociadas"] == "true", recebida, Glass.Conversoes.StrParaUint(Request["idComissionado"]), Glass.Conversoes.StrParaUint(Request["idRota"]),
                             Request["obs"], Request["tipoConta"], Glass.Conversoes.StrParaUint(Request["numArqRemessa"]), bool.Parse(Request["refObra"] ?? "false"), Glass.Conversoes.StrParaInt(Request["contasCnab"]),
                             Glass.Conversoes.StrParaInt(Request["idVendedorAssociado"]), Glass.Conversoes.StrParaInt(Request["idVendedorObra"]), Request["idComissao"].StrParaInt(),
-                            Request["idSinal"].StrParaInt(), Request["numCte"].StrParaInt(), bool.Parse(Request["protestadas"] ?? "false"), bool.Parse(Request["contasVinculadas"] ?? "false"), Request["tipoContasBuscar"], Request["numAutCartao"]);
+                            Request["idSinal"].StrParaInt(), Request["numCte"].StrParaInt(), bool.Parse(Request["protestadas"] ?? "false"), bool.Parse(Request["contasVinculadas"] ?? "false"), Request["tipoContasBuscar"], Request["numAutCartao"],
+                            Request["idContaBancoRecebimento"].StrParaIntNullable());
 
                         var idsContas = contasRecebidas.Select(f => f.IdContaR).ToList();
 
@@ -602,7 +603,7 @@ namespace Glass.UI.Web.Relatorios
                         var debitos = ContasReceberDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idPedido"]),
                             Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]), 0, 0, 0, 0, 0, Glass.Conversoes.StrParaUint(Request["idCli"]),
                             Glass.Conversoes.StrParaUint(Request["idFunc"]), 0, 0, Request["nomeCli"], null, null, null, null, null, null, null, null,
-                            "", 0, 0, 0, 1, null, false, 0, 0, null, null, 0, true, 0, 0, 0, 0, 0, 0, false, false, null, "");
+                            "", 0, 0, 0, 1, null, false, 0, 0, null, null, 0, true, 0, 0, 0, 0, 0, 0, false, false, null, "", null);
 
                         lstParam.Add(new ReportParameter("LiberarPedido", PedidoConfig.LiberarPedido.ToString()));
 

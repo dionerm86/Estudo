@@ -235,6 +235,7 @@
       this.incluirFiltroComLista(filtros, 'idComissionado', this.filtro.idComissionado);
       this.incluirFiltroComLista(filtros, 'obs', this.filtro.observacao);
       this.incluirFiltroComLista(filtros, 'numAutCartao', this.filtro.numeroAutorizacaoCartao);
+      this.incluirFiltroComLista(filtros, 'idContaBancoRecebimento', this.filtro.idContaBancoRecebimento);
       this.incluirFiltroComLista(filtros, 'numArqRemessa', this.filtro.numeroArquivoRemessa);
       this.incluirFiltroComLista(filtros, 'contasCnab', this.filtro.buscaArquivoRemessa);
       this.incluirFiltroComLista(filtros, 'idComissao', this.filtro.idComissao);

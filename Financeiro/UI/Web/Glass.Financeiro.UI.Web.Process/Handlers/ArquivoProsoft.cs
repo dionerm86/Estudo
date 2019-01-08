@@ -81,6 +81,9 @@ namespace Glass.Financeiro.UI.Web.Process.Handlers
         [Colosoft.Web.QueryString("valorFinal")]
         public decimal? ValorFinal { get; set; }
 
+        [Colosoft.Web.QueryString("idContaBancoRecebimento")]
+        public int? IdContaBancoRecebimento { get; set; }
+
         [Colosoft.Web.QueryString("renegociadas")]
         public bool Renegociadas { get; set; }
 
@@ -159,7 +162,7 @@ namespace Glass.Financeiro.UI.Web.Process.Handlers
                 if (Receber)
                     arq = prosoftFluxo.GerarArquivoRecebidas(IdPedido, IdLiberarPeidido, IdAcerto, IdAcertoParcial, IdTrocaDev, NumeroNfe,
                         IdLoja, IdCliente, IdFunc, IdFuncRecebido, TipoEntrega, NomeCli, DtInivenc, DtFimVenc, DtIniRec, DtFimRec,
-                        DataIniCad, DataFimCad, IdFormaPagto, TipoBoleto, ValorInicial, ValorFinal, Renegociadas, IdComissionado, IdRota,
+                        DataIniCad, DataFimCad, IdFormaPagto, TipoBoleto, ValorInicial, ValorFinal, IdContaBancoRecebimento, Renegociadas, IdComissionado, IdRota,
                         Obs, NumArqRemessa, IdVendedorObra, RefObra, ContasCnab, ContasVinculadas);
                 else
                     arq = prosoftFluxo.GerarArquivoPagas(IdContaPg, IdCompra, NumeroNfe, IdCustoFixo, IdImpServ, IdComissao, ValorInicial, ValorFinal, DtInivenc, DtFimVenc, DtIniRec, DtFimRec,

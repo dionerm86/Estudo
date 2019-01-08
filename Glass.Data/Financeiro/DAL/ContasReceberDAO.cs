@@ -1090,7 +1090,7 @@ namespace Glass.Data.DAL
             string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string dtIniLib, string dtFimLib, string idsFormaPagto, uint idTipoBoleto, Single precoInicial,
             Single precoFinal, bool? recebida, uint idComissionado, uint idRota, string obs, int sort, bool? renegociadas, string tipoContaContabil,
             bool returnAll, uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinalPedido, int numCte,
-            bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao, bool relatorio, bool selecionar, out bool temFiltro, out string filtroAdicional)
+            bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao, int? idContaBancoRecebimento, bool relatorio, bool selecionar, out bool temFiltro, out string filtroAdicional)
         {
             temFiltro = false;
             filtroAdicional = " And c.valorVec > 0 AND (c.isParcelaCartao=false OR c.isParcelaCartao IS NULL)";
@@ -1525,6 +1525,15 @@ namespace Glass.Data.DAL
                 }
             }
 
+            if (idContaBancoRecebimento > 0)
+            {
+                where += $" AND pcr.IdContaBanco = {idContaBancoRecebimento}";
+                temFiltro = true;
+
+                var descricaoContaBancoRecebimento = ContaBancoDAO.Instance.GetDescricao(null, (uint)idContaBancoRecebimento);
+                criterio += $"Conta bancária recebimento: {descricaoContaBancoRecebimento}    ";
+            }
+
             if (idComissao > 0)
             {
                 filtroAdicional += " AND ccr.IdComissao=" + idComissao;
@@ -1660,7 +1669,7 @@ namespace Glass.Data.DAL
             string dtFimVenc, string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string dtIniLib, string dtFimLib, string idsFormaPagto, uint idTipoBoleto,
             Single precoInicial, Single precoFinal, int sort, bool? renegociadas, bool? recebida, uint idComissionado,
             uint idRota, string obs, string tipoContaContabil, uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal,
-            int numCte, bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao)
+            int numCte, bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao, int? idContaBancoRecebimento)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -1674,7 +1683,7 @@ namespace Glass.Data.DAL
             string sql = SqlRpt(idPedido, idLiberarPedido, idAcerto, idAcertoParcial, idTrocaDevolucao, numeroNFe, idLoja, idFunc, idFuncRecebido,
                 idCli, tipoEntrega, nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, dtIniLib, dtFimLib, idsFormaPagto, idTipoBoleto, precoInicial,
                 precoFinal, recebida, idComissionado, idRota, obs, 0, renegociadas, tipoContaContabil, true, numArqRemessa, refObra, contasCnab, idVendedorAssociado, idVendedorObra, idComissao, idSinal, numCte,
-                protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, true, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
+                protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, idContaBancoRecebimento, true, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
             List<ContasReceber> lst = objPersistence.LoadData(sql + sortExpression, GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec,
                 dataIniCad, dataFimCad, dtIniLib, dtFimLib, null, null, obs));
@@ -1687,7 +1696,7 @@ namespace Glass.Data.DAL
             string dtFimVenc, string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string idsFormaPagto, uint idTipoBoleto, float precoInicial, float precoFinal,
             bool? renegociadas, bool? recebida, uint idComissionado, uint idRota, string obs, int ordenacao, string tipoContaContabil,
             uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte,
-            bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao, string sortExpression, int startRow, int pageSize)
+            bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao, int? idContaBancoRecebimento, string sortExpression, int startRow, int pageSize)
         {
             var ordenacaoSql = !string.IsNullOrEmpty(sortExpression) ? string.Empty :
                 ordenacao == 2 ? " ORDER BY cli.Nome Asc, c.idContaR Desc" :
@@ -1701,7 +1710,7 @@ namespace Glass.Data.DAL
             string sql = SqlRpt(idPedido, idLiberarPedido, idAcerto, idAcertoParcial, idTrocaDevolucao, numeroNFe, idLoja, idFunc, idFuncRecebido,
                 idCli, tipoEntrega, nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, idsFormaPagto, idTipoBoleto, precoInicial, precoFinal,
                 recebida, idComissionado, idRota, obs, 0, renegociadas, tipoContaContabil, true, numArqRemessa, refObra, contasCnab, idVendedorAssociado,
-                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, false, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
+                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, idContaBancoRecebimento, false, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
             var lst = objPersistence.LoadDataWithSortExpression(sql + ordenacaoSql, new InfoSortExpression(sortExpression), new InfoPaging(startRow, pageSize),
                 GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, null, null, obs));
@@ -1714,7 +1723,7 @@ namespace Glass.Data.DAL
             string dtFimVenc, string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string idsFormaPagto, uint idTipoBoleto, float precoInicial, float precoFinal,
             bool? renegociadas, bool? recebida, uint idComissionado, uint idRota, string obs, int ordenacao, string tipoContaContabil,
             uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte,
-            bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao)
+            bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao, int? idContaBancoRecebimento)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -1722,7 +1731,7 @@ namespace Glass.Data.DAL
             string sql = SqlRpt(idPedido, idLiberarPedido, idAcerto, idAcertoParcial, idTrocaDevolucao, numeroNFe, idLoja, idFunc, idFuncRecebido,
                 idCli, tipoEntrega, nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, idsFormaPagto, idTipoBoleto, precoInicial, precoFinal,
                 recebida, idComissionado, idRota, obs, ordenacao, renegociadas, tipoContaContabil, true, numArqRemessa, refObra, contasCnab, idVendedorAssociado,
-                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, false, false, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
+                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, idContaBancoRecebimento,  false, false, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
             return objPersistence.ExecuteSqlQueryCount(sql, GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, null, null, obs));
         }
