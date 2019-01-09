@@ -14,15 +14,15 @@ using System.Web.Http;
 namespace Glass.API.Backend.Controllers.Produtos.V1.ChapasVidro.Perdas
 {
     /// <summary>
-    /// Controller de produtos.
+    /// Controller de perdas de chapas de vidro.
     /// </summary>
     public partial class PerdasChapasVidroController : BaseController
     {
         /// <summary>
-        /// Recupera a lista de produtos.
+        /// Recupera a lista de perdas de chapas de vidro.
         /// </summary>
         /// <param name="filtro">Os filtros para a busca dos itens.</param>
-        /// <returns>Uma lista JSON com os dados dos produtos.</returns>
+        /// <returns>Uma lista JSON com os dados dosas perdas de chapas de vidro.</returns>
         [HttpGet]
         [Route("")]
         [SwaggerResponse(200, "Perdas de chapa de vidro encontradas sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<ListaDto>))]
@@ -33,23 +33,31 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.ChapasVidro.Perdas
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.Produtos.V1.Lista.FiltroDto();
+                filtro = filtro ?? new FiltroDto();
 
                 var perdasChapasVidro = PerdaChapaVidroDAO.Instance.GetListPerdaChapaVidro(
-                    filtro.Id,
-                    filtro.id
-                    );
-
-                ((Colosoft.Collections.IVirtualList)produtos).Configure(filtro.NumeroRegistros);
-                ((Colosoft.Collections.ISortableCollection)produtos).ApplySort(filtro.ObterTraducaoOrdenacao());
+                    (uint)(filtro.Id ?? 0),
+                    null,
+                    (uint)(filtro.IdTipoPerda ?? 0),
+                    (uint)(filtro.IdSubtipoPerda ?? 0),
+                    filtro.PeriodoCadastroInicio?.ToShortDateString(),
+                    filtro.PeriodoCadastroFim?.ToShortDateString(),
+                    filtro.CodigoEtiqueta,
+                    filtro.ObterTraducaoOrdenacao(),
+                    filtro.ObterPrimeiroRegistroRetornar(),
+                    filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    produtos
-                        .Skip(filtro.ObterPrimeiroRegistroRetornar())
-                        .Take(filtro.NumeroRegistros)
-                        .Select(c => new Models.Produtos.V1.Lista.ListaDto(c)),
+                    perdasChapasVidro.Select(pcv => new ListaDto(pcv)),
                     filtro,
-                    () => produtos.Count);
+                    () => PerdaChapaVidroDAO.Instance.GetListPerdaChapaVidroCount(
+                        (uint)(filtro.Id ?? 0),
+                        null,
+                        (uint)(filtro.IdTipoPerda ?? 0),
+                        (uint)(filtro.IdSubtipoPerda ?? 0),
+                        filtro.PeriodoCadastroInicio?.ToShortDateString(),
+                        filtro.PeriodoCadastroFim?.ToShortDateString(),
+                        filtro.CodigoEtiqueta));
             }
         }
     }

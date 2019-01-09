@@ -9,9 +9,7 @@ Servicos.Producao = (function(http) {
   const API_TipoPerda_SubtipoPerda = function (idTipoPerda) {
     const complemento = 'subtiposPerda/';
 
-    return idTipoPerda > 0
-      ? API_TipoPerda + idTipoPerda + '/' + complemento
-      : API_TipoPerda + complemento;
+    return API_TipoPerda + idTipoPerda + '/' + complemento;
   };
 
   return {
@@ -292,7 +290,8 @@ Servicos.Producao = (function(http) {
          * @returns {Promise} Uma promise com o resultado da operação.
          */
         obterParaFiltro: function (idTipoPerda) {
-          if (!idTipoPerda) {
+          debugger;
+          if (!idTipoPerda && idTipoPerda != 0) {
             throw new Error('Tipo de perda é obrigatório.');
           }
 

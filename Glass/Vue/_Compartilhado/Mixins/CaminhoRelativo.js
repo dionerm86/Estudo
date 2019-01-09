@@ -22,11 +22,7 @@ Vue.mixin({
         return url;
       }
 
-      const urlFinal = url;
-
-      if (caminhoSite.endsWith("/")) {
-        urlFinal = url.replace(/^\/*/, '');
-      }
+      const urlFinal = caminhoSite.endsWith("/") ? url.replace(/^\/*/, '') : url;
 
       return url !== urlFinal.replace(/^\/*/, '')
         ? caminhoSite + urlFinal
