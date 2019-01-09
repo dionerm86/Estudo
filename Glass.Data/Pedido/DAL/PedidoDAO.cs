@@ -15367,10 +15367,6 @@ namespace Glass.Data.DAL
                 {
                     throw new Exception("Não é possível mudar a situação do pedido de conferido para ativo, feche a tela e tente realizar a operação novamente.");
                 }
-                else if (ObtemIdSinalOuPagtoAntecipado(session, objUpdate.IdPedido) > 0)
-                {
-                    throw new InvalidOperationException("O pedido possui sinal ou pagamento antecipado, por isso não foi possível voltá-lo para a situação ativo.");
-                }
             }
 
             // Não permite atualizar o pedido se já estiver confirmado/liberado.
