@@ -2186,16 +2186,5 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-
-        /// <summary>
-        /// Obtem o valor da movimentação passada.
-        /// </summary>
-        /// <param name="sessao">Sessão do GDA.</param>
-        /// <param name="idCaixaDiario">Identificador da movimentação do caixa geral.</param>
-        /// <returns>O valor da movimentação.</returns>
-        public decimal ObterValorMov(GDASession sessao, int idCaixaDiario)
-        {
-            return this.ObtemValorCampo<decimal>(sessao, "valor", $"IdCaixaDiario = {idCaixaDiario}");
-        }
     }
 }
