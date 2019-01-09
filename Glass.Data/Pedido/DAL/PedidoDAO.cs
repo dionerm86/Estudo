@@ -15167,6 +15167,8 @@ namespace Glass.Data.DAL
 
         public override int Update(GDASession session, Pedido objUpdate)
         {
+            this.ForcarTransacaoPedido(session, objUpdate.IdPedido, true);
+
             #region Declaração de variáveis
 
             var ped = GetElementByPrimaryKey(session, objUpdate.IdPedido);
@@ -15631,6 +15633,8 @@ namespace Glass.Data.DAL
             }
 
             #endregion
+
+            this.ForcarTransacaoPedido(session, objUpdate.IdPedido, false);
 
             return retorno;
         }
@@ -17405,12 +17409,17 @@ namespace Glass.Data.DAL
 
         public void ForcarTransacaoPedido(GDASession sessao, uint idPedido, bool inicio)
         {
+            if (idPedido == 0)
+            {
+                return;
+            }
+
             string sql = $@"
                 UPDATE pedido
                 SET TRANSACAO = {inicio}
                 WHERE idPedido = {idPedido}";
 
-            objPersistence.ExecuteCommand(sessao, sql);
+            this.objPersistence.ExecuteCommand(sessao, sql);
         }
 
         public Pedido ObterDataEntregaEDataEntregaSistema(GDASession sessao, int idPedido)
