@@ -116,7 +116,7 @@ namespace Glass.API.Backend.Models.ContasPagar.V1.Lista
         public decimal? ValorInicial { get; set; }
 
         /// <summary>
-        /// Obtém ou define o valor finaL na faixa de valores daS contaS a pagar.
+        /// Obtém ou define o valor finaL na faixa de valores daS contas a pagar.
         /// </summary>
         [JsonProperty("valorFinal")]
         public decimal? ValorFinal { get; set; }

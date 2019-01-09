@@ -1748,7 +1748,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca contas pagas
+        /// Busca contas pagas.
         /// </summary>
         public IList<ContasPagar> GetPagas(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, string formaPagto,
             string dataIniCad, string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao,
@@ -1763,8 +1763,23 @@ namespace Glass.Data.DAL
                 valorInicial, valorFinal, tipo, comissao, renegociadas, jurosMulta, planoConta, custoFixo, true, null, exibirAPagar, idComissao, numCte, observacao, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
 
-            var lstContasPagar = LoadDataWithSortExpression(sql, sort, startRow, pageSize, temFiltro, filtroAdicional, GetParamPagas(nf, nomeFornec, dataIniCad, dataFimCad, dtIniPago, dtFimPago,
-                dtIniVenc, dtFimVenc, planoConta, observacao)).ToArray();
+            sql += $" ORDER BY {sort}";
+
+            var lstContasPagar = this.objPersistence.LoadDataWithSortExpression(
+                sql,
+                null,
+                new InfoPaging(startRow, pageSize),
+                this.GetParamPagas(
+                    nf,
+                    nomeFornec,
+                    dataIniCad,
+                    dataFimCad,
+                    dtIniPago,
+                    dtFimPago,
+                    dtIniVenc,
+                    dtFimVenc,
+                    planoConta,
+                    observacao)).ToArray();
 
             return lstContasPagar;
         }

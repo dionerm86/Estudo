@@ -83,42 +83,42 @@
                             <img src="../Images/edit.gif" />
                         </button>
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         {{ item.id }}
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         {{ item.referencia }}
                     </td>
-                    <td v-if="item.fornecedor && item.fornecedor.id">
+                    <td v-if="item.fornecedor && item.fornecedor.id" :style="{ color: item.corLinha }">
                         {{ item.fornecedor.nome }}
                     </td>
-                    <td v-if="item.transportador && item.transportador.id">
+                    <td v-if="item.transportador && item.transportador.id" :style="{ color: item.corLinha }">
                         {{ item.transportador.nome }}
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         {{ item.descricaoContaAPagar }}
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         {{ item.formaPagamento.nome }}
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         <span v-if="item.parcela.exibir">
                             {{ item.parcela.numero }}/{{ item.parcela.total }}
                         </span>
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         {{ item.valorVencimento | moeda }}
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         {{ item.datas.vencimento | data }}
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         {{ item.datas.cadastro | data }}
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         {{ item.boletoChegou ? "Sim" : "Não" }}
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         {{ item.observacoes.contaAPagar }}
                         <template v-if="item && item.observacoes && item.observacoes.desconto">
                             {{ item.observacoes.desconto }}
@@ -127,10 +127,10 @@
                             {{ item.observacoes.acrescimo }}
                         </template>
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         {{ item.contaContabil }}
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         <log-alteracao tabela="ContaPagar" :id-item="item.id" :atualizar-ao-alterar="false"
                             v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
                     </td>
@@ -144,50 +144,50 @@
                             <img src="../Images/ExcluirGrid.gif" />
                         </button>
                     </td>
-                    <td>
+                    <td :style="{ color: contaAPagarAtual.corLinha }">
                         {{ contaAPagarAtual.id }}
                     </td>
-                    <td>
+                    <td :style="{ color: contaAPagarAtual.corLinha }">
                         {{ contaAPagarAtual.referencia }}
                     </td>
-                    <td v-if="contaAPagarAtual.fornecedor && contaAPagarAtual.fornecedor.id">
+                    <td v-if="contaAPagarAtual.fornecedor && contaAPagarAtual.fornecedor.id" :style="{ color: contaAPagarAtual.corLinha }">
                         {{ contaAPagarAtual.fornecedor.nome }}
                     </td>
-                    <td v-if="contaAPagarAtual.transportador && contaAPagarAtual.transportador.id">
+                    <td v-if="contaAPagarAtual.transportador && contaAPagarAtual.transportador.id" :style="{ color: contaAPagarAtual.corLinha }">
                         {{ contaAPagarAtual.transportador.nome }}
                     </td>
-                    <td>
+                    <td :style="{ color: contaAPagarAtual.corLinha }">
                         <lista-selecao-id-valor :funcao-recuperar-itens="obterPlanosConta"
                             :item-selecionado.sync="planoContaAtual"></lista-selecao-id-valor>
                     </td>
-                    <td>
+                    <td :style="{ color: contaAPagarAtual.corLinha }">
                         <lista-selecao-id-valor :funcao-recuperar-itens="obterFormasPagamentoCompras"
                             :item-selecionado.sync="formaPagamentoAtual"></lista-selecao-id-valor>
                     </td>
-                    <td>
+                    <td :style="{ color: contaAPagarAtual.corLinha }">
                         <span v-if="contaAPagarAtual.parcela.exibir">
                             {{ contaAPagarAtual.parcela.numero }}/{{ contaAPagarAtual.parcela.total }}
                         </span>
                     </td>
-                    <td>
+                    <td :style="{ color: contaAPagarAtual.corLinha }">
                         {{ contaAPagarAtual.valorVencimento | moeda }}
                     </td>
-                    <td v-if="contaAPagarAtual.permissoes.editarDataVencimento">
+                    <td v-if="contaAPagarAtual.permissoes.editarDataVencimento" :style="{ color: contaAPagarAtual.corLinha }">
                         <campo-data-hora :data-hora.sync="contaAPagar.dataVencimento" :data-minima="Date.now()"></campo-data-hora>
                     </td>
-                    <td v-else>
+                    <td v-else :style="{ color: contaAPagarAtual.corLinha }">
                         {{ contaAPagarAtual.datas.vencimento | data }}
                     </td>
-                    <td>
+                    <td :style="{ color: contaAPagarAtual.corLinha }">
                         {{ contaAPagarAtual.datas.cadastro | data }}
                     </td>
-                    <td>
+                    <td :style="{ color: contaAPagarAtual.corLinha }">
                         {{ contaAPagarAtual.boletoChegou ? "Sim" : "Não" }}
                     </td>
-                    <td>
+                    <td :style="{ color: contaAPagarAtual.corLinha }">
                         <input type="text" v-model="contaAPagar.observacao" />
                     </td>
-                    <td>
+                    <td :style="{ color: contaAPagarAtual.corLinha }">
                         {{ contaAPagarAtual.contaContabil }}
                     </td>
                     <td></td>

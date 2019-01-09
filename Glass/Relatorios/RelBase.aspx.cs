@@ -651,10 +651,13 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("Agrupar", !String.IsNullOrEmpty(Request["agrupar"]) ? Request["agrupar"] : "0"));
                         lstParam.Add(new ReportParameter("ExibirAPagar", (Request["exibirAPagar"] == "true").ToString()));
 
-                        var lancamentosAvulsosCG = CaixaGeralDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(Request["dtIniPago"].ToString()),
-                            Glass.Conversoes.StrParaDate(Request["dtFimPago"].ToString()), Request["idFornec"].StrParaUint(), Request["idLoja"].StrParaInt(), Request["planoConta"]);
-                        var lancamentosAvulsosCD = Glass.Data.DAL.CaixaDiarioDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(Request["dtIniPago"].ToString()),
-                            Glass.Conversoes.StrParaDate(Request["dtFimPago"].ToString()), Request["idFornec"].StrParaUint(), Request["idLoja"].StrParaInt(), Request["planoConta"]);
+                        var dtIniPago = Request["dtIniPago"] != null ? Request["dtIniPago"].ToString() : string.Empty;
+                        var dtFimPago = Request["dtFimPago"] != null ? Request["dtFimPago"].ToString() : string.Empty;
+
+                        var lancamentosAvulsosCG = CaixaGeralDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(dtIniPago),
+                            Glass.Conversoes.StrParaDate(dtFimPago), Request["idFornec"].StrParaUint(), Request["idLoja"].StrParaInt(), Request["planoConta"]);
+                        var lancamentosAvulsosCD = Glass.Data.DAL.CaixaDiarioDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(dtIniPago),
+                            Glass.Conversoes.StrParaDate(dtFimPago), Request["idFornec"].StrParaUint(), Request["idLoja"].StrParaInt(), Request["planoConta"]);
 
                         var valorPagtoPermuta = ContasPagarDAO.Instance.ObtemValorPagtoPermuta(string.Join(",", contasPagas.Select(f => f.IdContaPg.ToString()).ToArray()));
                         var valorPagtoEncontroContas = ContasPagarDAO.Instance.ObtemValorPagtoEncontroContas(string.Join(",", contasPagas.Select(f => f.IdContaPg.ToString()).ToArray()));

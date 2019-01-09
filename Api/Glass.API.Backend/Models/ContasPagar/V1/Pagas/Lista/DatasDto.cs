@@ -6,26 +6,26 @@ using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.ContasPagar.V1.Lista
+namespace Glass.API.Backend.Models.ContasPagar.V1.Pagas.Lista
 {
     /// <summary>
-    /// Classe que encapsula os dados das datas para a lista de contas a pagar.
+    /// Classe que encapsula os dados das datas para a lista de contas pagas.
     /// </summary>
     [DataContract(Name = "Datas")]
     public class DatasDto
     {
         /// <summary>
-        /// Obtém ou define a data de vencimento da conta a pagar.
+        /// Obtém ou define a data de vencimento da conta paga.
         /// </summary>
         [DataMember]
         [JsonProperty("vencimento")]
         public DateTime? Vencimento { get; set; }
 
         /// <summary>
-        /// Obtém ou define a data de cadastro da conta a pagar.
+        /// Obtém ou define a data de pagamento da conta paga.
         /// </summary>
         [DataMember]
-        [JsonProperty("cadastro")]
-        public DateTime? Cadastro { get; set; }
+        [JsonProperty("pagamento")]
+        public DateTime? Pagamento { get; set; }
     }
 }
