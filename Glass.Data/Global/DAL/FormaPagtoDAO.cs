@@ -392,6 +392,16 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public FormaPagto[] GetForPagto()
         {
+            return this.GetForPagto(true);
+        }
+
+        /// <summary>
+        /// Formas Pagto. para pagamento de contas.
+        /// </summary>
+        /// <param name="inserirCampoVazio">Indica se será inserido um campo vazio no inicio da lista do controle.</param>
+        /// <returns></returns>
+        public FormaPagto[] GetForPagto(bool inserirCampoVazio)
+        {
             string formasPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto + "," + (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio + "," +
                 (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro + "," + (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro + "," +
                 (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito;
@@ -407,7 +417,11 @@ namespace Glass.Data.DAL
             string sql = "Select *, true as utilizarPagamento From formapagto where !apenasSistema and IdFormaPagto In (" + formasPagto + ") Order By Descricao";
 
             List<FormaPagto> lst = objPersistence.LoadData(sql).ToList();
-            lst.Insert(0, new FormaPagto());
+
+            if (inserirCampoVazio)
+            {
+                lst.Insert(0, new FormaPagto());
+            }
 
             if (FinanceiroConfig.UsarPgtoAntecipFornec &&
                 FornecedorConfig.TipoUsoAntecipacaoFornecedor == DataSources.TipoUsoAntecipacaoFornecedor.ContasPagar &&

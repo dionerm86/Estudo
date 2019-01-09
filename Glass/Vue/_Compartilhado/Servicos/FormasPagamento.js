@@ -37,6 +37,14 @@ Servicos.FormasPagamento = (function(http) {
      */
     obterFormasPagamentoCompra: function () {
       return http().get(API + 'filtroCompras');
+    },
+
+    /**
+     * Recupera a lista de formas de pagamento para uso no controle de seleção de formas de pagamento de pagamentos.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    obterFormasPagamentoPagamentos: function () {
+      return http().get(API + 'filtroPagamentos');
     }
   };
 })(function() {

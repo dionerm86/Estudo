@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Helper;
@@ -138,7 +138,7 @@ namespace Glass.Data.Model
 
         public int TipoCalc
         {
-            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int)IdSubgrupoProd, false); }
+            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int)IdSubgrupoProd); }
         }
 
         public bool AlturaEnabled

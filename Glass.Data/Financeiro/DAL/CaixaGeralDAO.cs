@@ -899,7 +899,7 @@ namespace Glass.Data.DAL
 
                 if (!idsCaixaGeralExcluir.Any(c => c > 0))
                 {
-                    throw new Exception("Não foram transferidos valores para o Caixa Geral com este fechamento.");
+                    return;
                 }
 
                 sql = $@"
@@ -921,9 +921,9 @@ namespace Glass.Data.DAL
 
                 this.DeleteByPKs(sessao, idsCaixaGeralExcluir);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception("Falha ao ajustar os valores do caixa geral.");
+                throw new Exception("Falha ao ajustar os valores do caixa geral. " + ex.Message);
             }
         }
 

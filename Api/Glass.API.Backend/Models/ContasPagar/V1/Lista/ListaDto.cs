@@ -54,6 +54,7 @@ namespace Glass.API.Backend.Models.ContasPagar.V1.Lista
             {
                 Numero = contaPagar.NumParc,
                 Total = contaPagar.NumParcMax,
+                Exibir = contaPagar.NumParc + contaPagar.NumParcMax > 0 && contaPagar.IdCustoFixo == null,
             };
 
             this.Datas = new DatasDto

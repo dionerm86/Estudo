@@ -1420,7 +1420,7 @@ namespace Glass.Data.DAL
 
                 foreach (ProdutosCompra p in lstProdCompra)
                 {
-                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd, false);
+                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd);
 
                     bool m2 = tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
@@ -1549,9 +1549,9 @@ namespace Glass.Data.DAL
                     {
                         p.TotM = Glass.Global.CalculosFluxo.ArredondaM2Compra(p.Largura, (int)p.Altura, (int)p.QtdeEntrada);
 
-                        int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdProd, false);
-                        var m2 = tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-                        decimal qtdBaixa = (decimal)p.QtdeEntrada;
+                            int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdProd);
+                            var m2 = tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
+                            decimal qtdBaixa = (decimal)p.QtdeEntrada;
 
                         if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
                             tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6 ||

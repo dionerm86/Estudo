@@ -1,4 +1,4 @@
-Ôªøusing GDA;
+using GDA;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.EFD;
@@ -12,7 +12,7 @@ using System.Text;
 namespace Glass.Data.Model
 {
     /// <summary>
-    /// Poss√≠veis tipos de mercadorias.
+    /// PossÌveis tipos de mercadorias.
     /// </summary>
     public enum TipoMercadoria
     {
@@ -22,9 +22,9 @@ namespace Glass.Data.Model
         [Description("Mercadoria Revenda")]
         MercadoriaRevenda,
         /// <summary>
-        /// Mat√©ria Prima.
+        /// MatÈria Prima.
         /// </summary>
-        [Description("Mat√©ria Prima")]
+        [Description("MatÈria Prima")]
         MateriaPrima,
         /// <summary>
         /// Embalagem.
@@ -47,9 +47,9 @@ namespace Glass.Data.Model
         [Description("Subproduto")]
         Subproduto,
         /// <summary>
-        /// Produto Intermedi√°rio.
+        /// Produto Intermedi·rio.
         /// </summary>
-        [Description("Produto Intermedi√°rio")]
+        [Description("Produto Intermedi·rio")]
         ProdutoIntermediario,
         /// <summary>
         /// Material de uso e consumo.
@@ -62,9 +62,9 @@ namespace Glass.Data.Model
         [Description("Ativo Imobilizado")]
         AtivoImobilizado,
         /// <summary>
-        /// Servi√ßos.
+        /// ServiÁos.
         /// </summary>
-        [Description("Servi√ßos")]
+        [Description("ServiÁos")]
         Servicos,
         /// <summary>
         /// Outros insumos.
@@ -79,19 +79,19 @@ namespace Glass.Data.Model
     }
 
     /// <summary>
-    /// Poss√≠veis c√≥digos ds situa√ß√£o tribut√°ria do Ipi do produto.
+    /// PossÌveis cÛdigos ds situaÁ„o tribut·ria do Ipi do produto.
     /// </summary>
     public enum ProdutoCstIpi
     {
         /// <summary>
-        /// Entrada recuperando cr√©dito.
+        /// Entrada recuperando crÈdito.
         /// </summary>
-        [Description("Entrada recuperando cr√©dito")]
+        [Description("Entrada recuperando crÈdito")]
         EntradaRecuperandoCredito,
         /// <summary>
-        /// Entrada Tributada Al√≠quota Zero.
+        /// Entrada Tributada AlÌquota Zero.
         /// </summary>
-        [Description("Entrada tributada com al√≠quota zero")]
+        [Description("Entrada tributada com alÌquota zero")]
         EntradaTributadaAliquotaZero,
         /// <summary>
         /// Entrada Isenta
@@ -99,9 +99,9 @@ namespace Glass.Data.Model
         [Description("Entrada isenta")]
         EntradaIsenta,
         /// <summary>
-        /// Entrada n√£o Tributada.
+        /// Entrada n„o Tributada.
         /// </summary>
-        [Description("Entrada n√£o-tributada")]
+        [Description("Entrada n„o-tributada")]
         EntradaNaoTributada,
         /// <summary>
         /// Entrada Imenu.
@@ -109,9 +109,9 @@ namespace Glass.Data.Model
         [Description("Entrada Imune")]
         EntradaImune,
         /// <summary>
-        /// Entrada com suspen√ß√£o.
+        /// Entrada com suspenÁ„o.
         /// </summary>
-        [Description("Entrada com suspens√£o")]
+        [Description("Entrada com suspens„o")]
         EntradaComSuspensao,
         /// <summary>
         /// Outras entradas.
@@ -119,39 +119,39 @@ namespace Glass.Data.Model
         [Description("Outras Entradas")]
         OutrasEntradas = 49,
         /// <summary>
-        /// Sa√≠da Tributada.
+        /// SaÌda Tributada.
         /// </summary>
-        [Description("Sa√≠da Tributada")]
+        [Description("SaÌda Tributada")]
         SaidaTributada,
         /// <summary>
-        /// Sa√≠da Tributada Al√≠quota Zero.
+        /// SaÌda Tributada AlÌquota Zero.
         /// </summary>
-        [Description("Sa√≠da tributada com al√≠quota zero")]
+        [Description("SaÌda tributada com alÌquota zero")]
         SaidaTributadaAliquotaZero,
         /// <summary>
-        /// Sa√≠da Isenta
+        /// SaÌda Isenta
         /// </summary>
-        [Description("Sa√≠da Isenta")]
+        [Description("SaÌda Isenta")]
         SaidaIsenta,
         /// <summary>
-        /// Sa√≠da n√£o Tributada.
+        /// SaÌda n„o Tributada.
         /// </summary>
-        [Description("Sa√≠da n√£o-tributada")]
+        [Description("SaÌda n„o-tributada")]
         SaidaNaoTributada,
         /// <summary>
-        /// Sa√≠da Imune.
+        /// SaÌda Imune.
         /// </summary>
-        [Description("Sa√≠da Imune")]
+        [Description("SaÌda Imune")]
         SaidaImune,
         /// <summary>
-        /// Sa√≠da com Suspen√ß√£o.
+        /// SaÌda com SuspenÁ„o.
         /// </summary>
-        [Description("Sa√≠da com suspens√£o")]
+        [Description("SaÌda com suspens„o")]
         SaidaComSuspensao,
         /// <summary>
-        /// Outras Sa√≠das.
+        /// Outras SaÌdas.
         /// </summary>
-        [Description("Outras Sa√≠das")]
+        [Description("Outras SaÌdas")]
         OutrasSaidas = 99
     }
 
@@ -190,7 +190,7 @@ namespace Glass.Data.Model
         [PersistenceForeignKey(typeof(CorFerragem), "IdCorFerragem")]
         public int? IdCorFerragem { get; set; }
 
-        [Log("Cor do Alum√≠nio", "Descricao", typeof(CorAluminioDAO))]
+        [Log("Cor do AlumÌnio", "Descricao", typeof(CorAluminioDAO))]
         [PersistenceProperty("IDCORALUMINIO")]
         [PersistenceForeignKey(typeof(CorAluminio), "IdCorAluminio")]
         public int? IdCorAluminio { get; set; }
@@ -225,7 +225,7 @@ namespace Glass.Data.Model
 
         private string _codInterno;
 
-        [Log("C√≥d. Produto")]
+        [Log("CÛd. Produto")]
         [PersistenceProperty("CODINTERNO")]
         [Colosoft.Data.Schema.CacheIndexed]
         public string CodInterno
@@ -234,7 +234,7 @@ namespace Glass.Data.Model
             set { _codInterno = !String.IsNullOrEmpty(value) ? value.ToUpper() : value; }
         }
 
-        [Log("C√≥d. EX")]
+        [Log("CÛd. EX")]
         [PersistenceProperty("CODIGOEX")]
         public string CodigoEX { get; set; }
 
@@ -256,7 +256,7 @@ namespace Glass.Data.Model
 
         private string _descricao;
 
-        [Log("Descri√ß√£o", true)]
+        [Log("DescriÁ„o", true)]
         [PersistenceProperty("DESCRICAO")]
         [Colosoft.Data.Schema.CacheIndexed]
         public string Descricao
@@ -277,7 +277,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALORATACADO")]
         public decimal ValorAtacado { get; set; }
 
-        [Log("Valor Balc√£o")]
+        [Log("Valor Balc„o")]
         [PersistenceProperty("VALORBALCAO")]
         public decimal ValorBalcao { get; set; }
 
@@ -285,7 +285,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("VALOROBRA")]
         public decimal ValorObra { get; set; }
 
-        [Log("Valor Reposi√ß√£o")]
+        [Log("Valor ReposiÁ„o")]
         [PersistenceProperty("VALORREPOSICAO")]
         public decimal ValorReposicao { get; set; }
 
@@ -295,25 +295,25 @@ namespace Glass.Data.Model
         [PersistenceProperty("UNIDADETRIB", DirectionParameter.InputOptional)]
         public string UnidadeTrib { get; set; }
 
-        [Log("Valor M√≠nimo")]
+        [Log("Valor MÌnimo")]
         [PersistenceProperty("Valor_Minimo")]
         public decimal ValorMinimo { get; set; }
 
-        [Log("Valor de Transfer√™ncia")]
+        [Log("Valor de TransferÍncia")]
         [PersistenceProperty("VALORTRANSFERENCIA")]
         public decimal ValorTransferencia { get; set; }
 
         /// <summary>
         /// 00 - Tributada integralmente
-        /// 10 - Tributada e com cobran√ßa de ICMS por substitui√ß√£o tribut√°ria
-        /// 20 - Com redu√ß√£o de base de c√°lculo
-        /// 30 - Isenta ou n√£o tributada e com cobran√ßa de ICMS por substitui√ß√£o tribut√°ria
+        /// 10 - Tributada e com cobranÁa de ICMS por substituiÁ„o tribut·ria
+        /// 20 - Com reduÁ„o de base de c·lculo
+        /// 30 - Isenta ou n„o tributada e com cobranÁa de ICMS por substituiÁ„o tribut·ria
         /// 40 - Isenta
-        /// 41 - N√£o tributada
-        /// 50 - Suspens√£o
-        /// 51 - Diferimento. A exig√™ncia do preenchimento das informa√ß√µes do ICMS diferido fica √† crit√©rio de cada UF.
-        /// 60 - ICMS cobrado anteriormente por substitui√ß√£o tribut√°ria
-        /// 70 - Com redu√ß√£o de base de c√°lculo e cobran√ßa do ICMS por substitui√ß√£o tribut√°ria
+        /// 41 - N„o tributada
+        /// 50 - Suspens„o
+        /// 51 - Diferimento. A exigÍncia do preenchimento das informaÁıes do ICMS diferido fica ‡ critÈrio de cada UF.
+        /// 60 - ICMS cobrado anteriormente por substituiÁ„o tribut·ria
+        /// 70 - Com reduÁ„o de base de c·lculo e cobranÁa do ICMS por substituiÁ„o tribut·ria
         /// 90 - Outros
         /// </summary>
         [Log("CST")]
@@ -328,15 +328,15 @@ namespace Glass.Data.Model
         [PersistenceProperty("NCM")]
         public string Ncm { get; set; }
 
-        [Log("Al√≠quota IPI")]
+        [Log("AlÌquota IPI")]
         [PersistenceProperty("AliqIPI")]
         public float AliqIPI { get; set; }
 
-        [Log("C√≥d. Otimiza√ß√£o")]
+        [Log("CÛd. OtimizaÁ„o")]
         [PersistenceProperty("CODOTIMIZACAO")]
         public string CodOtimizacao { get; set; }
 
-        [Log("Ativar M√≠nimo")]
+        [Log("Ativar MÌnimo")]
         [PersistenceProperty("AtivarMin")]
         public bool AtivarMin { get; set; }
 
@@ -348,11 +348,11 @@ namespace Glass.Data.Model
         [PersistenceProperty("PESO")]
         public float Peso { get; set; }
 
-        [Log("√Årea M√≠nima")]
+        [Log("¡rea MÌnima")]
         [PersistenceProperty("AREAMINIMA")]
         public float AreaMinima { get; set; }
 
-        [Log("Ativar √Årea M√≠nima")]
+        [Log("Ativar ¡rea MÌnima")]
         [PersistenceProperty("ATIVARAREAMINIMA")]
         public bool AtivarAreaMinima { get; set; }
 
@@ -360,7 +360,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("COMPRA")]
         public bool Compra { get; set; }
 
-        [Log("Item gen√©rico")]
+        [Log("Item genÈrico")]
         [PersistenceProperty("ITEMGENERICO")]
         public bool ItemGenerico { get; set; }
 
@@ -372,7 +372,7 @@ namespace Glass.Data.Model
         [Colosoft.Data.Schema.CacheIndexed]
         public int? UsuAlt { get; set; }
 
-        [Log("Observa√ß√£o")]
+        [Log("ObservaÁ„o")]
         [PersistenceProperty("OBS")]
         public string Obs { get; set; }
 
@@ -399,7 +399,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("CSTIPI")]
         public ProdutoCstIpi? CstIpi { get; set; }
 
-        [Log("Plano de Conta Cont√°bil", "Descricao", typeof(PlanoContaContabilDAO))]
+        [Log("Plano de Conta Cont·bil", "Descricao", typeof(PlanoContaContabilDAO))]
         [PersistenceProperty("IDCONTACONTABIL")]
         [PersistenceForeignKey(typeof(PlanoContaContabil), "IdContaContabil")]
         public int? IdContaContabil { get; set; }
@@ -413,7 +413,7 @@ namespace Glass.Data.Model
         [PersistenceForeignKey(typeof(EtiquetaProcesso), "IdProcesso")]
         public int? IdProcesso { get; set; }
 
-        [Log("Aplica√ß√£o", "CodInterno", typeof(EtiquetaAplicacaoDAO))]
+        [Log("AplicaÁ„o", "CodInterno", typeof(EtiquetaAplicacaoDAO))]
         [PersistenceProperty("IDAPLICACAO")]
         [PersistenceForeignKey(typeof(EtiquetaAplicacao), "IdAplicacao")]
         public int? IdAplicacao { get; set; }
@@ -446,101 +446,101 @@ namespace Glass.Data.Model
         public string CodigoCest { get; set; }
 
         /// <summary>
-        /// Obt√©m ou define a dist√¢ncia da margem inferior da chapa.
+        /// ObtÈm ou define a dist‚ncia da margem inferior da chapa.
         /// </summary>
         [Log("Recorte X1")]
         [PersistenceProperty("RecorteX1")]
         public double RecorteX1 { get; set; }
 
         /// <summary>
-        /// Obt√©m ou define a dist√¢ncia da margem esquerda da chapa.
+        /// ObtÈm ou define a dist‚ncia da margem esquerda da chapa.
         /// </summary>
         [Log("Recorte Y1")]
         [PersistenceProperty("RecorteY1")]
         public double RecorteY1 { get; set; }
 
         /// <summary>
-        /// Obt√©m ou define a dist√¢ncia da margem superior da chapa.
+        /// ObtÈm ou define a dist‚ncia da margem superior da chapa.
         /// </summary>
         [Log("Recorte X2")]
         [PersistenceProperty("RecorteX2")]
         public double RecorteX2 { get; set; }
 
         /// <summary>
-        /// Obt√©m ou define a dist√¢ncia da margem direita da chapa.
+        /// ObtÈm ou define a dist‚ncia da margem direita da chapa.
         /// </summary>
         [Log("Recorte Y2")]
         [PersistenceProperty("RecorteY2")]
         public double RecorteY2 { get; set; }
 
         /// <summary>
-        /// Obt√©m ou define a dist√¢ncia m√°xima de lado X da chapa
+        /// ObtÈm ou define a dist‚ncia m·xima de lado X da chapa
         /// da qual deve ser criada uma transversal.
         /// </summary>
-        [Log("Transversal M√°xima X")]
+        [Log("Transversal M·xima X")]
         [PersistenceProperty("TransversalMaxX")]
         public double TransversalMaxX { get; set; } = 9999.0;
 
         /// <summary>
-        /// Obt√©m ou define a dist√¢ncia m√°xima de lado Y da chapa
+        /// ObtÈm ou define a dist‚ncia m·xima de lado Y da chapa
         /// da qual deve ser criada uma transversal.
         /// </summary>
-        [Log("Transversal M√°xima Y")]
+        [Log("Transversal M·xima Y")]
         [PersistenceProperty("TransversalMaxY")]
         public double TransversalMaxY { get; set; } = 9999.0;
 
         /// <summary>
-        /// Obt√©m ou define a dimens√£o m√≠nima em X da superf√≠cie de desperd√≠cio
-        /// geradas pelo programa de otimiza√ß√£o que, ao serem suficientemente
-        /// grandes, se podem considerar reutiliz√°veis e √© desej√°vel introduzi-las
-        /// de novo no estoque para otimiza√ß√µes posteriores
+        /// ObtÈm ou define a dimens„o mÌnima em X da superfÌcie de desperdÌcio
+        /// geradas pelo programa de otimizaÁ„o que, ao serem suficientemente
+        /// grandes, se podem considerar reutiliz·veis e È desej·vel introduzi-las
+        /// de novo no estoque para otimizaÁıes posteriores
         /// </summary>
-        [Log("Desperd√≠cio M√≠nimo X")]
+        [Log("DesperdÌcio MÌnimo X")]
         [PersistenceProperty("DesperdicioMinX")]
         public double DesperdicioMinX { get; set; }
 
         /// <summary>
-        /// Obt√©m ou define a dimens√£o m√≠nima em Y da superf√≠cie de desperd√≠cio
-        /// geradas pelo programa de otimiza√ß√£o que, ao serem suficientemente
-        /// grandes, se podem considerar reutiliz√°veis e √© desej√°vel introduzi-las
-        /// de novo no estoque para otimiza√ß√µes posteriores
+        /// ObtÈm ou define a dimens„o mÌnima em Y da superfÌcie de desperdÌcio
+        /// geradas pelo programa de otimizaÁ„o que, ao serem suficientemente
+        /// grandes, se podem considerar reutiliz·veis e È desej·vel introduzi-las
+        /// de novo no estoque para otimizaÁıes posteriores
         /// </summary>
-        [Log("Desperd√≠cio M√≠nimo Y")]
+        [Log("DesperdÌcio MÌnimo Y")]
         [PersistenceProperty("DesperdicioMinY")]
         public double DesperdicioMinY { get; set; }
 
         /// <summary>
-        /// Obt√©m ou define a dist√¢ncia minima aceitavel durante a otimiza√ß√£o
+        /// ObtÈm ou define a dist‚ncia minima aceitavel durante a otimizaÁ„o
         /// entre dois cortes paralelos, com o intuito de facilitar ou tornar
-        /// poss√≠vel a abertura dos cortes.
+        /// possÌvel a abertura dos cortes.
         /// </summary>
         /// <example>
-        /// Ao configurar o valor em 20mm, ser√° imposs√≠vel encontrar no interior
-        /// de um plano de corte duas pe√ßas ou dois cortes pr√≥ximos um do outro,
-        /// de dist√¢ncia inferior √† anteriormente introduzida (20mm).
+        /// Ao configurar o valor em 20mm, ser· impossÌvel encontrar no interior
+        /// de um plano de corte duas peÁas ou dois cortes prÛximos um do outro,
+        /// de dist‚ncia inferior ‡ anteriormente introduzida (20mm).
         /// </example>
         /// <remarks>
-        /// Evidentemente, esta dist√¢ncia n√£o √© tida em conta nos casos em que
-        /// 2 pe√ßas compartilham o mesmo corte.
+        /// Evidentemente, esta dist‚ncia n„o È tida em conta nos casos em que
+        /// 2 peÁas compartilham o mesmo corte.
         /// </remarks>
-        [Log("Dist√¢ncia M√≠nima")]
+        [Log("Dist‚ncia MÌnima")]
         [PersistenceProperty("DistanciaMin")]
         public double DistanciaMin { get; set; }
 
         /// <summary>
-        /// Obt√©m ou define a configura√ß√£o do valor de recorte que deve
-        /// introduzir-se nas formas no caso de esta conter √¢ngulos
+        /// ObtÈm ou define a configuraÁ„o do valor de recorte que deve
+        /// introduzir-se nas formas no caso de esta conter ‚ngulos
         /// inferiores ao configurado no campo "AnguloRecorteAutomatico"
         /// </summary>
-        [Log("Recorte Autom√°tico da Forma")]
+        [Log("Recorte Autom·tico da Forma")]
         [PersistenceProperty("RecorteAutomaticoForma")]
         public double RecorteAutomaticoForma { get; set; }
 
         /// <summary>
-        /// Obt√©m ou define o valor do √¢ngulo ao qual o recorte deve
-        /// ser introduzido de forma autom√°tica.
+        /// ObtÈm ou define o valor do ‚ngulo ao qual o recorte deve
+        /// ser introduzido de forma autom·tica.
         /// </summary>
-        [Log("√Çngulo de Recorte Autom√°tico")]
+        [Log("¬ngulo de Recorte Autom·tico")]
         [PersistenceProperty("AnguloRecorteAutomatico")]
         public double AnguloRecorteAutomatico { get; set; }
 
@@ -747,7 +747,7 @@ namespace Glass.Data.Model
 
         #region Propriedades de Suporte
 
-        [Log("Situa√ß√£o")]
+        [Log("SituaÁ„o")]
         public string DescrSituacao
         {
             get
@@ -756,7 +756,7 @@ namespace Glass.Data.Model
             }
         }
 
-        #region Propriedades para a busca de al√≠quota de ICMS interna
+        #region Propriedades para a busca de alÌquota de ICMS interna
 
         private int? _idNfIcms;
 
@@ -848,7 +848,7 @@ namespace Glass.Data.Model
                 {
                     if (IdLojaIcms == 0)
                     {
-                        throw new Exception("Indique a Loja para buscar a al√≠quota de ICMS interna.");
+                        throw new Exception("Indique a Loja para buscar a alÌquota de ICMS interna.");
                     }
 
                     var lojaCalculaIpi = IdLojaIcms > 0 ? LojaDAO.Instance.ObtemCalculaIpiPedido(null, IdLojaIcms) : false;
@@ -882,7 +882,7 @@ namespace Glass.Data.Model
                 {
                     if (IdLojaIcms == 0)
                     {
-                        throw new Exception("Indique a Loja para buscar a al√≠quota de ICMS interna.");
+                        throw new Exception("Indique a Loja para buscar a alÌquota de ICMS interna.");
                     }
 
                     var lojaCalculaIpi = IdLojaIcms > 0 ? LojaDAO.Instance.ObtemCalculaIpiPedido(null, IdLojaIcms) : false;
@@ -912,7 +912,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, IdGrupoProd, IdSubgrupoProd, false);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(IdGrupoProd, IdSubgrupoProd);
                 string descrTipoCalculo = Glass.Global.CalculosFluxo.GetDescrTipoCalculo(tipoCalc, true);
                 return Disponivel.ToString() + descrTipoCalculo;
             }
@@ -922,7 +922,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, IdGrupoProd, IdSubgrupoProd, false);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(IdGrupoProd, IdSubgrupoProd);
                 string descrTipoCalculo = Glass.Global.CalculosFluxo.GetDescrTipoCalculo(tipoCalc, true);
                 return QtdEntrega.ToString() + descrTipoCalculo;
             }
@@ -932,7 +932,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, IdGrupoProd, IdSubgrupoProd, false);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(IdGrupoProd, IdSubgrupoProd);
                 string estoque = Math.Round(EstoqueFiscal, 2).ToString();
                 string descrTipoCalculo = Glass.Global.CalculosFluxo.GetDescrTipoCalculo(tipoCalc, true);
                 return estoque + descrTipoCalculo;
@@ -943,7 +943,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, IdGrupoProd, IdSubgrupoProd, false);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(IdGrupoProd, IdSubgrupoProd);
                 string estoque = Math.Round(EstoqueFiscalPeriodo, 2).ToString();
                 string descrTipoCalculo = Glass.Global.CalculosFluxo.GetDescrTipoCalculo(tipoCalc, true);
                 return estoque + descrTipoCalculo;
@@ -1085,9 +1085,9 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// 0 - Padr√£o
+        /// 0 - Padr„o
         /// 1 - Atacado
-        /// 2 - Balc√£o
+        /// 2 - Balc„o
         /// 3 - Obra
         /// </summary>
         [PersistenceProperty("TIPOVALORTABELA", DirectionParameter.InputOptional)]
@@ -1114,9 +1114,9 @@ namespace Glass.Data.Model
             get
             {
                 if (TipoValorTabela == 0)
-                    return ClienteRevendaVend ? "Valor Atacado" : "Valor Balc√£o";
+                    return ClienteRevendaVend ? "Valor Atacado" : "Valor Balc„o";
                 else
-                    return TipoValorTabela == 1 ? "Valor Atacado" : TipoValorTabela == 2 ? "Valor Balc√£o" : "Valor Obra";
+                    return TipoValorTabela == 1 ? "Valor Atacado" : TipoValorTabela == 2 ? "Valor Balc„o" : "Valor Obra";
             }
         }
 
@@ -1127,7 +1127,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_tipoCalculo == null)
-                    _tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, IdGrupoProd, IdSubgrupoProd, false);
+                    _tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(IdGrupoProd, IdSubgrupoProd);
 
                 return _tipoCalculo != null ? _tipoCalculo.Value : (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd;
             }
@@ -1142,7 +1142,7 @@ namespace Glass.Data.Model
                     TipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 || TipoCalculo == (int)TipoCalculoGrupoProd.MLAL6) ? TotalML.ToString("N2") + "ml" :
                     TipoCalculo == (int)TipoCalculoGrupoProd.M2 || TipoCalculo == (int)TipoCalculoGrupoProd.M2Direto ||
                     TipoCalculo == (int)TipoCalculoGrupoProd.QtdM2 || GrupoProdDAO.Instance.IsVidro(IdGrupoProd) ?
-                    TotalM2.ToString("N2") + "m¬≤" : "0";
+                    TotalM2.ToString("N2") + "m≤" : "0";
             }
         }
 
@@ -1153,7 +1153,7 @@ namespace Glass.Data.Model
                 return
                     TipoCalculo == (int)TipoCalculoGrupoProd.M2 || TipoCalculo == (int)TipoCalculoGrupoProd.M2Direto ||
                     TipoCalculo == (int)TipoCalculoGrupoProd.QtdM2 || GrupoProdDAO.Instance.IsVidro(IdGrupoProd) ?
-                    TotalM2.ToString("N2") + "m¬≤" : "";
+                    TotalM2.ToString("N2") + "m≤" : "";
             }
         }
 
@@ -1292,7 +1292,7 @@ namespace Glass.Data.Model
             set { _aliqIcms = value; }
         }
 
-        [Log("Al√≠quota ICMS")]
+        [Log("AlÌquota ICMS")]
         public string DescrAliqIcms
         {
             get
@@ -1306,7 +1306,7 @@ namespace Glass.Data.Model
                     if (!String.IsNullOrEmpty(dados.UfDestino))
                         retorno.AppendFormat("UF Destino: {0} ", dados.UfDestino);
 
-                    retorno.AppendFormat("Al√≠q. ICMS Intraestadual: {0} Al√≠q. ICMS Interestadual: {1}, Al√≠q. ICMS Interna Destinat√°rio: {2}, Al√≠q. FCP Intraestadual: {3} Al√≠q. FCP Interestadual: {4} ",
+                    retorno.AppendFormat("AlÌq. ICMS Intraestadual: {0} AlÌq. ICMS Interestadual: {1}, AlÌq. ICMS Interna Destinat·rio: {2}, AlÌq. FCP Intraestadual: {3} AlÌq. FCP Interestadual: {4} ",
                         dados.AliquotaIntraestadual, dados.AliquotaInterestadual, dados.AliquotaInternaDestinatario, dados.AliquotaFCPIntraestadual, dados.AliquotaFCPInterestadual);
                 }
 
@@ -1355,7 +1355,7 @@ namespace Glass.Data.Model
         public int[] FlagsArqMesa { get; set; }
 
         /// <summary>
-        /// Descri√ß√£o da do arquuivo de mesa
+        /// DescriÁ„o da do arquuivo de mesa
         /// </summary>
         public string FlagsArqMesaDescricao { get; set; }
 

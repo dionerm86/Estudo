@@ -250,7 +250,7 @@ namespace WebGlass.Business.Produto.Ajax
 
                     decimal precoForn = ProdutoFornecedorDAO.Instance.GetCustoCompra(Glass.Conversoes.StrParaInt(idFornec), prod.IdProd);
                     decimal custoCompra = precoForn > 0 ? precoForn : prod.Custofabbase > 0 ? prod.Custofabbase : prod.CustoCompra;
-                    return "Prod|" + prod.IdProd + "|" + prod.Descricao + infoEstoque + "|" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false) + "|" +
+                    return "Prod|" + prod.IdProd + "|" + prod.Descricao + infoEstoque + "|" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd) + "|" +
                         Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(prod.IdGrupoProd).ToString().ToLower() + "|" + prod.Espessura + "|" + custoCompra.ToString("F2") + "|" +
                         prod.IdCorVidro;
                 }
@@ -426,7 +426,7 @@ namespace WebGlass.Business.Produto.Ajax
                     (uint)prod.IdProd).ToString() : "999999999");
 
                 // Verifica como deve ser feito o cálculo do produto
-                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
+                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
 
                 // Retorna a espessura do produto
                 retorno += ";" + prod.Espessura;
@@ -592,7 +592,7 @@ namespace WebGlass.Business.Produto.Ajax
                     (uint)prod.IdProd, isPedidoProducao).ToString() : "999999999");
 
                 // Verifica como deve ser feito o cálculo do produto
-                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
+                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
 
                 // Retorna a espessura do produto
                 retorno += ";" + prod.Espessura;
@@ -755,7 +755,7 @@ namespace WebGlass.Business.Produto.Ajax
                         Glass.Data.DAL.GrupoProdDAO.Instance.IsAluminio(prod.IdGrupoProd).ToString().ToLower() + ";" +
                         (prod.AtivarAreaMinima ? prod.AreaMinima.ToString().Replace(',', '.') : "0");
 
-                    retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
+                    retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
                     retorno += ";" + prod.Espessura;
                     retorno += ";" + prod.AliqICMSInterna.ToString().Replace(',', '.');
                     retorno += ";" + prod.Forma;
@@ -796,7 +796,7 @@ namespace WebGlass.Business.Produto.Ajax
                 return "false";
 
             return (Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(prod.IdGrupoProd) && prod.IdSubgrupoProd != (int)Utils.SubgrupoProduto.LevesDefeitos &&
-                Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false) != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd).ToString().ToLower();
+                Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd) != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd).ToString().ToLower();
         }
 
         public string GetProdutoInterno(string codInterno)
@@ -819,7 +819,7 @@ namespace WebGlass.Business.Produto.Ajax
                 (uint)prod.IdProd, null, false, false, false).ToString() : "999999999");
 
             // Verifica como deve ser feito o cálculo do produto
-            retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
+            retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
 
             retorno += ";" + (prod.Altura != null ? prod.Altura.Value.ToString() : "") + ";" + (prod.Largura != null ?
                 prod.Largura.Value.ToString() : "");

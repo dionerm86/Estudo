@@ -1,43 +1,50 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstAssociarPropVeic.aspx.cs" Inherits="Glass.UI.Web.Listas.LstAssociarPropVeic" Title="Associar Proprietário/Veículo" %>
+<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstAssociarPropVeic.aspx.cs" 
+    Inherits="Glass.UI.Web.Listas.LstAssociarPropVeic" Title="Associar Proprietário/Veículo"
+    EnableViewState="false" EnableViewStateMac="false" %>
 
-<asp:Content ID="Content2" ContentPlaceHolderID="Conteudo" runat="Server">
-    <div>
-        <asp:LinkButton ID="lnkInserir" runat="server" OnClick="lnkInserir_Click">Associar Proprietário/Veículo</asp:LinkButton>
+<asp:Content ID="Content2" ContentPlaceHolderID="Conteudo" runat="Server">    
+    <div id="app">
+        <section>
+            <a :href="obterLinkInserirAssociacaoProprietarioVeiculo()">Associar Proprietário/Veículo</a>
+        </section>
+        <section>
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma associação entre proprietário de veículo e veículo encontrada.">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('nome')">
+                            Nome
+                        </a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('placa')">
+                            Placa
+                        </a>
+                    </th>
+                </template>
+                <template slot="item" slot-scope="{ item }">
+                    <td>
+                        <a :href="obterLinkEditarAssociacaoProprietarioVeiculo(item)">
+                            <img src="../Images/EditarGrid.gif" />
+                        </a>
+                        <a href="#" @click.prevent="excluir(item)">
+                            <img src="../Images/ExcluirGrid.gif" />
+                        </a>
+                    </td>
+                    <td>
+                        {{ item.proprietario.nome }}
+                    </td>
+                    <td>
+                        {{ item.placaVeiculo }}
+                    </td>
+                </template>
+            </lista-paginada>
+        </section>
     </div>
-    <div>
-        <asp:GridView GridLines="None" ID="grdAssociarProprietarioVeiculo" 
-            runat="server" AllowPaging="True"
-            AllowSorting="True" AutoGenerateColumns="False" DataSourceID="odsAssociarProprietarioVeiculo"
-            CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
-            EditRowStyle-CssClass="edit" DataKeyNames="IdPropVeic" 
-            EmptyDataText="Não há associação cadastrada" 
-            onrowdatabound="grdAssociarProprietarioVeiculo_RowDataBound">
-            <Columns>
-                <asp:TemplateField>
-                    <ItemTemplate>
-                        <asp:HyperLink ID="lnkEditar" runat="server" ToolTip="Editar" NavigateUrl='<%# "../Cadastros/CadAssociarPropVeic.aspx?idPropVeiculo=" + Eval("IdPropVeic") + "&placa=" + Eval("Placa")%>'>
-                                    <img border="0" src="../Images/EditarGrid.gif" /></asp:HyperLink>
-                        <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                            OnClientClick="return confirm(&quot;Tem certeza que deseja desfazer associação?&quot;);"
-                            ToolTip="Excluir" />
-                    </ItemTemplate>
-                    <HeaderStyle Wrap="False" />
-                    <ItemStyle Wrap="False" />
-                </asp:TemplateField>
-                <asp:BoundField  HeaderText="Nome" SortExpression="Nome" />
-                <asp:BoundField DataField="Placa" HeaderText="Placa" SortExpression="Placa" />                
-            </Columns>
-            <PagerStyle />
-            <EditRowStyle />
-            <AlternatingRowStyle />
-        </asp:GridView>
-        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsAssociarProprietarioVeiculo" runat="server" DataObjectTypeName="Glass.Data.Model.CTe.ProprietarioVeiculo_Veiculo"
-            DeleteMethod="Delete" SelectMethod="GetList" TypeName="Glass.Data.DAL.CTe.ProprietarioVeiculo_VeiculoDAO"
-            EnablePaging="True" MaximumRowsParameterName="pageSize" SelectCountMethod="GetCount" 
-            SortParameterName="sortExpression" StartRowIndexParameterName="startRow" 
-            OnDeleted="odsAssociarProprietarioVeiculo_Deleted" 
-            onselected="odsAssociarProprietarioVeiculo_Selected">
-        </colo:VirtualObjectDataSource>
-    </div>
+    <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/ConhecimentosTransporte/Veiculos/Proprietarios/Associacoes/Componentes/ListaAssociacaoProprietariosVeiculos.js" />
+        </Scripts>
+    </asp:ScriptManager>
 </asp:Content>
 

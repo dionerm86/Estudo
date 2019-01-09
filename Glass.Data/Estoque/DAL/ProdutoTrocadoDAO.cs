@@ -400,7 +400,7 @@ namespace Glass.Data.DAL
                 prodPed.TotM2Calc = prodPed.TotM2Calc > 0 ? (prodPed.TotM2Calc / prodPed.Qtde) * (float)qtde : prodPed.TotM;
 
                 prodPed.Qtde = (float)qtde;
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)prodPed.IdProd, false);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)prodPed.IdProd);
 
                 if (tipoCalc == (uint)TipoCalculoGrupoProd.Qtd || tipoCalc == (uint)TipoCalculoGrupoProd.QtdM2 || tipoCalc == (uint)TipoCalculoGrupoProd.QtdDecimal)
                     prodPed.Total = (decimal)prodPed.Qtde * prodPed.ValorVendido;
@@ -499,7 +499,7 @@ namespace Glass.Data.DAL
 
                 if (percDesc > 0)
                 {
-                    int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)novo.IdProd, false);
+                    int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)novo.IdProd);
 
                     novo.Total -= (novo.Total + novo.ValorBenef) * (decimal)percDesc;
 
@@ -594,7 +594,7 @@ namespace Glass.Data.DAL
                 uint idCliente = TrocaDevolucaoDAO.Instance.ObtemIdCliente(session, objInsert.IdTrocaDevolucao);
                 decimal custo = objInsert.CustoProd, total = objInsert.Total;
                 float altura = objInsert.Altura, totM2 = objInsert.TotM, totM2Calc = objInsert.TotM2Calc;
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objInsert.IdProd, false);
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objInsert.IdProd);
 
                 objInsert.IdPedido = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>(session, "idPedido",
                     "idTrocaDevolucao=" + objInsert.IdTrocaDevolucao);

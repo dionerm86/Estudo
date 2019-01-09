@@ -69,7 +69,7 @@ namespace Glass.Data.Model
 
         public float TotM
         {
-            get { return Glass.Global.CalculosFluxo.ArredondaM2(null, Largura, (int)Altura, (float)Qtde, (int)IdProduto, false, 0, true); }
+            get { return Glass.Global.CalculosFluxo.ArredondaM2(Largura, (int)Altura, Qtde, (int)IdProduto, false); }
         }
 
         public int QtdeMaxima

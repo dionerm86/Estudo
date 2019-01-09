@@ -1534,7 +1534,7 @@ namespace Glass.Data.DAL
                     Array.Find(produtosSaidaEstoque, find => find.IdProdPed == produtoLiberarPedido.IdProdPed);
                 var quantidadeEstorno = produtoSaidaEstoque != null ? (int)produtoSaidaEstoque.QtdeSaida : produtoLiberarPedido.Qtde;
                 // Verifica o tipo de cálculo do produto.
-                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoLiberarPedido.IdProd, false);
+                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoLiberarPedido.IdProd);
                 // Verifica o tipo de cálculo do produto.
                 var m2Calc = Global.CalculosFluxo.ArredondaM2(session, produtoLiberarPedido.LarguraProd, (int)produtoLiberarPedido.AlturaProd, quantidadeEstorno, 0, produtoLiberarPedido.Redondo, 0,
                     tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto);
@@ -2944,7 +2944,7 @@ namespace Glass.Data.DAL
                 var prodPed = ProdutosPedidoDAO.Instance.GetElementFluxoLite(sessao, idsProdutosPedido[i]);
                 var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(sessao, prodPed.IdPedido);
                 var idLoja = idLojaPedido > 0 ? idLojaPedido : UserInfo.GetUserInfo.IdLoja;
-                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPed.IdProd, false);
+                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPed.IdProd);
 
                 // Remove a peça da reserva e a coloca na liberação
                 var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, prodPed.Largura, (int)prodPed.Altura, qtdeLiberar[i], 0, prodPed.Redondo, 0,
@@ -3331,7 +3331,7 @@ namespace Glass.Data.DAL
                 var qtdEstorno = pse != null ? (int)pse.QtdeSaida : prod.Qtde;
 
                 // Verifica o tipo de cálculo do produto
-                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd, false);
+                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd);
 
                 // Verifica o tipo de cálculo do produto
                 var m2Calc = Global.CalculosFluxo.ArredondaM2(session, prod.LarguraProd,
@@ -3538,7 +3538,7 @@ namespace Glass.Data.DAL
                 if (OrdemCargaConfig.UsarControleOrdemCarga && !naoVolume && ProdutosPedidoDAO.Instance.ObterQtdSaida(session, idsProdutosPedido[i]) == qtdeLiberar[i])
                     continue;
 
-                int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)idProd, false);
+                int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)idProd);
                 float qtdALiberar = qtdeLiberar[i];
 
                 if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto)
