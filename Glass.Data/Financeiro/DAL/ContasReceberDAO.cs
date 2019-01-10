@@ -8146,7 +8146,7 @@ namespace Glass.Data.DAL
         /// Recupera as contas a receber para geração do arquivo do CNAB.
         /// </summary>
         public IList<ContasReceber> GetForCnab(int tipoPeriodo, string dataIni, string dataFim, string tiposConta, int tipoContaSemSeparacao, string formasPagto,
-            uint idCli, string nomeCli, uint idLoja, int idContaBancoCliente, string idsContas, bool incluirContasAcertoParcial, bool incluirContasAntecipacaoBoleto)
+            uint idCli, string nomeCli, uint idLoja, int idContaBancoCliente, int idContaBancoContaReceber, string idsContas, bool incluirContasAcertoParcial, bool incluirContasAntecipacaoBoleto)
         {
             string idsFormasPagto = "";
 
@@ -8181,6 +8181,7 @@ namespace Glass.Data.DAL
                 FROM contas_receber c
                     INNER JOIN cliente cli ON (c.idCliente=cli.id_Cli)
                     LEFT JOIN loja l ON (c.idLoja = l.idLoja)
+                    LEFT JOIN boleto_impresso bi ON (c.IdContaR = bi.IdContaR)
                 WHERE COALESCE(c.isParcelaCartao, 0) = 0
                     AND coalesce(recebida, 0) = 0
                     AND numeroDocumentoCnab IS NULL
@@ -8205,7 +8206,6 @@ namespace Glass.Data.DAL
             {
                 sql += $" AND {tipoPeriodoConsiderar} <= ?dataFim";
             }
-
 
             if (string.IsNullOrWhiteSpace(tiposConta))
             {
@@ -8254,6 +8254,11 @@ namespace Glass.Data.DAL
             if (idContaBancoCliente > 0)
             {
                 sql += $" AND cli.IdContaBanco = {idContaBancoCliente}";
+            }
+
+            if (idContaBancoContaReceber > 0)
+            {
+                sql += $" AND bi.IdContaBanco = {idContaBancoContaReceber}";
             }
 
             if (!string.IsNullOrWhiteSpace(idsContas) && !string.IsNullOrWhiteSpace(idsContas.Trim(',')))

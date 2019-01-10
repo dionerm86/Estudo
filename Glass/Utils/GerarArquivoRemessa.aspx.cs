@@ -227,12 +227,12 @@ namespace Glass.UI.Web.Utils
 
         [Ajax.AjaxMethod]
         public string GetContas(string tipoPeriodo, string dataIni, string dataFim, string tiposConta, string tipoContaSemSeparacao, string formasPagto, string idCli, string nomeCli,
-            string idLoja, string idContaBancoCliente, string idsContas, string incluirContasAcertoParcial, string incluirContasAntecipacaoBoleto)
+            string idLoja, string idContaBancoCliente, string idContaBancoContaReceber, string idsContas, string incluirContasAcertoParcial, string incluirContasAntecipacaoBoleto)
         {
             var sb = new StringBuilder();
 
             var contas = ContasReceberDAO.Instance.GetForCnab(tipoPeriodo.StrParaInt(), dataIni, dataFim, tiposConta, tipoContaSemSeparacao.StrParaInt(),
-                formasPagto, idCli.StrParaUint(), nomeCli, idLoja.StrParaUint(), idContaBancoCliente.StrParaInt(), idsContas,
+                formasPagto, idCli.StrParaUint(), nomeCli, idLoja.StrParaUint(), idContaBancoCliente.StrParaInt(), idContaBancoContaReceber.StrParaInt(), idsContas,
                 incluirContasAcertoParcial.ToLower() == "true", incluirContasAntecipacaoBoleto.ToLower() == "true");
 
             foreach (var c in contas)

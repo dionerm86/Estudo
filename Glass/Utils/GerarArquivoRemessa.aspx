@@ -24,11 +24,12 @@
             var loja = FindControl("drpFiltroLoja", "select").value;
             var tipoContaSemSeparacao = FindControl("drpTipoContaSemSeparacao", "select").value;
             var idContaBancoCliente = FindControl("drpContaCliente", "select").value;
+            var idContaBancoContaReceber = FindControl("drpContaBancoContaReceber", "select").value;
             var incluirContasAcertoParcial = FindControl("chkIncluirContasAcertoParcial", "input").checked;
             var incluirContasAntecipacaoBoleto = FindControl("chkIncluirContasAntecipacaoBoleto", "input").checked;
 
             var contas = GerarArquivoRemessa.GetContas(tipoPeriodo, dataIni, dataFim, tiposConta, tipoContaSemSeparacao, formasPagto,
-                idCliente, nomeCliente, loja, idContaBancoCliente, "", incluirContasAcertoParcial, incluirContasAntecipacaoBoleto).value.split("\n");
+                idCliente, nomeCliente, loja, idContaBancoCliente, idContaBancoContaReceber, "", incluirContasAcertoParcial, incluirContasAntecipacaoBoleto).value.split("\n");
 
             if (contas == null || contas.length == 0 || (contas.length == 1 && contas[0] == "")) {
                 alert("Não há contas a receber disponíveis para geração do arquivo de remessa.");
@@ -79,10 +80,13 @@
             FindControl("drpLojaGerar", "select", document.getElementById("gerarArquivo")).value = idLojaFiltro;
 
             var idContaBanco = 0;
-
+            
             var idContaCliente = FindControl("drpContaCliente", "select").value;
+            var idContaBancoContaReceber = FindControl("drpContaBancoContaReceber", "select").value;
 
-            if (idContaCliente > 0) {
+            if (idContaBancoContaReceber > 0) {
+                idContaBanco = idContaBancoContaReceber;
+            } else if (idContaCliente > 0) {
                 idContaBanco = idContaCliente;
             }
             else {
@@ -154,6 +158,18 @@
             FindControl("drpFiltroLoja", "select").value = retorno.value;
         }
 
+        function drpContaBancoContaReceberChange(controle) {
+
+            var retorno = GerarArquivoRemessa.GetIdLoja(controle.value);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+
+            FindControl("drpFiltroLoja", "select").value = retorno.value;
+        }
+
         function limpar() {
 
             var tipoPeriodo = FindControl("drpTipoPeriodo", "select").value;
@@ -211,7 +227,7 @@
 
             if (ids != "") {
 
-                var retorno = GerarArquivoRemessa.GetContas("", "", "", "", "", "", "", "", "", "", ids, "", "");
+                var retorno = GerarArquivoRemessa.GetContas("", "", "", "", "", "", "", "", "", "", "", ids, "", "");
 
                 if (retorno.error != null) {
                     alert(retorno.error.description);
@@ -326,6 +342,23 @@
                                 <asp:ListItem Text="" Value="0" Selected="True"></asp:ListItem>
                             </asp:DropDownList>
                             <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsContaBancoCliente" runat="server" SelectMethod="ObterBancoAgrupado"
+                                TypeName="Glass.Data.DAL.ContaBancoDAO">
+                            </colo:VirtualObjectDataSource>
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>
+                            <asp:Label ID="lblIdContaBancoContaReceber" runat="server" ForeColor="#0066FF" Text="Conta Bancária do Boleto: "></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpContaBancoContaReceber" runat="server" DataSourceID="odsContaBancoContaReceber"
+                                DataTextField="Descricao" DataValueField="IdContaBanco" AppendDataBoundItems="True"
+                                onchange="drpContaBancoContaReceberChange(this);">
+                                <asp:ListItem Text="" Value="0" Selected="True"></asp:ListItem>
+                            </asp:DropDownList>
+                            <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsContaBancoContaReceber" runat="server" SelectMethod="ObterBancoAgrupado"
                                 TypeName="Glass.Data.DAL.ContaBancoDAO">
                             </colo:VirtualObjectDataSource>
                         </td>
