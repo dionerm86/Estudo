@@ -40,7 +40,7 @@ namespace Glass.Financeiro.Negocios.Componentes
             int? numeroNFe, int? idLoja, int? idFunc, int? idFuncRecebido, int? idCli, int? tipoEntrega,
             string nomeCli, DateTime? dtIniVenc, DateTime? dtFimVenc, DateTime? dtIniRec, DateTime? dtFimRec,
             DateTime? dataIniCad, DateTime? dataFimCad,
-            int? idFormaPagto, int? idTipoBoleto, decimal? precoInicial, decimal? precoFinal, bool? renegociadas,
+            int? idFormaPagto, int? idTipoBoleto, decimal? precoInicial, decimal? precoFinal, int? idContaBancoRecebimento, bool? renegociadas,
             bool? recebida, int? idComissionado, int? idRota, string obs, int? ordenacao, IEnumerable<int> tipoContaContabil,
             int? numArqRemessa, bool refObra, int? contasCnab, int? idVendedorAssociado, int? idVendedorObra, int? idComissao, int? numCte,
             bool protestadas, bool contasVinculadas)
@@ -55,7 +55,8 @@ namespace Glass.Financeiro.Negocios.Componentes
                  .LeftJoin<Data.Model.ComissaoContasReceber>("c.IdContaR = ccr.IdContaR", "ccr")
                  .LeftJoin<Data.Model.Loja>("c.IdLoja = l.IdLoja", "l")
                  .LeftJoin<Data.Model.PlanoContaContabil>("cli.IdContaContabil = pcc.IdContaContabil", "pcc")
-                 .Where("c.ValorVec>0 AND (c.IsParcelaCartao=0 OR c.IsParcelaCartao IS NULL)");
+                 .Where("c.ValorVec>0 AND (c.IsParcelaCartao=0 OR c.IsParcelaCartao IS NULL)")
+                .GroupBy("c.IdContaR");
 
             consulta
                 .Select(@"replace(replace(replace(replace(l.Cnpj, '.', ''), ' ', ''), '-', ''), '/', '') AS Cnpj, c.DataCad, c.ValorVec as ValorLancamento,
@@ -447,7 +448,16 @@ namespace Glass.Financeiro.Negocios.Componentes
                 consulta.WhereClause
                     .Add("?precoFinal", precoFinal)
                     .AddDescription(string.Format("Até: {0:C}     ", precoFinal));
+            }
 
+            if (idContaBancoRecebimento > 0)
+            {
+                consulta
+                    .LeftJoin<Data.Model.PagtoContasReceber>("c.IdContaR = pcr.IdContaR", "pcr");
+
+                consulta.WhereClause
+                    .And("pcr.IdContaBanco = ?idContaBancoRecebimento")
+                    .Add("?idContaBancoRecebimento", idContaBancoRecebimento);
             }
 
             if (idFormaPagto > 0)
@@ -561,8 +571,6 @@ namespace Glass.Financeiro.Negocios.Componentes
                         .Add("?numeroNFe", numeroNFe)
                         .Select("pnf.IdNf"));
             }
-            else if (idFunc > 0)
-                consulta.GroupBy("c.IdContaR");
 
             var registros = consulta.Execute<Entidades.Dominio.Conta>().ToList();
 

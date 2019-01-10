@@ -438,7 +438,7 @@
             ? vm.datasEntrega.dataFastDelivery
             : vm.datasEntrega.dataMinimaCalculada;
 
-          if (vm.pedido.entrega.data === null || dataMinima < vm.pedido.entrega.data || forcarAtualizacao) {
+          if (vm.pedido.entrega.data === null || dataMinima > vm.pedido.entrega.data || forcarAtualizacao) {
             vm.pedido.entrega.data = dataMinima;
           }
 
@@ -472,8 +472,8 @@
      * Alterações no fast delivery, se for marcado, verifica se pode ser usado,
      * caso possa, preenche o campo pedido.dataEntrega com a data de fastDelivery, caso contrário, preenche com a data de entrega mínima calculada.
      */
-    alterarFastDelivery: function() {
-      if (this.pedido.fastDelivery) {
+    alterarFastDelivery: function () {
+      if (this.pedido.fastDelivery.aplicado) {
         var vm = this;
 
         Servicos.Pedidos.verificarFastDelivery(this.pedido.id)
@@ -489,11 +489,9 @@
               vm.exibirMensagem('Erro', erro.mensagem);
             }
           });
-      } else {
-        this.pedido.entrega.data = this.datasEntrega.dataMinimaCalculada;
-      }
+      } 
 
-      this.dataEntregaMinima = this.pedido.entrega.data;
+      this.dataEntregaMinima = this.datasEntrega.dataMinimaCalculada;
     },
 
     /**
@@ -1088,33 +1086,57 @@
      * Observador para a variável 'pedido.idCliente'.
      * Altera a data de entrega do pedido e a data mínima do controle de data de entrega.
      */
-    'pedido.idCliente': function() {
-      this.iniciarCalculoDatasEntrega(true);
+    'pedido.idCliente': {
+      handler: function (atual, anterior) {
+        if (!this.pedido) {
+          return;
+        }
+
+        this.iniciarCalculoDatasEntrega(anterior && atual && anterior.id !== atual);
+      }
     },
 
     /**
      * Observador para a variável 'pedido.tipo'.
      * Altera a data de entrega do pedido e a data mínima do controle de data de entrega.
      */
-    'pedido.tipo': function() {
-      this.iniciarCalculoDatasEntrega(true);
+    'pedido.tipo': {
+      handler: function (atual, anterior) {
+        if (!this.pedido) {
+          return;
+        }
+
+        this.iniciarCalculoDatasEntrega(anterior && atual && anterior.id !== atual);
+      }
     },
 
     /**
      * Observador para a variável 'pedido.tipoEntrega'.
      * Altera a data de entrega do pedido e a data mínima do controle de data de entrega.
      */
-    'pedido.tipoEntrega': function() {
-      this.iniciarCalculoDatasEntrega(true);
-      this.preencherEnderecoObra();
+    'pedido.tipoEntrega': {
+      handler: function (atual, anterior) {
+        if (!this.pedido) {
+          return;
+        }
+
+        this.iniciarCalculoDatasEntrega(anterior && atual && anterior.id !== atual.id);
+        this.preencherEnderecoObra();
+      }
     },
 
     /**
      * Observador para a variável 'pedido.dataPedido'.
      * Altera a data de entrega do pedido e a data mínima do controle de data de entrega.
      */
-    'pedido.dataPedido': function() {
-      this.iniciarCalculoDatasEntrega(true);
+    'pedido.dataPedido': {
+      handler: function (atual, anterior) {
+        if (!this.pedido) {
+          return;
+        }
+
+        this.iniciarCalculoDatasEntrega(anterior && atual && anterior.format('dd/mm/yyyy') != atual.format('dd/mm/yyyy'));
+      }
     },
 
     /**

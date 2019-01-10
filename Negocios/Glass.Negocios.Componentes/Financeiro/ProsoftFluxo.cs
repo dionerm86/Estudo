@@ -293,7 +293,7 @@ namespace Glass.Financeiro.Negocios.Componentes
         public Arquivo GerarArquivoRecebidas(int? idPedido, int? idLiberarPedido, int? idAcerto, int? idAcertoParcial,
             int? idTrocaDevolucao, int? numeroNFe, int? idLoja, int? idCli, int? idFunc, int? idFuncRecebido, int? tipoEntrega,
             string nomeCli, DateTime? dtIniVenc, DateTime? dtFimVenc, DateTime? dtIniRec, DateTime? dtFimRec, DateTime? dataIniCad,
-            DateTime? dataFimCad, int? idFormaPagto, int? idTipoBoleto, decimal? precoInicial, decimal? precoFinal, bool? renegociadas,
+            DateTime? dataFimCad, int? idFormaPagto, int? idTipoBoleto, decimal? precoInicial, decimal? precoFinal, int? idContaBancoRecebimento, bool? renegociadas,
             int? idComissionado, int? idRota, string obs, int? numArqRemessa, int? idVendedorObra, bool refObra, int? contasCnab, bool contasVinculadas)
         {
             #region Variaveis Locais
@@ -310,7 +310,8 @@ namespace Glass.Financeiro.Negocios.Componentes
                     .LeftJoin<Data.Model.Cliente>("cr.IdCliente = c.IdCli", "c")
                     .LeftJoin<Data.Model.NotaFiscal>("cr.IdNf = nf.IdNf", "nf")
                     .LeftJoin<Data.Model.Pedido>("cr.IdPedido = p.IdPedido", "p")
-                    .LeftJoin<Data.Model.LiberarPedido>("cr.IdLiberarPedido = lp.IdLiberarPedido", "lp");
+                    .LeftJoin<Data.Model.LiberarPedido>("cr.IdLiberarPedido = lp.IdLiberarPedido", "lp")
+                .GroupBy("cr.IdContaR");
 
             if (idFunc > 0)
             {
@@ -413,11 +414,6 @@ namespace Glass.Financeiro.Negocios.Componentes
                         .From<Glass.Data.Model.NotaFiscal>()
                         .Where("NumeroNFe = ?numNfe").Add("?numNfe", numeroNFe)
                         .SelectDistinct("IdNf"));
-            }
-            else if (idFunc.GetValueOrDefault(0) > 0)
-            {
-                consulta
-                    .GroupBy("cr.IdContaR");
             }
 
             if (idLoja > 0)
@@ -573,6 +569,16 @@ namespace Glass.Financeiro.Negocios.Componentes
             if (precoFinal > 0)
                 consulta.WhereClause
                         .And("cr.ValorRec <= ?precoFinal").Add("?precoFinal", precoFinal);
+
+            if (idContaBancoRecebimento > 0)
+            {
+                consulta
+                    .LeftJoin<Data.Model.PagtoContasReceber>("cr.IdContaR = pcr.IdContaR", "pcr");
+
+                consulta.WhereClause
+                    .And("pcr.IdContaBanco = ?idContaBancoRecebimento")
+                    .Add("?idContaBancoRecebimento", idContaBancoRecebimento);
+            }
 
             if (renegociadas != null)
             {

@@ -137,6 +137,12 @@ namespace Glass.Financeiro.UI.Web.Process.Handlers
         public decimal? ValorFinal { get; set; }
 
         /// <summary>
+        /// Identificador da conta bancária de recebimento.
+        /// </summary>
+        [Colosoft.Web.QueryString("idContaBancoRecebimento")]
+        public int? IdContaBancoRecebimento { get; set; }
+
+        /// <summary>
         /// Identificador do Comissionado
         /// </summary>
         [Colosoft.Web.QueryString("idComissionado")]
@@ -389,7 +395,7 @@ namespace Glass.Financeiro.UI.Web.Process.Handlers
                     arq = dominioFluxo.GerarArquivoRecebidas(IdPedido, IdLiberarPedido, IdAcerto, IdAcertoParcial,
                         IdTrocaDevolucao, NumeroNfe, IdLoja, IdFuncionario, IdFuncionarioRecebido, IdCliente, TipoEntrega, NomeCliente,
                         DataInicioVencimento, DataFimVencimento, DataInicioRecebimento, DataFimRecebimento, null, null, IdFormaPagto,
-                        TipoBoleto, ValorInicial, ValorFinal, Renegociadas, Recebida, IdComissionado, IdRota, Obs, Ordenar, tiposConta,
+                        TipoBoleto, ValorInicial, ValorFinal, IdContaBancoRecebimento, Renegociadas, Recebida, IdComissionado, IdRota, Obs, Ordenar, tiposConta,
                         NumArqRemessa, RefObra, ContasCnab, IdVendedorAssociado, IdVendedorObra, IdComissao, NumCte, Protestadas, ContasVinculadas);
                 }
                 else

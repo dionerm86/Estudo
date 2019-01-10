@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.DAL;
 using Glass;
 using System.Linq;
+using GDA;
 using System.Collections.Generic;
 
 namespace WebGlass.Business.Boleto.Fluxo
@@ -14,112 +15,100 @@ namespace WebGlass.Business.Boleto.Fluxo
 
         public void IndicarBoletoImpresso(int codigoContaReceber, int? codigoNotaFiscal, int? codigoLiberacao, int? codigoCte, int codigoContaBancaria, LoginUsuario login)
         {
-            FilaOperacoes.BoletoImpresso.AguardarVez();
-
-            try
+            var boleto = new BoletoImpresso()
             {
-                if (BoletoFoiImpresso(codigoContaReceber))
-                    return;
+                IdContaR = (uint)codigoContaReceber,
+                IdNf = codigoNotaFiscal > 0 ? codigoNotaFiscal.Value : (int?)null,
+                IdLiberarPedido = codigoLiberacao > 0 ? codigoLiberacao.Value : (int?)null,
+                IdContaBanco = codigoContaBancaria,
+                IdCte = codigoCte > 0 ? codigoCte.Value : (int?)null,
+                Usucad = login.CodUser,
+            };
 
-                var boleto = new BoletoImpresso()
-                {
-                    IdContaR = (uint)codigoContaReceber,
-                    IdNf = codigoNotaFiscal > 0 ? codigoNotaFiscal.Value : (int?)null,
-                    IdLiberarPedido = codigoLiberacao > 0 ? codigoLiberacao.Value : (int?)null,
-                    IdContaBanco = codigoContaBancaria,
-                    IdCte = codigoCte > 0 ? codigoCte.Value : (int?)null,
-                };
-
-                boleto.Usucad = login.CodUser;
-                BoletoImpressoDAO.Instance.Insert(boleto);
-            }
-            finally
-            {
-                FilaOperacoes.BoletoImpresso.ProximoFila();
-            }
+            BoletoImpressoDAO.Instance.InserirBoletoImpresso(null, boleto);
         }
 
-        public bool BoletoFoiImpresso(int codigoContaReceber)
+        private BoletoImpresso ObterBoletoImpresso(GDASession session, int codigoContaReceber)
         {
-            return BoletoImpressoDAO.Instance.BoletoFoiImpresso(codigoContaReceber, null);
+            return BoletoImpressoDAO.Instance.ObterBoletoImpresso(session, codigoContaReceber, null);
+        }
+
+        public bool VerificarPossuiBoletoImpresso(GDASession session, int codigoContaReceber)
+        {
+            return BoletoImpressoDAO.Instance.VerificarPossuiBoletoImpresso(session, codigoContaReceber);
         }
 
         public string MensagemBoletoImpresso(int? codigoContaReceber, int? codigoNotaFiscal, int? codigoLiberacao, int? codigoCte)
         {
+            IEnumerable<int> idsContasReceber = null;
+
             if (codigoContaReceber > 0)
-                return BoletoFoiImpresso(codigoContaReceber.Value) ? "já impresso" : null;
-
-            else if (codigoNotaFiscal > 0)
             {
-                var idsContasReceber = ContasReceberDAO.Instance.ObtemPelaNfe((uint)codigoNotaFiscal.Value);
+                var ultimoBoletoImpresso = this.ObterBoletoImpresso(null, codigoContaReceber.Value);
 
-                if (idsContasReceber.Count == 0)
-                    return null;
-                else if (idsContasReceber.Count == 1)
-                    return MensagemBoletoImpresso((int)idsContasReceber[0], null, null, null);
-
-                string mensagem = "{0}/{1} já impresso{2}";
-
-                int impressos = 0;
-                foreach (var id in idsContasReceber)
-                    impressos += BoletoFoiImpresso((int)id) ? 1 : 0;
-
-                return impressos == 0 ? null :
-                    String.Format(mensagem, impressos, idsContasReceber.Count, idsContasReceber.Count > 1 ? "s" : String.Empty);
-            }
-            else if (codigoLiberacao > 0)
-            {
-                var contasReceberLiberacao = ContasReceberDAO.Instance.GetByPedidoLiberacao(0, (uint)codigoLiberacao, null)?.ToList() ?? new List<Glass.Data.Model.ContasReceber>();
-
-                var idsContasReceber = new List<uint>();
-
-                if (Glass.Configuracoes.FinanceiroConfig.EmitirBoletoApenasContaTipoPagtoBoleto)
+                if (ultimoBoletoImpresso?.IdContaBanco > 0)
                 {
-                    var contasRecebimentoBoleto = UtilsPlanoConta.ContasRecebimentoBoleto().Split(',').Where(f => f != "0").Select(f => f.StrParaInt()).ToList();
-
-                    var idsContaR = contasReceberLiberacao.Where(f => contasRecebimentoBoleto.Contains((int)f.IdConta.GetValueOrDefault()))?.Select(f => f.IdContaR).ToList() ?? new List<uint>();
-
-                    idsContasReceber.AddRange(idsContaR);
+                    var descricaoContaBanco = ContaBancoDAO.Instance.GetDescricao(null, (uint)ultimoBoletoImpresso.IdContaBanco);
+                    return $"Boleto impresso na conta bancária: {descricaoContaBanco}";
                 }
                 else
                 {
-                    idsContasReceber.AddRange(contasReceberLiberacao.Select(f => f.IdContaR).ToList());
+                    return $"Boleto: já impresso";
                 }
-
-                if (idsContasReceber.Count == 0)
-                    return null;
-                else if (idsContasReceber.Count == 1)
-                    return MensagemBoletoImpresso((int)idsContasReceber[0], null, null, null);
-
-                string mensagem = "{0}/{1} já impresso{2}";
-
-                int impressos = 0;
-                foreach (var id in idsContasReceber)
-                    impressos += BoletoFoiImpresso((int)id) ? 1 : 0;
-
-                return impressos == 0 ? null :
-                    String.Format(mensagem, impressos, idsContasReceber.Count, idsContasReceber.Count > 1 ? "s" : String.Empty);
+            }
+            else if (codigoNotaFiscal > 0)
+            {
+                idsContasReceber = ContasReceberDAO.Instance.ObtemPelaNfe((uint)codigoNotaFiscal.Value)?.Select(f => (int)f);
+            }
+            else if (codigoLiberacao > 0)
+            {
+                idsContasReceber = ContasReceberDAO.Instance.GetByPedidoLiberacao(0, (uint)codigoLiberacao, null).Select(f => f.IdContaR)?.Select(f => (int)f);
             }
             else if (codigoCte > 0)
             {
-                var idsContasReceberCte = ContasReceberDAO.Instance.ObterIdContaRPeloIdCte((uint)codigoCte);
-
-                if (idsContasReceberCte.Count == 0)
-                    return null;
-                else if (idsContasReceberCte.Count == 1)
-                    return MensagemBoletoImpresso((int)idsContasReceberCte[0], null, null, null);
-
-                string mensagem = "{0}/{1} já impresso{2}";
-
-                int impressos = 0;
-                foreach (var id in idsContasReceberCte)
-                    impressos += BoletoFoiImpresso((int)id) ? 1 : 0;
-
-                return impressos == 0 ? null :
-                    String.Format(mensagem, impressos, idsContasReceberCte.Count, idsContasReceberCte.Count > 1 ? "s" : String.Empty);
+                idsContasReceber = ContasReceberDAO.Instance.ObterIdContaRPeloIdCte((uint)codigoCte)?.Select(f => (int)f);
             }
 
-            return null;
+            if (idsContasReceber?.Any(f => f > 0) ?? false)
+            {
+                idsContasReceber = idsContasReceber.Where(f => f > 0).ToList();
+
+                if (idsContasReceber.Count() == 1)
+                {
+                    return this.MensagemBoletoImpresso(idsContasReceber.First(), null, null, null);
+                }
+                else
+                {
+                    return this.ObterMensagemBoletosImpressos(idsContasReceber);
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private string ObterMensagemBoletosImpressos(IEnumerable<int> idsContaReceber)
+        {
+            var impressos = 0;
+            var descricoesContaBanco = new List<string>();
+
+            foreach (var id in idsContaReceber)
+            {
+                var ultimoBoletoImpresso = this.ObterBoletoImpresso(null, (int)id);
+
+                if (ultimoBoletoImpresso?.IdContaBanco > 0)
+                {
+                    var descricaoContaBanco = ContaBancoDAO.Instance.GetDescricao(null, (uint)ultimoBoletoImpresso.IdContaBanco);
+                    descricoesContaBanco.Add(descricaoContaBanco);
+                    impressos++;
+                }
+            }
+
+            if (impressos > 0)
+            {
+                return $"Boleto(s) {impressos}/{idsContaReceber.Count()} impresso(s) na conta bancária: {string.Join(" | ", descricoesContaBanco)}";
+            }
+
+            return string.Empty;
         }
     }
 }

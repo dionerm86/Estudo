@@ -18,8 +18,6 @@ namespace Glass.Data.DAL
 {
     public sealed class ArquivoRemessaDAO : BaseCadastroDAO<ArquivoRemessa, ArquivoRemessaDAO>
     {
-        //private ArquivoRemessaDAO() { }
-
         #region Busca padrão
 
         private string Sql(int codArquivoRemessa, uint? numArqRemessa, string dataCadIni, string dataCadFim, int? tipoRemessa,
@@ -110,17 +108,19 @@ namespace Glass.Data.DAL
 
         public string ObtemNumeroDocumento(uint idContaR, bool buscarComNf, int codigoBanco, bool buscarComCte)
         {
-            const string ALFABETO = "ABCDEFGHIJLMNOPQRSTUVXZ";
-
-            var numDoc = idContaR.ToString();
+            if (idContaR == 0)
+            {
+                throw new Exception("Não é possivel obter o numero do documento. O identificador da conta esta zerado.");
+            }
 
             var numDocContaReceber = ContasReceberDAO.Instance.ObtemValorCampo<string>("numeroDocumentoCnab", "idContaR=" + idContaR);
 
             if (!string.IsNullOrWhiteSpace(numDocContaReceber) && numDocContaReceber.StrParaInt() > 0)
             {
-                numDoc = numDocContaReceber;
-                return numDoc.ToString().FormataNumero("numDoc", 10, false);
+                return numDocContaReceber.FormataNumero("numDoc", 10, false);
             }
+
+            const string ALFABETO = "ABCDEFGHIJLMNOPQRSTUVXZ";
 
             var numParc = ContasReceberDAO.Instance.ObtemValorCampo<int>("numParc", "idContaR=" + idContaR);
             if (numParc < 1)
@@ -129,11 +129,9 @@ namespace Glass.Data.DAL
             }
 
             var idNf = ContasReceberDAO.Instance.ObtemValorCampo<uint>("idNf", "idContaR=" + idContaR);
-
             var idCte = ContasReceberDAO.Instance.ObtemValorCampo<uint>("idCte", "idContaR=" + idContaR);
 
-            if (buscarComNf && idNf == 0 &&
-                (Glass.Configuracoes.FinanceiroConfig.FinanceiroRec.GerarNotaApenasDeLiberacao || FinanceiroConfig.UsarNumNfBoletoSemSeparacao))
+            if (buscarComNf && idNf == 0 && (FinanceiroConfig.FinanceiroRec.GerarNotaApenasDeLiberacao || FinanceiroConfig.UsarNumNfBoletoSemSeparacao))
             {
                 var idsNf = NotaFiscalDAO.Instance.ObtemIdNfByContaR(idContaR, true);
 
@@ -164,7 +162,7 @@ namespace Glass.Data.DAL
                 return CTe.ConhecimentoTransporteDAO.Instance.ObtemNumeroCte(idCte).ToString().FormataNumero("numDoc", 8, false) + "-" + ALFABETO[numParc - 1];
             }
 
-            return numDoc.ToString().FormataNumero("numDoc", 10, false);
+            return idContaR.ToString().FormataNumero("numDoc", 10, false);
         }
 
         public KeyValuePair<string, string> ObtemNossoNumero(uint idContaR, int codigoBanco, int carteira, int agencia,
@@ -568,6 +566,11 @@ namespace Glass.Data.DAL
                     boletos.Add(boleto);
 
                     var numeroDocumento = ObtemNumeroDocumento(c.IdContaR, false, boletos.Banco.Codigo, false);
+
+                    if(numeroDocumento.StrParaInt() == 0)
+                    {
+                        throw new Exception($"O número do documento para a conta {c.IdContaR} esta zerado.");
+                    }
 
                     if (boletos.Banco.Codigo == (int)CodigoBanco.Sicredi)
                     {

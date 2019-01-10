@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Data.Helper;
@@ -73,7 +73,7 @@ namespace Glass.UI.Web.Cadastros
             if (!String.IsNullOrEmpty(Request["idTrocaDev"]))
             {
                 uint idTrocaDevolucao = Glass.Conversoes.StrParaUint(Request["idTrocaDev"]);
-                int tipo = TrocaDevolucaoDAO.Instance.ObtemTipo(idTrocaDevolucao); // Sempre considera o tipo da troca/devolu√ß√£o
+                int tipo = TrocaDevolucaoDAO.Instance.ObtemTipo(idTrocaDevolucao); // Sempre considera o tipo da troca/devoluÁ„o
                 return tipo == 1 ? "Trocados" : "Devolvidos";
             }
 
@@ -85,7 +85,7 @@ namespace Glass.UI.Web.Cadastros
             if (e.Exception != null)
             {
                 e.ExceptionHandled = true;
-                var msgErro = MensagemAlerta.FormatErrorMsg("Falha ao inserir troca/devolu√ß√£o.", e.Exception);
+                var msgErro = MensagemAlerta.FormatErrorMsg("Falha ao inserir troca/devoluÁ„o.", e.Exception);
                 Page.ClientScript.RegisterClientScriptBlock(typeof(string), "err", string.Format("alert('{0}'); window.location.href = window.location.href;", msgErro), true);
             }
             else
@@ -98,7 +98,7 @@ namespace Glass.UI.Web.Cadastros
             if (e.Exception != null)
             {
                 e.ExceptionHandled = true;
-                Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar troca/devolu√ß√£o.", e.Exception, Page);
+                Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar troca/devoluÁ„o.", e.Exception, Page);
             }
             else
                 Response.Redirect("~/Cadastros/CadTrocaDev.aspx?idTrocaDev=" + Request["idTrocaDev"] +
@@ -117,7 +117,7 @@ namespace Glass.UI.Web.Cadastros
                 }
                 else if (TrocaDevolucaoDAO.Instance.IsTroca(idTrocaDevolucao) && ProdutoTrocaDevolucaoDAO.Instance.GetCountReal(idTrocaDevolucao) == 0)
                 {
-                    Glass.MensagemAlerta.ShowMsg("Cadastre pelo menos um produto para troca/devolu√ß√£o antes de finalizar.", Page);
+                    Glass.MensagemAlerta.ShowMsg("Cadastre pelo menos um produto para troca/devoluÁ„o antes de finalizar.", Page);
                     return;
                 }
 
@@ -125,17 +125,17 @@ namespace Glass.UI.Web.Cadastros
                 {
                     string mensagem = "";
 
-                    // Se o funcion√°rio for Caixa Di√°rio, ou tiver permiss√£o de caixa di√°rio
+                    // Se o funcion·rio for Caixa Di·rio, ou tiver permiss„o de caixa di·rio
                     bool isCaixaDiario = UserInfo.GetUserInfo.IsCaixaDiario;
 
-                    // Se o funcion√°rio for Financeiro
+                    // Se o funcion·rio for Financeiro
                     bool isCaixaGeral = UserInfo.GetUserInfo.IsFinanceiroReceb;
 
-                    // Se o funcion√°rio n√£o tiver permiss√£o de financeiro, gera conta a receber direto
+                    // Se o funcion·rio n„o tiver permiss„o de financeiro, gera conta a receber direto
                     if (!TrocaDevolucaoDAO.Instance.TemValorExcedente(idTrocaDevolucao) || (!isCaixaDiario && !isCaixaGeral))
                         mensagem = TrocaDevolucaoDAO.Instance.Finalizar(idTrocaDevolucao, false);
 
-                    // Se o funcion√°rio tiver permiss√£o de financeiro, permite que o mesmo receba o valor da troca ou gere conta a receber
+                    // Se o funcion·rio tiver permiss„o de financeiro, permite que o mesmo receba o valor da troca ou gere conta a receber
                     else
                     {
                         dtvTroca.Fields[1].Visible = false;
@@ -155,7 +155,7 @@ namespace Glass.UI.Web.Cadastros
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao finalizar troca/devolu√ß√£o.", ex, Page);
+                    Glass.MensagemAlerta.ErrorMsg("Falha ao finalizar troca/devoluÁ„o.", ex, Page);
                 }
             }
             else
@@ -174,7 +174,7 @@ namespace Glass.UI.Web.Cadastros
 
                 if (!TrocaDevolucaoDAO.Instance.TemValorExcedente(idTrocaDevolucao))
                 {
-                    Glass.MensagemAlerta.ShowMsg("Esta troca n√£o possui valor excedente.", Page);
+                    Glass.MensagemAlerta.ShowMsg("Esta troca n„o possui valor excedente.", Page);
                     return;
                 }
 
@@ -193,7 +193,7 @@ namespace Glass.UI.Web.Cadastros
             }
             catch (Exception ex)
             {
-                Glass.MensagemAlerta.ErrorMsg("Falha ao finalizar troca/devolu√ß√£o.", ex, Page);
+                Glass.MensagemAlerta.ErrorMsg("Falha ao finalizar troca/devoluÁ„o.", ex, Page);
             }
         }
 
@@ -243,7 +243,7 @@ namespace Glass.UI.Web.Cadastros
             grdProdutosTrocados.ShowFooter = !lkbInserir.Visible && e.CommandName != "Edit";
         }
 
-        #region M√©todos Ajax
+        #region MÈtodos Ajax
 
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda, string idStr, string percDescontoQtdeStr, string tipo, string idPedido, string alturaStr)
@@ -261,7 +261,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno);
 
-                // Recupera o valor m√≠nimo do produto
+                // Recupera o valor mÌnimo do produto
                 int? tipoEntr = !string.IsNullOrWhiteSpace(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !string.IsNullOrWhiteSpace(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCli, revenda == "true", false, percDescontoQtde, idPedido.StrParaIntNullable(), null, null, altura).ToString();
@@ -269,7 +269,7 @@ namespace Glass.UI.Web.Cadastros
         }
 
         /// <summary>
-        /// Retorna o C√≥digo/Descri√ß√£o do produto
+        /// Retorna o CÛdigo/DescriÁ„o do produto
         /// </summary>
         [Ajax.AjaxMethod()]
         public string GetProduto(string codInterno, string tipoEntrega, string revenda, string idCliente, string percDescontoQtdeStr, string idLoja, string idPedido)
@@ -279,14 +279,14 @@ namespace Glass.UI.Web.Cadastros
                 Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
 
                 if (prod == null)
-                    return "Erro;N√£o existe produto com o c√≥digo informado.";
+                    return "Erro;N„o existe produto com o cÛdigo informado.";
                 else if (prod.Situacao == Glass.Situacao.Inativo)
                     return "Erro;Produto inativo." + (!String.IsNullOrEmpty(prod.Obs) ? " Obs: " + prod.Obs : "");
                 else if (prod.Compra)
                     return "Erro;Produto utilizado apenas na compra.";
 
                 if (PedidoConfig.DadosPedido.BloqueioPedidoMaoDeObra && prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)
-                    return "Erro;Produtos do grupo 'M√£o de Obra Beneficiamento' est√£o bloqueados para pedidos comuns.";
+                    return "Erro;Produtos do grupo 'M„o de Obra Beneficiamento' est„o bloqueados para pedidos comuns.";
 
                 string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
                 decimal valorProduto = 0;
@@ -312,13 +312,13 @@ namespace Glass.UI.Web.Cadastros
                 bool bloquearEstoque = GrupoProdDAO.Instance.BloquearEstoque(prod.IdGrupoProd, prod.IdSubgrupoProd);
                 retorno += ";" + (bloquearEstoque ? ProdutoLojaDAO.Instance.GetEstoque(null, UserInfo.GetUserInfo.IdLoja, (uint)prod.IdProd).ToString() : "100000");
 
-                // Verifica como deve ser feito o c√°lculo do produto
-                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
+                // Verifica como deve ser feito o c·lculo do produto
+                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
 
                 // Retorna a espessura do produto
                 retorno += ";" + prod.Espessura;
 
-                // Retorna a al√≠quota ICMS do produto
+                // Retorna a alÌquota ICMS do produto
                 retorno += ";" + prod.AliqICMSInterna.ToString().Replace(',', '.');
 
                 //if (isPedidoProducao)
@@ -343,7 +343,7 @@ namespace Glass.UI.Web.Cadastros
                 Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(null, Glass.Conversoes.StrParaUint(idPedido));
 
                 if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Confirmado && situacao != Glass.Data.Model.Pedido.SituacaoPedido.LiberadoParcialmente)
-                    return "Erro;A troca/devolu√ß√£o s√≥ pode ser feita se o pedido estiver " + (PedidoConfig.LiberarPedido ? "liberado" : "confirmado") + ".";
+                    return "Erro;A troca/devoluÁ„o sÛ pode ser feita se o pedido estiver " + (PedidoConfig.LiberarPedido ? "liberado" : "confirmado") + ".";
 
                 bool pedidosReposicao = PedidoDAO.Instance.IsPedidoReposto(null, Glass.Conversoes.StrParaUint(idPedido)) &&
                     PedidoReposicaoDAO.Instance.PedidoParaTroca(PedidoDAO.Instance.IdReposicao(Glass.Conversoes.StrParaUint(idPedido)).GetValueOrDefault());
@@ -464,7 +464,7 @@ namespace Glass.UI.Web.Cadastros
             }
             catch (Exception ex)
             {
-                return "Erro;" + MensagemAlerta.FormatErrorMsg("Falha ao finalizar troca/devolu√ß√£o.", ex);
+                return "Erro;" + MensagemAlerta.FormatErrorMsg("Falha ao finalizar troca/devoluÁ„o.", ex);
             }
         }
 

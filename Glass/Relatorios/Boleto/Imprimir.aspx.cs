@@ -89,9 +89,7 @@ namespace Glass.UI.Web.Relatorios.Boleto
             var codigoLiberacao = Conversoes.StrParaInt(Request["codigoLiberacao"]);
             var codigoCte = Conversoes.StrParaInt(Request["codigoCte"]);
 
-            string mensagem = WebGlass.Business.Boleto.Fluxo.Impresso.Instance.MensagemBoletoImpresso(codigoContaReceber, codigoNotaFiscal, codigoLiberacao, codigoCte);
-            return !String.IsNullOrEmpty(mensagem) ? String.Format("Boleto{0}: {1}",
-                mensagem[mensagem.Length - 1] == 's' ? "s" : String.Empty, mensagem) : String.Empty;
+            return WebGlass.Business.Boleto.Fluxo.Impresso.Instance.MensagemBoletoImpresso(codigoContaReceber, codigoNotaFiscal, codigoLiberacao, codigoCte);
         }
     }
 }

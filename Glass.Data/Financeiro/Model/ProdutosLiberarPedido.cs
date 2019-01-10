@@ -323,7 +323,7 @@ namespace Glass.Data.Model
 
         private int TipoCalc
         {
-            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int?)IdSubgrupoProd, false); }
+            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd); }
         }
 
         private ProdutosPedido produtoPedido = null;

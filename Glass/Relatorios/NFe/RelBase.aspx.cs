@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Collections.Generic;
 using System.Web;
 using Microsoft.Reporting.WebForms;
@@ -31,7 +31,7 @@ namespace Glass.UI.Web.Relatorios.NFe
     
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Clientes acessando o sistema externamente n√£o podem entrar neste relat√≥rio
+            // Clientes acessando o sistema externamente n„o podem entrar neste relatÛrio
             if (UserInfo.GetUserInfo.IdCliente > 0)
                 return;
     
@@ -49,7 +49,7 @@ namespace Glass.UI.Web.Relatorios.NFe
         {
             uint idLoja = 1;
     
-            // Verifica qual relat√≥rio ser√° chamado
+            // Verifica qual relatÛrio ser· chamado
             switch (Request["rel"])
             {
                 case "NfTerceiros":
@@ -58,7 +58,7 @@ namespace Glass.UI.Web.Relatorios.NFe
                     ProdutosNf[] lstProd = ProdutosNfDAO.Instance.GetByNf(nfTerc.IdNf);
     
                     foreach (ProdutosNf pnf in lstProd)
-                        pnf.Qtde = ProdutosNfDAO.Instance.ObtemQtdDanfe(null, pnf, false);
+                        pnf.Qtde = ProdutosNfDAO.Instance.ObtemQtdDanfe(pnf);
     
                     idLoja = nfTerc.IdLoja.Value;
                     report.DataSources.Add(new ReportDataSource("NotaFiscal", new NotaFiscal[] { nfTerc }));
@@ -110,7 +110,7 @@ namespace Glass.UI.Web.Relatorios.NFe
                         List<ItemEntrada> Itens = ItemEntradaDAO.Instance.ObterItensEntrada(Glass.Conversoes.StrParaUint(loja), Glass.Conversoes.StrParaInt(mes), 
                             Glass.Conversoes.StrParaInt(ano), bool.Parse(exibeST), bool.Parse(exibeIPI), login);
     
-                        #region CST 20 Redu√ß√£o de Base de C√°lculo
+                        #region CST 20 ReduÁ„o de Base de C·lculo
     
                         List<ItemEntrada> ItensCST20 = Itens.FindAll(delegate(ItemEntrada i) { return i.CST == "20" && i.TipoImposto == "ICMS"; });
     
@@ -169,7 +169,7 @@ namespace Glass.UI.Web.Relatorios.NFe
     
                         #endregion
     
-                        #region CST 70 Redu√ß√£o de Base de C√°lculo
+                        #region CST 70 ReduÁ„o de Base de C·lculo
     
                         List<ItemEntrada> ItensCST70 = Itens.FindAll(delegate(ItemEntrada i) { return i.CST == "70" && i.TipoImposto == "ICMS" && i.CodValorFiscal == 1; });
     
@@ -256,8 +256,8 @@ namespace Glass.UI.Web.Relatorios.NFe
                         bool exibirFornecedor = false;
                         decimal valorSt = 0;
     
-                        // Ordena os itens de acordo com a ordena√ß√£o que ser√° feita no relat√≥rio, para n√£o dar problema na itera√ß√£o abaixo,
-                        // que esconde campos de acordo com as notas e ordena√ß√£o
+                        // Ordena os itens de acordo com a ordenaÁ„o que ser· feita no relatÛrio, para n„o dar problema na iteraÁ„o abaixo,
+                        // que esconde campos de acordo com as notas e ordenaÁ„o
                         Itens.Sort(delegate(ItemEntrada p1, ItemEntrada p2)
                         {
                             int ret = p1.NumeroPagina.CompareTo(p2.NumeroPagina);
@@ -280,7 +280,7 @@ namespace Glass.UI.Web.Relatorios.NFe
                             return ret;
                         });
 
-                        // Nesta itera√ß√£o, ser√° definido quando o nome do emitente e a descri√ß√£o "SUBSTITUI√á√ÉO TRIBUT√ÅRIA" dever√£o ser exibidos
+                        // Nesta iteraÁ„o, ser· definido quando o nome do emitente e a descriÁ„o "SUBSTITUI«√O TRIBUT¡RIA" dever„o ser exibidos
                         for (int i = 0; i < Itens.Count; i++)
                         {
                             if (idNf != Itens[i].IdNF)
@@ -347,7 +347,7 @@ namespace Glass.UI.Web.Relatorios.NFe
     
                         List<ItemSaida> Itens = ItemSaidaDAO.Instance.ObterItensSaida(Glass.Conversoes.StrParaUint(loja), Glass.Conversoes.StrParaInt(mes), Glass.Conversoes.StrParaInt(ano));
     
-                        #region CST 20 Redu√ß√£o de Base de C√°lculo
+                        #region CST 20 ReduÁ„o de Base de C·lculo
     
                         List<ItemSaida> ItensCST20 = Itens.FindAll(delegate(ItemSaida i) { return i.CST == "20" && i.TipoImposto == "ICMS"; });
     
@@ -405,7 +405,7 @@ namespace Glass.UI.Web.Relatorios.NFe
     
                         #endregion
     
-                        #region CST 70 Redu√ß√£o de Base de C√°lculo
+                        #region CST 70 ReduÁ„o de Base de C·lculo
     
                         List<ItemSaida> ItensCST70 = Itens.FindAll(delegate(ItemSaida i) { return i.CST == "70" && i.TipoImposto == "ICMS"; });
     
@@ -486,8 +486,8 @@ namespace Glass.UI.Web.Relatorios.NFe
                         totalPaginas = int.MinValue;
                         idNota = 0;
 
-                        // Ordena os itens de acordo com a ordena√ß√£o que ser√° feita no relat√≥rio, para n√£o dar problema na itera√ß√£o abaixo,
-                        // que esconde campos de acordo com as notas e ordena√ß√£o
+                        // Ordena os itens de acordo com a ordenaÁ„o que ser· feita no relatÛrio, para n„o dar problema na iteraÁ„o abaixo,
+                        // que esconde campos de acordo com as notas e ordenaÁ„o
                         Itens.Sort(delegate(ItemSaida p1, ItemSaida p2)
                         {
                             int ret = p1.NumeroPagina.CompareTo(p2.NumeroPagina);
@@ -507,7 +507,7 @@ namespace Glass.UI.Web.Relatorios.NFe
                             return ret;
                         });
 
-                        // Nesta itera√ß√£o, ser√° definido quando os dados do ICMS ST dever√£o ser exibidos
+                        // Nesta iteraÁ„o, ser· definido quando os dados do ICMS ST dever„o ser exibidos
                         for (int i = 0; i < Itens.Count; i++)
                         {
                             if (idNota != Itens[i].IdNF)
@@ -537,11 +537,11 @@ namespace Glass.UI.Web.Relatorios.NFe
                     }
                     #endregion
     
-                    #region Apura√ß√£o ICMS/IPI
+                    #region ApuraÁ„o ICMS/IPI
     
                     else if (tipo == "3" || tipo == "4")
                     {
-                        #region Dados digitados pelo usu√°rio
+                        #region Dados digitados pelo usu·rio
     
                         string outrosDebitosDesc = Request["outrosDebitosDesc"];
                         decimal outrosDebitosValor = Request["outrosDebitosValor"] == "" ? 0 : Convert.ToDecimal(Request["outrosDebitosValor"]);
@@ -694,7 +694,7 @@ namespace Glass.UI.Web.Relatorios.NFe
                     break;
             }
     
-            // Atribui par√¢metros ao relat√≥rio
+            // Atribui par‚metros ao relatÛrio
             lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogoColor(PageRequest, idLoja)));
 
             return null;

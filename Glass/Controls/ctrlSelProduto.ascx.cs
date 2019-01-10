@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Data.DAL;
@@ -33,7 +33,7 @@ namespace Glass.UI.Web.Controls
                     ctrlSelProdBuscar.Valor = value.Value.ToString();
                     ctrlSelProdBuscar.Descricao = ProdutoDAO.Instance.GetCodInterno((int)value.Value);
                     lblDescricaoProd.Text = ProdutoDAO.Instance.ObtemDescricao((int)value.Value);
-                    hdfTipoCalculo.Value = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)value.Value, Nf.GetValueOrDefault(false)).ToString();
+                    hdfTipoCalculo.Value = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)value.Value, Nf.GetValueOrDefault(false)).ToString();
     
                     Page.ClientScript.RegisterStartupScript(GetType(), this.ClientID + "_setProd",
                         this.ClientID + ".CallbackSelecao(" + this.ClientID + "," + value + ");\n", true);
@@ -91,7 +91,7 @@ namespace Glass.UI.Web.Controls
     
         #endregion
     
-        #region M√©todos Ajax
+        #region MÈtodos Ajax
     
         [Ajax.AjaxMethod]
         public string GetDadosProduto(string idProdStr, string isCompraStr, string isNfStr)
@@ -109,12 +109,12 @@ namespace Glass.UI.Web.Controls
                 }
 
                 return "Ok|" + ProdutoDAO.Instance.ObtemDescricao((int)idProd).Replace("|", "") + "|" +
-                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)idProd, isNf ||
+                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)idProd, isNf ||
                     (isCompra && CompraConfig.UsarTipoCalculoNfParaCompra)) + "|" +
                     ProdutoDAO.Instance.ObtemItemGenerico(idProd).ToString().ToLower();
             }
             else
-                return "Erro|Produto n√£o encontrado.";
+                return "Erro|Produto n„o encontrado.";
         }
     
         #endregion
@@ -123,7 +123,7 @@ namespace Glass.UI.Web.Controls
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(Controls.ctrlSelProduto));
     
-            // Registra este script no Page_Load para que as fun√ß√µes inseridas abaixo no Page_PreRender funcionem
+            // Registra este script no Page_Load para que as funÁıes inseridas abaixo no Page_PreRender funcionem
             if (!Page.ClientScript.IsClientScriptIncludeRegistered(GetType(), "ctrlSelProduto_script"))
                 Page.ClientScript.RegisterClientScriptInclude(GetType(), "ctrlSelProduto_script", this.ResolveClientUrl("~/Scripts/ctrlSelProduto.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
         }
@@ -147,7 +147,7 @@ namespace Glass.UI.Web.Controls
             Page.ClientScript.RegisterClientScriptBlock(GetType(), this.ClientID,
                 String.Format("var {0} = new SelProdutoType('{0}', {1});\n", this.ClientID, "{" + dadosControle + "}"), true);
     
-            // A atribui√ß√£o de idProd no IdProd deve ser feita aqui, pois o Set do IdProd registra um script na p√°gina que depende do registro feito acima.
+            // A atribuiÁ„o de idProd no IdProd deve ser feita aqui, pois o Set do IdProd registra um script na p·gina que depende do registro feito acima.
             if (IsPostBack)
                 if (!String.IsNullOrEmpty(ctrlSelProdBuscar.Valor))
                 {

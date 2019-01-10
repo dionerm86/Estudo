@@ -471,14 +471,12 @@ namespace Glass.Data.DAL
                             if (estorno || usarValorProdNf)
                             {
                                 /* Chamado 38441. */
-                                if (LojaDAO.Instance.ObtemCalculaIcmsStPedido(sessao, idLoja) && idProdNf > 0)
+                                if (Configuracoes.EstoqueConfig.AbaterICMSDoTotalProdNfMovEstoqueFiscal && idProdNf > 0)
                                 {
                                     var valorIcms = ProdutosNfDAO.Instance.ObterValorIcms(sessao, (int)idProdNf.GetValueOrDefault());
                                     totalMov -= valorIcms;
                                 }
                             }
-                            else
-                                totalMov = MovEstoqueDAO.Instance.GetTotalEstoqueManual(sessao, (int)pbef.IdProdBaixa, qtde);
                         }
                         
                         // Recupera os dados da movimentação anterior

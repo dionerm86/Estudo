@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Data.DAL;
@@ -19,10 +19,10 @@ namespace Glass.UI.Web.Cadastros
             {
                 uint idPedidoInterno = Glass.Conversoes.StrParaUint(selPedidoInterno.Valor);
                 if (PedidoInternoDAO.Instance.GetCount(idPedidoInterno, 0, 0, null, null, null) == 0)
-                    throw new Exception("Esse pedido interno n√£o existe.");
+                    throw new Exception("Esse pedido interno n„o existe.");
     
                 if (!PedidoInternoDAO.Instance.PodeConfirmar(null, idPedidoInterno))
-                    throw new Exception("Esse pedido interno n√£o pode ser confirmado. Ele pode estar cancelado, confirmado ou aguardando autoriza√ß√£o.");
+                    throw new Exception("Esse pedido interno n„o pode ser confirmado. Ele pode estar cancelado, confirmado ou aguardando autorizaÁ„o.");
     
                 confirmar.Visible = true;
             }
@@ -53,8 +53,8 @@ namespace Glass.UI.Web.Cadastros
                     
                     Glass.Data.Model.ProdutoPedidoInterno produto = ProdutoPedidoInternoDAO.Instance.GetElement(idProdPedInterno);
 
-                    bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)produto.IdGrupoProd, (int?)produto.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                               Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)produto.IdGrupoProd, (int?)produto.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
+                    bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)produto.IdGrupoProd, (int?)produto.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
+                               Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)produto.IdGrupoProd, (int?)produto.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
                     ProdutoLojaDAO.Instance.NewProd((int)produto.IdProd, (int)pedido.IdLoja);
                     var quantidadeEstoque = ProdutoLojaDAO.Instance.GetEstoque(null, pedido.IdLoja, produto.IdProd, null, false, false, false);
@@ -63,7 +63,7 @@ namespace Glass.UI.Web.Cadastros
                     {
                         erro = true;
                         v.IsValid = false;
-                        v.ErrorMessage = "Produto " + produto.DescrProduto + ": A quantidade confirmada n√£o pode ser menor que zero.";
+                        v.ErrorMessage = "Produto " + produto.DescrProduto + ": A quantidade confirmada n„o pode ser menor que zero.";
                         v.ToolTip = v.ErrorMessage;
                     }
 
@@ -71,7 +71,7 @@ namespace Glass.UI.Web.Cadastros
                     {
                         erro = true;
                         v.IsValid = false;
-                        v.ErrorMessage = "Produto " + produto.DescrProduto + ": A quantidade confirmada n√£o pode ser superior √† quantidade pedida!";
+                        v.ErrorMessage = "Produto " + produto.DescrProduto + ": A quantidade confirmada n„o pode ser superior ‡ quantidade pedida!";
                         v.ToolTip = v.ErrorMessage;
                     }
     
@@ -79,7 +79,7 @@ namespace Glass.UI.Web.Cadastros
                     {
                         erro = true;
                         v.IsValid = false;
-                        v.ErrorMessage = "Produto " + produto.DescrProduto + ": A quantidade confirmada n√£o pode ser superior √† quantidade pedida!";
+                        v.ErrorMessage = "Produto " + produto.DescrProduto + ": A quantidade confirmada n„o pode ser superior ‡ quantidade pedida!";
                         v.ToolTip = v.ErrorMessage;
                     }
                     else if (quantidadeEstoque < qtde)
@@ -97,7 +97,7 @@ namespace Glass.UI.Web.Cadastros
     
                 if (erro)
                 {
-                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Falha", "alert('A confirma√ß√£o do pedido falhou. Verifique os erros!'); return false;", true);
+                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Falha", "alert('A confirmaÁ„o do pedido falhou. Verifique os erros!'); return false;", true);
                     return;
                 }
                 else

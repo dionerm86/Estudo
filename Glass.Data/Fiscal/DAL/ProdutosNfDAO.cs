@@ -620,15 +620,37 @@ namespace Glass.Data.DAL
         #region Retorna a quantidade que será usada no DANFE
 
         /// <summary>
-        /// Obtém a quantidade que será usada no DANFE.
+        /// Retorna a quantidade que será usada no DANFE
         /// </summary>
-        /// <param name="session">session.</param>
-        /// <param name="pnf">pnf.</param>
-        /// <param name="nfQtdBaixaM2">nfQtdBaixaM2.</param>
-        /// <returns>Retorna a quantidade que será usada no DANFE.</returns>
+        public float ObtemQtdDanfe(ProdutosNf pnf)
+        {
+            return ObtemQtdDanfe(null, pnf);
+        }
+
+        /// <summary>
+        /// Retorna a quantidade que será usada no DANFE
+        /// </summary>
+        public float ObtemQtdDanfe(GDASession session, ProdutosNf pnf)
+        {
+            return ObtemQtdDanfe(session, pnf, false);
+        }
+
+        public float ObtemQtdDanfe(ProdutosNf pnf, bool nfQtdBaixaM2)
+        {
+            return ObtemQtdDanfe(null, pnf, nfQtdBaixaM2);
+        }
+
         public float ObtemQtdDanfe(GDASession session, ProdutosNf pnf, bool nfQtdBaixaM2)
         {
-            return this.ObtemQtdDanfe(session, pnf.IdProd, pnf.TotM, pnf.Qtde, pnf.Altura, pnf.Largura, nfQtdBaixaM2, true);
+            return ObtemQtdDanfe(session, pnf.IdProd, pnf.TotM, pnf.Qtde, pnf.Altura, pnf.Largura, nfQtdBaixaM2, true);
+        }
+
+        /// <summary>
+        /// Retorna a quantidade que será usada no DANFE
+        /// </summary>
+        public float ObtemQtdDanfe(uint idProd, float totM2, float qtde, float altura, int largura, bool nfQtdBaixaM2, bool tipoCalcFiscal)
+        {
+            return ObtemQtdDanfe(null, idProd, totM2, qtde, altura, largura, nfQtdBaixaM2, tipoCalcFiscal);
         }
 
         /// <summary>
@@ -751,7 +773,7 @@ namespace Glass.Data.DAL
             }
             else
             {
-                // Qtd/QtdM2
+                // Qtd/QtdM2.
                 return qtde;
             }
         }
@@ -1861,7 +1883,7 @@ namespace Glass.Data.DAL
                             else
                                 valorTotal += prodNf.Total;
 
-                            qtdeTotal += ObtemQtdDanfe(null, prodNf, false);
+                            qtdeTotal += ObtemQtdDanfe(prodNf);
                         }
 
                         valorParcelaImportada += (valorTotal / Convert.ToDecimal(qtdeTotal)) * Convert.ToDecimal(pbe.Qtde);
@@ -1930,7 +1952,7 @@ namespace Glass.Data.DAL
                             else
                                 valorTotal += prodNf.Total;
 
-                            qtdeTotal += ObtemQtdDanfe(null, prodNf, false);
+                            qtdeTotal += ObtemQtdDanfe(prodNf);
                         }
 
                         valorParcelaImportada += valorTotal / Convert.ToDecimal(qtdeTotal);
@@ -2031,7 +2053,7 @@ namespace Glass.Data.DAL
                 foreach (var prodNf in prodsNfSaida)
                 {
                     valorTotal += prodNf.Total;
-                    qtdeTotal += ObtemQtdDanfe(null, prodNf, false);
+                    qtdeTotal += ObtemQtdDanfe(prodNf);
                 }
 
                 valorOperacaoInterestadual += valorTotal / Convert.ToDecimal(qtdeTotal);
