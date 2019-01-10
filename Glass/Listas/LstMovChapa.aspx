@@ -138,11 +138,6 @@
                                 <asp:Label ID="Label2" runat="server" Text='<%# Bind("Espessura", "{0} MM") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Qtde. Inicial" SortExpression="Inicial">
-                            <ItemTemplate>
-                                <asp:Label ID="Label3" runat="server" Text='<%# Bind("Inicial") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Qtde. Utilizada" SortExpression="Utilizado">
                             <ItemTemplate>
                                 <asp:Label ID="Label4" runat="server" Text='<%# Bind("Utilizado") %>'></asp:Label>

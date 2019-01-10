@@ -315,11 +315,10 @@ namespace Glass.Data.DAL
         {
             var idProdPed = ProdutosLiberarPedidoDAO.Instance.ObterIdProdPed(sessao, idProdLiberarPedido);
             var custoProd = GetTotalProdPed(sessao, idProdPed);
-            var qtdeProd = ProdutosPedidoDAO.Instance.ObtemQtde(sessao, (uint)idProdPed);
+            var qtdeProd = (decimal)ProdutosPedidoDAO.Instance.ObtemQtde(sessao, (uint)idProdPed);
             var qtdeLib = ProdutosLiberarPedidoDAO.Instance.ObterQtde(sessao, idProdLiberarPedido);
-            var qtdTotal = (decimal)qtdeProd * qtdeLib;
 
-            return custoProd / (qtdTotal > 0 ? qtdTotal : 1);
+            return (custoProd / (qtdeProd > 0 ? qtdeProd : 1)) * qtdeLib;
         }
 
         private decimal GetTotalProdTrocaDevolucao(GDASession session, int? idProdTrocaDev, int? idProdTrocado)
@@ -1381,7 +1380,7 @@ namespace Glass.Data.DAL
                 throw new InvalidOperationException("Não é possível cancelar essa saída de estoque.");
             }
 
-            SaidaEstoqueDAO.Instance.MarcaEstorno(sessao, saidaEstoque.IdPedido, saidaEstoque.IdLiberarPedido, saidaEstoque.IdVolume);
+            SaidaEstoqueDAO.Instance.MarcaEstorno(sessao, saidaEstoque.IdSaidaEstoque, saidaEstoque.IdPedido, saidaEstoque.IdLiberarPedido, saidaEstoque.IdVolume);
 
             var produtosSaidaEstoque = ProdutoSaidaEstoqueDAO.Instance.GetForRpt(sessao, saidaEstoque.IdSaidaEstoque);
             var idsProduto = new List<int>();
@@ -1476,7 +1475,7 @@ namespace Glass.Data.DAL
             var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido);
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedido);
 
-            SaidaEstoqueDAO.Instance.MarcaEstorno(sessao, (uint)idPedido, null, (uint?)idVolume);
+            SaidaEstoqueDAO.Instance.MarcaEstorno(sessao, null, (uint)idPedido, null, (uint?)idVolume);
 
             foreach (var item in volumes)
             {
@@ -1530,7 +1529,7 @@ namespace Glass.Data.DAL
 
             var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido);
 
-            SaidaEstoqueDAO.Instance.MarcaEstorno(sessao, (uint)idPedido, null, null);
+            SaidaEstoqueDAO.Instance.MarcaEstorno(sessao, null, (uint)idPedido, null, null);
 
             foreach (var item in produtosPedido.Where(f => f.QtdMarcadaSaida > 0))
             {
@@ -1606,7 +1605,7 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(sessao, $"UPDATE produtos_compra SET qtdeEntrada={item.Qtde.ToString().Replace(",", ".")} WHERE idProdCompra={item.IdProdCompra}");
             }
 
-            objPersistence.ExecuteCommand(sessao, "UPDATE compra SET EstoqueBaixado=true WHERE idCompra=" + compra.IdCompra);
+            CompraDAO.Instance.MarcaEstoqueBaixado(sessao, compra.IdCompra);
         }
 
         public void CreditaEstoqueManualCompra(GDASession sessao, uint idLoja, uint idCompra, IEnumerable<ProdutosCompra> produtosCompra)
@@ -2058,6 +2057,33 @@ namespace Glass.Data.DAL
                     IdPerdaChapaVidro = idPerdaChapaVidro,
                     Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)idProdNf),
                     AlterarProdutoBase = true,
+                });
+        }
+
+        public void CreditaEstoqueChapaCancelamentoImpressaoEtiqueta(GDASession sessao, int idProdutoImpressaoChapa)
+        {
+            var idProduto = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, (uint)idProdutoImpressaoChapa);
+
+            if (idProduto.GetValueOrDefault() == 0)
+            {
+                throw new InvalidOperationException("Produto da chapa não existe.");
+            }
+
+            var produtoImpressao = ProdutoImpressaoDAO.Instance.GetElementByPrimaryKey(sessao, idProdutoImpressaoChapa);
+
+            if (produtoImpressao.IdProdNf == null || produtoImpressao.IdNf == null)
+            {
+                throw new InvalidOperationException("Não foi encontrada a impressão da etiqueta de chapa.");
+            }
+            
+            new EstoqueStrategyFactory()
+                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                .Creditar(sessao, new MovimentacaoDto
+                {
+                    IdProduto = idProduto.Value,
+                    IdLoja = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, produtoImpressao.IdNf.Value),
+                    IdProdImpressaoChapa = (uint)idProdutoImpressaoChapa,
+                    Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)produtoImpressao.IdProdNf.Value),
                 });
         }
 

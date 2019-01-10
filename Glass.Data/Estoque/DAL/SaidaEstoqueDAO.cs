@@ -162,21 +162,26 @@ namespace Glass.Data.DAL
         /// <param name="idPedido"></param>
         /// <param name="idLiberarPedido"></param>
         /// <param name="idVolume"></param>
-        public void MarcaEstorno(GDASession sessao, uint? idPedido, uint? idLiberarPedido, uint? idVolume)
+        public void MarcaEstorno(GDASession sessao, uint? idSaidaEstoque, uint? idPedido, uint? idLiberarPedido, uint? idVolume)
         {
-            if (!idPedido.HasValue && !idLiberarPedido.HasValue && !idVolume.HasValue)
+            if (!idSaidaEstoque.HasValue && !idPedido.HasValue && !idLiberarPedido.HasValue && !idVolume.HasValue)
                 throw new Exception("Nenhum identificador for informado.");
 
             string sql = @"UPDATE saida_estoque SET estornado=true WHERE 1";
 
-            if (idPedido.HasValue)
-                sql += " AND idPedido=" + idPedido.Value;
+            if (idSaidaEstoque.HasValue)
+                sql += " AND IdSaidaEstoque=" + idSaidaEstoque;
+            else
+            {
+                if (idPedido.HasValue)
+                    sql += " AND idPedido=" + idPedido.Value;
 
-            if (idLiberarPedido.HasValue)
-                sql += " AND idLiberarPedido=" + idLiberarPedido.Value;
+                if (idLiberarPedido.HasValue)
+                    sql += " AND idLiberarPedido=" + idLiberarPedido.Value;
 
-            if (idVolume.HasValue)
-                sql += " AND idVolume=" + idVolume.Value;
+                if (idVolume.HasValue)
+                    sql += " AND idVolume=" + idVolume.Value;
+            }
 
             objPersistence.ExecuteCommand(sessao, sql);
         }

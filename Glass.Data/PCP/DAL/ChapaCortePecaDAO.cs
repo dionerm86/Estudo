@@ -333,10 +333,31 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(session, $"DELETE FROM chapa_corte_peca WHERE COALESCE(PecaReposta,FALSE) = FALSE AND IdProdImpressaoPeca IN ({ids})");
 
                 foreach (var id in idsProdImpressaoChapa)
+                {
                     MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaChapaCortePeca(session, id, MovEstoque.TipoMovEnum.Entrada);
+                }
 
                 foreach (var id in idsProdImpressaoPeca)
                     MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaChapaCortePeca(session, id, MovEstoque.TipoMovEnum.Saida);
+            }
+        }
+
+        /// <summary>
+        /// Estorna a chapa no estoque
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idsProdImpressaoPeca"></param>
+        public void EstornarEstoqueChapa(GDASession sessao, List<int> idsProdImpressaoPeca)
+        {
+            if (idsProdImpressaoPeca != null && idsProdImpressaoPeca.Any())
+            {
+                foreach (var id in ObtemIdProdImpressaoChapa(sessao, string.Join(",", idsProdImpressaoPeca)))
+                {
+                    if (!this.ChapaPossuiLeitura(sessao, (uint)id))
+                    {
+                        MovEstoqueDAO.Instance.CreditaEstoqueChapaCancelamentoImpressaoEtiqueta(sessao, id);
+                    }
+                }
             }
         }
 

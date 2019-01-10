@@ -560,6 +560,29 @@ namespace Glass.Data.DAL
             return (int)Single.Parse(obj.ToString().Replace('.', ','));
         }
 
+        /// <summary>
+        /// Retorna o estoque atual de chapas pela cor e espessura informadas
+        /// </summary>
+        /// <param name="idCorVidro"></param>
+        /// <param name="espessura"></param>
+        /// <returns></returns>
+        public Tuple<int, decimal> ObterEstoqueAtualChapasPorCorEspessura(int idCorVidro, float espessura)
+        {
+            var sql = $@"
+                SELECT SUM(pl.{{0}})
+                FROM produto_loja pl
+                    INNER JOIN produto p ON (pl.IdProd=p.IdProd)
+                    INNER JOIN subgrupo_prod sg ON (p.IdSubgrupoProd=sg.IdSubgrupoProd)
+                WHERE p.IdCorVidro={idCorVidro}
+                    AND Espessura=?espessura
+                    AND sg.TipoSubgrupo={(int)TipoSubgrupoProd.ChapasVidro}";
+
+            var quantidadeEstoque = ExecuteScalar<int>(string.Format(sql, "QtdEstoque"), new GDAParameter("?espessura", espessura));
+            var metroQuadradoEstoque = ExecuteScalar<decimal>(string.Format(sql, "M2"), new GDAParameter("?espessura", espessura));
+
+            return new Tuple<int, decimal>(quantidadeEstoque, metroQuadradoEstoque);
+        }
+
         #endregion
 
         #region Atualiza reserva/liberação

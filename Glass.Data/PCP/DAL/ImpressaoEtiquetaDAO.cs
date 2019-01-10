@@ -2950,6 +2950,7 @@ namespace Glass.Data.DAL
                 if (!idsProdImpressao.Any(f => f > 0) && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
                     ChapaCortePecaDAO.Instance.DeleteByIdsProdImpressaoPeca(sessao, idsProdImpressao);
+                    ChapaCortePecaDAO.Instance.EstornarEstoqueChapa(sessao, idsProdImpressao);
                 }
 
                 var ids = string.Empty;

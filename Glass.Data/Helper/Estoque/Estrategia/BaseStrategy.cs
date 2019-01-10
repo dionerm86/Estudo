@@ -156,12 +156,10 @@ namespace Glass.Data.Helper.Estoque.Estrategia
                         movEstoque.ValorMov = 0;
                         movEstoque.SaldoValorMov = 0;
                     }
-                    else if (movimentacao.Tipo == MovEstoque.TipoMovEnum.Entrada)
+                    else if (movimentacao.Tipo == MovEstoque.TipoMovEnum.Entrada && movimentacao.Total > 0)
                     {
                         var saldoQuantidadeMovimentada = movEstoque.SaldoQtdeMov > 0 ? movEstoque.SaldoQtdeMov : 1;
-                        var perc = movimentacao.Tipo == MovEstoque.TipoMovEnum.Entrada && movimentacao.Quantidade > movEstoque.SaldoQtdeMov
-                            ? movimentacao.Quantidade / saldoQuantidadeMovimentada
-                            : 1;
+                        var perc = movimentacao.Quantidade > movEstoque.SaldoQtdeMov ? movimentacao.Quantidade / saldoQuantidadeMovimentada : 1;
 
                         movEstoque.ValorMov = Math.Abs(movimentacao.Total);
                         movEstoque.SaldoValorMov = saldoValorAnterior + (movEstoque.ValorMov * perc);
