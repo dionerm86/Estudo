@@ -48,7 +48,7 @@ namespace Glass.API.Backend.Helper.Producao.Retalhos
                     return "DataCad";
 
                 case "situacao":
-                    return "SituacaoString";
+                    return "Situacao";
 
                 case "datauso":
                     return "DataUso";

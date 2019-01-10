@@ -47,8 +47,11 @@ namespace Glass.API.Backend.Models.Producao.V1.Retalhos.Lista
                 Uso = retalhoProducao.DataUso,
             };
 
-            this.Situacao = retalhoProducao.Situacao;
+            this.Situacao = retalhoProducao.SituacaoString;
             this.CodigoEtiqueta = retalhoProducao.NumeroEtiqueta;
+            this.NumeroNotaFiscal = retalhoProducao.NumeroNFe;
+            this.Lote = retalhoProducao.Lote;
+            this.CodigosEtiquetaUsandoRetalho = retalhoProducao.EtiquetaUsando;
             this.Funcionario = retalhoProducao.NomeFunc;
             this.Observacao = retalhoProducao.Obs;
             this.Permissoes = new PermissoesDto
@@ -56,7 +59,7 @@ namespace Glass.API.Backend.Models.Producao.V1.Retalhos.Lista
                 Imprimir = Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) && retalhoProducao.CancelarVisible,
                 Cancelar = retalhoProducao.CancelarVisible,
                 MarcarPerda = retalhoProducao.PerdaVisible,
-                ExibirEtiquetasUsando = string.IsNullOrWhiteSpace(retalhoProducao.EtiquetaUsando),
+                ExibirEtiquetasUsando = !string.IsNullOrWhiteSpace(retalhoProducao.EtiquetaUsando),
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.RetalhoProducao, (uint)retalhoProducao.IdRetalhoProducao, null),
                 LogCancelamento = LogCancelamentoDAO.Instance.TemRegistro(LogCancelamento.TabelaCancelamento.RetalhoProducao, (uint)retalhoProducao.IdRetalhoProducao),
             };
@@ -88,7 +91,7 @@ namespace Glass.API.Backend.Models.Producao.V1.Retalhos.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("situacao")]
-        public SituacaoRetalhoProducao Situacao { get; set; }
+        public string Situacao { get; set; }
 
         /// <summary>
         /// Obtém ou define o código da etiqueta do retalho de produção.
