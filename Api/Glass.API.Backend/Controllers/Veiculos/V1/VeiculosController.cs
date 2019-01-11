@@ -4,6 +4,9 @@
 
 using GDA;
 using Glass.Data.DAL;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Veiculos.V1
@@ -36,7 +39,7 @@ namespace Glass.API.Backend.Controllers.Veiculos.V1
                 return this.NaoEncontrado("Veículo não encontrado.");
             }
 
-            return null;
+            return validacao;
         }
     }
 }

@@ -547,6 +547,25 @@ namespace Glass.Data.Model
 
         #region Propriedades de Suporte
 
+        /// <summary>
+        /// Indica se o produto pode ser editado no pedido
+        /// (se o pedido não tem desconto, ou se a empresa não rateia o desconto).
+        /// </summary>
+        public bool PodeEditar
+        {
+            get
+            {
+                if (!PedidoConfig.RatearDescontoProdutos)
+                {
+                    return true;
+                }
+
+                float descontoPedido = PedidoEspelhoDAO.Instance.ObtemValorCampo<float>("desconto", $"idPedido={IdPedido}");
+                float descontoAmbiente = AmbientePedidoEspelhoDAO.Instance.ObtemValorCampo<float>("desconto", $"idAmbientePedido={IdAmbientePedido.GetValueOrDefault()}");
+                return (descontoPedido + descontoAmbiente) == 0;
+            }
+        }
+
         public float TotM2Rpt
         {
             get { return PedidoConfig.RelatorioPedido.ExibirM2CalcRelatorio ? 
@@ -598,7 +617,7 @@ namespace Glass.Data.Model
             get
             {
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(null, IdPedido);
-                return Glass.Global.CalculosFluxo.CalcM2Calculo(null, IdCliente, (int)Altura, Largura, Qtde, (int)IdProd, Redondo,
+                return Glass.Global.CalculosFluxo.CalcM2Calculo(IdCliente, (int)Altura, Largura, Qtde, (int)IdProd, Redondo,
                     Beneficiamentos.CountAreaMinima, ProdutoDAO.Instance.ObtemAreaMinima((int)IdProd), false, 0, 
                     TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte).ToString();
             }
@@ -636,17 +655,7 @@ namespace Glass.Data.Model
 
         public int TipoCalc
         {
-            get
-            {
-                if (this.IdProd > 0)
-                {
-                    this.IdGrupoProd = this.IdGrupoProd > 0 ? this.IdGrupoProd : (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)this.IdProd);
-
-                    return GrupoProdDAO.Instance.TipoCalculo(null, (int)this.IdGrupoProd, false);
-                }
-
-                return (int)TipoCalculoGrupoProd.Qtd;
-            }
+            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd); }
         }
 
         public bool AlturaEnabled

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Glass.Data.Model;
 using Glass.Data.Helper;
@@ -347,7 +347,7 @@ namespace Glass.Data.DAL
 
         internal decimal GetTotalEstoqueManual(GDASession sessao, int idProd, decimal qtde)
         {
-            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, idProd, false);
+            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, idProd);
             var divisor = new List<int> { (int)TipoCalculoGrupoProd.MLAL0, (int)TipoCalculoGrupoProd.MLAL05, (int)TipoCalculoGrupoProd.MLAL1, (int)TipoCalculoGrupoProd.MLAL6 }.Contains(tipoCalculo) ? 6 : 1;
             var custoCompra = ProdutoDAO.Instance.ObtemCustoCompra(sessao, idProd);
 
@@ -1226,8 +1226,7 @@ namespace Glass.Data.DAL
         {
             MovEstoque mov = GetElementByPrimaryKey(session, idMovEstoque);
 
-            /* Chamado 47777 e 48244. */
-            if (!mov.DeleteVisible && mov.IdNf == 0)
+            if (!mov.DeleteVisible && mov.IdNf.GetValueOrDefault() == 0)
             {
                 throw new Exception("Esta movimentação não foi gerada a partir de um lançamento manual, portanto, não é possível excluí-la.");
             }

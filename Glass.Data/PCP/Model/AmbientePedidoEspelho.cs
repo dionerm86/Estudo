@@ -181,7 +181,7 @@ namespace Glass.Data.Model
             get 
             {
                 return Qtde + " " + PecaVidro + "   Tot. m²: " + 
-                    Glass.Global.CalculosFluxo.ArredondaM2(null, Largura.Value, Altura.Value, (float)Qtde.Value, IdProd > 0 ? (int)IdProd.Value : 0, Redondo, 0, true) + 
+                    Glass.Global.CalculosFluxo.ArredondaM2(Largura.Value, Altura.Value, Qtde.Value, IdProd > 0 ? (int)IdProd.Value : 0, Redondo) + 
                     (PedidoConfig.RelatorioPedido.ExibirTotalML ? "   Tot. ML: " + Math.Round((float)(2 * (Altura.Value + Largura.Value) * Qtde.Value) / 1000, 2) : "");
             }
         }
@@ -229,7 +229,7 @@ namespace Glass.Data.Model
             get
             {
                 return Largura > 0 && Altura > 0 && Qtde > 0 && IdProd > 0 ?
-                    Glass.Global.CalculosFluxo.ArredondaM2(null, Largura.Value, Altura.Value, (float)Qtde.Value, (int)IdProd.Value, Redondo, 0, true) : 0;
+                    Glass.Global.CalculosFluxo.ArredondaM2(Largura.Value, Altura.Value, Qtde.Value, (int)IdProd.Value, Redondo) : 0;
             }
         }
 

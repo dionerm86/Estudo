@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -1144,13 +1144,13 @@ namespace Glass.UI.Web.Utils
                     if (p.QtdeEntradaRestante <= 0)
                         continue;
 
-                    bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                        Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
+                    bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
+                        Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
                     MovEstoqueDAO.Instance.CreditaEstoqueNotaFiscal(null, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
-                        (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
+                        (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
 
-                    objPersistence.ExecuteCommand("update produtos_nf set qtdeEntrada=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p, false).ToString().Replace(",", ".") +
+                    objPersistence.ExecuteCommand("update produtos_nf set qtdeEntrada=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(p).ToString().Replace(",", ".") +
                         " where idProdNf=" + p.IdProdNf);
                 }
             }
@@ -4592,7 +4592,7 @@ namespace Glass.UI.Web.Utils
                             EstoqueFiscal = Glass.Conversoes.StrParaDouble(dados[3].Trim() != String.Empty ? dados[3].Trim() : dados[2].Trim())
                         };
 
-                        if (calcM2.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, idProd, false)))
+                        if (calcM2.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(idProd)))
                             produtoLoja.M2 = produtoLoja.QtdEstoque;
 
                         ProdutoLojaDAO.Instance.AtualizaEstoque(produtoLoja);
@@ -5914,7 +5914,7 @@ namespace Glass.UI.Web.Utils
                         foreach (ProdutosNf p in lstProd)
                             MovEstoqueFiscalDAO.Instance.CreditaEstoqueNotaFiscal(null, p.IdProd, nf.IdLoja.Value,
                                 p.IdCfop > 0 ? p.IdCfop.Value : nf.IdCfop.Value, p.IdNf, p.IdProdNf,
-                                (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p, true), false, false);
+                                (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(p, true), false, false);
 
                         objPersistence.ExecuteCommand("Update nota_fiscal Set entrouEstoque=true Where idNf=" + nf.IdNf);
                     }
@@ -5928,18 +5928,18 @@ namespace Glass.UI.Web.Utils
                         {
                             MovEstoqueFiscalDAO.Instance.BaixaEstoqueNotaFiscal(null, p.IdProd, nf.IdLoja.Value,
                                 p.IdCfop > 0 ? p.IdCfop.Value : nf.IdCfop.Value, p.IdNf, p.IdProdNf,
-                                (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p, true), false);
+                                (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(p, true), false);
 
                             // Altera o estoque real dos produtos
                             if (nf.GerarEstoqueReal)
                             {
-                                bool m2 = GrupoProdDAO.Instance.TipoCalculo(null, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)TipoCalculoGrupoProd.M2 ||
-                                    GrupoProdDAO.Instance.TipoCalculo(null, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd, false) == (int)TipoCalculoGrupoProd.M2Direto;
+                                bool m2 = GrupoProdDAO.Instance.TipoCalculo((int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)TipoCalculoGrupoProd.M2 ||
+                                    GrupoProdDAO.Instance.TipoCalculo((int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)TipoCalculoGrupoProd.M2Direto;
 
                                 MovEstoqueDAO.Instance.BaixaEstoqueNotaFiscal(null, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
-                                    (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p, false));
+                                    (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(p));
 
-                                objPersistence.ExecuteCommand("Update produtos_nf Set qtdeSaida=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(null, p, false).ToString().Replace(",", ".") +
+                                objPersistence.ExecuteCommand("Update produtos_nf Set qtdeSaida=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(p).ToString().Replace(",", ".") +
                                     " Where idProdNf=" + p.IdProdNf);
                             }
                         }
@@ -6859,7 +6859,7 @@ namespace Glass.UI.Web.Utils
         {
             var contasRecebidas = ContasReceberDAO.Instance.GetForRpt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null,
                 null, null, null, null, null, null, null, null, null, 0, 0, 0, 0, null,
-                true, 0, 0, null, null, 0, false, 0, 0, 0, 0, 0, 0, false, false, null, null);
+                true, 0, 0, null, null, 0, false, 0, 0, 0, 0, 0, 0, false, false, null, null, null);
 
             using (var transaction = new GDATransaction())
             {

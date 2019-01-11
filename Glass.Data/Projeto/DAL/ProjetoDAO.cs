@@ -1,4 +1,4 @@
-using GDA;
+Ôªøusing GDA;
 using Glass.Configuracoes;
 using Glass.Data.Exceptions;
 using Glass.Data.Helper;
@@ -15,7 +15,7 @@ namespace Glass.Data.DAL
     {
         //private ProjetoDAO() { }
 
-        #region Listagem Padr„o
+        #region Listagem Padr√£o
 
         private string Sql(uint idProjeto, uint idCliente, string nomeCliente, string dataIni, string dataFim, bool selecionar)
         {
@@ -171,27 +171,27 @@ namespace Glass.Data.DAL
                     // Busca o projeto.
                     Projeto projeto = GetElementByPrimaryKey(transaction, idProjeto);
 
-                    #region ValidaÁıes inciais
+                    #region Valida√ß√µes inciais
 
-                    // Se este projeto estiver finalizado, n„o pode gerar pedido
+                    // Se este projeto estiver finalizado, n√£o pode gerar pedido
                     if (projeto.Situacao == (int)Projeto.SituacaoProjeto.Finalizado)
-                        throw new Exception("Este projeto j· gerou um pedido.");
+                        throw new Exception("Este projeto j√° gerou um pedido.");
 
                     // Verifica se o cliente foi informado
                     if (projeto.IdCliente == null)
                         throw new Exception("Selecione um cliente para o projeto para gerar pedido.");
 
                     /* Chamado 62300.
-                     * O tipo de venda deve ser validado somente para o parceiro, pois, no webglass, a inserÁ„o de projetos n„o disponibiliza a seleÁ„o de tipo de venda. */
+                     * O tipo de venda deve ser validado somente para o parceiro, pois, no webglass, a inser√ß√£o de projetos n√£o disponibiliza a sele√ß√£o de tipo de venda. */
                     if (parceiro && projeto.TipoVenda == 0)
                         throw new Exception("Selecione um tipo venda para o projeto antes de gerar o pedido.");
 
                     /* Chamado 63864. */
-                    // Verifica se existe algum projeto n„o conferido, e se o tipo venda for diferente de REVENDA.
+                    // Verifica se existe algum projeto n√£o conferido, e se o tipo venda for diferente de REVENDA.
                     if (ItemProjetoDAO.Instance.VerificarProjetoPossuiItensNaoConferidos(transaction, (int)idProjeto) && projeto.TipoVenda != 2)
                     {
                         var ambientesNaoConferidos = ItemProjetoDAO.Instance.ObterAmbientesProjetoItensProjetoNaoConferidos(transaction, (int)idProjeto);
-                        throw new Exception(string.Format("Para gerar um pedido atravÈs desse orÁamento, confirme os seguintes projetos: {0}.", string.Join(", ", ambientesNaoConferidos)));
+                        throw new Exception(string.Format("Para gerar um pedido atrav√©s desse or√ßamento, confirme os seguintes projetos: {0}.", string.Join(", ", ambientesNaoConferidos)));
                     }
 
                     #endregion
@@ -227,29 +227,29 @@ namespace Glass.Data.DAL
                         pedido.Desconto = descontoEcommerce.Value;
                     }
 
-                    #region Define as informaÁıes de pagamento do pedido
+                    #region Define as informa√ß√µes de pagamento do pedido
 
-                    // Recupera a parcela padr„o do cliente.
+                    // Recupera a parcela padr√£o do cliente.
                     var tipoPagto = ClienteDAO.Instance.ObtemTipoPagto(transaction, pedido.IdCli);
 
                     if (tipoPagto > 0)
                     {
                         var parcelaPadrao = ParcelasDAO.Instance.GetElementByPrimaryKey(transaction, tipoPagto.Value);
 
-                        // Caso a parcela padr„o seja uma parcela ‡ prazo, altera o tipo de venda do pedido para ¿ Prazo.
+                        // Caso a parcela padr√£o seja uma parcela √† prazo, altera o tipo de venda do pedido para √Ä Prazo.
                         if (parcelaPadrao != null && parcelaPadrao.NumParcelas > 0)
                             pedido.TipoVenda = (int)Pedido.TipoVendaPedido.APrazo;
                     }
 
-                    // Recupera a forma de pagamento padr„o do cliente.
+                    // Recupera a forma de pagamento padr√£o do cliente.
                     var idFormaPagtoCliente = ClienteDAO.Instance.ObtemIdFormaPagto(transaction, pedido.IdCli);
 
                     if (idFormaPagtoCliente > 0)
                     {
-                        // Recupera as formas de pagamento disponÌveis, para o cliente, de acordo com o tipo de venda do pedido.
+                        // Recupera as formas de pagamento dispon√≠veis, para o cliente, de acordo com o tipo de venda do pedido.
                         var formasPagamento = FormaPagtoDAO.Instance.GetForPedido(transaction, (int)pedido.IdCli, pedido.TipoVenda.GetValueOrDefault());
 
-                        // Caso a forma de pagamento, padr„o do cliente, esteja presente nas opÁıes de forma de pagamento do pedido, seleciona ela por padr„o.
+                        // Caso a forma de pagamento, padr√£o do cliente, esteja presente nas op√ß√µes de forma de pagamento do pedido, seleciona ela por padr√£o.
                         if (formasPagamento != null && formasPagamento.Count > 0 && formasPagamento.Select(f => f.IdFormaPagto).Contains(idFormaPagtoCliente))
                             pedido.IdFormaPagto = idFormaPagtoCliente;
                     }
@@ -259,7 +259,7 @@ namespace Glass.Data.DAL
                     uint idPedido = PedidoDAO.Instance.Insert(transaction, pedido);
 
                     if (idPedido == 0)
-                        throw new Exception("InserÁ„o do pedido retornou 0.");
+                        throw new Exception("Inser√ß√£o do pedido retornou 0.");
 
                     #endregion
 
@@ -278,13 +278,13 @@ namespace Glass.Data.DAL
                     {
                         uint idItemProjeto = 0;
 
-                        // Se o produto for um c·lculo de projeto, faz uma cÛpia para o pedido
+                        // Se o produto for um c√°lculo de projeto, faz uma c√≥pia para o pedido
                         if (revendaParceiro)
                             idItemProjeto = ip.IdItemProjeto;
                         else
                             idItemProjeto = PedidoDAO.Instance.ClonaItemProjeto(transaction, ip.IdItemProjeto, idPedido);
 
-                        // Gera ambientes, independente de a empresa usar ou n„o ambientes.
+                        // Gera ambientes, independente de a empresa usar ou n√£o ambientes.
                         AmbientePedido ambiente = new AmbientePedido();
                         ambiente.IdPedido = idPedido;
                         ambiente.Ambiente = ip.Ambiente;
@@ -370,11 +370,11 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region Insere produtos de pedido a partir dos alumÌnios
+                    #region Insere produtos de pedido a partir dos alum√≠nios
 
                     var lstAluminio = new Dictionary<uint, KeyValuePair<uint?, MaterialItemProjeto>>();
 
-                    // Insere os itens do alumÌnio no projeto, se eles tiverem sido agrupados
+                    // Insere os itens do alum√≠nio no projeto, se eles tiverem sido agrupados
                     foreach (uint key in lstAluminio.Keys)
                     {
                         uint? idAmbientePedido = lstAluminio[key].Key;
@@ -453,23 +453,23 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region Salva as imagens do projeto e arquivo de marcaÁ„o
+                    #region Salva as imagens do projeto e arquivo de marca√ß√£o
 
                     var lstImagensPcp = new List<string>();
 
                     if (!revendaParceiro)
                     {
                         // Copia as imagens de projeto que podem ter sido criadas no comercial, alterando o idProdPed do produtos_pedido para o
-                        // idProdPed de produtos_pedido_espelho, recÈm criado
+                        // idProdPed de produtos_pedido_espelho, rec√©m criado
                         foreach (ItemProjeto ip in ItemProjetoDAO.Instance.GetByPedido(transaction, idPedido))
                         {
                             foreach (MaterialItemProjeto mip in MaterialItemProjetoDAO.Instance.GetByItemProjeto(transaction, ip.IdItemProjeto, false))
                             {
                                 // Com base no campo IdMaterItemProjOrig, recupera o produtos_pedido associado ao mesmo, para verificar se
-                                // existe ou n„o alguma figura editada neste produto
+                                // existe ou n√£o alguma figura editada neste produto
                                 var idProdPed = ProdutosPedidoDAO.Instance.GetIdProdPedByMaterItemProj(transaction, idPedido, mip.IdMaterItemProjOrig.Value);
 
-                                // Pega a peÁa associada ‡ este produtos_pedido_espelho
+                                // Pega a pe√ßa associada √† este produtos_pedido_espelho
                                 var peca = PecaItemProjetoDAO.Instance.GetByProdPed(transaction, idProdPed);
 
                                 if (peca == null)
@@ -556,8 +556,8 @@ namespace Glass.Data.DAL
                             PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(transaction, pedido.IdPedido, "Pedido emitido no e-commerce por cliente inativo ou bloqueado");
                         }
 
-                        // Caso n„o seja permitido editar pedidos gerados pelo WebGlass Parceiros, finaliza o pedido na mesma
-                        // transaÁ„o onde ele È gerado, para que, caso ocorra algum problema, o pedido n„o seja inserido.
+                        // Caso n√£o seja permitido editar pedidos gerados pelo WebGlass Parceiros, finaliza o pedido na mesma
+                        // transa√ß√£o onde ele √© gerado, para que, caso ocorra algum problema, o pedido n√£o seja inserido.
                         if (!PedidoConfig.PodeEditarPedidoGeradoParceiro)
                         {
                             // Deixa o pedido conferido.
@@ -568,7 +568,7 @@ namespace Glass.Data.DAL
                         if (!pedido.DataEntrega.HasValue || !PedidoDAO.Instance.ObtemDataEntrega(transaction, pedido.IdPedido).HasValue ||
                             PedidoDAO.Instance.ObtemDataEntrega(transaction, pedido.IdPedido).Value.Date != pedido.DataEntrega.Value.Date)
                         {
-                            var msg = "N„o foi possÌvel calcular a data de entrega do pedido, porque nenhuma rota ou data mÌnima de entrega foi definida.";
+                            var msg = "N√£o foi poss√≠vel calcular a data de entrega do pedido, porque nenhuma rota ou data m√≠nima de entrega foi definida.";
 
                             if (parceiro)
                                 msg += " Entre em contato com seu fornecedor para que a data seja definida.";
@@ -624,16 +624,16 @@ namespace Glass.Data.DAL
             Projeto proj = GetElementByPrimaryKey(idProjeto);
             if (String.IsNullOrEmpty(proj.PedCli))
             {
-                erro = new Exception("Cadastre o seu cÛdigo de pedido para continuar.");
+                erro = new Exception("Cadastre o seu c√≥digo de pedido para continuar.");
                 return 0;
             }
 
             var itemProjeto = ItemProjetoDAO.Instance.GetByProjeto(idProjeto);
 
-            // N„o permite gerar o pedido caso n„o exista item cadastrado
+            // N√£o permite gerar o pedido caso n√£o exista item cadastrado
             if (itemProjeto.Count == 0)
             {
-                erro = new Exception("N„o existem c·lculos neste orÁamento. Inclua pelo menos um para gerar um pedido.");
+                erro = new Exception("N√£o existem c√°lculos neste or√ßamento. Inclua pelo menos um para gerar um pedido.");
                 return 0;
             }
 
@@ -646,15 +646,15 @@ namespace Glass.Data.DAL
                     return 0;
                 }
 
-                // N„o permite gerar o pedido se houver algum item de projeto com o valor zerado
+                // N√£o permite gerar o pedido se houver algum item de projeto com o valor zerado
                 if (MaterialItemProjetoDAO.Instance.GetCount(item.IdItemProjeto) == 0)
                 {
-                    erro = new Exception("Existe pelo menos um c·lculo sem produtos. Corrija-o(s) para continuar.");
+                    erro = new Exception("Existe pelo menos um c√°lculo sem produtos. Corrija-o(s) para continuar.");
                     return 0;
                 }
                 else if (item.Total == 0)
                 {
-                    erro = new Exception("Existe pelo menos um c·lculo sem valor. Corrija-o(s) para continuar.");
+                    erro = new Exception("Existe pelo menos um c√°lculo sem valor. Corrija-o(s) para continuar.");
                     return 0;
                 }
             }
@@ -688,11 +688,8 @@ namespace Glass.Data.DAL
                     // Deixa o pedido Confirmado.
                     var idsPedidos = new List<int>();
                     var idsPedidosErro = new List<int>();
-                    
+
                     if (GetTipoVenda(null, idProjeto) != (uint)Pedido.TipoPedidoEnum.Revenda && PedidoDAO.Instance.ObtemSituacao(null, idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao)
-                    {
-                        PedidoDAO.Instance.ConfirmarLiberacaoPedidoComTransacao(new List<int> { (int)idPedido }, out idsPedidos, out idsPedidosErro, true, false);
-                    }
                     {
                         if (PedidoConfig.PodeEditarPedidoGeradoParceiro)
                         {
@@ -740,19 +737,19 @@ namespace Glass.Data.DAL
                     }
                     catch (Exception ex)
                     {
-                        erro = new Exception($"Falha ao gerar a conferÍncia do pedido. Erro: { ex?.Message ?? ex?.InnerException?.Message }.", ex);
+                        erro = new Exception($"Falha ao gerar a confer√™ncia do pedido. Erro: { ex?.Message ?? ex?.InnerException?.Message }.", ex);
                         ErroDAO.Instance.InserirFromException("GerarPedidoParceiro", erro);
                         return idPedido;
                     }
 
                     try
                     {
-                        // Deixa a conferÍncia do pedido finalizada.
+                        // Deixa a confer√™ncia do pedido finalizada.
                         PedidoEspelhoDAO.Instance.FinalizarPedidoComTransacao(idPedido);
                     }
                     catch (Exception ex)
                     {
-                        erro = new Exception($"Falha ao finalizar a conferÍncia do pedido. Erro: { ex?.Message ?? ex?.InnerException?.Message }.", ex);
+                        erro = new Exception($"Falha ao finalizar a confer√™ncia do pedido. Erro: { ex?.Message ?? ex?.InnerException?.Message }.", ex);
                         ErroDAO.Instance.InserirFromException("GerarPedidoParceiro", erro);
                         return idPedido;
                     }
@@ -773,7 +770,7 @@ namespace Glass.Data.DAL
 
         /// <summary>
         /// Verifica se este projeto pode ser editado.
-        /// Verifica o cliente tambÈm se for chamado dentro do WebGlassParceiros.
+        /// Verifica o cliente tamb√©m se for chamado dentro do WebGlassParceiros.
         /// </summary>
         /// <param name="idProjeto"></param>
         /// <returns></returns>
@@ -835,7 +832,7 @@ namespace Glass.Data.DAL
         #region Atualiza total do projeto
 
         /// <summary>
-        /// Atualiza o valor total do projeto, somando os totais dos produtos relacionados ‡ ele
+        /// Atualiza o valor total do projeto, somando os totais dos produtos relacionados √† ele
         /// </summary>
         public void UpdateTotalProjeto(uint idProjeto)
         {
@@ -843,7 +840,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza o valor total do projeto, somando os totais dos produtos relacionados ‡ ele
+        /// Atualiza o valor total do projeto, somando os totais dos produtos relacionados √† ele
         /// </summary>
         public void UpdateTotalProjeto(GDASession sessao, uint idProjeto)
         {
@@ -891,10 +888,10 @@ namespace Glass.Data.DAL
                     {0}
                     where mip.idItemProjeto in (select idItemProjeto from item_projeto where idProjeto=" + idProjeto + ")";
 
-                // Atualiza a AlÌquota ICMSST somada ao FCPST com o ajuste do MVA e do IPI. Necess·rio porque na tela È recuperado e salvo o valor sem FCPST.
+                // Atualiza a Al√≠quota ICMSST somada ao FCPST com o ajuste do MVA e do IPI. Necess√°rio porque na tela √© recuperado e salvo o valor sem FCPST.
                 objPersistence.ExecuteCommand(sessao, string.Format(sql,
                     "SET mip.AliqIcms=Round((" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, desconto, aliquotaIcmsSt, null) + @"), 2)"));
-                // Atualiza o valor do ICMSST calculado com a AlÌquota recuperada anteriormente.
+                // Atualiza o valor do ICMSST calculado com a Al√≠quota recuperada anteriormente.
                 objPersistence.ExecuteCommand(sessao, string.Format(sql,
                     "SET mip.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, desconto, aliquotaIcmsSt, null) + @")"));
 
@@ -968,10 +965,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Atualiza ObsLiberÁ„o do projeto
+        #region Atualiza ObsLiber√ß√£o do projeto
 
         /// <summary>
-        /// Atualiza a observaÁ„o de liberaÁ„o do projeto e-commerce
+        /// Atualiza a observa√ß√£o de libera√ß√£o do projeto e-commerce
         /// </summary>
         /// <param name="idProjeto"></param>
         /// <param name="obLiberacao"></param>
@@ -982,7 +979,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera a obs liberaÁ„oo do projeto ecommerce
+        /// Recupera a obs libera√ß√£oo do projeto ecommerce
         /// </summary>
         /// <param name="idProjeto"></param>
         /// <returns></returns>
@@ -998,7 +995,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos sobrescritos
+        #region M√©todos sobrescritos
 
         public override uint Insert(Projeto objInsert)
         {
@@ -1014,7 +1011,7 @@ namespace Glass.Data.DAL
                         var idProjetoModeloOtr = ProjetoModeloDAO.Instance.ObtemId(transaction, "OTR01");
 
                         if (idProjetoModeloOtr == 0)
-                            throw new Exception("Para inserir um orÁamento do tipo Revenda È necess·rio cadastrar o projeto de cÛdigo OTR01, contate o suporte WebGlass.");
+                            throw new Exception("Para inserir um or√ßamento do tipo Revenda √© necess√°rio cadastrar o projeto de c√≥digo OTR01, contate o suporte WebGlass.");
                     }
 
                     var login = UserInfo.GetUserInfo;
@@ -1032,8 +1029,8 @@ namespace Glass.Data.DAL
                      * Caso a empresa utilize loja por tipo de pedido, os projetos cadastrados no WebGlass Parceiros
                      * devem ser gerados sem loja definida, para que a loja seja definida ao inserir o primeiro produto no projeto.
                      * (Obs.: produto que esteja associado a um subgrupo e, este, associado a alguma loja).
-                     * Sen„o, caso a empresa utilize a configuraÁ„o de loja por tipo de pedido, somente informa o ID recuperado.
-                     * Sen„o, salva a loja associada ao login no campo IdLoja do projeto. */
+                     * Sen√£o, caso a empresa utilize a configura√ß√£o de loja por tipo de pedido, somente informa o ID recuperado.
+                     * Sen√£o, salva a loja associada ao login no campo IdLoja do projeto. */
                     objInsert.IdLoja = login.IdCliente > 0 && idLojaPorTipoPedido > 0 ? 0 : idLojaPorTipoPedido > 0 ? (uint)idLojaPorTipoPedido.Value : login.IdLoja;
 
                     objInsert.DataCad = DateTime.Now;
@@ -1042,9 +1039,9 @@ namespace Glass.Data.DAL
                     if (objInsert.IdCliente > 0)
                         objInsert.NomeCliente = ClienteDAO.Instance.GetNome(transaction, objInsert.IdCliente.Value);
 
-                    // Se o idOrcamento tiver sido informado, verifica se o mesmo existe e est· em aberto
+                    // Se o idOrcamento tiver sido informado, verifica se o mesmo existe e est√° em aberto
                     if (objInsert.IdOrcamento != null && !(OrcamentoDAO.Instance.ExistsOrcamentoEmAberto(transaction, (int?)objInsert.IdOrcamento)))
-                        throw new Exception("O n˙mero de orÁamento passado n„o existe.");
+                        throw new Exception("O n√∫mero de or√ßamento passado n√£o existe.");
 
                     var retorno = base.Insert(transaction, objInsert);
 
@@ -1085,7 +1082,7 @@ namespace Glass.Data.DAL
 
                     // Se o idOrcamento tiver sido informado, verifica se o mesmo existe
                     if (objUpdate.IdOrcamento != null && !(OrcamentoDAO.Instance.ExistsOrcamentoEmAberto(transaction, (int?)objUpdate.IdOrcamento)))
-                        throw new Exception("O n˙mero de orÁamento passado n„o existe.");
+                        throw new Exception("O n√∫mero de or√ßamento passado n√£o existe.");
 
                     /* Chamado 63864. */
                     if (objUpdate.TipoEntrega != projetoOld.TipoEntrega)
@@ -1107,7 +1104,7 @@ namespace Glass.Data.DAL
                                 }
 
                                 if (aplicacao.NaoPermitirFastDelivery)
-                                    throw new Exception(string.Format("Erro|O produto {0} tem a aplicacao {1} e esta aplicacao n„o permite fast delivery", material.DescrProduto, aplicacao.CodInterno));
+                                    throw new Exception(string.Format("Erro|O produto {0} tem a aplicacao {1} e esta aplicacao n√£o permite fast delivery", material.DescrProduto, aplicacao.CodInterno));
                             }
                         }
                     }
@@ -1115,7 +1112,7 @@ namespace Glass.Data.DAL
                     int retorno = base.Update(transaction, objUpdate);
 
                     // Atualiza total do projeto tendo em vista que um cliente possa ter sido selecionado e
-                    // talvez seja necess·rio calcular a taxa ‡ prazo do mesmo
+                    // talvez seja necess√°rio calcular a taxa √† prazo do mesmo
                     UpdateTotalProjeto(transaction, objUpdate.IdProjeto);
 
                     transaction.Commit();
@@ -1136,12 +1133,12 @@ namespace Glass.Data.DAL
         {
             if (Glass.Conversoes.StrParaInt(this.objPersistence.ExecuteScalar(sessao, "Select Count(*) From pedido Where idProjeto=" + key).ToString()) > 0)
             {
-                throw new InvalidOperationException("Este projeto n„o pode ser excluÌdo por haver um pedido relacionado ao mesmo.");
+                throw new InvalidOperationException("Este projeto n√£o pode ser exclu√≠do por haver um pedido relacionado ao mesmo.");
             }
 
             if (Glass.Conversoes.StrParaInt(this.objPersistence.ExecuteScalar(sessao, "Select Count(*) From orcamento Where idProjeto=" + key).ToString()) > 0)
             {
-                throw new InvalidOperationException("Este projeto n„o pode ser excluÌdo por haver um ou mais orÁamentos relacionados ao mesmo.");
+                throw new InvalidOperationException("Este projeto n√£o pode ser exclu√≠do por haver um ou mais or√ßamentos relacionados ao mesmo.");
             }
 
             this.objPersistence.ExecuteCommand(sessao, "Delete From material_projeto_benef where idMaterItemProj In (Select idMaterItemProj From material_item_projeto Where idItemProjeto In (Select IdItemProjeto From item_projeto Where idProjeto=" + key + "))");

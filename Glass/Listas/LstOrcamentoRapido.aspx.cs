@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -132,7 +132,7 @@ namespace Glass.UI.Web.Listas
 
                 if (Glass.Configuracoes.Geral.NaoVendeVidro())
                 {
-                    // Esconde campos da inser√ß√£o do produto
+                    // Esconde campos da inserÁ„o do produto
                     lblLarguraAltura.Style.Add("display", "none");
                     lblTitleEspessura.Style.Add("display", "none");
                     lblMm.Style.Add("display", "none");
@@ -142,7 +142,7 @@ namespace Glass.UI.Web.Listas
                     txtAltura.Style.Add("display", "none");
                     txtEspessura.Style.Add("display", "none");
 
-                    // Esconde campos da lista de produtos j√° adicionados
+                    // Esconde campos da lista de produtos j· adicionados
                     lblAltLst.Text = "";
                     lblLargLst.Text = "";
                     lblLstTotM2.Text = "";
@@ -153,7 +153,7 @@ namespace Glass.UI.Web.Listas
             }
         }
 
-        #region M√©todos Ajax
+        #region MÈtodos Ajax
 
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string idClienteStr, string tipoEntrega, string revenda, string percDescontoQtdeStr, string alturaStr)
@@ -163,13 +163,13 @@ namespace Glass.UI.Web.Listas
             var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno);
             var idCliente = Conversoes.StrParaUintNullable(idClienteStr);
 
-            // Recupera o valor m√≠nimo do produto
+            // Recupera o valor mÌnimo do produto
             int? tipoEntr = !string.IsNullOrWhiteSpace(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
             return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCliente, revenda == "true", false, percDescontoQtde, null, null, null, altura).ToString();
         }
 
         /// <summary>
-        /// Retorna o C√≥digo/Descri√ß√£o/Valor aplic√°vel do produto
+        /// Retorna o CÛdigo/DescriÁ„o/Valor aplic·vel do produto
         /// </summary>
         [Ajax.AjaxMethod()]
         public string GetProduto(string codInterno, string idCli, string idOrca, string tipoEntrega, string revenda, string percDescontoQtdeStr, string orcamentoRapido)
@@ -179,7 +179,7 @@ namespace Glass.UI.Web.Listas
                 Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, UserInfo.GetUserInfo.IdLoja, Glass.Conversoes.StrParaUintNullable(idCli), null, true);
 
                 if (prod == null)
-                    return "Erro;N√£o existe produto com o c√≥digo informado.";
+                    return "Erro;N„o existe produto com o cÛdigo informado.";
 
                 var subGrupo = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(prod.IdSubgrupoProd.GetValueOrDefault()) ?? new Glass.Data.Model.SubgrupoProd();
 
@@ -198,7 +198,7 @@ namespace Glass.UI.Web.Listas
                 float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
                 retorno += ";" + ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCliente, revenda.ToLower() == "true", false, percDescontoQtde, null, null, idOrca.StrParaIntNullable()).ToString("F2");
 
-                // Verifica qual tipo de entrega ser√° utilizado
+                // Verifica qual tipo de entrega ser· utilizado
                 if (revenda.ToLower() == "true" || ClienteDAO.Instance.IsRevenda(null, idCliente)) // Se for cliente revenda, valor de atacado
                     retorno += ";1";
                 else
@@ -226,27 +226,27 @@ namespace Glass.UI.Web.Listas
                 // Espessura do vidro
                 retorno += ";" + prod.Espessura;
 
-                // Verifica se produto √© vidro
+                // Verifica se produto È vidro
                 retorno += ";" + (Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(prod.IdGrupoProd)).ToString().ToLower();
 
-                // Verifica se produto √© alum√≠nio
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
+                // Verifica se produto È alumÌnio
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
                 retorno += ";" + (Glass.Data.DAL.GrupoProdDAO.Instance.IsAluminio(prod.IdGrupoProd) || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
                     tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6).ToString().ToLower();
 
-                // M¬≤ m√≠nima para o c√°lculo do valor do produto
+                // M≤ mÌnima para o c·lculo do valor do produto
                 retorno += ";" + (prod.AtivarAreaMinima ? prod.AreaMinima.ToString().Replace(',', '.') : "0");
 
-                // Verifica se o produto √© vidro temperado
+                // Verifica se o produto È vidro temperado
                 retorno += ";" + (Glass.Data.DAL.GrupoProdDAO.Instance.IsVidroTemperado(null, prod.IdGrupoProd, prod.IdSubgrupoProd)).ToString().ToLower();
 
-                // Verifica o tipo de c√°lculo que ser√° feito no produto
-                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, prod.IdGrupoProd, prod.IdSubgrupoProd, false);
+                // Verifica o tipo de c·lculo que ser· feito no produto
+                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
 
                 // Custo do produto
                 retorno += ";" + prod.CustoCompra.ToString().Replace(',', '.');
 
-                // Al√≠quota do ICMS
+                // AlÌquota do ICMS
                 retorno += ";" + prod.AliqICMSInterna.ToString().Replace(',', '.');
 
                 bool bloquearEstoque = GrupoProdDAO.Instance.BloquearEstoque(prod.IdGrupoProd, prod.IdSubgrupoProd);
@@ -255,7 +255,7 @@ namespace Glass.UI.Web.Listas
                 retorno += ";" + ProdutoDAO.Instance.ExibirMensagemEstoque(prod.IdProd).ToString().ToLower();
                 retorno += ";" + ProdutoLojaDAO.Instance.GetEstoque(null, UserInfo.GetUserInfo.IdLoja, (uint)prod.IdProd);
 
-                // Altura/Largura padr√£o
+                // Altura/Largura padr„o
                 if (prod.Altura != null && prod.Largura != null)
                     retorno += ";" + prod.Altura.Value + ";" + prod.Largura.Value;
                 else
@@ -275,7 +275,7 @@ namespace Glass.UI.Web.Listas
         }
 
         /// <summary>
-        /// Gera um pedido a partir do or√ßamento r√°pido
+        /// Gera um pedido a partir do orÁamento r·pido
         /// </summary>
         /// <param name="idCli"></param>
         /// <returns></returns>
@@ -294,7 +294,7 @@ namespace Glass.UI.Web.Listas
                 ped.IdCli = Glass.Conversoes.StrParaUint(idCli);
 
                 if (ClienteDAO.Instance.GetSituacao(ped.IdCli) != (int)SituacaoCliente.Ativo)
-                    throw new Exception("O cliente n√£o est√° ativo.");
+                    throw new Exception("O cliente n„o est· ativo.");
 
                 ped.IdFunc = login.CodUser;
                 ped.IdLoja = FuncionarioDAO.Instance.ObtemIdLoja(ped.IdFunc);
@@ -321,11 +321,11 @@ namespace Glass.UI.Web.Listas
                 produtos = produtos.Replace("\r\n", "\n");
                 string[] vetProds = produtos.TrimEnd('\n').Split('\n');
 
-                // Para cada produto do or√ßamento r√°pido
+                // Para cada produto do orÁamento r·pido
                 foreach (string prod in vetProds)
                 {
                     // [0]Id do produto [1]Valor produto (sem benef.) [2]Valor total [3]Qtd [4]Altura [5]AlturaCalc [6]Largura [7]Redondo [8]Area total
-                    // [9]Descri√ß√£o [10]Custo, [11]Valor tabela [12]Espessura [13]Perc. Desc. Qtde [14]ServicoInfo [15]Perc. Comiss√£o [16]IdProcesso [17]IdAplicacao
+                    // [9]DescriÁ„o [10]Custo, [11]Valor tabela [12]Espessura [13]Perc. Desc. Qtde [14]ServicoInfo [15]Perc. Comiss„o [16]IdProcesso [17]IdAplicacao
                     string[] dadosProd = prod.Split('\t');
 
                     prodPed = new ProdutosPedido();
@@ -353,7 +353,7 @@ namespace Glass.UI.Web.Listas
                         prodPed.Espessura = Glass.Conversoes.StrParaInt(espessura);
                     prodPed.CustoProd = decimal.Parse(dadosProd[10].Replace('.', ','));
                     prodPed.ValorTabelaOrcamento = decimal.Parse(dadosProd[11].Replace('.', ','));
-                    prodPed.TipoCalculoUsadoOrcamento = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)prodPed.IdProd, false);
+                    prodPed.TipoCalculoUsadoOrcamento = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)prodPed.IdProd);
                     prodPed.TipoCalculoUsadoPedido = prodPed.TipoCalculoUsadoOrcamento;
                     prodPed.Espessura = !String.IsNullOrEmpty(dadosProd[12]) ? Glass.Conversoes.StrParaFloat(dadosProd[12]) : 0;
                     prodPed.IdProcesso = Glass.Conversoes.StrParaUintNullable(dadosProd[16]);
@@ -384,7 +384,7 @@ namespace Glass.UI.Web.Listas
         }
 
         /// <summary>
-        /// Gera um or√ßamento a partir do or√ßamento r√°pido
+        /// Gera um orÁamento a partir do orÁamento r·pido
         /// </summary>
         /// <param name="nomeCli"></param>
         /// <returns></returns>
@@ -430,8 +430,8 @@ namespace Glass.UI.Web.Listas
 
                 uint? idProdParent = null;
                 prodOrca = new ProdutosOrcamento();
-                prodOrca.Ambiente = "Or√ßamento r√°pido";
-                prodOrca.Descricao = "Produto gerado pelo or√ßamento r√°pido";
+                prodOrca.Ambiente = "OrÁamento r·pido";
+                prodOrca.Descricao = "Produto gerado pelo orÁamento r·pido";
                 prodOrca.IdOrcamento = idOrca;
                 prodOrca.Qtde = 1;
 
@@ -440,11 +440,11 @@ namespace Glass.UI.Web.Listas
                 produtos = produtos.Replace("\r\n", "\n");
                 string[] vetProds = produtos.TrimEnd('\n').Split('\n');
 
-                // Para cada produto do or√ßamento r√°pido
+                // Para cada produto do orÁamento r·pido
                 foreach (string prod in vetProds)
                 {
                     // [0]Id do produto [1]Valor produto (sem benef.) [2]Valor total [3]Qtd [4]Altura [5]AlturaCalc [6]Largura [7]Redondo [8]Area total
-                    // [9]Descri√ß√£o [10]Custo, [11]Valor tabela [12]Espessura [13]Perc. Desc. Qtde [14]ServicoInfo [15]Perc. Comiss√£o [16]IdProcesso [17]IdAplicacao
+                    // [9]DescriÁ„o [10]Custo, [11]Valor tabela [12]Espessura [13]Perc. Desc. Qtde [14]ServicoInfo [15]Perc. Comiss„o [16]IdProcesso [17]IdAplicacao
                     string[] dadosProd = prod.Split('\t');
                     var revenda = ClienteDAO.Instance.IsRevenda(orca.IdCliente);
 
@@ -470,7 +470,7 @@ namespace Glass.UI.Web.Listas
                     if (!String.IsNullOrEmpty(espessura))
                         prodOrca.Espessura = Glass.Conversoes.StrParaInt(espessura);
                     prodOrca.Custo = decimal.Parse(dadosProd[10].Replace('.', ','));
-                    prodOrca.TipoCalculoUsado = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)prodOrca.IdProduto.Value, false);
+                    prodOrca.TipoCalculoUsado = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)prodOrca.IdProduto.Value);
                     prodOrca.Espessura = !String.IsNullOrEmpty(dadosProd[12]) ? Glass.Conversoes.StrParaFloat(dadosProd[12]) : 0;
 
                     if (!String.IsNullOrEmpty(dadosProd[14]))
@@ -495,16 +495,16 @@ namespace Glass.UI.Web.Listas
                     ProdutosOrcamentoDAO.Instance.Insert(prodOrca);
                 }
 
-                // Atualiza o total do or√ßamento
+                // Atualiza o total do orÁamento
                 OrcamentoDAO.Instance.UpdateTotaisOrcamento(null, OrcamentoDAO.Instance.GetElementByPrimaryKey(null, idOrca), false, false);
 
-                return "ok\tOr√ßamento Gerado com sucesso.\t" + idOrca;
+                return "ok\tOrÁamento Gerado com sucesso.\t" + idOrca;
             }
             catch (Exception ex)
             {
                 OrcamentoDAO.Instance.DeleteByPrimaryKey(idOrca);
 
-                return "Erro\t" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao gerar or√ßamento.", ex);
+                return "Erro\t" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao gerar orÁamento.", ex);
             }
         }
 
@@ -522,7 +522,7 @@ namespace Glass.UI.Web.Listas
             try
             {
                 // [0]Id do produto [1]Valor produto (sem benef.) [2]Valor total [3]Qtd [4]Altura [5]AlturaCalc [6]Largura [7]Redondo [8]Area total
-                // [9]Descri√ß√£o [10]Custo, [11]Valor tabela [12]Espessura [13]Perc. Desc. Qtde [14]ServicoInfo [15]Perc. Comiss√£o [16]IdProcesso [17]IdAplicacao
+                // [9]DescriÁ„o [10]Custo, [11]Valor tabela [12]Espessura [13]Perc. Desc. Qtde [14]ServicoInfo [15]Perc. Comiss„o [16]IdProcesso [17]IdAplicacao
                 string[] dadosProd = produto.TrimEnd('\n').Split('\t');
 
                 prodOrca = new ProdutosOrcamento();
@@ -546,7 +546,7 @@ namespace Glass.UI.Web.Listas
                 prodOrca.AlturaCalc = !String.IsNullOrEmpty(dadosProd[5]) ? Single.Parse(dadosProd[5], System.Globalization.NumberStyles.Any) : 0;
                 prodOrca.Largura = !String.IsNullOrEmpty(dadosProd[6]) ? Glass.Conversoes.StrParaInt(dadosProd[6]) : 0;
                 prodOrca.Redondo = dadosProd[7] == "true";
-                prodOrca.TipoCalculoUsado = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)prodOrca.IdProduto.Value, false);
+                prodOrca.TipoCalculoUsado = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)prodOrca.IdProduto.Value);
                 prodOrca.Custo = !String.IsNullOrEmpty(dadosProd[10]) ? decimal.Parse(dadosProd[10].Replace('.', ',')) : 0;
                 prodOrca.Espessura = !String.IsNullOrEmpty(dadosProd[12]) ? Glass.Conversoes.StrParaFloat(dadosProd[12]) : 0;
 
@@ -574,11 +574,11 @@ namespace Glass.UI.Web.Listas
 
                 idProdNovo = ProdutosOrcamentoDAO.Instance.Insert(prodOrca);
 
-                return "ok\tProduto inclu√≠do com sucesso no or√ßamento.\t" + idProdNovo;
+                return "ok\tProduto incluÌdo com sucesso no orÁamento.\t" + idProdNovo;
             }
             catch (Exception ex)
             {
-                return "Erro\t" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao incluir produto no or√ßamento.", ex);
+                return "Erro\t" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao incluir produto no orÁamento.", ex);
             }
         }
 
@@ -591,7 +591,7 @@ namespace Glass.UI.Web.Listas
             {
                 string[] vetProds = produtos.TrimEnd('\n').Split('\n');
 
-                // Para cada produto do or√ßamento r√°pido
+                // Para cada produto do orÁamento r·pido
                 foreach (string prod in vetProds)
                 {
                     string[] resultado = IncluirProdutoOrcamento(idProdString, prod).Split('\t');
@@ -601,11 +601,11 @@ namespace Glass.UI.Web.Listas
                         idProdutos += ", " + resultado[2];
                 }
 
-                return "ok\tProdutos inclu√≠dos com sucesso no or√ßamento.\t" + idProdutos.Substring(2);
+                return "ok\tProdutos incluÌdos com sucesso no orÁamento.\t" + idProdutos.Substring(2);
             }
             catch (Exception ex)
             {
-                return "Erro\t" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao incluir produto no or√ßamento.", ex);
+                return "Erro\t" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao incluir produto no orÁamento.", ex);
             }
         }
 
@@ -618,11 +618,11 @@ namespace Glass.UI.Web.Listas
             {
                 ProdutoOrcamentoBenefDAO.Instance.DeleteByProdOrca(idProd);
                 ProdutosOrcamentoDAO.Instance.DeleteByPrimaryKey(idProd);
-                return "ok\tProduto exclu√≠do com sucesso do or√ßamento.\t" + idProd;
+                return "ok\tProduto excluÌdo com sucesso do orÁamento.\t" + idProd;
             }
             catch (Exception ex)
             {
-                return "Erro\t" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao excluir produto do or√ßamento.", ex);
+                return "Erro\t" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao excluir produto do orÁamento.", ex);
             }
         }
 
@@ -656,11 +656,11 @@ namespace Glass.UI.Web.Listas
                 {
                     if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
                         (prodOrca.Altura < tamanhoMinimoBisote || prodOrca.Largura < tamanhoMinimoBisote))
-                        retorno += $"A altura ou largura minima para pe√ßas com bisot√™ √© de {tamanhoMinimoBisote}mm.";
+                        retorno += $"A altura ou largura minima para peÁas com bisotÍ È de {tamanhoMinimoBisote}mm.";
 
                     if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
                         (prodOrca.Altura < tamanhoMinimoLapidacao || prodOrca.Largura < tamanhoMinimoLapidacao))
-                        retorno += $"A altura ou largura minima para pe√ßas com lapida√ß√£o √© de {tamanhoMinimoLapidacao}mm.";
+                        retorno += $"A altura ou largura minima para peÁas com lapidaÁ„o È de {tamanhoMinimoLapidacao}mm.";
                 }
             }
 
@@ -668,7 +668,7 @@ namespace Glass.UI.Web.Listas
             {
                 if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((int)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)prodOrca.IdProduto)).IsVidroTemperado &&
                         prodOrca.Altura < tamanhoMinimoTemperado && prodOrca.Largura < tamanhoMinimoTemperado)
-                    retorno += $"A altura ou largura minima para pe√ßas com tempera √© de {tamanhoMinimoTemperado}mm.";
+                    retorno += $"A altura ou largura minima para peÁas com tempera È de {tamanhoMinimoTemperado}mm.";
             }
 
             return retorno;

@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Text;
 using GDA;
@@ -16,7 +16,7 @@ namespace Glass.Data.DAL
 
         #region Pagar Contas
 
-        #region MÈtodos de suporte
+        #region M√©todos de suporte
 
         private string GetIdsContas(ContasPagar[] contas)
         {
@@ -33,17 +33,17 @@ namespace Glass.Data.DAL
             decimal desconto, string obs, bool gerarCredito, decimal creditoUtilizado, bool pagtoParcial, string numAutConstrucard, decimal totalMulta,
             decimal totalJuros, decimal totalPago, decimal totalASerPago)
         {
-            #region Vari·veis
+            #region Vari√°veis
 
-            // Data utilizada na geraÁ„o das movimentaÁıes banc·rias.
+            // Data utilizada na gera√ß√£o das movimenta√ß√µes banc√°rias.
             DateTime dataUsar;
-            // Loja utilizada na geraÁ„o das movimentaÁıes do caixa e conta banc·ria.
+            // Loja utilizada na gera√ß√£o das movimenta√ß√µes do caixa e conta banc√°ria.
             var idLoja = (int)UserInfo.GetUserInfo.IdLoja;
-            // Recupera o n˙mero de formas de pagamento v·lidas
+            // Recupera o n√∫mero de formas de pagamento v√°lidas
             var numFormasPagto = 0;
-            // Usado para evitar bloqueio de Ìndice no caixa geral/na conta banc·ria.
+            // Usado para evitar bloqueio de √≠ndice no caixa geral/na conta banc√°ria.
             var contadorDataUnica = 0;
-            // Cheques prÛprios.
+            // Cheques pr√≥prios.
             var chequesInseridos = new List<Cheques>();
             // Salva os ids dos cheques de terceiros.
             var idsChequeTerc = string.Empty;
@@ -69,22 +69,22 @@ namespace Glass.Data.DAL
             {
                 for (var i = 0; i < formasPagto.Length; i++)
                 {
-                    // Somente formas de pagamento com valor podem gerar movimentaÁ„o no caixa ou no banco.
+                    // Somente formas de pagamento com valor podem gerar movimenta√ß√£o no caixa ou no banco.
                     if (valores[i] == 0)
                         continue;
 
                     dataUsar = dataPagto;
 
-                    // Descrescenta a quantidade de formas de pagamento. Na ˙ltima forma de pagamento, os valores de juros e multa, rateados,
-                    // devem ser preenchidos com o valor restante de juros e multa que n„o foi aplicado.
+                    // Descrescenta a quantidade de formas de pagamento. Na √∫ltima forma de pagamento, os valores de juros e multa, rateados,
+                    // devem ser preenchidos com o valor restante de juros e multa que n√£o foi aplicado.
                     numFormasPagto--;
                     
-                    #region Recupera o valor de juros e de multa, para cada forma de pagamento v·lida.
+                    #region Recupera o valor de juros e de multa, para cada forma de pagamento v√°lida.
 
-                    // Caso seja a ˙ltima forma de pagamento, os valores de juros e multa, rateados, devem considerar o valor de juros e multa que n„o foram aplicados.
+                    // Caso seja a √∫ltima forma de pagamento, os valores de juros e multa, rateados, devem considerar o valor de juros e multa que n√£o foram aplicados.
                     if (numFormasPagto == 0)
                     {
-                        // Recupera o valor de juros/multa que, ainda, n„o foi aplicado.
+                        // Recupera o valor de juros/multa que, ainda, n√£o foi aplicado.
                         jurosRateado = totalJuros - jurosAplicado;
                         multaRateada = totalMulta - multaAplicada;
                     }
@@ -95,19 +95,19 @@ namespace Glass.Data.DAL
                         jurosRateado = Math.Round((totalJuros / valores.Sum(f => f)) * valores[i], 2, MidpointRounding.AwayFromZero);
                         multaRateada = Math.Round((totalMulta / valores.Sum(f => f)) * valores[i], 2, MidpointRounding.AwayFromZero);
 
-                        // Salva o valor de juros e multa aplicados, para que o rateio da ˙ltima forma de pagamento fique correto.
+                        // Salva o valor de juros e multa aplicados, para que o rateio da √∫ltima forma de pagamento fique correto.
                         jurosAplicado += jurosRateado;
                         multaAplicada += multaAplicada;
                     }
                     
-                    // Salva, em uma vari·vel, a soma do valor de juros e do valor da multa, rateados. Isso foi feito para reduzir a quantidades de soma que estavam sendo feitas nesse bloco.
+                    // Salva, em uma vari√°vel, a soma do valor de juros e do valor da multa, rateados. Isso foi feito para reduzir a quantidades de soma que estavam sendo feitas nesse bloco.
                     jurosMultaRateados = jurosRateado + multaRateada;
 
                     #endregion
                     
                     #region Dinheiro
 
-                    // Se a forma de pagto for Dinheiro, gera movimentaÁ„o no caixa geral
+                    // Se a forma de pagto for Dinheiro, gera movimenta√ß√£o no caixa geral
                     if (formasPagto[i] == (uint)Pagto.FormaPagto.Dinheiro)
                     {
                         CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoContaPagto((uint)Pagto.FormaPagto.Dinheiro), 2, valores[i] - jurosMultaRateados,
@@ -118,8 +118,8 @@ namespace Glass.Data.DAL
 
                     #region Cheques
 
-                    // Se a forma de pagamento for cheques prÛprios, cadastra cheques, associa os mesmos com as contas
-                    // que est„o sendo pagas, debita valor da conta que foi escolhida em cada cheque
+                    // Se a forma de pagamento for cheques pr√≥prios, cadastra cheques, associa os mesmos com as contas
+                    // que est√£o sendo pagas, debita valor da conta que foi escolhida em cada cheque
                     else if ((formasPagto[i] == (uint)Pagto.FormaPagto.ChequeProprio || formasPagto[i] == (uint)Pagto.FormaPagto.ChequeTerceiro) && !string.IsNullOrEmpty(chequesPagto))
                     {
                         Cheques cheque;
@@ -130,22 +130,22 @@ namespace Glass.Data.DAL
                         var multaRateadaCheque = multaRateada / vetCheque.Length;
                         var jurosMultaRateadosCheque = jurosRateadoCheque + multaRateadaCheque;
 
-                        // Cria um idPagto, que ser· utilizado para identificar este pagto.
+                        // Cria um idPagto, que ser√° utilizado para identificar este pagto.
                         pagtoCheque.IdPagto = idPagto;
 
                         if (formasPagto[i] == (uint)Pagto.FormaPagto.ChequeProprio)
                         {
-                            #region Associa cheques ao pagamento e Gera movimentaÁıes no caixa geral
+                            #region Associa cheques ao pagamento e Gera movimenta√ß√µes no caixa geral
 
                             try
                             {
-                                // Para cada cheque prÛprio informado, cadastra o mesmo, guardando os ids que cada um retorna
+                                // Para cada cheque pr√≥prio informado, cadastra o mesmo, guardando os ids que cada um retorna
                                 foreach (var c in vetCheque)
                                 {
                                     // Divide o cheque para pegar suas propriedades
                                     var dadosCheque = c.Split('\t');
 
-                                    if (dadosCheque[0] == "proprio") // Se for cheque prÛprio
+                                    if (dadosCheque[0] == "proprio") // Se for cheque pr√≥prio
                                     {
                                         // Insere cheque no BD
                                         cheque = ChequesDAO.Instance.GetFromString(c);
@@ -160,11 +160,11 @@ namespace Glass.Data.DAL
                                         if (cheque.IdCheque < 1)
                                             throw new Exception("retorno do insert do cheque=0");
 
-                                        // Adiciona este cheque ‡ lista de cheques inseridos
+                                        // Adiciona este cheque √† lista de cheques inseridos
                                         chequesInseridos.Add(cheque);
 
-                                        // Gera movimentaÁ„o no caixa geral de cada cheque, mas sem alterar o saldo, 
-                                        // a forma de pagto deve ser 0 (zero), para que n„o atrapalhe o c·lculo feito no caixa geral
+                                        // Gera movimenta√ß√£o no caixa geral de cada cheque, mas sem alterar o saldo, 
+                                        // a forma de pagto deve ser 0 (zero), para que n√£o atrapalhe o c√°lculo feito no caixa geral
                                         var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoChequeProprio),
                                             2, cheque.Valor - jurosMultaRateadosCheque, jurosMultaRateadosCheque, null, obs, 0, false, null);
 
@@ -209,7 +209,7 @@ namespace Glass.Data.DAL
 
                             #endregion
 
-                            #region Associa cheques inseridos ao pagamento e Gera MovimentaÁ„o Banc·ria
+                            #region Associa cheques inseridos ao pagamento e Gera Movimenta√ß√£o Banc√°ria
 
                             try
                             {
@@ -221,19 +221,19 @@ namespace Glass.Data.DAL
                                     PagtoChequeDAO.Instance.Insert(sessao, pagtoCheque);
                                 }
 
-                                // Para cada cheque "Compensado" utilizado neste pagamento, debita o valor da conta banc·ria associada ao mesmo
+                                // Para cada cheque "Compensado" utilizado neste pagamento, debita o valor da conta banc√°ria associada ao mesmo
                                 foreach (var c in chequesInseridos)
                                     if (c.Situacao == (int)Cheques.SituacaoCheque.Compensado)
                                     {
                                         ContaBancoDAO.Instance.MovContaChequePagto(sessao, c.IdContaBanco.Value, UtilsPlanoConta.GetPlanoContaPagto(2), idLoja, c.IdCheque, idPagto, idFornec, 2,
                                             c.Valor - jurosMultaRateadosCheque, jurosMultaRateadosCheque, dataUsar);
 
-                                        // Gera movimentaÁ„o de juros.
+                                        // Gera movimenta√ß√£o de juros.
                                         if (c.JurosPagto > 0)
                                             ContaBancoDAO.Instance.MovContaChequePagto(sessao, c.IdContaBanco.Value, FinanceiroConfig.PlanoContaJurosPagto, idLoja, c.IdCheque, idPagto, idFornec, 2,
                                                 jurosRateadoCheque, 0, dataUsar);
 
-                                        // Gera movimentaÁ„o de multa
+                                        // Gera movimenta√ß√£o de multa
                                         if (c.MultaPagto > 0)
                                             ContaBancoDAO.Instance.MovContaChequePagto(sessao, c.IdContaBanco.Value, FinanceiroConfig.PlanoContaMultaPagto, idLoja, c.IdCheque, idPagto, idFornec, 2,
                                                 multaRateadaCheque, 0, dataUsar);
@@ -241,7 +241,7 @@ namespace Glass.Data.DAL
                             }
                             catch (Exception ex)
                             {
-                                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao associar cheques ‡s contas a pagar", ex));
+                                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao associar cheques √†s contas a pagar", ex));
                             }
 
                             #endregion
@@ -249,13 +249,13 @@ namespace Glass.Data.DAL
                         // Se a forma de pagamento for cheques de terceiros
                         else if (formasPagto[i] == (uint)Pagto.FormaPagto.ChequeTerceiro)
                         {
-                            #region Associa cheques ao pagamento e Gera movimentaÁıes no caixa geral
+                            #region Associa cheques ao pagamento e Gera movimenta√ß√µes no caixa geral
 
                             try
                             {
                                 contadorDataUnica = 0;
 
-                                // Para cada cheque prÛprio informado, cadastra o mesmo, guardando os ids que cada um retorna
+                                // Para cada cheque pr√≥prio informado, cadastra o mesmo, guardando os ids que cada um retorna
                                 foreach (var c in vetCheque)
                                 {
                                     // Divide o cheque para pegar suas propriedades
@@ -263,18 +263,18 @@ namespace Glass.Data.DAL
 
                                     if (dadosCheque[0] == "terceiro") // Se for cheque de terceiro
                                     {
-                                        // Associa cada cheque utilizado no pagto ‡ cada conta paga
+                                        // Associa cada cheque utilizado no pagto √† cada conta paga
                                         pagtoCheque.IdCheque = dadosCheque[18].StrParaUint();
                                         var valorCheque = ChequesDAO.Instance.ObtemValorCampo<decimal>(sessao, "Valor", string.Format("IdCheque={0}", pagtoCheque.IdCheque));
 
                                         /* Chamado 55066. */
                                         if (pagtoCheque.IdCheque == 0)
-                                            throw new Exception("N„o foi possÌvel recuperar um dos cheques utilizados no pagamento.");
+                                            throw new Exception("N√£o foi poss√≠vel recuperar um dos cheques utilizados no pagamento.");
 
                                         if (ChequesDAO.Instance.ObterSituacao(sessao, (int)pagtoCheque.IdCheque) != (int)Cheques.SituacaoCheque.EmAberto)
                                         {
                                             var numCheque = ChequesDAO.Instance.ObtemNumCheque(sessao, pagtoCheque.IdCheque);
-                                            throw new Exception($"O cheque {numCheque} n„o pode ser utilizado neste pagamento, verifique a situaÁ„o deste cheque");
+                                            throw new Exception($"O cheque {numCheque} n√£o pode ser utilizado neste pagamento, verifique a situa√ß√£o deste cheque");
                                         }
 
                                         PagtoChequeDAO.Instance.Insert(sessao, pagtoCheque);
@@ -287,7 +287,7 @@ namespace Glass.Data.DAL
                                             new GDAParameter("?multa", multaRateadaCheque),
                                             new GDAParameter("?obs", string.Format("Utilizado no pagamento {0}", idPagto)));
                                         
-                                        // Gera movimentaÁ„o no caixa geral de cada cheque, mas sem alterar o saldo
+                                        // Gera movimenta√ß√£o no caixa geral de cada cheque, mas sem alterar o saldo
                                         var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoChequeTerceiros),
                                             2, valorCheque - jurosMultaRateadosCheque, jurosMultaRateadosCheque, null, null, 2, true, null);
                                             
@@ -303,7 +303,7 @@ namespace Glass.Data.DAL
 
                             #endregion
 
-                            #region Altera situaÁ„o dos cheques para compensado e gera movimentaÁ„o se houver adicional
+                            #region Altera situa√ß√£o dos cheques para compensado e gera movimenta√ß√£o se houver adicional
 
                             try
                             {
@@ -321,23 +321,23 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region DepÛsito (Pagto. Banc·rio) ou Boleto
+                    #region Dep√≥sito (Pagto. Banc√°rio) ou Boleto
 
                     else if (formasPagto[i] == (uint)Pagto.FormaPagto.Deposito || formasPagto[i] == (uint)Pagto.FormaPagto.Boleto)
                     {
                         var idContaDepositoBoleto = formasPagto[i] == (uint)Pagto.FormaPagto.Deposito ?
                             UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoTransfBanco) :
                             UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoBoleto);
-                        // Salva o pagto. banc·rio no Cx. Geral.
+                        // Salva o pagto. banc√°rio no Cx. Geral.
                         var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, idContaDepositoBoleto, 2, valores[i] - jurosMultaRateados, jurosMultaRateados, null, obs,
                             0, false, dataUsar);
-                        // Gera movimentaÁ„o de saÌda na conta banc·ria.
+                        // Gera movimenta√ß√£o de sa√≠da na conta banc√°ria.
                         var idMovBanco = ContaBancoDAO.Instance.MovContaPagto(sessao, idContasBanco[i], idContaDepositoBoleto, idLoja, idPagto, null, idFornec, 2, valores[i] - jurosMultaRateados,
                             jurosMultaRateados, dataUsar, obs);
 
-                        // Necess·rio para evitar bloqueio do Ìndice no caixa geral.
+                        // Necess√°rio para evitar bloqueio do √≠ndice no caixa geral.
                         objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_geral SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdCaixaGeral={1}", contadorDataUnica++, idCaixaGeral));
-                        // Necess·rio para evitar bloqueio do Ìndice na conta banc·ria.
+                        // Necess√°rio para evitar bloqueio do √≠ndice na conta banc√°ria.
                         objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_banco SET DataUnica=CONCAT(DATAUNICA, '_{0}') WHERE IdMovBanco={1}", contadorDataUnica, idMovBanco));
                     }
 
@@ -353,7 +353,7 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region AntecipaÁ„o de Fornecedor
+                    #region Antecipa√ß√£o de Fornecedor
 
                     if (formasPagto[i] == (uint)Pagto.FormaPagto.AntecipFornec)
                     {
@@ -364,9 +364,9 @@ namespace Glass.Data.DAL
                     #endregion
                 }
 
-                #region Gera movimentaÁıes de juros e multa
+                #region Gera movimenta√ß√µes de juros e multa
 
-                // Recupera o n˙mero de formas de pagamento v·lidas para juros (todas menos permuta)
+                // Recupera o n√∫mero de formas de pagamento v√°lidas para juros (todas menos permuta)
                 numFormasPagto = 0;
 
                 for (var i = 0; i < valores.Length; i++)
@@ -387,32 +387,32 @@ namespace Glass.Data.DAL
 
                         for (var j = 0; j < contas.Length; j++)
                         {
-                            // Cheque prÛprio n„o deve gerar movimentaÁ„o de juros/multa, pois caso esteja em aberto,
-                            // a movimentaÁ„o de juros/multa ser· gerada ao quitar o cheque e caso esteja compensado
-                            // a movimentaÁ„o j· foi gerada acima
+                            // Cheque pr√≥prio n√£o deve gerar movimenta√ß√£o de juros/multa, pois caso esteja em aberto,
+                            // a movimenta√ß√£o de juros/multa ser√° gerada ao quitar o cheque e caso esteja compensado
+                            // a movimenta√ß√£o j√° foi gerada acima
                             if (formasPagto[i] == (uint)Pagto.FormaPagto.ChequeProprio)
                                 continue;
 
-                            // Gera movimentaÁ„o na conta banc·ria
+                            // Gera movimenta√ß√£o na conta banc√°ria
                             if (idContasBanco[i] > 0 && formasPagto[i] != (uint)Pagto.FormaPagto.Dinheiro)
                             {
-                                // Gera movimentaÁ„o de juros
+                                // Gera movimenta√ß√£o de juros
                                 if (jurosC[j] > 0)
                                     ContaBancoDAO.Instance.MovContaPagto(sessao, idContasBanco[i], FinanceiroConfig.PlanoContaJurosPagto, idLoja, idPagto, contas[j].IdContaPg, idFornec, 2,
                                         jurosC[j] / numFormasPagto, 0, dataUsar, null);
 
-                                // Gera movimentaÁ„o de multa
+                                // Gera movimenta√ß√£o de multa
                                 if (multaC[j] > 0)
                                     ContaBancoDAO.Instance.MovContaPagto(sessao, idContasBanco[i], FinanceiroConfig.PlanoContaMultaPagto, idLoja, idPagto, contas[j].IdContaPg, idFornec, 2,
                                         multaC[j] / numFormasPagto, 0, dataUsar, null);
                             }
-                            // Gera movimentaÁ„o no caixa geral
+                            // Gera movimenta√ß√£o no caixa geral
                             else
                             {
                                 var formaSaida = formasPagto[i] == (int)Pagto.FormaPagto.ChequeTerceiro ? 2 : formasPagto[i] == (int)Pagto.FormaPagto.Dinheiro ? 1 : 0;
                                 var mudarSaldo = formaSaida == 0 ? false : true;
 
-                                // Gera movimentaÁ„o de juros
+                                // Gera movimenta√ß√£o de juros
                                 if (jurosC[j] > 0)
                                 {
                                     var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[j].IdContaPg, idFornec, FinanceiroConfig.PlanoContaJurosPagto, 2,
@@ -422,7 +422,7 @@ namespace Glass.Data.DAL
                                         idCaixaGeral));
                                 }
 
-                                // Gera movimentaÁ„o de multa
+                                // Gera movimenta√ß√£o de multa
                                 if (multaC[j] > 0)
                                 {
                                     var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[j].IdContaPg, idFornec, FinanceiroConfig.PlanoContaMultaPagto, 2,
@@ -438,24 +438,24 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                #region CrÈdito
+                #region Cr√©dito
 
-                // Se a empresa trabalhar com crÈdito de fornecedor
+                // Se a empresa trabalhar com cr√©dito de fornecedor
                 if (FinanceiroConfig.FormaPagamento.CreditoFornecedor && idFornec > 0)
                 {
-                    // Se algum crÈdito do fornecedor tive sido utilizado
+                    // Se algum cr√©dito do fornecedor tive sido utilizado
                     if (creditoUtilizado > 0)
                     {
                         CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoCreditoFornecedor), 1,
                             creditoUtilizado, 0, null, null, 0, false, null);
                         
-                        // Debita CrÈdito com o fornecedor
+                        // Debita Cr√©dito com o fornecedor
                         FornecedorDAO.Instance.DebitaCredito(sessao, idFornec, creditoUtilizado);
 
-                        #region Gera movimentaÁıes de juros e multa caso o pagamento tenha sido efetuado somente com crÈdito
+                        #region Gera movimenta√ß√µes de juros e multa caso o pagamento tenha sido efetuado somente com cr√©dito
 
                         /* Chamado 34577.
-                         * O pagamento efetuado totalmente com crÈdito deve gerar as movimentaÁıes de juros e multa. */
+                         * O pagamento efetuado totalmente com cr√©dito deve gerar as movimenta√ß√µes de juros e multa. */
                         if (numFormasPagto == 0 && !formasPagto.Any(f => f > 0))
                         {
                             dataUsar = dataPagto.Ticks > 0 ? dataPagto : DateTime.Now;
@@ -465,7 +465,7 @@ namespace Glass.Data.DAL
 
                             for (var i = 0; i < contas.Length; i++)
                             {
-                                // Gera movimentaÁ„o de juros.
+                                // Gera movimenta√ß√£o de juros.
                                 if (jurosC[i] > 0)
                                 {
                                     var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[i].IdContaPg, idFornec, FinanceiroConfig.PlanoContaJurosPagto, 2, jurosC[i], 0, null,
@@ -475,7 +475,7 @@ namespace Glass.Data.DAL
                                         idCaixaGeral));
                                 }
 
-                                // Gera movimentaÁ„o de multa.
+                                // Gera movimenta√ß√£o de multa.
                                 if (multaC[i] > 0)
                                 {
                                     var idCaixaGeral = CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, contas[i].IdContaPg, idFornec, FinanceiroConfig.PlanoContaMultaPagto, 2, multaC[i], 0, null,
@@ -490,15 +490,15 @@ namespace Glass.Data.DAL
                         #endregion
                     }
 
-                    // Se tiver sido gerado algum crÈdito para com o fornecedor
-                    // Chamado 13169. O total a ser pago j· considera o valor do desconto, n„o È necess·rio subtraÌ-lo novamente
+                    // Se tiver sido gerado algum cr√©dito para com o fornecedor
+                    // Chamado 13169. O total a ser pago j√° considera o valor do desconto, n√£o √© necess√°rio subtra√≠-lo novamente
                     //if (gerarCredito && totalPago > (totalASerPago - desconto))
                     if (gerarCredito && totalPago > totalASerPago)
                     {
                         CaixaGeralDAO.Instance.MovCxPagto(sessao, idPagto, null, idFornec, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoCompraGerado), 2,
                             totalPago - totalASerPago, 0, null, null, 0, false, null);
 
-                        // Credita crÈdito do fornecedor
+                        // Credita cr√©dito do fornecedor
                         FornecedorDAO.Instance.CreditaCredito(sessao, idFornec, totalPago - totalASerPago);
                     }
                 }
@@ -508,14 +508,28 @@ namespace Glass.Data.DAL
                 #region Pagamento parcial
 
                 /* Chamado 22203.
-                 * O total a ser pago j· considera o desconto. */
+                 * O total a ser pago j√° considera o desconto. */
                 //if (pagtoParcial && ((totalASerPago - desconto) - totalPago) > 0)
                 if (pagtoParcial && (totalASerPago - totalPago) > 0)
                 {
-                    // IdConta que ser· salvo na conta a pagar restante.
+                    // IdConta que ser√° salvo na conta a pagar restante.
                     var idContaPagtoRestante = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ValorRestantePagto);
                     var idsContaPg = GetIdsContas(contas);
-                    // SQL base utilizado para verificar quais propriedades das contas a pagar, do pagamento, s„o as mesmas. Para que ela seja preenchida na conta do pagamento restante.
+
+                    // Verifica se as contas a pagar deste pagamento possuem o mesmo plano de contas
+                    object value = this.objPersistence.ExecuteScalar(
+                        sessao,
+                        $@"SELECT Cast(group_concat(distinct idConta) AS char)
+                           FROM contas_pagar 
+                           WHERE idContaPg IN ({idsContaPg})
+                           GROUP BY idConta");
+
+                    if (value != null && value.ToString() != string.Empty && !value.ToString().Contains(","))
+                    {
+                        idContaPagtoRestante = Glass.Conversoes.StrParaUint(value.ToString());
+                    }
+
+                    // SQL base utilizado para verificar quais propriedades das contas a pagar, do pagamento, s√£o as mesmas. Para que ela seja preenchida na conta do pagamento restante.
                     var sqlBasePropriedadesEmComum = string.Format(@"
                         SELECT 
                             IF(
@@ -534,11 +548,11 @@ namespace Glass.Data.DAL
                     var idCompra = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdCompra"));
                     // Recupera o ID do custo fixo, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
                     var idCustoFixo = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdCustoFixo"));
-                    // Recupera o ID do imposto/serviÁo avulso, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
+                    // Recupera o ID do imposto/servi√ßo avulso, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
                     var idImpostoServico = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdImpostoServ"));
                     // Recupera o ID da nota fiscal, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
                     var idNf = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdNf"));
-                    // Recupera o ID da comiss„o, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
+                    // Recupera o ID da comiss√£o, caso ele esteja preenchido, com o mesmo valor, em todas as contas a pagar do pagamento.
                     var idComissao = ExecuteScalar<uint?>(sessao, string.Format(sqlBasePropriedadesEmComum, "IdComissao"));
                     // Recupera a propriedade CONTABIL, caso ela esteja preenchida, com o mesmo valor, em todas as contas a pagar do pagamento.
                     var contabil = ExecuteScalar<bool?>(sessao, string.Format(sqlBasePropriedadesEmComum, "Contabil"));
@@ -548,7 +562,7 @@ namespace Glass.Data.DAL
                     // Insere outra parcela contendo o valor restante a ser pago.
                     var contaPagar = new ContasPagar();
                     /* Chamado 22203.
-                     * O total a ser pago j· considera o desconto. */
+                     * O total a ser pago j√° considera o desconto. */
                     //contaPagar.ValorVenc = (totalASerPago - desconto) - totalPago;
                     contaPagar.ValorVenc = totalASerPago - totalPago;
                     contaPagar.DataVenc = DateTime.Now;
@@ -610,14 +624,14 @@ namespace Glass.Data.DAL
             }
             catch (Exception ex)
             {
-                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao alterar situaÁ„o das contas para paga.", ex));
+                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao alterar situa√ß√£o das contas para paga.", ex));
             }
 
             return idPagto;
         }
 
         /// <summary>
-        /// Recupera o valor do crÈdito gerado.
+        /// Recupera o valor do cr√©dito gerado.
         /// </summary>
         /// <param name="contas"></param>
         /// <param name="desconto"></param>
@@ -682,8 +696,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Marca todas as contas a pagar passadas por par‚metro como paga, atualizando 
-        /// o valor pago para o valor venc e a data de pagto para o valor do par‚metro passado
+        /// Marca todas as contas a pagar passadas por par√¢metro como paga, atualizando 
+        /// o valor pago para o valor venc e a data de pagto para o valor do par√¢metro passado
         /// </summary>
         /// <param name="idsContaPagar"></param>
         /// <param name="idPagto"></param>
@@ -694,7 +708,7 @@ namespace Glass.Data.DAL
         {
             var sql = string.Empty;
             var vetMultaJuros = multasJuros.Trim(' ').Trim('|').Trim(',').Split('|');
-            // Se for renegociaÁ„o, o valor do vencimento fica sendo "0".
+            // Se for renegocia√ß√£o, o valor do vencimento fica sendo "0".
             var sqlValorPago = string.Empty;
 
             if (renegociar || valorPago <= 0)
@@ -753,14 +767,14 @@ namespace Glass.Data.DAL
                     observacao = ContasPagarDAO.Instance.ObtemValorCampo<string>(sessao, "obs", "idContaPg=" + contas[i].IdContaPg);
                     if (obs.Length + (contas[i].Obs != null ? contas[i].Obs.Length : 0) > 500)
                         throw new Exception("O campo OBS ultrapassou o limite de caracteres permitido. " +
-                            "O limite m·ximo È de atÈ 500 caracteres, quantidade de caracteres inseridos: " + (obs.Length + (contas[i].Obs != null ? contas[i].Obs.Length : 0)) +
-                            ". ReferÍncia da conta: " + contas[i].Referencia);
+                            "O limite m√°ximo √© de at√© 500 caracteres, quantidade de caracteres inseridos: " + (obs.Length + (contas[i].Obs != null ? contas[i].Obs.Length : 0)) +
+                            ". Refer√™ncia da conta: " + contas[i].Referencia);
                 }
 
                 throw new Exception(ex.Message);
             }
 
-            // Atualiza o saldo das antecipaÁıes de fornecedor
+            // Atualiza o saldo das antecipa√ß√µes de fornecedor
             foreach (var af in antecipFornecedor.Where(x => x > 0))
                 AntecipacaoFornecedorDAO.Instance.AtualizaSaldo(sessao, af);
         }
@@ -768,7 +782,7 @@ namespace Glass.Data.DAL
         #endregion
 
         /// <summary>
-        /// Faz o pagamento das contas passadas por par‚metro
+        /// Faz o pagamento das contas passadas por par√¢metro
         /// </summary>
         public uint PagarContasComTransacao(uint idFornec, string contas, string chequesAssoc, string vetJurosMulta, DateTime dataPagto, DateTime[] datasFormasPagto,
             decimal[] valores, uint[] formasPagto, uint[] idContasBanco, uint[] tiposCartao, uint[] numParcCartao, string[] boletos, uint[] antecipFornec,
@@ -799,7 +813,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Faz o pagamento das contas passadas por par‚metro
+        /// Faz o pagamento das contas passadas por par√¢metro
         /// </summary>
         public uint PagarContas(GDASession session, uint idFornec, string contas, string chequesAssoc, string vetJurosMulta, DateTime dataPagto, DateTime[] datasFormasPagto,
             decimal[] valores, uint[] formasPagto, uint[] idContasBanco, uint[] tiposCartao, uint[] numParcCartao, string[] boletos, uint[] antecipFornec,
@@ -807,16 +821,16 @@ namespace Glass.Data.DAL
         {
             uint idPagto = 0;
 
-            // Se o fornecedor n„o tiver sido passado, verifica se os fornecedores das contas a pagar È o mesmo
+            // Se o fornecedor n√£o tiver sido passado, verifica se os fornecedores das contas a pagar √© o mesmo
             if (idFornec == 0)
                 idFornec = GetFornecFromVariasContas(session, contas);
 
-            // Se o id do fornecedor for 0, n„o deve-se gerar/utilizar crÈdito 
+            // Se o id do fornecedor for 0, n√£o deve-se gerar/utilizar cr√©dito 
             if (idFornec == 0 || !FinanceiroConfig.FormaPagamento.CreditoFornecedor)
             {
-                // Se a opÁ„o de gerar crÈdito estiver marcada mas n„o tiver fornecedor, n„o permite gerar crÈdito
+                // Se a op√ß√£o de gerar cr√©dito estiver marcada mas n√£o tiver fornecedor, n√£o permite gerar cr√©dito
                 if (gerarCredito && FinanceiroConfig.FormaPagamento.CreditoFornecedor)
-                    throw new Exception("N„o È possÌvel gerar crÈdito neste pagamento, as contas a pagar n„o possuem fornecedor associado ou possuem fornecedores diferentes.");
+                    throw new Exception("N√£o √© poss√≠vel gerar cr√©dito neste pagamento, as contas a pagar n√£o possuem fornecedor associado ou possuem fornecedores diferentes.");
 
                 gerarCredito = false;
                 creditoUtilizado = 0;
@@ -831,9 +845,9 @@ namespace Glass.Data.DAL
             // Um pagamento foi criado em duplicidade, criamos este bloqueio para evitar que isso ocorra novamente.
             foreach (var contaPagar in cp)
                 if (contaPagar.Paga)
-                    throw new Exception("A conta " + contaPagar.Referencia + " j· foi paga.");
+                    throw new Exception("A conta " + contaPagar.Referencia + " j√° foi paga.");
 
-            // Valida as informaÁoes do pagto e calcula o total pago e o total a ser pago
+            // Valida as informa√ßoes do pagto e calcula o total pago e o total a ser pago
             decimal totalPago = 0, totalASerPago = 0;
             ValidaPagto(session, idFornec, cp, ref valores, formasPagto, ref totalPago, ref totalASerPago, creditoUtilizado, totalJuros, totalMulta, desconto,
                 pagtoParcial, gerarCredito, vetJurosMulta, false, false);
@@ -857,7 +871,7 @@ namespace Glass.Data.DAL
         #region Retificar Pagamento
 
         /// <summary>
-        /// Retifica o pagamento das contas passadas por par‚metro
+        /// Retifica o pagamento das contas passadas por par√¢metro
         /// </summary>
         public uint RetificarPagto(uint idPagto, uint idFornec, string contas, string chequesAssoc, string vetJurosMulta, DateTime dataPagto, DateTime[] datasFormasPagto,
             decimal[] valores, uint[] formasPagto, uint[] idContasBanco, uint[] tiposCartao, uint[] numParcCartao, string[] boletos, uint[] antecipFornec, string chequesPagto,
@@ -870,7 +884,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    // Se o id do fornecedor for 0, n„o deve-se gerar/utilizar crÈdito 
+                    // Se o id do fornecedor for 0, n√£o deve-se gerar/utilizar cr√©dito 
                     if (idFornec == 0)
                     {
                         gerarCredito = false;
@@ -889,7 +903,7 @@ namespace Glass.Data.DAL
                     Dictionary<uint, decimal> creditoGeradoFornec = new Dictionary<uint, decimal>();
 
                     if (gerarCreditoContasRemovidas && String.IsNullOrEmpty(idsContasRemovidas))
-                        throw new Exception("N„o È possÌvel gerar crÈdito se n„o houver contas removidas.");
+                        throw new Exception("N√£o √© poss√≠vel gerar cr√©dito se n√£o houver contas removidas.");
 
                     decimal totalMulta = TotalJurosMulta(vetJurosMulta, 1);
                     decimal totalJuros = TotalJurosMulta(vetJurosMulta, 2);
@@ -897,14 +911,14 @@ namespace Glass.Data.DAL
                     decimal creditoGerado = !gerarCredito ? 0 :
                         GetCreditoGerado(cp, desconto, valores, totalJuros, totalMulta, creditoUtilizado);
 
-                    // Valida as informaÁoes do pagto.
+                    // Valida as informa√ßoes do pagto.
                     decimal totalPago = 0, totalASerPago = 0;
                     ValidaPagto(transaction, idFornec, cp, ref valores, formasPagto, ref totalPago, ref totalASerPago, creditoUtilizado, totalJuros, totalMulta, desconto,
                         pagtoParcial, gerarCredito, vetJurosMulta, true, gerarCreditoContasRemovidas);
                     
                     PagtoDAO.Instance.CancelarPagto(transaction, idPagto, "", false, null);
 
-                    #region Gera o crÈdito para as contas removidas
+                    #region Gera o cr√©dito para as contas removidas
 
                     if (gerarCreditoContasRemovidas)
                     {
@@ -924,16 +938,16 @@ namespace Glass.Data.DAL
                             if (cp == null)
                                 continue;
 
-                            // Adiciona o crÈdito ‡ vari·vel de controle
+                            // Adiciona o cr√©dito √† vari√°vel de controle
                             if (!creditoGeradoFornec.ContainsKey(contaPag.IdFornec.Value))
                                 creditoGeradoFornec.Add(contaPag.IdFornec.Value, contaPag.ValorPago);
                             else
                                 creditoGeradoFornec[contaPag.IdFornec.Value] += contaPag.ValorPago;
 
-                            // Gera a movimentaÁ„o no caixa geral
+                            // Gera a movimenta√ß√£o no caixa geral
                             gerarCreditoFornec += CaixaGeralDAO.Instance.MovCxPagto(transaction, idPagto, null, contaPag.IdFornec.Value,
                                 UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoCompraGerado),
-                                2, contaPag.ValorPago, 0, null, "RetificaÁ„o de pagamento", 0, false, null) + ",";
+                                2, contaPag.ValorPago, 0, null, "Retifica√ß√£o de pagamento", 0, false, null) + ",";
                         }
 
                         foreach (uint f in creditoGeradoFornec.Keys)
@@ -942,17 +956,17 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    //RICARDO ALTERA«√O
+                    //RICARDO ALTERA√á√ÉO
                     //uint retorno = PagarContas(idPagto, idFornec, cp, chequesAssoc, vetJurosMulta, dataPagto, datasFormasPagto, valores, formasPagto, idContasBanco,
                     //    tiposCartao, numParcCartao, boletos, antecipFornec, chequesPagto, desconto, obs, gerarCredito, creditoUtilizado, pagtoParcial,
                     //    numAutConstrucard, totalMulta, totalJuros, totalPago, totalASerPago);
 
-                    //RICARDO ALTERA«√O
+                    //RICARDO ALTERA√á√ÉO
                     uint retorno = PagarContas(transaction, idFornec, contas, chequesAssoc, vetJurosMulta,
                             dataPagto, datasFormasPagto, valores, formasPagto, idContasBanco, tiposCartao, numParcCartao, boletos,
                             antecipFornec, chequesPagto, desconto, obs, gerarCredito, creditoUtilizado, pagtoParcial, numAutConstrucard);
 
-                    // Salva as alteraÁıes de retificaÁ„o
+                    // Salva as altera√ß√µes de retifica√ß√£o
                     LogAlteracaoDAO.Instance.LogPagto(pagto);
 
                     transaction.Commit();
@@ -974,8 +988,8 @@ namespace Glass.Data.DAL
         #region Valida Pagamento
         
         /// <summary>
-        /// Valida as informaÁıes do pagto e calcula o total pago e o total a ser pago
-        /// MÈtodo criado para validar os dados do pagto ao pagar e ao retificar
+        /// Valida as informa√ß√µes do pagto e calcula o total pago e o total a ser pago
+        /// M√©todo criado para validar os dados do pagto ao pagar e ao retificar
         /// </summary>
         private void ValidaPagto(GDASession session, uint idFornec, ContasPagar[] contas, ref decimal[] valores, uint[] formasPagto,
             ref decimal totalPago, ref decimal totalASerPago, decimal creditoUtilizado, decimal totalJuros, decimal totalMulta,
@@ -985,7 +999,7 @@ namespace Glass.Data.DAL
 
             // Apenas Financeiro Pagto. pode pagar contas
             if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
-                throw new Exception("Apenas funcion·rios Financeiro Pagamento podem efetuar pagamento de contas.");
+                throw new Exception("Apenas funcion√°rios Financeiro Pagamento podem efetuar pagamento de contas.");
 
             totalPago = 0;
 
@@ -998,21 +1012,21 @@ namespace Glass.Data.DAL
 
             totalASerPago -= desconto;
 
-            // N„o permite pagar contas de fornecedor caso o crÈdito com o mesmo esteja negativo
+            // N√£o permite pagar contas de fornecedor caso o cr√©dito com o mesmo esteja negativo
             if (FornecedorDAO.Instance.GetCredito(session, idFornec) < 0)
-                throw new Exception("N„o È possÌvel pagar contas de fornecedor que possua crÈdito negativo. Regularize esta situaÁ„o antes de efetuar o pagamento.");
+                throw new Exception("N√£o √© poss√≠vel pagar contas de fornecedor que possua cr√©dito negativo. Regularize esta situa√ß√£o antes de efetuar o pagamento.");
 
             for (int i = 0; i < valores.Length; i++)
                 if (valores[i] > 0)
                 {
                     if (formasPagto[i] == (int)Glass.Data.Model.Pagto.FormaPagto.AntecipFornec)
                     {
-                        // Faz a validaÁ„o de antecipaÁ„o de fornecedor
+                        // Faz a valida√ß√£o de antecipa√ß√£o de fornecedor
                         if (!FinanceiroConfig.UsarPgtoAntecipFornec)
-                            throw new Exception("A antecipaÁ„o de fornecedor est· desabilitada.");
+                            throw new Exception("A antecipa√ß√£o de fornecedor est√° desabilitada.");
 
                         else if (FornecedorConfig.TipoUsoAntecipacaoFornecedor != DataSources.TipoUsoAntecipacaoFornecedor.ContasPagar)
-                            throw new Exception("N„o È possÌvel utilizar a antecipaÁ„o de fornecedor para o pagamento. Vincule a antecipaÁ„o diretamente ‡ compra/NF-e.");
+                            throw new Exception("N√£o √© poss√≠vel utilizar a antecipa√ß√£o de fornecedor para o pagamento. Vincule a antecipa√ß√£o diretamente √† compra/NF-e.");
                     }
                     else
                         totalPago += valores[i];
@@ -1021,15 +1035,15 @@ namespace Glass.Data.DAL
             for (int i = 0; i < valores.Length; i++)
                 if (valores[i] > 0 && formasPagto[i] == (int)Glass.Data.Model.Pagto.FormaPagto.AntecipFornec)
                 {
-                    // Calcula o valor a ser utilizado de cada antecipaÁ„o
+                    // Calcula o valor a ser utilizado de cada antecipa√ß√£o
                     valores[i] = Math.Max(Math.Min(valores[i], totalASerPago - totalPago), 0);
                     totalPago += valores[i];
                 }
 
-            // Se for pagto. parcial, o valor pago n„o pode ser superior ao valor do pagamento
+            // Se for pagto. parcial, o valor pago n√£o pode ser superior ao valor do pagamento
             if (pagtoParcial)
             {
-                // Se o fornecedor n„o tiver sido informado e mais de uma conta estiver sendo paga, n„o permite, a menos que sejam contas
+                // Se o fornecedor n√£o tiver sido informado e mais de uma conta estiver sendo paga, n√£o permite, a menos que sejam contas
                 // de comissionados
                 if (idFornec == 0 && contas.Length > 1)
                 {
@@ -1042,20 +1056,20 @@ namespace Glass.Data.DAL
                         Where idContaPg In (" + idsContaPg.TrimEnd(',') + ") Group By idComissao");
 
                     if (objIdComissao == null || objIdComissao.ToString() == String.Empty || objIdComissao.ToString().Contains(","))
-                        throw new Exception("A opÁ„o pagamento parcial sÛ pode ser utilizada quando todas as contas a pagar forem do mesmo fornecedor.");
+                        throw new Exception("A op√ß√£o pagamento parcial s√≥ pode ser utilizada quando todas as contas a pagar forem do mesmo fornecedor.");
                 }
 
                 if (totalPago > totalASerPago)
                     throw new Exception("Valor pago excede o valor a ser pagamento.");
             }
 
-            // Se for para gerar crÈdito, o total a ser pago deve ser menor ou igual que o valor pago
+            // Se for para gerar cr√©dito, o total a ser pago deve ser menor ou igual que o valor pago
             else if (FinanceiroConfig.FormaPagamento.CreditoFornecedor && (gerarCredito || gerarCreditoContasRemovidas) && Math.Round(totalASerPago, 2) > Math.Round(totalPago, 2))
-                throw new Exception("Total a ser pago È maior que o valor pago. Total a ser pago: " + Math.Round(totalASerPago, 2).ToString("C") + " Valor pago: " + Math.Round(totalPago, 2).ToString("C"));
+                throw new Exception("Total a ser pago √© maior que o valor pago. Total a ser pago: " + Math.Round(totalASerPago, 2).ToString("C") + " Valor pago: " + Math.Round(totalPago, 2).ToString("C"));
             
-            // Se o total a ser pago for diferente do valor pago, considerando que n„o È para gerar crÈdito
+            // Se o total a ser pago for diferente do valor pago, considerando que n√£o √© para gerar cr√©dito
             else if (!gerarCreditoContasRemovidas && !gerarCredito && Math.Round(totalASerPago, 2) != Math.Round(totalPago, 2))
-                throw new Exception("Total a ser pago n„o confere com valor pago. Total a ser pago: " + Math.Round(totalASerPago, 2).ToString("C") + " Valor pago: " + Math.Round(totalPago, 2).ToString("C"));
+                throw new Exception("Total a ser pago n√£o confere com valor pago. Total a ser pago: " + Math.Round(totalASerPago, 2).ToString("C") + " Valor pago: " + Math.Round(totalPago, 2).ToString("C"));
 
             // Se tiver juros e multa, obriga a selecionar um plano de conta de juros e multa
             if (!String.IsNullOrEmpty(vetJurosMulta) && (FinanceiroConfig.PlanoContaJurosPagto == 0 ||
@@ -1064,11 +1078,11 @@ namespace Glass.Data.DAL
             
             uint idLojaUsuario = UserInfo.GetUserInfo.IdLoja;
 
-            // Verifica se as contas a pagar j· foram pagas e existem
+            // Verifica se as contas a pagar j√° foram pagas e existem
             foreach (ContasPagar c in contas)
             {
                 if (!retificar && c.Paga)
-                    throw new Exception("Uma das contas a pagar selecionadas j· foi paga.");
+                    throw new Exception("Uma das contas a pagar selecionadas j√° foi paga.");
             }
         }
 
@@ -1076,7 +1090,7 @@ namespace Glass.Data.DAL
 
         #region Renegociar Contas
 
-        #region MÈtodos privados
+        #region M√©todos privados
 
         /// <summary>
         /// Renegocia contas a pagar, gerando um pagamento e novas contas com as datas e valores estipulados.
@@ -1095,11 +1109,11 @@ namespace Glass.Data.DAL
                 totalPago += v;
 
             if (Math.Round(totalASerPago, 2) != Math.Round(totalPago, 2))
-                throw new Exception("Total a ser pago n„o confere com valor pago. Total a ser pago: " + Math.Round(totalASerPago, 2).ToString("C") + " Valor pago: " + Math.Round(totalPago, 2).ToString("C"));
+                throw new Exception("Total a ser pago n√£o confere com valor pago. Total a ser pago: " + Math.Round(totalASerPago, 2).ToString("C") + " Valor pago: " + Math.Round(totalPago, 2).ToString("C"));
 
             try
             {
-                // Dados que ser„o usados nas contas que ser„o geradas
+                // Dados que ser√£o usados nas contas que ser√£o geradas
                 uint idConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.PagtoRenegociacao);
                 uint? idCompra = null;
                 uint? idCustoFixo = null;
@@ -1127,7 +1141,7 @@ namespace Glass.Data.DAL
                 if (objIdCustoFixo != null && objIdCustoFixo.ToString() != String.Empty && !objIdCustoFixo.ToString().Contains(","))
                     idCustoFixo = Glass.Conversoes.StrParaUint(objIdCustoFixo.ToString());
 
-                // Verifica se as contas a pagar deste pagamento possuem o mesmo imposto serviÁo
+                // Verifica se as contas a pagar deste pagamento possuem o mesmo imposto servi√ßo
                 object objIdImpostoServico = objPersistence.ExecuteScalar(session, @"Select Cast(group_concat(distinct IdImpostoServ) as char) From contas_pagar 
                     Where idContaPg In (" + contas.Trim().Trim(',') + ")");
                 if (objIdImpostoServico != null && objIdImpostoServico.ToString() != String.Empty && !objIdImpostoServico.ToString().Contains(","))
@@ -1145,7 +1159,7 @@ namespace Glass.Data.DAL
                 if (objIdComissao != null && objIdComissao.ToString() != String.Empty && !objIdComissao.ToString().Contains(","))
                     idComissao = Glass.Conversoes.StrParaUint(objIdComissao.ToString());
 
-                // Verifica se as contas a pagar deste pagamento s„o cont·beis ou n„o
+                // Verifica se as contas a pagar deste pagamento s√£o cont√°beis ou n√£o
                 object objContabil = objPersistence.ExecuteScalar(session, @"Select Cast(group_concat(distinct contabil) as char) From contas_pagar 
                     Where idContaPg In (" + contas.Trim().Trim(',') + ")");
                 if (objContabil != null && objContabil.ToString() != String.Empty && !objContabil.ToString().Contains(","))
@@ -1344,7 +1358,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a compra tem contas a pagar ‡ vista.
+        /// Verifica se a compra tem contas a pagar √† vista.
         /// </summary>
         /// <param name="idCompra"></param>
         /// <returns></returns>
@@ -1429,7 +1443,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna as contas geradas pela renegociaÁ„o de pagamento.
+        /// Retorna as contas geradas pela renegocia√ß√£o de pagamento.
         /// </summary>
         public ContasPagar[] GetRenegociadasPagto(uint idPagto)
         {
@@ -1437,7 +1451,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna as contas geradas pela renegociaÁ„o de pagamento.
+        /// Retorna as contas geradas pela renegocia√ß√£o de pagamento.
         /// </summary>
         public ContasPagar[] GetRenegociadasPagto(GDASession session, uint idPagto)
         {
@@ -1521,7 +1535,7 @@ namespace Glass.Data.DAL
             if (idContaPg > 0)
             {
                 filtroAdicional += " AND c.IdContaPg=" + idContaPg;
-                criterio = "CÛd. conta paga: " + idContaPg + "    ";
+                criterio = "C√≥d. conta paga: " + idContaPg + "    ";
                 temFiltro = true;
             }
 
@@ -1554,7 +1568,7 @@ namespace Glass.Data.DAL
             if (!string.IsNullOrEmpty(dataIniCad))
             {
                 filtroAdicional += " And c.DataCad>=?dataIniCad";
-                criterio += "Data InÌcio Cad.: " + dataIniCad + "    ";
+                criterio += "Data In√≠cio Cad.: " + dataIniCad + "    ";
                 temFiltro = true;
             }
 
@@ -1568,7 +1582,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dtIniPago))
             {
                 filtroAdicional += " And c.DataPagto>=?dtIniPago";
-                criterio += "Data InÌcio Pagto.: " + dtIniPago + "    ";
+                criterio += "Data In√≠cio Pagto.: " + dtIniPago + "    ";
                 temFiltro = true;
             }
 
@@ -1582,7 +1596,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dtIniVenc))
             {
                 filtroAdicional += " And c.DataVenc>=?dtIniVenc";
-                criterio += "Data InÌcio Venc.: " + dtIniVenc + "    ";
+                criterio += "Data In√≠cio Venc.: " + dtIniVenc + "    ";
                 temFiltro = true;
             }
 
@@ -1631,21 +1645,21 @@ namespace Glass.Data.DAL
             if (valorFinal > 0)
             {
                 filtroAdicional += " And c.valorPago<=" + valorFinal.ToString().Replace(',', '.');
-                criterio += "AtÈ: " + valorFinal.ToString("C") + "    ";
+                criterio += "At√©: " + valorFinal.ToString("C") + "    ";
                 temFiltro = true;
             }
 
             if (tipo > 0)
             {
                 filtroAdicional += tipo == 1 ? " And c.contabil=true" : " And (c.contabil is null or c.contabil=false)";
-                criterio += "Tipo: " + (tipo == 1 ? "Cont·bil" : tipo == 2 ? "N„o Cont·bil" : "N/D");
+                criterio += "Tipo: " + (tipo == 1 ? "Cont√°bil" : tipo == 2 ? "N√£o Cont√°bil" : "N/D");
                 temFiltro = true;
             }
 
             if (comissao)
             {
                 filtroAdicional += " and c.idComissao is not null";
-                criterio += "Apenas contas de comiss„o    ";
+                criterio += "Apenas contas de comiss√£o    ";
                 temFiltro = true;
             }
 
@@ -1679,7 +1693,7 @@ namespace Glass.Data.DAL
             if (idComissao > 0)
             {
                 filtroAdicional += " AND c.IdComissao = " + idComissao;
-                criterio += "Comiss„o: " + idComissao + "   ";
+                criterio += "Comiss√£o: " + idComissao + "   ";
                 temFiltro = true;
             }
 
@@ -1713,7 +1727,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca todas as contas a pagar pagas para o relatÛrio
+        /// Busca todas as contas a pagar pagas para o relat√≥rio
         /// </summary>
         public ContasPagar[] GetPagasForRpt(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, string formaPagto,
             string dataIniCad, string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao,
@@ -1734,7 +1748,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca contas pagas
+        /// Busca contas pagas.
         /// </summary>
         public IList<ContasPagar> GetPagas(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, string formaPagto,
             string dataIniCad, string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao,
@@ -1749,8 +1763,23 @@ namespace Glass.Data.DAL
                 valorInicial, valorFinal, tipo, comissao, renegociadas, jurosMulta, planoConta, custoFixo, true, null, exibirAPagar, idComissao, numCte, observacao, out temFiltro, out filtroAdicional)
                 .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
 
-            var lstContasPagar = LoadDataWithSortExpression(sql, sort, startRow, pageSize, temFiltro, filtroAdicional, GetParamPagas(nf, nomeFornec, dataIniCad, dataFimCad, dtIniPago, dtFimPago,
-                dtIniVenc, dtFimVenc, planoConta, observacao)).ToArray();
+            sql += $" ORDER BY {sort}";
+
+            var lstContasPagar = this.objPersistence.LoadDataWithSortExpression(
+                sql,
+                null,
+                new InfoPaging(startRow, pageSize),
+                this.GetParamPagas(
+                    nf,
+                    nomeFornec,
+                    dataIniCad,
+                    dataFimCad,
+                    dtIniPago,
+                    dtFimPago,
+                    dtIniVenc,
+                    dtFimVenc,
+                    planoConta,
+                    observacao)).ToArray();
 
             return lstContasPagar;
         }
@@ -1813,7 +1842,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a entrada da compra est· paga.
+        /// Verifica se a entrada da compra est√° paga.
         /// </summary>
         /// <param name="idCompra"></param>
         /// <returns></returns>
@@ -1871,7 +1900,7 @@ namespace Glass.Data.DAL
         #region Busca por string
         
         /// <summary>
-        /// Retorna as contas a pagar/pagas atravÈs de seus IDs.
+        /// Retorna as contas a pagar/pagas atrav√©s de seus IDs.
         /// </summary>
         public ContasPagar[] GetByString(GDASession sessao, string idsContasPg)
         {
@@ -1880,10 +1909,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca as contas a pagar para desconto/acrÈscimo
+        #region Busca as contas a pagar para desconto/acr√©scimo
 
         /// <summary>
-        /// Busca as contas a pagar para desconto/acrÈscimo.
+        /// Busca as contas a pagar para desconto/acr√©scimo.
         /// </summary>
         /// <param name="idsContasPg"></param>
         /// <returns></returns>
@@ -2117,10 +2146,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Preenche localizaÁ„o de uma conta paga
+        #region Preenche localiza√ß√£o de uma conta paga
 
         /// <summary>
-        /// Preenche a localizaÁ„o de cada conta recebida da lista
+        /// Preenche a localiza√ß√£o de cada conta recebida da lista
         /// </summary>
         /// <param name="lst"></param>
         public void PreencheLocalizacao(GDASession sessao, ref ContasPagar[] lst)
@@ -2136,7 +2165,7 @@ namespace Glass.Data.DAL
                     if (pagto.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro)
                         obj += "Cx. Geral (Dinheiro), ";
                     else if (pagto.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio)
-                        obj += "Cheque PrÛprio" + (pagto.IdContaBanco > 0 ? " " + ContaBancoDAO.Instance.GetElement(pagto.IdContaBanco.Value).Descricao : String.Empty) + ", ";
+                        obj += "Cheque Pr√≥prio" + (pagto.IdContaBanco > 0 ? " " + ContaBancoDAO.Instance.GetElement(pagto.IdContaBanco.Value).Descricao : String.Empty) + ", ";
                     else if (pagto.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro)
                         obj += "Cx. Geral (Cheque Terc.), ";
                     else if (pagto.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito)
@@ -2172,7 +2201,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se os fornecedores das compras s„o iguais e retorna-o
+        /// Verifica se os fornecedores das compras s√£o iguais e retorna-o
         /// </summary>
         private uint GetFornecFromVariasContas(GDASession session, string idsContaPg)
         {
@@ -2191,7 +2220,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca histÛrico de um fornecedor
+        #region Busca hist√≥rico de um fornecedor
 
         private string SqlHist(uint idFornec, string dataIniVenc, string dataFimVenc, string dataIniPag, string dataFimPag,
             float vIniVenc, float vFinVenc, float vIniPag, float vFinPag, bool emAberto, bool pagEmDia, bool pagComAtraso,
@@ -2240,9 +2269,9 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And DATAVENC<=?dtFimVenc";
 
                 if (!String.IsNullOrEmpty(dataIniVenc))
-                    criterio += " atÈ " + dataFimVenc + "    ";
+                    criterio += " at√© " + dataFimVenc + "    ";
                 else
-                    criterio += "Data venc.: atÈ " + dataFimVenc + "    ";
+                    criterio += "Data venc.: at√© " + dataFimVenc + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataIniPag))
@@ -2256,9 +2285,9 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And DATAPAGTO<=?dtFimPag";
 
                 if (!String.IsNullOrEmpty(dataIniPag))
-                    criterio += " atÈ " + dataFimPag + "    ";
+                    criterio += " at√© " + dataFimPag + "    ";
                 else
-                    criterio += "Data pagto.: atÈ " + dataFimPag + "    ";
+                    criterio += "Data pagto.: at√© " + dataFimPag + "    ";
             }
 
             if (vIniVenc > 0)
@@ -2272,9 +2301,9 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And c.valorVenc<=" + vFinVenc.ToString().Replace(',', '.');
 
                 if (vIniVenc > 0)
-                    criterio += "AtÈ: " + vFinVenc.ToString("C") + "    ";
+                    criterio += "At√©: " + vFinVenc.ToString("C") + "    ";
                 else
-                    criterio += "Valor venc.: atÈ " + vFinVenc.ToString("C") + "    ";
+                    criterio += "Valor venc.: at√© " + vFinVenc.ToString("C") + "    ";
             }
 
             if (vIniPag > 0)
@@ -2288,9 +2317,9 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And c.valorPago<=" + vFinPag.ToString().Replace(',', '.');
 
                 if (vIniPag > 0)
-                    criterio += "AtÈ: " + vFinPag.ToString("C") + "    ";
+                    criterio += "At√©: " + vFinPag.ToString("C") + "    ";
                 else
-                    criterio += "Valor pago: atÈ " + vFinPag.ToString("C") + "    ";
+                    criterio += "Valor pago: at√© " + vFinPag.ToString("C") + "    ";
             }
 
             if (!emAberto)
@@ -2310,7 +2339,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o valor das contas do fornecedor por situaÁ„o
+        /// Retorna o valor das contas do fornecedor por situa√ß√£o
         /// </summary>
         /// <param name="tipoValor">1-Em aberto, 2-Rec em dia, 3-Rec com atraso</param>
         public decimal GetHistValor(int tipoValor, uint idFornec, string dataIniVenc, string dataFimVenc, string dataIniPag,
@@ -2385,7 +2414,7 @@ namespace Glass.Data.DAL
                         sortExpression = "DataVenc desc"; break;
                     case "2": // Pagamento
                         sortExpression = "DataPagto desc"; break;
-                    case "3": // SituaÁ„o (Em aberto, Recebida em dia, Recebida com atraso)
+                    case "3": // Situa√ß√£o (Em aberto, Recebida em dia, Recebida com atraso)
                         sortExpression = "Paga, (DataPagto>DataVenc Or DataPagto is null), DataVenc desc"; break;
                 }
 
@@ -2427,7 +2456,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca as contas a pagar que ainda n„o foram pagas junto com cheques que ainda n„o foram quitados
+        #region Busca as contas a pagar que ainda n√£o foram pagas junto com cheques que ainda n√£o foram quitados
         
         private string SqlPagtos(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec,
             string nomeFornec, string dtIni, string dtFim, string dataCadIni, string dataCadFim, uint[] idsFormaPagto, Single valorInicial,
@@ -2458,7 +2487,7 @@ namespace Glass.Data.DAL
             if (idContaPg > 0)
             {
                 where += string.Format(" AND c.IdContaPg={0}", idContaPg);
-                criterio = string.Format("CÛd. conta pagar: {0}    ", idContaPg);
+                criterio = string.Format("C√≥d. conta pagar: {0}    ", idContaPg);
             }
 
             if (idCompra > 0)
@@ -2486,7 +2515,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dtIni))
             {
                 where += " And DataVenc>=?dtIni";
-                criterio += "Data InÌcio: " + dtIni + "    ";
+                criterio += "Data In√≠cio: " + dtIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dtFim))
@@ -2498,13 +2527,13 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataCadIni))
             {
                 where += " and c.DataCad>=?dataCadIni";
-                criterio += "PerÌodo Cad.: " + (!String.IsNullOrEmpty(dataCadFim) ? "de " + dataCadIni : " a partir de " + dataCadIni + "    ");
+                criterio += "Per√≠odo Cad.: " + (!String.IsNullOrEmpty(dataCadFim) ? "de " + dataCadIni : " a partir de " + dataCadIni + "    ");
             }
 
             if (!String.IsNullOrEmpty(dataCadFim))
             {
                 where += " and c.DataCad<=?dataCadFim";
-                criterio += (!String.IsNullOrEmpty(dataCadIni) ? " atÈ " + dataCadFim : "PerÌodo Cad.: atÈ " + dataCadFim) + "    ";
+                criterio += (!String.IsNullOrEmpty(dataCadIni) ? " at√© " + dataCadFim : "Per√≠odo Cad.: at√© " + dataCadFim) + "    ";
             }
 
             if (idsFormaPagto != null && idsFormaPagto.Count() > 0 &&
@@ -2532,7 +2561,7 @@ namespace Glass.Data.DAL
             if (idImpostoServ > 0)
             {
                 where += " And c.idImpostoServ=" + idImpostoServ;
-                criterio += "Imposto/ServiÁo: " + idImpostoServ + "    ";
+                criterio += "Imposto/Servi√ßo: " + idImpostoServ + "    ";
             }
 
             if (valorInicial > 0)
@@ -2544,7 +2573,7 @@ namespace Glass.Data.DAL
             if (valorFinal > 0)
             {
                 where += " And c.valorVenc<=" + valorFinal.ToString().Replace(',', '.');
-                criterio += "AtÈ: " + valorFinal.ToString("C") + "    ";
+                criterio += "At√©: " + valorFinal.ToString("C") + "    ";
             }
 
             if (tipo > 0)
@@ -2557,7 +2586,7 @@ namespace Glass.Data.DAL
             if (comissao)
             {
                 where += " and c.idComissao is not null";
-                criterio += "Apenas contas de comiss„o    ";
+                criterio += "Apenas contas de comiss√£o    ";
             }
 
             if (!String.IsNullOrEmpty(planoConta))
@@ -2589,7 +2618,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dtBaixadoIni))
             {
                 where += " And (DataPagto is null Or DataPagto>=?dtBaixadoIni)";
-                criterio += "Data Baixado InÌcio: " + dtBaixadoIni + "    ";
+                criterio += "Data Baixado In√≠cio: " + dtBaixadoIni + "    ";
                 filtroBaixado = true;
             }
 
@@ -2607,7 +2636,7 @@ namespace Glass.Data.DAL
                 if (!string.IsNullOrEmpty(dtNfCompraIni))
                 {
                     where += " AND IF(COALESCE(c.idNf, 0) > 0, Coalesce(nf.dataEmissao,nf.dataSaidaEnt)>=?dtNfCompraIni, IF(COALESCE(c.idCompra, 0) > 0, cmp.dataCad>=?dtNfCompraIni, 1))";
-                    criterio += "Data NF-e/Compra InÌcio: " + dtNfCompraIni + "     ";
+                    criterio += "Data NF-e/Compra In√≠cio: " + dtNfCompraIni + "     ";
                     filtroNfCompra = true;
                 }
 
@@ -2648,13 +2677,13 @@ namespace Glass.Data.DAL
             if (idFuncComissao > 0)
             {
                 where += " AND com.IdFunc = " + idFuncComissao;
-                criterio += "Func. Comiss„o: " + FuncionarioDAO.Instance.GetNome((uint)idFuncComissao) + "  ";
+                criterio += "Func. Comiss√£o: " + FuncionarioDAO.Instance.GetNome((uint)idFuncComissao) + "  ";
             }
 
             if (idComissao > 0)
             {
                 where += " AND c.IdComissao = " + idComissao;
-                criterio += "Comiss„o: " + idComissao + "   ";
+                criterio += "Comiss√£o: " + idComissao + "   ";
             }
 
             string sql = "(Select " + campos + @" From contas_pagar c 
@@ -2674,7 +2703,7 @@ namespace Glass.Data.DAL
                 Left Join funcionario iCom On (com.idInstalador=iCom.idFunc) 
                 Where " + (filtroBaixado ? "1 " : "(paga=false or paga is null) ") + where + wherePlanoConta;
 
-            // Busca os cheques prÛprios juntamente com as contas a pagar
+            // Busca os cheques pr√≥prios juntamente com as contas a pagar
             if ((incluirCheques || incluirChequesPropDev) && idCompra == 0 && idImpostoServ == 0 && String.IsNullOrEmpty(nf) && !comissao)
             {
                 sql += selecionar ? @") union (Select null as idContaPg, null as IdFornec, null as idConta, null as idCompra, null as idSinalCompra, 
@@ -2683,7 +2712,7 @@ namespace Glass.Data.DAL
                     null as NumBoleto, 0 as Multa, 0 as Juros, null as idPagto, p.idPagto as idPagtoRestante, Coalesce(f.NomeFantasia, f.RazaoSocial, 
                     'Fornecedores Diversos') as NomeFornec, Coalesce(f.NomeFantasia, f.RazaoSocial, 'Fornecedores Diversos') as NomeFornecSemData, 
                     null as nomeTransportador, null as idFormaPagto, null as Nf, Concat('Pagamento de Cheque (Num. Cheque: ', Cast(c.Num as CHAR), ')') as DescrPlanoConta, 
-                    'Cheque PrÛprio' as FormaPagtoCompra, '$$$' as Criterio, c.DataCad, c.usuCad as UsuCad, null as IdNf, null as NumeroNf, 
+                    'Cheque Pr√≥prio' as FormaPagtoCompra, '$$$' as Criterio, c.DataCad, c.usuCad as UsuCad, null as IdNf, null as NumeroNf, 
                     false as contabil, null as Obs, null as ObsCompra, null as idComissao, false as renegociada, null as desconto, 
                     false as aVista, false as previsaoCustoFixo, null as descontoParc, null as acrescimoParc, null as motivoDescontoAcresc, 
                     null as idFuncDescAcresc, null as dataDescAcresc, null as idImpostoServ, null as obsImpostoServ, null as numParc, 
@@ -2788,7 +2817,7 @@ namespace Glass.Data.DAL
                         )", wherePlanoConta, dataCustoFixo, where, (int)CustoFixo.SituacaoEnum.Ativo, wherePrevisaoCustoFixo);
 
                     // Utiliza a data gerada dinamicamente para o custo fixo para fazer o filtro corretamente.
-                    // Ex.: 30/10 atÈ 02/11, n„o buscava custos fixos do dia 01/11 antes desta alteraÁ„o
+                    // Ex.: 30/10 at√© 02/11, n√£o buscava custos fixos do dia 01/11 antes desta altera√ß√£o
                     if (!string.IsNullOrEmpty(dtIni))
                         sql += " and ((data.data - interval day(data.data) day)+interval diaVenc day)>=?dtIni";
 
@@ -2867,7 +2896,7 @@ namespace Glass.Data.DAL
                         )", wherePlanoConta, dataCustoFixo, where, (int)CustoFixo.SituacaoEnum.Ativo, wherePrevisaoCustoFixo);
 
                     // Utiliza a data gerada dinamicamente para o custo fixo para fazer o filtro corretamente.
-                    // Ex.: 30/10 atÈ 02/11, n„o buscava custos fixos do dia 01/11 antes desta alteraÁ„o
+                    // Ex.: 30/10 at√© 02/11, n√£o buscava custos fixos do dia 01/11 antes desta altera√ß√£o
                     if (!string.IsNullOrEmpty(dtIni))
                         sql += " and ((data.data - interval day(data.data) day)+interval diaVenc day)>=?dtIni";
 
@@ -2878,7 +2907,7 @@ namespace Glass.Data.DAL
                         sql += " and coalesce(contabil,false)=" + (tipo == 1 ? "true" : "false");
                 }
 
-                criterio += "Exibir previs„o de custo fixo    ";
+                criterio += "Exibir previs√£o de custo fixo    ";
             }
 
             sql += ")";
@@ -2894,7 +2923,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca todas as contas a pagar que ainda n„o foram pagas para o relatÛrio
+        /// Busca todas as contas a pagar que ainda n√£o foram pagas para o relat√≥rio
         /// </summary>
         public ContasPagar[] GetPagtosForRpt(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ,
             uint idFornec, string nomeFornec, string dtIni, string dtFim, string dataCadIni, string dataCadFim, string idsFormaPagtoString,
@@ -2903,14 +2932,14 @@ namespace Glass.Data.DAL
             bool contasSemValor, string dtBaixadoIni, string dtBaixadoFim, string dtNfCompraIni, string dtNfCompraFim, uint numCte,
             uint idTransportadora, string nomeTransportadora, int idFuncComissao, int idComissao)
         {
-            // Sql para buscar gastos com Sal·rios
+            // Sql para buscar gastos com Sal√°rios
             string sqlSalarios = "Select Sum(coalesce(salario, 0) + coalesce(gratificacao, 0) + coalesce(auxalimentacao, 0)) " +
                 "From funcionario Where situacao=" + (int)Situacao.Ativo;
 
-            // Sql para buscar gastos com fÈrias
+            // Sql para buscar gastos com f√©rias
             string sqlFerias = "Select Sum((coalesce(salario, 0) / 3) / 12) From funcionario where situacao=" + (int)Situacao.Ativo;
 
-            // Sql para buscar gastos com dÈcimo terceiro
+            // Sql para buscar gastos com d√©cimo terceiro
             string sqlDecTerc = "Select Sum(coalesce(salario, 0) / 12) From funcionario where situacao=" + (int)Situacao.Ativo;
 
             // Sql para buscar gastos com IPVA
@@ -2938,7 +2967,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca as contas a pagar que ainda n„o foram pagas
+        /// Busca as contas a pagar que ainda n√£o foram pagas
         /// </summary>
         public IList<ContasPagar> GetPagtos(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ,
             uint idFornec, string nomeFornec, string dtIni, string dtFim, string dataCadIni, string dataCadFim, uint[] idsFormaPagto,
@@ -3098,7 +3127,7 @@ namespace Glass.Data.DAL
             else if (idImpostoServ > 0)
             {
                 filtroAdicional += " And c.idImpostoServ=" + idImpostoServ;
-                criterio = "Num. LanÁ. Imposto/ServiÁo: " + idImpostoServ + "    ";
+                criterio = "Num. Lan√ß. Imposto/Servi√ßo: " + idImpostoServ + "    ";
             }
             else if (contasVinculadas && idFornec > 0)
             {
@@ -3136,7 +3165,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dtIni))
             {
                 filtroAdicional += " And DataVenc>=?dtIni";
-                criterio += "Data InÌcio: " + dtIni + "    ";
+                criterio += "Data In√≠cio: " + dtIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dtFim))
@@ -3160,7 +3189,7 @@ namespace Glass.Data.DAL
             if (valorFinal > 0)
             {
                 filtroAdicional += " And c.valorVenc<=" + valorFinal.ToString().Replace(',', '.');
-                criterio += "Valor: atÈ " + valorFinal.ToString("C") + "    ";
+                criterio += "Valor: at√© " + valorFinal.ToString("C") + "    ";
             }
 
             if (!String.IsNullOrEmpty(tipoContaContabil))
@@ -3173,11 +3202,11 @@ namespace Glass.Data.DAL
             {
                 case 1:
                     filtroAdicional += " and c.idComissao is not null";
-                    criterio += "Apenas contas de comiss„o    ";
+                    criterio += "Apenas contas de comiss√£o    ";
                     break;
                 case 2:
                     filtroAdicional += " and c.idImpostoServ is not null";
-                    criterio += "Apenas contas de lanÁ. imposto/serviÁo    ";
+                    criterio += "Apenas contas de lan√ß. imposto/servi√ßo    ";
                     break;
             }
 
@@ -3190,7 +3219,7 @@ namespace Glass.Data.DAL
             if (soAVista)
             {
                 filtroAdicional += " and c.aVista=true";
-                criterio += "Apenas contas ‡ vista/entrada    ";
+                criterio += "Apenas contas √† vista/entrada    ";
             }
 
             if (numCte > 0)
@@ -3208,13 +3237,13 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca as contas a pagar que ainda n„o foram pagas
+        /// Busca as contas a pagar que ainda n√£o foram pagas
         /// </summary>
         public IList<ContasPagar> GetNaoPagas(uint idCompra, uint idImpostoServ, string nf, uint idLoja, uint idFornec, string nomeFornec, string dtIni,
             string dtFim, Single valorInicial, Single valorFinal, string tipoContaContabil, int tipoConta, bool custoFixo, int numCte, bool contasVinculadas,
             string sortExpression, int startRow, int pageSize)
         {
-            // A ordenaÁ„o de c.idContaPg deve ser feita pois estava ocorrendo um problema no "LoadDataWithSortExpression",
+            // A ordena√ß√£o de c.idContaPg deve ser feita pois estava ocorrendo um problema no "LoadDataWithSortExpression",
             // ao recuperar os ids da tabela para otimizar o sql, o mesmo id estava sendo repetido pelas paginas.
             string sort = String.IsNullOrEmpty(sortExpression) ? "c.DataVenc Asc, c.idContaPg" : sortExpression;
 
@@ -3243,7 +3272,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca as contas a pagar que ainda n„o foram pagas de uma compra
+        /// Busca as contas a pagar que ainda n√£o foram pagas de uma compra
         /// </summary>
         public ContasPagar[] GetNaoPagasByCompra(uint idCompra, bool soAVista)
         {
@@ -3257,7 +3286,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca as contas a pagar que ainda n„o foram pagas de um custo fixo
+        /// Busca as contas a pagar que ainda n√£o foram pagas de um custo fixo
         /// </summary>
         public ContasPagar[] GetNaoPagasByCustoFixo(uint idCustoFixo, bool soAVista)
         {
@@ -3271,7 +3300,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca as contas a pagar que ainda n„o foram pagas de um lanÁamento de imposto/serviÁo avulso.
+        /// Busca as contas a pagar que ainda n√£o foram pagas de um lan√ßamento de imposto/servi√ßo avulso.
         /// </summary>
         public ContasPagar[] GetNaoPagasByImpostoServ(uint idImpostoServ, bool soAVista)
         {
@@ -3373,7 +3402,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca as contas a pagar que ainda n„o foram pagas
+        /// Busca as contas a pagar que ainda n√£o foram pagas
         /// </summary>
         public IList<ContasPagar> GetBoletoChegou(uint idCompra, uint idLoja, string nf, uint idFornec, string nomeFornec, string sortExpression, int startRow, int pageSize)
         {
@@ -3416,7 +3445,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Exclui contas da compra/comiss„o passada
+        #region Exclui contas da compra/comiss√£o passada
 
         /// <summary>
         /// Exclui todas as contas a pagar da compra passada
@@ -3432,14 +3461,14 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Exclui todas as contas a pagar da comiss„o passada
+        /// Exclui todas as contas a pagar da comiss√£o passada
         /// </summary>
         /// <param name="idComissao"></param>
         /// <param name="inicioMotivo"></param>
         public void DeleteByComissao(GDATransaction session, uint idComissao, string inicioMotivo)
         {
             foreach (ContasPagar c in objPersistence.LoadData("select * from contas_pagar where idComissao=" + idComissao).ToList())
-                LogCancelamentoDAO.Instance.LogContaPagar(session, c, inicioMotivo + " da Comiss„o " + idComissao, false);
+                LogCancelamentoDAO.Instance.LogContaPagar(session, c, inicioMotivo + " da Comiss√£o " + idComissao, false);
 
             string sql = "Delete From contas_pagar Where idComissao=" + idComissao;
             objPersistence.ExecuteCommand(session, sql);
@@ -3452,10 +3481,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Exclui contas a pagar de um imposto/serviÁo
+        #region Exclui contas a pagar de um imposto/servi√ßo
 
         /// <summary>
-        /// Exclui contas a pagar de um imposto/serviÁo
+        /// Exclui contas a pagar de um imposto/servi√ßo
         /// </summary>
         public void DeleteByImpostoServ(GDASession session, uint idImpostoServ)
         {
@@ -3499,10 +3528,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Exclui contas a pagar de uma antecipaÁ„o de fornecedor
+        #region Exclui contas a pagar de uma antecipa√ß√£o de fornecedor
 
         /// <summary>
-        /// Exclui contas a pagar de uma antecipaÁ„o de fornecedor
+        /// Exclui contas a pagar de uma antecipa√ß√£o de fornecedor
         /// </summary>
         public void DeleteByAntecipFornec(GDASession session, uint idAntecipFornec)
         {
@@ -3512,10 +3541,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Exclui contas a pagar n„o pagas do custo fixo passado
+        #region Exclui contas a pagar n√£o pagas do custo fixo passado
 
         /// <summary>
-        /// Exclui contas a pagar n„o pagas do custo fixo passado
+        /// Exclui contas a pagar n√£o pagas do custo fixo passado
         /// </summary>
         /// <param name="idCustoFixo"></param>
         public void DeleteFromCustoFixo(uint idCustoFixo)
@@ -3532,9 +3561,9 @@ namespace Glass.Data.DAL
         #region Excluir contas a pagar que estiverem em idsContasPagar
 
         /// <summary>
-        /// Exclui as contas a pagar passadas por par‚metro
+        /// Exclui as contas a pagar passadas por par√¢metro
         /// </summary>
-        /// <param name="idsContasPagar">Ids das contas a serem excluÌdos separados por ",". Ex.: 1,2,3</param>
+        /// <param name="idsContasPagar">Ids das contas a serem exclu√≠dos separados por ",". Ex.: 1,2,3</param>
         public void ExcluiContas(string idsContasPagar)
         {
             string sql = "Delete From contas_pagar Where idContaPg In (" + idsContasPagar.TrimEnd(' ').Trim(',') + ")";
@@ -3544,7 +3573,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se Custo Fixo j· foi gerado
+        #region Verifica se Custo Fixo j√° foi gerado
 
         public bool ExistsCustoFixo(uint idCustoFixo, string mesAno)
         {
@@ -3552,7 +3581,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se j· foi gerada uma Conta a Pagar a partir do custo fixo, do mÍs e do ano passados
+        /// Verifica se j√° foi gerada uma Conta a Pagar a partir do custo fixo, do m√™s e do ano passados
         /// </summary>
         /// <param name="idCustoFixo"></param>
         /// <param name="mes"></param>
@@ -3570,10 +3599,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se Custo Fixo gerado j· foi pago
+        #region Verifica se Custo Fixo gerado j√° foi pago
 
         /// <summary>
-        /// Verifica se j· foi pago uma Conta a Pagar a partir do custo fixo, do mÍs e do ano passados
+        /// Verifica se j√° foi pago uma Conta a Pagar a partir do custo fixo, do m√™s e do ano passados
         /// </summary>
         /// <param name="idCustoFixo"></param>
         /// <param name="mes"></param>
@@ -3590,7 +3619,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se j· foi pago uma Conta a Pagar a partir do custo fixo
+        /// Verifica se j√° foi pago uma Conta a Pagar a partir do custo fixo
         /// </summary>
         /// <param name="idCustoFixo"></param>
         /// <param name="mes"></param>
@@ -3622,9 +3651,9 @@ namespace Glass.Data.DAL
             List<ContasPagar> lst = objPersistence.LoadData(sql).ToList();
 
             if (lst.Count == 0)
-                throw new Exception("Nenhuma Conta a Pagar encontrada para o Custo Fixo e o MÍs informados.");
+                throw new Exception("Nenhuma Conta a Pagar encontrada para o Custo Fixo e o M√™s informados.");
             else if (lst.Count > 1)
-                throw new Exception("Mais de uma Conta a Pagar encontrada para o Custo Fixo e o MÍs informados.");
+                throw new Exception("Mais de uma Conta a Pagar encontrada para o Custo Fixo e o M√™s informados.");
             else
                 return lst[0];
         }
@@ -3634,7 +3663,7 @@ namespace Glass.Data.DAL
         #region Cancela contas a pagar provenientes de Custo Fixo
 
         /// <summary>
-        /// Busca as contas a pagar de um mÍs e ano relacionadas a custos fixos.
+        /// Busca as contas a pagar de um m√™s e ano relacionadas a custos fixos.
         /// </summary>
         /// <param name="mesAno"></param>
         /// <returns></returns>
@@ -3671,12 +3700,12 @@ namespace Glass.Data.DAL
             // Para cada conta a pagar desta compra
             foreach (ContasPagar c in lstContas)
             {
-                // Se a conta n„o tiver paga, guarda seu id para ser excluÌda
+                // Se a conta n√£o tiver paga, guarda seu id para ser exclu√≠da
                 if (!c.Paga)
                     idsContasPagarAExcluir += c.IdContaPg + ",";
                 else
                 {
-                    // Se esta conta estiver no caixa Geral, e ainda n„o tiver sido estornada, estorna o valor
+                    // Se esta conta estiver no caixa Geral, e ainda n√£o tiver sido estornada, estorna o valor
                     if (CaixaGeralDAO.Instance.ExisteContaPaga(c.IdContaPg) && !CaixaGeralDAO.Instance.ExisteEstornoConta(c.IdContaPg))
                         CaixaGeralDAO.Instance.EstornaContaPaga(c.IdContaPg, c.ValorPago);
                     
@@ -3689,7 +3718,7 @@ namespace Glass.Data.DAL
 
             try
             {
-                // Exclui contas a pagar que n„o foram pagas
+                // Exclui contas a pagar que n√£o foram pagas
                 if (idsContasPagarAExcluir != String.Empty)
                     ExcluiContas(idsContasPagarAExcluir);
             }
@@ -3706,17 +3735,17 @@ namespace Glass.Data.DAL
         public void CancelaCustoFixo(uint idContaPg)
         {
             if (ObtemValorCampo<bool>("paga", "idContaPg=" + idContaPg))
-                throw new Exception("Este custo fixo est· pago. Cancele o seu pagamento antes de cancel·-lo.");
+                throw new Exception("Este custo fixo est√° pago. Cancele o seu pagamento antes de cancel√°-lo.");
 
             ExcluiContas(idContaPg.ToString());
         }
 
         #endregion
 
-        #region Marcar se boletou chegou ou n„o
+        #region Marcar se boletou chegou ou n√£o
 
         /// <summary>
-        /// Marcar se boletou chegou ou n„o
+        /// Marcar se boletou chegou ou n√£o
         /// </summary>
         /// <param name="boletoChegou"></param>
         /// <param name="idCompra"></param>
@@ -3747,10 +3776,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se a conta a pagar existe e se est· paga
+        #region Verifica se a conta a pagar existe e se est√° paga
 
         /// <summary>
-        /// Verifica se a conta a pagar existe e se est· paga
+        /// Verifica se a conta a pagar existe e se est√° paga
         /// </summary>
         /// <param name="idContaPg"></param>
         /// <returns></returns>
@@ -3762,7 +3791,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a conta a pagar existe e se est· paga
+        /// Verifica se a conta a pagar existe e se est√° paga
         /// </summary>
         /// <param name="idContaPg"></param>
         /// <returns></returns>
@@ -3808,7 +3837,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se existe alguma conta a pagar/paga de imposto/serviÁo
+        /// Verifica se existe alguma conta a pagar/paga de imposto/servi√ßo
         /// </summary>
         public bool ExisteImpostoServ(GDASession session, uint idImpostoServ)
         {
@@ -3817,10 +3846,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se h· alguma conta paga na antecipaÁ„o de fornecedor passada
+        #region Verifica se h√° alguma conta paga na antecipa√ß√£o de fornecedor passada
 
         /// <summary>
-        /// Verifica se h· alguma conta recebida na obra passada
+        /// Verifica se h√° alguma conta recebida na obra passada
         /// </summary>
         public bool ExistePagaAntecipFornec(GDASession session, uint idAntecipFornec)
         {
@@ -3886,10 +3915,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera a conta a pagar de uma comiss„o
+        #region Recupera a conta a pagar de uma comiss√£o
 
         /// <summary>
-        /// Recupera a conta a pagar de uma comiss„o.
+        /// Recupera a conta a pagar de uma comiss√£o.
         /// </summary>
         /// <param name="idComissao"></param>
         /// <returns></returns>
@@ -3907,10 +3936,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera as contas a pagar de um lanÁamento de imposto/serviÁo
+        #region Recupera as contas a pagar de um lan√ßamento de imposto/servi√ßo
 
         /// <summary>
-        /// Recupera as contas a pagar de um lanÁamento de imposto/serviÁo.
+        /// Recupera as contas a pagar de um lan√ßamento de imposto/servi√ßo.
         /// </summary>
         public ContasPagar[] GetByImpostoServ(uint idImpostoServ)
         {
@@ -3918,7 +3947,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera as contas a pagar de um lanÁamento de imposto/serviÁo.
+        /// Recupera as contas a pagar de um lan√ßamento de imposto/servi√ßo.
         /// </summary>
         public ContasPagar[] GetByImpostoServ(GDASession session, uint idImpostoServ)
         {
@@ -3928,10 +3957,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca a conta a pagar gerada por um cheque prÛprio devolvido
+        #region Busca a conta a pagar gerada por um cheque pr√≥prio devolvido
 
         /// <summary>
-        /// Busca a conta a pagar gerada por um cheque prÛprio devolvido.
+        /// Busca a conta a pagar gerada por um cheque pr√≥prio devolvido.
         /// </summary>
         public ContasPagar GetByChequeDev(GDASession session, int idCheque, int? idPagto, int? idCreditoFornecedor, int? idSinalCompra)
         {
@@ -3944,8 +3973,8 @@ namespace Glass.Data.DAL
                 UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ValorRestantePagto), idCheque);
 
             /* Chamado 56581.
-             * Removi a condiÁ„o que busca a conta a pagar pela propriedade IdPagto, pois, caso a conta seja paga essa propriedade ser· atualizada com o novo IdPagto,
-             * sendo assim, esse mÈtodo nunca iria retornar contas pagas referentes ao cheque. */
+             * Removi a condi√ß√£o que busca a conta a pagar pela propriedade IdPagto, pois, caso a conta seja paga essa propriedade ser√° atualizada com o novo IdPagto,
+             * sendo assim, esse m√©todo nunca iria retornar contas pagas referentes ao cheque. */
             if (idPagto > 0)
                 sql += string.Format(" AND IdPagtoRestante={0}", idPagto);
 
@@ -3962,7 +3991,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Atualiza os n˙meros de parcela
+        #region Atualiza os n√∫meros de parcela
 
         private void AtualizaNumParcBase(string nomeCampo, uint id)
         {
@@ -3985,7 +4014,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza os n˙meros de parcela por compra.
+        /// Atualiza os n√∫meros de parcela por compra.
         /// </summary>
         /// <param name="idCompra"></param>
         public void AtualizaNumParcCompra(GDASession sessao, uint idCompra)
@@ -3994,7 +4023,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza os n˙meros de parcela por custo fixo.
+        /// Atualiza os n√∫meros de parcela por custo fixo.
         /// </summary>
         /// <param name="idCustoFixo"></param>
         public void AtualizaNumParcCustoFixo(uint idCustoFixo)
@@ -4008,7 +4037,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza os n˙meros de parcela por pagto.
+        /// Atualiza os n√∫meros de parcela por pagto.
         /// </summary>
         /// <param name="idPagto"></param>
         public void AtualizaNumParcPagto(GDASession sessao, uint idPagto)
@@ -4022,7 +4051,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza os n˙meros de parcela por sinal de compra.
+        /// Atualiza os n√∫meros de parcela por sinal de compra.
         /// </summary>
         public void AtualizaNumParcSinalCompra(GDASession sessao, uint idSinalCompra)
         {
@@ -4030,7 +4059,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza os n˙meros de parcela por pagto restante.
+        /// Atualiza os n√∫meros de parcela por pagto restante.
         /// </summary>
         /// <param name="idPagtoRestante"></param>
         public void AtualizaNumParcPagtoRestante(uint idPagtoRestante)
@@ -4039,7 +4068,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza os n˙meros de parcela por pagto restante.
+        /// Atualiza os n√∫meros de parcela por pagto restante.
         /// </summary>
         /// <param name="idPagtoRestante"></param>
         public void AtualizaNumParcPagtoRestante(GDASession sessao ,uint idPagtoRestante)
@@ -4048,7 +4077,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza os n˙meros de parcela por imposto/serviÁo.
+        /// Atualiza os n√∫meros de parcela por imposto/servi√ßo.
         /// </summary>
         /// <param name="idPagto"></param>
         public void AtualizaNumParcImpostoServ(GDASession sessao, uint idImpostoServ)
@@ -4057,7 +4086,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza os n˙meros de parcela por NF.
+        /// Atualiza os n√∫meros de parcela por NF.
         /// </summary>
         /// <param name="idPagto"></param>
         public void AtualizaNumParcNf(GDASession sessao, uint idNf)
@@ -4066,7 +4095,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza os n˙meros de parcelas por conta a pagar.
+        /// Atualiza os n√∫meros de parcelas por conta a pagar.
         /// </summary>
         /// <param name="idContaPg"></param>
         public void AtualizaNumParcContaPg(uint idContaPg)
@@ -4085,7 +4114,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera a referÍncia de uma conta a pagar
+        #region Recupera a refer√™ncia de uma conta a pagar
 
         public string GetReferencia(uint idContaPg)
         {
@@ -4111,10 +4140,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region ObtÈm informaÁıes da conta a pagar
+        #region Obt√©m informa√ß√µes da conta a pagar
         
         /// <summary>
-        /// ObtÈm o tipo de conta a pagar.
+        /// Obt√©m o tipo de conta a pagar.
         /// </summary>
         /// <param name="idContaPg"></param>
         /// <returns></returns>
@@ -4189,7 +4218,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera campos especÌficos da conta a pagar
+        #region Recupera campos espec√≠ficos da conta a pagar
 
         /// <summary>
         /// Insere todas as contas a pagar na tabela contas_pagar_data_base.
@@ -4205,7 +4234,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos sobrescritos
+        #region M√©todos sobrescritos
 
         public override uint Insert(GDASession sessao, ContasPagar objInsert)
         {
@@ -4223,8 +4252,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza os dados da conta a pagar/paga.
         /// </summary>
-        /// <param name="contaPagar">A conta a pagar com os dados que ser„o alterados.</param>
-        /// <returns>O n˙mero de linhas afetadas pela alteraÁ„o.</returns>
+        /// <param name="contaPagar">A conta a pagar com os dados que ser√£o alterados.</param>
+        /// <returns>O n√∫mero de linhas afetadas pela altera√ß√£o.</returns>
         public override int Update(ContasPagar contaPagar)
         {
             using (var sessao = new GDATransaction())
@@ -4251,14 +4280,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza os dados da conta a pagar/paga.
         /// </summary>
-        /// <param name="sessao">A transaÁ„o atual.</param>
-        /// <param name="contaPagar">A conta a pagar com os dados que ser„o alterados.</param>
-        /// <returns>O n˙mero de linhas afetadas pela alteraÁ„o.</returns>
+        /// <param name="sessao">A transa√ß√£o atual.</param>
+        /// <param name="contaPagar">A conta a pagar com os dados que ser√£o alterados.</param>
+        /// <returns>O n√∫mero de linhas afetadas pela altera√ß√£o.</returns>
         public int Update(GDATransaction sessao, ContasPagar contaPagar)
         {
             var contaPagarOld = this.GetElementByPrimaryKey(sessao, contaPagar.IdContaPg);
 
-            // Recupera a descriÁ„o da forma de pagamento para alterar o log.
+            // Recupera a descri√ß√£o da forma de pagamento para alterar o log.
             if (contaPagarOld.IdFormaPagto > 0)
             {
                 contaPagarOld.FormaPagtoCompra = FormaPagtoDAO.Instance.GetDescricao((Pagto.FormaPagto)contaPagarOld.IdFormaPagto);
@@ -4271,13 +4300,13 @@ namespace Glass.Data.DAL
 
             if (!contaPagarOld.Paga && FuncoesData.DateDiff(DateInterval.Year, contaPagarOld.DataVenc, contaPagar.DataVenc) > 2)
             {
-                throw new Exception("A data de vencimento n„o pode ser alterada com mais de 2 anos de diferenÁa da data original nesta opÁ„o.");
+                throw new Exception("A data de vencimento n√£o pode ser alterada com mais de 2 anos de diferen√ßa da data original nesta op√ß√£o.");
             }
 
-            // Caso a conta esteja paga, n„o È permitido alterar a Data de Vencimento, N˙mero do Boleto ou a Forma de Pagamento.
+            // Caso a conta esteja paga, n√£o √© permitido alterar a Data de Vencimento, N√∫mero do Boleto ou a Forma de Pagamento.
             if (contaPagarOld.Paga)
             {
-                var mensagemAlerta = "A conta est· paga, portanto, n„o È possÌvel alterar {0}";
+                var mensagemAlerta = "A conta est√° paga, portanto, n√£o √© poss√≠vel alterar {0}";
 
                 if (contaPagarOld.DataVenc != contaPagar.DataVenc)
                 {
@@ -4286,7 +4315,7 @@ namespace Glass.Data.DAL
 
                 if (contaPagarOld.NumBoleto != contaPagar.NumBoleto)
                 {
-                    throw new Exception(string.Format(mensagemAlerta, "o n˙mero do boleto."));
+                    throw new Exception(string.Format(mensagemAlerta, "o n√∫mero do boleto."));
                 }
 
                 if (contaPagarOld.IdFormaPagto != contaPagar.IdFormaPagto)
@@ -4362,7 +4391,7 @@ namespace Glass.Data.DAL
 
         public uint InsertExecScript(ContasPagar objInsert)
         {
-            throw new NotImplementedException("Alterar mÈtodo para buscar conta j· existente.");
+            throw new NotImplementedException("Alterar m√©todo para buscar conta j√° existente.");
 
             //string sql = @"select idContaPg from contas_pagar where idFornec{0} and idLoja=?idLoja and date(dataVenc)=date(?dataVenc) 
             //    and valorVenc=?valorVenc and numParc=?numParc and idConta=?idConta";

@@ -374,13 +374,13 @@ namespace Glass.Data.RelDAL
 	                INNER JOIN (
 		                SELECT lp.IdProdPedProducao
 		                FROM leitura_producao lp
-		                WHERE NOT(lp.DataLeitura <= ?dataFim)
+		                WHERE (lp.DataLeitura IS NULL OR lp.DataLeitura > ?dataFim)
 			                {filtroPecasProntas}
 	                ) peca_pronta ON (ppp.IdProdPedProducao = peca_pronta.IdProdPedProducao)
 	                INNER JOIN (
 		                SELECT lp.IdProdPedProducao
 		                FROM leitura_producao lp
-		                WHERE NOT(lp.DataLeitura < ?dataInicio)
+		                WHERE lp.DataLeitura < ?dataInicio
 			                AND lp.IdSetor = 1
 	                ) peca_pendente ON (ppp.IdProdPedProducao = peca_pendente.IdProdPedProducao);";
 

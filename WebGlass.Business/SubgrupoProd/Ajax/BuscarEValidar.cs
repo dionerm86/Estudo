@@ -83,7 +83,7 @@ namespace WebGlass.Business.SubgrupoProd.Ajax
                     if (!Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(grupo))
                         tiposCalc.AddRange(new[] { (int)Glass.Data.Model.TipoCalculoGrupoProd.QtdM2, (int)Glass.Data.Model.TipoCalculoGrupoProd.QtdDecimal });
 
-                    return tiposCalc.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, grupo, subgrupo, false)).ToString().ToLower();
+                    return tiposCalc.Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(grupo, subgrupo)).ToString().ToLower();
                 }
                 else
                     return "false";

@@ -498,7 +498,8 @@ namespace Glass.UI.Web.Relatorios
                             Request["renegociadas"] == "true", recebida, Glass.Conversoes.StrParaUint(Request["idComissionado"]), Glass.Conversoes.StrParaUint(Request["idRota"]),
                             Request["obs"], Request["tipoConta"], Glass.Conversoes.StrParaUint(Request["numArqRemessa"]), bool.Parse(Request["refObra"] ?? "false"), Glass.Conversoes.StrParaInt(Request["contasCnab"]),
                             Glass.Conversoes.StrParaInt(Request["idVendedorAssociado"]), Glass.Conversoes.StrParaInt(Request["idVendedorObra"]), Request["idComissao"].StrParaInt(),
-                            Request["idSinal"].StrParaInt(), Request["numCte"].StrParaInt(), bool.Parse(Request["protestadas"] ?? "false"), bool.Parse(Request["contasVinculadas"] ?? "false"), Request["tipoContasBuscar"], Request["numAutCartao"]);
+                            Request["idSinal"].StrParaInt(), Request["numCte"].StrParaInt(), bool.Parse(Request["protestadas"] ?? "false"), bool.Parse(Request["contasVinculadas"] ?? "false"), Request["tipoContasBuscar"], Request["numAutCartao"],
+                            Request["idContaBancoRecebimento"].StrParaIntNullable());
 
                         var idsContas = contasRecebidas.Select(f => f.IdContaR).ToList();
 
@@ -602,7 +603,7 @@ namespace Glass.UI.Web.Relatorios
                         var debitos = ContasReceberDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idPedido"]),
                             Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]), 0, 0, 0, 0, 0, Glass.Conversoes.StrParaUint(Request["idCli"]),
                             Glass.Conversoes.StrParaUint(Request["idFunc"]), 0, 0, Request["nomeCli"], null, null, null, null, null, null, null, null,
-                            "", 0, 0, 0, 1, null, false, 0, 0, null, null, 0, true, 0, 0, 0, 0, 0, 0, false, false, null, "");
+                            "", 0, 0, 0, 1, null, false, 0, 0, null, null, 0, true, 0, 0, 0, 0, 0, 0, false, false, null, "", null);
 
                         lstParam.Add(new ReportParameter("LiberarPedido", PedidoConfig.LiberarPedido.ToString()));
 
@@ -650,10 +651,13 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("Agrupar", !String.IsNullOrEmpty(Request["agrupar"]) ? Request["agrupar"] : "0"));
                         lstParam.Add(new ReportParameter("ExibirAPagar", (Request["exibirAPagar"] == "true").ToString()));
 
-                        var lancamentosAvulsosCG = CaixaGeralDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(Request["dtIniPago"].ToString()),
-                            Glass.Conversoes.StrParaDate(Request["dtFimPago"].ToString()), Request["idFornec"].StrParaUint(), Request["idLoja"].StrParaInt(), Request["planoConta"]);
-                        var lancamentosAvulsosCD = Glass.Data.DAL.CaixaDiarioDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(Request["dtIniPago"].ToString()),
-                            Glass.Conversoes.StrParaDate(Request["dtFimPago"].ToString()), Request["idFornec"].StrParaUint(), Request["idLoja"].StrParaInt(), Request["planoConta"]);
+                        var dtIniPago = Request["dtIniPago"] != null ? Request["dtIniPago"].ToString() : string.Empty;
+                        var dtFimPago = Request["dtFimPago"] != null ? Request["dtFimPago"].ToString() : string.Empty;
+
+                        var lancamentosAvulsosCG = CaixaGeralDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(dtIniPago),
+                            Glass.Conversoes.StrParaDate(dtFimPago), Request["idFornec"].StrParaUint(), Request["idLoja"].StrParaInt(), Request["planoConta"]);
+                        var lancamentosAvulsosCD = Glass.Data.DAL.CaixaDiarioDAO.Instance.GetSaldoLancAvulsos(Glass.Conversoes.StrParaDate(dtIniPago),
+                            Glass.Conversoes.StrParaDate(dtFimPago), Request["idFornec"].StrParaUint(), Request["idLoja"].StrParaInt(), Request["planoConta"]);
 
                         var valorPagtoPermuta = ContasPagarDAO.Instance.ObtemValorPagtoPermuta(string.Join(",", contasPagas.Select(f => f.IdContaPg.ToString()).ToArray()));
                         var valorPagtoEncontroContas = ContasPagarDAO.Instance.ObtemValorPagtoEncontroContas(string.Join(",", contasPagas.Select(f => f.IdContaPg.ToString()).ToArray()));
@@ -1656,8 +1660,8 @@ namespace Glass.UI.Web.Relatorios
                                     lstProdPed[i].Qtde = dicProdutos[lstProdPed[i].IdProdPed];
                                     lstProdPed[i].QtdeSomada = dicProdutos[lstProdPed[i].IdProdPed];
 
-                                    var totM2 = Glass.Global.CalculosFluxo.ArredondaM2(null, lstProdPed[i].Largura, Convert.ToInt32(lstProdPed[i].Altura),
-                                        Convert.ToSingle(lstProdPed[i].QtdeSomada), (int)lstProdPed[i].IdProd, lstProdPed[i].Redondo, 0, true);
+                                    var totM2 = Glass.Global.CalculosFluxo.ArredondaM2(lstProdPed[i].Largura, Convert.ToInt32(lstProdPed[i].Altura),
+                                        Convert.ToSingle(lstProdPed[i].QtdeSomada), (int)lstProdPed[i].IdProd, lstProdPed[i].Redondo);
 
                                     lstProdPed[i].TotMSomada = totM2;
                                     lstProdPed[i].TotM = totM2;
@@ -2540,7 +2544,7 @@ namespace Glass.UI.Web.Relatorios
                                         mov[i].QtdeSaldoRealFiscal = movComparativo[j].QtdeSaldo;
                                         // Recupera o id do subgrupo do produto.
                                         var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)mov[i].IdProd);
-                                        int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(null, (int)mov[i].IdProd, false);
+                                        int tipoCalculo = GrupoProdDAO.Instance.TipoCalculo((int)mov[i].IdProd);
 
                                         // Caso o tipo de cálculo do produto for por barra de alumínio o campo complemento qtd deve ser preenchido.
                                         if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||

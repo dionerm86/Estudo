@@ -1,4 +1,4 @@
-<section class="filtros">
+﻿<section class="filtros">
     <div>
         <span class="form-group">
             <label>Pedido</label>
@@ -93,19 +93,19 @@
         <span class="form-group">
             <label>Vendedor obra</label>
             <lista-selecao-id-valor v-bind:item-selecionado.sync="vendedorObraAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroVendedores"
-                v-bind:ordenar="false"></lista-selecao-id-valor>
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Forma pagamento</label>
             <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.formasPagamento" texto-selecionar="Selecione a forma de pagamento"
-                v-bind:funcao-recuperar-itens="obterItensFiltroFormasPagamentoContasRecebidas" v-bind:ordenar="false"></lista-selecao-multipla>
+                                    v-bind:funcao-recuperar-itens="obterItensFiltroFormasPagamentoContasRecebidas" v-bind:ordenar="false"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group" v-if="!configuracoes.usarLiberacaoPedido">
             <label>Tipo entrega</label>
             <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoEntregaAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroTiposEntrega"
-                v-bind:ordenar="false"></lista-selecao-id-valor>
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -113,6 +113,12 @@
             <input type="number" v-model.number="filtroAtual.valorRecebidoInicio" style="width: 60px" />
             a
             <input type="number" v-model.number="filtroAtual.valorRecebidoFim" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Conta bancária recebimento</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="idContaBancoRecebimentoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroContasBancoRecebimento"
+                                    v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">

@@ -110,7 +110,7 @@ namespace WebGlass.Business.CotacaoCompra.Entidade
 
         public int TipoCalc
         {
-            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(null, (int)CodigoProduto, false); }
+            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)CodigoProduto); }
         }
 
         #endregion
