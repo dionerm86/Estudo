@@ -28,12 +28,11 @@ namespace Glass.API.Backend.Models.Produtos.V1.PrecosTabelaCliente.Configuracoes
             this.SubgruposPadraoParaFiltro = !string.IsNullOrWhiteSpace(subgruposPadraoFiltro) ? subgruposPadraoFiltro.Split(',') : null;
             this.AlterarSubgruposSelecionados = new IdNomeDto
             {
-                Id = !idNomeAlterarSubgruposSelecionados.Equals(default(KeyValuePair<string, string>))
-                    && idNomeAlterarSubgruposSelecionados.Key != null
+                Id = idNomeAlterarSubgruposSelecionados.Key != null
                     ? int.Parse(idNomeAlterarSubgruposSelecionados.Key)
                     : 0,
 
-                Nome = !idNomeAlterarSubgruposSelecionados.Equals(default(KeyValuePair<string, string>))
+                Nome = idNomeAlterarSubgruposSelecionados.Key != null
                     ? idNomeAlterarSubgruposSelecionados.Value
                     : string.Empty,
             };
