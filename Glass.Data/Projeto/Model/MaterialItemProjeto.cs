@@ -289,7 +289,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public int TipoCalc
         {
-            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int)IdSubgrupoProd); }
+            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)this.IdProd); }
         }
 
         [XmlIgnore]
@@ -485,6 +485,12 @@ namespace Glass.Data.Model
         uint IProdutoCalculo.IdProduto
         {
             get { return IdProd; }
+        }
+
+        [XmlIgnore]
+        int IProdutoCalculo.TipoCalc
+        {
+            get { return this.TipoCalc; }
         }
 
         [XmlIgnore]

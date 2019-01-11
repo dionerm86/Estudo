@@ -522,6 +522,9 @@
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.js" />
     <Content Include="Vue\Pagamentos\Templates\LstPagamentos.Filtro.html" />
     <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
+    <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.Filtro.js" />
+    <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.js" />
+    <Content Include="Vue\Produtos\PrecosTabelaCliente\Templates\ListaPrecoTabelaCliente.Filtro.html" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
     <Content Include="Vue\Projetos\Ferragens\FabricantesFerragem\Componentes\LstFabricantesFerragem.js" />

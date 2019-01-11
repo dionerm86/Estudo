@@ -1,5 +1,6 @@
 using Glass.Configuracoes;
 using Glass.Data.DAL;
+using Glass.Data.Exceptions;
 using Glass.Data.Helper;
 using Glass.Data.Model;
 using System;
@@ -655,19 +656,27 @@ namespace Glass.UI.Web.WebGlassParceiros
 
         protected void btnFinalizar_Click(object sender, EventArgs e)
         {
+            var idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
+
             try
             {
                 if (IsPedidoMaoDeObra())
                 {
-                    var ambientes = AmbientePedidoDAO.Instance.GetByPedido(Glass.Conversoes.StrParaUint(Request["idPedido"]), false);
+                    var ambientes = AmbientePedidoDAO.Instance.GetByPedido(idPedido, false);
                     foreach (AmbientePedido a in ambientes)
                         if (!AmbientePedidoDAO.Instance.PossuiProdutos(a.IdAmbientePedido))
                             throw new Exception("O vidro " + a.PecaVidro + " não possui mão-de-obra cadastrada. Cadastre alguma mão-de-obra ou remova o vidro para continuar.");
                 }
 
-                PedidoDAO.Instance.FinalizarPedidoComTransacao(Glass.Conversoes.StrParaUint(Request["idPedido"]), false);
+                PedidoDAO.Instance.FinalizarPedidoComTransacao(idPedido, false);
 
                 AbreImpressaoPedido();
+            }
+            catch (ValidacaoPedidoFinanceiroException f)
+            {
+                string mensagem = MensagemAlerta.FormatErrorMsg("", f);
+                PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(null, idPedido, mensagem);
+                return;
             }
             catch (Exception ex)
             {
