@@ -410,36 +410,29 @@ namespace Glass.Data.DAL
         {
             lock (_cancelar)
             {
-                try
+                var pcv = this.GetPerdaChapaVidro(session, perdaChapaVidro.IdPerdaChapaVidro);
+
+                var idNf = ProdutosNfDAO.Instance.ObtemIdNf(session, pcv.IdProdNf.Value);
+
+                if (idNf == 0)
                 {
-                    var pcv = this.GetPerdaChapaVidro(session, perdaChapaVidro.IdPerdaChapaVidro);
-
-                    var idNf = ProdutosNfDAO.Instance.ObtemIdNf(session, pcv.IdProdNf.Value);
-
-                    if (idNf == 0)
-                    {
-                        throw new Exception("Não foi possível recuperar a nota fiscal.");
-                    }
-
-                    var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(session, idNf);
-
-                    if (idLoja == 0)
-                    {
-                        throw new Exception("Não foi possível recuperar a loja da nota fiscal.");
-                    }
-
-                    // Credita o estoque da chapa
-                    MovEstoqueDAO.Instance.CreditaEstoquePerdaChapa(session, pcv.IdProd, pcv.IdProdNf.Value, idLoja, pcv.IdPerdaChapaVidro);
-
-                    // Marca a perda como cancelada.
-                    this.objPersistence.ExecuteCommand(session, "UPDATE perda_chapa_vidro SET cancelado = 1 WHERE IdPerdaChapaVidro = " + perdaChapaVidro.IdPerdaChapaVidro);
-
-                    LogCancelamentoDAO.Instance.LogPerdaChapaVidro(session, pcv);
+                    throw new Exception("Não foi possível recuperar a nota fiscal.");
                 }
-                catch
+
+                var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(session, idNf);
+
+                if (idLoja == 0)
                 {
-                    throw;
+                    throw new Exception("Não foi possível recuperar a loja da nota fiscal.");
                 }
+
+                // Credita o estoque da chapa
+                MovEstoqueDAO.Instance.CreditaEstoquePerdaChapa(session, pcv.IdProd, pcv.IdProdNf.Value, idLoja, pcv.IdPerdaChapaVidro);
+
+                // Marca a perda como cancelada.
+                this.objPersistence.ExecuteCommand(session, "UPDATE perda_chapa_vidro SET cancelado = 1 WHERE IdPerdaChapaVidro = " + perdaChapaVidro.IdPerdaChapaVidro);
+
+                LogCancelamentoDAO.Instance.LogPerdaChapaVidro(session, pcv);
             }
         }
 

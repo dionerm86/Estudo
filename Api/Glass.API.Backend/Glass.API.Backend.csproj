@@ -300,6 +300,11 @@
     <Compile Include="Models\ContasPagar\V1\Pagas\Lista\ObservacoesDto.cs" />
     <Compile Include="Models\ContasPagar\V1\Pagas\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ContasPagar\V1\Pagas\Lista\ValoresPagamentoDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\CadastroAtualizacao\CadastroAtualizacaoRecebidaDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\Configuracoes\ListaRecebidasDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\FiltroDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\ListaDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\PermissoesDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Fiscais\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Fiscais\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Fiscais\DadosEstoqueDto.cs" />
@@ -1058,11 +1063,6 @@
     <Compile Include="Models\Genericas\V1\CadastroAtualizacao\BaseCadastroAtualizacaoDto.cs" />
     <Compile Include="Helper\CadastroAtualizacao\ConversorValorTipo.cs" />
     <Compile Include="Helper\CadastroAtualizacao\ConversorValoresDtoModelo.cs" />
-    <Compile Include="Models\ContasReceber\V1\CadastroAtualizacao\CadastroAtualizacaoRecebidaDto.cs" />
-    <Compile Include="Models\ContasReceber\V1\Configuracoes\ListaRecebidasDto.cs" />
-    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\FiltroDto.cs" />
-    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\ListaDto.cs" />
-    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\PermissoesDto.cs" />
     <Compile Include="Models\Acertos\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Acertos\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Acertos\V1\Lista\FiltroDto.cs" />
@@ -1242,6 +1242,9 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\ContasPagarReceber\" />
+    <Folder Include="Models\Datas\ContasReceber\V1\CadastroAtualizacao\" />
+    <Folder Include="Models\Datas\ContasReceber\V1\Configuracoes\" />
+    <Folder Include="Models\Datas\ContasReceber\V1\ListaRecebidas\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">

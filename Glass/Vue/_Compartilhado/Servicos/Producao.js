@@ -290,11 +290,6 @@ Servicos.Producao = (function(http) {
          * @returns {Promise} Uma promise com o resultado da operação.
          */
         obterParaFiltro: function (idTipoPerda) {
-          debugger;
-          if (!idTipoPerda && idTipoPerda != 0) {
-            throw new Error('Tipo de perda é obrigatório.');
-          }
-
           return http().get(API_TipoPerda_SubtipoPerda(idTipoPerda) + 'filtro');
         }
       },

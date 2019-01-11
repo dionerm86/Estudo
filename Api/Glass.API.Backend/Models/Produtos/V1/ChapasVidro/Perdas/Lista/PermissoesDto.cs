@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.ChapasVidro.Perdas.Lista
         public bool Cancelar { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se a perda de chapa de vidro possui log de alteração.
+        /// Obtém ou define um valor que indica se a perda de chapa de vidro possui log de cancelamento.
         /// </summary>
         [DataMember]
         [JsonProperty("logCancelamento")]
