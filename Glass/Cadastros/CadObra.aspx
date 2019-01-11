@@ -1,4 +1,4 @@
-<%@ Page Title="Cadastro de Pagamento Antecipado" Language="C#" MasterPageFile="~/Painel.master"
+Ôªø<%@ Page Title="Cadastro de Pagamento Antecipado" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="CadObra.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadObra" %>
 
 <%@ Register Src="../Controls/ctrlParcelas.ascx" TagName="ctrlParcelas" TagPrefix="uc1" %>
@@ -43,7 +43,7 @@
                 FindControl("hdfIdProd", "input").value = "";
                 FindControl("txtValorUnit", "input").value = "";
 
-                alert("Apenas produtos do grupo Vidro podem ser incluÌdos nesse <%= DescrTipoObra() %>.");
+                alert("Apenas produtos do grupo Vidro podem ser inclu√≠dos nesse <%= DescrTipoObra() %>.");
                 return;
             }
 
@@ -67,7 +67,7 @@
 
         var clicked = false;
 
-        // ValidaÁıes realizadas ao receber conta
+        // Valida√ß√µes realizadas ao receber conta
         function onInsertUpdate() {
             if (!validate())
                 return false;
@@ -83,7 +83,7 @@
 
             if (descricao == "")
             {
-                alert("Informe a descriÁ„o.");
+                alert("Informe a descri√ß√£o.");
                 clicked = false;
                 return false;
             }
@@ -97,7 +97,7 @@
 
             if (idFunc == "")
             {
-                alert("Informe o Funcion·rio.");
+                alert("Informe o Funcion√°rio.");
                 clicked = false;
                 return false;
             }
@@ -195,14 +195,14 @@
 
             var retornoReceber = "";
 
-            // ¿ vista
+            // √Ä vista
             if(tipoPagto && tipoPagto.value == "1") {
 
                 var controle = <%= dtvObra.FindControl("ctrlFormaPagto1") != null ? dtvObra.FindControl("ctrlFormaPagto1").ClientID : "''" %>;
 
                 if(controle == null) {
                     desbloquearPagina(true);
-                    alert("O controle de pagto. n„o foi encontrado.");
+                    alert("O controle de pagto. n√£o foi encontrado.");
                     return false;
                 }
 
@@ -234,7 +234,7 @@
                     return false;
                 }
 
-                //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cart„o ‡ vista
+                //Se utilizar o TEF CAPPTA e tiver selecionado pagamento com cart√£o √† vista
                 if(receberCappta) {
 
                     //Busca os dados para autenticar na cappta
@@ -254,7 +254,7 @@
 
                     return false;
                 }
-            } else if(tipoPagto && tipoPagto.value == "2") { // ¿ prazo
+            } else if(tipoPagto && tipoPagto.value == "2") { // √Ä prazo
 
                 var numParcelas = FindControl("drpNumParcelas", "select");
                 var controle = <%= dtvObra.FindControl("ctrlParcelas1") != null ? dtvObra.FindControl("ctrlParcelas1").ClientID : "''" %>;
@@ -307,7 +307,7 @@
                                 <table cellspacing="0">
                                     <tr class="dtvAlternatingRow">
                                         <td class="dtvHeader">
-                                            DescriÁ„o
+                                            Descri√ß√£o
                                         </td>
                                         <td nowrap="nowrap">
                                             <asp:TextBox ID="txtDescricao" runat="server" MaxLength="200" Rows="3" Width="400px"
@@ -316,7 +316,7 @@
                                     </tr>
                                     <tr>
                                         <td class="dtvHeader">
-                                            Funcion·rio
+                                            Funcion√°rio
                                         </td>
                                         <td nowrap="nowrap" align="left">
                                             <asp:DropDownList ID="drpFuncionario" runat="server" DataSourceID="odsFuncionario" DataTextField="Nome"
@@ -358,7 +358,7 @@
                                 <table cellspacing="0" cellpadding="4">
                                     <tr>
                                         <td class="dtvHeader">
-                                            DescriÁ„o
+                                            Descri√ß√£o
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="Label1" runat="server" Text='<%# Eval("Descricao") %>'></asp:Label>
@@ -366,7 +366,7 @@
                                     </tr>
                                     <tr>
                                         <td class="dtvHeader">
-                                            Funcion·rio
+                                            Funcion√°rio
                                         </td>
                                         <td align="left" nowrap="nowrap">
                                             <asp:Label ID="lblNomeFuncionario" runat="server" Text='<%# Eval("NomeFunc") %>'></asp:Label>
@@ -396,8 +396,8 @@
                                     <div style="padding: 12px">
                                         Tipo de pagamento
                                         <asp:DropDownList ID="drpTipoPagto" runat="server" onchange="tipoPagtoChanged(true)">
-                                            <asp:ListItem Value="1">¿ vista</asp:ListItem>
-                                            <asp:ListItem Value="2">¿ prazo</asp:ListItem>
+                                            <asp:ListItem Value="1">√Ä vista</asp:ListItem>
+                                            <asp:ListItem Value="2">√Ä prazo</asp:ListItem>
                                         </asp:DropDownList>
                                     </div>
                                     <div id="a_vista">
@@ -410,7 +410,7 @@
                                     </div>
                                     <div id="a_prazo">
                                         <br />
-                                        N˙mero de parcelas:
+                                        N√∫mero de parcelas:
                                         <asp:DropDownList ID="drpNumParcelas" runat="server" DataSourceID="odsParcelas" DataTextField="Descr"
                                             DataValueField="Id">
                                         </asp:DropDownList>
@@ -422,7 +422,7 @@
                                         Forma de pagamento:
                                         <asp:DropDownList ID="drpFormaPagtoPrazo" runat="server" DataSourceID="odsFormaPagto"
                                             AppendDataBoundItems="true" DataTextField="Descricao"
-                                            DataValueField="IdFormaPagto">
+                                            DataValueField="IdFormaPagto" EnableViewState="false">
                                             <asp:ListItem></asp:ListItem>
                                         </asp:DropDownList>
                                         <asp:CustomValidator ID="ctvPrazo" runat="server" ClientValidationFunction="validaFormaPagtoPrazo"

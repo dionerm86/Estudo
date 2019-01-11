@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Globalization;
 using System.Web.UI.WebControls;
 using Glass.Data.Helper;
@@ -20,7 +20,7 @@ namespace Glass.UI.Web.Cadastros
                     !Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.GerarCreditoAvulsoCliente))
                     Response.Redirect("~/Listas/LstObra.aspx" + (Request["cxDiario"] == "1" ? "?cxDiario=1" : ""));
     
-                Page.Title = "Cadastro de crÈdito cliente";
+                Page.Title = "Cadastro de cr√©dito cliente";
             }
             else if (PedidoConfig.DadosPedido.UsarControleNovoObra)
                 Response.Redirect("~/Listas/LstObra.aspx" + (Request["cxDiario"] == "1" ? "?cxDiario=1" : ""));
@@ -61,7 +61,7 @@ namespace Glass.UI.Web.Cadastros
 
                 if (!GerarCreditoObra(idObra) && ObraDAO.Instance.IsGerarCredito(idObra))
                 {
-                    MensagemAlerta.ShowMsg("FaÁa logout e login no sistema e refaÁa esta operaÁ„o.", Page);
+                    MensagemAlerta.ShowMsg("Fa√ßa logout e login no sistema e refa√ßa esta opera√ß√£o.", Page);
                     return;
                 }
 
@@ -146,7 +146,7 @@ namespace Glass.UI.Web.Cadastros
             var valorObra = ObraDAO.Instance.GetValorObra(null, Request["idObra"].StrParaUint());
             if (exibir && valorObra == 0)
             {
-                MensagemAlerta.ShowMsg("O valor do " + DescrTipoObra() + " n„o pode ser zero.", Page);
+                MensagemAlerta.ShowMsg("O valor do " + DescrTipoObra() + " n√£o pode ser zero.", Page);
                 return;
             }
     
@@ -187,7 +187,7 @@ namespace Glass.UI.Web.Cadastros
     
         protected string DescrTipoObra()
         {
-            return GerarCreditoObra() ? "crÈdito gerado" : "pagamento antecipado";
+            return GerarCreditoObra() ? "cr√©dito gerado" : "pagamento antecipado";
         }
     
         protected void panReceber_Load(object sender, EventArgs e)
@@ -205,7 +205,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void drpFuncionario_DataBound(object sender, EventArgs e)
         {
-            // Preenche o campo vendedor com o usu·rio logado, caso exista na drop
+            // Preenche o campo vendedor com o usu√°rio logado, caso exista na drop
             if (!IsPostBack && dtvObra.CurrentMode == DetailsViewMode.Insert && 
                 ((DropDownList)dtvObra.FindControl("drpFuncionario")).Items.FindByValue(UserInfo.GetUserInfo.CodUser.ToString()) != null)
             { 
