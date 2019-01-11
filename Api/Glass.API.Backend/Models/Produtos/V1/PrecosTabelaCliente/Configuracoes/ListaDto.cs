@@ -2,11 +2,11 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Configuracoes;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Glass.API.Backend.Models.Genericas.V1;
 
 namespace Glass.API.Backend.Models.Produtos.V1.PrecosTabelaCliente.Configuracoes
 {
@@ -28,8 +28,14 @@ namespace Glass.API.Backend.Models.Produtos.V1.PrecosTabelaCliente.Configuracoes
             this.SubgruposPadraoParaFiltro = !string.IsNullOrWhiteSpace(subgruposPadraoFiltro) ? subgruposPadraoFiltro.Split(',') : null;
             this.AlterarSubgruposSelecionados = new IdNomeDto
             {
-                Id = idNomeAlterarSubgruposSelecionados.Key != null ? int.Parse(idNomeAlterarSubgruposSelecionados.Key) : 0,
-                Nome = idNomeAlterarSubgruposSelecionados.Value,
+                Id = !idNomeAlterarSubgruposSelecionados.Equals(default(KeyValuePair<string, string>))
+                    && idNomeAlterarSubgruposSelecionados.Key != null
+                    ? int.Parse(idNomeAlterarSubgruposSelecionados.Key)
+                    : 0,
+
+                Nome = !idNomeAlterarSubgruposSelecionados.Equals(default(KeyValuePair<string, string>))
+                    ? idNomeAlterarSubgruposSelecionados.Value
+                    : string.Empty,
             };
         }
 

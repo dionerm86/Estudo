@@ -26,7 +26,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.PrecosTabelaCliente
         /// </summary>
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
-        [Route("configuracoes/precosTabelaCliente")]
+        [Route("configuracoes")]
         [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Produtos.V1.PrecosTabelaCliente.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaPrecoTabelaCliente()
         {
@@ -43,7 +43,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.PrecosTabelaCliente
         /// <param name="filtro">Os filtros para a busca dos itens.</param>
         /// <returns>Uma lista JSON com os dados dos preços de tabela por cliente.</returns>
         [HttpGet]
-        [Route("precosTabelaCliente")]
+        [Route("")]
         [SwaggerResponse(200, "Preços de tabela de cliente encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<ListaDto>))]
         [SwaggerResponse(204, "Preços de tabela de cliente não encontrados para o filtro informado.")]
         [SwaggerResponse(206, "Preços de tabela de cliente paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<ListaDto>))]
@@ -55,23 +55,23 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.PrecosTabelaCliente
                 filtro = filtro ?? new FiltroDto();
 
                 var precosTabelaCliente = ProdutoDAO.Instance.GetListPrecoTab(
-                        (uint)(filtro.IdCliente ?? 0),
-                        filtro.NomeCliente,
-                        (uint)(filtro.IdGrupoProduto ?? 0),
-                        filtro.IdsSubgrupoProduto != null && filtro.IdsSubgrupoProduto.Any() ? string.Join(",", filtro.IdsSubgrupoProduto) : null,
-                        filtro.CodigoProduto,
-                        filtro.DescricaoProduto,
-                        filtro.TipoValorTabela ?? 0,
-                        filtro.ValorAlturaInicio ?? 0,
-                        filtro.ValorAlturaFim ?? 0,
-                        filtro.ValorLarguraInicio ?? 0,
-                        filtro.ValorLarguraFim ?? 0,
-                        filtro.OrdenacaoManual ?? 0,
-                        filtro.ApenasComDesconto.GetValueOrDefault(false),
-                        false,
-                        filtro.ObterTraducaoOrdenacao(),
-                        filtro.ObterPrimeiroRegistroRetornar(),
-                        filtro.NumeroRegistros);
+                    (uint)(filtro.IdCliente ?? 0),
+                    filtro.NomeCliente,
+                    (uint)(filtro.IdGrupoProduto ?? 0),
+                    filtro.IdsSubgrupoProduto != null && filtro.IdsSubgrupoProduto.Any() ? string.Join(",", filtro.IdsSubgrupoProduto) : null,
+                    filtro.CodigoProduto,
+                    filtro.DescricaoProduto,
+                    filtro.TipoValorTabela ?? 0,
+                    filtro.ValorAlturaInicio ?? 0,
+                    filtro.ValorAlturaFim ?? 0,
+                    filtro.ValorLarguraInicio ?? 0,
+                    filtro.ValorLarguraFim ?? 0,
+                    filtro.OrdenacaoManual ?? 0,
+                    filtro.ApenasComDesconto.GetValueOrDefault(false),
+                    false,
+                    filtro.ObterTraducaoOrdenacao(),
+                    filtro.ObterPrimeiroRegistroRetornar(),
+                    filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
                     precosTabelaCliente.Select(ptc => new ListaDto(ptc)),

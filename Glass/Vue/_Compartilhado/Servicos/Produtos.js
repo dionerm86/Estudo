@@ -232,7 +232,7 @@ Servicos.Produtos = (function(http) {
        * @returns {Promise} Uma promise com o resultado da busca.
        */
       obterConfiguracoesLista: function () {
-        return http().get(API + 'configuracoes/precosTabelaCliente');
+        return http().get(API + 'precosTabelaCliente/configuracoes');
       },
 
       /**
@@ -240,7 +240,7 @@ Servicos.Produtos = (function(http) {
        * @returns {Promise} Uma promise com o resultado da busca.
        */
       obterTiposValorTabela: function () {
-        return http().get(API + 'tiposValorTabela');
+        return http().get(API + 'precosTabelaCliente/tiposValorTabela');
       }
     },
 

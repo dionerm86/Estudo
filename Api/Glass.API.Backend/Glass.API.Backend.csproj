@@ -222,6 +222,7 @@
     <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\DeleteProprietariosDeVeiculosController.cs" />
     <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\GetProprietariosDeVeiculosController.cs" />
     <Compile Include="Controllers\ConhecimentosTransporte\Veiculos\Proprietarios\ProprietariosDeVeiculosController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
     <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\GetPrecosTabelaClienteController.cs" />
     <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\PrecosTabelaClienteController.cs" />
     <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
