@@ -229,6 +229,9 @@
     <Compile Include="Controllers\ContasPagar\V1\Pagas\ContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\GetContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\PatchContasPagasController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
+    <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\GetPrecosTabelaClienteController.cs" />
+    <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\PrecosTabelaClienteController.cs" />
     <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\DeletePerdasChapasVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\GetPerdasChapasVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\PerdasChapasVidroController.cs" />
@@ -237,6 +240,7 @@
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\ConverterCadastroAtualizacaoParaContasPagas.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\TraducaoOrdenacaoListaContasPagas.cs" />
+    <Compile Include="Helper\Produtos\PrecosTabelaCliente\TraducaoOrdenacaoListaPrecoTabelaCliente.cs" />
     <Compile Include="Helper\Produtos\ChapasVidro\Perdas\TraducaoOrdenacaoListaPerdasChapasVidro.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Configuracoes\ListaDto.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
@@ -569,7 +573,6 @@
     <Compile Include="Controllers\Pedidos\V1\ProdutosPedido\ProdutosPedidoController.cs" />
     <Compile Include="Controllers\Pedidos\V1\ProdutosPedido\GetProdutosPedidoController.cs" />
     <Compile Include="Controllers\Produtos\V1\PostProdutosController.cs" />
-    <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
     <Compile Include="Controllers\Produtos\V1\ProdutosController.cs" />
     <Compile Include="Controllers\Publico\V1\GetPublicoController.cs" />
     <Compile Include="Controllers\Publico\V1\PublicoController.cs" />
@@ -876,6 +879,10 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\TipoValorTabelaEnum.cs" />
     <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\DadosPerdaDto.cs" />
     <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\ListaDto.cs" />

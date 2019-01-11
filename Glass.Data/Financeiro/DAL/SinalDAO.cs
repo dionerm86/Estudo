@@ -497,11 +497,15 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), true);
+
                     var idSinal = CriarPreRecebimentoSinalPagamentoAntecipado(transaction, caixaDiario, creditoUtilizado, dadosChequesRecebimento, dataRecebimento, descontarComissao, gerarCredito,
                         idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsTipoCartao, isSinal, numeroAutorizacaoConstrucard,
                         numerosAutorizacaoCartao, observacao, quantidadesParcelaCartao, valoresRecebimento);
 
                     var retorno = FinalizarPreRecebimentoSinalPagamentoAntecipado(transaction, idSinal);
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), false);
 
                     transaction.Commit();
                     transaction.Close();
