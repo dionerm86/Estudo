@@ -682,6 +682,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         var idCarregamento = ItemCarregamentoDAO.Instance.GetIdCarregamento(transaction, idsItensCarregamento.Split(',')[0].StrParaUint());
                         CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(transaction, idCarregamento, null);
 
+                        CarregamentoDAO.Instance.ForcarTransacaoCarregamento(trans, idCarregamento, false);
+
                         transaction.Commit();
                         transaction.Close();
                     }
