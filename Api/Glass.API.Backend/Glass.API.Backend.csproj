@@ -229,11 +229,15 @@
     <Compile Include="Controllers\ContasPagar\V1\Pagas\ContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\GetContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\PatchContasPagasController.cs" />
+    <Compile Include="Controllers\Exportacao\V1\ExportacaoPedidosController.cs" />
+    <Compile Include="Controllers\Exportacao\V1\GetExportacaoPedidosController.cs" />
+    <Compile Include="Controllers\Exportacao\V1\PostExportacaoPedidosController.cs" />
     <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\Associacoes\TraducaoOrdenacaoListaAssociacaoProprietariosVeiculos.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\ConverterCadastroAtualizacaoParaContasPagas.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\TraducaoOrdenacaoListaContasPagas.cs" />
+    <Compile Include="Helper\Exportacao\TraducaoOrdenacaoExportacaoPedidos.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Configuracoes\ListaDto.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PostCarregamentosController.cs" />
@@ -772,6 +776,8 @@
     <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\TiposMovimentacao\TiposMovimentacao.cs" />
+    <Compile Include="Models\Exportacao\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Exportacao\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Funcionarios\V1\CadastroAtualizacao\DocumentosEDadosPessoaisDto.cs" />
     <Compile Include="Models\Funcionarios\V1\Detalhe\DocumentosEDadosPessoaisDto.cs" />
     <Compile Include="Models\Funcionarios\V1\Lista\ContatosDto.cs" />

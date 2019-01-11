@@ -14,7 +14,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1.TiposPerda
     [RoutePrefix("api/v1/producao/tiposPerda")]
     public partial class TiposPerdaController : BaseController
     {
-        private IHttpActionResult ValidarIdTtipoPerda(int id)
+        private IHttpActionResult ValidarIdTipoPerda(int id)
         {
             if (id <= 0)
             {
@@ -26,7 +26,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1.TiposPerda
 
         private IHttpActionResult ValidarExistenciaIdTipoPerda(GDASession sessao, int id)
         {
-            var validacao = this.ValidarIdTtipoPerda(id);
+            var validacao = this.ValidarIdTipoPerda(id);
 
             if (validacao == null && !TipoPerdaDAO.Instance.Exists(sessao, id))
             {
