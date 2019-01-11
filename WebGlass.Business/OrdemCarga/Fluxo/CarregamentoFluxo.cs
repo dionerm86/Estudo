@@ -506,6 +506,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     //Verifica se terminou de carregar
                     CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento, etiqueta);
 
+                    CarregamentoDAO.Instance.ForcarTransacaoCarregamento(trans, idCarregamento, false);
+
                     trans.Commit();
                     trans.Close();
                 }
@@ -681,8 +683,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         //Atualiza a situação do carregamento
                         var idCarregamento = ItemCarregamentoDAO.Instance.GetIdCarregamento(transaction, idsItensCarregamento.Split(',')[0].StrParaUint());
                         CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(transaction, idCarregamento, null);
-
-                        CarregamentoDAO.Instance.ForcarTransacaoCarregamento(trans, idCarregamento, false);
 
                         transaction.Commit();
                         transaction.Close();
