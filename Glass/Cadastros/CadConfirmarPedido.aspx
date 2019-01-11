@@ -18,7 +18,7 @@ function setPedido(idPedido) {
 function queryStringCheques() {
     var ctrTipoPagto = FindControl("drpTipoVendaObra", "select");
     var idPedido = FindControl('txtNumPedido', 'input').value;
-    return "?IdPedido=" + idPedido + "&origem=2&tipoPagto=" + ctrTipoPagto.value;
+    return "?IdPedido=" + idPedido + "&origem=2&tipoPagto=" + (ctrTipoPagto != null ? ctrTipoPagto.value : 1);
 }
 
 function onConfirmVista(control) {
