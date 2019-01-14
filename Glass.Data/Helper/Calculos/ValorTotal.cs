@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass.Data.Helper.Calculos.Estrategia;
 using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.Enum;
 using Glass.Data.Model;
@@ -38,8 +38,15 @@ namespace Glass.Data.Helper.Calculos
         {
             produto.InicializarParaCalculo(sessao, container);
 
-            var alturaBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container, produto.TipoCalc);
-            var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container, produto.TipoCalc);
+            var alturaBeneficiamento = this.NormalizarAlturaLarguraBeneficiamento(
+                produto.AlturaBenef,
+                container,
+                (int)produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo(nf, compra));
+
+            var larguraBeneficiamento = this.NormalizarAlturaLarguraBeneficiamento(
+                produto.LarguraBenef,
+                container,
+                (int)produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo(nf, compra));
 
             var estrategia = ValorTotalStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
             var acrescimo = 0.00M;
