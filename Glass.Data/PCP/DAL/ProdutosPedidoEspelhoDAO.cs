@@ -4412,7 +4412,7 @@ namespace Glass.Data.DAL
                     objUpdate.ValorDescontoProd = 0;
                     objUpdate.ValorAcrescimoProd = 0;
 
-                    var pedidoEspelho = PedidoEspelhoDAO.Instance.GetElement(null, objUpdate.IdPedido);
+                    var pedidoEspelho = PedidoEspelhoDAO.Instance.GetElement(transaction, objUpdate.IdPedido);
                     var retorno = Update(transaction, objUpdate, pedidoEspelho);
                     PedidoEspelhoDAO.Instance.UpdateDados(transaction, pedidoEspelho);
 
