@@ -1,0 +1,34 @@
+﻿<section class="filtros">
+    <div class="form-group">
+        <span>
+            <label>Cód.</label>
+            <input type="number" v-model="filtroAtual.id" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Tipo da Perda</label>
+            <lista-selecao-id-valor :funcao-recuperar-itens="obterTiposPerda"
+                :item-selecionado.sync="tipoPerdaAtual"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Subtipo da Perda</label>
+            <lista-selecao-id-valor :funcao-recuperar-itens="obterSubtiposPerda"
+                :item-selecionado.sync="subtipoPerdaAtual" :filtro-recuperar-itens="filtroSubtiposPerda"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div class="form-group">
+        <span>
+            <label>Período Perda.:</label>
+            <campo-data-hora-periodo :data-hora-inicial.sync="filtroAtual.periodoCadastroInicio"
+                :data-hora-final.sync="filtroAtual.periodoCadastroFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Etiqueta</label>
+            <input type="text" v-model="filtroAtual.codigoEtiqueta" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

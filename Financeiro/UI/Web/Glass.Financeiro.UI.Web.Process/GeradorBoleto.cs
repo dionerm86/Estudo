@@ -111,7 +111,7 @@ namespace Glass.Financeiro.UI.Web.Process
                 outPdf.Save(conteudoBoleto, false);
 
                 if (Configuracoes.FinanceiroConfig.EnviarEmailEmitirBoleto &&
-                    !Impresso.Instance.BoletoFoiImpresso((int)idsContasR.FirstOrDefault()))
+                    !Impresso.Instance.VerificarPossuiBoletoImpresso(null, (int)idsContasR.FirstOrDefault()))
                 {
                     if (codigoNotaFiscal > 0)
                     {

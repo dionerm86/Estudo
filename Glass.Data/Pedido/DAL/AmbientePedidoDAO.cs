@@ -791,8 +791,17 @@ namespace Glass.Data.DAL
                     );
                 }
 
-                RemoverAcrescimo(sessao, pedido, objUpdate.IdAmbientePedido, produtosPedido);
-                RemoverDesconto(sessao, pedido, objUpdate.IdAmbientePedido, produtosPedido);
+                bool aplicado = false;
+
+                if (RemoverAcrescimo(sessao, pedido, objUpdate.IdAmbientePedido, produtosPedido))
+                {
+                    aplicado = true;
+                }
+
+                if (RemoverDesconto(sessao, pedido, objUpdate.IdAmbientePedido, produtosPedido))
+                {
+                    aplicado = true;
+                }
 
                 if (pedido.MaoDeObra)
                 {
@@ -810,8 +819,6 @@ namespace Glass.Data.DAL
                     foreach (ProdutosPedido pp in produtosPedido)
                         ProdutosPedidoDAO.Instance.Update(sessao, pp, pedido);
                 }
-
-                bool aplicado = false;
 
                 if (AplicarAcrescimo(sessao, pedido, objUpdate.IdAmbientePedido, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, produtosPedido))
                     aplicado = true;

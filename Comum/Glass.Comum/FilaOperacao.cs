@@ -65,7 +65,6 @@ namespace Glass
 
             #endregion
             
-            BoletoImpresso = new FilaOperacoes();
             CancelarConta = new FilaOperacoes();
             CancelarDevolucaoPagto = new FilaOperacoes();
             CancelarImpostoServ = new FilaOperacoes();
@@ -158,7 +157,6 @@ namespace Glass
 
         #endregion
 
-        public static FilaOperacoes BoletoImpresso { get; private set; }
         public static FilaOperacoes CancelarConta { get; private set; }
         public static FilaOperacoes CancelarDevolucaoPagto { get; private set; }
         public static FilaOperacoes CancelarImpostoServ { get; private set; }
