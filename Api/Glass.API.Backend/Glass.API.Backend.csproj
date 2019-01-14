@@ -200,6 +200,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Compile Include="Helper\Produtos\MateriaPrima\Posicao\ChapaMateriaPrima\TraducaoOrdenacaoListaChapasMateriaPrima.cs" />
+    <Compile Include="Helper\Produtos\MateriaPrima\Posicao\TraducaoOrdenacaoListaPosicoesMateriaPrima.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\ChapaMateriaPrima\FiltroDto.cs" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -230,8 +233,8 @@
     <Compile Include="Controllers\ContasPagar\V1\Pagas\GetContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\PatchContasPagasController.cs" />
     <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
-    <Compile Include="Controllers\Produtos\V1\MateriaPrima\ChapaMateriaPrimaController.cs" />
-    <Compile Include="Controllers\Produtos\V1\MateriaPrima\GetChapaMateriaPrimaController.cs" />
+    <Compile Include="Controllers\Produtos\V1\MateriaPrima\ChapasMateriaPrimaController.cs" />
+    <Compile Include="Controllers\Produtos\V1\MateriaPrima\GetChapasMateriaPrimaController.cs" />
     <Compile Include="Controllers\Produtos\V1\MateriaPrima\Posicao\GetPosicaoMateriaPrimaController.cs" />
     <Compile Include="Controllers\Produtos\V1\MateriaPrima\Posicao\PosicaoMateriaPrimaController.cs" />
     <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\GetPrecosTabelaClienteController.cs" />

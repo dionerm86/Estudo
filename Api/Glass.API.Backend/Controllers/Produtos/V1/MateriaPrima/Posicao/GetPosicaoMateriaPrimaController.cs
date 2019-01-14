@@ -47,13 +47,9 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.MateriaPrima.Posicao
                     (float)(filtro.Espessura ?? 0),
                     filtro.BuscarApenasEstoqueDisponivelNegativo.GetValueOrDefault(false));
 
-                return this.ListaPaginada(
+                return this.Lista(
                     posicoesMateriaPrima
-                        .Skip(filtro.ObterPrimeiroRegistroRetornar())
-                        .Take(filtro.NumeroRegistros)
-                        .Select(pmp => new ListaDto(pmp)),
-                    filtro,
-                    () => posicoesMateriaPrima.Count);
+                        .Select(pmp => new ListaDto(pmp)));
             }
         }
     }

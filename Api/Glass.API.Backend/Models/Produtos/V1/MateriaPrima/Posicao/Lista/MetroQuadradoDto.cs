@@ -60,6 +60,6 @@ namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Posicao.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("disponivel")]
-        public decimal? Disponivel { get; set; }
+        public string Disponivel { get; set; }
     }
 }

@@ -1,0 +1,48 @@
+﻿<section class="filtros">
+    <div class="form-group">
+        <span>
+            <label>Situação do Pedido</label>
+            <lista-selecao-multipla :ids-selecionados.sync="filtroAtual.situacoesPedido"
+                :funcao-recuperar-itens="obterItensFiltroSituacoesPedidoPcp"></lista-selecao-multipla>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span>
+            <label>Tipo de Pedido</label>
+            <lista-selecao-multipla :ids-selecionados.sync="filtroAtual.tiposPedido"
+                :funcao-recuperar-itens="obterTiposFiltroSituacoesPedidoPcp"></lista-selecao-multipla>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+    </div>
+    <div class="form-group">
+        <span>
+            <label>Rota</label>
+            <lista-selecao-multipla :ids-selecionados.sync="filtroAtual.idsRota"
+                :funcao-recuperar-itens="obterRotas"></lista-selecao-multipla>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span>
+            <label>Cor</label>
+            <lista-selecao-multipla :ids-selecionados.sync="filtroAtual.idsCorVidro"
+                :funcao-recuperar-itens="obterCoresVidro"></lista-selecao-multipla>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span>
+            <label>Espessura</label>
+            <input type="number" v-model="filtroAtual.espessura" style="width: 60px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span>
+            <label>Data de Entrega</label>
+            <campo-data-hora-periodo :data-hora-inicial.sync="filtroAtual.periodoEntregaPedidoInicio"
+                :data-hora-final.sync="filtroAtual.periodoEntregaPedidoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+    </div>
+    <div class="form-group">
+        <span>
+            <input type="checkbox" v-model="filtroAtual.buscarApenasEstoqueDisponivelNegativo" />
+            <label>M2 Disponível Negativo</label>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+    </div>
+</section>

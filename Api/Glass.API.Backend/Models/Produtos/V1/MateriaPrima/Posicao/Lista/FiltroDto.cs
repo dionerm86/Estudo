@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Helper.Produtos.MateriaPrima.Posicoes;
+using Glass.API.Backend.Helper.Produtos.MateriaPrima.Posicao;
 using Glass.API.Backend.Models.Genericas.V1;
 using Glass.API.Backend.Models.Pedidos.V1.TipoPedidoPCPEnum;
 using Glass.Data.Model;

@@ -599,6 +599,20 @@ Servicos.Pedidos = (function (http) {
         observacao: obs || '',
         observacaoLiberacao: obsLiberacao || ''
       });
+    },
+
+    /**
+     * Retorna os itens para o controle de situações do pedido PCP.
+     */
+    obterSituacoesPedidoPcp: function () {
+      return http().get(API + 'situacoesPcp');
+    },
+
+    /**
+     * Retorna os itens para o controle de tipos do pedido PCP.
+     */
+    obterTiposPedidoPcp: function () {
+      return http().get(API + 'tiposPcp');
     }
   };
 })(function () {

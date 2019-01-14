@@ -35,12 +35,12 @@ namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Posicao.Lista
                 PedidoDeVenda = posicaoMateriaPrima.TotM2Venda,
                 PedidoDeProducao = posicaoMateriaPrima.TotM2Producao,
                 EmEstoque = posicaoMateriaPrima.TotM2Estoque,
-                Disponivel = posicaoMateriaPrima.TotM2Disponivel,
+                Disponivel = posicaoMateriaPrima.TotM2DisponivelNovo,
             };
 
             this.Permissoes = new PermissoesDto
             {
-                ExibirChapas = posicaoMateriaPrima.TotM2 > 0,
+                ExibirChapas = posicaoMateriaPrima.TotM2Estoque > 0,
             };
         }
 

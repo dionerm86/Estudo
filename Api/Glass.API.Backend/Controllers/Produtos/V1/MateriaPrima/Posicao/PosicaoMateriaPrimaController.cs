@@ -12,7 +12,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.MateriaPrima.Posicao
     /// Controller de grupos de posição de matéria prima.
     /// </summary>
     [RoutePrefix("api/v1/produtos/materiaPrima/posicao")]
-    public class PosicaoMateriaPrimaController : BaseController
+    public partial class PosicaoMateriaPrimaController : BaseController
     {
     }
 }

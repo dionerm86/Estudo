@@ -212,6 +212,44 @@ Servicos.Produtos = (function(http) {
       }
     },
 
+    /**
+     * Objeto com os serviços para a API de matéria prima.
+     */
+    MateriaPrima: {
+      /**
+       * Objeto com os serviços para a API de posição de matéria prima.
+       */
+      Posicao: {
+        /**
+         * Recupera a lista de preços de posições de matéria prima.
+         * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+         * @param {number} pagina O número da página de resultados a ser exibida.
+         * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+         * @param {string} ordenacao A ordenação para o resultado.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+          return http().get(API + 'materiaPrima/posicao', {
+            params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+          });
+        }
+      },
+
+      /**
+       * Recupera a lista de chapas de matéria prima.
+       * @param {number} idCorVidro O identificador da cor do vidro associado a posição de matéria prima.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterLista: function (filtro) {
+        return http().get(API + 'materiaPrima', {
+          params: filtro
+        });
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de preços de tabela por cliente.
+     */
     PrecosTabelaCliente: {
       /**
        * Recupera a lista de preços de tabela por cliente.
