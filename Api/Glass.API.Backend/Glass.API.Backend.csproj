@@ -230,6 +230,10 @@
     <Compile Include="Controllers\ContasPagar\V1\Pagas\GetContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\PatchContasPagasController.cs" />
     <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
+    <Compile Include="Controllers\Produtos\V1\MateriaPrima\ChapaMateriaPrimaController.cs" />
+    <Compile Include="Controllers\Produtos\V1\MateriaPrima\GetChapaMateriaPrimaController.cs" />
+    <Compile Include="Controllers\Produtos\V1\MateriaPrima\Posicao\GetPosicaoMateriaPrimaController.cs" />
+    <Compile Include="Controllers\Produtos\V1\MateriaPrima\Posicao\PosicaoMateriaPrimaController.cs" />
     <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\GetPrecosTabelaClienteController.cs" />
     <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\PrecosTabelaClienteController.cs" />
     <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
@@ -827,6 +831,7 @@
     <Compile Include="Models\Pedidos\V1\ListaVolumes\ListaDto.cs" />
     <Compile Include="Models\Pedidos\V1\ListaVolumes\PermissoesDto.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Pedidos\ListaDto.cs" />
+    <Compile Include="Models\Pedidos\V1\TipoPedidoPCPEnum\TipoPedidoPCPEnum.cs" />
     <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\GruposConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CategoriasConta\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
@@ -870,6 +875,13 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\ChapaMateriaPrima\ProdutoDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\CorVidroDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\ChapaMateriaPrima\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\MetroQuadradoDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\ListaDto.cs" />
