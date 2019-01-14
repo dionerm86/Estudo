@@ -68,7 +68,7 @@
 
   watch: {
     /**
-     * Observador para a variável 'lojaAtual'.
+     * Observador para a variável 'situacaoAtual'.
      * Atualiza o filtro com os dados do item selecionado.
      */
     situacaoAtual: {
