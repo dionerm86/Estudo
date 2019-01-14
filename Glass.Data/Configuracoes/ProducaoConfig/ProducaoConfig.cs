@@ -9,10 +9,7 @@ namespace Glass.Configuracoes
         /// </summary>
         public static bool ReporApenasProduzidos
         {
-            get
-            {
-                return PCPConfig.ControlarProducao;
-            }
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ReporApenasProduzidos); }
         }
 
         /// <summary>
