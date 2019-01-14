@@ -32,13 +32,6 @@ namespace Glass.API.Backend.Controllers.Producao.V1.TiposPerda.SubtiposPerda
         {
             using (var sessao = new GDATransaction())
             {
-                var validacao = this.ValidarExistenciaIdTipoPerda(sessao, idTipoPerda);
-
-                if (validacao != null)
-                {
-                    return validacao;
-                }
-
                 var subtiposPerda = Microsoft.Practices.ServiceLocation.ServiceLocator
                     .Current.GetInstance<PCP.Negocios.IPerdaFluxo>()
                     .PesquisarSubtiposPerda(idTipoPerda)

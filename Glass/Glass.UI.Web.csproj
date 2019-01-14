@@ -522,6 +522,9 @@
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.Filtro.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Templates\ListaPrecoTabelaCliente.Filtro.html" />
+    <Content Include="Vue\Produtos\ChapasVidro\Perdas\Componentes\LstPerdasChapasVidro.Filtro.js" />
+    <Content Include="Vue\Produtos\ChapasVidro\Perdas\Componentes\LstPerdasChapasVidro.js" />
+    <Content Include="Vue\Produtos\ChapasVidro\Perdas\Templates\LstPerdasChapasVidro.Filtro.html" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.Filtro.js" />
     <Content Include="Vue\Projetos\Componentes\LstProjetos.js" />
     <Content Include="Vue\Projetos\Ferragens\FabricantesFerragem\Componentes\LstFabricantesFerragem.js" />
