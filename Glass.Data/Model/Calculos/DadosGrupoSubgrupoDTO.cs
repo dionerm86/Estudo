@@ -62,24 +62,20 @@ namespace Glass.Data.Model.Calculos
             if (compra)
             {
                 var tipoCalculoSubGrupo = CompraConfig.UsarTipoCalculoNfParaCompra
-                        ? subgrupoProduto.Value.TipoCalculoNf
-                        : subgrupoProduto.Value.TipoCalculo;
+                    ? subgrupoProduto.Value.TipoCalculoNf
+                    : subgrupoProduto.Value.TipoCalculo;
+
                 return tipoCalculoSubGrupo ?? TipoCalculoGrupoProd.Qtd;
             }
 
-            TipoCalculoGrupoProd? tipoCalculoFiscal = subgrupoProduto != null
-                ? subgrupoProduto.Value.TipoCalculoNf ?? grupoProduto.Value.TipoCalculoNf
-                : grupoProduto.Value.TipoCalculoNf;
-
-            TipoCalculoGrupoProd? tipoCalculo = subgrupoProduto != null
-                ? subgrupoProduto.Value.TipoCalculo
-                : grupoProduto.Value.TipoCalculo;
-
-            var tipoCalc = fiscal
-                ? tipoCalculoFiscal ?? tipoCalculo
-                : tipoCalculo;
-
-            return tipoCalc ?? TipoCalculoGrupoProd.Qtd;
+            return (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(
+                grupoProduto.Value.IdGrupoProd,
+                subgrupoProduto.Value.IdSubgrupoProd,
+                fiscal,
+                grupoProduto.Value.TipoCalculo,
+                grupoProduto.Value.TipoCalculoNf,
+                subgrupoProduto.Value.TipoCalculo,
+                subgrupoProduto.Value.TipoCalculoNf);
         }
 
         private Lazy<GrupoProd> ObterGrupo(GDASession sessao, int idGrupoProd)

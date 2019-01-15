@@ -40,7 +40,6 @@ namespace Glass.Data.Model
         float AlturaCalc { get; }
         float TotM { get; set; }
         float TotM2Calc { get; set; }
-        int TipoCalc { get; }
 
         GenericBenefCollection Beneficiamentos { get; set; }
         int? AlturaBenef { get; }
