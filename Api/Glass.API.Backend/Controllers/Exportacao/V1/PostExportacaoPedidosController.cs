@@ -53,14 +53,8 @@ namespace Glass.API.Backend.Controllers.Exportacao.V1
                     }
 
                     byte[] buffer = Data.Helper.UtilsExportacaoPedido.ConfigurarExportacao(listaPedidos, new uint[] { });
-                    var urlFornecedor = string.Format(
-                        "{0}{1}",
-                        fornecedor.UrlSistema.ToLower().Substring(
-                            0,
-                            fornecedor.UrlSistema.ToLower()
-                                .LastIndexOf("/webglass"))
-                                    .TrimEnd('/'),
-                        "/service/wsexportacaopedido.asmx");
+                    var urlInicio = fornecedor.UrlSistema.ToLower().Substring(0, fornecedor.UrlSistema.ToLower().LastIndexOf("/webglass")).TrimEnd('/');
+                    var urlFornecedor = string.Format("{0}{1}", urlInicio, "/service/wsexportacaopedido.asmx");
 
                     object[] parametros = new object[] { loja.Cnpj, 1, buffer };
 

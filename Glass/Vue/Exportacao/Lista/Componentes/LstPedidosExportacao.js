@@ -32,7 +32,6 @@
     /**
      * Exibe um relatório da exportação do pedido, aplicando os filtros da tela.
      * @param {number} id O identificador da exportação de pedido que será exibido para impressão.
-     * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
      */
     abrirRelatorio: function (id) {
       this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=Exportacao&idExportacao=' + id);
