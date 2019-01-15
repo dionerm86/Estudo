@@ -28,21 +28,21 @@ namespace Glass.API.Backend.Models.Exportacao.Lista.V1
         }
 
         /// <summary>
-        /// Obtém ou define o fornecedor da listagem de exportações de pedidos atuais.
+        /// Obtém ou define o fornecedor da exportação de pedidos.
         /// </summary>
         [DataMember]
         [JsonProperty("fornecedor")]
         public string Fornecedor { get; set; }
 
         /// <summary>
-        /// Obtém ou define o funcionário da listagem de exportações de pedidos atuais.
+        /// Obtém ou define o funcionário da exportação de pedidos.
         /// </summary>
         [DataMember]
         [JsonProperty("funcionario")]
         public string Funcionario { get; set; }
 
         /// <summary>
-        /// Obtém ou define a data das exportações de pedidos atuais.
+        /// Obtém ou define a data da exportação de pedidos.
         /// </summary>
         [DataMember]
         [JsonProperty("dataExportacao")]

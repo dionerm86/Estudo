@@ -61,7 +61,7 @@ namespace Glass.API.Backend.Controllers.Exportacao.V1
         /// <summary>
         /// Recupera a lista de situações da exportação de pedidos.
         /// </summary>
-        /// <returns>Uma lista JSON com os dados das exportações de pedidos.</returns>
+        /// <returns>Uma lista JSON com os itens para controle de situações da listagem de exportação de pedidos.</returns>
         [HttpGet]
         [Route("situacoes")]
         [SwaggerResponse(200, "Situações encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]

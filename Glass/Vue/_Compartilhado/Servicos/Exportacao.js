@@ -22,7 +22,7 @@ Servicos.Exportacao = (function (http) {
     },
 
     /**
-     * Recupera o objeto com as configurações utilizadas na tela de listagem de exportação de pedidos.
+     * Recupera a lista de situações para uso no controle de seleção.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterFiltroSituacoes: function () {
@@ -30,7 +30,7 @@ Servicos.Exportacao = (function (http) {
     },
 
     /**
-     * Recupera a lista de situações para uso no controle de seleção.
+     * Consulta da situação para a exportação de pedidos.
      * @param {number} idExportacao O identificador da exportação do pedido.
      * @returns {Promise} Uma promise com o resultado da busca.
      */

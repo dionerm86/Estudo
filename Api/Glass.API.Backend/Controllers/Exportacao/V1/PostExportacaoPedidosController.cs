@@ -43,7 +43,7 @@ namespace Glass.API.Backend.Controllers.Exportacao.V1
                     var exportacao = ExportacaoDAO.Instance.GetElement((uint)id);
                     var idsPedido = PedidoExportacaoDAO.Instance.PesquisarPedidosExportacao((uint)id);
 
-                    var loja = LojaDAO.Instance.GetElement(Data.Helper.UserInfo.GetUserInfo.IdLoja);
+                    var loja = LojaDAO.Instance.GetElement(sessao, Data.Helper.UserInfo.GetUserInfo.IdLoja);
                     var fornecedor = FornecedorDAO.Instance.GetElement(exportacao.IdFornec);
 
                     var listaPedidos = new Dictionary<uint, bool>();
@@ -63,7 +63,7 @@ namespace Glass.API.Backend.Controllers.Exportacao.V1
 
                     Data.Helper.UtilsExportacaoPedido.AtualizarPedidosExportacao(retorno as string[]);
 
-                    return this.Ok("As situações dos pedidos foram atualizadas.");
+                    return this.Ok("A situação dos pedidos foi atualizada.");
                 }
                 catch (Exception ex)
                 {
