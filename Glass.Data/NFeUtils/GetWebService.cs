@@ -15,6 +15,14 @@ namespace Glass.Data.NFeUtils
             return !string.IsNullOrEmpty(certPath) ? Certificado.GetCertificado(idLoja, certPath) : Certificado.GetCertificado(idLoja);
         }
 
+        private static System.Net.SecurityProtocolType ObterProtocoloSeguranca()
+        {
+            return System.Net.SecurityProtocolType.Tls |
+                System.Net.SecurityProtocolType.Tls11 |
+                System.Net.SecurityProtocolType.Tls12 |
+                System.Net.SecurityProtocolType.Ssl3;
+        }
+
         #endregion
 
         #region Consulta Cadastro
@@ -116,14 +124,6 @@ namespace Glass.Data.NFeUtils
         #endregion
 
         #region NF-e
-
-        private static System.Net.SecurityProtocolType ObterProtocoloSeguranca()
-        {
-            return System.Net.SecurityProtocolType.Tls |
-                System.Net.SecurityProtocolType.Tls11 |
-                System.Net.SecurityProtocolType.Tls12 |
-                System.Net.SecurityProtocolType.Ssl3;
-        }
 
         internal static string ObterServidorAutorizadorNFe(NotaFiscal notaFiscal, string uf)
         {
