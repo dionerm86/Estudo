@@ -5,7 +5,7 @@
 namespace Glass.API.Backend.Helper.Exportacao
 {
     /// <summary>
-    /// Classe que realiza a tradução dos campos de ordenação para a lista de grupos de medidas de projetos.
+    /// Classe que realiza a tradução dos campos de ordenação para a lista de exportação de pedidos.
     /// </summary>
     internal class TraducaoOrdenacaoExportacaoPedidos : BaseTraducaoOrdenacao
     {

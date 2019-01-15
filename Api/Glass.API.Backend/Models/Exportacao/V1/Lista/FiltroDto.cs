@@ -25,35 +25,35 @@ namespace Glass.API.Backend.Models.Exportacao.Lista.V1
         }
 
         /// <summary>
-        /// Obtém ou define o identificador da listagem de exportações de pedido.
+        /// Obtém ou define o identificador da listagem de exportações de pedidos.
         /// </summary>
         [DataMember]
         [JsonProperty("id")]
         public int? Id { get; set; }
 
         /// <summary>
-        /// Obtém ou define o identificador do pedido da listagem de exportações de pedido.
+        /// Obtém ou define o identificador de exportações de pedidos.
         /// </summary>
         [DataMember]
         [JsonProperty("idPedido")]
         public int? IdPedido { get; set; }
 
         /// <summary>
-        /// Obtém ou define a situação da listagem de exportações de pedido.
+        /// Obtém ou define a situação das exportações de pedidos.
         /// </summary>
         [DataMember]
         [JsonProperty("situacao")]
         public PedidoExportacao.SituacaoExportacaoEnum Situacao { get; set; }
 
         /// <summary>
-        /// Obtém ou define o período do inicio das exportações de pedido.
+        /// Obtém ou define data inicial para filtro pela data de cadastro da exportação.
         /// </summary>
         [DataMember]
         [JsonProperty("periodoCadastroInicio")]
         public DateTime? PeriodoCadastroInicio { get; set; }
 
         /// <summary>
-        /// Obtém ou define o período do fim das exportações de pedido.
+        /// Obtém ou define a data final para filtro pela data de cadastro da exportação.
         /// </summary>
         [DataMember]
         [JsonProperty("periodoCadastroFim")]

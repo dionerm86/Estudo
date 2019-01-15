@@ -12,16 +12,15 @@ using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Exportacao.V1
 {
-
     /// <summary>
     /// Controller de exportação de pedidos.
     /// </summary>
     public partial class ExportacaoPedidosController : BaseController
     {
         /// <summary>
-        /// Consulta a situação de exportação de pedidos.
+        /// Consulta a situação da exportação de pedidos.
         /// </summary>
-        /// <param name="id">Objeto contendo dados para consultar exportação de pedidos.</param>
+        /// <param name="id">O identificador da exportação de pedidos.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPost]
         [Route("{id:int}/consultarSituacao")]
@@ -70,7 +69,7 @@ namespace Glass.API.Backend.Controllers.Exportacao.V1
 
                     Data.Helper.UtilsExportacaoPedido.AtualizarPedidosExportacao(retorno as string[]);
 
-                    return this.Ok("A Situação dos pedidos foram atualizadas.");
+                    return this.Ok("As situações dos pedidos foram atualizadas.");
                 }
                 catch (Exception ex)
                 {

@@ -50,9 +50,9 @@
 
   watch: {
     /**
-      * Observador para a variável 'situacaoAtual'.
-      * Atualiza o filtro com o ID do item selecionado.
-      */
+     * Observador para a variável 'situacaoAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
     situacaoAtual: {
       handler: function (atual) {
         this.filtroAtual.situacao = atual ? atual.id : null;
