@@ -235,6 +235,8 @@
     <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\DeletePerdasChapasVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\GetPerdasChapasVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\PerdasChapasVidroController.cs" />
+    <Compile Include="Controllers\Producao\V1\Retalhos\GetRetalhosProducaoController.cs" />
+    <Compile Include="Controllers\Producao\V1\Retalhos\RetalhosProducaoController.cs" />
     <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\Associacoes\TraducaoOrdenacaoListaAssociacaoProprietariosVeiculos.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
@@ -242,6 +244,7 @@
     <Compile Include="Helper\ContasPagar\Pagas\TraducaoOrdenacaoListaContasPagas.cs" />
     <Compile Include="Helper\Produtos\PrecosTabelaCliente\TraducaoOrdenacaoListaPrecoTabelaCliente.cs" />
     <Compile Include="Helper\Produtos\ChapasVidro\Perdas\TraducaoOrdenacaoListaPerdasChapasVidro.cs" />
+    <Compile Include="Helper\Producao\Retalhos\TraducaoOrdenacaoListaRetalhosProducao.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Configuracoes\ListaDto.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PostCarregamentosController.cs" />
@@ -848,6 +851,13 @@
     <Compile Include="Models\PlanosConta\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\PlanosConta\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\PlanosConta\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\DatasDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\MedidasDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\MetroQuadradoDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\ProdutoDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\ListaDto.cs" />
     <Compile Include="Models\Parcelas\V1\Configurações\ListaDto.cs" />
