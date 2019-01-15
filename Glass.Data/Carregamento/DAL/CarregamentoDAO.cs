@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.Model;
@@ -482,5 +482,18 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        public void ForcarTransacaoCarregamento(GDASession sessao, uint idCarregamento, bool inicio)
+        {
+            if (idCarregamento == 0)
+            {
+                return;
+            }
+            string sql = $@"
+                UPDATE carregamento
+                SET TRANSACAO = {inicio}
+                WHERE idCarregamento = {idCarregamento}";
+            this.objPersistence.ExecuteCommand(sessao, sql);
+        }
     }
 }
