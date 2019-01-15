@@ -351,10 +351,14 @@ namespace Glass.Data.DAL
         {
             if (idGrupo == 0 && idSubgrupo.GetValueOrDefault() == 0)
             {
-                var excecao = new Exception("Não foi possível recuperar o tipo de cálculo do produto.");
-                ErroDAO.Instance.InserirFromException("TipoCalculo", excecao);
+                var idSubgrupoExcecao = idSubgrupo == 0 ? "0" : "null";
+                var nfExcecao = nf ? "S" : "N";
 
-                throw excecao;
+                ErroDAO.Instance.InserirFromException(
+                    $"TipoCalculo - IdGrupo: {idGrupo} | IdSubgrupo: {idSubgrupoExcecao} | NF: {nfExcecao}",
+                    new Exception("Não foi possível recuperar o tipo de cálculo do produto."));
+
+                return (int)TipoCalculoGrupoProd.Qtd;
             }
 
             TipoCalculoGrupoProd? tipoCalculo = null;
