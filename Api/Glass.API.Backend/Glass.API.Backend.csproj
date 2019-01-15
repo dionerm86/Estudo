@@ -232,12 +232,15 @@
     <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
     <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\GetPrecosTabelaClienteController.cs" />
     <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\PrecosTabelaClienteController.cs" />
+    <Compile Include="Helper\ArquivosOtimizacao\TraducaoOrdenacaoListaArquivosOtimizacao.cs" />
     <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\Associacoes\TraducaoOrdenacaoListaAssociacaoProprietariosVeiculos.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\ConverterCadastroAtualizacaoParaContasPagas.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\TraducaoOrdenacaoListaContasPagas.cs" />
     <Compile Include="Helper\Produtos\PrecosTabelaCliente\TraducaoOrdenacaoListaPrecoTabelaCliente.cs" />
+    <Compile Include="Models\ArquivosOtimizacao\V1\FiltroDto.cs" />
+    <Compile Include="Models\ArquivosOtimizacao\V1\ListaDto.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Configuracoes\ListaDto.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PostCarregamentosController.cs" />
