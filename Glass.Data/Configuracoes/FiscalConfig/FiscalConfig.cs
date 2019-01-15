@@ -232,11 +232,6 @@ namespace Glass.Configuracoes
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirCheckGerarProdutoConjunto); }
         }
 
-        public static bool UsarTLS12NFe
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarTLS12NFe); }
-        }
-
         /// <summary>
         /// Estados que devem ser considerados para o cálculo do Difal do artigo 7°, incisos XIII e XIV e 7° c/c Artigo 16 do RICMS/PR.
         /// </summary>
