@@ -4305,7 +4305,7 @@ namespace Glass.Data.DAL
 
             try
             {
-                if (naturezaCalculaDifal && totalIcmsUFDestino > 0 && totalIcmsUFRemetente > 0)
+                if (naturezaCalculaDifal && (totalIcmsUFDestino > 0 || totalIcmsUFRemetente > 0))
                 {
                     nf.InfCompl += $" Valor da partilha UF de destino: {totalIcmsUFDestino.ToString("C")}, Valor da partilha UF de origem: {totalIcmsUFRemetente.ToString("C")}.";
                 }
