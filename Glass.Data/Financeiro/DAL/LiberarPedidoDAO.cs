@@ -2807,7 +2807,7 @@ namespace Glass.Data.DAL
                 produtosPedido.Add(new KeyValuePair<int, float>((int)idsProdutosPedido[i], qtdeLiberar[i]));
             }
 
-            MovEstoqueDAO.Instance.BaixaEstoqueLiberacao(sessao, idLiberarPedido, idCliente, produtosPedido);
+            MovEstoqueDAO.Instance.BaixaEstoqueLiberacao(sessao, idLiberarPedido, produtosPedido);
         }
 
         #endregion

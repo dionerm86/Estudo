@@ -485,6 +485,11 @@ namespace Glass.Data.DAL
                 return;
             }
 
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
             var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, idPedido);
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
             var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, idLoja, idPedido, null, null, false);
@@ -535,6 +540,11 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueChapa(GDASession sessao, int idProdPed, uint? idProdImpressaoChapa)
         {
+            if (idProdPed == 0)
+            {
+                throw new InvalidOperationException("O produto do pedido deve ser informado.");
+            }
+
             var produtoPedido = ProdutosPedidoDAO.Instance.GetElementFluxoLite(sessao, (uint)idProdPed);
 
             if (produtoPedido.Qtde <= produtoPedido.QtdSaida)
@@ -564,6 +574,16 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueCorteChapa(GDASession sessao, uint idProdPedProducao, int idProdImpressaoChapa)
         {
+            if (idProdPedProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
+            if (idProdImpressaoChapa == 0)
+            {
+                throw new InvalidOperationException("O produto da impressão de chapad deve ser informado.");
+            }
+
             uint? idProd = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, (uint)idProdImpressaoChapa);
 
             new EstoqueStrategyFactory()
@@ -579,6 +599,11 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueVolume(GDASession sessao, uint idPedido, IEnumerable<VolumeProdutosPedido> volumes)
         {
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
             var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, idLoja, idPedido, null, null, false);
             var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, idPedido);
@@ -627,6 +652,16 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueManual(GDASession sessao, int idLoja, int idPedido, IEnumerable<KeyValuePair<int, float>> produtosPedido, string observacao)
         {
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
             var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, (uint)idLoja, (uint)idPedido, null, null, true);
             var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido);
             var idsProduto = new List<int>();
@@ -670,6 +705,11 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueCancelamentoCompra(GDASession sessao, int idCompra, IEnumerable<ProdutosCompra> produtosCompra)
         {
+            if (idCompra == 0)
+            {
+                throw new InvalidOperationException("A compra deve ser informada.");
+            }
+
             foreach (var item in produtosCompra)
             {
                 var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
@@ -695,8 +735,11 @@ namespace Glass.Data.DAL
                             AlterarProdutoBase = true,
                         });
                 }
+            }
 
-                objPersistence.ExecuteCommand(sessao, "update produtos_compra set qtdeEntrada=0 where idProdCompra=" + item.IdProdCompra);
+            if (produtosCompra.Any())
+            {
+                objPersistence.ExecuteCommand(sessao, $"update produtos_compra set qtdeEntrada=0 where idProdCompra IN ({string.Join(",", produtosCompra.Select(f => f.IdCompra))})");
             }
 
             objPersistence.ExecuteCommand(sessao, "update compra set estoqueBaixado=false where idCompra=" + idCompra);
@@ -704,6 +747,16 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueCancelamentoEntradaEstoqueCompra(GDASession sessao, int idLoja, int idCompra, int idEntradaEstoque, IEnumerable<ProdutoEntradaEstoque> produtosEntradaEstoque)
         {
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
+            if (idCompra == 0)
+            {
+                throw new InvalidOperationException("A compra deve ser informada.");
+            }
+
             foreach (var item in produtosEntradaEstoque)
             {
                 var produtoCompra = ProdutosCompraDAO.Instance.GetElementByPrimaryKey(sessao, item.IdProdCompra.Value);
@@ -736,6 +789,16 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueCancelamentoEntradaEstoqueNotaFiscal(GDASession sessao, int idLoja, int idNotaFiscal, int idEntradaEstoque, IEnumerable<ProdutoEntradaEstoque> produtosEntradaEstoque)
         {
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
+            if (idNotaFiscal == 0)
+            {
+                throw new InvalidOperationException("A nota fiscal deve ser informada.");
+            }
+
             foreach (var item in produtosEntradaEstoque)
             {
                 var produtoNotaFiscal = ProdutosNfDAO.Instance.GetElementByPrimaryKey(sessao, item.IdProdNf.Value);
@@ -766,8 +829,13 @@ namespace Glass.Data.DAL
             }
         }
 
-        public void BaixaEstoqueLiberacao(GDASession sessao, uint idLiberarPedido, uint idCliente, IEnumerable<KeyValuePair<int, float>> produtosPedido)
+        public void BaixaEstoqueLiberacao(GDASession sessao, uint idLiberarPedido, IEnumerable<KeyValuePair<int, float>> produtosPedido)
         {
+            if (idLiberarPedido == 0)
+            {
+                throw new InvalidOperationException("A liberação de pedido deve ser informada.");
+            }
+
             var idsProdutoReservaLiberacao = new Dictionary<int, List<int>>();
 
             foreach (var item in produtosPedido)
@@ -846,6 +914,11 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueProdutoDevolvidoTrocaDevolucao(GDASession sessao, int idTrocaDevolucao, IEnumerable<ProdutoTrocaDevolucao> produtosDevolvidos)
         {
+            if (idTrocaDevolucao == 0)
+            {
+                throw new InvalidOperationException("A troca/devolução deve ser informada.");
+            }
+
             foreach (var item in produtosDevolvidos.Where(f => f.AlterarEstoque))
             {
                 var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int?)item.IdSubgrupoProd, false);
@@ -870,6 +943,11 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueProdutoTrocadoTrocaDevolucao(GDASession sessao, int idTrocaDevolucao, IEnumerable<ProdutoTrocado> produtosTrocados)
         {
+            if (idTrocaDevolucao == 0)
+            {
+                throw new InvalidOperationException("A troca/devolução deve ser informada.");
+            }
+
             foreach (var item in produtosTrocados)
             {
                 var idLoja = (uint)ObterIdLojaTrocaDevolucao(sessao, idTrocaDevolucao, (int)item.IdProd);
@@ -902,7 +980,7 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueRealNotaFiscal(GDASession sessao, NotaFiscal notaFiscal, IEnumerable<ProdutosNf> produtosNotaFiscal)
         {
-            if (notaFiscal.SaiuEstoque || !notaFiscal.GerarEstoqueReal)
+            if (notaFiscal == null || notaFiscal.SaiuEstoque || !notaFiscal.GerarEstoqueReal)
             {
                 return;
             }
@@ -932,6 +1010,11 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoquePedidoInterno(GDASession sessao, int idLoja, Dictionary<int, float> saidasProduto, IEnumerable<ProdutoPedidoInterno> produtosPedidoInterno)
         {
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
             foreach (var item in produtosPedidoInterno)
             {
                 saidasProduto[(int)item.IdProdPedInterno] = Math.Min(saidasProduto[(int)item.IdProdPedInterno], item.QtdeConfirmar);
@@ -970,7 +1053,7 @@ namespace Glass.Data.DAL
 
                 var idCentroCusto = PedidoInternoDAO.Instance.ObtemIdCentroCusto(sessao, (int)item.IdPedidoInterno);
 
-                if (FiscalConfig.UsarControleCentroCusto && CentroCustoDAO.Instance.GetCountReal(sessao) > 0 && idCentroCusto.GetValueOrDefault(0) > 0)
+                if (FiscalConfig.UsarControleCentroCusto && CentroCustoDAO.Instance.GetCountReal(sessao) > 0 && idCentroCusto > 0)
                 {
                     CentroCustoAssociadoDAO.Instance.Insert(sessao, new CentroCustoAssociado()
                     {
@@ -987,19 +1070,46 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueManual(GDASession sessao, uint idProd, uint idLoja, decimal qtdeBaixa, decimal? valor, DateTime dataMov, string observacao)
         {
-            new EstoqueStrategyFactory()
-                .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
-                .Baixar(sessao, new MovimentacaoDto
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
+            if (idProd == 0)
+            {
+                throw new InvalidOperationException("O produto deve ser informado.");
+            }
+
+            using (var transaction = new GDATransaction())
+            {
+                try
                 {
-                    IdProduto = idProd,
-                    IdLoja = idLoja,
-                    LancamentoManual = true,
-                    Quantidade = qtdeBaixa,
-                    Total = valor.GetValueOrDefault(GetTotalEstoqueManual(sessao, (int)idProd, qtdeBaixa)),
-                    Data = dataMov,
-                    AlterarProdutoBase = true,
-                    Observacao = observacao,
-                });
+                    transaction.BeginTransaction();
+
+                    new EstoqueStrategyFactory()
+                        .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                        .Baixar(transaction, new MovimentacaoDto
+                        {
+                            IdProduto = idProd,
+                            IdLoja = idLoja,
+                            LancamentoManual = true,
+                            Quantidade = qtdeBaixa,
+                            Total = valor.GetValueOrDefault(GetTotalEstoqueManual(transaction, (int)idProd, qtdeBaixa)),
+                            Data = dataMov,
+                            AlterarProdutoBase = true,
+                            Observacao = observacao,
+                        });
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
         }
 
         public void BaixaEstoquePedidoProducao(GDASession sessao, IEnumerable<int> idsProdutoPedidoProducao)
@@ -1027,14 +1137,21 @@ namespace Glass.Data.DAL
                     });
 
                 CreditaEstoqueProducao(sessao, (int)produtoPedidoEspelho.IdProd, idLoja, (int)item.IdProdPedProducao, (decimal)(m2Calc > 0 && passouSetorLaminado ? m2Calc : 1));
+            }
 
-                // Marca que este produto entrou em estoque
-                objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET EntrouEstoque = 0 WHERE IdProdPedProducao = {item.IdProdPedProducao}");
+            if (idsProdutoPedidoProducao.Any())
+            {
+                objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET EntrouEstoque = 0 WHERE IdProdPedProducao IN ({string.Join(",", idsProdutoPedidoProducao)})");
             }
         }
 
         public void BaixaEstoquePedidoProducaoPerda(GDASession sessao, int idProdutoPedidoProducao, Pedido.TipoPedidoEnum tipoPedido, uint idFuncionario)
         {
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
             if (tipoPedido != Pedido.TipoPedidoEnum.Producao
                 || !ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
             {
@@ -1071,6 +1188,26 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueVoltarPecaProducao(GDASession sessao, int idProdutoPedidoProducao, int idPedido, Pedido.TipoPedidoEnum tipoPedido, Setor setorAtual, Setor setorNovo)
         {
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
+            if (setorAtual == null || setorAtual.IdSetor == 0)
+            {
+                throw new InvalidOperationException("O setor atual deve ser informado.");
+            }
+
+            if (setorNovo == null || setorNovo.IdSetor == 0)
+            {
+                throw new InvalidOperationException("O setor novo deve ser informado.");
+            }
+
             if (tipoPedido != Pedido.TipoPedidoEnum.Producao
                 || !setorAtual.EntradaEstoque
                 || setorNovo.EntradaEstoque)
@@ -1107,7 +1244,27 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueEntregaExpedicao(GDASession sessao, int idProdutoPedidoProducao, int idPedido, int? idProdutoPedidoRevenda, ProdutosPedido produtoPedido, ProdutosPedidoEspelho produtoPedidoEspelho)
         {
-            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd, false);
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
+            if (produtoPedido == null || produtoPedido.IdProdPed == 0)
+            {
+                throw new InvalidOperationException("O produto do pedido deve ser informado.");
+            }
+
+            if (produtoPedidoEspelho == null || produtoPedidoEspelho.IdProdPed == 0)
+            {
+                throw new InvalidOperationException("O produto do pedido de conferência deve ser informado.");
+            }
+
+            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd);
             var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, 1, produtoPedidoEspelho.Qtde, produtoPedidoEspelho.TotM, produtoPedidoEspelho.Altura);
             var idLoja = ObterIdLojaProdutoPedidoProducao(
                 sessao,
@@ -1142,12 +1299,22 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoquePecaRepostaPedidoProducao(GDASession sessao, int idProdutoPedidoProducao, ProdutosPedidoEspelho produtoPedidoEspelho)
         {
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
             if (!ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
             {
                 return;
             }
 
-            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd, false);
+            if (produtoPedidoEspelho == null || produtoPedidoEspelho.IdProdPed == 0)
+            {
+                throw new InvalidOperationException("O produto do pedido de conferência deve ser informado.");
+            }
+
+            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd);
             var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, 1, produtoPedidoEspelho.Qtde, produtoPedidoEspelho.TotM, produtoPedidoEspelho.Altura);
 
             var idLoja = ObterIdLojaProdutoPedidoProducao(
@@ -1176,7 +1343,17 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoquePerda(GDASession sessao, int idProdutoPedidoProducao, ProdutosPedidoEspelho produtoPedidoEspelho)
         {
-            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd, false);
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
+            if (produtoPedidoEspelho == null || produtoPedidoEspelho.IdProdPed == 0)
+            {
+                throw new InvalidOperationException("O produto do pedido de conferência deve ser informado.");
+            }
+
+            var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoEspelho.IdGrupoProd, (int)produtoPedidoEspelho.IdSubgrupoProd);
             var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, 1, produtoPedidoEspelho.Qtde, produtoPedidoEspelho.TotM, produtoPedidoEspelho.Altura);
 
             var idLoja = ObterIdLojaProdutoPedidoProducao(
@@ -1201,6 +1378,11 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueVoltarPecaProducaoRetalho(GDASession sessao, int idProdutoPedidoProducao, IEnumerable<RetalhoProducao> retalhos)
         {
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
             var idPedido = ProdutoPedidoProducaoDAO.Instance.ObtemIdPedido(sessao, (uint)idProdutoPedidoProducao);
 
             foreach (var item in retalhos)
@@ -1227,6 +1409,26 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueMateriaPrimaPedidoProducao(GDASession sessao, int idProd, int idPedido, int idProdutoPedidoProducao, decimal quantidadeBaixa, Setor setor)
         {
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
+            if (idProd == 0)
+            {
+                throw new InvalidOperationException("O produto deve ser informado.");
+            }
+
+            if (setor == null || setor.IdSetor == 0)
+            {
+                throw new InvalidOperationException("O setor deve ser informado.");
+            }
+
             if (!setor.EntradaEstoque
                 || !PedidoDAO.Instance.IsProducao(sessao, (uint)idPedido)
                 || ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
@@ -1255,6 +1457,21 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueProducao(GDASession sessao, int idProduto, int idPedido, int idProdutoPedidoProducao, decimal quantidadeBaixa)
         {
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
+            if (idProduto == 0)
+            {
+                throw new InvalidOperationException("O produto deve ser informado.");
+            }
+
             var idLoja = ObterIdLojaProdutoPedidoProducao(
                 sessao,
                 idProdutoPedidoProducao,
@@ -1276,6 +1493,11 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueChapaRetalho(GDASession sessao, uint idRetalhoProducao, bool chapaPossuiLeitura)
         {
+            if (idRetalhoProducao == 0)
+            {
+                throw new InvalidOperationException("O retalho de produção deve ser informado.");
+            }
+
             if (chapaPossuiLeitura)
             {
                 return;
@@ -1297,6 +1519,11 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueRetalho(GDASession sessao, RetalhoProducao retalho)
         {
+            if (retalho == null || retalho.IdRetalhoProducao == 0)
+            {
+                throw new InvalidOperationException("O retalho deve ser informado.");
+            }
+
             new EstoqueStrategyFactory()
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Baixar(sessao, new MovimentacaoDto
@@ -1322,6 +1549,11 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoquePerdaChapa(GDASession sessao, PerdaChapaVidro perdaChapaVidro)
         {
+            if (perdaChapaVidro == null || perdaChapaVidro.IdPerdaChapaVidro == 0)
+            {
+                throw new InvalidOperationException("A perda da chapa de vidro deve ser informada.");
+            }
+
             var idNotaFiscal = ProdutosNfDAO.Instance.ObtemIdNf(sessao, perdaChapaVidro.IdProdNf.Value);
 
             if (idNotaFiscal == 0)
@@ -1350,6 +1582,11 @@ namespace Glass.Data.DAL
 
         public void BaixaEstoqueInventario(GDASession sessao, uint idLoja, IEnumerable<ProdutoInventarioEstoque> produtosInventarioEstoque)
         {
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
             foreach (var item in produtosInventarioEstoque)
             {
                 var quantidadeBaixa = (decimal)(item.QtdeIni - item.QtdeFim.GetValueOrDefault());
@@ -1375,6 +1612,11 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueCancelamentoSaidaEstoque(GDASession sessao, SaidaEstoque saidaEstoque)
         {
+            if (saidaEstoque == null || saidaEstoque.IdSaidaEstoque == 0)
+            {
+                throw new InvalidOperationException("A saída de estoque deve ser informada.");
+            }
+
             if (!saidaEstoque.PodeCancelar)
             {
                 throw new InvalidOperationException("Não é possível cancelar essa saída de estoque.");
@@ -1434,11 +1676,20 @@ namespace Glass.Data.DAL
 
             ProdutoLojaDAO.Instance.RecalcularReserva(sessao, (int)saidaEstoque.IdLoja, idsProduto);
             ProdutoLojaDAO.Instance.RecalcularLiberacao(sessao, (int)saidaEstoque.IdLoja, idsProduto);
-
         }
 
         public void CreditaEstoqueCancelamentoPedido(GDASession sessao, uint idLoja, uint idPedido, IEnumerable<ProdutosPedido> produtosPedido)
         {
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
             var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, idPedido);
 
             foreach (var item in produtosPedido.Where(f => f.QtdSaida > 0))
@@ -1472,6 +1723,16 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueEstornoVolume(GDASession sessao, int idPedido, int idVolume, IEnumerable<VolumeProdutosPedido> volumes)
         {
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
+            if (idVolume == 0)
+            {
+                throw new InvalidOperationException("O volume deve ser informado.");
+            }
+
             var tipoPedido = PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido);
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedido);
 
@@ -1520,6 +1781,11 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueEstornoCarregamentoExpedicaoChapa(GDASession sessao, int idPedido, int? idProdImpressaoChapa, IEnumerable<ProdutosPedido> produtosPedido)
         {
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedido);
             var idNotaFiscal = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, (uint)idProdImpressaoChapa);
             if (idNotaFiscal > 0)
@@ -1574,6 +1840,11 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueCompra(GDASession sessao, Compra compra)
         {
+            if (compra == null || compra.IdCompra == 0)
+            {
+                throw new InvalidOperationException("A compra deve ser informada.");
+            }
+
             if (EstoqueConfig.EntradaEstoqueManual || compra.EstoqueBaixado)
             {
                 return;
@@ -1610,6 +1881,16 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueManualCompra(GDASession sessao, uint idLoja, uint idCompra, IEnumerable<ProdutosCompra> produtosCompra)
         {
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
+            if (idCompra == 0)
+            {
+                throw new InvalidOperationException("A compra deve ser informada.");
+            }
+
             var idEntradaEstoque = EntradaEstoqueDAO.Instance.GetNewEntradaEstoque(sessao, idLoja, idCompra, null, true, (int)UserInfo.GetUserInfo.CodUser);
 
             foreach (var item in produtosCompra.Where(f => f.QtdMarcadaEntrada > 0))
@@ -1640,6 +1921,11 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueLiberacao(GDASession sessao, uint idLiberarPedido, IEnumerable<ProdutosLiberarPedido> produtosLiberarPedido)
         {
+            if (idLiberarPedido == 0)
+            {
+                throw new InvalidOperationException("A liberação de pedido deve ser informada.");
+            }
+
             var saidaEstoque = SaidaEstoqueDAO.Instance.GetByLiberacao(sessao, idLiberarPedido);
             var produtosSaidaEstoque = saidaEstoque != null ? ProdutoSaidaEstoqueDAO.Instance.GetForRpt(sessao, saidaEstoque.IdSaidaEstoque).ToArray() : null;
             var idsProdutoReservaLiberacao = new Dictionary<int, List<int>>();
@@ -1718,6 +2004,11 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueProdutoDevolvidoTrocaDevolucao(GDASession sessao, int idTrocaDevolucao, IEnumerable<ProdutoTrocaDevolucao> produtosTrocaDevolucao)
         {
+            if (idTrocaDevolucao == 0)
+            {
+                throw new InvalidOperationException("A troca/devolução deve ser informada.");
+            }
+
             foreach (var item in produtosTrocaDevolucao.Where(f => f.AlterarEstoque))
             {
                 var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
@@ -1742,6 +2033,11 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueProdutoTrocadoTrocaDevolucao(GDASession sessao, int idTrocaDevolucao, IEnumerable<ProdutoTrocado> produtosTrocados)
         {
+            if (idTrocaDevolucao == 0)
+            {
+                throw new InvalidOperationException("A troca/devolução deve ser informada.");
+            }
+
             foreach (var item in produtosTrocados)
             {
                 var idLoja = (uint)ObterIdLojaTrocaDevolucao(sessao, idTrocaDevolucao, (int)item.IdProd);
@@ -1774,6 +2070,16 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueNotaFiscalManual(GDASession sessao, int idNotaFiscal, int idLoja, IEnumerable<ProdutosNf> produtosNotaFiscal)
         {
+            if (idNotaFiscal == 0)
+            {
+                throw new InvalidOperationException("A nota fiscal deve ser informada.");
+            }
+
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
             var dataMov = DateTime.Now;
             var tipoDoc = (NotaFiscal.TipoDoc)NotaFiscalDAO.Instance.GetTipoDocumento(sessao, (uint)idNotaFiscal);
 
@@ -1813,6 +2119,11 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueNotaFiscal(GDASession sessao, NotaFiscal notaFiscal, IEnumerable<ProdutosNf> produtosNotaFiscal)
         {
+            if (notaFiscal == null || notaFiscal.IdNf == 0)
+            {
+                throw new InvalidOperationException("A nota fiscal deve ser informada.");
+            }
+
             if (!notaFiscal.GerarEstoqueReal)
             {
                 return;
@@ -1847,9 +2158,20 @@ namespace Glass.Data.DAL
             }
         }
 
-        public void CreditaEstoqueManual(GDASession sessao, uint idProd, uint idLoja, decimal qtdeEntrada, decimal? valor, DateTime dataMov, string observacao)
+        public void CreditaEstoqueManual(uint idProd, uint idLoja, decimal qtdeEntrada, decimal? valor, DateTime dataMov, string observacao)
         {
-            var totalEstoqueManual = GetTotalEstoqueManual(sessao, (int)idProd, qtdeEntrada);
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var totalEstoqueManual = GetTotalEstoqueManual(transaction, (int)idProd, qtdeEntrada);
 
             new EstoqueStrategyFactory()
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
@@ -1868,6 +2190,26 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoquePedidoProducao(GDASession sessao, int idPedido, int idProdutoPedidoProducao, ProdutosPedidoEspelho produtoPedidoEspelho, Setor setor)
         {
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
+            if (produtoPedidoEspelho == null || produtoPedidoEspelho.IdProdPed == 0)
+            {
+                throw new InvalidOperationException("O produto do pedido em conferência deve ser informado.");
+            }
+
+            if (setor == null || setor.IdSetor == 0)
+            {
+                throw new InvalidOperationException("O setor deve ser informado.");
+            }
+
             if (!setor.EntradaEstoque
                 || !PedidoDAO.Instance.IsProducao(sessao, (uint)idPedido)
                 || ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
@@ -1905,6 +2247,21 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueVoltarPecaProducao(GDASession sessao, int idProduto, int idProdutoPedidoProducao, ProdutosPedidoEspelho produtoPedidoEspelho)
         {
+            if (idProduto == 0)
+            {
+                throw new InvalidOperationException("O produto deve ser informado.");
+            }
+
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
+            if (produtoPedidoEspelho == null || produtoPedidoEspelho.IdProdPed == 0)
+            {
+                throw new InvalidOperationException("O produto do pedido em conferência deve ser informado.");
+            }
+
             var idLoja = ObterIdLojaProdutoPedidoProducao(
                 sessao,
                 idProdutoPedidoProducao,
@@ -1939,6 +2296,21 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueChapaVoltarPecaProducao(GDASession sessao, int idPedido, int idProdutoPedidoProducao, int idProdutoImpressaoChapa)
         {
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
+            if (idProdutoImpressaoChapa == 0)
+            {
+                throw new InvalidOperationException("O produto de impressão da chapa deve ser informado.");
+            }
+
             var idProduto = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, (uint)idProdutoImpressaoChapa);
 
             if (idProduto.GetValueOrDefault() == 0)
@@ -1963,6 +2335,16 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueVoltarPecaPedidoProducao(GDASession sessao, int idPedido, int idProdutoPedidoProducao)
         {
+            if (idPedido == 0)
+            {
+                throw new InvalidOperationException("O pedido deve ser informado.");
+            }
+
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
             if (PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido) != Pedido.TipoPedidoEnum.Producao
                 || !ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, idProdutoPedidoProducao))
             {
@@ -2000,6 +2382,21 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueProducao(GDASession sessao, int idProduto, int idLoja, int idProdutoPedidoProducao, decimal quantidadeEntrada)
         {
+            if (idProduto == 0)
+            {
+                throw new InvalidOperationException("O produto deve ser informado.");
+            }
+
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
+            if (idProdutoPedidoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto de pedido de produção deve ser informado.");
+            }
+
             new EstoqueStrategyFactory()
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
@@ -2014,8 +2411,18 @@ namespace Glass.Data.DAL
                 });
         }
 
-        public void CreditaEstoqueRetalho(GDASession sessao, int idProd, RetalhoProducao retalho, LoginUsuario usuario)
+        public void CreditaEstoqueRetalho(GDASession sessao, int idProduto, RetalhoProducao retalho, LoginUsuario usuario)
         {
+            if (idProduto == 0)
+            {
+                throw new InvalidOperationException("O produto deve ser informado.");
+            }
+
+            if (retalho == null || retalho.IdRetalhoProducao == 0)
+            {
+                throw new InvalidOperationException("O produto do pedido em conferência deve ser informado.");
+            }
+
             var idLoja = usuario != null
                 ? usuario.IdLoja
                 : UserInfo.GetUserInfo.IdLoja;
@@ -2024,7 +2431,7 @@ namespace Glass.Data.DAL
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
                 {
-                    IdProduto = (uint)idProd,
+                    IdProduto = (uint)idProduto,
                     IdLoja = idLoja,
                     IdRetalhoProducao = (uint)retalho.IdRetalhoProducao,
                     AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, idProd),
@@ -2048,6 +2455,26 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoquePerdaChapa(GDASession sessao, uint idProd, uint idProdNf, uint idLoja, uint idPerdaChapaVidro)
         {
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
+            if (idProd == 0)
+            {
+                throw new InvalidOperationException("O prodtuo deve ser informado.");
+            }
+
+            if (idProdNf == 0)
+            {
+                throw new InvalidOperationException("O prodtuo da nota fiscal deve ser informado.");
+            }
+
+            if (idPerdaChapaVidro == 0)
+            {
+                throw new InvalidOperationException("A perda da chapa de vidro deve ser informada.");
+            }
+
             new EstoqueStrategyFactory()
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
                 .Creditar(sessao, new MovimentacaoDto
@@ -2062,6 +2489,11 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueChapaCancelamentoImpressaoEtiqueta(GDASession sessao, int idProdutoImpressaoChapa)
         {
+            if (idProdutoImpressaoChapa == 0)
+            {
+                throw new InvalidOperationException("O produto de impressão de chapa deve ser informado.");
+            }
+
             var idProduto = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, (uint)idProdutoImpressaoChapa);
 
             if (idProduto.GetValueOrDefault() == 0)
@@ -2089,6 +2521,11 @@ namespace Glass.Data.DAL
 
         public void CreditaEstoqueInventario(GDASession sessao, uint idLoja, IEnumerable<ProdutoInventarioEstoque> produtosInventarioEstoque)
         {
+            if (idLoja == 0)
+            {
+                throw new InvalidOperationException("A loja deve ser informada.");
+            }
+
             foreach (var item in produtosInventarioEstoque)
             {
                 var quantidadeEntrada = (decimal)(item.QtdeFim.GetValueOrDefault() - item.QtdeIni);

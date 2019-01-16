@@ -4947,6 +4947,11 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool EntrouEmEstoque(GDASession sessao, int idProdutoPedidoProducao)
         {
+            if (idProdutoPedidoProducao == 0)
+            {
+                return false;
+            }
+
             return ExecuteScalar<bool>(sessao, $@"
                 SELECT COUNT(*)>0 From produto_pedido_producao 
                 WHERE idProdPedProducao={idProdutoPedidoProducao}

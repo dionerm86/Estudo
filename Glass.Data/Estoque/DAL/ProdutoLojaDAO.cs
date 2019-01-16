@@ -568,6 +568,11 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public Tuple<int, decimal> ObterEstoqueAtualChapasPorCorEspessura(int idCorVidro, float espessura)
         {
+            if (idCorVidro == 0 || espessura == 0)
+            {
+                throw new InvalidOperationException("A cor do vidro e a espessura devem ser informadas.");
+            }
+
             var sql = $@"
                 SELECT SUM(pl.{{0}})
                 FROM produto_loja pl
