@@ -668,7 +668,7 @@ namespace Glass.Data.DAL
 
             foreach (var item in produtosPedido)
             {
-                var produtoPedido = ProdutosPedidoDAO.Instance.GetElement((uint)item.Key);
+                var produtoPedido = ProdutosPedidoDAO.Instance.GetElement(sessao, (uint)item.Key);
                 var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, false);
                 var quantidadeBaixa = CalcularQuantidadeEstoque(tipoCalculo, item.Value, produtoPedido.Qtde, produtoPedido.TotM, produtoPedido.Altura);
 
@@ -2158,20 +2158,14 @@ namespace Glass.Data.DAL
             }
         }
 
-        public void CreditaEstoqueManual(uint idProd, uint idLoja, decimal qtdeEntrada, decimal? valor, DateTime dataMov, string observacao)
+        public void CreditaEstoqueManual(GDASession sessao, uint idProd, uint idLoja, decimal qtdeEntrada, decimal? valor, DateTime dataMov, string observacao)
         {
             if (idLoja == 0)
             {
                 throw new InvalidOperationException("A loja deve ser informada.");
             }
 
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
-
-                    var totalEstoqueManual = GetTotalEstoqueManual(transaction, (int)idProd, qtdeEntrada);
+            var totalEstoqueManual = GetTotalEstoqueManual(sessao, (int)idProd, qtdeEntrada);
 
             new EstoqueStrategyFactory()
                 .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
@@ -2434,7 +2428,7 @@ namespace Glass.Data.DAL
                     IdProduto = (uint)idProduto,
                     IdLoja = idLoja,
                     IdRetalhoProducao = (uint)retalho.IdRetalhoProducao,
-                    AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, idProd),
+                    AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, idProduto),
                     BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                     Usuario = usuario,
                 });
