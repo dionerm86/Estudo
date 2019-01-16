@@ -16,7 +16,7 @@
     <RootNamespace>Glass.API.Backend</RootNamespace>
     <AssemblyName>Glass.API.Backend</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -229,11 +229,22 @@
     <Compile Include="Controllers\ContasPagar\V1\Pagas\ContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\GetContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\PatchContasPagasController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
+    <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\GetPrecosTabelaClienteController.cs" />
+    <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\PrecosTabelaClienteController.cs" />
+    <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\DeletePerdasChapasVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\GetPerdasChapasVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\PerdasChapasVidroController.cs" />
+    <Compile Include="Controllers\Producao\V1\Retalhos\GetRetalhosProducaoController.cs" />
+    <Compile Include="Controllers\Producao\V1\Retalhos\RetalhosProducaoController.cs" />
     <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\Associacoes\TraducaoOrdenacaoListaAssociacaoProprietariosVeiculos.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\ConverterCadastroAtualizacaoParaContasPagas.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\TraducaoOrdenacaoListaContasPagas.cs" />
+    <Compile Include="Helper\Produtos\PrecosTabelaCliente\TraducaoOrdenacaoListaPrecoTabelaCliente.cs" />
+    <Compile Include="Helper\Produtos\ChapasVidro\Perdas\TraducaoOrdenacaoListaPerdasChapasVidro.cs" />
+    <Compile Include="Helper\Producao\Retalhos\TraducaoOrdenacaoListaRetalhosProducao.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Configuracoes\ListaDto.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PatchCarregamentosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\PostCarregamentosController.cs" />
@@ -296,6 +307,11 @@
     <Compile Include="Models\ContasPagar\V1\Pagas\Lista\ObservacoesDto.cs" />
     <Compile Include="Models\ContasPagar\V1\Pagas\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ContasPagar\V1\Pagas\Lista\ValoresPagamentoDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\CadastroAtualizacao\CadastroAtualizacaoRecebidaDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\Configuracoes\ListaRecebidasDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\FiltroDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\ListaDto.cs" />
+    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\PermissoesDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Fiscais\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Fiscais\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Fiscais\DadosEstoqueDto.cs" />
@@ -560,7 +576,6 @@
     <Compile Include="Controllers\Pedidos\V1\ProdutosPedido\ProdutosPedidoController.cs" />
     <Compile Include="Controllers\Pedidos\V1\ProdutosPedido\GetProdutosPedidoController.cs" />
     <Compile Include="Controllers\Produtos\V1\PostProdutosController.cs" />
-    <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
     <Compile Include="Controllers\Produtos\V1\ProdutosController.cs" />
     <Compile Include="Controllers\Publico\V1\GetPublicoController.cs" />
     <Compile Include="Controllers\Publico\V1\PublicoController.cs" />
@@ -836,6 +851,13 @@
     <Compile Include="Models\PlanosConta\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\PlanosConta\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\PlanosConta\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\DatasDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\MedidasDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\MetroQuadradoDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Producao\V1\Retalhos\Lista\ProdutoDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\ClassificacoesRoteiro\Lista\ListaDto.cs" />
     <Compile Include="Models\Parcelas\V1\Configurações\ListaDto.cs" />
@@ -867,6 +889,14 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\TipoValorTabelaEnum.cs" />
+    <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\DadosPerdaDto.cs" />
+    <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Projetos\V1\Ferragens\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Projetos\V1\Ferragens\FabricantesFerragem\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Projetos\V1\Ferragens\FabricantesFerragem\Lista\FiltroDto.cs" />
@@ -1050,11 +1080,6 @@
     <Compile Include="Models\Genericas\V1\CadastroAtualizacao\BaseCadastroAtualizacaoDto.cs" />
     <Compile Include="Helper\CadastroAtualizacao\ConversorValorTipo.cs" />
     <Compile Include="Helper\CadastroAtualizacao\ConversorValoresDtoModelo.cs" />
-    <Compile Include="Models\ContasReceber\V1\CadastroAtualizacao\CadastroAtualizacaoRecebidaDto.cs" />
-    <Compile Include="Models\ContasReceber\V1\Configuracoes\ListaRecebidasDto.cs" />
-    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\FiltroDto.cs" />
-    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\ListaDto.cs" />
-    <Compile Include="Models\ContasReceber\V1\ListaRecebidas\PermissoesDto.cs" />
     <Compile Include="Models\Acertos\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Acertos\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Acertos\V1\Lista\FiltroDto.cs" />
@@ -1234,6 +1259,9 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\ContasPagarReceber\" />
+    <Folder Include="Models\Datas\ContasReceber\V1\CadastroAtualizacao\" />
+    <Folder Include="Models\Datas\ContasReceber\V1\Configuracoes\" />
+    <Folder Include="Models\Datas\ContasReceber\V1\ListaRecebidas\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">
@@ -1328,16 +1356,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
-          <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>50879</DevelopmentServerPort>
-          <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:15190/backend</IISUrl>
-          <NTLMAuthentication>False</NTLMAuthentication>
-          <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl>
-          </CustomServerUrl>
-          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>

@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
@@ -319,6 +319,9 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 {
                     trans.BeginTransaction();
 
+                    CarregamentoDAO.Instance.ForcarTransacaoCarregamento(trans, idCarregamento, true);
+
+                    //Valida os filtros
                     ValidaFiltros(trans, idCliente.GetValueOrDefault(), nomeCli, etiqueta, idPedidoExp, idOc, idPedidoFiltro, altura, largura, numEtqFiltro, idClienteExterno, nomeClienteExterno, idPedidoExterno);
 
                     ValidaLeitura(trans, idCarregamento, etiqueta, idPedidoExp);
@@ -427,6 +430,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                 //Verifica se terminou de carregar
                                 CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento, etiqueta);
 
+                                CarregamentoDAO.Instance.ForcarTransacaoCarregamento(trans, idCarregamento, false);
+
                                 trans.Commit();
                                 trans.Close();
 
@@ -457,6 +462,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                     //Verifica se terminou de carregar
                     CarregamentoDAO.Instance.AtualizaCarregamentoCarregado(trans, idCarregamento, etiqueta);
+
+                    CarregamentoDAO.Instance.ForcarTransacaoCarregamento(trans, idCarregamento, false);
 
                     trans.Commit();
                     trans.Close();

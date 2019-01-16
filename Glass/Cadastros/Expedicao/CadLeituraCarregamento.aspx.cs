@@ -70,6 +70,21 @@ namespace Glass.UI.Web.Cadastros.Expedicao
             LinkBalcao.Visible = FuncionarioSetorDAO.Instance.PossuiSetorEntregue(UserInfo.GetUserInfo.CodUser);
         }
 
+        protected void divChat_Load(object sender, EventArgs e)
+        {
+            divChat.Visible = UserInfo.GetUserInfo.IsCliente ? false : FuncionarioDAO.Instance.ObtemHabilitarChat(UserInfo.GetUserInfo.CodUser);
+        }
+
+        public string ObterNomeUsuario()
+        {
+            return string.Format("{0} ({1})", UserInfo.GetUserInfo.Nome, System.Configuration.ConfigurationManager.AppSettings["sistema"]);
+        }
+
+        public string ObterEmailUsuario()
+        {
+            return FuncionarioDAO.Instance.GetEmail(UserInfo.GetUserInfo.CodUser);
+        }
+
         protected void lnkLgout_Click(object sender, EventArgs e)
         {
             Session.Abandon();

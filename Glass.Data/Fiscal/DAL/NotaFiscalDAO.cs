@@ -4252,7 +4252,7 @@ namespace Glass.Data.DAL
 
             try
             {
-                if (naturezaCalculaDifal && totalIcmsUFDestino > 0 && totalIcmsUFRemetente > 0)
+                if (naturezaCalculaDifal && (totalIcmsUFDestino > 0 || totalIcmsUFRemetente > 0))
                 {
                     nf.InfCompl += $" Valor da partilha UF de destino: {totalIcmsUFDestino.ToString("C")}, Valor da partilha UF de origem: {totalIcmsUFRemetente.ToString("C")}.";
                 }
@@ -5421,7 +5421,7 @@ namespace Glass.Data.DAL
             {
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Inutilizada);
             }
-            else if (codigoStatusRetorno == 218 || codigoStatusRetorno == 420 || codigoStatusRetorno == 101 || codigoStatusRetorno == 151) // NF-e já está cancelada
+            else if (cStat == "218" || cStat == "420" || cStat == "101" || cStat == "151" || cStat == "155") // NF-e já está cancelada
             {
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Cancelada);
             }
@@ -5484,7 +5484,7 @@ namespace Glass.Data.DAL
 
                 // Se o código de retorno for 135 ou 136-Cancelamento de NF-e homologado, altera situação para cancelada
                 // e estorna produtos no estoque fiscal
-                if (statusProcessamento == 135 || statusProcessamento == 136)
+                if (statusProcessamento == 135 || statusProcessamento == 136 || statusProcessamento == 155)
                 {
                     BaixaCreditaEstoqueFiscalReal(session, statusProcessamento.ToString(), GetElement(idNf));
 

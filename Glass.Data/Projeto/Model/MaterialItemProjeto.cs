@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Helper;
@@ -169,7 +169,7 @@ namespace Glass.Data.Model
         #endregion
 
         /// <summary>
-        /// Verifica se o produto associadao ‡ esta material est· inativo
+        /// Verifica se o produto associadao √† esta material est√° inativo
         /// </summary>
         [XmlIgnore]
         [PersistenceProperty("PRODUTOINATIVO", DirectionParameter.InputOptional)]
@@ -289,7 +289,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public int TipoCalc
         {
-            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int)IdSubgrupoProd); }
+            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)this.IdProd); }
         }
 
         [XmlIgnore]
@@ -299,7 +299,7 @@ namespace Glass.Data.Model
             { 
                 bool alturaEnabled = Glass.Calculos.AlturaEnabled(TipoCalc);
 
-                // N„o permite alterar altura de peÁas de vidro associadas a alguma peca_item_projeto
+                // N√£o permite alterar altura de pe√ßas de vidro associadas a alguma peca_item_projeto
                 return alturaEnabled && (IdPecaItemProj == null || !ItemProjetoDAO.Instance.IsBoxPadrao(IdItemProjeto)) &&
                     (IdPecaItemProj == null || !PedidoConfig.LiberarPedido);
             }
@@ -312,13 +312,13 @@ namespace Glass.Data.Model
             { 
                 bool larguraEnabled = Glass.Calculos.LarguraEnabled(TipoCalc);
 
-                // N„o permite alterar altura de peÁas de vidro associadas a alguma peca_item_projeto
+                // N√£o permite alterar altura de pe√ßas de vidro associadas a alguma peca_item_projeto
                 return larguraEnabled && (IdPecaItemProj == null || !PedidoConfig.LiberarPedido);
             }
         }
 
         /// <summary>
-        /// Campo utilizado para importar beneficiamento quando for fazer conferÍncia deste projeto
+        /// Campo utilizado para importar beneficiamento quando for fazer confer√™ncia deste projeto
         /// </summary>
         [XmlIgnore]
         public uint IdProdPed { get; set; }
@@ -351,7 +351,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.AlumÌnio)
+                if (IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Alum√≠nio)
                     return Altura.ToString();
                 else
                     return Altura != AlturaCalc ? (AlturaCalc > 0 ? Altura.ToString() + " (" + AlturaCalc.ToString() + ")" : Altura.ToString()) : Altura.ToString();
@@ -441,7 +441,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Usado para exportaÁ„o de pedido.
+        /// Usado para exporta√ß√£o de pedido.
         /// </summary>
         public string ServicosInfoBenef
         {
@@ -512,7 +512,7 @@ namespace Glass.Data.Model
             get { return 0; }
             set
             {
-                // n„o faz nada
+                // n√£o faz nada
             }
         }
 
@@ -528,7 +528,7 @@ namespace Glass.Data.Model
             get { return 0; }
             set
             {
-                // n„o faz nada
+                // n√£o faz nada
             }
         }
 

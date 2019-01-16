@@ -49,7 +49,12 @@ namespace Glass.Data.DAL
 
             if (idLiberarPedido > 0)
             {
-                sql += " and a.idAcerto in (select idAcerto from contas_receber where idLiberarPedido=" + idLiberarPedido + ")";
+                sql += $@" and a.idAcerto in 
+                    (SELECT idAcerto 
+                     FROM contas_receber 
+                     WHERE idLiberarPedido = {idLiberarPedido}
+                        OR idNf In (Select pnf.idNf From pedidos_nota_fiscal pnf Where pnf.idLiberarPedido = {idLiberarPedido}))";
+
                 criterio += "Liberação: " + idLiberarPedido + "    ";
                 temFiltro = true;
             }
@@ -95,14 +100,14 @@ namespace Glass.Data.DAL
 
             if (numNotaFiscal > 0)
             {
-                sql += @" AND EXISTS (
-                                        SELECT nf.IdNf
-                                        FROM nota_fiscal nf
-                                            LEFT JOIN pedidos_nota_fiscal pnf ON(nf.IdNf = pnf.IdNf)
-                                            LEFT JOIN liberarpedido lp ON(pnf.IdLiberarPedido = lp.IdLiberarPedido)
-                                            LEFT JOIN contas_receber cr ON(lp.IdLiberarPedido = cr.IdLiberarPedido)
-                                        WHERE cr.IdAcerto = a.IdAcerto AND nf.NumeroNfe = " + numNotaFiscal + @"
-                                    )";
+                sql += $@" AND a.idAcerto IN 
+                    (SELECT idAcerto 
+                     FROM contas_receber
+                     WHERE idNf IN 
+                        (SELECT idNf 
+                         FROM nota_fiscal
+                         WHERE numeroNfe = {numNotaFiscal})
+                     GROUP BY idAcerto)";
 
                 criterio += "Nota Fiscal: " + numNotaFiscal + "    ";
                 temFiltro = true;

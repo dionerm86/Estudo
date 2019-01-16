@@ -206,6 +206,21 @@ namespace Glass.UI.Web.Cadastros.Producao
             #endregion
         }
 
+        protected void divChat_Load(object sender, EventArgs e)
+        {
+            divChat.Visible = UserInfo.GetUserInfo.IsCliente ? false : FuncionarioDAO.Instance.ObtemHabilitarChat(UserInfo.GetUserInfo.CodUser);
+        }
+
+        public string ObterNomeUsuario()
+        {
+            return string.Format("{0} ({1})", UserInfo.GetUserInfo.Nome, System.Configuration.ConfigurationManager.AppSettings["sistema"]);
+        }
+
+        public string ObterEmailUsuario()
+        {
+            return FuncionarioDAO.Instance.GetEmail(UserInfo.GetUserInfo.CodUser);
+        }
+
         #region Dados de peça
 
         void ConsultaDadosPeca()

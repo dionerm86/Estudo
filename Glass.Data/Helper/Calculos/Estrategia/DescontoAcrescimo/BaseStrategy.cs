@@ -181,7 +181,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
         private IProdutoCalculo ObterProdutoValorResidual(IEnumerable<IProdutoCalculo> produtos)
         {
-            var produtosQtde = produtos.Where(p => p.TipoCalc == (int)TipoCalculoGrupoProd.Qtd);
+            var produtosQtde = produtos.Where(p => p.DadosProduto.DadosGrupoSubgrupo.TipoCalculo() == TipoCalculoGrupoProd.Qtd);
 
             if (produtosQtde.Any())
             {

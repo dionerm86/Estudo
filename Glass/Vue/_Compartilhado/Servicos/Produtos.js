@@ -212,6 +212,75 @@ Servicos.Produtos = (function(http) {
       }
     },
 
+    PrecosTabelaCliente: {
+      /**
+       * Recupera a lista de preços de tabela por cliente.
+       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'precosTabelaCliente', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Recupera o objeto com as configurações utilizadas na tela de listagem de preços de tabela por cliente.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterConfiguracoesLista: function () {
+        return http().get(API + 'precosTabelaCliente/configuracoes');
+      },
+
+      /**
+       * Recupera uma lista com os tipos de valor de tabela para uso no controle.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterTiposValorTabela: function () {
+        return http().get(API + 'precosTabelaCliente/tiposValorTabela');
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de chapas de vidro.
+     */
+    ChapasVidro: {
+      /**
+       * Objeto com os serviços para a API de perdas de chapas de vidro.
+       */
+      Perdas: {
+        /**
+         * Recupera a lista de perdas de chapas de vidro.
+         * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+         * @param {number} pagina O número da página de resultados a ser exibida.
+         * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+         * @param {string} ordenacao A ordenação para o resultado.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+          return http().get(API + 'chapasVidro/perdas', {
+            params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+          });
+        },
+
+        /**
+         * Cancela uma perda de chapa de vidro.
+         * @param {!number} idPerdaChapaVidro.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        cancelar: function (idPerdaChapaVidro) {
+          if (!idPerdaChapaVidro) {
+            throw new Error('Perda de chapa de vidro é obrigatória.');
+          }
+
+          return http().delete(API + 'chapasVidro/perdas/' + idPerdaChapaVidro);
+        },
+      }
+    },
+
     /**
      * Objeto com os serviços para a API de cores de vidro.
      */
