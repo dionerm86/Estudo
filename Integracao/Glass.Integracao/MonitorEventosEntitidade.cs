@@ -52,7 +52,10 @@ namespace Glass.Integracao
                     }
                 };
 
-                action.Callback += handler;
+                if (action != null)
+                {
+                    action.Callback += handler;
+                }
             }
         }
 
