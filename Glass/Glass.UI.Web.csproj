@@ -519,6 +519,11 @@
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.js" />
     <Content Include="Vue\Pagamentos\Templates\LstPagamentos.Filtro.html" />
     <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.Filtro.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.Movimentacoes.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Templates\LstMovimentacoesChapas.Filtro.html" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Templates\LstMovimentacoesChapas.Movimentacoes.html" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.Filtro.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Templates\ListaPrecoTabelaCliente.Filtro.html" />
