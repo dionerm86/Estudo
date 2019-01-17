@@ -14,16 +14,16 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('IdExportacao')">Cód.</a>
+                        <a href="#" @click.prevent="ordenar('id')">Cód.</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('NomeFornec')">Fornecedor</a>
+                        <a href="#" @click.prevent="ordenar('fornecedor')">Fornecedor</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('NomeFunc')">Funcionário</a>
+                        <a href="#" @click.prevent="ordenar('funcionario')">Funcionário</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('DataExportacao')">Data Exportação</a>
+                        <a href="#" @click.prevent="ordenar('dataexportacao')">Data Exportação</a>
                     </th>
                 </template>
                 <template slot="item" slot-scope="{ item }">
@@ -31,14 +31,14 @@
                         <a href="#" @click.prevent="abrirRelatorio(item.id)">
                             <img src="../Images/Relatorio.gif" border="0">
                         </a>
-                        <a href="#" @click.prevent="obterSituacaoPedidoExportacao(item.id)">
+                        <a href="#" @click.prevent="consultarSituacaoPedidoExportacao(item.id)">
                             <img src="../Images/Pesquisar.gif" border="0">
                         </a>                        
                     </td>
                     <td>{{ item.id }}</td>
                     <td>{{ item.fornecedor }}</td>
                     <td>{{ item.funcionario }}</td>
-                    <td>{{ item.dataExportacao }}</td>
+                    <td>{{ item.dataExportacao | data }}</td>
                 </template>
             </lista-paginada>
         </section>

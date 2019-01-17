@@ -58,6 +58,5 @@ namespace Glass.API.Backend.Models.Exportacao.Lista.V1
         [DataMember]
         [JsonProperty("periodoCadastroFim")]
         public DateTime? PeriodoCadastroFim { get; set; }
-
     }
 }

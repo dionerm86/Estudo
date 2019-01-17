@@ -29,7 +29,7 @@ namespace Glass.API.Backend.Helper.Exportacao
         {
             switch (campo.ToLowerInvariant())
             {
-                case "cod":
+                case "id":
                     return "IdExportacao";
 
                 case "fornecedor":
@@ -39,7 +39,7 @@ namespace Glass.API.Backend.Helper.Exportacao
                     return "NomeFunc";
 
                 case "dataexportacao":
-                    return "DataExportacao";
+                    return campo;
 
                 default:
                     return this.OrdenacaoPadrao;

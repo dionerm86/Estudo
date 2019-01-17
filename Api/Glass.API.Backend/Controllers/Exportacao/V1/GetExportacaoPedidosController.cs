@@ -16,7 +16,7 @@ using System.Web.Http;
 namespace Glass.API.Backend.Controllers.Exportacao.V1
 {
     /// <summary>
-    /// Controller de exportacao de pedidos.
+    /// Controller de exportação de pedidos.
     /// </summary>
     public partial class ExportacaoPedidosController : BaseController
     {

@@ -34,7 +34,7 @@ Servicos.Exportacao = (function (http) {
      * @param {number} idExportacao O identificador da exportação do pedido.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterSituacao: function (idExportacao) {      
+    consultarSituacao: function (idExportacao) {      
       return http().post(API + idExportacao + '/consultarSituacao');
     }
   };

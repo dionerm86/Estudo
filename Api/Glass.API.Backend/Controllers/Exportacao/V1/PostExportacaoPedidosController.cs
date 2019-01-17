@@ -27,7 +27,7 @@ namespace Glass.API.Backend.Controllers.Exportacao.V1
         [SwaggerResponse(202, "Consulta realizada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(406, "Exportação não encontrada para o id informado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult ConsultaSituacaoExportacaoPedidos(int id)
+        public IHttpActionResult ConsultarSituacaoExportacaoPedidos(int id)
         {
             using (var sessao = new GDATransaction())
             {
@@ -40,8 +40,8 @@ namespace Glass.API.Backend.Controllers.Exportacao.V1
                         return validacao;
                     }
 
-                    var exportacao = ExportacaoDAO.Instance.GetElement((uint)id);
-                    var idsPedido = PedidoExportacaoDAO.Instance.PesquisarPedidosExportacao((uint)id);
+                    var exportacao = ExportacaoDAO.Instance.GetElement(sessao, (uint)id);
+                    var idsPedido = PedidoExportacaoDAO.Instance.PesquisarPedidosExportacao(sessao, (uint)id);
 
                     var loja = LojaDAO.Instance.GetElement(sessao, Data.Helper.UserInfo.GetUserInfo.IdLoja);
                     var fornecedor = FornecedorDAO.Instance.GetElement(exportacao.IdFornec);

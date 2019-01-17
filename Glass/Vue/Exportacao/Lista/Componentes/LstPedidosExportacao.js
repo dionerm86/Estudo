@@ -26,7 +26,7 @@
      * @returns {Promise} Uma promise com o resultado da busca dos itens.
      */
     obterSituacaoPedidoExportacao: function (id) {
-      return Servicos.Exportacao.obterSituacao(id);
+      return Servicos.Exportacao.consultarSituacao(id);
     },
 
     /**

@@ -113,13 +113,32 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Recupera os pedidos da exportação passada.
+        /// </summary>
+        /// <returns></returns>
+        public int[] PesquisarPedidosExportacao(uint idExportacao)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                try
+                {
+                    return this.PesquisarPedidosExportacao(sessao, idExportacao);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        /// <summary>
         /// Recupera os pedidos da exportação passada
         /// </summary>
-        public int[] PesquisarPedidosExportacao(uint idExportacao)
+        public int[] PesquisarPedidosExportacao(GDASession sessao, uint idExportacao)
         {
             var sql = "SELECT IdPedido FROM pedido_exportacao WHERE IdExportacao=" + idExportacao;
 
-            return ExecuteMultipleScalar<int>(sql).ToArray();
+            return ExecuteMultipleScalar<int>(sessao, sql).ToArray();
         }
 
         //Verifica se o pedido passado possui alguma exportação que não esteja cancelada
