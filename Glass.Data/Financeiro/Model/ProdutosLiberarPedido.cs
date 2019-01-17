@@ -136,7 +136,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("AMBIENTE", DirectionParameter.InputOptional)]
         public string AmbientePedido
         {
-            get 
+            get
             {
                 return !PedidoMaoDeObra || IdAmbientePedido == null ? _ambientePedido :
                     AmbientePedidoDAO.Instance.ObtemPecaVidroQtd(IdAmbientePedido.Value);
@@ -205,7 +205,7 @@ namespace Glass.Data.Model
 
         public string Ambiente
         {
-            get 
+            get
             {
                 return !PedidoMaoDeObra ? (IdAmbientePedidoEspelho != null ? _ambientePedidoEspelho : _ambientePedido) :
                     (IdAmbientePedidoEspelho != null ? AmbientePedidoEspelho : AmbientePedido);
@@ -274,7 +274,7 @@ namespace Glass.Data.Model
 
         public decimal TotalProdLiberado
         {
-            get 
+            get
             {
                 // Caso seja pedido de mão-de-obra e não seja liberação por produtos prontos, o ValorProd deve ser dividido pela 
                 // QtdeAmbiente * QtdeProd, devido ao fato do ValorProd ser calculado já considerando o valor unitário do produto * QtdeAmbiente e 
@@ -299,7 +299,7 @@ namespace Glass.Data.Model
 
         public decimal TotalProdBrutoLiberado
         {
-            get 
+            get
             {
                 // Caso seja pedido de mão-de-obra e não seja liberação por produtos prontos, o ValorProd deve ser dividido pela 
                 // QtdeAmbiente * QtdeProd, devido ao fato do ValorProd ser calculado já considerando o valor unitário do produto * QtdeAmbiente e 
@@ -342,12 +342,12 @@ namespace Glass.Data.Model
 
         public GenericBenefCollection Beneficiamentos
         {
-            get 
+            get
             {
                 if (_beneficiamentos == null && ProdutoPedido != null)
                     _beneficiamentos = ProdutoPedido.Beneficiamentos;
 
-                return _beneficiamentos; 
+                return _beneficiamentos;
             }
             set { _beneficiamentos = value; }
         }
@@ -356,7 +356,7 @@ namespace Glass.Data.Model
 
         public decimal ValorUnit
         {
-            get 
+            get
             {
                 if (_valorUnit == null)
                 {
@@ -365,21 +365,22 @@ namespace Glass.Data.Model
                     // Recupera o valor unitário do beneficiamento e soma ao valor unitário final, o motivo disso é evitar que o cálculo do
                     // valor unitário fique incorreto caso esteja usando área mínima, situação na qual o beneficiamento calculado por m²
                     // considera a área real e o cálculo do vidro considera a área mínima
-                    var valorUnitBenef = Beneficiamentos.Sum(b => {
+                    var valorUnitBenef = Beneficiamentos.Sum(b =>
+                    {
                         var divisor = totM2 > 0 ? (decimal)totM2 : 1;
                         return b.Valor / divisor;
                     });
-                    
+
                     var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(IdPedido);
 
                     var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(null, IdPedido);
-
-                    var calcMult5 =  ProdutoPedido.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
                     decimal? valorUnitario;
 
                     if (ProdutoPedido != null)
                     {
+                        var calcMult5 = ProdutoPedido.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
+
                         ValorTotal.Instance.Calcular(null,
                             pedido,
                             ProdutoPedido,
@@ -433,7 +434,7 @@ namespace Glass.Data.Model
                     {
                         _isVidro = false;
                     }
-                    else if (Liberacao.RelatorioLiberacaoPedido.ConsiderarVidroQualquerProdutoDoGrupoVidro 
+                    else if (Liberacao.RelatorioLiberacaoPedido.ConsiderarVidroQualquerProdutoDoGrupoVidro
                         && IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro)
                     {
                         _isVidro = true;
@@ -441,7 +442,7 @@ namespace Glass.Data.Model
                     else
                     {
                         _isVidro = !SubgrupoProdDAO.Instance.IsSubgrupoProducao(
-                            (int)IdGrupoProd, 
+                            (int)IdGrupoProd,
                             (int?)IdSubgrupoProd);
                     }
                 }
@@ -452,8 +453,11 @@ namespace Glass.Data.Model
 
         public double TotM2Rpt
         {
-            get { return TipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObra || 
-                PedidoConfig.RelatorioPedido.ExibirM2CalcRelatorio ? TotM2Calc : TotM2; }
+            get
+            {
+                return TipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObra ||
+              PedidoConfig.RelatorioPedido.ExibirM2CalcRelatorio ? TotM2Calc : TotM2;
+            }
         }
 
         public double TotM2Vidro
@@ -512,8 +516,8 @@ namespace Glass.Data.Model
 
         public decimal Total
         {
-            get 
-            {   
+            get
+            {
                 // Subtrai o desconto do pedido no cálculo do total do produto, para que o resumo da liberação fique correto
                 decimal total = ((TotalProd + ValorBenefProd) / (decimal)(QtdeProd > 0 ? QtdeProd : 1)) * (decimal)QtdeTotal;
                 decimal percDescPed = (decimal)PedidoDAO.Instance.GetPercDesc(null, IdPedido);
