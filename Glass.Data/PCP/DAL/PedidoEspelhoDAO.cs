@@ -2813,12 +2813,12 @@ namespace Glass.Data.DAL
             if (this.objPersistence.ExecuteSqlQueryCount(
                 session,
                 $@"SELECT COUNT(*) FROM produtos_compra pc
-                LEFT JOIN compra c ON (pc.idCompra = c.idCompra)
-                LEFT JOIN produtos_pedido_espelho ppe ON (pc.idProdPed = ppe.idProdPed)
+                    LEFT JOIN compra c ON (pc.idCompra = c.idCompra)
+                    LEFT JOIN produtos_pedido_espelho ppe ON (pc.idProdPed = ppe.idProdPed)
                 WHERE ppe.idPedido = {idPedido}
                     AND c.situacao <> {(int)Compra.SituacaoEnum.Cancelada}") > 0)
             {
-                throw new Exception($"Este pedido possui compra gerada a partir dos produtos do pedido {idPedido}, cancele-a compra antes de reabrí-lo.");
+                throw new Exception($"Este pedido possui compra gerada a partir dos produtos do pedido {idPedido}, cancele-a.");
             }
 
             //Valida se o espelho possui peças de composição, se tiver nao pode reabrir, tem que ser excluido e editado no pedido
