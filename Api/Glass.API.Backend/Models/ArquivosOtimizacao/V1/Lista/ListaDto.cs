@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.ArquivosOtimizacao.V1
+namespace Glass.API.Backend.Models.ArquivosOtimizacao.V1.Lista
 {
     /// <summary>
     /// Classe que encapsula um item para a lista de arquivos de otimização.
@@ -23,46 +23,60 @@ namespace Glass.API.Backend.Models.ArquivosOtimizacao.V1
         public ListaDto(ArquivoOtimizacao arquivoOtimizacao)
         {
             this.Id = (int)arquivoOtimizacao.IdArquivoOtimizacao;
-            this.Direcao = new IdNomeDto
+            this.Direcao = new DirecaoDto
             {
-                Id = (int)arquivoOtimizacao.IdArquivoOtimizacao,
+                Id = arquivoOtimizacao.Direcao,
                 Descricao = arquivoOtimizacao.DescrDirecao,
             };
-            this.Arquivo = new ArquivoOtimizacao
+
+            this.Arquivo = new ArquivoDto
             {
                 Caminho = arquivoOtimizacao.CaminhoArquivo,
                 Extensao = arquivoOtimizacao.ExtensaoArquivo,
             };
+
             this.Funcionario = arquivoOtimizacao.NomeFunc;
             this.DataCadastro = arquivoOtimizacao.DataCad;
+            this.Permissoes = new PermissoesDto
+            {
+                ExibirLinkDownload = Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta != Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter || arquivoOtimizacao.Direcao == 2,
+                ExibirLinkECutter = Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter && arquivoOtimizacao.Direcao == 1,
+            };
         }
 
         /// <summary>
-        /// Obtém ou define a descrição do arquivo de otimização.
+        /// Obtém ou define a direção do arquivo de otimização.
         /// </summary>
         [DataMember]
         [JsonProperty("direcao")]
-        public CodigoNomeDto Direcao { get; set; }
+        public DirecaoDto Direcao { get; set; }
 
         /// <summary>
-        /// Obtém ou define a descrição do arquivo de otimização.
+        /// Obtém ou define o arquivo do arquivo de otimização.
         /// </summary>
         [DataMember]
         [JsonProperty("arquivo")]
-        public CodigoNomeDto Arquivo { get; set; }
+        public ArquivoDto Arquivo { get; set; }
 
         /// <summary>
-        /// Obtém ou define o caminho do arquivo de otimização.
+        /// Obtém ou define o funcionário para a lista de arquivos de otimização.
         /// </summary>
         [DataMember]
         [JsonProperty("funcionario")]
         public string Funcionario { get; set; }
 
         /// <summary>
-        /// Obtém ou define a extensão do arquivo de otimização.
+        /// Obtém ou define a data de cadastro do funcionário para a lista de arquivo de otimização.
         /// </summary>
         [DataMember]
         [JsonProperty("dataCadastro")]
         public DateTime? DataCadastro { get; set; }
+
+        /// <summary>
+        /// Obtém ou define permissões para o download na lista de arquivos de otimização.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("permissoes")]
+        public PermissoesDto Permissoes { get; set; }
     }
 }

@@ -29,19 +29,19 @@ namespace Glass.API.Backend.Models.ArquivosOtimizacao.V1
         public int? IdFuncionario { get; set; }
 
         /// <summary>
-        /// Obtém ou define o período do início do cadastro.
+        /// Obtém ou define a data inicial do cadastro da exportação/importação do arquivo.
         /// </summary>
         [JsonProperty("periodoCadastroInicio")]
         public DateTime? PeriodoCadastroInicio { get; set; }
 
         /// <summary>
-        /// Obtém ou define o período do fim do cadastro.
+        /// Obtém ou define a data final do cadastro da exportação/importação do arquivo.
         /// </summary>
         [JsonProperty("periodoCadastroFim")]
         public DateTime? PeriodoCadastroFim { get; set; }
 
         /// <summary>
-        /// Obtém ou define o tipo da ação.
+        /// Obtém ou define o tipo de direção, importação/exportação.
         /// </summary>
         [JsonProperty("direcao")]
         public int? Direcao { get; set; }
@@ -50,12 +50,12 @@ namespace Glass.API.Backend.Models.ArquivosOtimizacao.V1
         /// Obtém ou define o identificador do pedido.
         /// </summary>
         [JsonProperty("idPedido")]
-        public int? IdPedido { get; set; }
+        public uint? IdPedido { get; set; }
 
         /// <summary>
-        /// Obtém ou define o código da etiqueta.
+        /// Obtém ou define o código da etiqueta do arquivo.
         /// </summary>
         [JsonProperty("codigoEtiqueta")]
-        public int? CodigoEtiqueta { get; set; }
+        public string CodigoEtiqueta { get; set; }
     }
 }

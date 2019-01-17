@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.ArquivosOtimizacao
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "c.idCarregamento DESC"; }
+            get { return "dataCad desc"; }
         }
 
         /// <inheritdoc/>

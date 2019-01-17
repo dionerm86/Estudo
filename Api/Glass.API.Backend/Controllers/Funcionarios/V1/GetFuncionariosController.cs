@@ -424,5 +424,28 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
                 }
             }
         }
+
+        /// <summary>
+        /// Recupera a lista de funcionários para a lista de arquivos de otimização.
+        /// </summary>
+        /// <returns>Um objeto JSON com os dados do funcionário.</returns>
+        [HttpGet]
+        [Route("arquivosOtimizacao")]
+        [SwaggerResponse(200, "Funcionários recuperados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(400, "Funcionários não recuperados.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterFuncionariosArquivosOtimizacao()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var funcionarios = ArquivoOtimizacaoDAO.Instance.GetFuncionarios()
+                    .Select(f => new IdNomeDto
+                    {
+                        Id = (int)f.Id,
+                        Nome = f.Descr,
+                    });
+
+                return this.Lista(funcionarios);
+            }
+        }
     }
 }
