@@ -1063,13 +1063,7 @@
                 alert("Observação salva.");
                 window.opener.refreshPage();
             }
-        }
-
-        function mensagemProdutoComDesconto(editar) {
-            alert("Não é possível " + (editar ? "editar" : "remover") + " esse produto porque o pedido possui desconto.\n" +
-                "Aplique o desconto apenas ao terminar o cadastro dos produtos.\n" +
-                "Para continuar, remova o desconto do pedido.");
-        }
+        }   
 
     </script>
 
@@ -1568,12 +1562,10 @@
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit" Visible='<%# Eval("EditDeleteVisible") %>'
-                                    OnClientClick='<%# !(bool)Eval("PodeEditar") ? "mensagemProdutoComDesconto(true); return false" : "" %>'>
+                                <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit" Visible='<%# Eval("EditDeleteVisible") %>'>
                                     <img border="0" src="../Images/Edit.gif"></img></asp:LinkButton>
                                 <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" Visible='<%# Eval("EditDeleteVisible") %>'
-                                    ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Excluir"
-                                    OnClientClick='<%# !(bool)Eval("PodeEditar") ? "mensagemProdutoComDesconto(false); return false" : "if (!confirm(\"Deseja remover esse produto do pedido?\")) return false" %>' />
+                                    ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Excluir" />
                                 <asp:ImageButton ID="imbDesmembrar" runat="server" ImageUrl="../Images/Split.png"
                                     OnClientClick='<%# "desmembrar(" + Eval("IdProdPed") + ", " + Eval("Qtde") + "); return false;" %>'
                                     ToolTip="Dividir produtos" Visible='<%# Eval("DesmembrarVisible") %>' />

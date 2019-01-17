@@ -15,14 +15,15 @@ namespace Glass.Data.RelDAL
         {
             string criterio = "";
 
-            var select = @"p.CODINTERNO AS CodInterno,
+            var select = $@"p.CODINTERNO AS CodInterno,
                     p.DESCRICAO AS DescProduto,
                     g.DESCRICAO AS DescGrupo,
                     s.DESCRICAO AS DescSubgrupo,
                     p.Altura,
                     p.Largura,
                     tdac.ValorOriginalUtilizado AS ValorOriginal,
-                    ROUND((tdac.ValorOriginalUtilizado * IF(tdac.Acrescimo > 0 OR tdac.Desconto > 0, IF(tdac.Acrescimo > tdac.Desconto, (1 + ((tdac.Acrescimo - tdac.Desconto) / 100)), (1 - ((tdac.Desconto - tdac.Acrescimo) / 100))), 1)), 2) AS ValorTabela,
+                    IFNULL(ROUND((tdac.ValorOriginalUtilizado * IF(tdac.Acrescimo > 0 OR tdac.Desconto > 0, IF(tdac.Acrescimo > tdac.Desconto, (1 + ((tdac.Acrescimo - tdac.Desconto) / 100)), (1 - ((tdac.Desconto - tdac.Acrescimo) / 100))), 1)), 2),
+                    (CASE {tipoValor} WHEN 1 THEN p.ValorAtacado WHEN 2 THEN p.ValorBalcao ELSE p.ValorObra END)) AS ValorTabela,
                     IF(tdac.Acrescimo > 0 OR tdac.Desconto > 0, IF(tdac.Acrescimo > tdac.Desconto, (1 + ((tdac.Acrescimo - tdac.Desconto) / 100)), (1 - ((tdac.Desconto - tdac.Acrescimo) / 100))), 1) AS PercDescAcrescimo,
                     '$$$' as criterio";
 
@@ -34,9 +35,9 @@ namespace Glass.Data.RelDAL
                     subgrupo_prod s ON p.IDSUBGRUPOPROD = s.IDSUBGRUPOPROD
                         LEFT JOIN
                     (SELECT
-                        p.IDPROD, 
-                        dac.ACRESCIMO, 
-                        dac.DESCONTO, 
+                        p.IDPROD,
+                        dac.ACRESCIMO,
+                        dac.DESCONTO,
                         (CASE {tipoValor} WHEN 1 THEN p.ValorAtacado WHEN 2 THEN p.ValorBalcao ELSE p.ValorObra END) ValorOriginalUtilizado
                     from produto p
                     LEFT JOIN desconto_acrescimo_cliente dac ON dac.IDCLIENTE IS NULL
@@ -84,8 +85,8 @@ namespace Glass.Data.RelDAL
                 sql += " and p.largura >= " + larguraInicio +
                     (larguraFim > 0 ? " AND p.largura <= " + larguraFim : "");
                 criterio += "Largura: " + larguraInicio + "Até" + larguraFim;
-            }      
-            
+            }
+
             if(produtoDesconto)
                 sql += @" AND (tdac.Acrescimo > 0 OR tdac.Desconto > 0) ";
 
@@ -94,7 +95,7 @@ namespace Glass.Data.RelDAL
 
         public IList<PrecoProdutosTabela> GetPrecosTabelaProdutos(uint idTabelaDescontoAcrescimo, string codInterno,
             string descrProduto, uint idGrupoProd, string idsSubgrupoProd, uint tipoValor, decimal alturaInicio,
-            decimal alturaFim, decimal larguraInicio, decimal larguraFim, int ordenacao, bool produtoDesconto, 
+            decimal alturaFim, decimal larguraInicio, decimal larguraFim, int ordenacao, bool produtoDesconto,
             string sortExpression, int startRow, int pageSize)
         {
             sortExpression = !string.IsNullOrEmpty(sortExpression) ? sortExpression :
@@ -107,13 +108,13 @@ namespace Glass.Data.RelDAL
                 descrProduto, idGrupoProd, idsSubgrupoProd, tipoValor, alturaInicio,
                 alturaFim, larguraInicio, larguraFim, produtoDesconto);
 
-            var retorno = LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, null); 
+            var retorno = LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, null);
 
             return retorno;
         }
 
-        public int GetPrecosTabelaProdutosCount(uint idTabelaDescontoAcrescimo, string codInterno, 
-            string descrProduto, uint idGrupoProd, string idsSubgrupoProd, uint tipoValor, 
+        public int GetPrecosTabelaProdutosCount(uint idTabelaDescontoAcrescimo, string codInterno,
+            string descrProduto, uint idGrupoProd, string idsSubgrupoProd, uint tipoValor,
             decimal alturaInicio, decimal alturaFim, decimal larguraInicio, decimal larguraFim, int ordenacao, bool produtoDesconto)
         {
             var sql = SqlPrecosTabelaProdutos(idTabelaDescontoAcrescimo, codInterno,
@@ -145,6 +146,6 @@ namespace Glass.Data.RelDAL
             var retorno = objPersistence.LoadData(sql);
 
             return retorno.ToList();
-        }        
+        }
     }
 }

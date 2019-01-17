@@ -4406,8 +4406,15 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
+                    objUpdate.ValorDesconto = 0;
+                    objUpdate.ValorAcrescimo = 0;
+                    objUpdate.ValorComissao = 0;
+                    objUpdate.ValorDescontoProd = 0;
+                    objUpdate.ValorAcrescimoProd = 0;
+
                     var pedidoEspelho = PedidoEspelhoDAO.Instance.GetElement(transaction, objUpdate.IdPedido);
                     var retorno = Update(transaction, objUpdate, pedidoEspelho);
+                    PedidoEspelhoDAO.Instance.UpdateDados(transaction, pedidoEspelho);
 
                     transaction.Commit();
                     transaction.Close();

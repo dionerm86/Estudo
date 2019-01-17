@@ -97,7 +97,7 @@ Vue.component('log-cancelamento', {
      */
     abrirLogCancelamento: function() {
       const url = '/Utils/ShowLogCancelamento.aspx?tabela=' + this.itemTabela.id + '&id=' + this.idItem;
-      this.abrirJanela(500, 700, this.caminhoReltivo(url));
+      this.abrirJanela(500, 700, this.caminhoRelativo(url));
     }
   },
 

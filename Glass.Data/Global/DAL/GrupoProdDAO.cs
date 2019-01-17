@@ -302,38 +302,31 @@ namespace Glass.Data.DAL
         /// <returns>Retorna o tipo de cálculo que será aplicado no produto.</returns>
         public int TipoCalculo(GDASession session, int idGrupo, int? idSubgrupo, bool nf)
         {
-            try
+            TipoCalculoGrupoProd? tipoCalculoGrupo = null;
+            TipoCalculoGrupoProd? tipoCalculoNfGrupo = null;
+            TipoCalculoGrupoProd? tipoCalculoSubgrupo = null;
+            TipoCalculoGrupoProd? tipoCalculoNfSubgrupo = null;
+
+            if (idGrupo > 0)
             {
-                TipoCalculoGrupoProd? tipoCalculoGrupo = null;
-                TipoCalculoGrupoProd? tipoCalculoNfGrupo = null;
-                TipoCalculoGrupoProd? tipoCalculoSubgrupo = null;
-                TipoCalculoGrupoProd? tipoCalculoNfSubgrupo = null;
-
-                if (idGrupo > 0)
-                {
-                    tipoCalculoGrupo = (TipoCalculoGrupoProd?)this.ObtemTipoCalculo(session, idGrupo, false);
-                    tipoCalculoNfGrupo = (TipoCalculoGrupoProd?)this.ObtemTipoCalculo(session, idGrupo, true);
-                }
-
-                if (idSubgrupo > 0)
-                {
-                    tipoCalculoSubgrupo = (TipoCalculoGrupoProd?)SubgrupoProdDAO.Instance.ObtemTipoCalculo(session, idSubgrupo.Value, false);
-                    tipoCalculoNfSubgrupo = (TipoCalculoGrupoProd?)SubgrupoProdDAO.Instance.ObtemTipoCalculo(session, idSubgrupo.Value, true);
-                }
-
-                return this.TipoCalculo(
-                    idGrupo,
-                    idSubgrupo,
-                    nf,
-                    tipoCalculoGrupo,
-                    tipoCalculoNfGrupo,
-                    tipoCalculoSubgrupo,
-                    tipoCalculoNfSubgrupo);
+                tipoCalculoGrupo = (TipoCalculoGrupoProd?)this.ObtemTipoCalculo(session, idGrupo, false);
+                tipoCalculoNfGrupo = (TipoCalculoGrupoProd?)this.ObtemTipoCalculo(session, idGrupo, true);
             }
-            catch
+
+            if (idSubgrupo > 0)
             {
-                return (int)TipoCalculoGrupoProd.Qtd;
+                tipoCalculoSubgrupo = (TipoCalculoGrupoProd?)SubgrupoProdDAO.Instance.ObtemTipoCalculo(session, idSubgrupo.Value, false);
+                tipoCalculoNfSubgrupo = (TipoCalculoGrupoProd?)SubgrupoProdDAO.Instance.ObtemTipoCalculo(session, idSubgrupo.Value, true);
             }
+
+            return this.TipoCalculo(
+                idGrupo,
+                idSubgrupo,
+                nf,
+                tipoCalculoGrupo,
+                tipoCalculoNfGrupo,
+                tipoCalculoSubgrupo,
+                tipoCalculoNfSubgrupo);
         }
 
         /// <summary>
@@ -356,6 +349,18 @@ namespace Glass.Data.DAL
             TipoCalculoGrupoProd? tipoCalculoSubgrupo,
             TipoCalculoGrupoProd? tipoCalculoNfSubgrupo)
         {
+            if (idGrupo == 0 && idSubgrupo.GetValueOrDefault() == 0)
+            {
+                var idSubgrupoExcecao = idSubgrupo == 0 ? "0" : "null";
+                var nfExcecao = nf ? "S" : "N";
+
+                ErroDAO.Instance.InserirFromException(
+                    $"TipoCalculo - IdGrupo: {idGrupo} | IdSubgrupo: {idSubgrupoExcecao} | NF: {nfExcecao}",
+                    new Exception("Não foi possível recuperar o tipo de cálculo do produto."));
+
+                return (int)TipoCalculoGrupoProd.Qtd;
+            }
+
             TipoCalculoGrupoProd? tipoCalculo = null;
 
             if (nf)
@@ -384,7 +389,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            return (int)tipoCalculo;
+            return (int)(tipoCalculo ?? TipoCalculoGrupoProd.Qtd);
         }
 
         /// <summary>
