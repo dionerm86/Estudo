@@ -23,8 +23,9 @@
 
     /**
      * Seleciona uma etiqueta para impressão.
+     * @param {Object} etiquetaProduto A etiqueta selecionada.
      */
-    selecionarEtiquetaProduto: function (EtiquetaProduto) {
+    selecionarEtiquetaProduto: function (etiquetaProduto) {
       if (!this.configuracoes.possuiPermissaoImprimirEtiquetas) {
         this.exibirMensagem('Você não tem permissão para reimprimir etiquetas.');
         return;
@@ -32,14 +33,12 @@
 
       var id = '';
       var codigoEtiqueta = this.filtro.codigoEtiqueta;
-      if (EtiquetaProduto.idProdutoPedido > 0) {
-        id = 'idProdPed=' + EtiquetaProduto.idProdutoPedido;
-      }
-      else if (EtiquetaProduto.numeroNotaFiscal > 0) {
-        id = 'idProdNf=' + EtiquetaProduto.idProdutoNotaFiscal;
-      }
-      else {
-        id = 'idAmbientePedido=' + EtiquetaProduto.idAmbientePedido;
+      if (etiquetaProduto.idProdutoPedido > 0) {
+        id = 'idProdPed=' + etiquetaProduto.idProdutoPedido;
+      } else if (etiquetaProduto.numeroNotaFiscal > 0) {
+        id = 'idProdNf=' + etiquetaProduto.idProdutoNotaFiscal;
+      } else {
+        id = 'idAmbientePedido=' + etiquetaProduto.idAmbientePedido;
       }
 
       this.abrirJanela(500, 700, '../Relatorios/RelEtiquetas.aspx?ind=1&' + id + '&tipo=0' + (codigoEtiqueta ? '&numEtiqueta=' + codigoEtiqueta : ''));

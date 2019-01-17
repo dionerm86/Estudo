@@ -106,15 +106,9 @@ namespace Glass.API.Backend.Controllers.ImpressoesEtiquetas.V1
         /// <returns>Uma lista JSON com os dados dos itens.</returns>
         [HttpGet]
         [Route("individual")]
-        [SwaggerResponse(
-            200,
-            "Etiquetas encontradas sem paginação (apenas uma página de retorno) ou última página retornada.",
-            Type = typeof(IEnumerable<Models.ImpressoesEtiquetas.V1.Individual.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Etiquetas encontradas sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.ImpressoesEtiquetas.V1.Individual.Lista.ListaDto>))]
         [SwaggerResponse(204, "Etiquetas não encontradas.")]
-        [SwaggerResponse(
-            206,
-            "Etiquetas paginadas (qualquer página, exceto a última).",
-            Type = typeof(IEnumerable<Models.ImpressoesEtiquetas.V1.Individual.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Etiquetas paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.ImpressoesEtiquetas.V1.Individual.Lista.ListaDto>))]
         public IHttpActionResult ObterImpressoesIndividuaisEtiquetas([FromUri] Models.ImpressoesEtiquetas.V1.Individual.Lista.FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
@@ -137,8 +131,7 @@ namespace Glass.API.Backend.Controllers.ImpressoesEtiquetas.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    impressoesIndividuais
-                        .Select(i => new Models.ImpressoesEtiquetas.V1.Individual.Lista.ListaDto(i)),
+                    impressoesIndividuais.Select(i => new Models.ImpressoesEtiquetas.V1.Individual.Lista.ListaDto(i)),
                     filtro,
                     () => ProdutosPedidoEspelhoDAO.Instance.GetCountImpIndiv(
                         (uint)(filtro.IdPedido ?? 0),

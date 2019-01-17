@@ -49,7 +49,7 @@ namespace Glass.API.Backend.Models.ImpressoesEtiquetas.V1.Individual.Lista
         public string DescricaoProduto { get; set; }
 
         /// <summary>
-        /// Obtém ou define o inicio da faixa de altura para o filtro.
+        /// Obtém ou define o início da faixa de altura para o filtro.
         /// </summary>
         [JsonProperty("alturaInicio")]
         public int? AlturaInicio { get; set; }
@@ -61,7 +61,7 @@ namespace Glass.API.Backend.Models.ImpressoesEtiquetas.V1.Individual.Lista
         public int? AlturaFim { get; set; }
 
         /// <summary>
-        /// Obtém ou define inicio da faixa de largura para o filtro.
+        /// Obtém ou define início da faixa de largura para o filtro.
         /// </summary>
         [JsonProperty("larguraInicio")]
         public int? LarguraInicio { get; set; }
