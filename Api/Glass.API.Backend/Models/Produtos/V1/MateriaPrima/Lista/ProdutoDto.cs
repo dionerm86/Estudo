@@ -5,7 +5,7 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Posicao.Lista.ChapaMateriaPrima
+namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Lista
 {
     /// <summary>
     /// Classe que encapsula os dados do produto associado a uma chapa de matéria prima.

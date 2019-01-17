@@ -6,7 +6,7 @@ using Glass.API.Backend.Helper.Produtos.MateriaPrima.Posicao.ChapaMateriaPrima;
 using Glass.API.Backend.Models.Genericas.V1;
 using Newtonsoft.Json;
 
-namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Posicao.Lista.ChapaMateriaPrima
+namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Lista
 {
     /// <summary>
     /// Classe com os itens para o filtro da lista de chapas de matéria prima.

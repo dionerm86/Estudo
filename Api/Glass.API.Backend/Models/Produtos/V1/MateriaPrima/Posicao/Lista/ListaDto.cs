@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Posicao.Lista
 {
     /// <summary>
-    /// Classe que encapsula os dados de uma posilção de matéria prima para a tela de listagem.
+    /// Classe que encapsula os dados de uma posição de matéria prima para a tela de listagem.
     /// </summary>
     [DataContract(Name = "Lista")]
     public class ListaDto

@@ -1,5 +1,5 @@
 ﻿Vue.component('posicoes-materia-prima-filtros', {
-  mixins: [Mixins.Objetos],
+  mixins: [Mixins.Data, Mixins.Objetos],
   props: {
     /**
      * Filtros selecionados para a lista de posições de matéria prima.

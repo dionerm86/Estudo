@@ -202,7 +202,7 @@
     <Content Include="Global.asax" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\ChapaMateriaPrima\TraducaoOrdenacaoListaChapasMateriaPrima.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\TraducaoOrdenacaoListaPosicoesMateriaPrima.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\ChapaMateriaPrima\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Lista\FiltroDto.cs" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -878,9 +878,9 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\ChapaMateriaPrima\ProdutoDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Lista\ProdutoDto.cs" />
     <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\CorVidroDto.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\ChapaMateriaPrima\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Lista\ListaDto.cs" />
     <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\ListaDto.cs" />
     <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\MetroQuadradoDto.cs" />

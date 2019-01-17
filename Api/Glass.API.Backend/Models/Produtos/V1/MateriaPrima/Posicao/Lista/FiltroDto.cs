@@ -35,13 +35,13 @@ namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Posicao.Lista
         /// Obtém ou define os tipos de Pedido.
         /// </summary>
         [JsonProperty("tiposPedido")]
-        public TipoPedidoPCPEnum TiposPedido { get; set; }
+        public IEnumerable<TipoPedidoPCPEnum> TiposPedido { get; set; }
 
         /// <summary>
         /// Obtém ou define as situações de pedido.
         /// </summary>
         [JsonProperty("situacoesPedido")]
-        public Data.Model.Pedido.SituacaoPedido SituacoesPedido { get; set; }
+        public IEnumerable<Data.Model.Pedido.SituacaoPedido> SituacoesPedido { get; set; }
 
         /// <summary>
         /// Obtém ou define o nome do cliente.

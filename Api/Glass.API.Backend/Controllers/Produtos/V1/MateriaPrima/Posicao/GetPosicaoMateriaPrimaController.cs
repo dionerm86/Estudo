@@ -36,11 +36,13 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.MateriaPrima.Posicao
             using (var sessao = new GDATransaction())
             {
                 filtro = filtro ?? new FiltroDto();
+                var tiposPedido = filtro.TiposPedido != null && filtro.TiposPedido.Any() ? filtro.TiposPedido.Select(tp => (int)tp) : null;
+                var situacoesPedido = filtro.SituacoesPedido != null && filtro.SituacoesPedido.Any() ? filtro.SituacoesPedido.Select(sp => (int)sp) : null;
 
                 var posicoesMateriaPrima = PosicaoMateriaPrimaDAO.Instance.GetPosMateriaPrima(
                     filtro.IdsRota != null && filtro.IdsRota.Any() ? string.Join(",", filtro.IdsRota) : string.Empty,
-                    filtro.TiposPedido.ToString(),
-                    filtro.SituacoesPedido.ToString(),
+                    tiposPedido != null && tiposPedido.Any() ? string.Join(",", tiposPedido) : string.Empty,
+                    situacoesPedido != null && situacoesPedido.Any() ? string.Join(",", situacoesPedido) : string.Empty,
                     filtro.PeriodoEntregaPedidoInicio?.ToShortDateString(),
                     filtro.PeriodoEntregaPedidoFim?.ToShortDateString(),
                     filtro.IdsCorVidro != null && filtro.IdsCorVidro.Any() ? string.Join(",", filtro.IdsCorVidro) : string.Empty,

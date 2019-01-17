@@ -603,6 +603,7 @@ Servicos.Pedidos = (function (http) {
 
     /**
      * Retorna os itens para o controle de situações do pedido PCP.
+     * @returns {Promise} Uma promisse com o resultado da busca.
      */
     obterSituacoesPedidoPcp: function () {
       return http().get(API + 'situacoesPcp');
@@ -610,6 +611,7 @@ Servicos.Pedidos = (function (http) {
 
     /**
      * Retorna os itens para o controle de tipos do pedido PCP.
+     * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterTiposPedidoPcp: function () {
       return http().get(API + 'tiposPcp');

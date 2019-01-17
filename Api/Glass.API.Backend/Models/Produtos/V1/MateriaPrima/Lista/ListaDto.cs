@@ -6,7 +6,7 @@ using Glass.Data.RelModel;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Posicao.Lista.ChapaMateriaPrima
+namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Lista
 {
     /// <summary>
     /// Classe que encapsula os dados de chapa de matéria prima para a tela de listagem.
@@ -34,42 +34,42 @@ namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Posicao.Lista.ChapaM
         }
 
         /// <summary>
-        /// Obtém ou define os dados referentes a cor do vidro.
+        /// Obtém ou define os dados referentes ao produto.
         /// </summary>
         [DataMember]
         [JsonProperty("produto")]
         public ProdutoDto Produto { get; set; }
 
         /// <summary>
-        /// Obtém ou define a espessura do vidro.
+        /// Obtém ou define o fornecedor da matéria prima.
         /// </summary>
         [DataMember]
         [JsonProperty("fornecedor")]
         public string Fornecedor { get; set; }
 
         /// <summary>
-        /// Obtém ou define os dados associados ao metro quadrado do vidro.
+        /// Obtém ou define a altura da matéria prima.
         /// </summary>
         [DataMember]
         [JsonProperty("altura")]
         public decimal? Altura { get; set; }
 
         /// <summary>
-        /// Obtém ou define a descrição do grupo do produto.
+        /// Obtém ou define a largura da matéria prima.
         /// </summary>
         [DataMember]
         [JsonProperty("largura")]
         public decimal? Largura { get; set; }
 
         /// <summary>
-        /// Obtém ou define os dados associados ao metro quadrado do vidro.
+        /// Obtém ou define a quantidade da matéria prima.
         /// </summary>
         [DataMember]
         [JsonProperty("quantidade")]
         public int? Quantidade { get; set; }
 
         /// <summary>
-        /// Obtém ou define a descrição do grupo do produto.
+        /// Obtém ou define o total em metros quadrados da matéria prima.
         /// </summary>
         [DataMember]
         [JsonProperty("totalMetroQuadrado")]

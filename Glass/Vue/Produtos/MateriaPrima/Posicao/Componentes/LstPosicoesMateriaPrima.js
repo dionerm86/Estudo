@@ -1,10 +1,15 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('DescrCorVidro', 'ASC')],
+  mixins: [Mixins.Data, Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('DescrCorVidro', 'ASC')],
 
-  data: {
-    filtro: {},
-    chapasEmExibicao: []
+  data: function () {
+    return {
+      filtro: {
+        periodoEntregaPedidoInicio: this.adicionarDias(new Date(), -15),
+        periodoEntregaPedidoFim: this.adicionarDias(new Date(), 15)
+      },
+      chapasEmExibicao: []
+    };
   },
 
   methods: {
@@ -25,7 +30,7 @@
      * @param {Boolean} exportarExcel Um valor que define se o relatório será exportado para o excel.
      */
     abrirRelatorio: function (exportarExcel) {
-      this.abrirJanela(600, 800, "../Relatorios/RelBase.aspx?Rel=PosicaoMateriaPrima&exportarExcel=" + exportarExcel);
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?Rel=PosicaoMateriaPrima&exportarExcel=' + exportarExcel);
     },
 
     /**
@@ -39,6 +44,7 @@
 
     /**
      * Alterna a exibição das chapas de matéria prima
+     * @param {!number} indice O indice onde se encontra o item para as quais as chapas serão exibidas.
      */
     alternarExibicaoChapas: function (indice) {
       var i = this.chapasEmExibicao.indexOf(indice);
@@ -52,7 +58,7 @@
 
     /**
      * Retorna o número de colunas da lista paginada.
-     * @type {number}
+     * @returns {number} o número de colunas existentes na lista paginada.
      */
     numeroColunasLista: function () {
       return this.$refs.lista.numeroColunas();

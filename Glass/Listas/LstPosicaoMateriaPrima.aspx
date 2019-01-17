@@ -84,7 +84,7 @@
                         {{ item.metroQuadrado.emEstoque | decimal }}
                     </td>
                     <td style="text-align: center; font-weight: bold">
-                        {{ item.metroQuadrado.disponivel }}
+                        {{ item.metroQuadrado.disponivel | decimal }}
                     </td>
                 </template>
                 <template slot="novaLinhaItem" slot-scope="{ item, index, classe }" v-if="exibindoChapas(index)">

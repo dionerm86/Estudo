@@ -27,11 +27,7 @@ namespace Glass.API.Backend.Helper.Produtos.MateriaPrima.Posicao
         /// <inheritdoc/>
         protected override string TraduzirCampo(string campo)
         {
-            switch (campo.ToLowerInvariant())
-            {
-                default:
-                    return this.OrdenacaoPadrao;
-            }
+            return this.OrdenacaoPadrao;
         }
     }
 }

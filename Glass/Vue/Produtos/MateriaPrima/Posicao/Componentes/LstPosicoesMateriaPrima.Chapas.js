@@ -46,6 +46,7 @@
 
     /**
      * Indica externamente que os itens em exibição foram atualizados.
+     * @param {!number} numeroItens O número de itens retornados para exibição.
      */
     atualizouItens: function (numeroItens) {
       this.$emit('atualizou-itens', numeroItens);
