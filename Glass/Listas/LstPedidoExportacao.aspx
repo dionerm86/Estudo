@@ -38,7 +38,7 @@
                     <td>{{ item.id }}</td>
                     <td>{{ item.fornecedor }}</td>
                     <td>{{ item.funcionario }}</td>
-                    <td>{{ item.dataExportacao | data }}</td>
+                    <td>{{ item.dataExportacao | dataHora }}</td>
                 </template>
             </lista-paginada>
         </section>
