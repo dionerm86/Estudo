@@ -26,5 +26,12 @@ namespace Glass.API.Backend.Models.Pagamentos.V1.Lista
         [DataMember]
         [JsonProperty("logAlteracoes")]
         public bool LogAlteracoes { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o pagamento possui log de cancelamento.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("logCancelamento")]
+        public bool LogCancelamento { get; set; }
     }
 }
