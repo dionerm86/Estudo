@@ -349,7 +349,7 @@
             Entrada imune.
             </summary>
         </member>
-        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.EntradaComSuspencao">
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.EntradaComSuspensao">
             <summary>
             Entrada com suspensão.
             </summary>
@@ -384,7 +384,7 @@
             Saída imune.
             </summary>
         </member>
-        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.SaidaComSuspencao">
+        <member name="F:Sync.Fiscal.Enumeracao.Cst.CstIpi.SaidaComSuspensao">
             <summary>
             Saída com suspensão.
             </summary>
