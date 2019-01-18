@@ -8,8 +8,7 @@
     <div id="app">
         <chapas-disponiveis-filtros :filtro.sync="filtro"></chapas-disponiveis-filtros>
         <section>
-            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma chapa disponível."
-                :linha-editando="numeroLinhaEdicao" v-on:atualizou-itens="atualizouItens">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" mensagem-lista-vazia="Nenhuma chapa disponível encontrada.">
                 <template slot="cabecalho">
                     <th>
                         Cor
@@ -44,16 +43,21 @@
                 </template>
             </lista-paginada>
         </section>
+        <div style="text-align: center">
+            <span style="color: red">
+                São consideradas todas as chapas com etiquetas impressas e não cortadas/expedidas. 
+            </span>
+        </div>
         <section class="links">
             <div>
                 <span>
-                    <a @click.prevent="lnkImprimir" title="Imprimir">
-                        <img src="../Images/Printer.png"/>
+                    <a href="#" @click.prevent="abrirRelatorio(false)" title="Imprimir">
+                        <img src="../Images/Printer.png"/> Imprimir
                     </a>
                 </span>
                 <span>
-                    <a @click.prevent="lnkExportarExcel" title="Exportar Excel">
-                        <img src="../Images/Excel.gif"/>
+                    <a href="#" @click.prevent="abrirRelatorio(true)" title="Exportar Excel">
+                        <img src="../Images/Excel.gif"/> Exportar para o Excel
                     </a>
                 </span>
             </div>

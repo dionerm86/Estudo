@@ -3,7 +3,7 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Produtos.MateriaPrima.ChapasDisponiveis.V1.Lista;
+using Glass.API.Backend.Models.Produtos.MateriaPrima.ChapasDisponiveis.Lista;
 using Glass.Data.RelDAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
@@ -42,7 +42,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.MateriaPrima.ChapasDisponive
                     filtro.Lote,
                     (int)(filtro.Altura ?? 0),
                     (int)(filtro.Largura ?? 0),
-                    filtro.IdsCorVidro,
+                    filtro.IdsCorVidro != null && filtro.IdsCorVidro.Any() ? string.Join(",", filtro.IdsCorVidro) : string.Empty,
                     (int)(filtro.Espessura ?? 0),
                     filtro.CodigoEtiqueta,
                     (int)(filtro.IdLoja ?? 0),
@@ -62,7 +62,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.MateriaPrima.ChapasDisponive
                     filtro.Lote,
                     (int)(filtro.Altura ?? 0),
                     (int)(filtro.Largura ?? 0),
-                    filtro.IdsCorVidro,
+                    filtro.IdsCorVidro != null && filtro.IdsCorVidro.Any() ? string.Join(",", filtro.IdsCorVidro) : string.Empty,
                     (int)(filtro.Espessura ?? 0),
                     filtro.CodigoEtiqueta,
                     (int)(filtro.IdLoja ?? 0)));

@@ -5,7 +5,7 @@
 namespace Glass.API.Backend.Helper.Produtos.MateriaPrima.ChapasDisponiveis
 {
     /// <summary>
-    /// Classe que realiza a tradução dos campos de ordenação para a lista de CFOP's.
+    /// Classe que realiza a tradução dos campos de ordenação para a lista de chapas disponíveis.
     /// </summary>
     internal class TraducaoOrdenacaoListaChapasDisponiveis : BaseTraducaoOrdenacao
     {
@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.Produtos.MateriaPrima.ChapasDisponiveis
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "desc"; }
+            get { return string.Empty; }
         }
 
         /// <inheritdoc/>

@@ -5,8 +5,9 @@
 using Glass.API.Backend.Helper.Produtos.MateriaPrima.ChapasDisponiveis;
 using Glass.API.Backend.Models.Genericas.V1;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
-namespace Glass.API.Backend.Models.Produtos.MateriaPrima.ChapasDisponiveis.V1.Lista
+namespace Glass.API.Backend.Models.Produtos.MateriaPrima.ChapasDisponiveis.Lista
 {
     /// <summary>
     /// Classe que encapsula os itens de filtro para a lista de chapas disponíveis.
@@ -73,7 +74,7 @@ namespace Glass.API.Backend.Models.Produtos.MateriaPrima.ChapasDisponiveis.V1.Li
         /// Obtém ou define o identificador da cor do vidro.
         /// </summary>
         [JsonProperty("idsCorVidro")]
-        public string IdsCorVidro { get; set; }
+        public IEnumerable<int> IdsCorVidro { get; set; }
 
         /// <summary>
         /// Obtém ou define a espessura da chapa.

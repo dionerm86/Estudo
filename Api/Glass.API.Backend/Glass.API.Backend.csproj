@@ -305,8 +305,8 @@
     <Compile Include="Helper\ContasPagar\ConverterCadastroAtualizacaoParaContasPagar.cs" />
     <Compile Include="Helper\ContasPagar\TraducaoOrdenacaoListaContasPagar.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\ChapasDisponiveis\V1\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\ChapasDisponiveis\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\ChapasDisponiveis\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\ChapasDisponiveis\Lista\ListaDto.cs" />
     <Compile Include="Models\ConhecimentosTransporte\V1\Veiculos\Proprietarios\Associacoes\FiltroDto.cs" />
     <Compile Include="Models\ConhecimentosTransporte\V1\Veiculos\Proprietarios\Associacoes\ListaDto.cs" />
     <Compile Include="Models\ConhecimentosTransporte\V1\Veiculos\Proprietarios\Lista\FiltroDto.cs" />

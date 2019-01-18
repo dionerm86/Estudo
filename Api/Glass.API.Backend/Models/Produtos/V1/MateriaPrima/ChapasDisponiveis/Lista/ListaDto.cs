@@ -2,17 +2,16 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Genericas.V1;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Produtos.MateriaPrima.ChapasDisponiveis.V1.Lista
+namespace Glass.API.Backend.Models.Produtos.MateriaPrima.ChapasDisponiveis.Lista
 {
     /// <summary>
     /// Classe que encapsula um item para a lista de chapas disponíveis.
     /// </summary>
     [DataContract(Name = "Lista")]
-    public class ListaDto : IdNomeDto
+    public class ListaDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.

@@ -1,6 +1,6 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('codInterno', 'asc')],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString],
 
   data: {
     filtro: {}
@@ -16,23 +16,48 @@
      * @return {Promise} Uma promise com o resultado da busca.
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-      return Servicos.ChapasDisponiveis.obterLista(filtro, pagina, numeroRegistros, ordenacao);
+      return Servicos.Produtos.MateriaPrima.ChapasDisponiveis.obterLista(filtro, pagina, numeroRegistros, ordenacao);
     },
 
     /**
-       * Recupera o objeto com as .
-       * @returns {Promise} Uma promise com o resultado da busca.
-       */
-    obterItensFiltroCor: function () {
-      return Servicos.CoresVidro.obterParaControle;
-    },
-
-    /**
-     * Retorna os itens para o controle de motoristas.
-     * @returns {Promise} Uma Promise com o resultado da busca.
+     * Recupera o objeto com as cores.
+     * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterItensFiltroLoja: function () {
-      return Servicos.Lojas.obterParaControle();
-    }
+    obterItensFiltroCor: function () {
+      return Servicos.Produtos.CoresVidro.obterParaControle();
+    },
+
+    /**
+     * Retornar uma string com os filtros selecionados na tela.
+     */
+    formatarFiltros_: function () {
+      var filtros = [];
+
+      this.incluirFiltroComLista(filtros, 'idFornecedor', this.filtro.idFornecedor);
+      this.incluirFiltroComLista(filtros, 'nomeFornecedor', this.filtro.nomeFornecedor);
+      this.incluirFiltroComLista(filtros, 'codigoProduto', this.filtro.codigoProduto);
+      this.incluirFiltroComLista(filtros, 'descricaoProduto', this.filtro.descricaoProduto);
+      this.incluirFiltroComLista(filtros, 'numeroNotaFiscal', this.filtro.numeroNotaFiscal);
+      this.incluirFiltroComLista(filtros, 'lote', this.filtro.lote);
+      this.incluirFiltroComLista(filtros, 'altura', this.filtro.altura);
+      this.incluirFiltroComLista(filtros, 'largura', this.filtro.largura);
+      this.incluirFiltroComLista(filtros, 'idsCorVidro', this.filtro.idsCorVidro);
+      this.incluirFiltroComLista(filtros, 'espessura', this.filtro.espessura);
+      this.incluirFiltroComLista(filtros, 'codigoEtiqueta', this.filtro.codigoEtiqueta);
+      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
+
+      return filtros.length
+        ? '&' + filtros.join('&')
+        : '';
+    },
+
+    /**
+     * Recupera o objeto com os dados para impressão.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    abrirRelatorio: function (exportarExcel) {
+      var url = '../Relatorios/RelBase.aspx?rel=ChapasDisponiveis' + this.formatarFiltros_() + '&exportarexcel=' + exportarExcel;
+      this.abrirJanela(600, 800, url);
+    },
   }
 });

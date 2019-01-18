@@ -1,4 +1,4 @@
-var Servicos = Servicos || {};
+﻿var Servicos = Servicos || {};
 
 /**
  * Objeto com os serviços para a API de produtos.
@@ -244,6 +244,25 @@ Servicos.Produtos = (function(http) {
         return http().get(API + 'materiaPrima', {
           params: filtro
         });
+      },
+
+      /**
+       * Objeto com os serviços para a API de chapas disponíveis.
+       */
+      ChapasDisponiveis: {
+        /**
+         * Recupera a lista de chapas disponíveis.
+         * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+         * @param {number} pagina O número da página de resultados a ser exibida.
+         * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+         * @param {string} ordenacao A ordenação para o resultado.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+        obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+          return http().get(API + 'materiaPrima/chapasDisponiveis', {
+            params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+          });
+        }
       }
     },
 
