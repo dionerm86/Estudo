@@ -18,9 +18,8 @@ namespace Glass.Data.DAL
             var nomeClienteBD = OrdemCargaConfig.ExibirRazaoSocialCliente ? 
                 "Coalesce(c.nome, c.nomeFantasia)" : "Coalesce(c.nomeFantasia, c.nome)";
 
-            string campos = @"ic.*, v.dataFechamento,
-                    IF(sgp.TipoSubgrupo IN (" + (int)TipoSubgrupoProd.VidroDuplo + "," + (int)TipoSubgrupoProd.VidroLaminado + @"), 
-                        (SELECT SUM(peso) FROM produtos_pedido WHERE IdProdPedParent = pp.IdProdPed) * vpp.qtde, SUM(pp.peso / pp.qtde * vpp.qtde))  as Peso,
+            string campos = @"ic.*, v.dataFechamento, sgp.TipoSubgrupo,
+                    SUM((pp.peso / pp.qtde) * vpp.qtde)  as Peso,
                     c.id_cli as IdCliente, " + nomeClienteBD + @" as NomeCliente, oc.idOrdemCarga as idOc, ped.CodCliente as PedCli,
             ped.IdPedidoExterno, ped.IdClienteExterno, ped.ClienteExterno, ped.Importado as PedidoImportado";
 
@@ -97,8 +96,7 @@ namespace Glass.Data.DAL
                 "Coalesce(c.nome, c.nomeFantasia)" : "Coalesce(c.nomeFantasia, c.nome)";
 
             string campos = selecionar ? @"ic.*, p.Descricao as DescrProduto, p.CodInterno, pp.Altura, pp.Largura, (pp.TotM / pp.qtde) as M2,
-                IF(sgp.TipoSubgrupo IN (" + (int)TipoSubgrupoProd.VidroDuplo + "," + (int)TipoSubgrupoProd.VidroLaminado + @"), 
-                        (SELECT SUM(peso) FROM produtos_pedido WHERE IdProdPedParent = pp.IdProdPed), pp.peso / pp.qtde)  as Peso,
+                (pp.peso / pp.qtde)  as Peso,
                 IF(ic.Carregado, {0}, null) as NumEtiqueta, {1} as PedidoEtiqueta, c.id_cli as IdCliente, " + nomeClienteBD + @" as NomeCliente,
                 ppp.IdProdPed as IdProdPedEsp, oc.idOrdemCarga as idOc, ped.CodCliente as PedCli, ped.IdPedidoExterno, ped.IdClienteExterno, ped.ClienteExterno,
                 ped.Importado as PedidoImportado" : "ic.IdItemCarregamento";
@@ -208,8 +206,7 @@ namespace Glass.Data.DAL
 
             string sqlvolume = @"
                 SELECT ic.*, null as DescrProduto, null as CodInterno, null as Altura, null as Largura, null as M2, 
-                    IF(sgp.TipoSubgrupo IN (" + (int)TipoSubgrupoProd.VidroDuplo + "," + (int)TipoSubgrupoProd.VidroLaminado + @"), 
-                        (SELECT SUM(peso) FROM produtos_pedido WHERE IdProdPedParent = pp.IdProdPed) * vpp.qtde, SUM(pp.peso / pp.qtde * vpp.qtde))  as Peso,
+                    SUM((pp.peso / pp.qtde) * vpp.qtde)  as Peso,
                     c.id_cli as IdCliente, " + nomeClienteBD + @" as NomeCliente, v.dataFechamento, ped.IdClienteExterno, ped.ClienteExterno, ped.IdPedidoExterno, ped.Importado as PedidoImportado,
                     r.IdRota, r.Descricao as Rota, c.Importacao as ClienteImportacao"
                 + (agruparProdutos ? @", null as Qtde, '$$$' as criterio " : "") + @", 1 as tipoItem, ped.deveTransferir
@@ -229,8 +226,7 @@ namespace Glass.Data.DAL
                 GROUP BY ic.idVolume";
 
             string campos = @"ic.*, p.Descricao as DescrProduto, p.CodInterno, pp.Altura, pp.Largura, (pp.TotM / pp.qtde)" + (agruparProdutos ? "* COUNT(*)" : "") + @" as M2,
-                IF(sgp.TipoSubgrupo IN (" + (int)TipoSubgrupoProd.VidroDuplo + "," + (int)TipoSubgrupoProd.VidroLaminado + @"),
-                    (SELECT SUM(peso) FROM produtos_pedido WHERE IdProdPedParent = pp.IdProdPed), pp.peso / pp.qtde) " + (agruparProdutos ? " * COUNT(*)" : "") + @" as Peso,
+                (pp.peso / pp.qtde) " + (agruparProdutos ? " * COUNT(*)" : "") + @" as Peso,
                 c.id_cli as IdCliente, " + nomeClienteBD + @" as NomeCliente, null as dataFechamento, ped.IdClienteExterno, ped.ClienteExterno, ped.IdPedidoExterno, ped.Importado as PedidoImportado,
                 r.IdRota, r.Descricao as Rota, c.Importacao as ClienteImportacao"
                                    + (agruparProdutos ? @", COUNT(*) as Qtde, '$$$' as criterio" : "");
