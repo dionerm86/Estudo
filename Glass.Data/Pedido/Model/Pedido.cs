@@ -2948,15 +2948,24 @@ namespace Glass.Data.Model
         [PersistenceProperty("QtdePecasVolume", DirectionParameter.InputOptional)]
         public double QtdePecasVolume { get; set; }
 
+        private bool? _gerouTodosVolumes;
+
         [XmlIgnore]
         public bool GerouTodosVolumes
         {
             get
             {
-                if (IdPedido == 0)
+                if (this.IdPedido == 0)
+                {
                     return false;
+                }
 
-                return PedidoDAO.Instance.GerouTodosVolumes(null, IdPedido);
+                if (this._gerouTodosVolumes == null)
+                {
+                    this._gerouTodosVolumes = PedidoDAO.Instance.GerouTodosVolumes(null, this.IdPedido);
+                }
+
+                return this._gerouTodosVolumes.Value;
             }
         }
 
