@@ -643,6 +643,48 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
             }
         }
 
+        /// <summary>
+        /// Recupera a lista de tipos dos pedidos PCP.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos tipos dos pedidos PCP.</returns>
+        [HttpGet]
+        [Route("tiposPcp")]
+        [SwaggerResponse(200, "Tipos de pedido de PCP encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de pedido de PCP não encontrados.")]
+        public IHttpActionResult ObterTiposPedidoPcp()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tiposPedidosPcp = new ConversorEnum<Models.Pedidos.V1.TipoPedidoPCPEnum.TipoPedidoPCPEnum>()
+                    .ObterTraducao();
+
+                return this.Lista(tiposPedidosPcp);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de situações dos pedidos PCP.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos das situações dos pedidos PCP.</returns>
+        [HttpGet]
+        [Route("situacoesPcp")]
+        [SwaggerResponse(200, "Situações de PCP do pedido encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Situações de PCP do pedido não encontradas.")]
+        public IHttpActionResult ObterSituacoesPedidoPcp()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var situacoesPedidosPcp = DataSources.Instance.GetSituacaoPedidoPCP()
+                    .Select(s => new IdNomeDto
+                     {
+                         Id = (int)(s.Id ?? 0),
+                         Nome = s.Descr,
+                     });
+
+                return this.Lista(situacoesPedidosPcp);
+            }
+        }
+
         private decimal ObterDescontoFormaPagamentoDadosProduto(GDASession sessao, int idPedido, Data.Model.Pedido.TipoVendaPedido? tipoVenda, int? idFormaPagamento, int? idTipoCartao, int? idParcela)
         {
             if (!FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto || idPedido == 0 || idFormaPagamento.GetValueOrDefault() == 0)
