@@ -1359,8 +1359,7 @@ namespace Glass.Data.DAL
 
             var sort = GetListaConsultaSort(idPedido, codRota, pecasProdCanc, null, temFiltro, ref filtroAdicional);
 
-            var ordenar = (!temFiltro || (idPedido > 0 || (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor &&
-                !String.IsNullOrEmpty(codRota)))) && !string.IsNullOrEmpty(sort) ? " order by " + sort : string.Empty;
+            var ordenar = !string.IsNullOrEmpty(sort) ? $" order by {sort}" : string.Empty;
 
             sql += ordenar;
 
