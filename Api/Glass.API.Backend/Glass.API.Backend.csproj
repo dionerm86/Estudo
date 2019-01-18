@@ -230,6 +230,8 @@
     <Compile Include="Controllers\ContasPagar\V1\Pagas\GetContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\PatchContasPagasController.cs" />
     <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
+    <Compile Include="Controllers\Produtos\V1\MateriaPrima\ChapasDisponiveis\ChapasDisponiveisController.cs" />
+    <Compile Include="Controllers\Produtos\V1\MateriaPrima\ChapasDisponiveis\GetChapasDisponiveisController.cs" />
     <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\GetPrecosTabelaClienteController.cs" />
     <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\PrecosTabelaClienteController.cs" />
     <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\DeletePerdasChapasVidroController.cs" />
@@ -238,6 +240,7 @@
     <Compile Include="Controllers\Producao\V1\Retalhos\GetRetalhosProducaoController.cs" />
     <Compile Include="Controllers\Producao\V1\Retalhos\RetalhosProducaoController.cs" />
     <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
+    <Compile Include="Helper\Produtos\MateriaPrima\ChapasDisponiveis\TraducaoOrdenacaoListaChapasDisponiveis.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\Associacoes\TraducaoOrdenacaoListaAssociacaoProprietariosVeiculos.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\ConverterCadastroAtualizacaoParaContasPagas.cs" />
@@ -295,6 +298,8 @@
     <Compile Include="Helper\ContasPagar\ConverterCadastroAtualizacaoParaContasPagar.cs" />
     <Compile Include="Helper\ContasPagar\TraducaoOrdenacaoListaContasPagar.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\ChapasDisponiveis\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\ChapasDisponiveis\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\ConhecimentosTransporte\V1\Veiculos\Proprietarios\Associacoes\FiltroDto.cs" />
     <Compile Include="Models\ConhecimentosTransporte\V1\Veiculos\Proprietarios\Associacoes\ListaDto.cs" />
     <Compile Include="Models\ConhecimentosTransporte\V1\Veiculos\Proprietarios\Lista\FiltroDto.cs" />

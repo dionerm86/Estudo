@@ -1,0 +1,62 @@
+﻿<section>
+    <div>
+        <span>
+            <label>Cor</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="corAtual" texto-selecionar="Selecione uma cor"
+                v-bind:funcao-recuperar-itens="obterItensFiltroCor" v-bind:ordenar="false"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Espessura</label>
+            <input type="number" v-model="filtroAtual.espessura" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Fornecedor</label>
+            <input type="number" v-model="filtroAtual.idFornecedor" style="width: 60px" />
+            <input type="text" v-model="filtroInicial.nomeFornecedor" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span>
+            <label>NF-e</label>
+            <input type="number" v-model="filtroAtual.numeroNotaFiscal"/>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Lote</label>
+            <input type="number" v-model="filtroAtual.lote" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Altura</label>
+            <input type="number" v-model="filtroAtual.altura" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Largura</label>
+            <input type="number" v-model="filtroAtual.largura" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span>
+            <label>Produto</label>
+            <input type="text" v-model="filtroAtual.codigoProduto" style="width: 60px" />
+            <input type="text" v-model="filtroAtual.descricaoProduto" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Etiqueta</label>
+            <input type="text" v-model="filtroAtual.codigoEtiqueta" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Loja</label>
+            <lista-selecao-id-valor :item-selecionado.sync="lojaAtual" texto-selecionar="Todas"
+                :funcao-recuperar-itens="obterItensFiltroLoja"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>
