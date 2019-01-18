@@ -1936,8 +1936,7 @@
                                                         <asp:Label ID="Label35" runat="server" Text="Crédito"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
-                                                        <asp:TextBox ID="txtCredito" runat="server" Enabled='<%# HabilitarCampoCredito() %>'
-                                                            Text='<%# Bind("Credito") %>' Width="70px"></asp:TextBox>
+                                                        <asp:Label ID="txtCredito" runat="server" Text='<%# Eval("Credito") %>'></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label41" runat="server" Text="Perc. Desconto (Venda)" Visible='<%# PercReducaoNfeVisible() %>'></asp:Label>
