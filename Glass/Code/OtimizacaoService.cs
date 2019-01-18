@@ -120,7 +120,7 @@ namespace Glass.UI.Web
                             var pecaItemProj = pp.IdMaterItemProj != null ? PecaItemProjetoDAO.Instance.GetByMaterial(pp.IdMaterItemProj.Value) : null;
 
                             Peca peca = new Peca();
-                            peca.Altura = pecaItemProj != null ? pecaItemProj.Altura : pp.AlturaReal;
+                            peca.Altura = pecaItemProj != null ? pecaItemProj.Altura : (pp.AlturaReal > 0 ? pp.AlturaReal : pp.Altura);
                             peca.Largura = pecaItemProj != null ? pecaItemProj.Largura : (pp.LarguraReal > 0 ? pp.LarguraReal : pp.Largura);
                             peca.Quantidade = Convert.ToInt32(pp.Qtde);
                             peca.Id = ProdutoBaixaEstoqueDAO.Instance.ObterIdProdBaixa(pp.IdProd);
