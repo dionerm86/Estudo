@@ -515,6 +515,9 @@
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Templates\ListaMovimentacoesEstoqueReal.Filtro.html" />
     <Content Include="Vue\Funcionarios\Tipos\Componentes\LstTiposFuncionario.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Componentes\LstMovimentacoesLiberacoes.Filtro.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Componentes\LstMovimentacoesLiberacoes.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Templates\LstMovimentacoesLiberacoes.Filtro.html" />
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.Filtro.js" />
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.js" />
     <Content Include="Vue\Pagamentos\Templates\LstPagamentos.Filtro.html" />

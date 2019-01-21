@@ -1,0 +1,31 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Cliente</label>
+            <input type="number" v-model.number="filtroAtual.idCliente" style="width: 45px"/>
+            <input type="text" v-model.number="filtroAtual.nomeCliente" style="width: 200px"/>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Período</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoCadastroInicio" v-bind:data-hora-final.sync="filtroAtual.periodoCadastroFim" :exibir-horas="false"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Situação</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="situacaoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroSituacoes"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Funcionário</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="funcionarioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroFuncionarios"
+                v-bind:ordenar="false" campo-id="codigo"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

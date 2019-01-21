@@ -4,6 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
+using Glass.API.Backend.Models.Genericas.V1;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -86,6 +87,48 @@ namespace Glass.API.Backend.Controllers.Liberacoes.V1
                         (uint)(filtro.IdLoja ?? 0),
                         filtro.PeriodoCancelamentoInicio?.ToShortDateString(),
                         filtro.PeriodoCancelamentoFim?.ToShortDateString()));
+            }
+        }
+
+        /// <summary>
+        /// Recupera as situações das liberações.
+        /// </summary>
+        /// <returns>Uma lista JSON com as situações das liberações.</returns>
+        [HttpGet]
+        [Route("situacoes")]
+        [SwaggerResponse(200, "Situações de liberações encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Situações de liberações não encontradas.")]
+        public IHttpActionResult ObterSituacoesLiberacoes()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var situacoes = new Helper.ConversorEnum<Models.Liberacoes.V1.SituacoesEnum.SituacoesEnum>()
+                    .ObterTraducao();
+
+                return this.Lista(situacoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera os funcionários.
+        /// </summary>
+        /// <returns>Uma lista JSON com os funcionários.</returns>
+        [HttpGet]
+        [Route("funcionarios")]
+        [SwaggerResponse(200, "Funcionários encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Funcionários não encontrados.")]
+        public IHttpActionResult ObterFuncionarios()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var funcionarios = FuncionarioDAO.Instance.GetOrdered()
+                    .Select(f => new IdNomeDto
+                    {
+                        Id = f.IdFunc,
+                        Nome = f.Nome,
+                    });
+
+                return this.Lista(funcionarios);
             }
         }
     }
