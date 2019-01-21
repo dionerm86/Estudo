@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Helper;
@@ -31,7 +31,7 @@ namespace Glass.Data.Model
         public int Largura { get; set; }
 
         /// <summary>
-        /// 1-InstalaÁ„o
+        /// 1-Instala√ß√£o
         /// 2-Caixilho
         /// </summary>
         [PersistenceProperty("TIPO")]
@@ -100,6 +100,13 @@ namespace Glass.Data.Model
         [XmlIgnore]
         [PersistenceProperty("TIPOARQUIVOMESACORTE", DirectionParameter.InputOptional)]
         public int? TipoArquivoMesaCorte { get; set; }
+
+        /// <summary>
+        /// Quantidade que ser√° exibida no relat√≥rio de projetos.
+        /// </summary>
+        [XmlIgnore]
+        [PersistenceProperty("QTDEEXIBIRRELATORIO", DirectionParameter.InputOptional)]
+        public int QtdeExibirRelatorio { get; set; }
 
         #endregion
 
@@ -217,7 +224,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Usado para exportaÁ„o de pedido.
+        /// Usado para exporta√ß√£o de pedido.
         /// </summary>
         public string ServicosInfoBenef
         {
@@ -242,10 +249,10 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Propriedade com o tipo de alteraÁ„o feita.
-        /// Usara para o Log de alteraÁıes.
+        /// Propriedade com o tipo de altera√ß√£o feita.
+        /// Usara para o Log de altera√ß√µes.
         /// </summary>
-        [Log("Tipo de AlteraÁ„o")]
+        [Log("Tipo de Altera√ß√£o")]
         public string TipoAlteracao { get; set; }
 
         Guid IPecaItemProjeto.IdPecaItemProj

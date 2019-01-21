@@ -264,6 +264,13 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDORCAMENTO", DirectionParameter.InputOptional)]
         public uint IdOrcamento { get; set; }
 
+        /// <summary>
+        /// Quantidade que será exibida no relatório de projetos.
+        /// </summary>
+        [XmlIgnore]
+        [PersistenceProperty("QTDEEXIBIRRELATORIO", DirectionParameter.InputOptional)]
+        public int QtdeExibirRelatorio { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte
