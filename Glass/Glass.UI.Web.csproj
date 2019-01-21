@@ -514,6 +514,9 @@
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.Filtro.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Componentes\ListaMovimentacoesEstoqueReal.js" />
     <Content Include="Vue\Estoques\Movimentacoes\Reais\Templates\ListaMovimentacoesEstoqueReal.Filtro.html" />
+    <Content Include="Vue\Exportacao\Lista\Componentes\LstPedidosExportacao.Filtro.js" />
+    <Content Include="Vue\Exportacao\Lista\Componentes\LstPedidosExportacao.js" />
+    <Content Include="Vue\Exportacao\Lista\Templates\LstPedidosExportacao.Filtro.html" />
     <Content Include="Vue\Funcionarios\Tipos\Componentes\LstTiposFuncionario.js" />
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.Filtro.js" />
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.js" />
@@ -1895,6 +1898,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Compras.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ContasPagar.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ConhecimentosTransporte.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Exportacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ImpressoesEtiquetas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Pagamentos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Projetos.js" />

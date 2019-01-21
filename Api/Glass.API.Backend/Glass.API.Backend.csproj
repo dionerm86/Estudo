@@ -232,6 +232,9 @@
     <Compile Include="Controllers\ContasPagar\V1\Pagas\ContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\GetContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\PatchContasPagasController.cs" />
+    <Compile Include="Controllers\Exportacao\V1\ExportacaoPedidosController.cs" />
+    <Compile Include="Controllers\Exportacao\V1\GetExportacaoPedidosController.cs" />
+    <Compile Include="Controllers\Exportacao\V1\PostExportacaoPedidosController.cs" />
     <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
     <Compile Include="Controllers\Produtos\V1\MateriaPrima\ChapasMateriaPrimaController.cs" />
     <Compile Include="Controllers\Produtos\V1\MateriaPrima\GetChapasMateriaPrimaController.cs" />
@@ -249,6 +252,7 @@
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\ConverterCadastroAtualizacaoParaContasPagas.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\TraducaoOrdenacaoListaContasPagas.cs" />
+    <Compile Include="Helper\Exportacao\TraducaoOrdenacaoExportacaoPedidos.cs" />
     <Compile Include="Helper\Produtos\PrecosTabelaCliente\TraducaoOrdenacaoListaPrecoTabelaCliente.cs" />
     <Compile Include="Helper\Produtos\ChapasVidro\Perdas\TraducaoOrdenacaoListaPerdasChapasVidro.cs" />
     <Compile Include="Helper\Producao\Retalhos\TraducaoOrdenacaoListaRetalhosProducao.cs" />
@@ -794,6 +798,8 @@
     <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\TiposMovimentacao\TiposMovimentacao.cs" />
+    <Compile Include="Models\Exportacao\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Exportacao\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Funcionarios\V1\CadastroAtualizacao\DocumentosEDadosPessoaisDto.cs" />
     <Compile Include="Models\Funcionarios\V1\Detalhe\DocumentosEDadosPessoaisDto.cs" />
     <Compile Include="Models\Funcionarios\V1\Lista\ContatosDto.cs" />
