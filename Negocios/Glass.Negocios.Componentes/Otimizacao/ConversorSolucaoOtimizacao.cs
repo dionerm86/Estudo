@@ -51,40 +51,34 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 return;
             }
 
-            var codigosMateriais = documentoEtiquetas.PlanosOtimizacao.Select(f => f.CodigoMaterial).Distinct();
-
-            var index = 0;
-            var parametros = codigosMateriais
-                .Select(f => new Colosoft.Query.QueryParameter($"?p{index++}", f))
-                .ToList();
-
-            var produtos = SourceContext.Instance.CreateQuery()
-                .From<Data.Model.Produto>()
-                .Where($"CodOtimizacao IN ({string.Join(",", parametros.Select(f => f.Name))})")
-                .Add(parametros)
-                .Select("CodOtimizacao, IdProd, TipoMercadoria")
-                .Execute()
-                .Select(f => new
-                {
-                    CodOtimizacao = f.GetString(0),
-                    IdProd = f.GetInt32(1),
-                    TipoMercadoria = (Glass.Data.Model.TipoMercadoria?)(int?)f[2],
-                }).ToList();
-
             var processados = new List<Entidades.PlanoOtimizacao>();
 
             foreach (var etiqueta in documentoEtiquetas.PlanosOtimizacao)
             {
-                var produto = produtos.FirstOrDefault(f => 
-                    f.CodOtimizacao == etiqueta.CodigoMaterial &&
-                    f.TipoMercadoria == Data.Model.TipoMercadoria.MateriaPrima);
+                int idProd = 0;
 
-                if (produto == null)
+                var etiquetaPeca = etiqueta.PlanosCorte
+                    .Select(f => f.Etiquetas.OfType<eCutter.EtiquetaPeca>())
+                    .FirstOrDefault(f => f.Any(x => !string.IsNullOrWhiteSpace(x.Notas)))
+                    .FirstOrDefault(f => !string.IsNullOrWhiteSpace(f.Notas));
+
+                if (etiquetaPeca != null)
                 {
-                    produto = produtos.FirstOrDefault(f => f.CodOtimizacao == etiqueta.CodigoMaterial);
+                    var prod = SourceContext.Instance.CreateQuery()
+                        .From<Data.Model.Produto>("p")
+                        .InnerJoin<Data.Model.ProdutosPedidoEspelho>("p.IdProd = pp.IdProd", "pp")
+                        .InnerJoin<Data.Model.ProdutoPedidoProducao>("pp.IdProdPed = ppp.IdProdPed", "ppp")
+                        .Where("ppp.NumEtiqueta = ?etq").Add("?etq", etiquetaPeca.Notas)
+                        .ProcessLazyResult<Global.Negocios.Entidades.Produto>()
+                        .FirstOrDefault();
+
+                    if (prod != null)
+                    {
+                        idProd = prod.BaixasEstoque.Any() ? prod.BaixasEstoque.FirstOrDefault().IdProdBaixa : prod.IdProd;
+                    }
                 }
 
-                if (produto == null)
+                if (idProd == 0)
                 {
                     continue;
                 }
@@ -97,7 +91,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                     this.Solucao.PlanosOtimizacao.Add(planoOtimizacao);
                 }
 
-                planoOtimizacao.IdProduto = produto.IdProd;
+                planoOtimizacao.IdProduto = idProd;
 
                 this.PreencherPlanosCorte(planoOtimizacao, etiqueta);
 
@@ -267,7 +261,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
             // os números das etiquetas do produto pedido pe
             var numerosEtiqueta = etiquetaPlanoCorte.Etiquetas.OfType<eCutter.EtiquetaPeca>()
                 .Select(f => f.Notas?.Trim())
-                .Where(f => f.Contains(".") && f.Contains("/") && f.Contains("-"))
+                .Where(f => !string.IsNullOrWhiteSpace(f) && f.Contains(".") && f.Contains("/") && f.Contains("-"))
                 .Distinct();
 
             var index = 0;
