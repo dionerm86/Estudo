@@ -2500,6 +2500,7 @@ namespace Glass.Data.DAL
                 contaReceberRestante.IdConta = idContaAntigo ?? contaReceber.IdConta;
                 contaReceberRestante.IdCliente = contaReceber.IdCliente;
                 contaReceberRestante.IdFormaPagto = contaReceber.IdFormaPagto;
+                contaReceberRestante.IdFuncComissaoRec = contaReceber.IdFuncComissaoRec;
                 CopiaReferencias(session, contaReceber, ref contaReceberRestante);
                 retorno.idContaParcial = InsertBase(session, contaReceberRestante);
 

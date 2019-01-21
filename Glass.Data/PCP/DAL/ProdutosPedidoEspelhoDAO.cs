@@ -984,7 +984,7 @@ namespace Glass.Data.DAL
             int alturaFim, int larguraIni, int larguraFim, string codProcesso, string codAplicacao, string sortExpression, int startRow, int pageSize)
         {
             if (FiltroImpIndivVazio(idPedido, numeroNFe, numEtiqueta, descrProd, alturaIni, alturaFim, larguraIni, larguraFim, codProcesso, codAplicacao))
-                return null;
+                return new List<ProdutosPedidoEspelho>();
 
             sortExpression = string.IsNullOrEmpty(sortExpression) ? "IdPedido DESC, NumeroNfe DESC" : sortExpression;
 

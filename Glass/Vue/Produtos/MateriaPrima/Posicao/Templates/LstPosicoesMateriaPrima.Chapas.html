@@ -1,0 +1,47 @@
+﻿<section>
+    <lista-paginada ref="lista" v-bind:funcao-recuperar-itens="buscarChapas" v-bind:filtro="filtro"
+        ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma chapa de matéria prima encontrada."
+        :exibir-totalizador="true" @atualizou-itens="atualizouItens">
+        <template slot="cabecalho">
+            <th style="width: 15%">
+                Cod.
+            </th>
+            <th style="width: 20%">
+                Descrição
+            </th>
+            <th style="width: 30%">
+                Fornecedor
+            </th>
+            <th style="width: 10%">
+                Altura
+            </th>
+            <th style="width: 10%">
+                Largura
+            </th>
+            <th style="width: 5%">
+                Qtd.
+            </th>
+            <th style="width: 10%">
+                Total M2
+            </th>
+        </template>
+        <template slot="item" slot-scope="{ item }">
+            <td>{{ item.produto.codigo }}</td>
+            <td>{{ item.produto.descricao }}</td>
+            <td>{{ item.fornecedor }}</td>
+            <td>{{ item.altura | decimal }}</td>
+            <td>{{ item.largura | decimal }}</td>
+            <td>{{ item.quantidade }}</td>
+            <td>{{ item.totalMetroQuadrado | decimal }}</td>
+        </template>
+        <template slot="itemTotalizador" slot-scope="{ item, index }">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td style="font-weight: bold">Total:</td>
+            <td style="font-weight: bold">{{ totalizadores.quantidade }}</td>
+            <td style="font-weight: bold">{{ totalizadores.metroQuadradoDisponivel | decimal }}</td>
+        </template>
+    </lista-paginada>
+</section>

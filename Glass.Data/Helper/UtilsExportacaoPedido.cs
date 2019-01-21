@@ -1250,8 +1250,9 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
-        /// Atualiza a situação dos pedidos no cliente
+        /// Atualiza a situação dos pedidos no cliente.
         /// </summary>
+        /// <param name="dados">Dados para exportação.</param>
         public static void AtualizarPedidosExportacao(string[] dados)
         {
             using (var transaction = new GDATransaction())
@@ -1260,20 +1261,7 @@ namespace Glass.Data.Helper
                 {
                     transaction.BeginTransaction();
 
-                    foreach (var item in dados)
-                    {
-                        var pedidoExportado = new Tuple<uint, bool>(item.Split('|')[0].StrParaUint(), bool.Parse(item.Split('|')[1]));
-
-                        var situacao = PedidoExportacaoDAO.Instance.GetSituacaoExportacao(pedidoExportado.Item1);
-
-                        if (situacao == 0)
-                            throw new Exception($"Não há registro de exportação para o pedido {pedidoExportado.Item1} no sistema, crie uma exportação para ele para que a mesma possa ser atualizada. ");
-
-                        if (pedidoExportado.Item2 && (situacao == PedidoExportacao.SituacaoExportacaoEnum.Exportando || situacao == PedidoExportacao.SituacaoExportacaoEnum.Cancelado))
-                            PedidoExportacaoDAO.Instance.AtualizarSituacao(transaction, pedidoExportado.Item1, (int)PedidoExportacao.SituacaoExportacaoEnum.Exportado);
-                        else if (!pedidoExportado.Item2 && (situacao != PedidoExportacao.SituacaoExportacaoEnum.Cancelado))
-                            PedidoExportacaoDAO.Instance.AtualizarSituacao(transaction, pedidoExportado.Item1, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
-                    }
+                    AtualizarPedidosExportacao(transaction, dados);
 
                     transaction.Commit();
                     transaction.Close();
@@ -1284,6 +1272,42 @@ namespace Glass.Data.Helper
                     transaction.Close();
                     throw;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Atualiza a situação dos pedidos no cliente.
+        /// </summary>
+        /// <param name="session">A sessão atual para transação.</param>
+        /// <param name="dados">Dados para exportação.</param>
+        public static void AtualizarPedidosExportacao(GDASession session, string[] dados)
+        {
+            try
+            {
+                foreach (var item in dados)
+                {
+                    var pedidoExportado = new Tuple<uint, bool>(item.Split('|')[0].StrParaUint(), bool.Parse(item.Split('|')[1]));
+
+                    var situacao = PedidoExportacaoDAO.Instance.GetSituacaoExportacao(pedidoExportado.Item1);
+
+                    if (situacao == 0)
+                    {
+                        throw new Exception($"Não há registro de exportação para o pedido {pedidoExportado.Item1} no sistema, crie uma exportação para ele para que a mesma possa ser atualizada. ");
+                    }
+
+                    if (pedidoExportado.Item2 && (situacao == PedidoExportacao.SituacaoExportacaoEnum.Exportando || situacao == PedidoExportacao.SituacaoExportacaoEnum.Cancelado))
+                    {
+                        PedidoExportacaoDAO.Instance.AtualizarSituacao(session, pedidoExportado.Item1, (int)PedidoExportacao.SituacaoExportacaoEnum.Exportado);
+                    }
+                    else if (!pedidoExportado.Item2 && (situacao != PedidoExportacao.SituacaoExportacaoEnum.Cancelado))
+                    {
+                        PedidoExportacaoDAO.Instance.AtualizarSituacao(session, pedidoExportado.Item1, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+                    }
+                }
+            }
+            catch
+            {
+                throw;
             }
         }
 
