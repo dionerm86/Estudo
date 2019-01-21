@@ -200,6 +200,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Compile Include="Helper\ImpressoesEtiquetas\Individual\TraducaoOrdenacaoListaImpressoesIndividuaisEtiquetas.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\QuantidadeDto.cs" />
     <Compile Include="Controllers\Liberacoes\V1\Movimentacoes\GetMovimentacoesLiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\Movimentacoes\MovimentacoesLiberacoesController.cs" />
     <Compile Include="Helper\Liberacoes\Movimentacoes\TraducaoOrdenacaoListaMovimentacoesLiberacoes.cs" />
@@ -239,6 +246,9 @@
     <Compile Include="Controllers\ContasPagar\V1\Pagas\ContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\GetContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\PatchContasPagasController.cs" />
+    <Compile Include="Controllers\Exportacao\V1\ExportacaoPedidosController.cs" />
+    <Compile Include="Controllers\Exportacao\V1\GetExportacaoPedidosController.cs" />
+    <Compile Include="Controllers\Exportacao\V1\PostExportacaoPedidosController.cs" />
     <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
     <Compile Include="Controllers\Produtos\V1\MateriaPrima\ChapasMateriaPrimaController.cs" />
     <Compile Include="Controllers\Produtos\V1\MateriaPrima\GetChapasMateriaPrimaController.cs" />
@@ -256,6 +266,7 @@
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\ConverterCadastroAtualizacaoParaContasPagas.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\TraducaoOrdenacaoListaContasPagas.cs" />
+    <Compile Include="Helper\Exportacao\TraducaoOrdenacaoExportacaoPedidos.cs" />
     <Compile Include="Helper\Produtos\PrecosTabelaCliente\TraducaoOrdenacaoListaPrecoTabelaCliente.cs" />
     <Compile Include="Helper\Produtos\ChapasVidro\Perdas\TraducaoOrdenacaoListaPerdasChapasVidro.cs" />
     <Compile Include="Helper\Producao\Retalhos\TraducaoOrdenacaoListaRetalhosProducao.cs" />
@@ -801,6 +812,8 @@
     <Compile Include="Models\Estoques\V1\TrocasDevolucoes\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\Reais\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Estoques\V1\Movimentacoes\TiposMovimentacao\TiposMovimentacao.cs" />
+    <Compile Include="Models\Exportacao\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Exportacao\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Funcionarios\V1\CadastroAtualizacao\DocumentosEDadosPessoaisDto.cs" />
     <Compile Include="Models\Funcionarios\V1\Detalhe\DocumentosEDadosPessoaisDto.cs" />
     <Compile Include="Models\Funcionarios\V1\Lista\ContatosDto.cs" />
@@ -814,10 +827,9 @@
     <Compile Include="Models\Funcionarios\V1\Tipos\ListaDto.cs" />
     <Compile Include="Models\Funcionarios\V1\Tipos\PermissoesDto.cs" />
     <Compile Include="Models\Genericas\V1\CodigoNomeDto.cs" />
-    <Compile Include="Models\ImpressoesEtiquetas\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\ImpressoesEtiquetas\Lista\FiltroDto.cs" />
-    <Compile Include="Models\ImpressoesEtiquetas\Lista\ListaDto.cs" />
-    <Compile Include="Models\ImpressoesEtiquetas\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\MedidasDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\ExecucaoOperacaoIntegracao\DadosExecucaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ConfiguracaoIntegradorDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\EsquemaHistoricoDto.cs" />

@@ -83,13 +83,28 @@ namespace Glass.Data.DAL
 
         public Exportacao GetElement(uint idExportacao)
         {
+            using (var sessao = new GDATransaction())
+            {
+                try
+                {
+                    return this.GetElement(sessao, idExportacao);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public Exportacao GetElement(GDASession sessao, uint idExportacao)
+        {
             bool temFiltro;
             string filtroAdicional;
 
             string sql = Sql(idExportacao, 0, 0, null, null, true, out temFiltro, out filtroAdicional).
                 Replace(FILTRO_ADICIONAL, filtroAdicional);
 
-            List<Exportacao> item = objPersistence.LoadData(sql);
+            List<Exportacao> item = objPersistence.LoadData(sessao, sql);
             return item.Count > 0 ? item[0] : null;
         }
 
