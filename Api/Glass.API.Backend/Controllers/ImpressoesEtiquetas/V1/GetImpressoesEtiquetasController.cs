@@ -84,6 +84,70 @@ namespace Glass.API.Backend.Controllers.ImpressoesEtiquetas.V1
         }
 
         /// <summary>
+        /// Recupera as configurações usadas pela tela de listagem de impressões individuais de etiqueta.
+        /// </summary>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("individual/configuracoes")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.ImpressoesEtiquetas.V1.Individual.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesListaImpressoesIndividuaisEtiquetas()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.ImpressoesEtiquetas.V1.Individual.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de impressões individuais de etiquetas.
+        /// </summary>
+        /// <param name="filtro">Os filtros para a busca dos itens.</param>
+        /// <returns>Uma lista JSON com os dados dos itens.</returns>
+        [HttpGet]
+        [Route("individual")]
+        [SwaggerResponse(200, "Etiquetas encontradas sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.ImpressoesEtiquetas.V1.Individual.Lista.ListaDto>))]
+        [SwaggerResponse(204, "Etiquetas não encontradas.")]
+        [SwaggerResponse(206, "Etiquetas paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.ImpressoesEtiquetas.V1.Individual.Lista.ListaDto>))]
+        public IHttpActionResult ObterImpressoesIndividuaisEtiquetas([FromUri] Models.ImpressoesEtiquetas.V1.Individual.Lista.FiltroDto filtro)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                filtro = filtro ?? new Models.ImpressoesEtiquetas.V1.Individual.Lista.FiltroDto();
+
+                var impressoesIndividuais = ProdutosPedidoEspelhoDAO.Instance.GetListImpIndiv(
+                    (uint)(filtro.IdPedido ?? 0),
+                    (uint)(filtro.NumeroNotaFiscal ?? 0),
+                    filtro.CodigoEtiqueta,
+                    filtro.DescricaoProduto,
+                    filtro.AlturaInicio ?? 0,
+                    filtro.AlturaFim ?? 0,
+                    filtro.LarguraInicio ?? 0,
+                    filtro.LarguraFim ?? 0,
+                    filtro.CodigoProcesso,
+                    filtro.CodigoAplicacao,
+                    filtro.ObterTraducaoOrdenacao(),
+                    filtro.ObterPrimeiroRegistroRetornar(),
+                    filtro.NumeroRegistros);
+
+                return this.ListaPaginada(
+                    impressoesIndividuais.Select(i => new Models.ImpressoesEtiquetas.V1.Individual.Lista.ListaDto(i)),
+                    filtro,
+                    () => ProdutosPedidoEspelhoDAO.Instance.GetCountImpIndiv(
+                        (uint)(filtro.IdPedido ?? 0),
+                        (uint)(filtro.NumeroNotaFiscal ?? 0),
+                        filtro.CodigoEtiqueta,
+                        filtro.DescricaoProduto,
+                        filtro.AlturaInicio ?? 0,
+                        filtro.AlturaFim ?? 0,
+                        filtro.LarguraInicio ?? 0,
+                        filtro.LarguraFim ?? 0,
+                        filtro.CodigoProcesso,
+                        filtro.CodigoAplicacao));
+            }
+        }
+
+        /// <summary>
         /// Recupera os tipos de impressão de etiqueta para o controle de pesquisa.
         /// </summary>
         /// <returns>Uma lista JSON com os tipos de impressão de etiqueta.</returns>

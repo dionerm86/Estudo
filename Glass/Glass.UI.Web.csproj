@@ -518,6 +518,9 @@
     <Content Include="Vue\Exportacao\Lista\Componentes\LstPedidosExportacao.js" />
     <Content Include="Vue\Exportacao\Lista\Templates\LstPedidosExportacao.Filtro.html" />
     <Content Include="Vue\Funcionarios\Tipos\Componentes\LstTiposFuncionario.js" />
+    <Content Include="Vue\ImpressoesEtiquetas\Individual\Componentes\LstImpressoesIndividuaisEtiquetas.Filtro.js" />
+    <Content Include="Vue\ImpressoesEtiquetas\Individual\Componentes\LstImpressoesIndividuaisEtiquetas.js" />
+    <Content Include="Vue\ImpressoesEtiquetas\Individual\Templates\LstImpressoesIndividuaisEtiquetas.Filtro.html" />
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.Filtro.js" />
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.js" />
     <Content Include="Vue\Pagamentos\Templates\LstPagamentos.Filtro.html" />

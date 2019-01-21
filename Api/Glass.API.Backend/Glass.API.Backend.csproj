@@ -200,6 +200,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Compile Include="Helper\ImpressoesEtiquetas\Individual\TraducaoOrdenacaoListaImpressoesIndividuaisEtiquetas.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\QuantidadeDto.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\ChapaMateriaPrima\TraducaoOrdenacaoListaChapasMateriaPrima.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\TraducaoOrdenacaoListaPosicoesMateriaPrima.cs" />
     <Compile Include="Models\Produtos\V1\MateriaPrima\Lista\FiltroDto.cs" />
@@ -813,10 +820,9 @@
     <Compile Include="Models\Funcionarios\V1\Tipos\ListaDto.cs" />
     <Compile Include="Models\Funcionarios\V1\Tipos\PermissoesDto.cs" />
     <Compile Include="Models\Genericas\V1\CodigoNomeDto.cs" />
-    <Compile Include="Models\ImpressoesEtiquetas\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\ImpressoesEtiquetas\Lista\FiltroDto.cs" />
-    <Compile Include="Models\ImpressoesEtiquetas\Lista\ListaDto.cs" />
-    <Compile Include="Models\ImpressoesEtiquetas\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\ListaDto.cs" />
+    <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\MedidasDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\ExecucaoOperacaoIntegracao\DadosExecucaoDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\ConfiguracaoIntegradorDto.cs" />
     <Compile Include="Models\Integracao\V1\Integradores\Lista\EsquemaHistoricoDto.cs" />
