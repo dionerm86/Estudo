@@ -1125,12 +1125,11 @@ namespace Glass.Data.DAL
             GDAParameter[] lstParam = GetParam(idPedidoImportado, numEtiqueta, codRota, dataIni, dataFim, dataIniEnt, dataFimEnt, dataIniFabr, dataFimFabr,
                 nomeCliente, codPedCli, planoCorte, numEtiquetaChapa, espessura);
 
-            string sort = GetListaConsultaSort(idPedido, codRota, pecasProdCanc, sortExpression, temFiltro, ref filtroAdicional);
+            string sort = this.GetListaConsultaSort(idPedido, codRota, pecasProdCanc, sortExpression, temFiltro, ref filtroAdicional);
 
             int numeroRegistros;
-            sql = GetSqlWithLimit(sql, sort, pageIndex, pageSize, "ppp", filtroAdicional,
-                !temFiltro, !String.IsNullOrEmpty(sortExpression) || idPedido > 0 || (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor &&
-                !String.IsNullOrEmpty(codRota)), out numeroRegistros, lstParam);
+            sql = this.GetSqlWithLimit(sql, sort, pageIndex, pageSize, "ppp", filtroAdicional,
+                !temFiltro, !string.IsNullOrEmpty(sortExpression) || idPedido > 0 || ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor, out numeroRegistros, lstParam);
 
             var retorno = objPersistence.LoadData(sql, lstParam).ToArray();
 
@@ -1145,13 +1144,7 @@ namespace Glass.Data.DAL
         {
             var sort = string.IsNullOrEmpty(sortExpression) ? (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor && temFiltro ? "s.NumSeq ASC" : "ppp.IdProdPedProducao DESC") : sortExpression;
 
-            if (sort == "pp.IdPedido DESC" && !temFiltro && pecasProdCanc != "0,1,2")
-            {
-                var pecasCanc = pecasProdCanc == "1";
-                filtroAdicional = string.Format("pp.IdProdPed IN (SELECT DISTINCT IdProdPed{0} FROM produto_pedido_producao)", pecasCanc ? "Canc" : string.Empty);
-            }
-
-            if (idPedido > 0 || (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor && !string.IsNullOrEmpty(codRota)))
+            if (idPedido > 0 || ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor)
             {
                 sort = "s.NumSeq ASC, ppp.IdProdPedProducao DESC";
             }
@@ -1359,7 +1352,7 @@ namespace Glass.Data.DAL
 
             var sort = GetListaConsultaSort(idPedido, codRota, pecasProdCanc, null, temFiltro, ref filtroAdicional);
 
-            var ordenar = !string.IsNullOrEmpty(sort) ? $" order by {sort}" : string.Empty;
+            var ordenar = (!temFiltro || (idPedido > 0 || ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor)) && !string.IsNullOrEmpty(sort) ? " order by " + sort : string.Empty;
 
             sql += ordenar;
 
