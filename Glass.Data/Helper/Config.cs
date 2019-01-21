@@ -759,6 +759,8 @@ namespace Glass.Data.Helper
             TextoEmailAdministradores = 1534,
             IgnorarReducaoBcIcmsCalculoDifal = 1535,
             AbaterICMSDoTotalProdNfMovEstoqueFiscal = 1536,
+            ReporApenasProduzidos = 1537,
+
             #endregion
         }
 

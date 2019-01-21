@@ -1,4 +1,4 @@
-<%@ Page Title="Consulta de Pagamentos" Language="C#" MasterPageFile="~/Painel.master"
+ï»¿<%@ Page Title="Consulta de Pagamentos" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="LstPagto.aspx.cs" Inherits="Glass.UI.Web.Listas.LstPagto"
     EnableViewState="false" EnableViewStateMac="false" %>
 
@@ -34,7 +34,7 @@
                         <a href="#" @click.prevent="ordenar('DataPagto')">Data</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('DescrSituacao')">Situação</a>
+                        <a href="#" @click.prevent="ordenar('DescrSituacao')">SituaÃ§Ã£o</a>
                     </th>
                     </th>
                     <th></th>
@@ -75,6 +75,8 @@
                     <td>
                         <log-alteracao tabela="Pagto" :id-item="item.id" :atualizar-ao-alterar="false" 
                             v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
+                        <log-cancelamento tabela="Pagto" :id-item="item.id" :atualizar-ao-alterar="false"
+                            v-if="item.permissoes.logCancelamento"></log-cancelamento>
                     </td>
                 </template>
             </lista-paginada>

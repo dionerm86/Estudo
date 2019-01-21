@@ -22,6 +22,15 @@ namespace Glass.UI.Web.Cadastros.Producao {
         protected global::System.Web.UI.HtmlControls.HtmlHead Head1;
         
         /// <summary>
+        /// divChat control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divChat;
+        
+        /// <summary>
         /// form1 control.
         /// </summary>
         /// <remarks>
@@ -524,7 +533,7 @@ namespace Glass.UI.Web.Cadastros.Producao {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblCliente;
-
+        
         /// <summary>
         /// lblTitleVendedor control.
         /// </summary>
@@ -533,7 +542,7 @@ namespace Glass.UI.Web.Cadastros.Producao {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblTitleVendedor;
-
+        
         /// <summary>
         /// lblVendedor control.
         /// </summary>
@@ -542,7 +551,7 @@ namespace Glass.UI.Web.Cadastros.Producao {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblVendedor;
-
+        
         /// <summary>
         /// lblTitlePeca control.
         /// </summary>

@@ -29,7 +29,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal.M2
                 return;
             }
 
-            if (compra && produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo(false, compra) == TipoCalculoGrupoProd.Qtd)
+            if (compra && produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo(nf, compra) == TipoCalculoGrupoProd.Qtd)
             {
                 produto.Total = custoCompra * (decimal)produto.Qtde;
                 return;

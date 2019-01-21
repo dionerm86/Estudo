@@ -218,12 +218,12 @@ namespace Glass.Global.Negocios.Componentes
                     .And("p.Largura >= ?larguraInicio")
                     .Add("?larguraInicio", larguraInicio);
 
-                if (alturaFim > 0)
+                if (larguraFim > 0)
                     consulta.WhereClause
                         .And("p.Largura <= ?larguraFim")
                         .Add("?larguraFim", larguraFim);
 
-                consulta.WhereClause.AddDescription(string.Format("Largura: {0}  Até {1}", alturaInicio, alturaFim));
+                consulta.WhereClause.AddDescription(string.Format("Largura: {0}  Até {1}", larguraInicio, larguraFim));
             }
 
             if (tipoNegociacao.HasValue)

@@ -29,11 +29,18 @@ namespace Glass.Data.Helper.Calculos
             if (produto.Container?.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
                 return null;
 
-            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container, produto.TipoCalc);
-            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container, produto.TipoCalc);
-
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
+
+            var alturaBenef = this.NormalizarAlturaLarguraBeneficiamento(
+                produto.AlturaBenef,
+                container,
+                (int)produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo(nf, compra));
+
+            var larguraBenef = this.NormalizarAlturaLarguraBeneficiamento(
+                produto.LarguraBenef,
+                container,
+                (int)produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo(nf, compra));
 
             AtualizaValorUnitario(produto, valorBruto);
             decimal total = CalcularTotal(sessao, produto, valorBruto);
@@ -56,11 +63,18 @@ namespace Glass.Data.Helper.Calculos
         {
             produto.InicializarParaCalculo(sessao, container);
 
-            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container, produto.TipoCalc);
-            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container, produto.TipoCalc);
-
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
+
+            var alturaBenef = this.NormalizarAlturaLarguraBeneficiamento(
+                produto.AlturaBenef,
+                container,
+                (int)produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo(nf, compra));
+
+            var larguraBenef = this.NormalizarAlturaLarguraBeneficiamento(
+                produto.LarguraBenef,
+                container,
+                (int)produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo(nf, compra));
 
             return CalcularValor(
                 sessao,
@@ -96,7 +110,7 @@ namespace Glass.Data.Helper.Calculos
 
                 var calcularMultiploDe5 = true;
                 if (produto.Container is Pedido)
-                    calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2 && !produto.Container.IsPedidoProducaoCorte;
+                    calcularMultiploDe5 = produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo() == TipoCalculoGrupoProd.M2 && !produto.Container.IsPedidoProducaoCorte;
 
                 // Deve passar o parâmetro usarChapaVidro como true, para que caso o produto tenha sido calculado por chapa,
                 // não calcule incorretamente o total do mesmo (retornado pela variável total abaixo), estava ocorrendo
@@ -188,11 +202,11 @@ namespace Glass.Data.Helper.Calculos
         private decimal? CalcularValor(GDASession sessao, IProdutoCalculo produto, decimal baseCalculo,
             bool compra, bool nf, int alturaBeneficiamento, int larguraBeneficiamento)
         {
-            var calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2;
+            bool calcularMultiploDe5 = produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo(nf, compra) == TipoCalculoGrupoProd.M2;
 
             if (produto.Container is Pedido || produto.Container is PedidoEspelho)
             {
-                calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2 && !produto.Container.IsPedidoProducaoCorte;
+                calcularMultiploDe5 = produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo(nf, compra) == TipoCalculoGrupoProd.M2 && !produto.Container.IsPedidoProducaoCorte;
             }
 
             var estrategia = ValorUnitarioStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);

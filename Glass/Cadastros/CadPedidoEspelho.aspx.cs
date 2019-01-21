@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Data.DAL;
@@ -25,7 +25,7 @@ namespace Glass.UI.Web.Cadastros
                 {
                     var pedido = PedidoEspelhoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(Request["idPedido"]));
 
-                    // Se este pedido não puder ser editado, volta para lista de pedidos
+                    // Se este pedido nÃ£o puder ser editado, volta para lista de pedidos
                     if (pedido == null || !pedido.EditVisible)
                     {
                         Response.Redirect("../Listas/LstPedidosEspelho.aspx");
@@ -34,7 +34,7 @@ namespace Glass.UI.Web.Cadastros
                 }
             }
 
-            // Indica se o pedido é um pedido de mão de obra ou de produção
+            // Indica se o pedido Ã© um pedido de mÃ£o de obra ou de produÃ§Ã£o
             bool isMaoDeObra = IsPedidoMaoDeObra();
             bool isProducao = IsPedidoProducao();
 
@@ -50,7 +50,7 @@ namespace Glass.UI.Web.Cadastros
 
             if (isMaoDeObra)
             {
-                grdAmbiente.Columns[1].HeaderText = "Peça de vidro";
+                grdAmbiente.Columns[1].HeaderText = "PeÃ§a de vidro";
                 grdAmbiente.Columns[2].Visible = false;
                 grdAmbiente.Columns[3].Visible = true;
                 grdAmbiente.Columns[4].Visible = true;
@@ -66,8 +66,8 @@ namespace Glass.UI.Web.Cadastros
                 lbkInserirMaoObra.OnClientClick = "openWindow(500, 700, \"../Utils/SetProdMaoObra.aspx?idPedido=" + Request["idPedido"] + "&pcp=true\"); return false";
             }
 
-            // Mostra a opção de inserir projeto apenas se for pedido pedido de venda, se a empresa tiver opção de usar projeto
-            // e se o pedido tiver com opção readonly
+            // Mostra a opÃ§Ã£o de inserir projeto apenas se for pedido pedido de venda, se a empresa tiver opÃ§Ã£o de usar projeto
+            // e se o pedido tiver com opÃ§Ã£o readonly
             if (!IsPostBack)
             {
                 uint? idObra = Request["idPedido"] != null ? PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(Request["idPedido"])) : null;
@@ -75,7 +75,7 @@ namespace Glass.UI.Web.Cadastros
                     (idObra == null || idObra == 0) && !isProducao && dtvPedido.CurrentMode == DetailsViewMode.ReadOnly;
             }
 
-            // Foi colocado o true para não deixar alterar acréscimo e desconto por ambiente
+            // Foi colocado o true para nÃ£o deixar alterar acrÃ©scimo e desconto por ambiente
             if (true || !OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento)
             {
                 grdAmbiente.Columns[9].Visible = isMaoDeObra;
@@ -83,11 +83,11 @@ namespace Glass.UI.Web.Cadastros
                 grdAmbiente.Columns[11].Visible = false;
             }
 
-            // Se a empresa trabalha com ambiente de pedido e não houver nenhum ambiente cadastrado, esconde grid de produtos
+            // Se a empresa trabalha com ambiente de pedido e nÃ£o houver nenhum ambiente cadastrado, esconde grid de produtos
             bool exibirAmbiente = PedidoConfig.DadosPedido.AmbientePedido || IsPedidoMaoDeObra();
             grdProdutos.Visible = (exibirAmbiente && !String.IsNullOrEmpty(hdfIdAmbiente.Value) && hdfIdAmbiente.Value != "0") || !exibirAmbiente;
 
-            // Se a empresa não trabalha com Ambiente no pedido, esconde grdAmbiente
+            // Se a empresa nÃ£o trabalha com Ambiente no pedido, esconde grdAmbiente
             grdAmbiente.Visible = exibirAmbiente;
 
             if (!exibirAmbiente && !String.IsNullOrEmpty(Request["idPedido"]) && PedidoEspelhoDAO.Instance.PossuiCalculoProjeto(Glass.Conversoes.StrParaUint(Request["idPedido"])))
@@ -106,7 +106,7 @@ namespace Glass.UI.Web.Cadastros
         {
             string ambiente = hdfIdAmbiente.Value;
 
-            // Se não houver nenhum produto cadastrado no pedido (e no ambiente passado)
+            // Se nÃ£o houver nenhum produto cadastrado no pedido (e no ambiente passado)
             if (ProdutosPedidoEspelhoDAO.Instance.CountInPedidoAmbiente(Glass.Conversoes.StrParaUint(Request["idPedido"]),
                 !String.IsNullOrEmpty(ambiente) ? Glass.Conversoes.StrParaUint(ambiente) : 0) == 0)
                 grdProdutos.Rows[0].Visible = false;
@@ -163,7 +163,7 @@ namespace Glass.UI.Web.Cadastros
                 grdProdutos.Visible = true;
                 grdProdutos.DataBind();
 
-                // Mostra no label qual ambiente está sendo incluido produtos
+                // Mostra no label qual ambiente estÃ¡ sendo incluido produtos
                 AmbientePedidoEspelho ambiente = AmbientePedidoEspelhoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(hdfIdAmbiente.Value));
                 lblAmbiente.Text = ambiente.Ambiente;
                 hdfAlturaAmbiente.Value = !IsPedidoMaoDeObra() ? "" : ambiente.Altura.Value.ToString();
@@ -177,7 +177,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void grdAmbiente_PreRender(object sender, EventArgs e)
         {
-            // Se não houver nenhum ambiente cadastrado para este pedido, esconde a primeira linha
+            // Se nÃ£o houver nenhum ambiente cadastrado para este pedido, esconde a primeira linha
             if (AmbientePedidoEspelhoDAO.Instance.CountInPedido(Glass.Conversoes.StrParaUint(Request["idPedido"])) == 0 && grdAmbiente.Rows.Count > 0)
                 grdAmbiente.Rows[0].Visible = false;
         }
@@ -218,7 +218,7 @@ namespace Glass.UI.Web.Cadastros
                 ambPed.IdProcesso = !String.IsNullOrEmpty(idProcesso) ? (uint?)Glass.Conversoes.StrParaUint(idProcesso) : null;
 
                 if (ambPed.Altura != ambPed.Largura && redondo)
-                    throw new Exception("O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.");
+                    throw new Exception("O beneficiamento Redondo pode ser marcado somente em peÃ§as de medidas iguais.");
             }
 
             try
@@ -234,7 +234,7 @@ namespace Glass.UI.Web.Cadastros
                 grdAmbiente.DataBind();
                 grdProdutos.DataBind();
 
-                // Esconde a 1ª linha da grdProduto, por não haver produtos cadastrados no ambiente
+                // Esconde a 1Âª linha da grdProduto, por nÃ£o haver produtos cadastrados no ambiente
                 grdProdutos.Rows[0].Visible = false;
             }
             catch (Exception ex)
@@ -279,7 +279,10 @@ namespace Glass.UI.Web.Cadastros
                 e.ExceptionHandled = true;
             }
             else
+            {
+                dtvPedido_ItemCommand(sender, new DetailsViewCommandEventArgs(null, new CommandEventArgs("Atualizar", false)));
                 dtvPedido.DataBind();
+            }
         }
 
         protected void odsProdXPed_Updated(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
@@ -295,7 +298,7 @@ namespace Glass.UI.Web.Cadastros
 
         #endregion
 
-        #region Métodos Ajax
+        #region MÃ©todos Ajax
 
         [Ajax.AjaxMethod]
         public string IsProdutoObra(string idPedido, string codInterno, bool isComposicao)
@@ -319,7 +322,7 @@ namespace Glass.UI.Web.Cadastros
         }
 
         /// <summary>
-        /// Retorna o Código/Descrição do produto
+        /// Retorna o CÃ³digo/DescriÃ§Ã£o do produto
         /// </summary>
         [Ajax.AjaxMethod()]
         public string GetProduto(string idPedidoStr, string codInterno, string tipoEntrega, string revenda,
@@ -363,7 +366,7 @@ namespace Glass.UI.Web.Cadastros
         }
 
         /// <summary>
-        /// Verifica se o pedido informado é um pedido de produção para corte
+        /// Verifica se o pedido informado Ã© um pedido de produÃ§Ã£o para corte
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -379,7 +382,7 @@ namespace Glass.UI.Web.Cadastros
             try
             {
                 if (String.IsNullOrEmpty(idProdPed) || Conversoes.StrParaInt(idProdPed) == 0)
-                    return "Erro;O produto não foi informado. informe o produto";
+                    return "Erro;O produto nÃ£o foi informado. informe o produto";
 
                 ProdutosPedidoEspelhoDAO.Instance.AtualizaObs(Conversoes.StrParaUint(idProdPed), obs);
 
@@ -387,7 +390,7 @@ namespace Glass.UI.Web.Cadastros
             }
             catch (Exception ex)
             {
-                return "Erro;" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao salvar observação.", ex);
+                return "Erro;" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao salvar observaÃ§Ã£o.", ex);
             }
         }
 
@@ -411,8 +414,8 @@ namespace Glass.UI.Web.Cadastros
                 ErroDAO.Instance.InserirFromException(urlErro, ex);
                 Glass.MensagemAlerta.ErrorMsg("Falha ao finalizar Pedido.", ex, this);
 
-                // Se o pedido estiver na situação Finalizado então o usuário não pode continuar na tela de cadastro do pedido,
-                // por isso ele será redirecionado para a listagem de pedidos espelho ou para a tela de gerar pedido espelho.
+                // Se o pedido estiver na situaÃ§Ã£o Finalizado entÃ£o o usuÃ¡rio nÃ£o pode continuar na tela de cadastro do pedido,
+                // por isso ele serÃ¡ redirecionado para a listagem de pedidos espelho ou para a tela de gerar pedido espelho.
                 if (PedidoEspelhoDAO.Instance.ObtemSituacao(idPedidoEspelho) == PedidoEspelho.SituacaoPedido.Finalizado)
                 {
                     Response.Redirect("../Listas/LstPedidosEspelho.aspx?dir=" + ex.Message, false);
@@ -424,10 +427,10 @@ namespace Glass.UI.Web.Cadastros
 
         #endregion
 
-        #region Gera valor excedente da conferência
+        #region Gera valor excedente da conferÃªncia
 
         /// <summary>
-        /// Gera valor excedente da conferência
+        /// Gera valor excedente da conferÃªncia
         /// </summary>
         protected void btnExcedente_Click(object sender, EventArgs e)
         {
@@ -451,7 +454,7 @@ namespace Glass.UI.Web.Cadastros
         {
             bool isPedidoMaoDeObra = IsPedidoMaoDeObra();
 
-            // Cria uma instância do ProdutosPedido
+            // Cria uma instÃ¢ncia do ProdutosPedido
             ProdutosPedidoEspelho prodPed = new ProdutosPedidoEspelho();
             prodPed.IdPedido = Glass.Conversoes.StrParaUint(Request["IdPedido"]);
             prodPed.IdAmbientePedido = !String.IsNullOrEmpty(hdfIdAmbiente.Value) ? (uint?)Glass.Conversoes.StrParaUint(hdfIdAmbiente.Value) : null;
@@ -491,17 +494,17 @@ namespace Glass.UI.Web.Cadastros
                 {
                     if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
                         (prodPed.Altura < tamanhoMinimoBisote || prodPed.Largura < tamanhoMinimoBisote))
-                        retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm. ";
+                        retorno += $"A altura ou largura minima para peÃ§as com bisotÃª Ã© de {tamanhoMinimoBisote}mm. ";
 
                     if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
                         (prodPed.Altura < tamanhoMinimoLapidacao || prodPed.Largura < tamanhoMinimoLapidacao))
-                        retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.   ";
+                        retorno += $"A altura ou largura minima para peÃ§as com lapidaÃ§Ã£o Ã© de {tamanhoMinimoLapidacao}mm.   ";
                 }
             }
 
             if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey(prodPed.IdSubgrupoProd).IsVidroTemperado &&
                     prodPed.Altura < tamanhoMinimoTemperado && prodPed.Largura < tamanhoMinimoTemperado)
-                retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}mm. ";
+                retorno += $"A altura ou largura minima para peÃ§as com tÃªmpera Ã© de {tamanhoMinimoTemperado}mm. ";
 
             if (!string.IsNullOrWhiteSpace(retorno))
             {
@@ -634,7 +637,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void lblQtdeAmbiente_PreRender(object sender, EventArgs e)
         {
-            ((Label)sender).Text = IsPedidoMaoDeObra() ? " x " + hdfQtdeAmbiente.Value + " peça(s) de vidro" : "";
+            ((Label)sender).Text = IsPedidoMaoDeObra() ? " x " + hdfQtdeAmbiente.Value + " peÃ§a(s) de vidro" : "";
         }
 
         protected string NomeControleBenef()
@@ -695,7 +698,10 @@ namespace Glass.UI.Web.Cadastros
                     grdAmbiente.DataBind();
                     grdProdutos.DataBind();
 
-                    Glass.MensagemAlerta.ShowMsg("Pedido atualizado/recalculado com sucesso!", Page);
+                    if (e.CommandArgument == null)
+                    {
+                        Glass.MensagemAlerta.ShowMsg("Pedido atualizado/recalculado com sucesso!", Page);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -731,7 +737,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected bool IsReposicao(object tipoVenda)
         {
-            return Convert.ToInt32(tipoVenda) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição;
+            return Convert.ToInt32(tipoVenda) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.ReposiÃ§Ã£o;
         }
 
         protected int CodigoTipoPedidoMaoObraEspecial()
@@ -760,9 +766,9 @@ namespace Glass.UI.Web.Cadastros
                 if (!VerificarPodeApagarAtualizarInserir(idPedido))
                 {
                     e.Cancel = true;
-                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido não está ativo, não é possível alterá-lo!'); " +
+                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡-lo!'); " +
                 "redirectUrl('../Listas/LstPedidos.aspx');", true);
-                    MensagemAlerta.ShowMsg("O pedido não está ativo, não é possível alterá - lo.", Page);
+                    MensagemAlerta.ShowMsg("O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡ - lo.", Page);
                 }
             }
         }
@@ -776,9 +782,9 @@ namespace Glass.UI.Web.Cadastros
                 if (!VerificarPodeApagarAtualizarInserir(idPedido))
                 {
                     e.Cancel = true;
-                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido não está ativo, não é possível alterá-lo!'); " +
+                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡-lo!'); " +
                 "redirectUrl('../Listas/LstPedidos.aspx');", true);
-                    MensagemAlerta.ShowMsg("O pedido não está ativo, não é possível alterá - lo.", Page);
+                    MensagemAlerta.ShowMsg("O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡ - lo.", Page);
                 }
             }
         }
@@ -792,9 +798,9 @@ namespace Glass.UI.Web.Cadastros
                 if (!VerificarPodeApagarAtualizarInserir(idPedido))
                 {
                     e.Cancel = true;
-                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido não está ativo, não é possível alterá-lo!'); " +
+                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡-lo!'); " +
                 "redirectUrl('../Listas/LstPedidos.aspx');", true);
-                    MensagemAlerta.ShowMsg("O pedido não está ativo, não é possível alterá - lo.", Page);
+                    MensagemAlerta.ShowMsg("O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡ - lo.", Page);
                 }
             }
         }
@@ -812,9 +818,9 @@ namespace Glass.UI.Web.Cadastros
                 if (!VerificarPodeApagarAtualizarInserir(idPedido))
                 {
                     e.Cancel = true;
-                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido não está ativo, não é possível alterá-lo!'); " +
+                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡-lo!'); " +
                 "redirectUrl('../Listas/LstPedidos.aspx');", true);
-                    MensagemAlerta.ShowMsg("O pedido não está ativo, não é possível alterá - lo.", Page);
+                    MensagemAlerta.ShowMsg("O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡ - lo.", Page);
                 }
             }
         }
@@ -828,9 +834,9 @@ namespace Glass.UI.Web.Cadastros
                 if (!VerificarPodeApagarAtualizarInserir(idPedido))
                 {
                     e.Cancel = true;
-                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido não está ativo, não é possível alterá-lo!'); " +
+                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡-lo!'); " +
                 "redirectUrl('../Listas/LstPedidos.aspx');", true);
-                    MensagemAlerta.ShowMsg("O pedido não está ativo, não é possível alterá - lo.", Page);
+                    MensagemAlerta.ShowMsg("O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡ - lo.", Page);
                 }
             }
         }
@@ -844,9 +850,9 @@ namespace Glass.UI.Web.Cadastros
                 if (!VerificarPodeApagarAtualizarInserir(idPedido))
                 {
                     e.Cancel = true;
-                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido não está ativo, não é possível alterá-lo!'); " +
+                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡-lo!'); " +
                 "redirectUrl('../Listas/LstPedidos.aspx');", true);
-                    MensagemAlerta.ShowMsg("O pedido não está ativo, não é possível alterá - lo.", Page);
+                    MensagemAlerta.ShowMsg("O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡ - lo.", Page);
                 }
             }
         }
@@ -864,9 +870,9 @@ namespace Glass.UI.Web.Cadastros
                 if (!VerificarPodeApagarAtualizarInserir(idPedido))
                 {
                     e.Cancel = true;
-                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido não está ativo, não é possível alterá-lo!'); " +
+                    Page.ClientScript.RegisterClientScriptBlock(GetType(), "Erro", "alert('O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡-lo!'); " +
                 "redirectUrl('../Listas/LstPedidos.aspx');", true);
-                    MensagemAlerta.ShowMsg("O pedido não está ativo, não é possível alterá - lo.", Page);
+                    MensagemAlerta.ShowMsg("O pedido nÃ£o estÃ¡ ativo, nÃ£o Ã© possÃ­vel alterÃ¡ - lo.", Page);
                 }
             }
 
@@ -874,7 +880,7 @@ namespace Glass.UI.Web.Cadastros
 
         #endregion
 
-        #region Verifica se a situação do pedido espelho permite inserir/atualizar/apagar dados do mesmo
+        #region Verifica se a situaÃ§Ã£o do pedido espelho permite inserir/atualizar/apagar dados do mesmo
 
         public bool VerificarPodeApagarAtualizarInserir(int idPedido)
         {
@@ -900,7 +906,7 @@ namespace Glass.UI.Web.Cadastros
         {
             var idPedido = Request["idPedido"].StrParaUint();
 
-            if (idPedido > 0 && PedidoDAO.Instance.ObtemTipoVenda(null, idPedido) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição)
+            if (idPedido > 0 && PedidoDAO.Instance.ObtemTipoVenda(null, idPedido) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.ReposiÃ§Ã£o)
             {
                 return "true";
             }

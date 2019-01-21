@@ -398,7 +398,10 @@ namespace Glass.Data.RelModel
             var calcularMultiploDe5 = true;
 
             if (container is Pedido)
-                calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2 && !container.IsPedidoProducaoCorte;
+            {
+                produto.InicializarParaCalculo(null, container);
+                calcularMultiploDe5 = produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo() == TipoCalculoGrupoProd.M2 && !container.IsPedidoProducaoCorte;
+            }
 
             Helper.Calculos.ValorTotal.Instance.Calcular(
                 null,

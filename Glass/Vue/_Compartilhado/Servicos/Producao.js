@@ -11,6 +11,7 @@ Servicos.Producao = (function(http) {
 
     return API_TipoPerda + idTipoPerda + '/' + complemento;
   };
+  const API_Retalhos_Producao = API + 'retalhos/';
 
   return {
     /**
@@ -142,6 +143,33 @@ Servicos.Producao = (function(http) {
             incluirEtiquetaNaoImpressa: incluirEtiquetaNaoImpressa || false
           }
         });
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de retalhos.
+     */
+    Retalhos: {
+      /**
+         * Recupera a lista de retalhos de produção.
+         * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+         * @param {number} pagina O número da página de resultados a ser exibida.
+         * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+         * @param {string} ordenacao A ordenação para o resultado.
+         * @returns {Promise} Uma promise com o resultado da operação.
+         */
+      obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API_Retalhos_Producao, {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Recupera a lista de situações dos retalhos de produção.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterSituacoesParaFiltro: function () {
+        return http().get(API_Retalhos_Producao + 'situacoes');
       }
     },
 
