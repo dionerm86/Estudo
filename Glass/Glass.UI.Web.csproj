@@ -519,6 +519,11 @@
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.js" />
     <Content Include="Vue\Pagamentos\Templates\LstPagamentos.Filtro.html" />
     <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
+    <Content Include="Vue\Pedidos\exportacao\Componentes\LstExportarPedidos.Filtro.js" />
+    <Content Include="Vue\Pedidos\exportacao\Componentes\LstExportarPedidos.js" />
+    <Content Include="Vue\Pedidos\exportacao\Componentes\LstExportarPedidos.Produtos.js" />
+    <Content Include="Vue\Pedidos\exportacao\Templates\LstExportarPedidos.Filtro.html" />
+    <Content Include="Vue\Pedidos\exportacao\Templates\LstExportarPedidos.Produtos.html" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.Filtro.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Templates\ListaPrecoTabelaCliente.Filtro.html" />

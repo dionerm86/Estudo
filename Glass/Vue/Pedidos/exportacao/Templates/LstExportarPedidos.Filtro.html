@@ -1,0 +1,28 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Num. Pedido</label>
+            <input type="number" v-model="filtroAtual.id" style="width: 50px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span class="form-group">
+            <label>Num. Ped. Cli.</label>
+            <input type="text" v-model="filtroAtual.codigoPedidoCliente" style="width: 50px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span class="form-group">
+            <label>Num. Pedido</label>
+            <input type="number" v-model="filtroAtual.idCliente" style="width: 50px" />
+            <input type="number" v-model="filtroAtual.id" style="width: 200px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Período Pedido</label>
+            <campo-data-hora-periodo :data-hora-inicial.sync="filtroAtual.periodoCadastroInicio"
+                :data-hora-final.sync="filtroAtual.periodoCadastroFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+    </div>
+</section>

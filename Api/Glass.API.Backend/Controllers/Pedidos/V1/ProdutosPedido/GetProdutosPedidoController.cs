@@ -70,5 +70,39 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.ProdutosPedido
                 }
             }
         }
+
+        /// <summary>
+        /// Recupera a lista de produtos de um pedido para exportação.
+        /// </summary>
+        /// <param name="idPedido">O identificador do pedido.</param>
+        /// <returns>Um objeto JSON com a lista de produtos encontrados para o pedido para exportação.</returns>
+        [HttpGet]
+        [Route("exportacao")]
+        [SwaggerResponse(200, "Produtos de pedido para exportação encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Pedidos.V1.ProdutosPedido.Exportacao.Lista.ListaDto>))]
+        [SwaggerResponse(204, "Produtos de pedido para exportação não encontrados.")]
+        [SwaggerResponse(206, "Produtos de pedido para exportação paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Pedidos.V1.ProdutosPedido.Exportacao.Lista.ListaDto>))]
+        public IHttpActionResult ObterLista(int idPedido)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var validacao = this.ValidarIdPedido(sessao, idPedido);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
+                try
+                {
+                    var produtosPedidoExportacao = ProdutosPedidoDAO.Instance.ObterProdutosNaoExportados((uint)idPedido);
+
+                    return this.Lista(produtosPedidoExportacao.Select(ppe => new Models.Pedidos.V1.ProdutosPedido.Exportacao.Lista.ListaDto(ppe)));
+                }
+                catch (Exception e)
+                {
+                    return this.ErroValidacao(string.Format("Erro ao recuperar produtos do pedido para exportação {0}.", idPedido), e);
+                }
+            }
+        }
     }
 }

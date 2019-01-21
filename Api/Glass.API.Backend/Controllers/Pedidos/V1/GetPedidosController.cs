@@ -30,7 +30,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="id">O identificador do pedido.</param>
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
-        [Route("{id}/configuracoes")]
+        [Route("{id:int}/configuracoes")]
         [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Pedidos.V1.Configuracoes.DetalheDto))]
         public IHttpActionResult ObterConfiguracoesDetalhePedido(int id)
         {
@@ -235,7 +235,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="id">O identificador do pedido.</param>
         /// <returns>Um objeto JSON com os dados do pedido.</returns>
         [HttpGet]
-        [Route("{id}")]
+        [Route("{id:int}")]
         [SwaggerResponse(200, "Pedido encontrado.", Type = typeof(Models.Pedidos.V1.Detalhe.DetalheDto))]
         [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
@@ -468,7 +468,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="dataBase">Data base a ser usada no cálculo da data de entrega</param>
         /// <returns>Um JSON com a data de entrega mínima e a data de entrega se for fast delivery.</returns>
         [HttpGet]
-        [Route("{id}/dataEntregaMinima")]
+        [Route("{id:int}/dataEntregaMinima")]
         [SwaggerResponse(200, "Data de entrega mínima calculada.", Type = typeof(DataEntregaMinimaDto))]
         [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
         public IHttpActionResult CalcularDataEntregaMinima(int id, int? idCliente = null, [FromUri] Data.Model.Pedido.TipoPedidoEnum? tipoPedido = null, [FromUri] Data.Model.Pedido.TipoEntregaPedido? tipoEntrega = null, DateTime? dataBase = null)
@@ -519,7 +519,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="id">O identificador do pedido a ser verificado.</param>
         /// <returns>Um status HTTP que indica se pode ou não marcar fast delivery no pedido.</returns>
         [HttpGet]
-        [Route("{id}/verificarFastDelivery")]
+        [Route("{id:int}/verificarFastDelivery")]
         [SwaggerResponse(200, "Pode marcar fast delivery.")]
         [SwaggerResponse(400, "Não pode marcar fast delivery.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
@@ -563,7 +563,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="idParcela">O identificador da parcela.</param>
         /// <returns>O desconto configurado para os parâmetros passados.</returns>
         [HttpGet]
-        [Route("{id}/validacaoDescontoPedido")]
+        [Route("{id:int}/validacaoDescontoPedido")]
         [SwaggerResponse(200, "Desconto válido.", Type = typeof(DescontoDto))]
         [SwaggerResponse(400, "Desconto inválido.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
