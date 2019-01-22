@@ -71,7 +71,7 @@ namespace Glass.API.Backend.Models.Produtos.MateriaPrima.ChapasDisponiveis.Lista
         public int? Largura { get; set; }
 
         /// <summary>
-        /// Obtém ou define o identificador da cor do vidro.
+        /// Obtém ou define os identificadores das cores do vidro.
         /// </summary>
         [JsonProperty("idsCorVidro")]
         public IEnumerable<int> IdsCorVidro { get; set; }

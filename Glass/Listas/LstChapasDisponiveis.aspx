@@ -1,4 +1,5 @@
-﻿<%@ Page Title="Chapas Disponíveis" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstChapasDisponiveis.aspx.cs" Inherits="Glass.UI.Web.Listas.LstChapasDisponiveis" %>
+﻿<%@ Page Title="Chapas Disponíveis" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstChapasDisponiveis.aspx.cs" Inherits="Glass.UI.Web.Listas.LstChapasDisponiveis"
+    EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="server">
     <%=
@@ -56,7 +57,7 @@
                     </a>
                 </span>
                 <span>
-                    <a href="#" @click.prevent="abrirRelatorio(true)" title="Exportar Excel">
+                    <a href="#" @click.prevent="abrirRelatorio(true)" title="Exportar para o Excel">
                         <img src="../Images/Excel.gif"/> Exportar para o Excel
                     </a>
                 </span>

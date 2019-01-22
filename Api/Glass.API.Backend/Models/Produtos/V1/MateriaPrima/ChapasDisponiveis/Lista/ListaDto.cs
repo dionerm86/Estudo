@@ -16,7 +16,7 @@ namespace Glass.API.Backend.Models.Produtos.MateriaPrima.ChapasDisponiveis.Lista
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
         /// </summary>
-        /// <param name="chapasDisponiveis">As chapas disponíveis que serão retornadas.</param>
+        /// <param name="chapasDisponiveis">As chapas que serão retornadas.</param>
         public ListaDto(Data.RelModel.ChapasDisponiveis chapasDisponiveis)
         {
             this.Cor = chapasDisponiveis.Cor;
@@ -57,14 +57,14 @@ namespace Glass.API.Backend.Models.Produtos.MateriaPrima.ChapasDisponiveis.Lista
         public int NumeroNotaFiscal { get; set; }
 
         /// <summary>
-        /// Obtém ou define o lota da chapa.
+        /// Obtém ou define o lote de fabricação da chapa.
         /// </summary>
         [DataMember]
         [JsonProperty("lote")]
         public string Lote { get; set; }
 
         /// <summary>
-        /// Obtém ou define o produto da chapa.
+        /// Obtém ou define o produto.
         /// </summary>
         [DataMember]
         [JsonProperty("produto")]

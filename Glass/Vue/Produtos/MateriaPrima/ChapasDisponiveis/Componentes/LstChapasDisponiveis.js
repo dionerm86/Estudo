@@ -20,30 +20,22 @@
     },
 
     /**
-     * Recupera o objeto com as cores.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-    obterItensFiltroCor: function () {
-      return Servicos.Produtos.CoresVidro.obterParaControle();
-    },
-
-    /**
-     * Retornar uma string com os filtros selecionados na tela.
+     * Formata os filtros para utilização na url.
      */
     formatarFiltros_: function () {
       var filtros = [];
 
-      this.incluirFiltroComLista(filtros, 'idFornecedor', this.filtro.idFornecedor);
-      this.incluirFiltroComLista(filtros, 'nomeFornecedor', this.filtro.nomeFornecedor);
-      this.incluirFiltroComLista(filtros, 'codigoProduto', this.filtro.codigoProduto);
-      this.incluirFiltroComLista(filtros, 'descricaoProduto', this.filtro.descricaoProduto);
-      this.incluirFiltroComLista(filtros, 'numeroNotaFiscal', this.filtro.numeroNotaFiscal);
+      this.incluirFiltroComLista(filtros, 'idFornec', this.filtro.idFornecedor);
+      this.incluirFiltroComLista(filtros, 'nomeFornec', this.filtro.nomeFornecedor);
+      this.incluirFiltroComLista(filtros, 'codInternoProd', this.filtro.codigoProduto);
+      this.incluirFiltroComLista(filtros, 'descrProd', this.filtro.descricaoProduto);
+      this.incluirFiltroComLista(filtros, 'numeroNfe', this.filtro.numeroNotaFiscal);
       this.incluirFiltroComLista(filtros, 'lote', this.filtro.lote);
       this.incluirFiltroComLista(filtros, 'altura', this.filtro.altura);
       this.incluirFiltroComLista(filtros, 'largura', this.filtro.largura);
-      this.incluirFiltroComLista(filtros, 'idsCorVidro', this.filtro.idsCorVidro);
+      this.incluirFiltroComLista(filtros, 'idCor', this.filtro.idsCorVidro);
       this.incluirFiltroComLista(filtros, 'espessura', this.filtro.espessura);
-      this.incluirFiltroComLista(filtros, 'codigoEtiqueta', this.filtro.codigoEtiqueta);
+      this.incluirFiltroComLista(filtros, 'numEtiqueta', this.filtro.codigoEtiqueta);
       this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
 
       return filtros.length
@@ -52,7 +44,7 @@
     },
 
     /**
-     * Recupera o objeto com os dados para impressão.
+     * Recupera o objeto com o detalhamento dos dados das chapas disponíveis.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     abrirRelatorio: function (exportarExcel) {

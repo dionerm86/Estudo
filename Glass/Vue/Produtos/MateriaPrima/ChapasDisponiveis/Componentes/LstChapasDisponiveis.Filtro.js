@@ -37,21 +37,13 @@
 
   methods: {
     /**
-    * Atualiza o filtro com os dados selecionados na tela.
-    */
+     * Atualiza o filtro com os dados selecionados na tela.
+     */
     filtrar: function () {
       var novoFiltro = this.clonar(this.filtroAtual);
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
       }
-    },
-
-    /**
-     * Retorna os itens para o controle de cores de chapas disponíveis.
-     * @returns {Promise} Uma Promise com o resultado da busca.
-     */
-    obterItensFiltroCor: function () {
-      return Servicos.Produtos.CoresVidro.obterParaControle();
     }
   },
 

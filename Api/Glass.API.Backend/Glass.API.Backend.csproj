@@ -233,8 +233,6 @@
     <Compile Include="Controllers\ContasPagar\V1\Pagas\GetContasPagasController.cs" />
     <Compile Include="Controllers\ContasPagar\V1\Pagas\PatchContasPagasController.cs" />
     <Compile Include="Controllers\Produtos\V1\GetProdutosController.cs" />
-    <Compile Include="Controllers\Produtos\V1\MateriaPrima\ChapasDisponiveis\ChapasDisponiveisController.cs" />
-    <Compile Include="Controllers\Produtos\V1\MateriaPrima\ChapasDisponiveis\GetChapasDisponiveisController.cs" />
     <Compile Include="Controllers\Produtos\V1\MateriaPrima\ChapasMateriaPrimaController.cs" />
     <Compile Include="Controllers\Produtos\V1\MateriaPrima\GetChapasMateriaPrimaController.cs" />
     <Compile Include="Controllers\Produtos\V1\MateriaPrima\Posicao\GetPosicaoMateriaPrimaController.cs" />
