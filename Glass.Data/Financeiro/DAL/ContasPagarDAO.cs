@@ -2853,8 +2853,8 @@ namespace Glass.Data.DAL
 
                     var dataInicialCustoFixo =
                         string.Format("{0}",
-                            !string.IsNullOrEmpty(dtFim) ?
-                                @"STR_TO_DATE(?dtFim, '%Y-%m-%d') AS Data,
+                            !string.IsNullOrEmpty(dtIni) ?
+                                @"STR_TO_DATE(?dtIni, '%Y-%m-%d') AS Data,
                                 STR_TO_DATE(?dtIni, '%Y-%m-%d') AS DataIni" :
                                 "NULL AS Data, NULL AS DataIni");
 
