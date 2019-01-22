@@ -1,5 +1,5 @@
 ﻿<%@ Page Title="Compra de Mercadoria" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstCompraPcp.aspx.cs"
-    Inherits="Glass.UI.Web.Listas.LstCompraPcp" %>
+    Inherits="Glass.UI.Web.Listas.LstCompraPcp" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <%=

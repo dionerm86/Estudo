@@ -77,6 +77,9 @@ Servicos.Compras = (function (http) {
       return http().get(API + 'situacoes');
     },
 
+    /**
+     * Objeto com os serviços para a API de compras de mercadorias.
+     */
     ComprasMercadorias: {
     /**
      * Recupera a lista de compras de mercadorias.
@@ -107,7 +110,7 @@ Servicos.Compras = (function (http) {
 
     /**
      * Realiza o cancelamento de uma compra de mercadoria.
-     * @param {Object} mercadoria A merccadorias que será cancelada.
+     * @param {Object} mercadoria A mercadoria que será cancelada.
      * @param {String} motivo O motivo do cancelamento.
      * @returns {Promise} Uma promise com o resultado da busca.
      */

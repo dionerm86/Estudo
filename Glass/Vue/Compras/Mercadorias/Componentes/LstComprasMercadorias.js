@@ -46,7 +46,7 @@
     },
 
     /**
-     * Abre um popup com o gerenciamento de fotos para a compra.
+     * Abre um popup com o gerenciamento de fotos para a compra de mercadoria.
      * @param {Object} item A compra que terá as fotos gerenciadas.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
@@ -63,7 +63,7 @@
     },
 
     /**
-     * Redireciona o usuário para uma tela onde poderá ser gerada uma nota fiscal para a compra.
+     * Redireciona o usuário para uma tela onde poderá ser gerada uma nota fiscal para a compra de mercadoria.
      * @param {Object} item A compra que terá uma nota fiscal gerada.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
@@ -76,7 +76,7 @@
     },
 
     /**
-     * Reabre uma compra já finalizada.
+     * Reabre uma compra de mercadoria já finalizada.
      * @param {Object} item A compra que será reaberta.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */

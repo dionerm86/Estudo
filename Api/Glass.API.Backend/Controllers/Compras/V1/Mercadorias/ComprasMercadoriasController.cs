@@ -9,7 +9,7 @@ using System.Web.Http;
 namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
 {
     /// <summary>
-    /// Controller de compras de marcadorias.
+    /// Controller de compras de mercadorias.
     /// </summary>
     [RoutePrefix("api/v1/compras/mercadorias")]
     public partial class ComprasMercadoriasController : BaseController

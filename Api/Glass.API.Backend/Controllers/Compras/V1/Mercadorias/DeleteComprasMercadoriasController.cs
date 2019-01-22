@@ -17,10 +17,10 @@ namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
     public partial class ComprasMercadoriasController : BaseController
     {
         /// <summary>
-        /// Cancela uma compra e registra o motivo do cancelamento.
+        /// Cancela uma compra de mercadoria e registra o motivo do cancelamento.
         /// </summary>
-        /// <param name="id">O identificador da compra que será cancelada.</param>
-        /// <param name="motivo">O motivo do cancelamento da compra.</param>
+        /// <param name="id">O identificador da compra de mercadoria que será cancelada.</param>
+        /// <param name="motivo">O motivo do cancelamento da compra de mercadoria.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpDelete]
         [Route("{id:int}")]
