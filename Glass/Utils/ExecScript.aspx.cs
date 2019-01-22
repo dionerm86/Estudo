@@ -1124,12 +1124,13 @@ namespace Glass.UI.Web.Utils
 
         public void AtualizaSaldo(uint idProd, uint idLoja)
         {
-            uint id = ExecuteMultipleScalar<uint>(@"select idMovEstoque from mov_estoque where idProd=?p
-            and idLoja=?l order by dataMov asc, idMovEstoque asc limit 1",
-                new GDAParameter("?p", idProd), new GDAParameter("?l", idLoja)).FirstOrDefault();
+            var id = this.objPersistence.ExecuteScalar($@"select idMovEstoque from mov_estoque where idProd={idProd}
+            and idLoja={idLoja} order by dataMov asc, idMovEstoque asc limit 1");
 
-            if (id > 0)
-                MovEstoqueDAO.Instance.AtualizaSaldo(null, id);
+            if (id != null && (uint)id > 0)
+            {
+                MovEstoqueDAO.Instance.AtualizaSaldo(null, (uint)id);
+            }
         }
     }
 
@@ -6741,6 +6742,17 @@ namespace Glass.UI.Web.Utils
         protected void btnAjustaMudarSaldoCaixaGeral_Click(object sender, EventArgs e)
         {
             tempMudarSaldo.Instance.alterarMudarSaldo();
+        }
+
+        protected void btnAjustarMovimentaçãoEstoque_Click(object sender, EventArgs e)
+        {
+            var idLoja = Conversoes.StrParaUint(drpLojaAjusteEstoque.SelectedValue);
+            var idsProduto = txtidsProdAjusteEstoque.Text.Replace("\r\n", "").Split(',');
+
+            foreach (var item in idsProduto.Where(f => f != string.Empty))
+            {
+                tempMovEstoqueDAO.Instance.AtualizaSaldo(Conversoes.StrParaUint(item), idLoja);
+            }
         }
 
         //protected void btnIdProdPedCarregamento_Click(object sender, EventArgs e)

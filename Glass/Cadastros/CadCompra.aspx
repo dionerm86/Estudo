@@ -1,4 +1,4 @@
-<%@ Page Title="Cadastro de Compra" Language="C#" MasterPageFile="~/Painel.master"
+Ôªø<%@ Page Title="Cadastro de Compra" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="CadCompra.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadCompra" %>
 
 <%@ Register Src="../Controls/ctrlTextBoxFloat.ascx" TagName="ctrlTextBoxFloat" TagPrefix="uc1" %>
@@ -79,7 +79,7 @@ function calcularValorTotalFinal()
     }
 }
 
-// FunÁ„o chamada para calcular o acrÈscimo das parcelas
+// Fun√ß√£o chamada para calcular o acr√©scimo das parcelas
 function calcAcrescimo()
 {
     var tipoCompra = FindControl("drpTipoCompra", "select");
@@ -103,7 +103,7 @@ function calcAcrescimo()
     Parc_visibilidadeParcelas("<%= dtvCompra.ClientID %>_ctrlParcelas1");
 }
 
-// Carrega dados do produto com base no cÛdigo do produto passado
+// Carrega dados do produto com base no c√≥digo do produto passado
 function selProduto(nomeControle, idProd)
 {
     if (idProd == "")
@@ -122,10 +122,10 @@ function selProduto(nomeControle, idProd)
         
         FindControl("hdfCodProd", "input").value = retorno[9]; 
         FindControl("lblInfoEstoque", "span").innerHTML = retorno[1];
-        FindControl("hdfIsVidro", "input").value = retorno[2]; // Informa se o produto È vidro
-        FindControl("txtValorIns", "input").value = retorno[4]; // Informa se o produto È vidro
+        FindControl("hdfIsVidro", "input").value = retorno[2]; // Informa se o produto √© vidro
+        FindControl("txtValorIns", "input").value = retorno[4]; // Informa se o produto √© vidro
         FindControl("hdfCustoProd", "input").value = retorno[5];
-        FindControl("txtValorIns", "input").disabled = retorno[6] == "true"; // Desabilita o campo de valor unit·rio
+        FindControl("txtValorIns", "input").disabled = retorno[6] == "true"; // Desabilita o campo de valor unit√°rio
         FindControl("txtEspessura", "input").value = retorno[3];
 
         var tipoCalc = retorno[10];
@@ -137,8 +137,8 @@ function selProduto(nomeControle, idProd)
             FindControl("lnkBenef", "a").style.display = exibirControleBenef(nomeControle) ? "" : "none";
         }            
 
-        // Se o produto n„o for vidro, desabilita os textboxes largura e altura,
-        // mas se o produto for tipoCalc=ML AL e a empresa trabalhar com venda de alumÌnio, deixa o campo altura habilitado
+        // Se o produto n√£o for vidro, desabilita os textboxes largura e altura,
+        // mas se o produto for tipoCalc=ML AL e a empresa trabalhar com venda de alum√≠nio, deixa o campo altura habilitado
         // no metro linear ou se o produto for tipoCalc=ML, deixa os campos altura e largura habilitados
         var cAltura = FindControl("txtAlturaIns", "input");
         var cLargura = FindControl("txtLarguraIns", "input");
@@ -149,8 +149,8 @@ function selProduto(nomeControle, idProd)
         cAltura.value = "";
         cLargura.value = "";
         
-        // O campo altura e largura devem sempre ser atribuÌdos pois caso seja selecionado um box e logo apÛs seja selecionado um kit 
-        // por exemplo, ao inserÌ-lo ele estava ficando com o campo altura, largura e m≤ preenchidos apesar de ser calculado por qtd
+        // O campo altura e largura devem sempre ser atribu√≠dos pois caso seja selecionado um box e logo ap√≥s seja selecionado um kit 
+        // por exemplo, ao inser√≠-lo ele estava ficando com o campo altura, largura e m¬≤ preenchidos apesar de ser calculado por qtd
         if (retorno[7] != "" || retorno[2] == "false") {
             FindControl("txtAltura", "input").value = retorno[7];
         }
@@ -158,7 +158,7 @@ function selProduto(nomeControle, idProd)
             FindControl("txtLargura", "input").value = retorno[8];
         }
 
-        // Chamado 14457: Sempre que carregar o produto, apaga o campo Qtd para n„o permitir inserir decimal onde n„o pode
+        // Chamado 14457: Sempre que carregar o produto, apaga o campo Qtd para n√£o permitir inserir decimal onde n√£o pode
         FindControl("txtQtdeIns", "input").value = "";
     }
     catch(err)
@@ -167,21 +167,21 @@ function selProduto(nomeControle, idProd)
     }
 }
 
-// Evento acionado ao trocar o tipo de compra (‡ vista/‡ prazo)
+// Evento acionado ao trocar o tipo de compra (√† vista/√† prazo)
 function tipoCompraChange(control) {
     if (control == null)
         return;
 
     var cNumParc = FindControl("txtNumParc", "input");
 
-    // Se for ‡ vista, Desabilita o campo n˙mero de parcelas se for compra ‡ vista
+    // Se for √† vista, Desabilita o campo n√∫mero de parcelas se for compra √† vista
     FindControl("txtNumParc", "input").disabled = control.value != 2;
 
     // Desabilita valor da parcela e data base de vencimento se for compra a vista ou 
     // se o numero de parcelas for < 6 && != 0
     FindControl("ctrValorParc_txtNumber", "input").disabled = control.value == 1 || (cNumParc < numeroParcelasMax && cNumParc != 0);
 
-    // Se for ‡ prazo e o n˙mero de parcelas estiver 0, muda para 1
+    // Se for √† prazo e o n√∫mero de parcelas estiver 0, muda para 1
     if (control.value == 2 && cNumParc.value == 0)
         cNumParc.value = 1;
     
@@ -241,7 +241,7 @@ function formaPagtoChange(control) {
     if (control == null)
         return;
     
-    // Se a forma de pagamento for cheque/boleto, mostra os campos numBoleto nas parcelas, sen„o, esconde
+    // Se a forma de pagamento for cheque/boleto, mostra os campos numBoleto nas parcelas, sen√£o, esconde
     var display = control.value == codBoleto || control.value == codCheque ? "" : "none";
     for (i = 0; i < <%= dtvCompra.FindControl("ctrlParcelas1") != null ? ((Glass.UI.Web.Controls.ctrlParcelas)dtvCompra.FindControl("ctrlParcelas1")).NumParcelas : 0 %>; i++)
             FindControl("ctrlParcelas1_Parc" + (i + 1) + "_Linha4", "tr").style.display = display;
@@ -290,7 +290,7 @@ function formaPagtoChange(control) {
             }
             else {
                 inserindo = false;
-                alert("Esse fornecedor aceita apenas compras ‡ vista.")
+                alert("Esse fornecedor aceita apenas compras √† vista.")
             }
         
             return false;
@@ -299,7 +299,7 @@ function formaPagtoChange(control) {
         return true;
     }
 
-    // Acionado quando a Compra est· para ser salva
+    // Acionado quando a Compra est√° para ser salva
     function onSave() {
         if (!validate())
             return false;
@@ -329,7 +329,7 @@ function formaPagtoChange(control) {
             var dataBaseVenc = FindControl("ctrlDataBaseVenc_txtData", "input").value;
 
             if (numParc == "0" || numParc == "") {
-                alert("Informe o n˙mero de parcelas.");
+                alert("Informe o n√∫mero de parcelas.");
                 return false;
             }
             else if (parseInt(numParc) > numeroParcelasMax) {
@@ -352,7 +352,7 @@ function formaPagtoChange(control) {
             if (prazo > 0)
                 alert("Esse fornecedor aceita apenas " + prazo + " parcela(s).");
             else
-                alert("Esse fornecedor aceita apenas compras ‡ vista.")
+                alert("Esse fornecedor aceita apenas compras √† vista.")
             
             return false;
         }
@@ -360,7 +360,7 @@ function formaPagtoChange(control) {
         return true;
     }
 
-    // Chamado quando um produto est· para ser inserido na Compra
+    // Chamado quando um produto est√° para ser inserido na Compra
     function onSaveProd()
     {
         if (!validate("produto"))
@@ -372,13 +372,13 @@ function formaPagtoChange(control) {
         
         if (FindControl("tbConfigVidro", "table").style.display == "block")
         {
-            alert("Aplique as alteraÁıes no beneficiamento antes de salvar o item.");
+            alert("Aplique as altera√ß√µes no beneficiamento antes de salvar o item.");
             return false;
         }
     
         if (codProd == "")
         {
-            alert("Informe o cÛdigo do produto.");
+            alert("Informe o c√≥digo do produto.");
             return false;
         }
         else if (valor == "0" || valor == "")
@@ -391,6 +391,21 @@ function formaPagtoChange(control) {
             alert("Informe a quantidade.");
             return false;
         }
+
+        var altura = FindControl("txtAlturaIns", "input").value;
+        var largura = FindControl("txtLarguraIns", "input").value;
+
+        if (FindControl("txtAlturaIns", "input").disabled == false && (altura == "" || parseFloat(altura.replace(",", ".")) == 0)) {
+            alert("Informe a altura.");
+            var_SaveProdClicked = false;
+            return false;
+        }
+
+        if (FindControl("txtLarguraIns", "input").disabled == false && (largura == "" || parseFloat(largura.replace(",", ".")) == 0)) {
+            alert("Informe a largura.");
+            var_SaveProdClicked = false;
+            return false;
+        }
     
         FindControl("txtAltura", "input").disabled = false;
         FindControl("txtLargura", "input").disabled = false;
@@ -398,7 +413,7 @@ function formaPagtoChange(control) {
         return true;
     }
 
-    // FunÁ„o chamada quando o produto est· para ser atualizado
+    // Fun√ß√£o chamada quando o produto est√° para ser atualizado
     function onUpdateProd()
     {
         if (!validate("produto"))
@@ -406,7 +421,7 @@ function formaPagtoChange(control) {
     
         if (FindControl("tbConfigVidro", "table").style.display == "block")
         {
-            alert("Aplique as alteraÁıes no beneficiamento antes de salvar o item.");
+            alert("Aplique as altera√ß√µes no beneficiamento antes de salvar o item.");
             return false;
         }
     
@@ -433,6 +448,24 @@ function formaPagtoChange(control) {
             return false;
         }
 
+        var altura = FindControl("txtAlturaIns", "input").value;
+        var largura = FindControl("txtLarguraIns", "input").value;
+
+        if (FindControl("txtAlturaIns", "input").disabled == false && (altura == "" || parseFloat(altura.replace(",", ".")) == 0)) {
+            alert("Informe a altura.");
+            var_SaveProdClicked = false;
+            return false;
+        }
+
+        if (FindControl("txtLarguraIns", "input").disabled == false && (largura == "" || parseFloat(largura.replace(",", ".")) == 0)) {
+            alert("Informe a largura.");
+            var_SaveProdClicked = false;
+            return false;
+        }
+
+        // Habilita campos para que seus valores sejam enviados para o backend
+        FindControl("txtAlturaIns", "input").disabled = false;
+        FindControl("txtLarguraIns", "input").disabled = false;
         FindControl("txtValorIns", "input").disabled = false;
     
         return true;
@@ -455,13 +488,13 @@ function formaPagtoChange(control) {
             var adicVidroRedondoAte12mm = '<%= Glass.Configuracoes.Geral.AdicionalVidroRedondoAte12mm %>';
             var adicVidroRedondoAcima12mm = '<%= Glass.Configuracoes.Geral.AdicionalVidroRedondoAcima12mm %>';
 
-            // Se a opÁ„o vidro redondo estiver marcado, adiciona 50mm na largura e na altura,
-            // bisote e lapidaÁ„o n„o cobram sobre este acrÈscimo
+            // Se a op√ß√£o vidro redondo estiver marcado, adiciona 50mm na largura e na altura,
+            // bisote e lapida√ß√£o n√£o cobram sobre este acr√©scimo
             if (FindControl("Redondo_chkSelecao", "input") != null && FindControl("Redondo_chkSelecao", "input").checked) {
                 if (altura != "" && largura != "" &&
                     parseInt(altura) > 0 && parseInt(largura) > 0 &&
                     parseInt(altura) != parseInt(largura) && FindControl("Redondo_chkSelecao", "input").checked) {
-                        alert('O beneficiamento Redondo pode ser marcado somente em peÁas de medidas iguais.');
+                        alert('O beneficiamento Redondo pode ser marcado somente em pe√ßas de medidas iguais.');
                         FindControl("Redondo_chkSelecao", "input").checked = false;
                         return false;
                     }
@@ -555,7 +588,7 @@ function formaPagtoChange(control) {
             if (retorno[3] != "" && FindControl("ddlPlanoConta", "select").value == "")
                 FindControl("ddlPlanoConta", "select").value = retorno[3];
     
-            // Verifica se o fornecedor da compra È a prÛpria empresa, para esconder as opÁıes ‡ vista e ‡ prazo
+            // Verifica se o fornecedor da compra √© a pr√≥pria empresa, para esconder as op√ß√µes √† vista e √† prazo
             if (<%= Glass.Configuracoes.FinanceiroConfig.Compra.CompraSemValores.ToString().ToLower() %>){
                 var semValores = new Array(3, 4);
         
@@ -585,7 +618,7 @@ function formaPagtoChange(control) {
         
             if (idFornec == "")
             {
-                alert("Selecione um fornecedor antes de selecionar a antecipaÁ„o.");
+                alert("Selecione um fornecedor antes de selecionar a antecipa√ß√£o.");
                 return false;
             }
     
@@ -676,10 +709,10 @@ function formaPagtoChange(control) {
                                                                 <td>
                                                                     <asp:DropDownList ID="drpTipoCompra" runat="server" onchange="tipoCompraChange(this);"
                                                                         SelectedValue='<%# Bind("TipoCompra") %>' OnLoad="drpTipoCompra_Load">
-                                                                        <asp:ListItem Value="2">¿ Prazo</asp:ListItem>
-                                                                        <asp:ListItem Value="1">¿ Vista</asp:ListItem>
+                                                                        <asp:ListItem Value="2">√Ä Prazo</asp:ListItem>
+                                                                        <asp:ListItem Value="1">√Ä Vista</asp:ListItem>
                                                                         <asp:ListItem Value="3">Estoque</asp:ListItem>
-                                                                        <asp:ListItem Value="4">ProduÁ„o</asp:ListItem>
+                                                                        <asp:ListItem Value="4">Produ√ß√£o</asp:ListItem>
                                                                     </asp:DropDownList>
                                                                     <div id="divAntecipFornec" style="display: none">
                                                                         <asp:TextBox ID="txtAntecip" Enabled="false" runat="server" Width="250px" />
@@ -797,11 +830,11 @@ function formaPagtoChange(control) {
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="left" class="dtvHeader" nowrap="nowrap">Data entr. f·brica
+                                                    <td align="left" class="dtvHeader" nowrap="nowrap">Data entr. f√°brica
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
                                                         <uc5:ctrlData ID="ctrlDataFabrica" runat="server" ReadOnly="ReadWrite" ValidateEmptyText="true"
-                                                            DataNullable='<%# Bind("DataFabrica") %>' ErrorMessage="Informe a data de entr. na f·brica." />
+                                                            DataNullable='<%# Bind("DataFabrica") %>' ErrorMessage="Informe a data de entr. na f√°brica." />
                                                     </td>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">Total
                                                     </td>
@@ -814,7 +847,7 @@ function formaPagtoChange(control) {
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:CheckBox ID="chkContabil" runat="server" Checked='<%# Bind("Contabil") %>'
-                                                            OnLoad="chkContabil_Load" Text="Cont·bil" />
+                                                            OnLoad="chkContabil_Load" Text="Cont√°bil" />
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -838,7 +871,7 @@ function formaPagtoChange(control) {
                                             </table>
                                             <table style="width: 100%">
                                                 <tr>
-                                                    <td class="dtvHeader">ObservaÁ„o
+                                                    <td class="dtvHeader">Observa√ß√£o
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:TextBox ID="txtObs" runat="server" Text='<%# Bind("Obs") %>'
@@ -898,8 +931,8 @@ function formaPagtoChange(control) {
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:DropDownList ID="drpTipoCompra" runat="server" SelectedValue='<%# Bind("TipoCompra") %>'
                                                             onchange="tipoCompraChange(this);" OnLoad="drpTipoCompra_Load">
-                                                            <asp:ListItem Value="2">¿ Prazo</asp:ListItem>
-                                                            <asp:ListItem Value="1">¿ Vista</asp:ListItem>
+                                                            <asp:ListItem Value="2">√Ä Prazo</asp:ListItem>
+                                                            <asp:ListItem Value="1">√Ä Vista</asp:ListItem>
                                                         </asp:DropDownList>
                                                         <div id="divAntecipFornec" style="display: none">
                                                             <asp:TextBox ID="txtAntecip" Enabled="false" runat="server" Width="250px" />
@@ -998,7 +1031,7 @@ function formaPagtoChange(control) {
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="left" class="dtvHeader" nowrap="nowrap">Data entr. f·brica
+                                                    <td align="left" class="dtvHeader" nowrap="nowrap">Data entr. f√°brica
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
                                                         <uc5:ctrlData ID="ctrlDataFabrica" runat="server" ReadOnly="ReadWrite" ValidateEmptyText="true"
@@ -1007,7 +1040,7 @@ function formaPagtoChange(control) {
                                                     <td colspan="2"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td align="left" class="dtvHeader" nowrap="nowrap">Cont·bil
+                                                    <td align="left" class="dtvHeader" nowrap="nowrap">Cont√°bil
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:CheckBox ID="chkContabil" runat="server" Checked='<%# Bind("Contabil") %>' OnLoad="chkContabil_Load" />
@@ -1016,7 +1049,7 @@ function formaPagtoChange(control) {
                                             </table>
                                             <table style="width: 100%">
                                                 <tr>
-                                                    <td class="dtvHeader">ObservaÁ„o
+                                                    <td class="dtvHeader">Observa√ß√£o
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:TextBox ID="txtObs" runat="server" Text='<%# Bind("Obs") %>'
@@ -1050,7 +1083,7 @@ function formaPagtoChange(control) {
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="dtvHeader">Funcion·rio
+                                                    <td class="dtvHeader">Funcion√°rio
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:Label ID="lblNomeFunc" runat="server" Text='<%# Eval("DescrUsuCad") %>'></asp:Label>
@@ -1118,7 +1151,7 @@ function formaPagtoChange(control) {
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="dtvHeader">Data entr. f·brica
+                                                    <td class="dtvHeader">Data entr. f√°brica
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:Label ID="lblDataFabrica" runat="server" Text='<%# Eval("DataFabrica", "{0:dd/MM/yyyy}") %>'></asp:Label>
@@ -1204,7 +1237,7 @@ function formaPagtoChange(control) {
                                 </EditItemTemplate>
                                 <ItemStyle Wrap="False" />
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="CÛd." SortExpression="CodInterno">
+                            <asp:TemplateField HeaderText="C√≥d." SortExpression="CodInterno">
                                 <EditItemTemplate>
                                     <asp:Label ID="lblCodProdIns" runat="server" Text='<%# Bind("CodInterno") %>'></asp:Label>
                                 </EditItemTemplate>
@@ -1312,7 +1345,7 @@ function formaPagtoChange(control) {
                                 </FooterTemplate>
                                 <ItemStyle Wrap="False" />
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Cobrar sÛ benef.?" SortExpression="NaoCobrarVidro">
+                            <asp:TemplateField HeaderText="Cobrar s√≥ benef.?" SortExpression="NaoCobrarVidro">
                                 <EditItemTemplate>
                                     <asp:CheckBox ID="chkNaoCobrarVidro" runat="server" onclick="calcTotalProd()" Checked='<%# Bind("NaoCobrarVidro") %>' />
                                 </EditItemTemplate>
@@ -1320,7 +1353,7 @@ function formaPagtoChange(control) {
                                     <asp:CheckBox ID="chkNaoCobrarVidro" runat="server" onclick="calcTotalProd()" />
                                 </FooterTemplate>
                                 <ItemTemplate>
-                                    <asp:Label ID="Label10" runat="server" Text='<%# (bool)Eval("NaoCobrarVidro") ? "Sim" : "N„o" %>'></asp:Label>
+                                    <asp:Label ID="Label10" runat="server" Text='<%# (bool)Eval("NaoCobrarVidro") ? "Sim" : "N√£o" %>'></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="V. Benef." SortExpression="ValorBenef">
@@ -1469,7 +1502,7 @@ function formaPagtoChange(control) {
 
         calcAcrescimo();
         
-        // Se a empressa n„o vende vidros, esconde campos
+        // Se a empressa n√£o vende vidros, esconde campos
         if (<%= Glass.Configuracoes.Geral.NaoVendeVidro().ToString().ToLower() %>)
         {
             var tbProd = FindControl("grdProdutos", "table");

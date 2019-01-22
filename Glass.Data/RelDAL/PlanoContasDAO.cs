@@ -201,6 +201,7 @@ namespace Glass.Data.RelDAL
                     LEFT JOIN categoria_conta cat ON (g.IdCategoriaConta=cat.IdCategoriaConta)
                     LEFT JOIN cliente cli ON (m.IdCliente=cli.Id_Cli)
                     LEFT JOIN fornecedor f ON (m.IdFornec=f.IdFornec)
+                    LEFT JOIN conta_banco cb on (m.IdContaBanco = cb.IdContaBanco)
                 WHERE 1 { filtroGrupos }";
 
             if (tipoConta == 1)
@@ -226,7 +227,7 @@ namespace Glass.Data.RelDAL
 
                 if (idLoja > 0)
                 {
-                    filtro += $" AND func.IdLoja = { idLoja }";
+                    filtro += $" AND cb.IdLoja = {idLoja}";
                 }
 
                 if (!string.IsNullOrWhiteSpace(dataIni))

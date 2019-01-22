@@ -2778,6 +2778,17 @@ namespace Glass.Data.DAL
                 throw new Exception("Este pedido possui compra gerada a partir de produtos associados a " +
                     "beneficiamentos, cancele-a antes de reabrí-lo.");
 
+            if (this.objPersistence.ExecuteSqlQueryCount(
+                session,
+                $@"SELECT COUNT(*) FROM produtos_compra pc
+                    LEFT JOIN compra c ON (pc.idCompra = c.idCompra)
+                    LEFT JOIN produtos_pedido_espelho ppe ON (pc.idProdPed = ppe.idProdPed)
+                WHERE ppe.idPedido = {idPedido}
+                    AND c.situacao <> {(int)Compra.SituacaoEnum.Cancelada}") > 0)
+            {
+                throw new Exception($"Este pedido possui compra gerada a partir dos produtos do pedido {idPedido}, cancele-a.");
+            }
+
             //Valida se o espelho possui peças de composição, se tiver nao pode reabrir, tem que ser excluido e editado no pedido
             if (!cancelamento && PossuiProdutosComposicao(session, (int)idPedido))
                 throw new Exception("Este pedido possui peças do tipo do subgrupo composição ou laminado e não pode ser editado, cancele e faça a edição no pedido comercial.");

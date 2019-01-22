@@ -884,6 +884,26 @@ namespace Glass.Data.DAL
                 impostoServ.IdImpostoServ, impostoServ, motivo, manual);
         }
 
+        /// <summary>
+        /// Cria o Log de Cancelamento para pagamentos.
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="pagto">Instãncia do pagamento.</param>
+        /// <param name="motivo">Motivo do cancelamento.</param>
+        /// <param name="manual">Cancelamento Manual.</param>
+        public void LogPagto(GDASession sessao, Pagto pagto, string motivo, bool manual)
+        {
+            this.InserirLog(
+                sessao,
+                UserInfo.GetUserInfo.CodUser,
+                LogCancelamento.TabelaCancelamento.Pagto,
+                pagto.IdPagto,
+                pagto,
+                motivo,
+                manual);
+        }
+
+
         #endregion
 
         #region Verifica se há log para um registro de uma tabela

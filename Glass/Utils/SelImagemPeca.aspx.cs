@@ -23,7 +23,7 @@ namespace Glass.UI.Web.Utils
                     odsPecas.SelectMethod = "GetMaoDeObra";
                     odsPecas.SelectCountMethod = "GetCountMaoDeObra";
                 }
-                else if(ProdutosPedidoDAO.Instance.TemProdutoLamComposicao(idPedido) && !PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido))
+                else if (ProdutosPedidoDAO.Instance.TemProdutoLamComposicao(idPedido) && !PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido))
                 {
                     odsPecas.SelectMethod = "ObterParaImagemComposicao";
                     odsPecas.SelectCountMethod = "ObterParaImagemCount";
@@ -37,7 +37,7 @@ namespace Glass.UI.Web.Utils
                     odsPecas.TypeName = "Glass.Data.DAL.ProdutosPedidoDAO";
                     odsPecas.SelectParameters.Add("idProdPed", (Request["idProdPed"]));
                 }
-                else if(Request["tipo"] == "pcp" && Request["pecaAvulsa"] == "True")
+                else if (Request["tipo"] == "pcp" && Request["pecaAvulsa"] == "True")
                 {
                     odsPecas.SelectMethod = "ObterParaImagemPecaAvulsa";
                     odsPecas.SelectCountMethod = "ObterParaImagemPecaAvulsaCount";
@@ -80,7 +80,7 @@ namespace Glass.UI.Web.Utils
                         var idProdPed = h.Value.StrParaUint();
 
                         if (Request["tipo"] == "pedido" && !PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido) && (ProdutosPedidoDAO.Instance.TemProdutoLamComposicao(idPedido) || Request["pecaAvulsa"] == "True"))
-                        {                            
+                        {
                             var urlImagem = ProdutosPedidoDAO.Instance.ObterUrlImagemSalvar(idProdPed);
                             ManipulacaoImagem.SalvarImagem(urlImagem, f.FileBytes);
 
@@ -95,7 +95,7 @@ namespace Glass.UI.Web.Utils
                                 IdFuncAlt = UserInfo.GetUserInfo.CodUser,
                                 Referencia = "Imagem do Produto Pedido " + idProdPed,
                                 NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)idProdPed)
-                            });                           
+                            });
                         }
 
                         if (Request["tipo"] == "pcp")
@@ -132,7 +132,7 @@ namespace Glass.UI.Web.Utils
                                 if (idPecaItemProj > 0)
                                     LogAlteracaoDAO.Instance.LogImagemProducao(idPecaItemProj, item.ToString(), "Nova imagem atribuída à peça");
                             }
-                        }                       
+                        }
                     }
                 }
 
@@ -144,11 +144,11 @@ namespace Glass.UI.Web.Utils
                 Glass.MensagemAlerta.ErrorMsg("Falha ao salvar imagem.", ex, Page);
             }
         }
-    
+
         #endregion
-    
+
         #region Excluir imagens
-    
+
         protected void imgExcluir_Click(object sender, ImageClickEventArgs e)
         {
             try
@@ -168,7 +168,7 @@ namespace Glass.UI.Web.Utils
 
                 ProdutosPedidoEspelho ppe = ProdutosPedidoEspelhoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(h.Value));
                 ppe.Item = Glass.Conversoes.StrParaInt(linha.Cells[0].Attributes["item"]);
-                
+
                 string filePath = Server.MapPath(ppe.ImagemUrlSalvarItem);
                 if (!File.Exists(filePath))
                 {
@@ -176,13 +176,13 @@ namespace Glass.UI.Web.Utils
                     if (!File.Exists(filePath))
                         return;
                 }
-    
+
                 File.Delete(filePath);
-    
+
                 uint idPecaItemProj = Glass.Conversoes.StrParaUint(linha.Cells[0].Attributes["idPecaItemProj"]);
                 if (idPecaItemProj > 0)
                     LogAlteracaoDAO.Instance.LogImagemProducao(idPecaItemProj, ppe.Item.ToString(), "Remoção da imagem atribuída à peça");
-    
+
                 Response.Redirect(Request.Url.ToString());
             }
             catch (Exception ex)
@@ -190,11 +190,11 @@ namespace Glass.UI.Web.Utils
                 Glass.MensagemAlerta.ErrorMsg("Falha ao excluir imagem.", ex, Page);
             }
         }
-    
+
         protected void imgExcluir_PreRender(object sender, EventArgs e)
         {
             bool visivel = false;
-    
+
             try
             {
                 TableRow linha = ((ImageButton)sender).Parent.Parent as TableRow;
@@ -210,18 +210,18 @@ namespace Glass.UI.Web.Utils
 
                 ProdutosPedidoEspelho ppe = ProdutosPedidoEspelhoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(h.Value));
                 ppe.Item = Glass.Conversoes.StrParaInt(linha.Cells[0].Attributes["item"]);
-    
+
                 visivel = File.Exists(Server.MapPath(ppe.ImagemUrlSalvarItem));
                 if (!visivel)
                     visivel = File.Exists(Server.MapPath(ppe.ImagemUrlSalvar));
             }
             catch { }
-    
+
             ((ImageButton)sender).Visible = visivel;
         }
-    
+
         #endregion
-    
+
         protected void tblImagens_Load(object sender, EventArgs e)
         {
             try
@@ -282,7 +282,7 @@ namespace Glass.UI.Web.Utils
 
                     // Verifica se é permitido alterar imagem da peça
                     var situacaoPedidoEspelho = PedidoEspelhoDAO.Instance.ObtemSituacao(ppe.IdPedido);
-                    var permitirAlterarImagem = situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Finalizado || 
+                    var permitirAlterarImagem = situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Finalizado ||
                         Config.PossuiPermissao(Config.FuncaoMenuPCP.AlterarImagemPecaAposImpressao);
 
                     if (permitirAlterarImagem)
@@ -317,7 +317,7 @@ namespace Glass.UI.Web.Utils
                 ErroDAO.Instance.InserirFromException(urlErro, ex);
             }
         }
-    
+
         private void CriaLinhaTabela(Table tblImagens, bool permitirAlterarImagem, string item, PecaItemProjeto peca, ProdutosPedidoEspelho ppe, ProdutosPedido pp, string msgErro)
         {
             TableRow linha = new TableRow();
@@ -372,7 +372,7 @@ namespace Glass.UI.Web.Utils
             {
                 if (peca != null)
                 {
-                    var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int) peca.IdPecaProjMod, true);
+                    var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)peca.IdPecaProjMod, true);
 
                     /* Chamado 24392. */
                     if (flags.Count(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString()) == 0 &&
@@ -394,10 +394,10 @@ namespace Glass.UI.Web.Utils
 
             if (!String.IsNullOrEmpty(item))
                 cabecalho.Text = "Item " + item;
-    
+
             cabecalho.Attributes.Add("item", item);
             cabecalho.Attributes.Add("idPecaItemProj", peca != null ? peca.IdPecaItemProj.ToString() : String.Empty);
-    
+
             if (peca != null)
             {
                 Controls.ctrlLogPopup log = (Controls.ctrlLogPopup)LoadControl("~/Controls/ctrlLogPopup.ascx");
@@ -437,35 +437,50 @@ namespace Glass.UI.Web.Utils
 
                 botoes.Controls.Add(ctrl);
             }
-    
+
             if (permitirAlterarImagem)
             {
-                ImageButton exc = new ImageButton();
-                exc.OnClientClick = "if (!confirm('Deseja excluir a imagem atribuída à peça?')) return false;";
-                exc.ImageUrl = "~/Images/ExcluirGrid.gif";
-                exc.Click += new ImageClickEventHandler(imgExcluir_Click);
-                exc.PreRender += new EventHandler(imgExcluir_PreRender);
-    
-                botoes.Controls.Add(exc);
-    
-                // Se o processo da peça for fixo, não permite anexar imagem
-                if (ppe.IdProcesso == null || ppe.IdProcesso != ProjetoConfig.Caixilho.ProcessoCaixilho)
+                var pedidoExportado = PedidoExportacaoDAO.Instance.GetSituacaoExportacao(null, pp != null ? pp.IdPedido : ppe != null ? ppe.IdPedido : 0) == PedidoExportacao.SituacaoExportacaoEnum.Exportado;
+
+                if (!pedidoExportado)
                 {
-                    FileUpload upl = new FileUpload();
-                    upl.ID = "flu" + (tblImagens.Rows.Count - 1);
-                    upload.Controls.Add(upl);
+                    ImageButton exc = new ImageButton();
+                    exc.OnClientClick = "if (!confirm('Deseja excluir a imagem atribuída à peça?')) return false;";
+                    exc.ImageUrl = "~/Images/ExcluirGrid.gif";
+                    exc.Click += new ImageClickEventHandler(this.imgExcluir_Click);
+                    exc.PreRender += new EventHandler(this.imgExcluir_PreRender);
+
+                    botoes.Controls.Add(exc);
+
+                    // Se o processo da peça for fixo, não permite anexar imagem
+                    if (ppe.IdProcesso == null || ppe.IdProcesso != ProjetoConfig.Caixilho.ProcessoCaixilho)
+                    {
+                        FileUpload upl = new FileUpload();
+                        upl.ID = "flu" + (tblImagens.Rows.Count - 1);
+                        upload.Controls.Add(upl);
+                    }
+                }
+                else
+                {
+                    Label msg = new Label();
+                    msg.Text = "Não é possível alterar imagens de peças de pedidos exportado.";
+                    msg.ForeColor = System.Drawing.Color.Red;
+                    msg.Style.Value = "display: inline-block; text-align: right; position: relative; left: 6px";
+                    botoes.Controls.Add(msg);
                 }
             }
             else
             {
                 if (ppe.IdProcesso == ProjetoConfig.Caixilho.ProcessoCaixilho)
+                {
                     msgErro = "Caixilhos não tem imagens associadas";
-    
+                }
+
                 Label msg = new Label();
                 msg.Text = msgErro;
                 msg.ForeColor = System.Drawing.Color.Red;
                 msg.Style.Value = "display: inline-block; text-align: right; position: relative; left: 6px";
-    
+
                 botoes.Controls.Add(msg);
             }
         }
