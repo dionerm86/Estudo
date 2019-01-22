@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 namespace Glass.API.Backend.Models.ArquivosOtimizacao.V1.Lista
 {
     /// <summary>
-    /// Classe que encapsula um item para a lista de arquivos de otimização.
+    /// Classe que encapsula dados de direção para a lista de arquivos de otimização.
     /// </summary>
     [DataContract(Name = "Lista")]
     public class DirecaoDto : IdDto

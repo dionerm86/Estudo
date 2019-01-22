@@ -2,7 +2,7 @@
     <div>
         <span class="form-group">
             <label>Funcionário</label>
-            <lista-selecao-id-valor v-bind:item-selecionado.sync="funcionarioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroIdFuncionarios"
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="funcionarioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroFuncionarios"
                v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
@@ -21,12 +21,12 @@
         </span>
         <span class="form-group">
             <label>Pedido</label>
-            <input id="id" type="text" v-model.number="filtroAtual.idPedido" style="width: 60px" />
+            <input type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Etiqueta</label>
-            <input id="id" type="text" v-model.number="filtroAtual.numEtiqueta" style="width: 60px" />
+            <input type="text" v-model.number="filtroAtual.numEtiqueta" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>

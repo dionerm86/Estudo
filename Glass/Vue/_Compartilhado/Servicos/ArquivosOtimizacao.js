@@ -30,7 +30,7 @@ Servicos.ArquivosOtimizacao = (function (http) {
     },
 
     /**
-     * Recupera o objeto com as configurações utilizadas na tela de listagem de arquivos de otimização.
+     * Recupera o objeto com as direções associadas a um arquivo de otimização.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterDirecoes: function () {

@@ -45,7 +45,7 @@
      * Retorna os itens para o controle de funcionários.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterItensFiltroIdFuncionarios: function () {
+    obterItensFiltroFuncionarios: function () {
       return Servicos.Funcionarios.obterParaControleArquivosOtimizacao();
     },
 

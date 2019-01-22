@@ -11,20 +11,20 @@ using System.Runtime.Serialization;
 namespace Glass.API.Backend.Models.ArquivosOtimizacao.V1.Lista
 {
     /// <summary>
-    /// Classe que encapsula os dados de permissão para o download do arquivo da lista de arquivos de otimização.
+    /// Classe que encapsula os dados de permissão da lista de arquivos de otimização.
     /// </summary>
     [DataContract(Name = "Permissoes")]
     public class PermissoesDto
     {
         /// <summary>
-        /// Obtém ou define um valor que indica se o download será efetuado.
+        /// Obtém ou define um valor que indica se o download pode ser efetuado.
         /// </summary>
         [DataMember]
         [JsonProperty("exibirLinkDownload")]
         public bool ExibirLinkDownload { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se o download no ECutter será efetuado.
+        /// Obtém ou define um valor que indica se o download no ECutter pode ser efetuado.
         /// </summary>
         [DataMember]
         [JsonProperty("exibirLinkECutter")]

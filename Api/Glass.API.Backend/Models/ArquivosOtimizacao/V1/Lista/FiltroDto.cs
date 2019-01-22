@@ -50,7 +50,7 @@ namespace Glass.API.Backend.Models.ArquivosOtimizacao.V1
         /// Obtém ou define o identificador do pedido.
         /// </summary>
         [JsonProperty("idPedido")]
-        public uint? IdPedido { get; set; }
+        public int? IdPedido { get; set; }
 
         /// <summary>
         /// Obtém ou define o código da etiqueta do arquivo.

@@ -6,7 +6,7 @@ using GDA;
 using Swashbuckle.Swagger.Annotations;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.ArquivoOtimizacao.V1
+namespace Glass.API.Backend.Controllers.ArquivosOtimizacao.V1
 {
     /// <summary>
     /// Controller de arquivos de otimização.

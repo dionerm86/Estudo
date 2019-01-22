@@ -1,5 +1,5 @@
 ﻿<%@ Page Title="Arquivos de Otimização" Language="C#" MasterPageFile="~/Painel.master"
-    AutoEventWireup="true" CodeBehind="ArqOtimiz.aspx.cs" Inherits="Glass.UI.Web.Relatorios.Producao.ArqOtimiz" %>
+    AutoEventWireup="true" CodeBehind="ArqOtimiz.aspx.cs" Inherits="Glass.UI.Web.Relatorios.Producao.ArqOtimiz" EnableViewState ="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <%=
@@ -25,10 +25,10 @@
                 </template>
                 <template slot="item" slot-scope="{ item }">
                     <td style="white-space: nowrap">
-                        <button @click.prevent="obterLinkDownload(item)" title="Download do arquivo" v-if="item.permissoes.exibirLinkDownload">
+                        <button @click.prevent="abrirLinkDownload(item)" title="Download do arquivo" v-if="item.permissoes.exibirLinkDownload">
                             <img src="../../Images/Relatorio.gif" />
                         </button>
-                        <button @click.prevent="obterLinkDownloadECutter(item.id)" title="Download do arquivo" v-if="item.permissoes.exibirLinkECutter">
+                        <button @click.prevent="abrirLinkDownloadECutter(item.id)" title="Download do arquivo" v-if="item.permissoes.exibirLinkECutter">
                             <img src="../../Images/Relatorio.gif" />
                         </button>
                     </td>

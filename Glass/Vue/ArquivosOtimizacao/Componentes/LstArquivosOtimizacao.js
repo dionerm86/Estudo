@@ -1,6 +1,6 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('dataCada', 'desc')],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('ao.dataCad', 'desc')],
 
   data: {
     filtro: {},
@@ -22,13 +22,13 @@
     },
 
     /**
-     * Formatação da data.
-     * @param {Date} data 
+     * Formata a data para ser utlizada no link de download.
+     * @param {Date} data A data que será utilizada.
      */
     formatarData: function (data) {
       var date = data.toISOString();
       date = date.substr(0, 19);
-      date = date.replace('T', ' ');
+      date = date.replace('%20', ' ');
       
       while (date.indexOf(':') > -1) {
         date = date.replace(':', '_');
@@ -42,7 +42,7 @@
     },
 
     /**
-     * Retornar uma string com os filtros selecionados na tela.
+     * Formata os filtros para a utilização no link de download.
      */
     formatarFiltros_: function (caminhoArquivo, nomeArquivo) {
       var filtros = [];
@@ -59,7 +59,7 @@
      * Função que realiza o download do arquivo.
      * @param {string} arquivoOtimizacao O arquivo que o usuário irá receber.
      */
-    obterLinkDownload: function (arquivoOtimizacao) {
+    abrirLinkDownload: function (arquivoOtimizacao) {
       var nomeArquivo = arquivoOtimizacao.funcionario + ' ' + this.formatarData(arquivoOtimizacao.dataCadastro) + arquivoOtimizacao.arquivo.extensao;
       var link = ('../../Handlers/Download.ashx' + this.formatarFiltros_(arquivoOtimizacao.arquivo.caminho, nomeArquivo));
 
@@ -70,7 +70,7 @@
      * Função que realiza o download do arquivo pelo ECutter.
      * @param {string} arquivoOtimizacao O arquivo que o usuário irá receber.
      */
-    obterLinkDownloadECutter: function (idArquivoOtimizacao) {
+    abrirLinkDownloadECutter: function (idArquivoOtimizacao) {
       var link = this.configuracoes.enderecoECutter + idArquivoOtimizacao;
 
       redirectUrl(link);

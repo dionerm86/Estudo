@@ -19,7 +19,7 @@ namespace Glass.API.Backend.Models.ArquivosOtimizacao.V1.Lista
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
         /// </summary>
-        /// <param name="arquivoOtimizacao">O arquivoOtimizacao que será retornado.</param>
+        /// <param name="arquivoOtimizacao">O arquivo de otimização que será retornado.</param>
         public ListaDto(ArquivoOtimizacao arquivoOtimizacao)
         {
             this.Id = (int)arquivoOtimizacao.IdArquivoOtimizacao;
@@ -52,28 +52,28 @@ namespace Glass.API.Backend.Models.ArquivosOtimizacao.V1.Lista
         public DirecaoDto Direcao { get; set; }
 
         /// <summary>
-        /// Obtém ou define o arquivo do arquivo de otimização.
+        /// Obtém ou define os dados do arquivo.
         /// </summary>
         [DataMember]
         [JsonProperty("arquivo")]
         public ArquivoDto Arquivo { get; set; }
 
         /// <summary>
-        /// Obtém ou define o funcionário para a lista de arquivos de otimização.
+        /// Obtém ou define o funcionário.
         /// </summary>
         [DataMember]
         [JsonProperty("funcionario")]
         public string Funcionario { get; set; }
 
         /// <summary>
-        /// Obtém ou define a data de cadastro do funcionário para a lista de arquivo de otimização.
+        /// Obtém ou define a data do cadastro.
         /// </summary>
         [DataMember]
         [JsonProperty("dataCadastro")]
         public DateTime? DataCadastro { get; set; }
 
         /// <summary>
-        /// Obtém ou define permissões para o download na lista de arquivos de otimização.
+        /// Obtém ou define as permissões para a lista de arquivos de otimização.
         /// </summary>
         [DataMember]
         [JsonProperty("permissoes")]

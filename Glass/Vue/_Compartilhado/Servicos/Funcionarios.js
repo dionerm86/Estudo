@@ -279,7 +279,7 @@ Servicos.Funcionarios = (function(http) {
     },
 
     /**
-     * Lista para controle de funcionários para arquivo de otimização.
+     * Busca os funcionários de um tipo específico para a lista de arquivos de otimização.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     obterParaControleArquivosOtimizacao: function () {

@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.ArquivoOtimizacao.V1
+namespace Glass.API.Backend.Controllers.ArquivosOtimizacao.V1
 {
     /// <summary>
     /// Controller de arquivos de otimização.
@@ -56,7 +56,7 @@ namespace Glass.API.Backend.Controllers.ArquivoOtimizacao.V1
                     (uint)(filtro.IdFuncionario ?? 0),
                     filtro.PeriodoCadastroInicio?.ToString(),
                     filtro.PeriodoCadastroFim?.ToString(),
-                    (int)(filtro.Direcao ?? 0),
+                    (int)filtro.Direcao,
                     (uint)(filtro.IdPedido ?? 0),
                     filtro.CodigoEtiqueta,
                     filtro.ObterTraducaoOrdenacao(),
@@ -70,7 +70,7 @@ namespace Glass.API.Backend.Controllers.ArquivoOtimizacao.V1
                         (uint)(filtro.IdFuncionario ?? 0),
                         filtro.PeriodoCadastroInicio?.ToString(),
                         filtro.PeriodoCadastroFim?.ToString(),
-                        (int)(filtro.Direcao ?? 0),
+                        (int)filtro.Direcao,
                         (uint)(filtro.IdPedido ?? 0),
                         filtro.CodigoEtiqueta));
             }
