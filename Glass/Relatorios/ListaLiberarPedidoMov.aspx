@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="ListaLiberarPedidoMov.aspx.cs"
-    Inherits="Glass.UI.Web.Relatorios.ListaLiberarPedidoMov" Title="Movimentações de Liberações de Pedidos" %>
+    Inherits="Glass.UI.Web.Relatorios.ListaLiberarPedidoMov" Title="Movimentações de Liberações de Pedidos" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Contentl" ContentPlaceHolderID="Conteudo" runat="server">
     <%=
@@ -84,7 +84,7 @@
                 </template>
                 <template slot="item" slot-scope="{ item }">
                     <td>{{ item.id }}</td>
-                    <td>{{ item.cliente.nome }}</td>
+                    <td>{{ item.cliente }}</td>
                     <td>{{ item.situacao }}</td>
                     <td>{{ item.total | moeda }}</td>
                     <td>{{ item.desconto | moeda }}</td>

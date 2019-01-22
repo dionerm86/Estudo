@@ -42,7 +42,7 @@
     },
 
     /**
-     * Retorna os itens para o controle de movimentações de liberações.
+     * Retorna os funcionários para o controle do filtro de movimentações de liberações.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroFuncionarios: function () {
@@ -50,7 +50,7 @@
     },
 
     /**
-     * Retorna os itens para o controle de movimentações de liberações.
+     * Retorna as situações para o controle do filtro de movimentações de liberações.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroSituacoes: function () {

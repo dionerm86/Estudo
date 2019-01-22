@@ -33,7 +33,7 @@ namespace Glass.API.Backend.Helper.Liberacoes.Movimentacoes
                     return "IdLiberarPedido";
 
                 case "cliente":
-                    return "Cliente";
+                    return "NomeCliente";
 
                 case "situacao":
                     return "Situacao";

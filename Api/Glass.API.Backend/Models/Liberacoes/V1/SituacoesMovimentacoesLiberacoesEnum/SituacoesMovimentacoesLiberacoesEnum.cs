@@ -1,4 +1,4 @@
-﻿// <copyright file="SituacoesEnum.cs" company="Sync Softwares">
+﻿// <copyright file="SituacoesMovimentacoesLiberacoesEnum.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -9,7 +9,7 @@ namespace Glass.API.Backend.Models.Liberacoes.V1.SituacoesEnum
     /// <summary>
     /// Enumerador com as situações de liberações.
     /// </summary>
-    public enum SituacoesEnum
+    public enum SituacoesMovimentacoesLiberacoesEnum
     {
         /// <summary>
         /// Liberado.

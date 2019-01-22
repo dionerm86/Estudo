@@ -102,7 +102,7 @@ namespace Glass.API.Backend.Controllers.Liberacoes.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var situacoes = new Helper.ConversorEnum<Models.Liberacoes.V1.SituacoesEnum.SituacoesEnum>()
+                var situacoes = new Helper.ConversorEnum<Models.Liberacoes.V1.SituacoesEnum.SituacoesMovimentacoesLiberacoesEnum>()
                     .ObterTraducao();
 
                 return this.Lista(situacoes);

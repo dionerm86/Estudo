@@ -24,16 +24,16 @@
     },
 
     /**
-     * Retornar uma string com os filtros selecionados na tela.
+     * Formata os filtros para utlização na url.
      */
     formatarFiltros_: function () {
       var filtros = [];
 
-      this.incluirFiltroComLista(filtros, 'idCliente', this.filtro.idCliente);
-      this.incluirFiltroComLista(filtros, 'nomeCliente', this.filtro.nomeCliente);
-      this.incluirFiltroComLista(filtros, 'idFuncionario', this.filtro.idFuncionario);
-      this.incluirFiltroComLista(filtros, 'periodoCadastroInicio', this.filtro.periodoCadastroInicio);
-      this.incluirFiltroComLista(filtros, 'periodoCadastroFim', this.filtro.periodoCadastroFim);
+      this.incluirFiltroComLista(filtros, 'idCli', this.filtro.idCliente);
+      this.incluirFiltroComLista(filtros, 'nomeCli', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtros, 'idFunc', this.filtro.idFuncionario);
+      this.incluirFiltroComLista(filtros, 'dataIni', this.filtro.periodoCadastroInicio);
+      this.incluirFiltroComLista(filtros, 'dataFim', this.filtro.periodoCadastroFim);
       this.incluirFiltroComLista(filtros, 'situacao', this.filtro.situacao);
 
       return filtros.length

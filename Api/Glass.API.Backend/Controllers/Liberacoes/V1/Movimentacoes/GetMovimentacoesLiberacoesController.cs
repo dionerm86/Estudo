@@ -39,7 +39,7 @@ namespace Glass.API.Backend.Controllers.Liberacoes.V1.Movimentacoes
                     (uint)(filtro.IdFuncionario ?? 0),
                     filtro.PeriodoCadastroInicio?.ToShortDateString(),
                     filtro.PeriodoCadastroFim?.ToShortDateString(),
-                    (int)(filtro.Situacao ?? 0),
+                    filtro.Situacao ?? 0,
                     filtro.ObterTraducaoOrdenacao(),
                     filtro.ObterPrimeiroRegistroRetornar(),
                     filtro.NumeroRegistros);
@@ -53,7 +53,7 @@ namespace Glass.API.Backend.Controllers.Liberacoes.V1.Movimentacoes
                         (uint)(filtro.IdFuncionario ?? 0),
                         filtro.PeriodoCadastroInicio?.ToShortDateString(),
                         filtro.PeriodoCadastroFim?.ToShortDateString(),
-                        (int)(filtro.Situacao ?? 0)));
+                        filtro.Situacao ?? 0));
             }
         }
     }

@@ -13,7 +13,7 @@ namespace Glass.API.Backend.Models.Liberacoes.V1.Movimentacoes.Lista
     /// Classe que encapsula os dados para a tela de listagem de movimentações de liberações.
     /// </summary>
     [DataContract(Name = "MovimentacaoLiberacao")]
-    public class ListaDto : IdNomeDto
+    public class ListaDto : IdDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
@@ -23,10 +23,7 @@ namespace Glass.API.Backend.Models.Liberacoes.V1.Movimentacoes.Lista
         {
             this.Id = (int)liberarPedidoMov.IdLiberarPedido;
 
-            this.Cliente = new IdNomeDto
-            {
-                Nome = liberarPedidoMov.NomeCliente,
-            };
+            this.Cliente = liberarPedidoMov.NomeCliente;
 
             this.Situacao = liberarPedidoMov.Situacao;
             this.Total = liberarPedidoMov.Total;
@@ -46,11 +43,11 @@ namespace Glass.API.Backend.Models.Liberacoes.V1.Movimentacoes.Lista
         }
 
         /// <summary>
-        /// Obtém ou define o identificador do cliente.
+        /// Obtém ou define o nome do cliente.
         /// </summary>
         [DataMember]
         [JsonProperty("cliente")]
-        public IdNomeDto Cliente { get; set; }
+        public string Cliente { get; set; }
 
         /// <summary>
         /// Obtém ou define a situação da liberação da movimentação do pedido.
@@ -60,21 +57,21 @@ namespace Glass.API.Backend.Models.Liberacoes.V1.Movimentacoes.Lista
         public string Situacao { get; set; }
 
         /// <summary>
-        /// Obtém ou define o total.
+        /// Obtém ou define o valor total para um item da lista.
         /// </summary>
         [DataMember]
         [JsonProperty("total")]
         public decimal Total { get; set; }
 
         /// <summary>
-        /// Obtém ou define o desconto.
+        /// Obtém ou define o desconto para um item da lista.
         /// </summary>
         [DataMember]
         [JsonProperty("desconto")]
         public decimal Desconto { get; set; }
 
         /// <summary>
-        /// Obtém ou define a forma de pagamento.
+        /// Obtém ou define a forma de pagamento para um item da lista.
         /// </summary>
         [DataMember]
         [JsonProperty("formasPagamento")]
