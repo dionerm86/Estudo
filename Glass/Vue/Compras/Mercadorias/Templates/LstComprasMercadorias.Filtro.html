@@ -1,0 +1,22 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Num. Compra</label>
+            <input type="text" v-model="filtroAtual.id" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Num. Pedido</label>
+            <input type="text" v-model="filtroAtual.idPedido" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Fornecedor</label>
+            <input type="number" v-model="filtroAtual.idFornecedor" style="width: 50px"/>
+            <input type="text" v-model="filtroAtual.nomeFornecedor" style="width: 200px"/>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

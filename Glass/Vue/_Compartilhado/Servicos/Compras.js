@@ -76,6 +76,49 @@ Servicos.Compras = (function (http) {
     obterSituacoesParaControle: function () {
       return http().get(API + 'situacoes');
     },
+
+    ComprasMercadorias: {
+    /**
+     * Recupera a lista de compras de mercadorias.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
+     * @param {number} pagina O número da página de resultados a ser exibida.
+     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+     * @param {string} ordenacao A ordenação para o resultado.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+      obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'mercadorias', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+    /**
+     * Realiza a reabertura de uma compra de mercadoria previamente finalizada.
+     * @param {Object} mercadoria A mercadoria que será reaberta.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+      reabrir: function (mercadoria) {
+        if (!mercadoria) {
+          throw new Error('Compra da mercadoria é obrigatória.');
+        }
+
+        return http().post(API + mercadoria + '/reabrir');
+      },
+
+    /**
+     * Realiza o cancelamento de uma compra de mercadoria.
+     * @param {Object} mercadoria A merccadorias que será cancelada.
+     * @param {String} motivo O motivo do cancelamento.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+      cancelar: function (mercadoria, motivo) {
+        if (!mercadoria) {
+          throw new Error('Compra da mercadoria é obrigatória.');
+        }
+
+        return http().delete(API + mercadoria, motivo);
+      },
+    }
   };
 })(function () {
   return Vue.prototype.$http;
