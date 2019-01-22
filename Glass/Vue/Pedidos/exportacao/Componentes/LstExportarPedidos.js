@@ -77,21 +77,25 @@
         this.produtosEmExibicao.push(indice);
       }
     },
-    
+
     /**
-     * Marca todos os pedidos da lista paginada para exportação.
+     * Exporta os pedidos selecionados.
      */
-    marcarTodosOsPedidosParaExportacao: function (event) {
-      if (event.target.checked) {
-        var itens = this.$refs.lista.itens;
-        for (var i = 0; i < itens.length; i++) {
-          this.pedidosExportar.push(itens[i].id);
-        }
-      }
-      else {
-        for (var i = 0; i < this.pedidosExportar.length; i++) {
-          this.pedidosExportar.splice(i, 1);
-        }
+    exportar: function () {
+      this.iniciarExportacao();
+    },
+
+    iniciarExportacao: function () {
+      this.dadosExportacao = {
+        idFornecedor: this.fornecedorAtual.id,
+        pedidos: this.gerarDadosPedidos()
+      };
+    },
+
+    gerarDadosPedidos: function () {
+      var pedidos = {};
+      for (var i = 0; i < this.pedidosExportar.length; i++) {
+        pedidos.idPedido = 
       }
     },
 
@@ -100,6 +104,44 @@
      */
     atualizarLista: function () {
       this.$refs.lista.atualizar(true);
+    }
+  },
+
+  computed: {
+    marcarTodosOsPedidosParaExportacao: {
+      get: function () {
+        return this.$refs.lista && this.$refs.lista.itens != null;
+      },
+      set: function (marcado) {
+        if (this.$refs.lista) {
+          if (marcado) {
+            var itens = this.$refs.lista.itens;
+            for (var i = 0; i < itens.length; i++) {
+              this.pedidosExportar.push(itens[i].id);
+            }
+          } else {
+            this.pedidosExportar = [];
+          }
+        }
+      }
+    },
+
+    marcarTodosOsBeneficiamentosParaExportacao: {
+      get: function () {
+        return this.$refs.lista && this.$refs.lista.itens != null;
+      },
+      set: function (marcado) {
+        if (this.$refs.lista) {
+          if (marcado) {
+            var itens = this.$refs.lista.itens;
+            for (var i = 0; i < itens.length; i++) {
+              this.beneficiamentosExportar.push(itens[i].id);
+            }
+          } else {
+            this.beneficiamentosExportar = [];
+          }
+        }
+      }
     }
   },
 

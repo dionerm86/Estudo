@@ -56,7 +56,7 @@
                         Tipo
                     </th>
                     <th>
-                        <input type="checkbox" />
+                        <input type="checkbox" v-model="marcarTodosOsBeneficiamentosParaExportacao" />
                         Exportar Beneficiamentos (todos)?
                     </th>
                     <th>
@@ -129,7 +129,7 @@
                         {{ item.tipoPedido }}
                     </td>
                     <td>
-                        <input type="checkbox" :value="item.id" v-model="beneficiamentosExportar" :enabled="pedidosExportar.includes(item.id)" />
+                        <input type="checkbox" :value="item.id" v-model="beneficiamentosExportar" />
                         Exportar Beneficiamentos?
                     </td>
                     <td>
@@ -140,7 +140,7 @@
                     <tr>
                         <td></td>
                         <td :colspan="numeroColunasLista() - 1">
-                            <exportacao-pedidos-produtos :filtro="{ idPedido: item.id }"></exportacao-pedidos-produtos>
+                            <exportacao-pedidos-produtos :filtro="{ idPedido: item.id }" :pedidos-marcados-para-exportacao.sync="pedidosExportar"></exportacao-pedidos-produtos>
                         </td>
                     </tr>
                 </template>

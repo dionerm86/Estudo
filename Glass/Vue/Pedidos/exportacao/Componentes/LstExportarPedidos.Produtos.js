@@ -9,12 +9,21 @@
       required: true,
       twoWay: true,
       validator: Mixins.Validacao.validarObjeto
+    },
+
+    /**
+     * Lista de pedidos marcados para exportação na lista de pedidos para exportação.
+     * @type {Object}
+     */
+    pedidosMarcadosParaExportacao: {
+      required: true,
+      twoWay: true,
+      validator: Mixins.Validacao.validarObjeto
     }
   },
 
   data: function () {
     return {
-      exportarTodosOsProdutosDoPedido: false,
       produtosPedidoExportar: []
     };
   },
@@ -35,6 +44,26 @@
       var novoFiltro = this.clonar(this.filtroAtual);
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
+      }
+    }
+  },
+
+  computed: {
+    marcarTodosOsProdutosParaExportacao: {
+      get: function () {
+        return this.pedidosMarcadosParaExportacao.indexOf(this.filtro.idPedido) > -1 || this.$refs.lista && this.$refs.lista.itens != null;
+      },
+      set: function (marcado) {
+        if (this.$refs.lista) {
+          if (marcado) {
+            var itens = this.$refs.lista.itens;
+            for (var i = 0; i < itens.length; i++) {
+              this.produtosPedidoExportar.push(itens[i].id);
+            }
+          } else {
+            this.produtosPedidoExportar = [];
+          }
+        }
       }
     }
   },

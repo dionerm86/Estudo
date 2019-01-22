@@ -11,9 +11,9 @@
             <button class="botaoPesquisar" @click.prevent="filtrar"></button>
         </span>
         <span class="form-group">
-            <label>Num. Pedido</label>
+            <label>Cliente</label>
             <input type="number" v-model="filtroAtual.idCliente" style="width: 50px" />
-            <input type="number" v-model="filtroAtual.id" style="width: 200px" />
+            <input type="text" v-model="filtroAtual.nomeCliente" style="width: 200px" />
             <button class="botaoPesquisar" @click.prevent="filtrar"></button>
         </span>
     </div>
