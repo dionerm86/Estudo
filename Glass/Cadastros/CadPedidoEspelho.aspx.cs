@@ -692,7 +692,7 @@ namespace Glass.UI.Web.Cadastros
                     pe.IdComissionado = ((HiddenField)dtvPedido.FindControl("hdfIdComissionado")) != null ? ((HiddenField)dtvPedido.FindControl("hdfIdComissionado")).Value.StrParaUintNullable() : pedidoEspelho.IdComissionado;
                     pe.PercComissao = ((HiddenField)dtvPedido.FindControl("hdfPercComissao")) != null ? ((HiddenField)dtvPedido.FindControl("hdfPercComissao")).Value.StrParaFloat() : pedidoEspelho.PercComissao;
 
-                    PedidoEspelhoDAO.Instance.UpdateDados(null, pe);
+                    PedidoEspelhoDAO.Instance.UpdateDadosComTransacao(pe);
 
                     dtvPedido.DataBind();
                     grdAmbiente.DataBind();

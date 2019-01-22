@@ -2043,33 +2043,39 @@ namespace Glass.Data.DAL
         /// </summary>
         public void AtualizaPeso(GDASession sessao, uint idPedido)
         {
-            string sql = @"
-                UPDATE produtos_pedido_espelho ppe
-                    LEFT JOIN
-                    (
-                        " + Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedidoEspelho, idPedido, true, true, false) + @"
-                    ) as peso on (ppe.idProdPed=peso.id)
-                    INNER JOIN produto prod ON (ppe.idProd = prod.idProd)
-                    LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd)
-                    LEFT JOIN
-                    (
-                        SELECT pp1.IdProdPedParent, sum(pp1.peso) as peso
-                        FROM produtos_pedido_espelho pp1
-                        GROUP BY pp1.IdProdPedParent
-                    ) as pesoFilhos ON (ppe.IdProdPed = pesoFilhos.IdProdPedParent)
-                SET ppe.peso = coalesce(IF(sgp.TipoSubgrupo IN (" + (int)TipoSubgrupoProd.VidroDuplo + "," + (int)TipoSubgrupoProd.VidroLaminado + @"), pesoFilhos.peso * ppe.Qtde, peso.peso), 0)
-                WHERE ppe.idPedido={0};
+            if (idPedido == 0)
+            {
+                return;
+            }
 
-                update produtos_pedido pp
-                    inner join produtos_pedido_espelho ppe on (pp.idProdPedEsp=ppe.idProdPed)
-                set pp.peso=ppe.peso
-                where pp.idPedido={0};
+            var pedidoPossuiProdutosComposicao = ProdutosPedidoEspelhoDAO.Instance.TemProdutoLamComposicao(sessao, idPedido);
 
-                UPDATE pedido_espelho
-                SET peso = coalesce((SELECT sum(peso) FROM produtos_pedido_espelho WHERE coalesce(IdProdPedParent, 0) = 0 AND idPedido={0} and !coalesce(invisivelFluxo, false)), 0)
-                WHERE idPedido = {0}";
+            if (pedidoPossuiProdutosComposicao)
+            {
+                ProdutosPedidoEspelhoDAO.Instance.AtualizarPesoPedidoComProdutoComposicao(sessao, (int)idPedido);
+            }
+            else
+            {
+                ProdutosPedidoEspelhoDAO.Instance.AtualizarPesoPedidoSemProdutoComposicao(sessao, (int)idPedido);
+            }
 
-            objPersistence.ExecuteCommand(sessao, String.Format(sql, idPedido));
+            var sqlAtualizarPesoProdutosPedidoClone = $@"UPDATE produtos_pedido pp
+                    INNER JOIN produtos_pedido_espelho ppe ON (pp.IdProdPedEsp = ppe.IdProdPed)
+                SET pp.Peso = ppe.Peso
+                WHERE pp.IdPedido = {idPedido};";
+
+            this.objPersistence.ExecuteCommand(sessao, sqlAtualizarPesoProdutosPedidoClone);
+
+            var sqlObterSomaPesoProdutosPedido = $@"SELECT SUM(COALESCE(ppe.Peso, 0)) FROM produtos_pedido_espelho ppe
+                WHERE ppe.IdPedido = {idPedido}
+                    AND (ppe.InvisivelFluxo IS NULL OR ppe.InvisivelFluxo = 0)
+                    AND (ppe.IdProdPedParent IS NULL OR ppe.IdProdPedParent = 0);";
+
+            var pesoPedido = this.ExecuteScalar<decimal>(sessao, sqlObterSomaPesoProdutosPedido);
+
+            var sqlAtualizarPesoPedido = $"UPDATE pedido_espelho pe SET pe.Peso = ?peso WHERE pe.IdPedido = {idPedido};";
+
+            this.objPersistence.ExecuteCommand(sessao, sqlAtualizarPesoPedido, new GDAParameter("?peso", pesoPedido));
         }
 
         #endregion
@@ -3580,6 +3586,28 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Atualiza os dados da tela
+
+        public void UpdateDadosComTransacao(PedidoEspelho objUpdate)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    this.UpdateDados(transaction, objUpdate);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
+        }
 
         public void UpdateDados(GDASession session, PedidoEspelho objUpdate)
         {

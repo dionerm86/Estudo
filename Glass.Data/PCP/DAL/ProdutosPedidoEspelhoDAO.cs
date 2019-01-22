@@ -4549,5 +4549,83 @@ namespace Glass.Data.DAL
         #endregion
 
         #endregion
+
+        /// <summary>
+        /// Verifica se o pedido possui produtos de composição
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <param name="idPedido">idPedido.</param>
+        /// <returns>True: o pedido possui produtos de composição.</returns>
+        public bool TemProdutoLamComposicao(GDASession session, uint idPedido)
+        {
+            var sql = $@"SELECT COUNT(*) > 0
+                FROM produtos_pedido_espelho ppe
+                    INNER JOIN produto p ON (ppe.IdProd = p.IdProd)
+                    INNER JOIN subgrupo_prod sgp ON (p.IdSubgrupoProd = sgp.IdSubgrupoProd)
+                WHERE sgp.TipoSubGrupo IN ({(int)TipoSubgrupoProd.VidroDuplo}, {(int)TipoSubgrupoProd.VidroLaminado})
+                    AND ppe.IdPedido = {idPedido};";
+
+            return this.ExecuteScalar<bool>(session, sql);
+        }
+
+        /// <summary>
+        /// Atualiza o peso dos produtos de um pedido espelho.
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <param name="idPedido">idPedido.</param>
+        public void AtualizarPesoPedidoSemProdutoComposicao(GDASession session, int idPedido)
+        {
+            var sqlAtualizarPesoProdutosPedido = $@"UPDATE produtos_pedido_espelho ppe
+                    LEFT JOIN 
+                    (
+                        {Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedido, (uint)idPedido, false, false, false)}
+                    ) AS peso ON (ppe.IdProdPed = peso.Id)
+                SET ppe.Peso = peso.Peso
+                WHERE ppe.IdPedido = {idPedido}
+                    AND (ppe.InvisivelFluxo IS NULL OR ppe.InvisivelFluxo = 0);";
+
+            this.objPersistence.ExecuteCommand(session, sqlAtualizarPesoProdutosPedido);
+        }
+
+        /// <summary>
+        /// Atualiza o peso dos produtos de um pedido espelho que possua produtos de composição.
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <param name="idPedido">idPedido.</param>
+        public void AtualizarPesoPedidoComProdutoComposicao(GDASession session, int idPedido)
+        {
+            var sqlAtualizarPesoProdutosPedido = string.Empty;
+            var sqlAtualizarPesoProdutosPedidoComposicao = string.Empty;
+
+            sqlAtualizarPesoProdutosPedido = $@"UPDATE produtos_pedido_espelho ppe
+                    LEFT JOIN 
+                    (
+                        {Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedido, (uint)idPedido, false, false, false)}
+                    ) AS peso ON (ppe.IdProdPed = peso.Id)
+                    INNER JOIN produto prod ON (ppe.IdProd = prod.IdProd)
+                    LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
+                SET ppe.Peso = peso.Peso
+                WHERE ppe.IdPedido = {idPedido}
+                    AND (ppe.InvisivelFluxo IS NULL OR ppe.InvisivelFluxo = 0)
+                    AND sgp.TipoSubgrupo NOT IN ({(int)TipoSubgrupoProd.VidroDuplo}, {(int)TipoSubgrupoProd.VidroLaminado});";
+
+            this.objPersistence.ExecuteCommand(session, sqlAtualizarPesoProdutosPedido);
+
+            sqlAtualizarPesoProdutosPedidoComposicao = $@"UPDATE produtos_pedido_espelho ppe
+                    INNER JOIN produto prod ON (ppe.IdProd = prod.IdProd)
+                    LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
+                    LEFT JOIN 
+                    (
+                        SELECT pp1.IdProdPedParent, SUM(pp1.Peso) AS Peso
+                        FROM produtos_pedido_espelho pp1
+                        GROUP BY pp1.IdProdPedParent
+                    ) AS pesoFilhos ON (ppe.IdProdPed = pesoFilhos.IdProdPedParent)
+                SET ppe.Peso = COALESCE(pesoFilhos.Peso * ppe.Qtde, 0)
+                WHERE ppe.IdPedido = {idPedido}
+                    AND (ppe.InvisivelFluxo IS NULL OR ppe.InvisivelFluxo = 0)
+                    AND sgp.TipoSubgrupo IN ({(int)TipoSubgrupoProd.VidroDuplo}, {(int)TipoSubgrupoProd.VidroLaminado});";
+
+            this.objPersistence.ExecuteCommand(session, sqlAtualizarPesoProdutosPedidoComposicao);
+        }
     }
 }
