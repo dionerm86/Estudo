@@ -1,4 +1,4 @@
-<%@ Page Title="Exportar Pedido" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+Ôªø<%@ Page Title="Exportar Pedido" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="LstExportarPedido.aspx.cs" Inherits="Glass.UI.Web.Listas.LstExportarPedido"
     EnableViewState="false" EnableViewStateMac="false" %>
 
@@ -13,10 +13,10 @@
         <exportacao-pedidos-filtros :filtro.sync="filtro"></exportacao-pedidos-filtros>
         <section>
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao"
-                 mensagem-lista-vazia="Nenhum pedido para exportaÁ„o encontrado.">
+                 mensagem-lista-vazia="Nenhum pedido para exporta√ß√£o encontrado.">
                 <template slot="cabecalho">
                     <th>
-                        <input type="checkbox" v-model="marcarTodosOsPedidosParaExportacao" />
+                        <checkbox-todos id-considerar="exportarPedido"></checkbox-todos>
                     </th>
                     <th></th>
                     <th>
@@ -26,7 +26,7 @@
                         Proj.
                     </th>
                     <th>
-                        OrÁa.
+                        Or√ßa.
                     </th>
                     <th>
                         Cliente
@@ -35,7 +35,7 @@
                         Loja
                     </th>
                     <th>
-                        Funcion·rio
+                        Funcion√°rio
                     </th>
                     <th>
                         Total
@@ -50,26 +50,25 @@
                         Entrega
                     </th>
                     <th>
-                        SituaÁ„o
+                        Situa√ß√£o
                     </th>
                     <th>
                         Tipo
                     </th>
                     <th>
-                        <input type="checkbox" v-model="marcarTodosOsBeneficiamentosParaExportacao" />
-                        Exportar Beneficiamentos (todos)?
+                        <checkbox-todos id-considerar="exportarBeneficiamento"></checkbox-todos>
                     </th>
                     <th>
-                        SituaÁ„o ExportaÁ„o
+                        Situa√ß√£o Exporta√ß√£o
                     </th>
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
                     <td>
                         <span>
-                            <input type="checkbox" :value="item.id" v-model="pedidosExportar" />
+                            <input type="checkbox" :id="'exportarPedido' + index" :value="item.id" v-model="pedidosExportar" />
                         </span>
-                        <span v-if="item.permissoes.consultarSituacao">
-                            <button @click.prevent="consultarSituacao(item.id)" title="Consultar situaÁ„o">
+                        <span v-if="item.permissoes && item.permissoes.consultarSituacao">
+                            <button @click.prevent="consultarSituacao(item.id)" title="Consultar situa√ß√£o">
                                 <img border="0" src="../Images/Pesquisar.gif" />
                             </button>
                         </span>
@@ -92,17 +91,15 @@
                         {{ item.id }}
                     </td>
                     <td>
-                        <span v-if="item && item.idProjeto">
-                            {{ item.idProjeto }}
-                        </span>
+                        {{ item.idProjeto }}
                     </td>
                     <td>
-                        <span v-if="item && item.idOrcamento">
-                            {{ item.idOrcamento }}
-                        </span>
+                        {{ item.idOrcamento }}
                     </td>
                     <td>
-                        {{ item.cliente.id }} - {{ item.cliente.nome }}
+                        <template v-if="item.cliente">
+                            {{ item.cliente.id }} - {{ item.cliente.nome }}
+                        </template>
                     </td>
                     <td>
                         {{ item.loja }}
@@ -117,23 +114,31 @@
                         {{ item.tipoVenda }}
                     </td>
                     <td>
-                        {{ item.datas.pedido | data }}
+                        <template v-if="item.datas">
+                            {{ item.datas.pedido | data }}
+                        </template>
                     </td>
                     <td>
-                        {{ item.datas.entrega | data }}
+                        <template v-if="item.datas">
+                            {{ item.datas.entrega | data }}
+                        </template>
                     </td>
                     <td>
-                        {{ item.situacoes.pedido }}
+                        <template v-if="item.situacoes">
+                            {{ item.situacoes.pedido }}
+                        </template>
                     </td>
                     <td>
                         {{ item.tipoPedido }}
                     </td>
                     <td>
-                        <input type="checkbox" :value="item.id" v-model="beneficiamentosExportar" />
-                        Exportar Beneficiamentos?
+                        <input type="checkbox" :id="'exportarBeneficiamento' + index" :value="item.id" v-model="beneficiamentosExportar" />
+                        <label :for="'exportarBeneficiamento' + index">Exportar beneficiamentos</label>
                     </td>
                     <td>
-                        {{ item.situacoes.exportacao }}
+                        <template v-if="item.situacoes">
+                            {{ item.situacoes.exportacao }}
+                        </template>
                     </td>
                 </template>
                 <template slot="novaLinhaItem" slot-scope="{ item, index, classe }" v-if="exibindoProdutos(index)">

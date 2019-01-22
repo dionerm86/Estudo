@@ -48,25 +48,5 @@
     }
   },
 
-  computed: {
-    marcarTodosOsProdutosParaExportacao: {
-      get: function () {
-        return this.pedidosMarcadosParaExportacao.indexOf(this.filtro.idPedido) > -1 || this.$refs.lista && this.$refs.lista.itens != null;
-      },
-      set: function (marcado) {
-        if (this.$refs.lista) {
-          if (marcado) {
-            var itens = this.$refs.lista.itens;
-            for (var i = 0; i < itens.length; i++) {
-              this.produtosPedidoExportar.push(itens[i].id);
-            }
-          } else {
-            this.produtosPedidoExportar = [];
-          }
-        }
-      }
-    }
-  },
-
   template: '#LstExportarPedidos-Produtos-template'
 });

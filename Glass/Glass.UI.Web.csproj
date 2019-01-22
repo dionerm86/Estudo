@@ -1845,6 +1845,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoLargura.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoTotal.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CheckboxTodos.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentos.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentosSetor.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBoleto.js" />
@@ -1985,6 +1986,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoLargura.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoQuantidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoTotal.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CheckboxTodos.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentos.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentosSetor.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBoleto.html" />

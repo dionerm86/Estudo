@@ -95,7 +95,7 @@
     gerarDadosPedidos: function () {
       var pedidos = {};
       for (var i = 0; i < this.pedidosExportar.length; i++) {
-        pedidos.idPedido = 
+        pedidos.idPedido = 0;
       }
     },
 
@@ -104,44 +104,6 @@
      */
     atualizarLista: function () {
       this.$refs.lista.atualizar(true);
-    }
-  },
-
-  computed: {
-    marcarTodosOsPedidosParaExportacao: {
-      get: function () {
-        return this.$refs.lista && this.$refs.lista.itens != null;
-      },
-      set: function (marcado) {
-        if (this.$refs.lista) {
-          if (marcado) {
-            var itens = this.$refs.lista.itens;
-            for (var i = 0; i < itens.length; i++) {
-              this.pedidosExportar.push(itens[i].id);
-            }
-          } else {
-            this.pedidosExportar = [];
-          }
-        }
-      }
-    },
-
-    marcarTodosOsBeneficiamentosParaExportacao: {
-      get: function () {
-        return this.$refs.lista && this.$refs.lista.itens != null;
-      },
-      set: function (marcado) {
-        if (this.$refs.lista) {
-          if (marcado) {
-            var itens = this.$refs.lista.itens;
-            for (var i = 0; i < itens.length; i++) {
-              this.beneficiamentosExportar.push(itens[i].id);
-            }
-          } else {
-            this.beneficiamentosExportar = [];
-          }
-        }
-      }
     }
   },
 
