@@ -1708,20 +1708,20 @@ namespace Glass.Data.DAL
         /// <param name="metodo">Nome do método que efetuou a chamada do marcar saída.</param>
         /// <param name="numEtiqueta">Número da etiqueta utilizada para dar saída na produção.</param>
         /// <param name="saidaConfirmacao">Variável booleana que indica se o método foi chamado através da saída em sistemas de Confirmação.</param>
-        public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta, bool saidaConfirmacao = false)
+        public bool MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta, bool saidaConfirmacao = false)
         {
             if (idProdPed == 0)
             {
-                return;
+                return false;
             }
 
             var idPedido = (int)this.ObtemIdPedido(sessao, idProdPed);
 
             var saidaJaEfetuada = !saidaConfirmacao && PedidoDAO.Instance.VerificaSaidaEstoqueConfirmacao(sessao, idPedido);
 
-            if (saidaJaEfetuada || PedidoDAO.Instance.VerificarPedidoProducaoParaCorte(sessao, idPedido) || !this.ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
+            if (saidaJaEfetuada || PedidoDAO.Instance.VerificarPedidoProducaoParaCorte(sessao, idPedido) || !this.ValidarSaidaProduto(sessao, idProdPed, Math.Abs(qtdSaida), (uint)idPedido))
             {
-                return;
+                return false;
             }
 
             if (!string.IsNullOrWhiteSpace(metodo)
@@ -1743,6 +1743,8 @@ namespace Glass.Data.DAL
 
                 ProdutoSaidaEstoqueDAO.Instance.Insert(sessao, novo);
             }
+
+            return true;
         }
 
         private void InserirLogMovimentacaoProdPed(GDASession sessao, uint idProdPed, float qtdMovimentar, string metodo, string numEtiqueta, int idPedido, bool estorno = false)

@@ -355,7 +355,17 @@ namespace Glass.Data.DAL
                 {
                     if (!this.ChapaPossuiLeitura(sessao, (uint)id))
                     {
-                        MovEstoqueDAO.Instance.CreditaEstoqueChapaCancelamentoImpressaoEtiqueta(sessao, id);
+                        var produtoImpressao = ProdutoImpressaoDAO.Instance.GetElementByPrimaryKey(sessao, id);
+
+                        if (produtoImpressao.IdRetalhoProducao > 0)
+                        {
+                            var retalho = RetalhoProducaoDAO.Instance.GetElementByPrimaryKey(produtoImpressao.IdRetalhoProducao.Value);
+                            MovEstoqueDAO.Instance.CreditaEstoqueRetalho(sessao, retalho.IdProd, retalho, UserInfo.GetUserInfo);
+                        }
+                        else
+                        {
+                            MovEstoqueDAO.Instance.CreditaEstoqueChapaCancelamentoImpressaoEtiqueta(sessao, produtoImpressao);
+                        }
                     }
                 }
             }

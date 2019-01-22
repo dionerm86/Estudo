@@ -684,7 +684,6 @@ namespace Glass.Data.DAL
                         IdProdPed = produtoPedido.IdProdPed,
                         Quantidade = quantidadeBaixa,
                         LancamentoManual = true,
-                        Total = GetTotalProdPed(sessao, (int)produtoPedido.IdProdPed),
                         AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)produtoPedido.IdProd),
                         BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                         AlterarProdutoBase = true,
@@ -1797,9 +1796,9 @@ namespace Glass.Data.DAL
 
             SaidaEstoqueDAO.Instance.MarcaEstorno(sessao, null, (uint)idPedido, null, null);
 
-            foreach (var item in produtosPedido.Where(f => f.QtdMarcadaSaida > 0))
+            foreach (var item in produtosPedido.Where(f => f.QtdSaida > 0))
             {
-                if (item.QtdMarcadaSaida > item.QtdSaida)
+                if (item.QtdSaida > item.Qtde)
                 {
                     throw new InvalidOperationException($"Operação cancelada. O produto {item.DescrProduto} está tendo um estono maior do que a quantidade que já joi dado saída.");
                 }
@@ -1807,9 +1806,9 @@ namespace Glass.Data.DAL
                 var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, false);
                 var quantidadeItem = ProdutosPedidoDAO.Instance.ObtemQtde(sessao, item.IdProdPed);
                 var metroQuadradoItem = ProdutosPedidoDAO.Instance.ObtemTotM(sessao, item.IdProdPed);
-                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, item.QtdMarcadaSaida, quantidadeItem, metroQuadradoItem, item.Altura);
+                var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, 1, quantidadeItem, metroQuadradoItem, item.Altura);
 
-                ProdutosPedidoDAO.Instance.EstornoSaida(sessao, item.IdProdPed, item.QtdMarcadaSaida, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+                ProdutosPedidoDAO.Instance.EstornoSaida(sessao, item.IdProdPed, 1, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
                 new EstoqueStrategyFactory()
                     .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
@@ -1929,7 +1928,7 @@ namespace Glass.Data.DAL
             var saidaEstoque = SaidaEstoqueDAO.Instance.GetByLiberacao(sessao, idLiberarPedido);
             var produtosSaidaEstoque = saidaEstoque != null ? ProdutoSaidaEstoqueDAO.Instance.GetForRpt(sessao, saidaEstoque.IdSaidaEstoque).ToArray() : null;
             var idsProdutoReservaLiberacao = new Dictionary<int, List<int>>();
-
+            
             foreach (var item in produtosLiberarPedido)
             {
                 var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, item.IdPedido);
@@ -1966,30 +1965,33 @@ namespace Glass.Data.DAL
                     continue;
                 }
 
-                var produtoSaidaEstoque = produtosSaidaEstoque.Any()
+                var produtoSaidaEstoque = (produtosSaidaEstoque?.Any() ?? false)
                     ? produtosSaidaEstoque.FirstOrDefault(f => f.IdProdPed == item.IdProdPed)
                     : null;
 
                 var tipoCalculo = (TipoCalculoGrupoProd)GrupoProdDAO.Instance.TipoCalculo(sessao, (int)item.IdProd, false);
                 var quantidadeEntrada = CalcularQuantidadeEstoque(tipoCalculo, produtoSaidaEstoque?.QtdeSaida ?? item.Qtde, item.Qtde, (float)item.TotM2, item.Altura);
 
-                ProdutosPedidoDAO.Instance.MarcarSaida(sessao, item.IdProdPed, -(float)quantidadeEntrada, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+                var marcadaSaida = ProdutosPedidoDAO.Instance.MarcarSaida(sessao, item.IdProdPed, -(float)quantidadeEntrada, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
-                new EstoqueStrategyFactory()
-                    .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
-                    .Creditar(sessao, new MovimentacaoDto
-                    {
-                        IdProduto = item.IdProd,
-                        IdLoja = idLoja,
-                        IdPedido = item.IdPedido,
-                        IdLiberarPedido = idLiberarPedido,
-                        IdProdLiberarPedido = item.IdProdLiberarPedido,
-                        Quantidade = quantidadeEntrada,
-                        Total = GetTotalProdLiberarPedido(sessao, (int)item.IdProdLiberarPedido),
-                        AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
-                        BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
-                        AlterarProdutoBase = true,
-                    });
+                if (marcadaSaida)
+                {
+                    new EstoqueStrategyFactory()
+                        .RecuperaEstrategia(Helper.Estoque.Estrategia.Cenario.Generica)
+                        .Creditar(sessao, new MovimentacaoDto
+                        {
+                            IdProduto = item.IdProd,
+                            IdLoja = idLoja,
+                            IdPedido = item.IdPedido,
+                            IdLiberarPedido = idLiberarPedido,
+                            IdProdLiberarPedido = item.IdProdLiberarPedido,
+                            Quantidade = quantidadeEntrada,
+                            Total = GetTotalProdLiberarPedido(sessao, (int)item.IdProdLiberarPedido),
+                            AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
+                            BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
+                            AlterarProdutoBase = true,
+                        });
+                }
             }
 
             foreach (var idLoja in idsProdutoReservaLiberacao.Keys)
@@ -2481,21 +2483,14 @@ namespace Glass.Data.DAL
                 });
         }
 
-        public void CreditaEstoqueChapaCancelamentoImpressaoEtiqueta(GDASession sessao, int idProdutoImpressaoChapa)
+        public void CreditaEstoqueChapaCancelamentoImpressaoEtiqueta(GDASession sessao, ProdutoImpressao produtoImpressao)
         {
-            if (idProdutoImpressaoChapa == 0)
-            {
-                throw new InvalidOperationException("O produto de impressão de chapa deve ser informado.");
-            }
-
-            var idProduto = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, (uint)idProdutoImpressaoChapa);
+            var idProduto = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, (uint)produtoImpressao.IdProdImpressao);
 
             if (idProduto.GetValueOrDefault() == 0)
             {
                 throw new InvalidOperationException("Produto da chapa não existe.");
             }
-
-            var produtoImpressao = ProdutoImpressaoDAO.Instance.GetElementByPrimaryKey(sessao, idProdutoImpressaoChapa);
 
             if (produtoImpressao.IdProdNf == null || produtoImpressao.IdNf == null)
             {
@@ -2508,7 +2503,7 @@ namespace Glass.Data.DAL
                 {
                     IdProduto = idProduto.Value,
                     IdLoja = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, produtoImpressao.IdNf.Value),
-                    IdProdImpressaoChapa = (uint)idProdutoImpressaoChapa,
+                    IdProdImpressaoChapa = (uint)produtoImpressao.IdProdImpressao,
                     Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)produtoImpressao.IdProdNf.Value),
                 });
         }

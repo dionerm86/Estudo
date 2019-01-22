@@ -2949,8 +2949,8 @@ namespace Glass.Data.DAL
                 /* Chamado 32174. */
                 if (!idsProdImpressao.Any(f => f > 0) && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
-                    ChapaCortePecaDAO.Instance.DeleteByIdsProdImpressaoPeca(sessao, idsProdImpressao);
                     ChapaCortePecaDAO.Instance.EstornarEstoqueChapa(sessao, idsProdImpressao);
+                    ChapaCortePecaDAO.Instance.DeleteByIdsProdImpressaoPeca(sessao, idsProdImpressao);
                 }
 
                 var ids = string.Empty;
