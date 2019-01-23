@@ -4,12 +4,12 @@
 
 using System.ComponentModel;
 
-namespace Glass.API.Backend.Models.Liberacoes.V1.SituacoesEnum
+namespace Glass.API.Backend.Models.Liberacoes.V1.SituacoesLiberacoesEnum
 {
     /// <summary>
     /// Enumerador com as situações de liberações.
     /// </summary>
-    public enum SituacoesMovimentacoesLiberacoesEnum
+    public enum SituacoesLiberacoesEnum
     {
         /// <summary>
         /// Liberado.

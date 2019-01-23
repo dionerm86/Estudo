@@ -424,5 +424,28 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
                 }
             }
         }
+
+        /// <summary>
+        /// Recupera os funcionários.
+        /// </summary>
+        /// <returns>Uma lista JSON com os funcionários.</returns>
+        [HttpGet]
+        [Route("funcLiberacoes")]
+        [SwaggerResponse(200, "Funcionários encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Funcionários não encontrados.")]
+        public IHttpActionResult ObterFuncionarios()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var funcionarios = FuncionarioDAO.Instance.GetFinanceiros()
+                    .Select(f => new IdNomeDto
+                    {
+                        Id = f.IdFunc,
+                        Nome = f.Nome,
+                    });
+
+                return this.Lista(funcionarios);
+            }
+        }
     }
 }

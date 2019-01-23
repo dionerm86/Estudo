@@ -46,7 +46,7 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroFuncionarios: function () {
-      return Servicos.Liberacoes.obterFuncionarios();
+        return Servicos.Funcionarios.obterFuncionariosLiberacoes();
     },
 
     /**
@@ -54,7 +54,7 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroSituacoes: function () {
-      return Servicos.Liberacoes.obterSituacoes();
+        return Servicos.Liberacoes.obterSituacoes();
     }
   },
 

@@ -102,33 +102,10 @@ namespace Glass.API.Backend.Controllers.Liberacoes.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var situacoes = new Helper.ConversorEnum<Models.Liberacoes.V1.SituacoesEnum.SituacoesMovimentacoesLiberacoesEnum>()
+                var situacoes = new Helper.ConversorEnum<Models.Liberacoes.V1.SituacoesLiberacoesEnum.SituacoesLiberacoesEnum>()
                     .ObterTraducao();
 
                 return this.Lista(situacoes);
-            }
-        }
-
-        /// <summary>
-        /// Recupera os funcionários.
-        /// </summary>
-        /// <returns>Uma lista JSON com os funcionários.</returns>
-        [HttpGet]
-        [Route("funcionarios")]
-        [SwaggerResponse(200, "Funcionários encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Funcionários não encontrados.")]
-        public IHttpActionResult ObterFuncionarios()
-        {
-            using (var sessao = new GDATransaction())
-            {
-                var funcionarios = FuncionarioDAO.Instance.GetOrdered()
-                    .Select(f => new IdNomeDto
-                    {
-                        Id = f.IdFunc,
-                        Nome = f.Nome,
-                    });
-
-                return this.Lista(funcionarios);
             }
         }
     }

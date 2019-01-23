@@ -261,6 +261,14 @@ Servicos.Funcionarios = (function(http) {
     },
 
     /**
+     * Recupera o objeto com os funcionários utilizados na tela de listagem de liberações.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterFuncionariosLiberacoes: function () {
+        return http().get(API + 'funcLiberacoes');
+    },
+
+    /**
      * Altera os dados de um pedido.
      * @param {!number} idPedido O identificador do pedido que será usado para busca do produto.
      * @param {!Object} pedido O objeto com os dados do pedido a serem alterados.

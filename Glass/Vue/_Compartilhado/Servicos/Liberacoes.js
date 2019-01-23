@@ -48,15 +48,7 @@ Servicos.Liberacoes = (function (http) {
      */
     obterSituacoes: function () {
       return http().get(API + 'situacoes');
-    },
-
-    /**
-     * Recupera o objeto com os funcionários utilizados na tela de listagem de liberações.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-    obterFuncionarios: function () {
-      return http().get(API + 'funcionarios');
-    },
+    },    
 
     /*
      *Objeto com os serviços para a API de movimentações de liberações.
@@ -71,7 +63,7 @@ Servicos.Liberacoes = (function (http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
       obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-        return http().get(API + 'movimentacoes', {
+          return http().get(API + 'movimentacoes', {
           params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       }
