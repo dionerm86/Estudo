@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.MovimentacaoChapa.Lista
+namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Lista
 {
     /// <summary>
     /// Classe que encapsula os dados de um item para a tela de extrato de movimentação de chapa.
@@ -38,26 +38,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Movimentacao
             this.MetroQuadradoLido = movimentacaoChapa.M2Lido;
             this.Sobra = movimentacaoChapa.Sobra;
 
-            var movimentacoesChapasDetalhadas = new List<ExtratoDto>();
-            for (int i = 0; i < movimentacaoChapa.Chapas.Count; i++)
-            {
-                movimentacoesChapasDetalhadas.Add(new ExtratoDto
-                {
-                    DataLeitura = movimentacaoChapa.Chapas[i].DataLeitura,
-                    CodigoEtiquetaChapa = movimentacaoChapa.Chapas[i].NumEtiqueta,
-                    Produto = movimentacaoChapa.Chapas[i].DescricaoProd,
-                    MetroQuadrado = new MetroQuadradoDto
-                    {
-                        Utilizado = movimentacaoChapa.Chapas[i].M2Utilizado,
-                        Lido = movimentacaoChapa.Chapas[i].M2Lido,
-                        Sobra = movimentacaoChapa.Chapas[i].Sobra,
-                        PlanosCorteVinculados = movimentacaoChapa.Chapas[i].PlanosCorte,
-                        CodigosEtiquetasVinculadas = movimentacaoChapa.Chapas[i].Etiquetas,
-                    },
-
-                    CorLinha = this.ObterCorLinha(movimentacaoChapa.Chapas[i]),
-                });
-            }
+            var movimentacoesChapasDetalhadas = this.GerarDadosExtrato(movimentacaoChapa.Chapas);
 
             this.Extrato = movimentacoesChapasDetalhadas;
         }
@@ -77,7 +58,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Movimentacao
         public decimal? Espessura { get; set; }
 
         /// <summary>
-        /// Obtém ou define os dados referêntes as quantidades.
+        /// Obtém ou define os dados referentes as quantidades.
         /// </summary>
         [DataMember]
         [JsonProperty("quantidades")]
@@ -98,11 +79,38 @@ namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Movimentacao
         public decimal? Sobra { get; set; }
 
         /// <summary>
-        /// Obtém ou define os dados referêntes ao extrato de movimentação.
+        /// Obtém ou define os dados referentes ao extrato de movimentação.
         /// </summary>
         [DataMember]
         [JsonProperty("extrato")]
         public IEnumerable<ExtratoDto> Extrato { get; set; }
+
+        private IEnumerable<ExtratoDto> GerarDadosExtrato(List<MovChapaDetalhe> chapas)
+        {
+            var movimentacoesChapasDetalhadas = new List<ExtratoDto>();
+
+            foreach (var chapa in chapas)
+            {
+                movimentacoesChapasDetalhadas.Add(new ExtratoDto
+                {
+                    DataLeitura = chapa.DataLeitura,
+                    CodigoEtiquetaChapa = chapa.NumEtiqueta,
+                    Produto = chapa.DescricaoProd,
+                    MetroQuadrado = new MetroQuadradoDto
+                    {
+                        Utilizado = chapa.M2Utilizado,
+                        Lido = chapa.M2Lido,
+                        Sobra = chapa.Sobra,
+                    },
+
+                    PlanosCorteVinculados = chapa.PlanosCorte,
+                    CodigosEtiquetasVinculadas = chapa.Etiquetas,
+                    CorLinha = this.ObterCorLinha(chapa),
+                });
+            }
+
+            return movimentacoesChapasDetalhadas;
+        }
 
         private string ObterCorLinha(MovChapaDetalhe movimentacaoChapaDetalhe)
         {

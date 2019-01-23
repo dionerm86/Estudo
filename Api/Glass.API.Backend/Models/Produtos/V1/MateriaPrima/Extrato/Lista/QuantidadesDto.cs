@@ -5,7 +5,7 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.MovimentacaoChapa.Lista
+namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Lista
 {
     /// <summary>
     /// Classe que encapsula os dados das quantidades para um item da lista de extrato de movimentações de chapa.

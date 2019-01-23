@@ -2,13 +2,13 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Helper.Produtos.MateriaPrima.Extrato.MovimentacaoChapa;
+using Glass.API.Backend.Helper.Produtos.MateriaPrima.Extrato;
 using Glass.API.Backend.Models.Genericas.V1;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.MovimentacaoChapa.Lista
+namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Lista
 {
     /// <summary>
     /// Classe com os itens para o filtro da lista extrato de movimentações de chapa.

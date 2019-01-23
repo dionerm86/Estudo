@@ -6,7 +6,7 @@ using Glass.API.Backend.Models.Genericas.V1;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.MovimentacaoChapa.Lista
+namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Lista
 {
     /// <summary>
     /// Classe que encapsula os dados de uma cor de vidro para um item da listagem de movimentações de chapa.

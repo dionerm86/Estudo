@@ -44,6 +44,7 @@
 
     /**
      * Alterna a exibição das movimentações.
+     * @param {!number} o indice do item que tera a exibição das movimentações alternada.
      */
     alternarExibicaoMovimentacoes: function (indice) {
       var i = this.movimentacoesEmExibicao.indexOf(indice);
@@ -64,6 +65,7 @@
 
     /**
      * Retorna uma string com os filtros selecionados na tela
+     * @returns {string} uma string contendo os parâmetros utilizados na geração do relatório.
      */
     formatarFiltros_: function () {
       var filtros = [];

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.MovimentacaoChapa.Lista
+namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Lista
 {
     /// <summary>
     /// Classe que encapsula os dados referentes ao metro quadrado para um item da lista de movimentações do extrato de movimentações de chapa.
@@ -34,19 +34,5 @@ namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Movimentacao
         [DataMember]
         [JsonProperty("sobra")]
         public decimal? Sobra { get; set; }
-
-        /// <summary>
-        /// Obtém ou define os planos de corte vinculados a movimentação.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("planosCorteVinculados")]
-        public string PlanosCorteVinculados { get; set; }
-
-        /// <summary>
-        /// Obtém ou define os códigos de etiquetas vinculadas a movimentção.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("codigosEtiquetasVinculadas")]
-        public string CodigosEtiquetasVinculadas { get; set; }
     }
 }

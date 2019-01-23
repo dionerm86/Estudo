@@ -2,7 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-namespace Glass.API.Backend.Helper.Produtos.MateriaPrima.Extrato.MovimentacaoChapa
+namespace Glass.API.Backend.Helper.Produtos.MateriaPrima.Extrato
 {
     /// <summary>
     /// Classe que realiza a tradução dos campos de ordenação para a lista extrato de movimentação de chapa.

@@ -244,7 +244,7 @@
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\ConverterCadastroAtualizacaoParaContasPagas.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\TraducaoOrdenacaoListaContasPagas.cs" />
-    <Compile Include="Helper\Produtos\MateriaPrima\Extrato\MovimentacaoChapa\TraducaoOrdenacaoExtratoMovimentacoesChapa.cs" />
+    <Compile Include="Helper\Produtos\MateriaPrima\Extrato\TraducaoOrdenacaoExtratoMovimentacoesChapa.cs" />
     <Compile Include="Helper\Produtos\PrecosTabelaCliente\TraducaoOrdenacaoListaPrecoTabelaCliente.cs" />
     <Compile Include="Helper\Produtos\ChapasVidro\Perdas\TraducaoOrdenacaoListaPerdasChapasVidro.cs" />
     <Compile Include="Helper\Producao\Retalhos\TraducaoOrdenacaoListaRetalhosProducao.cs" />
@@ -892,12 +892,12 @@
     <Compile Include="Models\Producao\V1\Setores\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Roteiros\Lista\ListaDto.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\MovimentacaoChapa\Lista\CorVidroDto.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\MovimentacaoChapa\Lista\ExtratoDto.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\MovimentacaoChapa\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\MovimentacaoChapa\Lista\ListaDto.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\MovimentacaoChapa\Lista\MetroQuadradoDto.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\MovimentacaoChapa\Lista\QuantidadesDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\Lista\CorVidroDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\Lista\ExtratoDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\Lista\MetroQuadradoDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\Extrato\Lista\QuantidadesDto.cs" />
     <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\ListaDto.cs" />
