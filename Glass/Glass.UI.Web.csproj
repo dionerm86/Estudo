@@ -502,6 +502,9 @@
     <Content Include="Vue\ContasPagar\Pagas\Templates\ListaContasPagas.Filtro.html" />
     <Content Include="Vue\ContasPagar\Templates\ListaContasPagar.Filtro.html" />
     <Content Include="Vue\ConhecimentosTransporte\Veiculos\Proprietarios\Componentes\ListaProprietariosVeiculo.js" />
+    <Content Include="Vue\DevolucoesPagamento\Componentes\LstDevolucoesPagamento.Filtro.js" />
+    <Content Include="Vue\DevolucoesPagamento\Componentes\LstDevolucoesPagamento.js" />
+    <Content Include="Vue\DevolucoesPagamento\Templates\LstDevolucoesPagamento.Filtro.html" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.Filtro.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Templates\LstTrocaDevolucao.Filtro.html" />
@@ -1901,6 +1904,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Compras.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ContasPagar.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ConhecimentosTransporte.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\DevolucoesPagamento.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Exportacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ImpressoesEtiquetas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Pagamentos.js" />
