@@ -2025,10 +2025,18 @@ namespace Glass.Data.DAL
             if (Geral.ManterDescontoAdministrador)
                 idFunc = ObtemIdFuncDesc(idPedido).GetValueOrDefault(idFunc);
 
+            var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(null, idPedido);
+            var idParcela = (int?)PedidoDAO.Instance.ObtemIdParcela(null, idPedido);
+            var descontoMaximoPedido = PedidoConfig.Desconto.GetDescontoMaximoPedido(
+                null,
+                idFunc,
+                tipoVenda,
+                idParcela);
+
             string sql = "Select Count(*) from pedido_espelho p Where idPedido=" + idPedido + @" And (
-                (tipoDesconto=1 And desconto<=" + PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido)).ToString().Replace(",", ".") + @") Or
+                (tipoDesconto=1 And desconto<=" + descontoMaximoPedido.ToString().Replace(",", ".") + @") Or
                 (tipoDesconto=2 And round(desconto/(total+" + somaDesconto + (!PedidoConfig.RatearDescontoProdutos ? "+desconto" : "") + "),2)<=(" +
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido)).ToString().Replace(",", ".") + @"/100))
+                descontoMaximoPedido.ToString().Replace(",", ".") + @"/100))
             )";
 
             return ExecuteScalar<int>(sql) > 0;

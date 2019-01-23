@@ -416,13 +416,17 @@ namespace Glass.Data.DAL
             else
                 percDescAmbiente = (ambientePedido.Desconto / totalBrutoAmbiente) * 100;
 
-            var descontoMaximoPedido = Conversoes.StrParaDecimal(PedidoConfig.Desconto.GetDescontoMaximoPedido(UserInfo.GetUserInfo.CodUser,
-                tipoVenda, (int?)PedidoDAO.Instance.ObtemIdParcela(null, ambientePedido.IdPedido)).ToString());
+            var idParcela = (int?)PedidoDAO.Instance.ObtemIdParcela(sessao, ambientePedido.IdPedido);
+            var descontoMaximoPedido = (decimal)PedidoConfig.Desconto.GetDescontoMaximoPedido(
+                sessao,
+                UserInfo.GetUserInfo.CodUser,
+                tipoVenda,
+                idParcela);
 
-            // Verifica se o desconto lançado é maior que o máximo configurado no pedido
+            // Verifica se o desconto lançado é maior que o máximo configurado no pedido.
             if (percDescAmbiente > descontoMaximoPedido)
             {
-                msg = "Não é permitido lançar desconto maior que " + descontoMaximoPedido + "% no pedido.";
+                msg = $"Não é permitido lançar desconto maior que {descontoMaximoPedido}% no pedido.";
                 return false;
             }
 

@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Web.UI;
@@ -25,7 +25,7 @@ namespace Glass.UI.Web.Utils
             if (PedidoDAO.Instance.IsPedidoReposicao(Request["idPedido"]) &&
                 !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao))
             {
-                Page.ClientScript.RegisterClientScriptBlock(GetType(), "fechar", "alert('VocÍ n„o tem permiss„o para editar pedidos de ReposiÁ„o');closeWindow();\n", true);
+                Page.ClientScript.RegisterClientScriptBlock(GetType(), "fechar", "alert('Voc√™ n√£o tem permiss√£o para editar pedidos de Reposi√ß√£o');closeWindow();\n", true);
                 principal.Visible = false;
                 return;
             }
@@ -33,7 +33,7 @@ namespace Glass.UI.Web.Utils
             if (PedidoDAO.Instance.IsPedidoGarantia(Request["idPedido"]) &&
                 !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia))
             {
-                Page.ClientScript.RegisterClientScriptBlock(GetType(), "fechar", "alert('VocÍ n„o tem permiss„o para editar pedidos de Garantia');closeWindow();\n", true);
+                Page.ClientScript.RegisterClientScriptBlock(GetType(), "fechar", "alert('Voc√™ n√£o tem permiss√£o para editar pedidos de Garantia');closeWindow();\n", true);
                 principal.Visible = false;
                 return;
             }
@@ -42,7 +42,7 @@ namespace Glass.UI.Web.Utils
             {
                 dtvPedido.Visible = false;
                 dtvPedidoConf.Visible = true;
-                Page.Title = "AlteraÁ„o dos produtos do pedido";
+                Page.Title = "Altera√ß√£o dos produtos do pedido";
             }
     
             Ajax.Utility.RegisterTypeForAjax(typeof(DescontoPedido));
@@ -91,12 +91,12 @@ namespace Glass.UI.Web.Utils
     
         protected void DataEntrega_Load(object sender, EventArgs e)
         {
-            // Se as etiquetas do pedido j· estiverem impressas, n„o permite alterar a data de entrega
+            // Se as etiquetas do pedido j√° estiverem impressas, n√£o permite alterar a data de entrega
             //((WebControl)sender).Visible = !PedidoEspelhoDAO.Instance.IsPedidoImpresso(Glass.Conversoes.StrParaUint(Request["IdPedido"]));
 
             var pedidoTemOC = PedidoOrdemCargaDAO.Instance.PedidoTemOC(null, Request["IdPedido"].StrParaUint());
 
-            //Se o pedido ja tiver OC gerada n„o permite alterar a data de entrega
+            //Se o pedido ja tiver OC gerada n√£o permite alterar a data de entrega
             if (sender is Controls.ctrlData)
                 ((Controls.ctrlData)sender).Enabled = !pedidoTemOC;
             else
@@ -164,7 +164,7 @@ namespace Glass.UI.Web.Utils
                         {
                             var idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(idProdPed);
                             if (idProdPedEsp.GetValueOrDefault(0) == 0)
-                                MensagemAlerta.ShowMsg("N„o foi possÌvel remover o produto do PCP. Produto n„o encontrado.", Page);
+                                MensagemAlerta.ShowMsg("N√£o foi poss√≠vel remover o produto do PCP. Produto n√£o encontrado.", Page);
                         }
     
                         dtvPedido.DataBind();
@@ -198,7 +198,7 @@ namespace Glass.UI.Web.Utils
                         {
                             uint? idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(idProdPed);
                             if (idProdPedEsp.GetValueOrDefault(0) == 0)
-                                Glass.MensagemAlerta.ShowMsg("N„o foi possÌvel restaurar o produto no PCP. Produto n„o encontrado.", Page);
+                                Glass.MensagemAlerta.ShowMsg("N√£o foi poss√≠vel restaurar o produto no PCP. Produto n√£o encontrado.", Page);
                         }
     
                         dtvPedido.DataBind();
@@ -222,7 +222,7 @@ namespace Glass.UI.Web.Utils
                 window.opener.atualizarPagina();", true);
         }
     
-        #region MÈtodos Ajax
+        #region M√©todos Ajax
     
         [Ajax.AjaxMethod]
         public string LoadAjax(string tipo, string idClienteStr, string tipoVendaStr)
@@ -296,7 +296,7 @@ namespace Glass.UI.Web.Utils
             pedido.IdParcela = idPedido.StrParaUint();
 
             return isAdministrador && !PedidoDAO.Instance.DescontoPermitido(null, pedido) ?
-                $"1|O funcion·rio {FuncionarioDAO.Instance.GetNome(idFuncDesc)} aplicou um desconto maior do que o desconto m·ximo configurado para esta alteraÁ„o." +
+                $"1|O funcion√°rio {FuncionarioDAO.Instance.GetNome(idFuncDesc)} aplicou um desconto maior do que o desconto m√°ximo configurado para esta altera√ß√£o." +
                 " Tem certeza que deseja alterar o pedido?" : "0|Deseja atualizar os dados do pedido?";
         }
 
@@ -306,10 +306,25 @@ namespace Glass.UI.Web.Utils
             var idPedido = idPedidoStr.StrParaUint();
             var idFuncAtual = idFuncAtualStr.StrParaUint();
             var idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(null, idPedido).GetValueOrDefault() : 0;
+            var idFuncVerificarDescontoMaximo = 0;
 
-            return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), idParcela.StrParaInt()) :
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), idParcela.StrParaInt())).ToString().Replace(",", ".");
+            if (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true")
+            {
+                idFuncVerificarDescontoMaximo = (int)idFuncAtual;
+            }
+            else
+            {
+                idFuncVerificarDescontoMaximo = (int)idFuncDesc;
+            }
+
+            var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(null, idPedido);
+            var descontoMaximoPedido = PedidoConfig.Desconto.GetDescontoMaximoPedido(
+                null,
+                (uint)idFuncVerificarDescontoMaximo,
+                tipoVenda,
+                idParcela.StrParaIntNullable());
+
+            return descontoMaximoPedido.ToString().Replace(",", ".");
         }
 
         [Ajax.AjaxMethod()]
@@ -469,19 +484,19 @@ namespace Glass.UI.Web.Utils
         }
     
         /// <summary>
-        /// Gera o script para esconder os campos desnecess·rios para a tela,
-        /// de acordo com o pedido que est· sendo editado.
+        /// Gera o script para esconder os campos desnecess√°rios para a tela,
+        /// de acordo com o pedido que est√° sendo editado.
         /// </summary>
         /// <returns></returns>
         protected string ScriptEsconderDadosPedido()
         {
             var script = string.Empty;
     
-            // Bsuca o desconto m·ximo do pedido de acordo com o vendedor
+            // Bsuca o desconto m√°ximo do pedido de acordo com o vendedor
             var desconto = ProdutosPedidoDAO.Instance.
                 GetDescontoMaximoPedidoVendedor(Request["idPedido"].StrParaUint());
     
-            // Se a empresa for confirmaÁ„o, ser· usado o DetailsView dtvPedidoConf
+            // Se a empresa for confirma√ß√£o, ser√° usado o DetailsView dtvPedidoConf
             if (!PedidoConfig.LiberarPedido)
             {
                 // Exibe os dados do desconto caso a empresa trabalhe com o desconto
@@ -503,7 +518,7 @@ namespace Glass.UI.Web.Utils
                 }
                 else
                 {
-                    // Define as linhas que continuar„o a ser exibidas
+                    // Define as linhas que continuar√£o a ser exibidas
                     var linhasExibir = new List<int>(new [] { 4, 5 });
     
                     // Esconde todas as outras linhas
@@ -514,19 +529,19 @@ namespace Glass.UI.Web.Utils
                 }
             }
     
-            // Caso a empresa seja de liberaÁ„o, mas o funcion·rio n„o seja administrador ou n„o tenha
-            // permiss„o para alteraÁ„o dos dados do pedido (ou seja, sÛ tem permiss„o para alteraÁ„o
+            // Caso a empresa seja de libera√ß√£o, mas o funcion√°rio n√£o seja administrador ou n√£o tenha
+            // permiss√£o para altera√ß√£o dos dados do pedido (ou seja, s√≥ tem permiss√£o para altera√ß√£o
             // do desconto se a empresa trabalhar com o desconto para 1 produto apenas)
             else if (!UserInfo.GetUserInfo.IsAdministrador && !Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarPedidoConfirmadoListaPedidos))
             {
-                // Esconde o controle de remoÁ„o/restauraÁ„o dos produtos do pedido
+                // Esconde o controle de remo√ß√£o/restaura√ß√£o dos produtos do pedido
                 produtosPedido.Visible = false;
     
                 // Permite que apenas a data de entrega seja modificada
                 if (!Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarPedidoCofirmadoListaPedidosVendedor) &&
                     Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarDataEntregaPedidoListaPedidos))
                 {
-                    // Define as linhas que ser„o exibidas (Data de entrega)
+                    // Define as linhas que ser√£o exibidas (Data de entrega)
                     var linhasExibir = new List<int>(new [] { 11 });
     
                     // Esconde todas as outras linhas
@@ -535,20 +550,20 @@ namespace Glass.UI.Web.Utils
                         if (!linhasExibir.Contains(i))
                             script += "document.getElementById('alterarPedido').rows[" + i + "].style.display='none';\n";
                 }
-                // Este if est· de acordo com o cÛdigo de atualizaÁ„o de valores ns PedidoDAO, mÈtodo UpdateDesconto(),
-                // caso este if seja alterado ser· necess·rio alterar o cÛdigo neste mÈtodo para definir quais campos ser„o atualizados
+                // Este if est√° de acordo com o c√≥digo de atualiza√ß√£o de valores ns PedidoDAO, m√©todo UpdateDesconto(),
+                // caso este if seja alterado ser√° necess√°rio alterar o c√≥digo neste m√©todo para definir quais campos ser√£o atualizados
                 else if (UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.Vendedor ||
                     Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarPedidoCofirmadoListaPedidosVendedor))
                 {
-                    // Define as linhas que ser„o exibidas
+                    // Define as linhas que ser√£o exibidas
                     var linhasExibir = new List<int>(new [] { 2, 3, 4, 10, 11, 12, 14 });
 
-                    // Se a config "Alterar Dados B·sicos do Pedido na Lista de Pedidos ApÛs Confirmado" estiver habilitada, exibe a Obs da LiberaÁ„o.
+                    // Se a config "Alterar Dados B√°sicos do Pedido na Lista de Pedidos Ap√≥s Confirmado" estiver habilitada, exibe a Obs da Libera√ß√£o.
                     if (Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarPedidoCofirmadoListaPedidosVendedor))
                         linhasExibir.Add(16);
     
-                    // TambÈm exibe as linhas de desconto para 1 produto se o vendedor tiver permiss„o
-                    // para alteraÁ„o do desconto e se o pedido permitir
+                    // Tamb√©m exibe as linhas de desconto para 1 produto se o vendedor tiver permiss√£o
+                    // para altera√ß√£o do desconto e se o pedido permitir
                     if (PedidoConfig.DescontoPedidoVendedorUmProduto && UserInfo.GetUserInfo.TipoUsuario == (uint)Data.Helper.Utils.TipoFuncionario.Vendedor &&
                         Config.PossuiPermissao(Config.FuncaoMenuPedido.AlterarPedidoCofirmadoListaPedidosVendedor) &&
                         ProdutosPedidoDAO.Instance.PodeAplicarDescontoVendedor(Request["idPedido"].StrParaUint()))
@@ -603,7 +618,7 @@ namespace Glass.UI.Web.Utils
             }
             else
             {
-                // Esconde o controle de remoÁ„o/restauraÁ„o dos produtos do pedido
+                // Esconde o controle de remo√ß√£o/restaura√ß√£o dos produtos do pedido
                 produtosPedido.Visible = false;
 
                 // Esconde as linhas de desconto para 1 produto
@@ -620,7 +635,7 @@ namespace Glass.UI.Web.Utils
             var idPedido = Request["idPedido"].StrParaUint();
             var idFunc = PedidoDAO.Instance.ObtemIdFunc(null, idPedido);
     
-            // Se o funcion·rio deste pedido estiver inativo, inclui o mesmo na listagem para n„o ocorrer erro
+            // Se o funcion√°rio deste pedido estiver inativo, inclui o mesmo na listagem para n√£o ocorrer erro
             if (FuncionarioDAO.Instance.GetVendedores().All(f => f.IdFunc != idFunc))
             {
                 string nomeFunc = FuncionarioDAO.Instance.GetNome(idFunc);
@@ -630,13 +645,13 @@ namespace Glass.UI.Web.Utils
     
         protected void lblObsLiberacao_Load(object sender, EventArgs e)
         {
-            // A observaÁ„o de liberaÁ„o sÛ ficar· visÌvel se a empresa trabalhar com liberaÁ„o de pedidos
+            // A observa√ß√£o de libera√ß√£o s√≥ ficar√° vis√≠vel se a empresa trabalhar com libera√ß√£o de pedidos
             ((WebControl)sender).Visible = PedidoConfig.LiberarPedido;
         }
     
         protected void txtObsLiberacao_Load(object sender, EventArgs e)
         {
-            // A observaÁ„o de liberaÁ„o sÛ ficar· visÌvel se a empresa trabalhar com liberaÁ„o de pedidos
+            // A observa√ß√£o de libera√ß√£o s√≥ ficar√° vis√≠vel se a empresa trabalhar com libera√ß√£o de pedidos
             ((WebControl)sender).Visible = PedidoConfig.LiberarPedido;
         }
     
@@ -655,7 +670,7 @@ namespace Glass.UI.Web.Utils
 
             var situacaoPedidoRevenda = PedidoDAO.Instance.ObtemSituacao(null, (uint)(PedidoDAO.Instance.ObterIdPedidoRevenda(null, (int)idPedido)).Value);
 
-            //se o pedido for de produÁ„o e o pedido de revenda estiver liberado, bloqueia o drop de alterar tipo entrega
+            //se o pedido for de produ√ß√£o e o pedido de revenda estiver liberado, bloqueia o drop de alterar tipo entrega
             if (isPedidoProducao && (situacaoPedidoRevenda == Data.Model.Pedido.SituacaoPedido.Confirmado || situacaoPedidoRevenda == Data.Model.Pedido.SituacaoPedido.LiberadoParcialmente))
             {
                 ((WebControl)sender).Enabled = false;
@@ -670,7 +685,7 @@ namespace Glass.UI.Web.Utils
 
         protected void drpLoja_Load(object sender, EventArgs e)
         {
-            //Se o pedido ja tiver OC gerada n„o permite alterar a data de entrega
+            //Se o pedido ja tiver OC gerada n√£o permite alterar a data de entrega
             if (sender is Controls.ctrlLoja)
                 ((Controls.ctrlLoja)sender).Enabled = !PedidoOrdemCargaDAO.Instance.PedidoTemOC(null, Request["IdPedido"].StrParaUint());
         }
