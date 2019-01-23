@@ -245,7 +245,7 @@ Servicos.Pedidos = (function (http) {
           this.exibirMensagem('Dados para exportação são obrigatórios.');
         }
 
-        return this.http().post('exportacao/exportar', dados);
+        return http().post(API + 'exportacao/exportar', dados);
       },
 
       /**
@@ -255,7 +255,7 @@ Servicos.Pedidos = (function (http) {
        * @returns {Promise} Uma promise com o resultado da busca.
        */
       consultarSituacao: function (idPedido, idFornecedor) {
-        return this.http().post('exportacao/consultarSituacao', {
+        return http().post(API + 'exportacao/consultarSituacao', {
           'idPedido': idPedido, 'idFornecedor': idFornecedor
         });
       }

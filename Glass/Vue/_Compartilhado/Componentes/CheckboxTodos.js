@@ -74,6 +74,7 @@
 
       this.controles.forEach(function (item) {
         item.checked = selecionar;
+        item.dispatchEvent(new Event('change'));
       });
     },
 

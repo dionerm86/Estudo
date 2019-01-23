@@ -67,6 +67,28 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.Exportacao
             return validacao;
         }
 
+        private IHttpActionResult ValidarIdProdutoPedido(int id)
+        {
+            if (id <= 0)
+            {
+                return this.ErroValidacao("Identificador do produto do pedido deve ser um número maior que zero.");
+            }
+
+            return null;
+        }
+
+        private IHttpActionResult ValidarExistenciaIdProdutoPedido(GDASession sessao, int idProdutoPedido)
+        {
+            var validacao = this.ValidarIdProdutoPedido(idProdutoPedido);
+
+            if (validacao == null && !ProdutosPedidoDAO.Instance.Exists(sessao, (uint)idProdutoPedido))
+            {
+                return this.NaoEncontrado($"Produto de pedido não encontrado.");
+            }
+
+            return validacao;
+        }
+
         private IHttpActionResult ValidarExistenciaPedidoFornecedor(GDASession sessao, int idPedido, int idFornecedor)
         {
             var erros = new List<Lazy<IHttpActionResult>>();
@@ -110,7 +132,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.Exportacao
 
                 foreach (var produtoPedido in pedido.IdsProdutoPedido)
                 {
-                    validacao = this.ValidarExistenciaIdPedido(sessao, produtoPedido);
+                    validacao = this.ValidarExistenciaIdProdutoPedido(sessao, produtoPedido);
 
                     if (validacao != null)
                     {

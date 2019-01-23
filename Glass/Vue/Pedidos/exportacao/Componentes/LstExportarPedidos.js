@@ -30,9 +30,43 @@
 
     /**
      * Exporta um ou mais pedidos para um dado fornecedor.
+     * @returns {Promise} uma Promise com o resultado da exportação.
      */
     exportar: function () {
+      this.iniciarExportacao();
       return Servicos.Pedidos.Exportacao.exportar(this.dadosExportacao);
+    },
+
+    /**
+     * Prepara os dados para exportação de pedidos.
+     */
+    iniciarExportacao: function () {
+      this.dadosExportacao = {
+        idFornecedor: this.fornecedorAtual.id,
+        pedidos: this.gerarDadosPedidos()
+      };
+    },
+
+    /**
+     * Preenche o objeto contendo os dados dos pedidos para envio ao controller de exportação.
+     * @return {Object} Um objeto com os dados dos pedidos para exportação.
+     */
+    gerarDadosPedidos: function () {
+      var vm = this;
+      var pedidos = [];
+      this.pedidosExportar.forEach(function (idPedidoExportar) {
+        var produtosPedidoExportar = vm.configuracoes.exibirProdutos 
+            ? vm.$refs['produtosPedido' + idPedidoExportar].produtosPedidoExportar 
+            : vm.$refs['produtosPedido' + idPedidoExportar].$refs.lista.itens;
+
+        pedidos.push({
+          idPedido: idPedidoExportar,
+          exportarBeneficiamento: vm.beneficiamentosExportar.indexOf(idPedidoExportar) > -1,
+          idsProdutoPedido: produtosPedidoExportar
+        });
+      });
+
+      return pedidos;
     },
 
     /**
@@ -79,23 +113,19 @@
     },
 
     /**
-     * Exporta os pedidos selecionados.
+     * Verifica se um dado pedido está marcado para exportação.
+     * @param {number} id O identificador do pedido.
+     * @returns um valor booleano que indica se o pedido está marcado para exportação.
      */
-    exportar: function () {
-      this.iniciarExportacao();
-    },
-
-    iniciarExportacao: function () {
-      this.dadosExportacao = {
-        idFornecedor: this.fornecedorAtual.id,
-        pedidos: this.gerarDadosPedidos()
-      };
-    },
-
-    gerarDadosPedidos: function () {
-      var pedidos = {};
-      for (var i = 0; i < this.pedidosExportar.length; i++) {
-        pedidos.idPedido = 0;
+    marcado: function (id) {
+      var vm = this;
+      var itens = this.$refs['produtosPedido' + id].$refs.lista.itens;
+      if (this.pedidosExportar.indexOf(id) > -1) {
+        itens.forEach(function (item) {
+          vm.$refs['produtosPedido' + id].produtosPedidoExportar.push(item.id);
+        });
+      } else {
+        vm.$refs['produtosPedido' + id].produtosPedidoExportar = [];
       }
     },
 

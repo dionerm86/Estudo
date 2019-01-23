@@ -59,7 +59,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.Exportacao
                             (uint)(pedido.IdPedido ?? 0),
                             pedido.ExportarBeneficiamento.GetValueOrDefault(false));
 
-                        idsProdutosPedido.Select(idpp => (uint)idpp);
+                        idsProdutosPedido = pedido.IdsProdutoPedido.Select(idpp => (uint)idpp).ToList();
 
                         idsPedidosProdutosPedido.Add((uint)(pedido.IdPedido ?? 0), idsProdutosPedido);
 

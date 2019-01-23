@@ -9,16 +9,6 @@
       required: true,
       twoWay: true,
       validator: Mixins.Validacao.validarObjeto
-    },
-
-    /**
-     * Lista de pedidos marcados para exportação na lista de pedidos para exportação.
-     * @type {Object}
-     */
-    pedidosMarcadosParaExportacao: {
-      required: true,
-      twoWay: true,
-      validator: Mixins.Validacao.validarObjeto
     }
   },
 

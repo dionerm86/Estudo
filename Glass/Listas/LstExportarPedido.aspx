@@ -16,7 +16,7 @@
                  mensagem-lista-vazia="Nenhum pedido para exportação encontrado.">
                 <template slot="cabecalho">
                     <th>
-                        <checkbox-todos id-considerar="exportarPedido"></checkbox-todos>
+                        <checkbox-todos id-considerar="exportarPedido" titulo=""></checkbox-todos>
                     </th>
                     <th></th>
                     <th>
@@ -56,7 +56,7 @@
                         Tipo
                     </th>
                     <th>
-                        <checkbox-todos id-considerar="exportarBeneficiamento"></checkbox-todos>
+                        <checkbox-todos id-considerar="exportarBeneficiamento" titulo="Exportar Beneficiamentos (todos)?"></checkbox-todos>
                     </th>
                     <th>
                         Situação Exportação
@@ -65,7 +65,7 @@
                 <template slot="item" slot-scope="{ item, index }">
                     <td>
                         <span>
-                            <input type="checkbox" :id="'exportarPedido' + index" :value="item.id" v-model="pedidosExportar" />
+                            <input type="checkbox" :id="'exportarPedido' + index" :value="item.id" v-model="pedidosExportar" @change="marcado(item.id)" />
                         </span>
                         <span v-if="item.permissoes && item.permissoes.consultarSituacao">
                             <button @click.prevent="consultarSituacao(item.id)" title="Consultar situação">
@@ -141,11 +141,11 @@
                         </template>
                     </td>
                 </template>
-                <template slot="novaLinhaItem" slot-scope="{ item, index, classe }" v-if="exibindoProdutos(index)">
-                    <tr>
+                <template slot="novaLinhaItem" slot-scope="{ item, index, classe }">
+                    <tr v-show="exibindoProdutos(index)">
                         <td></td>
                         <td :colspan="numeroColunasLista() - 1">
-                            <exportacao-pedidos-produtos :filtro="{ idPedido: item.id }" :pedidos-marcados-para-exportacao.sync="pedidosExportar"></exportacao-pedidos-produtos>
+                            <exportacao-pedidos-produtos :filtro="{ idPedido: item.id }" :ref="'produtosPedido' + item.id"></exportacao-pedidos-produtos>
                         </td>
                     </tr>
                 </template>

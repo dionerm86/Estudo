@@ -3,7 +3,7 @@
         mensagem-lista-vazia="Não foram encontrados produtos do grupo Vidro que não sejam de estoque ou que não foram exportados.">
         <template slot="cabecalho">
             <th>
-                <checkbox-todos id-considerar="exportarProdutosPedido"></checkbox-todos>
+                <checkbox-todos id-considerar="exportarProdutosPedido" titulo=""></checkbox-todos>
             </th>
             <th>
                 Cod.
@@ -29,7 +29,7 @@
         </template>
         <template slot="item" slot-scope="{ item }">
             <td>
-                <input type="checkbox" :id="'exportarProdutosPedido' + item.id" :value="item.id" v-model="produtosPedidoExportar" checked />
+                <input type="checkbox" :id="'exportarProdutosPedido' + item.id" :value="item.id" v-model="produtosPedidoExportar" />
             </td>
             <td>
                 {{ item.produto.codigo }}
