@@ -31,7 +31,7 @@ PopupTelaType = function(nomeControle, exibirFechar, tipoExibicao, baseUrl)
     var alterarPopupPai = function(exibir)
     {
         // Altera o popup pai, se necessário
-        if (window != window.opener && window.opener.document)
+        if (window != window.opener && isPopup && window.opener.document != null)
         {
             // Altera o botão "Fechar"
             var fechar = FindControl(controle + "_fechar", "div", window.opener.document);

@@ -267,7 +267,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
             // os números das etiquetas do produto pedido pe
             var numerosEtiqueta = etiquetaPlanoCorte.Etiquetas.OfType<eCutter.EtiquetaPeca>()
                 .Select(f => f.Notas?.Trim())
-                .Where(f => f.Contains(".") && f.Contains("/") && f.Contains("-"))
+                .Where(f => !string.IsNullOrEmpty(f) && f.Contains(".") && f.Contains("/") && f.Contains("-"))
                 .Distinct();
 
             var index = 0;

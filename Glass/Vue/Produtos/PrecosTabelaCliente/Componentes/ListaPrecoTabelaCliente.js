@@ -57,7 +57,7 @@
     },
 
     /**
-     * Força a atualização da lista de grupos de produto, com base no filtro atual.
+     * Força a atualização da lista de preços de tabela de cliente, com base no filtro atual.
      */
     atualizarLista: function () {
       this.$refs.lista.atualizar(true);

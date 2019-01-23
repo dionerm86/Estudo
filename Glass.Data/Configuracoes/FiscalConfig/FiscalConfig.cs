@@ -242,6 +242,9 @@ namespace Glass.Configuracoes
                 return Config.GetConfigItem<string>(Config.ConfigEnum.EstadosConsiderarRicmsPr).Split(',');
             }
         }
-
+        public static bool UsarTLS12NFe
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarTLS12NFe); }
+        }
     }
 }
