@@ -57,9 +57,7 @@
             return false;
         }
 
-        function openRptReferencia(IdPedido, IdAcerto, IdLiberarPedido, IdObra, IdTrocaDevolucao, IdSinal, IdPagto,
-            IdDevolucaoPagto, IdDeposito, IdCompra, IdAcertoCheque) {
-
+        function openRptReferencia(IdPedido, IdAcerto, IdLiberarPedido, IdObra, IdTrocaDevolucao, IdSinal, IdDevolucaoPagto, IdAcertoCheque) {
             if (IdTrocaDevolucao > 0)
                 openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=TrocaDevolucao&idTrocaDevolucao=" + IdTrocaDevolucao);
             else if (IdPedido > 0)
@@ -74,8 +72,6 @@
                 openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Sinal&IdSinal=" + IdSinal);
             else if (IdDevolucaoPagto > 0)
                 openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=DevolucaoPagto&idDevolucaoPagto=" + IdDevolucaoPagto);
-            else if (IdDeposito > 0)
-                openWindow(600, 800, "../Relatorios/RelBase.aspx?Rel=Deposito&idDeposito=" + IdDeposito + "&ordemCheque=1&exportarExcel=false");
             else if (IdAcertoCheque > 0)
                 openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=AcertoCheque&idAcertoCheque=" + IdAcertoCheque);
         }

@@ -14,15 +14,14 @@ namespace Glass.Data.RelDAL
     {
         //private ImagemDAO() { }
 
-        public Imagem[] GetPecasAlteradas(uint idItemProjeto, float percentualImagem)
+        public Imagem[] GetPecasAlteradas(uint idItemProjeto, float percentualImagem, PecaItemProjeto[] pecas)
         {
-            return GetPecasAlteradas(null, idItemProjeto, percentualImagem);
+            return GetPecasAlteradas(null, idItemProjeto, percentualImagem, pecas);
         }
 
-        public Imagem[] GetPecasAlteradas(GDASession sessao, uint idItemProjeto, float percentualImagem)
+        public Imagem[] GetPecasAlteradas(GDASession sessao, uint idItemProjeto, float percentualImagem, PecaItemProjeto[] pecas)
         {
             ItemProjeto itemProj = ItemProjetoDAO.Instance.GetElementByPrimaryKey(sessao, idItemProjeto);
-            PecaItemProjeto[] pecas = PecaItemProjetoDAO.Instance.GetByItemProjetoRpt(sessao, idItemProjeto, itemProj.IdProjetoModelo).ToArray();
 
             List<Imagem> retorno = new List<Imagem>();
             foreach (PecaItemProjeto p in pecas)

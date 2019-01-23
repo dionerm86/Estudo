@@ -53,7 +53,6 @@ namespace Glass.Data.Helper.Calculos
 
             try
             {
-                DescontoAcrescimo.Instance.RemoverAcrescimo(sessao, container, new List <IProdutoCalculo>{ produto });
                 DescontoAcrescimo.Instance.RemoverDescontoQtde(sessao, container, produto);
                 acrescimo = produto.ValorAcrescimo;
                 produto.ValorAcrescimo = 0.00M;

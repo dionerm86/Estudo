@@ -34,6 +34,7 @@ namespace Glass.API.Backend.Models.Pagamentos.V1.Lista
             {
                 Cancelar = pagamento.CancelarVisible,
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.Pagto, pagamento.IdPagto, null),
+                LogCancelamento = LogCancelamentoDAO.Instance.TemRegistro(LogCancelamento.TabelaCancelamento.Pagto, pagamento.IdPagto),
             };
         }
 

@@ -1,4 +1,4 @@
-<%@ Page Title="Cadastro de Clientes" Language="C#" MasterPageFile="~/Painel.master" EnableViewState="false"
+Ôªø<%@ Page Title="Cadastro de Clientes" Language="C#" MasterPageFile="~/Painel.master" EnableViewState="false" EnableEventValidation="false"
     AutoEventWireup="true" CodeBehind="CadCliente.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadCliente" %>
 
 <%@ Register Src="../Controls/ctrlLinkQueryString.ascx" TagName="ctrlLinkQueryString" TagPrefix="uc1" %>
@@ -129,12 +129,12 @@
             urlSistema = urlSistema != null ? urlSistema.value : "";
 
             if (<%= ExigirFuncionarioAoInserir().ToString().ToLower() %> && FindControl("drpFuncionario", "select").value == "") {
-                alert("Informe o vendedor associado ‡ este cliente.");
+                alert("Informe o vendedor associado √† este cliente.");
                 return false;
             }
 
             if (urlSistema != "" && urlSistema.toUpperCase().indexOf("WEBGLASS") == -1) {
-                alert("A URL do Sistema È inv·lida.");
+                alert("A URL do Sistema √© inv√°lida.");
                 return false;
             }
 
@@ -149,7 +149,7 @@
                 return false;
             else if (!produtorRural && CadCliente.CheckIfExists(cpfCnpj).value == "true")
             {
-                alert("J· existe um cliente cadastrado com o CPF/CNPJ informado");
+                alert("J√° existe um cliente cadastrado com o CPF/CNPJ informado");
                 return false;
             }
 
@@ -201,7 +201,7 @@
                 var cpfCnpjSalvo = FindControl("hdfCNPJ", "input").value;
 
                 if (CadCliente.ComparaCpfCnpj(cpfCnpjSalvo, cpfCnpjNovo).value == "false") {
-                    alert("CPF/CNPJ inserido j· est· cadastrado no sistema para outro cliente");
+                    alert("CPF/CNPJ inserido j√° est√° cadastrado no sistema para outro cliente");
                     return false;
                 }
             }
@@ -229,7 +229,7 @@
                 }
 
                 if (parseFloat(valorMediaIni.value) > parseFloat(valorMediaFim.value)){
-                    alert("O valor inicial da mÈdia de compra n„o pode ser maior que o valor final da mesma.");
+                    alert("O valor inicial da m√©dia de compra n√£o pode ser maior que o valor final da mesma.");
                     return false;
                 }
             }
@@ -241,14 +241,14 @@
             }
 
             if (urlSistema != "" && urlSistema.toUpperCase().indexOf("WEBGLASS") == -1) {
-                alert("A URL do Sistema È inv·lida.");
+                alert("A URL do Sistema √© inv√°lida.");
                 return false;
             }
 
             var toolTip = document.getElementById("WzTtDiV");
             if (toolTip != null && toolTip.style.visibility == "visible")
             {
-                alert("Aplique as alteraÁıes feitas nas formas de pagamento e/ou parcelas.");
+                alert("Aplique as altera√ß√µes feitas nas formas de pagamento e/ou parcelas.");
                 return false;
             }
 
@@ -276,13 +276,13 @@
 
                 if (FindControl("txtEndereco", "input").value == "")
                 {
-                    alert("Informe o endereÁo do Cliente.");
+                    alert("Informe o endere√ßo do Cliente.");
                     return false;
                 }
 
                 if (FindControl("txtNum", "input").value == "")
                 {
-                    alert("Informe o n˙mero do endereÁo do Cliente.");
+                    alert("Informe o n√∫mero do endere√ßo do Cliente.");
                     return false;
                 }
 
@@ -315,7 +315,7 @@
                 {
                     for (var i = 0; i < email.split(';').length; i++)
                         if (email.split(';')[i].trim() != "" && !validaEmail(email.split(';')[i])) {
-                            alert("Email inv·lido.");
+                            alert("Email inv√°lido.");
                             return false;
                         }
                 }
@@ -333,18 +333,18 @@
 
                     for (var i = 0; i < emailFiscal.split(';').length; i++)
                         if (emailFiscal.split(';')[i].trim() != "" && !validaEmail(emailFiscal.split(';')[i])) {
-                            alert("Email Fiscal inv·lido.");
+                            alert("Email Fiscal inv√°lido.");
                         return false;
                     }
             }
 
-            // Email CobranÁa
+            // Email Cobran√ßa
             if (FindControl("txtEmailCobranca", "input") != null)
             {
                 var emailCobranca = FindControl("txtEmailCobranca", "input").value;
 
                 if (emailCobranca == "" && exigirEmailCliente) {
-                    alert("Informe o email de cobranÁa do cliente.");
+                    alert("Informe o email de cobran√ßa do cliente.");
                     return false;
                 }
 
@@ -352,7 +352,7 @@
                 {
                     for (var i = 0; i < emailCobranca.split(';').length; i++)
                         if (emailCobranca.split(';')[i].trim() != "" && !validaEmail(emailCobranca.split(';')[i])) {
-                            alert("Email cobranÁa inv·lido.");
+                            alert("Email cobran√ßa inv√°lido.");
                             return false;
                         }
                 }
@@ -370,19 +370,19 @@
 
             if (telRes != "" && telRes.replace(' ', '').length < 13)
             {
-                alert("Telefone residencial inv·lido.");
+                alert("Telefone residencial inv√°lido.");
                 return false;
             }
 
             if (telCont != "" && telCont.replace(' ', '').length < 13)
             {
-                alert("Telefone de contato inv·lido.");
+                alert("Telefone de contato inv√°lido.");
                 return false;
             }
 
             if (telCel != "" && telCel.replace(' ', '').length < 13)
             {
-                alert("Celular inv·lido.");
+                alert("Celular inv√°lido.");
                 return false;
             }
 
@@ -396,12 +396,12 @@
                 }
 
                 if (cep.length > 0 && (cep.length < 8 || cep == "00000000" || cep == "00000-000")) {
-                    alert("Cep inv·lido.");
+                    alert("Cep inv√°lido.");
                     return false;
                 }
         }
 
-        // Se for PJ, InscriÁ„o Estadual/Contato n„o pode ficar em branco
+        // Se for PJ, Inscri√ß√£o Estadual/Contato n√£o pode ficar em branco
         if (getTipoPessoa() == "J")
         {
             if (FindControl("txtContato1", "input").value == "" && FindControl("txtContato", "input").value == "")
@@ -435,7 +435,7 @@
 
             if (getTipoPessoa() == "J") {
                 FindControl("txtCpfCnpj", "input").maxLength = 18;
-                FindControl("lblDataNasc", "span").innerHTML = "Data FundaÁ„o";
+                FindControl("lblDataNasc", "span").innerHTML = "Data Funda√ß√£o";
                 FindControl("lblRgInscEst", "span").innerHTML = "Insc. Est.";
             }
             else {
@@ -491,7 +491,7 @@
                 FindControl("hdfCampoCidade", "input").value = "entrega";
         }
 
-        // M·scara para valores monet·rios
+        // M√°scara para valores monet√°rios
         function maskCurrency(o, n, dig, dec) {
             new function(c, dig, dec, m) {
                 addEvent(o, "keypress", function(e, _) {
@@ -555,7 +555,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label21" runat="server" Text="Nome/Raz„o Social"></asp:Label>
+                                                        <asp:Label ID="Label21" runat="server" Text="Nome/Raz√£o Social"></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="width: 380px">
                                                         <asp:TextBox ID="txtNome" runat="server" MaxLength="75" Text='<%# Bind("Nome") %>'
@@ -567,8 +567,8 @@
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:DropDownList ID="ddlTipoPessoa" runat="server" onchange="drpTipoPessoaChanged(true)"
                                                             SelectedValue='<%# Bind("TipoPessoa") %>'>
-                                                            <asp:ListItem Value="Fisica">Pessoa FÌsica</asp:ListItem>
-                                                            <asp:ListItem Value="Juridica">Pessoa JurÌdica</asp:ListItem>
+                                                            <asp:ListItem Value="Fisica">Pessoa F√≠sica</asp:ListItem>
+                                                            <asp:ListItem Value="Juridica">Pessoa Jur√≠dica</asp:ListItem>
                                                         </asp:DropDownList>
                                                         &nbsp;<asp:CheckBox ID="chkProdutorRural" runat="server" onclick="drpTipoPessoaChanged(true)"
                                                             Checked='<%# Bind("ProdutorRural") %>' Text="Produtor Rural" />
@@ -599,7 +599,7 @@
                                                         <asp:TextBox ID="txtCpfCnpj" runat="server" MaxLength="18" Text='<%# Bind("CpfCnpj") %>'
                                                             Width="150px" onkeypress="getTipoPessoa()=='J' ? maskCNPJ(event, this) : maskCPF(event, this);"></asp:TextBox>
                                                         <asp:CustomValidator ID="valCpfCnpj" runat="server" ClientValidationFunction="validarCpfCnpj"
-                                                            ControlToValidate="txtCpfCnpj" ErrorMessage="CPF/CNPJ Inv·lido"></asp:CustomValidator>
+                                                            ControlToValidate="txtCpfCnpj" ErrorMessage="CPF/CNPJ Inv√°lido"></asp:CustomValidator>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="lblSuframa" runat="server" Text="SUFRAMA "></asp:Label>
@@ -642,7 +642,7 @@
                                                         <asp:TextBox ID="txtEmailFiscal" runat="server" Text='<%# Bind("EmailFiscal") %>' Width="300px"></asp:TextBox>
                                                         <br />
                                                         <asp:CheckBox ID="CheckBox6" runat="server" Checked='<%# Bind("NaoReceberEmailFiscal") %>'
-                                                            Text="N„o receber e-mail fiscal" />
+                                                            Text="N√£o receber e-mail fiscal" />
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px"></td>
                                                     <td align="left"></td>
@@ -664,7 +664,7 @@
                                                             onkeypress="return soTelefone(event)" Text='<%# Bind("TelCel") %>' Width="100px"></asp:TextBox>
                                                         <br />
                                                         <asp:CheckBox ID="CheckBox2" runat="server" Checked='<%# Bind("NaoReceberSms") %>'
-                                                            Text="N„o receber SMS pedido pronto" Visible="<%# Glass.Configuracoes.PCPConfig.EmailSMS.EnviarSMSPedidoPronto %>" />
+                                                            Text="N√£o receber SMS pedido pronto" Visible="<%# Glass.Configuracoes.PCPConfig.EmailSMS.EnviarSMSPedidoPronto %>" />
                                                     </td>
                                                 </tr>
                                                 <tr class="alt">
@@ -732,17 +732,17 @@
                                             <table id="tblEnderecos" style="width: 100%">
                                                 <tr>
                                                     <td colspan="4" align="center" bgcolor="#D2D2D2">
-                                                        <asp:Label ID="Label27" runat="server" Text="EndereÁos" Font-Bold="True"></asp:Label>
+                                                        <asp:Label ID="Label27" runat="server" Text="Endere√ßos" Font-Bold="True"></asp:Label>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label28" runat="server" Text="EndereÁo"></asp:Label>
+                                                        <asp:Label ID="Label28" runat="server" Text="Endere√ßo"></asp:Label>
                                                         <asp:Label ID="Label100" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEndereco" runat="server" MaxLength="100" Text='<%# Bind("Endereco") %>' Width="230px"></asp:TextBox>
-                                                        &nbsp;<asp:Label ID="Label52" runat="server" Text="N.∫"></asp:Label>&nbsp;
+                                                        &nbsp;<asp:Label ID="Label52" runat="server" Text="N.¬∫"></asp:Label>&nbsp;
                                                         <asp:Label ID="Label106" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                         <asp:TextBox ID="txtNum" onKeyPress='bloquearEspeciais(event)' runat="server" Width="50px" Text='<%# Bind("Numero") %>'></asp:TextBox>
                                                     </td>
@@ -786,7 +786,7 @@
                                                         <asp:HiddenField ID="hdfCidade" runat="server" Value='<%# Bind("IdCidade") %>' />
                                                         <asp:HiddenField ID="hfdNomeUf" runat="server" Value='<%# Eval("Cidade.NomeUf") %>' />
                                                     </td>
-                                                     <td align="left" class="dtvHeader" style="width: 160px"><asp:Label ID="lblPais" runat="server" Text="PaÌs"></asp:Label></td>
+                                                     <td align="left" class="dtvHeader" style="width: 160px"><asp:Label ID="lblPais" runat="server" Text="Pa√≠s"></asp:Label></td>
                                                     <td align="left">
                                                         <asp:DropDownList ID="drpPais" runat="server" DataSourceID="odsPais" DataTextField="NomePais"
                                                             DataValueField="IdPais" SelectedValue='<%# Bind("IdPais") %>'>
@@ -795,12 +795,12 @@
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label46" runat="server" Text="EndereÁo de CobranÁa"></asp:Label>
+                                                        <asp:Label ID="Label46" runat="server" Text="Endere√ßo de Cobran√ßa"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEnderecoCobranca" runat="server" MaxLength="100" Text='<%# Bind("EnderecoCobranca") %>'
                                                             Width="230px"></asp:TextBox>
-                                                        &nbsp;<asp:Label ID="Label12" runat="server" Text="N.∫"></asp:Label>&nbsp;
+                                                        &nbsp;<asp:Label ID="Label12" runat="server" Text="N.¬∫"></asp:Label>&nbsp;
                                                         <asp:TextBox ID="txtNumCobranca" runat="server" onKeyPress='bloquearEspeciais(event)' Width="50px" Text='<%# Bind("NumeroCobranca") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
@@ -846,12 +846,12 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label1" runat="server" Text="EndereÁo de Entrega"></asp:Label>
+                                                        <asp:Label ID="Label1" runat="server" Text="Endere√ßo de Entrega"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEnderecoEntrega" runat="server" MaxLength="100" Text='<%# Bind("EnderecoEntrega") %>'
                                                             Width="230px"></asp:TextBox>
-                                                        &nbsp;<asp:Label ID="Label5" runat="server" Text="N.∫"></asp:Label>&nbsp;
+                                                        &nbsp;<asp:Label ID="Label5" runat="server" Text="N.¬∫"></asp:Label>&nbsp;
                                                         <asp:TextBox ID="txtNumeroEntrega" runat="server" onKeyPress='bloquearEspeciais(event)' Width="50px" Text='<%# Bind("NumeroEntrega") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
@@ -911,17 +911,17 @@
                                                 </tr>
                                                 <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label36" runat="server" Text="MÈdia de compra mensal"></asp:Label>
+                                                        <asp:Label ID="Label36" runat="server" Text="M√©dia de compra mensal"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">De
                                                         <asp:TextBox ID="txtValorMediaIni" runat="server" onkeypress="return soNumeros(event, false, false);"
                                                             Text='<%# Bind("ValorMediaIni") %>' Width="80px"></asp:TextBox>
-                                                        atÈ
+                                                        at√©
                                                         <asp:TextBox ID="txtValorMediaFim" runat="server" onkeypress="return soNumeros(event, false, false);"
                                                             Text='<%# Bind("ValorMediaFim") %>' Width="80px"></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style='<%# ExibirPercentualComissao() %>'>
-                                                        <asp:Label ID="Label72" runat="server" Text="Percentual de comiss„o"></asp:Label>
+                                                        <asp:Label ID="Label72" runat="server" Text="Percentual de comiss√£o"></asp:Label>
                                                     </td>
                                                     <td align="left" style='<%# ExibirPercentualComissao() %>'>
                                                         <asp:TextBox ID="txtPercentualComissao" runat="server" MaxLength="3" onkeypress="return soNumeros(event, false, false);"
@@ -932,7 +932,7 @@
                                                 <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label32" runat="server" Text="Limite"
-                                                            ToolTip="Caso o limite esteja zerado o Cliente ser· ilimitado."></asp:Label>
+                                                            ToolTip="Caso o limite esteja zerado o Cliente ser√° ilimitado."></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <table class="pos" cellpadding="0" cellspacing="0">
@@ -940,13 +940,13 @@
                                                                 <td>
                                                                     <asp:TextBox ID="txtLimite" runat="server" onkeypress="return soNumeros(event, false, false);"
                                                                         OnLoad="txtLimite_Load" Text='<%# Bind("Limite") %>' Width="80px"
-                                                                        ToolTip="Caso o limite esteja zerado o Cliente ser· ilimitado."></asp:TextBox>
+                                                                        ToolTip="Caso o limite esteja zerado o Cliente ser√° ilimitado."></asp:TextBox>
                                                                     <br />
                                                                     <asp:CheckBox ID="chkBloquearCheques" runat="server" Checked='<%# Bind("BloquearRecebChequeLimite") %>'
                                                                         OnLoad="chkBloquearCheques_Load" Text="Bloquear recebimento de cheque de terceiro acima de 50% do limite" />
                                                                     <br />
                                                                     <asp:CheckBox ID="chkBloquearChequesProprio" runat="server" Checked='<%# Bind("BloquearRecebChequeProprioLimite") %>'
-                                                                        OnLoad="chkBloquearCheques_Load" Text="Bloquear recebimento de cheque prÛprio acima de 50% do limite" />
+                                                                        OnLoad="chkBloquearCheques_Load" Text="Bloquear recebimento de cheque pr√≥prio acima de 50% do limite" />
                                                                 </td>
                                                                 <td style='<%# ExibirLimiteCheques() %>'>&nbsp;
                                                                 </td>
@@ -994,7 +994,7 @@
                                                         <asp:CheckBox ID="chkRevenda" runat="server" Checked='<%# Bind("Revenda") %>' Enabled="<%# Glass.Data.Helper.Config.PossuiPermissao(Glass.Data.Helper.Config.FuncaoMenuCadastro.MarcarClienteRevenda) %>" />
                                                     </td>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap" style='<%# Glass.Configuracoes.PedidoConfig.LiberarPedido ? "": "display: none" %>'>
-                                                        <asp:Label ID="lblPercSinal" runat="server" Text="Perc. Sinal MÌn. Pedido"></asp:Label>
+                                                        <asp:Label ID="lblPercSinal" runat="server" Text="Perc. Sinal M√≠n. Pedido"></asp:Label>
                                                     </td>
                                                     <td align="left" style='<%# Glass.Configuracoes.PedidoConfig.LiberarPedido ? "": "display: none" %>'>
                                                         <asp:TextBox ID="txtPercSinalMin" runat="server" onkeypress="return soNumeros(event, false, true);"
@@ -1022,7 +1022,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
-                                                    <td align="left" class="dtvHeader">Tabela Desconto/AcrÈscimo
+                                                    <td align="left" class="dtvHeader">Tabela Desconto/Acr√©scimo
                                                     </td>
                                                     <td align="left">
                                                         <asp:DropDownList ID="drpTabelaDescontoAcrescimo" runat="server" AppendDataBoundItems="true"
@@ -1031,7 +1031,7 @@
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
                                                     </td>
-                                                    <td align="left" class="dtvHeader" nowrap="nowrap" style='<%# Glass.Configuracoes.PedidoConfig.LiberarPedido ? "": "display: none" %>'>Pagar antes da produÁ„o?
+                                                    <td align="left" class="dtvHeader" nowrap="nowrap" style='<%# Glass.Configuracoes.PedidoConfig.LiberarPedido ? "": "display: none" %>'>Pagar antes da produ√ß√£o?
                                                     </td>
                                                     <td align="left" style='<%# Glass.Configuracoes.PedidoConfig.LiberarPedido ? "": "display: none" %>'>
                                                         <asp:CheckBox ID="chkPagamentoAntesProducao" runat="server" Checked='<%# Bind("PagamentoAntesProducao") %>' />
@@ -1054,7 +1054,7 @@
                                                 </tr>
                                                 <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader">
-                                                        <asp:Label ID="Label86" runat="server" Text="Conta Banc·ria"></asp:Label></td>
+                                                        <asp:Label ID="Label86" runat="server" Text="Conta Banc√°ria"></asp:Label></td>
                                                     <td>
                                                         <asp:DropDownList ID="drpContaBanco" runat="server" DataSourceID="odsContaBanco"
                                                             DataTextField="Descricao" DataValueField="IdContaBanco" AppendDataBoundItems="True"
@@ -1062,7 +1062,7 @@
                                                             <asp:ListItem Text="" Value="" Selected="True"></asp:ListItem>
                                                         </asp:DropDownList><asp:Image ID="imgConta" runat="server" ImageUrl="~/Images/Help.gif" ToolTip='<%# BancosDisponiveis() %>'></asp:Image></td>
                                                     <td align="left" class="dtvHeader">
-                                                        <asp:Label ID="Label89" runat="server" Text="Plano conta cont·bil"></asp:Label></td>
+                                                        <asp:Label ID="Label89" runat="server" Text="Plano conta cont√°bil"></asp:Label></td>
                                                     <td>
                                                         <asp:DropDownList ID="drpPlanoContaContabil" runat="server" AppendDataBoundItems="True" DataSourceID="odsPlanoContaContabil"
                                                             DataTextField="Descricao" DataValueField="IdContaContabil" SelectedValue='<%# Bind("IdContaContabil") %>'>
@@ -1072,7 +1072,7 @@
                                                 </tr>
                                                 <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() || ExigirEmailClienteAoInserirOuAtualizar() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader"  style="width: 170px">
-                                                        <asp:Label ID="lblEmailCobranca" runat="server" Text="Email CobranÁa"></asp:Label>
+                                                        <asp:Label ID="lblEmailCobranca" runat="server" Text="Email Cobran√ßa"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEmailCobranca" runat="server" Text='<%# Bind("EmailCobranca") %>' Width="300px"></asp:TextBox>
@@ -1087,7 +1087,7 @@
                                                 </tr>
                                                 <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() && UsarPercentualBonificacaoCliente()  ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader"  style="width: 170px">
-                                                        <asp:Label ID="lblPercBonificacao" runat="server" Text="Perc. BonificaÁ„o"></asp:Label>
+                                                        <asp:Label ID="lblPercBonificacao" runat="server" Text="Perc. Bonifica√ß√£o"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtPercBonificacao" runat="server" Width="50px"
@@ -1111,7 +1111,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label19" runat="server" Text="SituaÁ„o"></asp:Label>
+                                                        <asp:Label ID="Label19" runat="server" Text="Situa√ß√£o"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:DropDownList ID="drpSituacao" runat="server" SelectedValue='<%# Bind("Situacao") %>'
@@ -1197,7 +1197,7 @@
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:CheckBox ID="chkIgnorarBloqueio" runat="server" Checked='<%# Bind("IgnorarBloqueioPedPronto") %>'
-                                                            OnLoad="chkIgnorarBloqueio_Load" Text="Ignorar bloqueio de emiss„o de pedidos caso haja pedidos n„o entregues" />
+                                                            OnLoad="chkIgnorarBloqueio_Load" Text="Ignorar bloqueio de emiss√£o de pedidos caso haja pedidos n√£o entregues" />
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label58" runat="server" Text="Comissionado"></asp:Label>
@@ -1217,10 +1217,10 @@
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:CheckBox ID="chkBloquearPedidoContaVenc" runat="server" Checked='<%# Bind("BloquearPedidoContaVencida") %>'
-                                                            Text="Bloquear emiss„o de pedido se houver conta vencida" />
+                                                            Text="Bloquear emiss√£o de pedido se houver conta vencida" />
                                                     </td>
                                                     <td class="dtvHeader" style='<%= Glass.Configuracoes.ComissaoConfig.UsarPercComissaoCliente ? "": "display: none" %>;'
-                                                        align="left">Perc. Comiss„o Vendedor
+                                                        align="left">Perc. Comiss√£o Vendedor
                                                     </td>
                                                     <td style='<%= Glass.Configuracoes.ComissaoConfig.UsarPercComissaoCliente ? "": "display: none" %>'
                                                         align="left">
@@ -1231,14 +1231,14 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class='dtvHeader' style="width: 170px; display: '<%= Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail ? "" : "none" %>'">
-                                                        <asp:Label ID="Label16" runat="server" Text="E-mail CobranÁa" Visible='<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>'></asp:Label>
+                                                        <asp:Label ID="Label16" runat="server" Text="E-mail Cobran√ßa" Visible='<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>'></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 381px;">
                                                         <asp:CheckBox ID="chkNaoReceberEmailCobrancaVencidas" runat="server" Checked='<%# Bind("NaoReceberEmailCobrancaVencida") %>'
-                                                            Text='<%# "N„o receber e-mail de cobranÁa (contas vencidas)" %>' Visible="<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>" />
+                                                            Text='<%# "N√£o receber e-mail de cobran√ßa (contas vencidas)" %>' Visible="<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>" />
                                                         <br />
                                                         <asp:CheckBox ID="chkNaoReceberEmailCobrancaVencer" runat="server" Checked='<%# Bind("NaoReceberEmailCobrancaVencer") %>'
-                                                            Text='<%# "N„o receber e-mail de cobranÁa (contas a vencer)" %>' Visible="<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>" />
+                                                            Text='<%# "N√£o receber e-mail de cobran√ßa (contas a vencer)" %>' Visible="<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>" />
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="<%= ExibirEstoqueClientes() %>">
                                                         <asp:Label ID="Label45" runat="server" Text="Estoque do Cliente"></asp:Label>
@@ -1254,15 +1254,15 @@
                                                     </td>
                                                     <td align="left" style="width: 381px; <%# !Glass.Configuracoes.PCPConfig.EmailSMS.EnviarEmailPedidoPronto ? "display: none": "" %>">
                                                         <asp:CheckBox ID="chkNaoRecebeEmailPedPronto" runat="server" Checked='<%# Bind("NaoReceberEmailPedPronto") %>'
-                                                            Text='<%# "N„o receber e-mail pedido " + (Glass.Configuracoes.PedidoConfig.LiberarPedido ? "conf./" : "") + "pronto" %>'
+                                                            Text='<%# "N√£o receber e-mail pedido " + (Glass.Configuracoes.PedidoConfig.LiberarPedido ? "conf./" : "") + "pronto" %>'
                                                             Visible="<%# Glass.Configuracoes.PCPConfig.EmailSMS.EnviarEmailPedidoPronto %>" />
                                                     </td>
                                                     <td align="left" class='dtvHeader' style='<%= Glass.Configuracoes.PCPConfig.GerarOrcamentoFerragensAluminiosPCP ? "": "none" %>'>
-                                                        <asp:Label ID="Label68" runat="server" OnLoad="chkGerarOrcamento_Load" Text="Gerar orÁamento"></asp:Label>
+                                                        <asp:Label ID="Label68" runat="server" OnLoad="chkGerarOrcamento_Load" Text="Gerar or√ßamento"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <asp:CheckBox ID="chkGerarOrcamento" runat="server" Checked='<%# Bind("GerarOrcamentoPcp") %>'
-                                                            OnLoad="chkGerarOrcamento_Load" Text="Gerar orÁamento de alumÌnios e ferragens ao finalizar conferÍncia de pedido." />
+                                                            OnLoad="chkGerarOrcamento_Load" Text="Gerar or√ßamento de alum√≠nios e ferragens ao finalizar confer√™ncia de pedido." />
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -1271,11 +1271,11 @@
                                                     </td>
                                                     <td align="left" style="width: 381px; <%# !Glass.Configuracoes.PCPConfig.EmailSMS.EnviarEmailPedidoConfirmado ? "display: none": "" %>">
                                                         <asp:CheckBox ID="chkNaoRecebeEmailPedPcp" runat="server" Checked='<%# Bind("NaoReceberEmailPedPcp") %>'
-                                                            Text="N„o enviar e-mail quando o pedido for finalizado no PCP." />
+                                                            Text="N√£o enviar e-mail quando o pedido for finalizado no PCP." />
                                                         <br />
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="<%= ExibirNaoEnviarEmailLiberacao() %>">
-                                                        <asp:Label ID="Label78" runat="server" Text="N„o enviar e-mail ao liberar pedido"></asp:Label>
+                                                        <asp:Label ID="Label78" runat="server" Text="N√£o enviar e-mail ao liberar pedido"></asp:Label>
                                                     </td>
                                                     <td align="left" style="<%= ExibirNaoEnviarEmailLiberacao() %>">
                                                         <asp:CheckBox ID="chkNaoEnviarEmailLiberacao" runat="server" Checked='<%# Bind("NaoEnviarEmailLiberacao") %>' />
@@ -1316,7 +1316,7 @@
                                                         <asp:Label ID="Label79" runat="server" Text="Ordem de Carga"></asp:Label>
                                                     </td>
                                                     <td align="left" style="<%= UsarControleOrdemCarga() %>">
-                                                        <asp:CheckBox ID="CheckBox1" runat="server" Text="Pode gerar somente OC de transferÍncia?"
+                                                        <asp:CheckBox ID="CheckBox1" runat="server" Text="Pode gerar somente OC de transfer√™ncia?"
                                                             Checked='<%# Bind("SomenteOcTransferencia") %>' />
                                                     </td>
                                                     <td align="left" class="dtvHeader">
@@ -1326,14 +1326,14 @@
                                                         <asp:TextBox ID="txtUrlSistema" runat="server" Text='<%# Bind("UrlSistema") %>' Width="200px"
                                                             OnLoad="UrlSistema_Load"></asp:TextBox>
                                                         <%--<asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" ControlToValidate="txtUrlSistema"
-                                                            ErrorMessage="Informe uma URL v·lida." SetFocusOnError="True" OnLoad="UrlSistema_Load"
+                                                            ErrorMessage="Informe uma URL v√°lida." SetFocusOnError="True" OnLoad="UrlSistema_Load"
                                                             ValidationExpression="((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)"
-                                                            ValidationGroup="c" ToolTip="Informe uma URL v·lida.">*</asp:RegularExpressionValidator>--%>
+                                                            ValidationGroup="c" ToolTip="Informe uma URL v√°lida.">*</asp:RegularExpressionValidator>--%>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label29" runat="server" Text="ObservaÁ„o"></asp:Label>
+                                                        <asp:Label ID="Label29" runat="server" Text="Observa√ß√£o"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <table>
@@ -1349,7 +1349,7 @@
                                                         </table>
                                                     </td>
                                                     <td align="left" class="dtvHeader">
-                                                        <asp:Label ID="Label81" runat="server" Text="ObservaÁ„o da LiberaÁ„o"></asp:Label>
+                                                        <asp:Label ID="Label81" runat="server" Text="Observa√ß√£o da Libera√ß√£o"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <asp:TextBox ID="TextBox3" runat="server" MaxLength="1000" Text='<%# Bind("ObsLiberacao") %>'
@@ -1358,10 +1358,10 @@
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="<%= ControlarPedidosImportados() %>">
-                                                        <asp:Label ID="Label87" runat="server" Text="ImportaÁ„o"></asp:Label>
+                                                        <asp:Label ID="Label87" runat="server" Text="Importa√ß√£o"></asp:Label>
                                                     </td>
                                                     <td align="left" style="<%= ControlarPedidosImportados() %>">
-                                                        <asp:CheckBox ID="CheckBox4" runat="server" Text="Cliente de importaÁ„o?"
+                                                        <asp:CheckBox ID="CheckBox4" runat="server" Text="Cliente de importa√ß√£o?"
                                                             Checked='<%# Bind("Importacao") %>' /></td>
                                                     <td align="left" class="dtvHeader" style='<%= Glass.Configuracoes.ProjetoConfig.UtilizarEditorCADImagensProjeto ? "" : "display: none;"  %>'>
                                                         <asp:Label ID="Label43" runat="server" Text="Editor CAD"></asp:Label></td>
@@ -1393,16 +1393,16 @@
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td align="left" class="dtvHeader">
-                                                        <asp:Label ID="lblIgnorarNoSmsResumoDiario" runat="server" Text="Ignorar no SMS de Resumo Di·rio"></asp:Label>
+                                                        <asp:Label ID="lblIgnorarNoSmsResumoDiario" runat="server" Text="Ignorar no SMS de Resumo Di√°rio"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <asp:CheckBox ID="chkIgnorarNoSmsResumoDiario" runat="server" Checked='<%# Bind("IgnorarNoSmsResumoDiario") %>'
-                                                           Text="Ignorar no SMS de Resumo Di·rio" />
+                                                           Text="Ignorar no SMS de Resumo Di√°rio" />
                                                     </td>
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader">
-                                                        <asp:Label ID="Label17" runat="server" Text="HistÛrico" />
+                                                        <asp:Label ID="Label17" runat="server" Text="Hist√≥rico" />
                                                     </td>
                                                     <td align="left" colspan="3">
                                                         <asp:TextBox ID="txtHistorico" runat="server" Text='<%# Bind("Historico") %>' TextMode="MultiLine"
@@ -1411,7 +1411,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader">
-                                                        <asp:Label ID="Label77" runat="server" Text="ObservaÁ„o para NF-e" />
+                                                        <asp:Label ID="Label77" runat="server" Text="Observa√ß√£o para NF-e" />
                                                     </td>
                                                     <td align="left" colspan="3">
                                                         <asp:TextBox ID="txtObsNfe" runat="server" Text='<%# Bind("ObsNfe") %>' TextMode="MultiLine"
@@ -1515,7 +1515,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label21" runat="server" Text="Nome/Raz„o Social"></asp:Label>
+                                                        <asp:Label ID="Label21" runat="server" Text="Nome/Raz√£o Social"></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="width: 380px">
                                                         <asp:TextBox ID="txtNome" runat="server" MaxLength="75" Text='<%# Bind("Nome") %>'
@@ -1527,8 +1527,8 @@
                                                     <td align="left" nowrap="nowrap">
                                                         <asp:DropDownList ID="ddlTipoPessoa" runat="server" onchange="drpTipoPessoaChanged(true)"
                                                             SelectedValue='<%# Bind("TipoPessoa") %>'>
-                                                            <asp:ListItem Value="Fisica">Pessoa FÌsica</asp:ListItem>
-                                                            <asp:ListItem Value="Juridica">Pessoa JurÌdica</asp:ListItem>
+                                                            <asp:ListItem Value="Fisica">Pessoa F√≠sica</asp:ListItem>
+                                                            <asp:ListItem Value="Juridica">Pessoa Jur√≠dica</asp:ListItem>
                                                         </asp:DropDownList>
                                                         &nbsp;<asp:CheckBox ID="chkProdutorRural" runat="server" onclick="drpTipoPessoaChanged(true)"
                                                             Checked='<%# Bind("ProdutorRural") %>' Text="Produtor Rural" />
@@ -1559,7 +1559,7 @@
                                                         <asp:TextBox ID="txtCpfCnpj" runat="server" MaxLength="18" Text='<%# Bind("CpfCnpj") %>'
                                                             Width="150px" onkeypress="getTipoPessoa()=='J' ? maskCNPJ(event, this) : maskCPF(event, this);"></asp:TextBox>
                                                         <asp:CustomValidator ID="valCpfCnpj" runat="server" ClientValidationFunction="validarCpfCnpj"
-                                                            ControlToValidate="txtCpfCnpj" ErrorMessage="CPF/CNPJ Inv·lido"></asp:CustomValidator>
+                                                            ControlToValidate="txtCpfCnpj" ErrorMessage="CPF/CNPJ Inv√°lido"></asp:CustomValidator>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="lblSuframa" runat="server" Text="SUFRAMA "></asp:Label>
@@ -1603,7 +1603,7 @@
                                                         <asp:TextBox ID="txtEmailFiscal" runat="server" Text='<%# Bind("EmailFiscal") %>' Width="300px"></asp:TextBox>
                                                         <br />
                                                         <asp:CheckBox ID="CheckBox6" runat="server" Checked='<%# Bind("NaoReceberEmailFiscal") %>'
-                                                            Text="N„o receber e-mail fiscal" />
+                                                            Text="N√£o receber e-mail fiscal" />
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px"></td>
                                                     <td align="left"></td>
@@ -1625,7 +1625,7 @@
                                                             onkeypress="return soTelefone(event)" Text='<%# Bind("TelCel") %>' Width="100px"></asp:TextBox>
                                                         <br />
                                                         <asp:CheckBox ID="CheckBox2" runat="server" Checked='<%# Bind("NaoReceberSms") %>'
-                                                            Text="N„o receber SMS pedido pronto" Visible="<%# Glass.Configuracoes.PCPConfig.EmailSMS.EnviarSMSPedidoPronto %>" />
+                                                            Text="N√£o receber SMS pedido pronto" Visible="<%# Glass.Configuracoes.PCPConfig.EmailSMS.EnviarSMSPedidoPronto %>" />
                                                     </td>
                                                 </tr>
                                                 <tr class="alt">
@@ -1693,18 +1693,18 @@
                                             <table id="tblEnderecos" style="width: 100%">
                                                 <tr>
                                                     <td colspan="4" align="center" bgcolor="#D2D2D2">
-                                                        <asp:Label ID="Label27" runat="server" Text="EndereÁos" Font-Bold="True"></asp:Label>
+                                                        <asp:Label ID="Label27" runat="server" Text="Endere√ßos" Font-Bold="True"></asp:Label>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label28" runat="server" Text="EndereÁo"></asp:Label>
+                                                        <asp:Label ID="Label28" runat="server" Text="Endere√ßo"></asp:Label>
                                                         <asp:Label ID="Label99" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEndereco" runat="server" MaxLength="100" Text='<%# Bind("Endereco") %>'
                                                             Width="230px"></asp:TextBox>
-                                                        &nbsp;<asp:Label ID="Label52" runat="server" Text="N.∫"></asp:Label>&nbsp;
+                                                        &nbsp;<asp:Label ID="Label52" runat="server" Text="N.¬∫"></asp:Label>&nbsp;
                                                         <asp:Label ID="Label105" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                                                         <asp:TextBox ID="txtNum" runat="server" Width="50px" onKeyPress='bloquearEspeciais(event)' Text='<%# Bind("Numero") %>'></asp:TextBox>
                                                     </td>
@@ -1749,7 +1749,7 @@
                                                         <asp:HiddenField ID="hdfCidade1" runat="server" Value='<%# Bind("IdCidade") %>' />
                                                         <asp:HiddenField ID="hdfNomeUf" runat="server" Value='<%# Eval("Cidade.NomeUf") %>' />
                                                     </td>
-                                                    <td align="left" class="dtvHeader" style="width: 160px"><asp:Label ID="lblPaisIns" runat="server" Text="PaÌs"></asp:Label></td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px"><asp:Label ID="lblPaisIns" runat="server" Text="Pa√≠s"></asp:Label></td>
                                                     <td align="left">
                                                         <asp:DropDownList ID="drpPais" runat="server" DataSourceID="odsPais" DataTextField="NomePais"
                                                             DataValueField="IdPais" SelectedValue='<%# Bind("IdPais") %>'>
@@ -1758,12 +1758,12 @@
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label46" runat="server" Text="EndereÁo de CobranÁa"></asp:Label>
+                                                        <asp:Label ID="Label46" runat="server" Text="Endere√ßo de Cobran√ßa"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEnderecoCobranca" runat="server" MaxLength="100" Text='<%# Bind("EnderecoCobranca") %>'
                                                             Width="230px"></asp:TextBox>
-                                                        &nbsp;<asp:Label ID="Label12" runat="server" Text="N.∫"></asp:Label>&nbsp;
+                                                        &nbsp;<asp:Label ID="Label12" runat="server" Text="N.¬∫"></asp:Label>&nbsp;
                                                         <asp:TextBox ID="txtNumCobranca" runat="server" onKeyPress='bloquearEspeciais(event)' Width="50px" Text='<%# Bind("NumeroCobranca") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
@@ -1809,12 +1809,12 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label1" runat="server" Text="EndereÁo de Entrega"></asp:Label>
+                                                        <asp:Label ID="Label1" runat="server" Text="Endere√ßo de Entrega"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEnderecoEntrega" runat="server" MaxLength="100" Text='<%# Bind("EnderecoEntrega") %>'
                                                             Width="230px"></asp:TextBox>
-                                                        &nbsp;<asp:Label ID="Label5" runat="server" Text="N.∫"></asp:Label>&nbsp;
+                                                        &nbsp;<asp:Label ID="Label5" runat="server" Text="N.¬∫"></asp:Label>&nbsp;
                                                         <asp:TextBox ID="txtNumeroEntrega" runat="server" onKeyPress='bloquearEspeciais(event)' Width="50px" Text='<%# Bind("NumeroEntrega") %>'></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
@@ -1874,17 +1874,17 @@
                                                 </tr>
                                                 <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label18" runat="server" Text="MÈdia de compra mensal"></asp:Label>
+                                                        <asp:Label ID="Label18" runat="server" Text="M√©dia de compra mensal"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">De
                                                         <asp:TextBox ID="txtValorMediaIni" runat="server" onkeypress="return soNumeros(event, false, false);"
                                                             Text='<%# Bind("ValorMediaIni") %>' Width="80px"></asp:TextBox>
-                                                        atÈ
+                                                        at√©
                                                         <asp:TextBox ID="txtValorMediaFim" runat="server" onkeypress="return soNumeros(event, false, false);"
                                                             Text='<%# Bind("ValorMediaFim") %>' Width="80px"></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style='<%# ExibirPercentualComissao() %>'>
-                                                        <asp:Label ID="Label72" runat="server" Text="Percentual de comiss„o"></asp:Label>
+                                                        <asp:Label ID="Label72" runat="server" Text="Percentual de comiss√£o"></asp:Label>
                                                     </td>
                                                     <td align="left" style='<%# ExibirPercentualComissao() %>'>
                                                         <asp:TextBox ID="txtPercentualComissao" runat="server" MaxLength="3" onkeypress="return soNumeros(event, false, false);"
@@ -1895,7 +1895,7 @@
                                                 <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label321" runat="server" Text="Limite"
-                                                            ToolTip="Caso o limite esteja zerado o Cliente ser· ilimitado."></asp:Label>
+                                                            ToolTip="Caso o limite esteja zerado o Cliente ser√° ilimitado."></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <table class="pos" cellpadding="0" cellspacing="0">
@@ -1903,13 +1903,13 @@
                                                                 <td>
                                                                     <asp:TextBox ID="txtLimite" runat="server" onkeypress="return soNumeros(event, false, false);"
                                                                         OnLoad="txtLimite_Load" Text='<%# Bind("Limite") %>' Width="80px"
-                                                                        ToolTip="Caso o limite esteja zerado o Cliente ser· ilimitado."></asp:TextBox>
+                                                                        ToolTip="Caso o limite esteja zerado o Cliente ser√° ilimitado."></asp:TextBox>
                                                                     <br />
                                                                     <asp:CheckBox ID="chkBloquearCheques" runat="server" Checked='<%# Bind("BloquearRecebChequeLimite") %>'
                                                                         Text="Bloquear recebimento de cheque de terceiro acima de 50% do limite" />
                                                                     <br />
                                                                     <asp:CheckBox ID="chkBloquearChequesProprio" runat="server" Checked='<%# Bind("BloquearRecebChequeProprioLimite") %>'
-                                                                        Text="Bloquear recebimento de cheque prÛprio acima de 50% do limite" />
+                                                                        Text="Bloquear recebimento de cheque pr√≥prio acima de 50% do limite" />
                                                                 </td>
                                                                 <td style='<%# ExibirLimiteCheques() %>'>&nbsp;
                                                                 </td>
@@ -1923,7 +1923,7 @@
                                                         </table>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
-                                                        <asp:Label ID="lblPercSinal" runat="server" Text="Perc. Sinal MÌn. Pedido"></asp:Label>
+                                                        <asp:Label ID="lblPercSinal" runat="server" Text="Perc. Sinal M√≠n. Pedido"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <asp:TextBox ID="txtPercSinalMin" runat="server" onkeypress="return soNumeros(event, false, true);"
@@ -1933,11 +1933,10 @@
                                                 </tr>
                                                 <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label35" runat="server" Text="CrÈdito"></asp:Label>
+                                                        <asp:Label ID="Label35" runat="server" Text="Cr√©dito"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
-                                                        <asp:TextBox ID="txtCredito" runat="server" Enabled='<%# HabilitarCampoCredito() %>'
-                                                            Text='<%# Bind("Credito") %>' Width="70px"></asp:TextBox>
+                                                        <asp:Label ID="txtCredito" runat="server" Text='<%# Eval("Credito") %>'></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label41" runat="server" Text="Perc. Desconto (Venda)" Visible='<%# PercReducaoNfeVisible() %>'></asp:Label>
@@ -1967,7 +1966,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
-                                                    <td align="left" class="dtvHeader">Tabela Desconto/AcrÈscimo
+                                                    <td align="left" class="dtvHeader">Tabela Desconto/Acr√©scimo
                                                     </td>
                                                     <td align="left">
                                                         <asp:DropDownList ID="drpTabelaDescontoAcrescimo" runat="server" DataSourceID="odsTabelaDescontoAcrescimo"
@@ -1976,7 +1975,7 @@
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
                                                     </td>
-                                                    <td nowrap="nowrap" class="dtvHeader" style='<%# Glass.Configuracoes.PedidoConfig.LiberarPedido ? "": "display: none" %>;'>Pagar antes da produÁ„o?
+                                                    <td nowrap="nowrap" class="dtvHeader" style='<%# Glass.Configuracoes.PedidoConfig.LiberarPedido ? "": "display: none" %>;'>Pagar antes da produ√ß√£o?
                                                     </td>
                                                     <td style='<%# Glass.Configuracoes.PedidoConfig.LiberarPedido ? "": "display: none" %>'
                                                         align="left">
@@ -2024,7 +2023,7 @@
                                                 </tr>
                                                 <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader">
-                                                        <asp:Label ID="Label85" runat="server" Text="Conta Banc·ria"></asp:Label></td>
+                                                        <asp:Label ID="Label85" runat="server" Text="Conta Banc√°ria"></asp:Label></td>
                                                     <td>
                                                         <asp:DropDownList ID="drpContaBanco" runat="server" DataSourceID="odsContaBanco"
                                                             DataTextField="Descricao" DataValueField="IdContaBanco" AppendDataBoundItems="True"
@@ -2032,7 +2031,7 @@
                                                             <asp:ListItem Text="" Value=""></asp:ListItem>
                                                         </asp:DropDownList><asp:Image ID="imgConta" runat="server" ImageUrl="~/Images/Help.gif" ToolTip='<%# BancosDisponiveis() %>'></asp:Image></td>
                                                     <td align="left" class="dtvHeader">
-                                                        <asp:Label ID="Label89" runat="server" Text="Plano conta cont·bil"></asp:Label></td>
+                                                        <asp:Label ID="Label89" runat="server" Text="Plano conta cont√°bil"></asp:Label></td>
                                                     <td>
                                                         <asp:DropDownList ID="drpPlanoContaContabil" runat="server" AppendDataBoundItems="True" DataSourceID="odsPlanoContaContabil"
                                                             DataTextField="Descricao" DataValueField="IdContaContabil" SelectedValue='<%# Bind("IdContaContabil") %>'>
@@ -2042,7 +2041,7 @@
                                                 </tr>
                                                 <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() || ExigirEmailClienteAoInserirOuAtualizar()  ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader"  style="width: 170px">
-                                                        <asp:Label ID="lblEmailCobranca" runat="server" Text="Email CobranÁa"></asp:Label>
+                                                        <asp:Label ID="lblEmailCobranca" runat="server" Text="Email Cobran√ßa"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtEmailCobranca" runat="server" Text='<%# Bind("EmailCobranca") %>' Width="300px"></asp:TextBox>
@@ -2057,7 +2056,7 @@
                                                 </tr>
                                                 <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() && UsarPercentualBonificacaoCliente()  ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader"  style="width: 170px">
-                                                        <asp:Label ID="lblPercBonificacao" runat="server" Text="Perc. BonificaÁ„o"></asp:Label>
+                                                        <asp:Label ID="lblPercBonificacao" runat="server" Text="Perc. Bonifica√ß√£o"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 380px">
                                                         <asp:TextBox ID="txtPercBonificacao" runat="server" Width="50px"
@@ -2081,7 +2080,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label19" runat="server" Text="SituaÁ„o"></asp:Label>
+                                                        <asp:Label ID="Label19" runat="server" Text="Situa√ß√£o"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:DropDownList ID="drpSituacao" runat="server" SelectedValue='<%# Bind("Situacao") %>'
@@ -2162,7 +2161,7 @@
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:CheckBox ID="chkIgnorarBloqueio" runat="server" Checked='<%# Bind("IgnorarBloqueioPedPronto") %>'
-                                                            OnLoad="chkIgnorarBloqueio_Load" Text="Ignorar bloqueio de emiss„o de pedidos caso haja pedidos n„o entregues" />
+                                                            OnLoad="chkIgnorarBloqueio_Load" Text="Ignorar bloqueio de emiss√£o de pedidos caso haja pedidos n√£o entregues" />
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="Label58" runat="server" Text="Comissionado"></asp:Label>
@@ -2182,10 +2181,10 @@
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:CheckBox ID="chkBloquearPedidoContaVenc" runat="server" Checked='<%# Bind("BloquearPedidoContaVencida") %>'
-                                                            Text="Bloquear emiss„o de pedido se houver conta vencida" />
+                                                            Text="Bloquear emiss√£o de pedido se houver conta vencida" />
                                                     </td>
                                                     <td class="dtvHeader" style='<%= Glass.Configuracoes.ComissaoConfig.UsarPercComissaoCliente ? "": "display: none" %>;'
-                                                        align="left">Perc. Comiss„o Vendedor
+                                                        align="left">Perc. Comiss√£o Vendedor
                                                     </td>
                                                     <td style='<%= Glass.Configuracoes.ComissaoConfig.UsarPercComissaoCliente ? "": "display: none" %>'
                                                         align="left">
@@ -2196,21 +2195,21 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class='dtvHeader' style="width: 170px; display: '<%= Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail ? "" : "none" %>'">
-                                                        <asp:Label ID="Label16" runat="server" Text="E-mail CobranÁa" Visible='<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>'></asp:Label>
+                                                        <asp:Label ID="Label16" runat="server" Text="E-mail Cobran√ßa" Visible='<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>'></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 381px;">
                                                         <asp:CheckBox ID="chkNaoReceberEmailCobrancaVencidas" runat="server" Checked='<%# Bind("NaoReceberEmailCobrancaVencida") %>'
-                                                            Text='<%# "N„o receber e-mail de cobranÁa (contas vencidas)" %>' Visible="<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>" />
+                                                            Text='<%# "N√£o receber e-mail de cobran√ßa (contas vencidas)" %>' Visible="<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>" />
                                                         <br />
                                                         <asp:CheckBox ID="chkNaoReceberEmailCobrancaVencer" runat="server" Checked='<%# Bind("NaoReceberEmailCobrancaVencer") %>'
-                                                            Text='<%# "N„o receber e-mail de cobranÁa (contas a vencer)" %>' Visible="<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>" />
+                                                            Text='<%# "N√£o receber e-mail de cobran√ßa (contas a vencer)" %>' Visible="<%# Glass.Configuracoes.FinanceiroConfig.UsarControleCobrancaEmail %>" />
                                                     </td>
                                                     <td align="left" class='dtvHeader' style='<%= Glass.Configuracoes.PCPConfig.GerarOrcamentoFerragensAluminiosPCP ? "": "none" %>'>
-                                                        <asp:Label ID="Label68" runat="server" OnLoad="chkGerarOrcamento_Load" Text="Gerar orÁamento"></asp:Label>
+                                                        <asp:Label ID="Label68" runat="server" OnLoad="chkGerarOrcamento_Load" Text="Gerar or√ßamento"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <asp:CheckBox ID="chkGerarOrcamento" runat="server" Checked='<%# Bind("GerarOrcamentoPcp") %>'
-                                                            OnLoad="chkGerarOrcamento_Load" Text="Gerar orÁamento de alumÌnios e ferragens ao finalizar conferÍncia de pedido." />
+                                                            OnLoad="chkGerarOrcamento_Load" Text="Gerar or√ßamento de alum√≠nios e ferragens ao finalizar confer√™ncia de pedido." />
                                                     </td>
                                                 </tr>
                                                 <tr class="alt">
@@ -2219,7 +2218,7 @@
                                                     </td>
                                                     <td align="left" style="width: 381px; <%# !Glass.Configuracoes.PCPConfig.EmailSMS.EnviarEmailPedidoPronto ? "display: none": "" %>">
                                                         <asp:CheckBox ID="chkNaoRecebeEmailPedPronto" runat="server" Checked='<%# Bind("NaoReceberEmailPedPronto") %>'
-                                                            Text='<%# "N„o receber e-mail pedido " + (Glass.Configuracoes.PedidoConfig.LiberarPedido ? "conf./" : "") + "pronto" %>'
+                                                            Text='<%# "N√£o receber e-mail pedido " + (Glass.Configuracoes.PedidoConfig.LiberarPedido ? "conf./" : "") + "pronto" %>'
                                                             Visible="<%# Glass.Configuracoes.PCPConfig.EmailSMS.EnviarEmailPedidoPronto %>" />
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
@@ -2247,7 +2246,7 @@
                                                     </td>
                                                     <td align="left" style="width: 381px; <%# !Glass.Configuracoes.PCPConfig.EmailSMS.EnviarEmailPedidoConfirmado ? "display: none": "" %>">
                                                         <asp:CheckBox ID="chkNaoRecebeEmailPedPcp" runat="server" Checked='<%# Bind("NaoReceberEmailPedPcp") %>'
-                                                            Text="N„o enviar e-mail quando o pedido for finalizado no PCP." />
+                                                            Text="N√£o enviar e-mail quando o pedido for finalizado no PCP." />
                                                         <br />
                                                     </td>
                                                     <td align="left" class="dtvHeader">
@@ -2263,7 +2262,7 @@
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="Label29" runat="server" Text="ObservaÁ„o"></asp:Label>
+                                                        <asp:Label ID="Label29" runat="server" Text="Observa√ß√£o"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <table>
@@ -2279,7 +2278,7 @@
                                                         </table>
                                                     </td>
                                                     <td align="left" class="dtvHeader">
-                                                        <asp:Label ID="Label81" runat="server" Text="ObservaÁ„o da LiberaÁ„o"></asp:Label>
+                                                        <asp:Label ID="Label81" runat="server" Text="Observa√ß√£o da Libera√ß√£o"></asp:Label>
                                                     </td>
                                                     <td align="left">
                                                         <asp:TextBox ID="TextBox3" runat="server" MaxLength="1000" Text='<%# Bind("ObsLiberacao") %>'
@@ -2295,7 +2294,7 @@
                                                             Checked='<%# Bind("ControlarEstoqueVidros") %>' />
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="<%= ExibirNaoEnviarEmailLiberacao() %>">
-                                                        <asp:Label ID="Label78" runat="server" Text="N„o enviar e-mail ao liberar pedido"></asp:Label>
+                                                        <asp:Label ID="Label78" runat="server" Text="N√£o enviar e-mail ao liberar pedido"></asp:Label>
                                                     </td>
                                                     <td align="left" style="<%= ExibirNaoEnviarEmailLiberacao() %>">
                                                         <asp:CheckBox ID="chkNaoEnviarEmailLiberacao" runat="server" Checked='<%# Bind("NaoEnviarEmailLiberacao") %>' />
@@ -2306,7 +2305,7 @@
                                                         <asp:Label ID="Label79" runat="server" Text="Ordem de Carga"></asp:Label>
                                                     </td>
                                                     <td align="left" style="<%= UsarControleOrdemCarga() %>">
-                                                        <asp:CheckBox ID="CheckBox1" runat="server" Text="Pode gerar somente OC de transferÍncia?"
+                                                        <asp:CheckBox ID="CheckBox1" runat="server" Text="Pode gerar somente OC de transfer√™ncia?"
                                                             Checked='<%# Bind("SomenteOcTransferencia") %>' />
                                                     </td>
                                                     <td align="left" class="dtvHeader">
@@ -2316,17 +2315,17 @@
                                                         <asp:TextBox ID="txtUrlSistema" runat="server" Text='<%# Bind("UrlSistema") %>' Width="200px"
                                                             OnLoad="UrlSistema_Load"></asp:TextBox>
                                                         <%--<asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" ControlToValidate="txtUrlSistema"
-                                                            ErrorMessage="Informe uma URL v·lida." SetFocusOnError="True" OnLoad="UrlSistema_Load"
+                                                            ErrorMessage="Informe uma URL v√°lida." SetFocusOnError="True" OnLoad="UrlSistema_Load"
                                                             ValidationExpression="((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)"
-                                                            ValidationGroup="c" ToolTip="Informe uma URL v·lida.">*</asp:RegularExpressionValidator>--%>
+                                                            ValidationGroup="c" ToolTip="Informe uma URL v√°lida.">*</asp:RegularExpressionValidator>--%>
                                                     </td>
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="<%= ControlarPedidosImportados() %>">
-                                                        <asp:Label ID="Label87" runat="server" Text="ImportaÁ„o"></asp:Label>
+                                                        <asp:Label ID="Label87" runat="server" Text="Importa√ß√£o"></asp:Label>
                                                     </td>
                                                     <td align="left" style="<%= ControlarPedidosImportados() %>">
-                                                        <asp:CheckBox ID="CheckBox4" runat="server" Text="Cliente de importaÁ„o?"
+                                                        <asp:CheckBox ID="CheckBox4" runat="server" Text="Cliente de importa√ß√£o?"
                                                             Checked='<%# Bind("Importacao") %>' /></td>
                                                     <td align="left" class="dtvHeader" style='<%= Glass.Configuracoes.ProjetoConfig.UtilizarEditorCADImagensProjeto ? "" : "display: none;"  %>'>
                                                         <asp:Label ID="Label43" runat="server" Text="Editor CAD"></asp:Label></td>
@@ -2357,16 +2356,16 @@
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
-                                                        <asp:Label ID="lblIgnorarNoSmsResumoDiario" runat="server" Text="Ignorar no SMS de Resumo Di·rio"></asp:Label>
+                                                        <asp:Label ID="lblIgnorarNoSmsResumoDiario" runat="server" Text="Ignorar no SMS de Resumo Di√°rio"></asp:Label>
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:CheckBox ID="chkIgnorarNoSmsResumoDiario" runat="server" Checked='<%# Bind("IgnorarNoSmsResumoDiario") %>'
-                                                           Text="Ignorar no SMS de Resumo Di·rio" />
+                                                           Text="Ignorar no SMS de Resumo Di√°rio" />
                                                     </td>
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader">
-                                                        <asp:Label ID="Label17" runat="server" Text="HistÛrico" />
+                                                        <asp:Label ID="Label17" runat="server" Text="Hist√≥rico" />
                                                     </td>
                                                     <td align="left" colspan="3">
                                                         <asp:TextBox ID="txtHistorico" runat="server" Text='<%# Bind("Historico") %>' TextMode="MultiLine"
@@ -2375,7 +2374,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader">
-                                                        <asp:Label ID="Label76" runat="server" Text="ObservaÁ„o para NF-e" />
+                                                        <asp:Label ID="Label76" runat="server" Text="Observa√ß√£o para NF-e" />
                                                     </td>
                                                     <td align="left" colspan="3">
                                                         <asp:TextBox ID="txtObsNfe" runat="server" Text='<%# Bind("ObsNfe") %>' TextMode="MultiLine"

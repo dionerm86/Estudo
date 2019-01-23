@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using System;
@@ -503,6 +503,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 throw new Exception("Nenhuma ordem de carga informada.");
 
             OrdemCargaDAO.Instance.ForcarTransacaoOC(sessao, idOC, true);
+            CarregamentoDAO.Instance.ForcarTransacaoCarregamento(sessao, idCarregamento, true);
 
             if (OrdemCargaDAO.Instance.PossuiPecaCarregada(sessao, idOC))
                 throw new Exception("Não é possível remover essa OC do Carregamento, pois a mesma possui itens que já foram carregados.");
@@ -552,6 +553,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
             LogCancelamentoDAO.Instance.LogOrdemCarga(sessao, oc, string.Format("Remoção da OC: {0}", idOC), true);
 
             OrdemCargaDAO.Instance.ForcarTransacaoOC(sessao, idOC, false);
+            CarregamentoDAO.Instance.ForcarTransacaoCarregamento(sessao, idCarregamento, false);
         }
 
         #endregion

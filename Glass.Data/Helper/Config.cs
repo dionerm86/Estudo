@@ -755,9 +755,12 @@ namespace Glass.Data.Helper
             PermitirImpressaoDePedidosImportadosApenasConferidos = 1530,
             NomeArquivoMesaBarraPorCeCedilha = 1531,
             ListaVendasPedidosVaziaPorPadrao = 1532,
+            UsarTLS12NFe = 1533,
             TextoEmailAdministradores = 1534,
             IgnorarReducaoBcIcmsCalculoDifal = 1535,
             AbaterICMSDoTotalProdNfMovEstoqueFiscal = 1536,
+            ReporApenasProduzidos = 1537,
+
             #endregion
         }
 

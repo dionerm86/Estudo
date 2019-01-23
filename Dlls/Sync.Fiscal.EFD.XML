@@ -4,6 +4,11 @@
         <name>Sync.Fiscal.EFD</name>
     </assembly>
     <members>
+        <member name="F:Sync.Fiscal.EFD.Configuracao.NaturezaPjEnum.SujeitaPisPasepExclusivamenteFolhaSalarios">
+            <summary>
+            Entidade sujeita ao PIS/Pasep exclusivamente com base na Folha de Salários
+            </summary>
+        </member>
         <member name="M:Sync.Fiscal.EFD.Configuracao.VersaoLeiauteFiscal(System.DateTime)">
             <summary>
             Versão do leiaute do EFD Fiscal
@@ -25,11 +30,6 @@
             da nota fiscal. Usado no registro E110 para o somatório dos registros C100, C500, D100 e D500.
             </summary>
         </member>
-        <member name="F:Sync.Fiscal.EFD.Configuracao.NaturezaPjEnum.SujeitaPisPasepExclusivamenteFolhaSalarios">
-            <summary>
-            Entidade sujeita ao PIS/Pasep exclusivamente com base na Folha de Salários
-            </summary>
-        </member>
         <member name="M:Sync.Fiscal.EFD.DataSources.GetFromEnum(System.Type,System.Delegate,System.Boolean)">
             <summary>
             Recupera uma lista de Suporte.GenericModel a partir dos itens de um enum.
@@ -44,40 +44,18 @@
             Enumeração com o tipo de participante.
             </summary>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Registro.GetInstance``1">
-            <summary>
-            Retorna uma instância de um registro.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <returns></returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Registro.ToString(System.Collections.Generic.IEnumerable{System.String})">
-            <summary>
-            Retorna a string separada por "|" para uso nos registros do EFD.
-            </summary>
-            <param name="campos">Os campos que serão usados no registro.</param>
-            <returns>A string separada por "|".</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Registro.ToString(System.Collections.Generic.IEnumerable{System.String},System.Int32)">
-            <summary>
-            Retorna a string para vários registros, usando quebra de linha e separando cada linha por "|".
-            </summary>
-            <param name="campos">Os campos de todos os registros que serão retornados.</param>
-            <param name="numeroCampos">O número de campos que compõe 1 registro.</param>
-            <returns>A string com quebras de linha e separada por "|".</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Bloco0.Registro0001.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoB.RegistroB001.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
             <summary>
             Construtor da classe.
             </summary>
-            <param name="dadosInformados"></param>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Bloco0.Registro0001.ToString">
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoB.RegistroB001.ToString">
             <summary>
-            Retorna o texto do registro 0001.
+            Retorna o texto do registro B001.
             </summary>
             <returns>Uma string com os dados formatados.</returns>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:Sync.Fiscal.EFD.Registro.BlocoB.RegistroB990.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)" -->
         <member name="M:Sync.Fiscal.EFD.Registro.BlocoK.RegistroK001.ToString">
             <summary>
             Retorna o texto do registro K001.
@@ -97,7 +75,7 @@
             </summary>
             <returns>Uma string com os dados formatados.</returns>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoK.RegistroK200.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IMovimentacaoEstoque,Sync.Fiscal.EFD.Registro.BlocoK.RegistroK200.IndPropEnum,System.DateTime)">
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoK.RegistroK200.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Int32,Sync.Fiscal.EFD.Entidade.IMovimentacaoEstoque,Sync.Fiscal.EFD.Registro.BlocoK.RegistroK200.IndPropEnum,System.DateTime)">
             <summary>
             Construtor da classe.
             </summary>
@@ -105,6 +83,18 @@
         <member name="M:Sync.Fiscal.EFD.Registro.BlocoK.RegistroK200.ToString">
             <summary>
             Retorna o texto do registro K200.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoK.RegistroK220.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IMovimentacaoInternaEstoque)">
+            <summary>
+            Construtor da classe
+            </summary>
+            <param name="tipoEfd"></param>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoK.RegistroK220.ToString">
+            <summary>
+            Retorna o texto do registro K220.
             </summary>
             <returns>Uma string com os dados formatados.</returns>
         </member>
@@ -129,17 +119,6 @@
             Retorna o texto do registro K235.
             </summary>
             <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Bloco0.Registro0990.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Bloco0.Registro0990.ToString">
-            <summary>
-            Retorna o texto do registro 0990.
-            </summary>
-            <returns>Uma string com os dados formatados para uso da EFD.</returns>
         </member>
         <member name="M:Sync.Fiscal.EFD.Registro.BlocoK.RegistroK990.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
             <summary>
@@ -168,59 +147,244 @@
             </summary>
             <returns>Uma string com os dados formatados.</returns>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Gerar.IsRegistroEfd``1(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM001.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
             <summary>
-            Verifica se o registro é para o tipo de EFD desejado.
+            Construtor da classe.
             </summary>
-            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM001.ToString">
+            <summary>
+            Retorna o texto do registro M001.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM100.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoTipoCredito,System.Single,Sync.Fiscal.EFD.Registro.BlocoM.RegistroM200)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM100.ToString">
+            <summary>
+            Retorna o texto do registro M100.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM105.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Int32,Sync.Fiscal.EFD.Registro.Bloco0.Registro0111,Sync.Fiscal.Enumeracao.CodigoTipoCredito,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Gerar.DadosBlocoM})">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM105.ToString">
+            <summary>
+            Retorna o texto do registro M105.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM110.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IAjusteContribuicao)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM110.ToString">
+            <summary>
+            Retorna o texto do registro M110.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM200.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria,Sync.Fiscal.EFD.Suporte.Registros)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM200.ToString">
+            <summary>
+            Retorna o texto do registro M200.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM210.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial,System.Single,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM210.ToString">
+            <summary>
+            Retorna o texto do registro M210.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM220.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IAjusteContribuicao)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM220.ToString">
+            <summary>
+            Retorna o texto do registro M220.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM230.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IInfoDiferimento)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM230.ToString">
+            <summary>
+            Retorna o texto do registro M230.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM300.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial,System.String)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM300.ToString">
+            <summary>
+            Retorna o texto do registro M300.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM400.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Gerar.DadosBlocoM})">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM400.ToString">
+            <summary>
+            Retorna o texto do registro M400.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM410.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Nullable{Sync.Fiscal.Enumeracao.Cst.CstPisCofins})">
+            <summary>
+            Construtor da classe.
+            </summary>
             <param name="tipoEfd"></param>
-            <returns></returns>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Gerar.IsRegistroEfd(Sync.Fiscal.EFD.Registro.Registro)">
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM410.ToString">
             <summary>
-            Verifica se o registro é para o tipo de EFD desejado.
+            Retorna o texto do registro M410.
             </summary>
-            <param name="r"></param>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM500.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoTipoCredito,System.Single,Sync.Fiscal.EFD.Registro.BlocoM.RegistroM600)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM500.ToString">
+            <summary>
+            Retorna o texto do registro M500.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM505.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria,Sync.Fiscal.EFD.Registro.Bloco0.Registro0111,Sync.Fiscal.Enumeracao.CodigoTipoCredito,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Gerar.DadosBlocoM})">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM505.ToString">
+            <summary>
+            Retorna o texto do registro M505.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM510.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IAjusteContribuicao)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM510.ToString">
+            <summary>
+            Retorna o texto do registro M510.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM600.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria,Sync.Fiscal.EFD.Suporte.Registros)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM600.ToString">
+            <summary>
+            Retorna o texto do registro M600.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM610.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial,System.Single,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM610.ToString">
+            <summary>
+            Retorna o texto do registro M610.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM620.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IAjusteContribuicao)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM620.ToString">
+            <summary>
+            Retorna o texto do registro M620.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM630.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IInfoDiferimento)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM630.ToString">
+            <summary>
+            Retorna o texto do registro M630.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM700.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial,System.String)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM700.ToString">
+            <summary>
+            Retorna o texto do registro M700.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM800.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Gerar.DadosBlocoM})">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM800.ToString">
+            <summary>
+            Retorna o texto do registro M800.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM810.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Nullable{Sync.Fiscal.Enumeracao.Cst.CstPisCofins})">
+            <summary>
+            Construtor da classe.
+            </summary>
             <param name="tipoEfd"></param>
-            <returns></returns>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Gerar.RecuperaRegistros(Sync.Fiscal.EFD.Suporte.IRecuperaDados,Sync.Fiscal.EFD.Suporte.IConfiguracao,Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Boolean,System.String,System.String,System.Int32,System.DateTime,System.DateTime,System.DateTime[],System.Boolean,System.String,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria,System.Nullable{Sync.Fiscal.Enumeracao.IndicadorApropriacaoCreditos},Sync.Fiscal.Enumeracao.IndicadorTipoContribuicao,System.Boolean,System.Boolean,System.Boolean)">
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM810.ToString">
             <summary>
-            Retorna os registro do SPED da loja e período especificados
+            Retorna o texto do registro M810.
             </summary>
-            <param name="idLoja"></param>
-            <param name="idContabilista">Contabilista responsável pela geração do arquivo</param>
-            <param name="inicio"></param>
-            <param name="fim"></param>
-            <returns></returns>
+            <returns>Uma string com os dados formatados.</returns>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Gerar.RecuperaRegistrosFiscal(Sync.Fiscal.EFD.Suporte.IRecuperaDados,Sync.Fiscal.EFD.Suporte.IConfiguracao,System.Boolean,System.String,System.Int32,System.Int32,System.DateTime,System.DateTime,System.DateTime[],System.Boolean,System.String,System.Boolean)">
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM990.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
             <summary>
-            Retorna os registros do EFD Fiscal (ICMS/IPI) da loja e período especificados.
+            Construtor da classe.
             </summary>
-            <param name="idLoja"></param>
-            <param name="idContabilista">Contabilista responsável pela geração do arquivo</param>
-            <param name="inicio"></param>
-            <param name="fim"></param>
-            <param name="recuperarDados"></param>
-            <param name="configuracao"></param>
-            <param name="arquivoRetificador"></param>
-            <param name="numReciboOriginal"></param>
-            <param name="intervalos"></param>
-            <param name="gerarBlocoH"></param>
-            <param name="aidf"></param>
-            <param name="gerarBlocoK"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Gerar.RecuperaRegistrosContribuicoes(Sync.Fiscal.EFD.Suporte.IRecuperaDados,Sync.Fiscal.EFD.Suporte.IConfiguracao,System.Boolean,System.String,System.String,System.Int32,System.DateTime,System.DateTime,System.Int32,System.Nullable{System.Int32},System.Int32)">
-            <summary>
-            Retorna os registros do EFD Contribuições (PIS/COFINS) das lojas e período especificados.
-            </summary>
-            <param name="idsLojas"></param>
-            <param name="idContabilista">Contabilista responsável pela geração do arquivo</param>
-            <param name="inicio"></param>
-            <param name="fim"></param>
-            <returns></returns>
+            <param name="registros"></param>
         </member>
         <member name="M:Sync.Fiscal.EFD.Registro.Bloco0.Registro0001.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
             <summary>
@@ -349,16 +513,16 @@
             Construtor da classe.
             </summary>
         </member>
+        <member name="P:Sync.Fiscal.EFD.Registro.Bloco0.Registro0150.CodPais">
+            <summary>
+            1058 - Brasil
+            </summary>
+        </member>
         <member name="M:Sync.Fiscal.EFD.Registro.Bloco0.Registro0150.ToString">
             <summary>
             Retorna o texto do registro 0150.
             </summary>
             <returns>Uma string com os dados formatados para uso da EFD.</returns>
-        </member>
-        <member name="P:Sync.Fiscal.EFD.Registro.Bloco0.Registro0150.CodPais">
-            <summary>
-            1058 - Brasil
-            </summary>
         </member>
         <member name="M:Sync.Fiscal.EFD.Registro.Bloco0.Registro0175.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.ILoja,System.DateTime,System.DateTime,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Entidade.IAlteracaoLog})">
             <summary>
@@ -408,12 +572,6 @@
             Construtor da classe.
             </summary>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Bloco0.Registro0200.ToString">
-            <summary>
-            Retorna o texto do registro 0200.
-            </summary>
-            <returns>Uma string com os dados formatados para uso da EFD.</returns>
-        </member>
         <member name="P:Sync.Fiscal.EFD.Registro.Bloco0.Registro0200.CodBarra">
             <summary>
             Implementar quando colocar na NFe também, códigos:
@@ -425,6 +583,12 @@
             Manual EFD: 
             "Não preencher. Se houver a informação, esta deve ser prestada no registro 0205"
             </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.Bloco0.Registro0200.ToString">
+            <summary>
+            Retorna o texto do registro 0200.
+            </summary>
+            <returns>Uma string com os dados formatados para uso da EFD.</returns>
         </member>
         <member name="M:Sync.Fiscal.EFD.Registro.Bloco0.Registro0205.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IProduto,System.DateTime,System.DateTime,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Entidade.IProduto})">
             <summary>
@@ -663,16 +827,16 @@
             Construtor da classe.
             </summary>
         </member>
+        <member name="P:Sync.Fiscal.EFD.Registro.Bloco1.Registro1500.VlCredDCompPaAnt">
+            <summary>
+            11
+            </summary>
+        </member>
         <member name="M:Sync.Fiscal.EFD.Registro.Bloco1.Registro1500.ToString">
             <summary>
             Retorna o texto do registro 1500.
             </summary>
             <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="P:Sync.Fiscal.EFD.Registro.Bloco1.Registro1500.VlCredDCompPaAnt">
-            <summary>
-            11
-            </summary>
         </member>
         <member name="M:Sync.Fiscal.EFD.Registro.Bloco1.Registro1501.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.INFe,Sync.Fiscal.EFD.Entidade.IProdutoNFe,System.Nullable{System.Int32})">
             <summary>
@@ -784,12 +948,6 @@
             </summary>
             <returns>Uma string com os dados formatados.</returns>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Bloco5.Registro5020.ToString">
-            <summary>
-            Retorna o texto do registro 0001.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
         <member name="P:Sync.Fiscal.EFD.Registro.Bloco5.Registro5020.NomeMercadoria">
             <summary>
             Descrição da mercadoria
@@ -838,6 +996,12 @@
             <summary>
             Coeficiente (percentual) do conteúdo de importação informado pelo contribinte
             </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.Bloco5.Registro5020.ToString">
+            <summary>
+            Retorna o texto do registro 0001.
+            </summary>
+            <returns>Uma string com os dados formatados.</returns>
         </member>
         <member name="M:Sync.Fiscal.EFD.Registro.Bloco5.Registro5990.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
             <summary>
@@ -1229,6 +1393,17 @@
             </summary>
             <param name="registros"></param>
         </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoC.RegistroD195.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Int32,System.String)">
+            <summary>
+            Construtor da classe.
+            </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.BlocoC.RegistroD195.ToString">
+            <summary>
+            Retorna o texto do registro D195.
+            </summary>
+            <returns>Uma string com os dados formatados para uso da EFD.</returns>
+        </member>
         <member name="M:Sync.Fiscal.EFD.Registro.BlocoD.RegistroD001.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
             <summary>
             Construtor da classe.
@@ -1259,6 +1434,16 @@
         <member name="M:Sync.Fiscal.EFD.Registro.BlocoD.RegistroD100.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.ICTe)">
             <summary>
             Construtor da classe.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.EFD.Registro.BlocoD.RegistroD100.CodMunOrig">
+            <summary>
+            Código, conforme a tabela do IBGE, do município de origem do serviço.
+            </summary>
+        </member>
+        <member name="P:Sync.Fiscal.EFD.Registro.BlocoD.RegistroD100.CodMunDest">
+            <summary>
+            Código, conforme a tabela do IBGE, do município de destino do serviço.
             </summary>
         </member>
         <member name="M:Sync.Fiscal.EFD.Registro.BlocoD.RegistroD100.ToString">
@@ -1317,17 +1502,6 @@
         <member name="M:Sync.Fiscal.EFD.Registro.BlocoD.RegistroD190.ToString">
             <summary>
             Retorna o texto do registro D190.
-            </summary>
-            <returns>Uma string com os dados formatados para uso da EFD.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoC.RegistroD195.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Int32,System.String)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoC.RegistroD195.ToString">
-            <summary>
-            Retorna o texto do registro D195.
             </summary>
             <returns>Uma string com os dados formatados para uso da EFD.</returns>
         </member>
@@ -1934,264 +2108,27 @@
             Construtor da classe.
             </summary>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM001.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
+        <member name="M:Sync.Fiscal.EFD.Registro.Registro.GetInstance``1">
             <summary>
-            Construtor da classe.
+            Retorna uma instância de um registro.
             </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM001.ToString">
+        <member name="M:Sync.Fiscal.EFD.Registro.Registro.ToString(System.Collections.Generic.IEnumerable{System.String})">
             <summary>
-            Retorna o texto do registro M001.
+            Retorna a string separada por "|" para uso nos registros do EFD.
             </summary>
-            <returns>Uma string com os dados formatados.</returns>
+            <param name="campos">Os campos que serão usados no registro.</param>
+            <returns>A string separada por "|".</returns>
         </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM100.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoTipoCredito,System.Single,Sync.Fiscal.EFD.Registro.BlocoM.RegistroM200)">
+        <member name="M:Sync.Fiscal.EFD.Registro.Registro.ToString(System.Collections.Generic.IEnumerable{System.String},System.Int32)">
             <summary>
-            Construtor da classe.
+            Retorna a string para vários registros, usando quebra de linha e separando cada linha por "|".
             </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM100.ToString">
-            <summary>
-            Retorna o texto do registro M100.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM105.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Int32,Sync.Fiscal.EFD.Registro.Bloco0.Registro0111,Sync.Fiscal.Enumeracao.CodigoTipoCredito,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Gerar.DadosBlocoM})">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM105.ToString">
-            <summary>
-            Retorna o texto do registro M105.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM110.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IAjusteContribuicao)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM110.ToString">
-            <summary>
-            Retorna o texto do registro M110.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM200.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria,Sync.Fiscal.EFD.Suporte.Registros)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM200.ToString">
-            <summary>
-            Retorna o texto do registro M200.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM210.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial,System.Single,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM210.ToString">
-            <summary>
-            Retorna o texto do registro M210.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM220.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IAjusteContribuicao)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM220.ToString">
-            <summary>
-            Retorna o texto do registro M220.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM230.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IInfoDiferimento)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM230.ToString">
-            <summary>
-            Retorna o texto do registro M230.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM300.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial,System.String)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM300.ToString">
-            <summary>
-            Retorna o texto do registro M300.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM400.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Gerar.DadosBlocoM})">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM400.ToString">
-            <summary>
-            Retorna o texto do registro M400.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM410.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Nullable{Sync.Fiscal.Enumeracao.Cst.CstPisCofins})">
-            <summary>
-            Construtor da classe.
-            </summary>
-            <param name="tipoEfd"></param>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM410.ToString">
-            <summary>
-            Retorna o texto do registro M410.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM500.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoTipoCredito,System.Single,Sync.Fiscal.EFD.Registro.BlocoM.RegistroM600)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM500.ToString">
-            <summary>
-            Retorna o texto do registro M500.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM505.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria,Sync.Fiscal.EFD.Registro.Bloco0.Registro0111,Sync.Fiscal.Enumeracao.CodigoTipoCredito,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Gerar.DadosBlocoM})">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM505.ToString">
-            <summary>
-            Retorna o texto do registro M505.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM510.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IAjusteContribuicao)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM510.ToString">
-            <summary>
-            Retorna o texto do registro M510.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM600.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria,Sync.Fiscal.EFD.Suporte.Registros)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM600.ToString">
-            <summary>
-            Retorna o texto do registro M600.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM610.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial,System.Single,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM610.ToString">
-            <summary>
-            Retorna o texto do registro M610.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM620.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IAjusteContribuicao)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM620.ToString">
-            <summary>
-            Retorna o texto do registro M620.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM630.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.EFD.Entidade.IInfoDiferimento)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM630.ToString">
-            <summary>
-            Retorna o texto do registro M630.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM700.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,Sync.Fiscal.Enumeracao.CodigoContribuicaoSocial,System.String)">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM700.ToString">
-            <summary>
-            Retorna o texto do registro M700.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM800.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Gerar.DadosBlocoM})">
-            <summary>
-            Construtor da classe.
-            </summary>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM800.ToString">
-            <summary>
-            Retorna o texto do registro M800.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM810.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Nullable{Sync.Fiscal.Enumeracao.Cst.CstPisCofins})">
-            <summary>
-            Construtor da classe.
-            </summary>
-            <param name="tipoEfd"></param>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM810.ToString">
-            <summary>
-            Retorna o texto do registro M810.
-            </summary>
-            <returns>Uma string com os dados formatados.</returns>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.BlocoM.RegistroM990.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
-            <summary>
-            Construtor da classe.
-            </summary>
-            <param name="registros"></param>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Registro0000.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.String,System.Boolean,System.String,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Entidade.ILoja},System.DateTime,System.DateTime)">
-            <summary>
-            Construtor da classe.
-            </summary>
-            <param name="loja">O objeto com os dados da loja.</param>
-            <param name="inicio">A data de início das informações.</param>
-            <param name="fim">A data de fim das informações.</param>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Registro0000.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Entidade.ILoja})">
-            <summary>
-            Construtor para arquivo FCI
-            </summary>
-            <param name="lojas">O objeto com os dados da loja.</param>
-        </member>
-        <member name="M:Sync.Fiscal.EFD.Registro.Registro0000.ToString">
-            <summary>
-            Retorna o texto do registro 0000.
-            </summary>
-            <returns>Uma string com os dados formatados para uso da EFD.</returns>
+            <param name="campos">Os campos de todos os registros que serão retornados.</param>
+            <param name="numeroCampos">O número de campos que compõe 1 registro.</param>
+            <returns>A string com quebras de linha e separada por "|".</returns>
         </member>
         <member name="T:Sync.Fiscal.EFD.Registro.Registro0000.CodFinEnum">
             <summary>
@@ -2217,6 +2154,26 @@
             <summary>
             Enumeração com o indicador de situação especial
             </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.Registro0000.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.String,System.Boolean,System.String,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Entidade.ILoja},System.DateTime,System.DateTime)">
+            <summary>
+            Construtor da classe.
+            </summary>
+            <param name="loja">O objeto com os dados da loja.</param>
+            <param name="inicio">A data de início das informações.</param>
+            <param name="fim">A data de fim das informações.</param>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.Registro0000.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Collections.Generic.IEnumerable{Sync.Fiscal.EFD.Entidade.ILoja})">
+            <summary>
+            Construtor para arquivo FCI
+            </summary>
+            <param name="lojas">O objeto com os dados da loja.</param>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Registro.Registro0000.ToString">
+            <summary>
+            Retorna o texto do registro 0000.
+            </summary>
+            <returns>Uma string com os dados formatados para uso da EFD.</returns>
         </member>
         <member name="M:Sync.Fiscal.EFD.Registro.Registro9999.#ctor(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
             <summary>
@@ -2246,6 +2203,60 @@
             <summary>
             Objeto responsável pelo cache.
             </summary>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Gerar.IsRegistroEfd``1(Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum)">
+            <summary>
+            Verifica se o registro é para o tipo de EFD desejado.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="tipoEfd"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Gerar.IsRegistroEfd(Sync.Fiscal.EFD.Registro.Registro)">
+            <summary>
+            Verifica se o registro é para o tipo de EFD desejado.
+            </summary>
+            <param name="r"></param>
+            <param name="tipoEfd"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Gerar.RecuperaRegistros(Sync.Fiscal.EFD.Suporte.IRecuperaDados,Sync.Fiscal.EFD.Suporte.IConfiguracao,Sync.Fiscal.EFD.Registro.Registro.TipoEfdEnum,System.Boolean,System.String,System.String,System.Int32,System.DateTime,System.DateTime,System.DateTime[],System.Boolean,System.String,Sync.Fiscal.Enumeracao.IndicadorIncidenciaTributaria,System.Nullable{Sync.Fiscal.Enumeracao.IndicadorApropriacaoCreditos},Sync.Fiscal.Enumeracao.IndicadorTipoContribuicao,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Retorna os registro do SPED da loja e período especificados
+            </summary>
+            <param name="idLoja"></param>
+            <param name="idContabilista">Contabilista responsável pela geração do arquivo</param>
+            <param name="inicio"></param>
+            <param name="fim"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Gerar.RecuperaRegistrosFiscal(Sync.Fiscal.EFD.Suporte.IRecuperaDados,Sync.Fiscal.EFD.Suporte.IConfiguracao,System.Boolean,System.String,System.Int32,System.Int32,System.DateTime,System.DateTime,System.DateTime[],System.Boolean,System.String,System.Boolean)">
+            <summary>
+            Retorna os registros do EFD Fiscal (ICMS/IPI) da loja e período especificados.
+            </summary>
+            <param name="idLoja"></param>
+            <param name="idContabilista">Contabilista responsável pela geração do arquivo</param>
+            <param name="inicio"></param>
+            <param name="fim"></param>
+            <param name="recuperarDados"></param>
+            <param name="configuracao"></param>
+            <param name="arquivoRetificador"></param>
+            <param name="numReciboOriginal"></param>
+            <param name="intervalos"></param>
+            <param name="gerarBlocoH"></param>
+            <param name="aidf"></param>
+            <param name="gerarBlocoK"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Sync.Fiscal.EFD.Gerar.RecuperaRegistrosContribuicoes(Sync.Fiscal.EFD.Suporte.IRecuperaDados,Sync.Fiscal.EFD.Suporte.IConfiguracao,System.Boolean,System.String,System.String,System.Int32,System.DateTime,System.DateTime,System.Int32,System.Nullable{System.Int32},System.Int32)">
+            <summary>
+            Retorna os registros do EFD Contribuições (PIS/COFINS) das lojas e período especificados.
+            </summary>
+            <param name="idsLojas"></param>
+            <param name="idContabilista">Contabilista responsável pela geração do arquivo</param>
+            <param name="inicio"></param>
+            <param name="fim"></param>
+            <returns></returns>
         </member>
         <member name="T:Sync.Fiscal.EFD.ValidaEFD">
             <summary>

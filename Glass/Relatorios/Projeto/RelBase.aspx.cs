@@ -87,7 +87,8 @@ namespace Glass.UI.Web.Relatorios.Projeto
                     {
                         var pcp = itemProjeto[i].IdPedidoEspelho.HasValue;
                         ProjetoModelo modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(itemProjeto[i].IdProjetoModelo);
-                        lstPeca.AddRange(PecaItemProjetoDAO.Instance.GetByItemProjetoRpt(itemProjeto[i].IdItemProjeto, itemProjeto[i].IdProjetoModelo, pcp));
+                        lstPeca.AddRange(PecaItemProjetoDAO.Instance.GetByItemProjetoRpt(itemProjeto[i].IdItemProjeto, itemProjeto[i].IdProjetoModelo, pcp)
+                            .Where(f => f.QtdeExibirRelatorio > 0));
 
                         // Caso a imagem da peça tenha sido editada então a impressão não deve exibir se a peça possui arquivo de otimização.
                         for (var x = 0; x < lstPeca.Count; x++)
@@ -106,7 +107,15 @@ namespace Glass.UI.Web.Relatorios.Projeto
                         }
     
                         int atual = lstMaterial.Count;
-                        lstMaterial.AddRange(MaterialItemProjetoDAO.Instance.GetForRptItemProjeto(itemProjeto[i].IdItemProjeto, false));
+
+                        foreach (var material in MaterialItemProjetoDAO.Instance.GetForRptItemProjeto(itemProjeto[i].IdItemProjeto, false, pcp))
+                        {
+                            if (material.QtdeExibirRelatorio > 0)
+                            {
+                                lstMaterial.Add(material);
+                            }
+                        }
+
                         int numeroMateriais = lstMaterial.Count - atual;
     
                         // Verifica se os materiais do itemProjeto deverão ser impressos também
@@ -143,7 +152,7 @@ namespace Glass.UI.Web.Relatorios.Projeto
                             itemProjeto[i].IdPedido = itemProjeto[i].IdPedidoEspelho;
     
                         lstImagens.AddRange(ImagemDAO.Instance.GetPecasAlteradas(itemProjeto[i].IdItemProjeto, 
-                            Glass.Configuracoes.ProjetoConfig.RelatorioImagemProjeto.PercentualTamanhoImagemRelatorio));
+                            Glass.Configuracoes.ProjetoConfig.RelatorioImagemProjeto.PercentualTamanhoImagemRelatorio, lstPeca.ToArray()));
                         lstMedidas.AddRange(MedidaItemProjetoDAO.Instance.GetListByItemProjeto(itemProjeto[i].IdItemProjeto));
                     }
 
