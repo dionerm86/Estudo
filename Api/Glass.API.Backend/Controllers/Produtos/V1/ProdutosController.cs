@@ -33,7 +33,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                 return this.NaoEncontrado("Produto não encontrado.");
             }
 
-            return null;
+            return validacao;
         }
     }
 }
