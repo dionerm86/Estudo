@@ -46,23 +46,23 @@
                 {{ movimentacao.metroQuadrado.sobra | decimal }}
             </td>
             <td>
-                <controle-tooltip :precisa-clicar="true" v-if="movimentacao.metroQuadrado.planosCorteVinculados"
+                <controle-tooltip :precisa-clicar="true" v-if="movimentacao.planosCorteVinculados"
                     :titulo="'Plano de Corte da etiqueta: ' + movimentacao.codigoEtiquetaChapa">
                     <template slot="botao">
                         <img src="../Images/blocodenotas.png" title="Planos de corte vinculados" />
                     </template>
 
-                    {{ movimentacao.metroQuadrado.planosCorteVinculados }}
+                    {{ movimentacao.planosCorteVinculados }}
                 </controle-tooltip>
             </td>
             <td>
-                <controle-tooltip :precisa-clicar="true" v-if="movimentacao.metroQuadrado.codigosEtiquetasVinculadas"
+                <controle-tooltip :precisa-clicar="true" v-if="movimentacao.codigosEtiquetasVinculadas"
                     :titulo="'Leituras da etiqueta: ' + movimentacao.codigoEtiquetaChapa">
                     <template slot="botao">
                         <img src="../Images/blocodenotas.png" title="Etiquetas vinculadas" />
                     </template>
 
-                    {{ movimentacao.metroQuadrado.codigosEtiquetasVinculadas }}
+                    {{ movimentacao.codigosEtiquetasVinculadas }}
                 </controle-tooltip>
             </td>
         </tr>

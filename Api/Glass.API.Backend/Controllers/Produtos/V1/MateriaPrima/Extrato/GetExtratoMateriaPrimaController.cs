@@ -3,7 +3,7 @@
 // </copyright>
 
 using GDA;
-using Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.MovimentacaoChapa.Lista;
+using Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Lista;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Collections.Generic;
