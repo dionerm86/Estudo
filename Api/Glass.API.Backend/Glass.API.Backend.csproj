@@ -200,7 +200,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Compile Include="Controllers\Producao\V1\Fornadas\FornadasController.cs" />
+    <Compile Include="Controllers\Producao\V1\Fornadas\GetFornadasController.cs" />
     <Compile Include="Helper\ImpressoesEtiquetas\Individual\TraducaoOrdenacaoListaImpressoesIndividuaisEtiquetas.cs" />
+    <Compile Include="Helper\Producao\Fornadas\TraducaoOrdenacaoListaFornadas.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\ListaDto.cs" />
@@ -209,6 +212,11 @@
     <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\QuantidadeDto.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\ChapaMateriaPrima\TraducaoOrdenacaoListaChapasMateriaPrima.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\TraducaoOrdenacaoListaPosicoesMateriaPrima.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\PecasFornada\MedidasDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\PecasFornada\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\PecasFornada\ProdutoDto.cs" />
     <Compile Include="Models\Produtos\V1\MateriaPrima\Lista\FiltroDto.cs" />
     <Content Include="Web.config" />
   </ItemGroup>

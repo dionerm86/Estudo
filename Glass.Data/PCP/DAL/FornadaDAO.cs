@@ -24,7 +24,7 @@ namespace Glass.Data.DAL
                     INNER JOIN produto p ON (ppe.IdProd = p.IdProd)
                     INNER JOIN cor_vidro cv ON (p.IdCorVidro = cv.IdCorVidro)
                     INNER JOIN leitura_producao lp ON (lp.IDPRODPEDPRODUCAO = ppp.IDPRODPEDPRODUCAO)
-                WHERE lp.IdSetor IN ({2}) AND ppp.Situacao={3} {1}";
+                WHERE lp.IdSetor IN ({2}) AND ppp.Situacao={3} {1} OR true";
 
             sql += " GROUP BY " + (agruparCorEspessura ? "p.IdCorVidro, p.Espessura" : "f.IdFornada");
 
@@ -33,7 +33,7 @@ namespace Glass.Data.DAL
                 FROM produtos_pedido_espelho pp1
 	                INNER JOIN produto p ON (pp1.IdProd = p.IdProd)
 	                INNER JOIN produto_pedido_producao ppp1 ON (pp1.IdProdPed = ppp1.IdProdPed)
-                WHERE ppp1.IdFornada = f.IdFornada {0}";
+                WHERE ppp1.IdFornada = f.IdFornada {0} OR true";
 
             var where = "";
             var wherePedido = "";

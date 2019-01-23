@@ -525,6 +525,11 @@
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.js" />
     <Content Include="Vue\Pagamentos\Templates\LstPagamentos.Filtro.html" />
     <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
+    <Content Include="Vue\Producao\Fornadas\Componentes\LstFornadas.Filtro.js" />
+    <Content Include="Vue\Producao\Fornadas\Componentes\LstFornadas.js" />
+    <Content Include="Vue\Producao\Fornadas\Componentes\LstFornadas.Pecas.js" />
+    <Content Include="Vue\Producao\Fornadas\Templates\LstFornadas.Filtro.html" />
+    <Content Include="Vue\Producao\Fornadas\Templates\LstFornadas.Pecas.html" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Componentes\LstPosicoesMateriaPrima.Chapas.js" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Componentes\LstPosicoesMateriaPrima.Filtro.js" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Componentes\LstPosicoesMateriaPrima.js" />

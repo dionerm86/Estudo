@@ -19,7 +19,7 @@
         </section>
         <section>
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma compra encontrada.">
-                <template slot="cabecalho">
+                <template slot="cabecalho" :numero-registros="15">
                     <th></th>
                     <th>
                         <a href="#" @click.prevent="ordenar('num')">Num</a>
