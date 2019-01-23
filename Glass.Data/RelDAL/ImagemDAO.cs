@@ -29,7 +29,7 @@ namespace Glass.Data.RelDAL
                 if (p.Tipo != 1)
                     continue;
 
-                ProdutosPedidoEspelho ppe = p.IdProdPed.GetValueOrDefault() == 0 ? null :
+                ProdutosPedidoEspelho ppe = !itemProj.IdPedidoEspelho.HasValue || p.IdProdPed.GetValueOrDefault() == 0 ? null :
                     ProdutosPedidoEspelhoDAO.Instance.GetForImagemPeca(sessao, p.IdProdPed.Value);
 
                 foreach (int item in Array.ConvertAll(UtilsProjeto.GetItensFromPeca(p.Item), x => Glass.Conversoes.StrParaInt(x)))
