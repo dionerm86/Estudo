@@ -1,0 +1,8 @@
+﻿<transition name="fade" v-on:enter="entrar__" v-on:after-enter="mostrar__" v-on:before-leave="esconder__">
+    <div v-show="exibir" v-bind:style="estiloTransicao" v-if="exibirComoBloco">
+        <slot></slot>
+    </div>
+    <span v-show="exibir" v-bind:style="estiloTransicao" v-else>
+        <slot></slot>
+    </span>
+</transition>

@@ -28,7 +28,8 @@
     transportadorAtual: {},
     medidorAtual: {},
     comissionadoAtual: {},
-    descricaoObraAtual: ''
+    descricaoObraAtual: '',
+    exibirPedido: false
   },
 
   methods: {
@@ -50,6 +51,7 @@
       return Servicos.Pedidos.obterDetalhe(id)
         .then(function(resposta) {
           vm.pedido = resposta.data;
+          vm.exibirPedido = true;
         })
         .catch(function(erro) {
           if (erro && erro.mensagem) {
@@ -795,7 +797,7 @@
     }
   },
 
-  mounted: function() {
+  created: function() {
     var id = GetQueryString('idPedido');
     var vm = this;
 

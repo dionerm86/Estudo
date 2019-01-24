@@ -1,258 +1,260 @@
 ﻿<section v-if="pedido" v-show="exibir">
     <form>
-        <lista-paginada v-bind:exibir-inclusao="configuracoes.exibirAmbientes" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarAmbientes"
-            v-bind:ordenacao="ordenacao" v-bind:filtro="filtro" v-on:atualizou-itens="listaInternaAtualizada">
-            <template slot="cabecalho">
-                <th></th>
-                <th>
-                    <a href="#" v-on:click.prevent="ordenar('ambiente')" v-if="!pedidoMaoDeObra">
-                        Ambiente
-                    </a>
-                    <a href="#" v-on:click.prevent="ordenar('ambiente')" v-else>
-                        Peça de vidro
-                    </a>
-                </th>
-                <th v-if="!pedidoMaoDeObra">
-                    <a href="#" v-on:click.prevent="ordenar('descricao')">
-                        Descrição
-                    </a>
-                </th>
-                <th v-if="pedidoMaoDeObra">
-                    <a href="#" v-on:click.prevent="ordenar('quantidade')">
-                        Qtde
-                    </a>
-                </th>
-                <th v-if="pedidoMaoDeObra">
-                    <a href="#" v-on:click.prevent="ordenar('largura')">
-                        Largura
-                    </a>
-                </th>
-                <th v-if="pedidoMaoDeObra">
-                    <a href="#" v-on:click.prevent="ordenar('altura')">
-                        Altura
-                    </a>
-                </th>
-                <th v-if="pedidoMaoDeObra && configuracoes.exibirColunasProcessoEAplicacao && !configuracoes.sistemaLite">
-                    <a href="#" v-on:click.prevent="ordenar('processo')">
-                        Proc.
-                    </a>
-                </th>
-                <th v-if="pedidoMaoDeObra && configuracoes.exibirColunasProcessoEAplicacao && !configuracoes.sistemaLite">
-                    <a href="#" v-on:click.prevent="ordenar('aplicacao')">
-                        Apl.
-                    </a>
-                </th>
-                <th v-if="pedidoMaoDeObra">
-                    <a href="#" v-on:click.prevent="ordenar('redondo')">
-                        Redondo
-                    </a>
-                </th>
-                <th v-if="pedidoMaoDeObra || configuracoes.acrescimoDescontoItens">
-                    <a href="#" v-on:click.prevent="ordenar('valorProdutos')">
-                        Valor produtos
-                    </a>
-                </th>
-                <th v-if="configuracoes.acrescimoDescontoItens">
-                    <a href="#" v-on:click.prevent="ordenar('acrescimo')">
-                        Acréscimo
-                    </a>
-                </th>
-                <th v-if="configuracoes.acrescimoDescontoItens">
-                    <a href="#" v-on:click.prevent="ordenar('desconto')">
-                        Desconto
-                    </a>
-                </th>
-                <th></th>
-            </template>
-            <template slot="item" slot-scope="{ item, index }">
-                <td style="white-space: nowrap">
-                    <button v-on:click.prevent="editar(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
-                        <img src="../Images/Edit.gif">
-                    </button>
-                    <button v-on:click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1">
-                        <img src="../Images/ExcluirGrid.gif">
-                    </button>
-                </td>
-                <td>
-                    <a href="#" v-on:click.prevent="exibirProjeto(item)" v-if="item.projeto && item.projeto.idItemProjeto">
-                        {{ item.nome }}
-                    </a>
-                    <a href="#" v-on:click.prevent="exibirProdutos(item.id, item.nome, item.produtoMaoDeObra)" v-else>
-                        {{ item.nome }}
-                    </a>
-                </td>
-                <td v-if="!pedidoMaoDeObra">
-                    {{ item.descricao }}
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <span v-if="item.produtoMaoDeObra">
-                        {{ item.produtoMaoDeObra.quantidade }}
-                    </span>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <span v-if="item.produtoMaoDeObra">
-                        {{ item.produtoMaoDeObra.largura }}
-                    </span>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <span v-if="item.produtoMaoDeObra">
-                        {{ item.produtoMaoDeObra.altura }}
-                    </span>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <span v-if="item.produtoMaoDeObra && item.produtoMaoDeObra.processo">
-                        {{ item.produtoMaoDeObra.processo.codigo }}
-                    </span>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <span v-if="item.produtoMaoDeObra && item.produtoMaoDeObra.aplicacao">
-                        {{ item.produtoMaoDeObra.aplicacao.codigo }}
-                    </span>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <span v-if="item.produtoMaoDeObra">
-                        {{ item.produtoMaoDeObra.redondo | indicaMarcado }}
-                    </span>
-                </td>
-                <td>
-                    {{ item.totalProdutos | moeda }}
-                </td>
-                <td>
-                    <span v-if="item.acrescimo">
-                        <span v-if="item.acrescimo.tipo == 1">
-                            {{ item.acrescimo.valor | percentual }}
+        <transicao :exibir="exibirAmbientes">
+            <lista-paginada v-bind:exibir-inclusao="configuracoes.exibirAmbientes" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarAmbientes"
+                v-bind:ordenacao="ordenacao" v-bind:filtro="filtro" v-on:atualizou-itens="listaInternaAtualizada">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" v-on:click.prevent="ordenar('ambiente')" v-if="!pedidoMaoDeObra">
+                            Ambiente
+                        </a>
+                        <a href="#" v-on:click.prevent="ordenar('ambiente')" v-else>
+                            Peça de vidro
+                        </a>
+                    </th>
+                    <th v-if="!pedidoMaoDeObra">
+                        <a href="#" v-on:click.prevent="ordenar('descricao')">
+                            Descrição
+                        </a>
+                    </th>
+                    <th v-if="pedidoMaoDeObra">
+                        <a href="#" v-on:click.prevent="ordenar('quantidade')">
+                            Qtde
+                        </a>
+                    </th>
+                    <th v-if="pedidoMaoDeObra">
+                        <a href="#" v-on:click.prevent="ordenar('largura')">
+                            Largura
+                        </a>
+                    </th>
+                    <th v-if="pedidoMaoDeObra">
+                        <a href="#" v-on:click.prevent="ordenar('altura')">
+                            Altura
+                        </a>
+                    </th>
+                    <th v-if="pedidoMaoDeObra && configuracoes.exibirColunasProcessoEAplicacao && !configuracoes.sistemaLite">
+                        <a href="#" v-on:click.prevent="ordenar('processo')">
+                            Proc.
+                        </a>
+                    </th>
+                    <th v-if="pedidoMaoDeObra && configuracoes.exibirColunasProcessoEAplicacao && !configuracoes.sistemaLite">
+                        <a href="#" v-on:click.prevent="ordenar('aplicacao')">
+                            Apl.
+                        </a>
+                    </th>
+                    <th v-if="pedidoMaoDeObra">
+                        <a href="#" v-on:click.prevent="ordenar('redondo')">
+                            Redondo
+                        </a>
+                    </th>
+                    <th v-if="pedidoMaoDeObra || configuracoes.acrescimoDescontoItens">
+                        <a href="#" v-on:click.prevent="ordenar('valorProdutos')">
+                            Valor produtos
+                        </a>
+                    </th>
+                    <th v-if="configuracoes.acrescimoDescontoItens">
+                        <a href="#" v-on:click.prevent="ordenar('acrescimo')">
+                            Acréscimo
+                        </a>
+                    </th>
+                    <th v-if="configuracoes.acrescimoDescontoItens">
+                        <a href="#" v-on:click.prevent="ordenar('desconto')">
+                            Desconto
+                        </a>
+                    </th>
+                    <th></th>
+                </template>
+                <template slot="item" slot-scope="{ item, index }">
+                    <td style="white-space: nowrap">
+                        <button v-on:click.prevent="editar(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/Edit.gif">
+                        </button>
+                        <button v-on:click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <a href="#" v-on:click.prevent="exibirProjeto(item)" v-if="item.projeto && item.projeto.idItemProjeto">
+                            {{ item.nome }}
+                        </a>
+                        <a href="#" v-on:click.prevent="exibirProdutos(item.id, item.nome, item.produtoMaoDeObra)" v-else>
+                            {{ item.nome }}
+                        </a>
+                    </td>
+                    <td v-if="!pedidoMaoDeObra">
+                        {{ item.descricao }}
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <span v-if="item.produtoMaoDeObra">
+                            {{ item.produtoMaoDeObra.quantidade }}
+                        </span>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <span v-if="item.produtoMaoDeObra">
+                            {{ item.produtoMaoDeObra.largura }}
+                        </span>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <span v-if="item.produtoMaoDeObra">
+                            {{ item.produtoMaoDeObra.altura }}
+                        </span>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <span v-if="item.produtoMaoDeObra && item.produtoMaoDeObra.processo">
+                            {{ item.produtoMaoDeObra.processo.codigo }}
+                        </span>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <span v-if="item.produtoMaoDeObra && item.produtoMaoDeObra.aplicacao">
+                            {{ item.produtoMaoDeObra.aplicacao.codigo }}
+                        </span>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <span v-if="item.produtoMaoDeObra">
+                            {{ item.produtoMaoDeObra.redondo | indicaMarcado }}
+                        </span>
+                    </td>
+                    <td>
+                        {{ item.totalProdutos | moeda }}
+                    </td>
+                    <td>
+                        <span v-if="item.acrescimo">
+                            <span v-if="item.acrescimo.tipo == 1">
+                                {{ item.acrescimo.valor | percentual }}
+                            </span>
+                            <span v-else>
+                                {{ item.acrescimo.valor | moeda }}
+                            </span>
                         </span>
                         <span v-else>
-                            {{ item.acrescimo.valor | moeda }}
+                            {{ 0 | moeda }}
                         </span>
-                    </span>
-                    <span v-else>
-                        {{ 0 | moeda }}
-                    </span>
-                </td>
-                <td>
-                    <span v-if="item.desconto">
-                        <span v-if="item.desconto.tipo == 1">
-                            {{ item.desconto.valor | percentual }}
+                    </td>
+                    <td>
+                        <span v-if="item.desconto">
+                            <span v-if="item.desconto.tipo == 1">
+                                {{ item.desconto.valor | percentual }}
+                            </span>
+                            <span v-else>
+                                {{ item.desconto.valor | moeda }}
+                            </span>
                         </span>
                         <span v-else>
-                            {{ item.desconto.valor | moeda }}
+                            {{ 0 | moeda }}
                         </span>
-                    </span>
-                    <span v-else>
-                        {{ 0 | moeda }}
-                    </span>
-                </td>
-                <td>
-                    <log-alteracao tabela="AmbientePedido" v-bind:id-item="item.id" v-bind:atualizar-ao-alterar="false" v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
-                </td>
-            </template>
-            <template slot="itemEditando">
-                <td style="white-space: nowrap">
-                    <button type="submit" v-on:click.prevent="atualizar" title="Atualizar">
-                        <img src="../Images/ok.gif">
-                    </button>
-                    <button v-on:click.prevent="cancelar" title="Cancelar">
-                        <img src="../Images/ExcluirGrid.gif">
-                    </button>
-                </td>
-                <td>
-                    <input type="text" v-model="ambientePedido.nome" v-if="ambientePedido && !pedidoMaoDeObra" style="width: 150px" maxlength="50">
-                    <campo-busca-produto v-bind:produto.sync="produtoAtual" v-else-if="ambientePedido && ambientePedido.produtoMaoDeObra"
-                        tipo-validacao="Pedido" v-bind:dados-adicionais-validacao="dadosValidacaoProduto" required></campo-busca-produto>
-                </td>
-                <td v-if="!pedidoMaoDeObra">
-                    <textarea rows="2" v-model="ambientePedido.descricao" style="width: 300px" maxlength="1000" v-if="ambientePedido"></textarea>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <campo-quantidade v-bind:quantidade.sync="ambientePedido.produtoMaoDeObra.quantidade" v-bind:permite-decimal="produtoAtual && produtoAtual.quantidade && produtoAtual.quantidade.permiteDecimal"
-                        v-bind:id-produto="produtoAtual ? produtoAtual.id : null" v-bind:id-cliente="pedido.cliente.id" v-bind:exibir-desconto-por-quantidade="false"
-                        v-if="ambientePedido && ambientePedido.produtoMaoDeObra"></campo-quantidade>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <campo-largura v-bind:largura.sync="ambientePedido.produtoMaoDeObra.largura" v-bind:permite-decimal="produtoAtual && produtoAtual.largura && produtoAtual.largura.permiteDecimal"
-                        v-bind:permite-editar="produtoAtual && produtoAtual.largura && produtoAtual.largura.podeEditar" v-if="ambientePedido && ambientePedido.produtoMaoDeObra"></campo-largura>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <campo-altura v-bind:altura-para-exibir.sync="ambientePedido.produtoMaoDeObra.altura" v-bind:exibir-altura-real="true" v-bind:permite-decimal="produtoAtual && produtoAtual.altura && produtoAtual.altura.permiteDecimal"
-                        v-bind:permite-editar="produtoAtual && produtoAtual.altura && produtoAtual.altura.podeEditar"
-                        v-bind:fator-arredondamento="produtoAtual && produtoAtual.altura ? produtoAtual.altura.fatorArredondamento : null"
-                        v-if="ambientePedido && ambientePedido.produtoMaoDeObra"></campo-altura>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="ambientePedido && ambientePedido.produtoMaoDeObra"></campo-busca-etiqueta-processo>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="ambientePedido && ambientePedido.produtoMaoDeObra"></campo-busca-etiqueta-aplicacao>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <input type="checkbox" v-model="ambientePedido.produtoMaoDeObra.redondo" v-if="ambientePedido && ambientePedido.produtoMaoDeObra">
-                </td>
-                <td>
-                    <span v-if="ambiente">
-                        {{ ambientePedido.totalProdutos | moeda }}
-                    </span>
-                </td>
-                <td>
-                    <campo-acrescimo-desconto v-bind:tipo.sync="ambientePedido.acrescimo.tipo" v-bind:valor.sync="ambientePedido.acrescimo.valor" v-if="ambientePedido && ambientePedido.acrescimo"></campo-acrescimo-desconto>
-                </td>
-                <td>
-                    <campo-acrescimo-desconto v-bind:tipo.sync="ambientePedido.desconto.tipo" v-bind:valor.sync="ambientePedido.desconto.valor" v-if="ambientePedido && ambientePedido.desconto"></campo-acrescimo-desconto>
-                </td>
-                <td></td>
-            </template>
-            <template slot="itemIncluir">
-                <td style="white-space: nowrap">
-                    <button v-on:click.prevent="iniciarCadastro" title="Novo ambientePedido..." v-if="!inserindo">
-                        <img src="../Images/Insert.gif">
-                    </button>
-                    <button type="submit" v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">
-                        <img src="../Images/ok.gif">
-                    </button>
-                    <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
-                        <img src="../Images/ExcluirGrid.gif">
-                    </button>
-                </td>
-                <td>
-                    <span v-if="inserindo">
-                        <input type="text" v-model="ambientePedido.nome" v-if="ambientePedido && !pedidoMaoDeObra" style="width: 150px" maxlength="50" required>
+                    </td>
+                    <td>
+                        <log-alteracao tabela="AmbientePedido" v-bind:id-item="item.id" v-bind:atualizar-ao-alterar="false" v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
+                    </td>
+                </template>
+                <template slot="itemEditando">
+                    <td style="white-space: nowrap">
+                        <button type="submit" v-on:click.prevent="atualizar" title="Atualizar">
+                            <img src="../Images/ok.gif">
+                        </button>
+                        <button v-on:click.prevent="cancelar" title="Cancelar">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="ambientePedido.nome" v-if="ambientePedido && !pedidoMaoDeObra" style="width: 150px" maxlength="50">
                         <campo-busca-produto v-bind:produto.sync="produtoAtual" v-else-if="ambientePedido && ambientePedido.produtoMaoDeObra"
                             tipo-validacao="Pedido" v-bind:dados-adicionais-validacao="dadosValidacaoProduto" required></campo-busca-produto>
-                    </span>
-                </td>
-                <td v-if="!pedidoMaoDeObra">
-                    <textarea rows="2" v-model="ambientePedido.descricao" maxlength="1000" style="width: 300px" v-if="inserindo"></textarea>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <campo-quantidade v-bind:quantidade.sync="ambientePedido.produtoMaoDeObra.quantidade" v-bind:permite-decimal="produtoAtual && produtoAtual.quantidade && produtoAtual.quantidade.permiteDecimal"
-                        v-bind:id-produto="produtoAtual ? produtoAtual.id : null" v-bind:id-cliente="pedido.cliente.id" v-bind:exibir-desconto-por-quantidade="false"
-                        v-if="inserindo"></campo-quantidade>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <campo-largura v-bind:largura.sync="ambientePedido.produtoMaoDeObra.largura" v-bind:permite-decimal="produtoAtual && produtoAtual.largura && produtoAtual.largura.permiteDecimal"
-                        v-bind:permite-editar="produtoAtual && produtoAtual.largura && produtoAtual.largura.podeEditar" v-if="inserindo"></campo-largura>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <campo-altura v-bind:altura-para-exibir.sync="ambientePedido.produtoMaoDeObra.altura" v-bind:permite-decimal="produtoAtual && produtoAtual.altura && produtoAtual.altura.permiteDecimal"
-                        v-bind:permite-editar="produtoAtual && produtoAtual.altura && produtoAtual.altura.podeEditar" v-bind:exibir-altura-real="true"
-                        v-bind:fator-arredondamento="produtoAtual && produtoAtual.altura ? produtoAtual.altura.fatorArredondamento : null"
-                        v-if="inserindo"></campo-altura>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="inserindo && ambientePedido && ambientePedido.produtoMaoDeObra"></campo-busca-etiqueta-processo>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="inserindo && ambientePedido && ambientePedido.produtoMaoDeObra"></campo-busca-etiqueta-aplicacao>
-                </td>
-                <td v-if="pedidoMaoDeObra">
-                    <input type="checkbox" v-model="ambientePedido.produtoMaoDeObra.redondo" v-if="inserindo">
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </template>
-        </lista-paginada>
+                    </td>
+                    <td v-if="!pedidoMaoDeObra">
+                        <textarea rows="2" v-model="ambientePedido.descricao" style="width: 300px" maxlength="1000" v-if="ambientePedido"></textarea>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <campo-quantidade v-bind:quantidade.sync="ambientePedido.produtoMaoDeObra.quantidade" v-bind:permite-decimal="produtoAtual && produtoAtual.quantidade && produtoAtual.quantidade.permiteDecimal"
+                            v-bind:id-produto="produtoAtual ? produtoAtual.id : null" v-bind:id-cliente="pedido.cliente.id" v-bind:exibir-desconto-por-quantidade="false"
+                            v-if="ambientePedido && ambientePedido.produtoMaoDeObra"></campo-quantidade>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <campo-largura v-bind:largura.sync="ambientePedido.produtoMaoDeObra.largura" v-bind:permite-decimal="produtoAtual && produtoAtual.largura && produtoAtual.largura.permiteDecimal"
+                            v-bind:permite-editar="produtoAtual && produtoAtual.largura && produtoAtual.largura.podeEditar" v-if="ambientePedido && ambientePedido.produtoMaoDeObra"></campo-largura>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <campo-altura v-bind:altura-para-exibir.sync="ambientePedido.produtoMaoDeObra.altura" v-bind:exibir-altura-real="true" v-bind:permite-decimal="produtoAtual && produtoAtual.altura && produtoAtual.altura.permiteDecimal"
+                            v-bind:permite-editar="produtoAtual && produtoAtual.altura && produtoAtual.altura.podeEditar"
+                            v-bind:fator-arredondamento="produtoAtual && produtoAtual.altura ? produtoAtual.altura.fatorArredondamento : null"
+                            v-if="ambientePedido && ambientePedido.produtoMaoDeObra"></campo-altura>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="ambientePedido && ambientePedido.produtoMaoDeObra"></campo-busca-etiqueta-processo>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="ambientePedido && ambientePedido.produtoMaoDeObra"></campo-busca-etiqueta-aplicacao>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <input type="checkbox" v-model="ambientePedido.produtoMaoDeObra.redondo" v-if="ambientePedido && ambientePedido.produtoMaoDeObra">
+                    </td>
+                    <td>
+                        <span v-if="ambiente">
+                            {{ ambientePedido.totalProdutos | moeda }}
+                        </span>
+                    </td>
+                    <td>
+                        <campo-acrescimo-desconto v-bind:tipo.sync="ambientePedido.acrescimo.tipo" v-bind:valor.sync="ambientePedido.acrescimo.valor" v-if="ambientePedido && ambientePedido.acrescimo"></campo-acrescimo-desconto>
+                    </td>
+                    <td>
+                        <campo-acrescimo-desconto v-bind:tipo.sync="ambientePedido.desconto.tipo" v-bind:valor.sync="ambientePedido.desconto.valor" v-if="ambientePedido && ambientePedido.desconto"></campo-acrescimo-desconto>
+                    </td>
+                    <td></td>
+                </template>
+                <template slot="itemIncluir">
+                    <td style="white-space: nowrap">
+                        <button v-on:click.prevent="iniciarCadastro" title="Novo ambientePedido..." v-if="!inserindo">
+                            <img src="../Images/Insert.gif">
+                        </button>
+                        <button type="submit" v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">
+                            <img src="../Images/ok.gif">
+                        </button>
+                        <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <span v-if="inserindo">
+                            <input type="text" v-model="ambientePedido.nome" v-if="ambientePedido && !pedidoMaoDeObra" style="width: 150px" maxlength="50" required>
+                            <campo-busca-produto v-bind:produto.sync="produtoAtual" v-else-if="ambientePedido && ambientePedido.produtoMaoDeObra"
+                                tipo-validacao="Pedido" v-bind:dados-adicionais-validacao="dadosValidacaoProduto" required></campo-busca-produto>
+                        </span>
+                    </td>
+                    <td v-if="!pedidoMaoDeObra">
+                        <textarea rows="2" v-model="ambientePedido.descricao" maxlength="1000" style="width: 300px" v-if="inserindo"></textarea>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <campo-quantidade v-bind:quantidade.sync="ambientePedido.produtoMaoDeObra.quantidade" v-bind:permite-decimal="produtoAtual && produtoAtual.quantidade && produtoAtual.quantidade.permiteDecimal"
+                            v-bind:id-produto="produtoAtual ? produtoAtual.id : null" v-bind:id-cliente="pedido.cliente.id" v-bind:exibir-desconto-por-quantidade="false"
+                            v-if="inserindo"></campo-quantidade>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <campo-largura v-bind:largura.sync="ambientePedido.produtoMaoDeObra.largura" v-bind:permite-decimal="produtoAtual && produtoAtual.largura && produtoAtual.largura.permiteDecimal"
+                            v-bind:permite-editar="produtoAtual && produtoAtual.largura && produtoAtual.largura.podeEditar" v-if="inserindo"></campo-largura>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <campo-altura v-bind:altura-para-exibir.sync="ambientePedido.produtoMaoDeObra.altura" v-bind:permite-decimal="produtoAtual && produtoAtual.altura && produtoAtual.altura.permiteDecimal"
+                            v-bind:permite-editar="produtoAtual && produtoAtual.altura && produtoAtual.altura.podeEditar" v-bind:exibir-altura-real="true"
+                            v-bind:fator-arredondamento="produtoAtual && produtoAtual.altura ? produtoAtual.altura.fatorArredondamento : null"
+                            v-if="inserindo"></campo-altura>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="inserindo && ambientePedido && ambientePedido.produtoMaoDeObra"></campo-busca-etiqueta-processo>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="inserindo && ambientePedido && ambientePedido.produtoMaoDeObra"></campo-busca-etiqueta-aplicacao>
+                    </td>
+                    <td v-if="pedidoMaoDeObra">
+                        <input type="checkbox" v-model="ambientePedido.produtoMaoDeObra.redondo" v-if="inserindo">
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </template>
+            </lista-paginada>
+        </transicao>
     </form>
     <section v-if="ambienteAtual">
         <span class="subtitle1">

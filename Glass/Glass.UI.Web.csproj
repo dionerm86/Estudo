@@ -1835,6 +1835,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoUpload.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ControleTooltip.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\IndicadorSistemaOcupado.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\Transicao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaPaginada.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaSelecao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaSelecaoIdValor.js" />
@@ -1959,6 +1960,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Volumes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Veiculos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Transportadores.js" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\Transicao.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoBisote.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoLapidacao.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoListaSelecao.html" />

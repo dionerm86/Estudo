@@ -48,9 +48,9 @@
       border: '1px solid #003099',
       backgroundColor: '#e2e7ff',
       zIndex: 1,
-      transition: 'opacity 0.2s ease-in-out',
-      opacity: 0,
-      position: 'absolute'
+      position: 'absolute',
+      marginLeft: '-1px',
+      marginRight: '-1px'
     };
 
     return {
@@ -105,20 +105,16 @@
 
     /**
      * Altera a opacidade do tooltip (para efeito de transição), exibindo-o.
-     * @param {Object} elemento O elemento HTML que está sendo exibido.
      */
-    mostrar__: function (elemento) {
+    mostrar__: function () {
       this.$emit('exibir', this.objetoEventos__);
-      elemento.style.opacity = 1;
     },
 
     /**
      * Altera a opacidade do tooltip (para efeito de transição), escondendo-o.
-     * @param {Object} elemento O elemento HTML que está sendo escondido.
      */
-    esconder__: function (elemento) {
+    esconder__: function () {
       this.$emit('esconder', this.objetoEventos__);
-      elemento.style.opacity = 0;
     },
 
     /**
