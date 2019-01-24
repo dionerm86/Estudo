@@ -1518,7 +1518,7 @@ namespace Glass.Data.DAL
 
             #region Atualização da reserva/liberação dos produtos liberados
 
-            MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(session, (uint)idLiberarPedido, produtosLiberarPedido);
+            MovEstoqueDAO.Instance.CreditaEstoqueCancelamentoLiberacao(session, (uint)idLiberarPedido, produtosLiberarPedido);
 
             #endregion
 
@@ -3072,8 +3072,8 @@ namespace Glass.Data.DAL
             #endregion
 
             #region Volta peça para a reserva e tira da liberação
-
-            MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(
+            
+            MovEstoqueDAO.Instance.CreditaEstoqueCancelamentoLiberacao(
                 session,
                 idLiberarPedido,
                 ProdutosLiberarPedidoDAO.Instance.GetByLiberarPedido(session, idLiberarPedido, false));

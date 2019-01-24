@@ -524,7 +524,6 @@ namespace Glass.Data.DAL
                             IdPedido = idPedido,
                             IdProdPed = item.IdProdPed,
                             Quantidade = quantidadeBaixa,
-                            Total = GetTotalProdPed(sessao, (int)item.IdProdPed),
                             AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)item.IdGrupoProd, (int)item.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)item.IdProd),
                             BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                             AlterarProdutoBase = true,
@@ -567,7 +566,6 @@ namespace Glass.Data.DAL
                     IdPedido = produtoPedido.IdPedido,
                     IdProdPed = produtoPedido.IdProdPed,
                     IdProdImpressaoChapa = idProdImpressaoChapa,
-                    Total = GetTotalProdPed(sessao, (int)produtoPedido.IdProdPed),
                     AlterarProdutoBase = true,
                 });
         }
@@ -593,7 +591,6 @@ namespace Glass.Data.DAL
                     IdProduto = idProd.Value,
                     IdLoja = (uint)ObterIdLojaPeloIdProdImpressaoChapa(sessao, 0, (int)idProd.Value, idProdImpressaoChapa),
                     IdProdPedProducao = idProdPedProducao,
-                    Total = GetTotalProdPedProducao(sessao, (int)idProdPedProducao),
                 });
         }
 
@@ -632,7 +629,6 @@ namespace Glass.Data.DAL
                         IdProdPed = produtoPedido.IdProdPed,
                         IdVolume = item.IdVolume,
                         Quantidade = quantidadeBaixa,
-                        Total = GetTotalProdPed(sessao, (int)produtoPedido.IdProdPed),
                         AlterarMateriaPrima = VerificarAlterarMateriaPrima(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd, tipoCalculo, tipoPedido, (int)produtoPedido.IdProd),
                         BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                         AlterarProdutoBase = true,
@@ -728,7 +724,6 @@ namespace Glass.Data.DAL
                             IdCompra = (uint)idCompra,
                             IdProdCompra = item.IdProdCompra,
                             Quantidade = quantidadeBaixa,
-                            Total = GetTotalProdCompra(sessao, (int)item.IdProdCompra),
                             AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
                             BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                             AlterarProdutoBase = true,
@@ -777,7 +772,6 @@ namespace Glass.Data.DAL
                             IdCompra = (uint)idCompra,
                             IdProdCompra = item.IdProdCompra,
                             Quantidade = quantidadeBaixa,
-                            Total = GetTotalProdCompra(sessao, (int)item.IdProdCompra),
                             AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)produtoCompra.IdProd),
                             BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                             AlterarProdutoBase = true,
@@ -819,7 +813,6 @@ namespace Glass.Data.DAL
                             IdNf = (uint)idNotaFiscal,
                             IdProdNf = produtoNotaFiscal.IdProdNf,
                             Quantidade = quantidadeBaixa,
-                            Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)produtoNotaFiscal.IdProdNf),
                             AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)produtoNotaFiscal.IdProd),
                             BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                             AlterarProdutoBase = true,
@@ -894,7 +887,6 @@ namespace Glass.Data.DAL
                         IdLiberarPedido = idLiberarPedido,
                         IdProdLiberarPedido = idProdutoLiberarPedido,
                         Quantidade = qtdeBaixa,
-                        Total = GetTotalProdLiberarPedido(sessao, (int)idProdutoLiberarPedido),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)produtoPedido.IdProd),
                         BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                         AlterarProdutoBase = true,
@@ -932,7 +924,6 @@ namespace Glass.Data.DAL
                         IdTrocaDevolucao = item.IdTrocaDevolucao,
                         IdProdTrocaDev = item.IdProdTrocaDev,
                         Quantidade = qtdeBaixa,
-                        Total = GetTotalProdTrocaDevolucao(sessao, (int?)item.IdProdTrocaDev, null),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
                         BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                         AlterarProdutoBase = true,
@@ -968,7 +959,6 @@ namespace Glass.Data.DAL
                             IdTrocaDevolucao = item.IdTrocaDevolucao,
                             IdProdTrocado = item.IdProdTrocado,
                             Quantidade = qtdeBaixa,
-                            Total = GetTotalProdTrocaDevolucao(sessao, null, (int?)item.IdProdTrocado),
                             AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
                             BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                             AlterarProdutoBase = true,
@@ -997,7 +987,6 @@ namespace Glass.Data.DAL
                         IdNf = item.IdNf,
                         IdProdNf = item.IdProdNf,
                         Quantidade = quantidadeBaixa,
-                        Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)item.IdProdNf),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
                         BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                         AlterarProdutoBase = true,
@@ -1041,7 +1030,6 @@ namespace Glass.Data.DAL
                         IdPedidoInterno = item.IdPedidoInterno,
                         IdProdPedInterno = item.IdProdPedInterno,
                         Quantidade = quantidadeBaixa,
-                        Total = GetTotalProdPedInterno(sessao, (int)item.IdProd, (int)item.IdProdPedInterno),
                         AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
                         BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                         AlterarProdutoBase = true,
@@ -1111,7 +1099,7 @@ namespace Glass.Data.DAL
             }
         }
 
-        public void BaixaEstoquePedidoProducao(GDASession sessao, IEnumerable<int> idsProdutoPedidoProducao)
+        public void BaixaEstoqueEstornoPedidoProducao(GDASession sessao, IEnumerable<int> idsProdutoPedidoProducao)
         {
             foreach (var item in ProdutoPedidoProducaoDAO.Instance.ObterParaBaixaEstoqueProducao(sessao, idsProdutoPedidoProducao).Where(f => f.IdProdPed > 0))
             {
@@ -1132,7 +1120,6 @@ namespace Glass.Data.DAL
                         IdProduto = produtoPedidoEspelho.IdProd,
                         IdLoja = (uint)idLoja,
                         IdProdPedProducao = item.IdProdPedProducao,
-                        Total = GetTotalProdPedProducao(sessao, (int)item.IdProdPedProducao),
                     });
 
                 CreditaEstoqueProducao(sessao, (int)produtoPedidoEspelho.IdProd, idLoja, (int)item.IdProdPedProducao, (decimal)(m2Calc > 0 && passouSetorLaminado ? m2Calc : 1));
@@ -1174,7 +1161,6 @@ namespace Glass.Data.DAL
                     IdProduto = produtoPedidoEspelho.IdProd,
                     IdLoja = (uint)idLoja,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                     BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                 });
 
@@ -1232,7 +1218,6 @@ namespace Glass.Data.DAL
                     IdProduto = produtoPedidoEspelho.IdProd,
                     IdLoja = (uint)idLoja,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
-                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                 });
 
             CreditaEstoqueProducao(sessao, (int)produtoPedidoEspelho.IdProd, idLoja, idProdutoPedidoProducao, (decimal)(m2Calc > 0 && !pecaPassouSetorLaminado ? m2Calc : 1));
@@ -1279,7 +1264,6 @@ namespace Glass.Data.DAL
                     IdLoja = (uint)idLoja,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
                     Quantidade = quantidadeBaixa,
-                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                     AlterarMateriaPrima = !SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)produtoPedido.IdGrupoProd, (int)produtoPedido.IdSubgrupoProd),
                     BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                 });
@@ -1330,7 +1314,6 @@ namespace Glass.Data.DAL
                     IdLoja = (uint)idLoja,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
                     Quantidade = quantidadeBaixa,
-                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                 });
 
             // Só baixa apenas se a peça possuir produto para baixa associado
@@ -1369,7 +1352,6 @@ namespace Glass.Data.DAL
                     IdLoja = (uint)idLoja,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
                     Quantidade = quantidadeBaixa,
-                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                     AlterarMateriaPrima = true,
                     BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                 });
@@ -1401,7 +1383,6 @@ namespace Glass.Data.DAL
                         IdProduto = (uint)item.IdProd,
                         IdLoja = (uint)idLoja,
                         IdProdPedProducao = item.IdProdPedProducaoOrig.GetValueOrDefault(),
-                        Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                     });
             }
         }
@@ -1449,7 +1430,6 @@ namespace Glass.Data.DAL
                     IdLoja = (uint)idLoja,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
                     Quantidade = quantidadeBaixa,
-                    Total = GetTotalProdPedProducao(sessao, (int)idProdutoPedidoProducao),
                     AlterarMateriaPrima = true,
                 });
         }
@@ -1485,7 +1465,6 @@ namespace Glass.Data.DAL
                     IdLoja = (uint)idLoja,
                     IdProdPedProducao = (uint)idProdutoPedidoProducao,
                     Quantidade = quantidadeBaixa,
-                    Total = GetTotalProdPedProducao(sessao, idProdutoPedidoProducao),
                     AlterarMateriaPrima = true,
                 });
         }
@@ -1574,7 +1553,6 @@ namespace Glass.Data.DAL
                     IdProduto = perdaChapaVidro.IdProd,
                     IdLoja = idLoja,
                     IdPerdaChapaVidro = perdaChapaVidro.IdPerdaChapaVidro,
-                    Total = ProdutosNfDAO.Instance.ObterTotal(sessao, (int)perdaChapaVidro.IdProdNf.GetValueOrDefault()),
                     AlterarProdutoBase = true,
                 });
         }
@@ -1820,7 +1798,6 @@ namespace Glass.Data.DAL
                         IdProdPed = item.IdProdPed,
                         IdProdImpressaoChapa = (uint)idProdImpressaoChapa,
                         Quantidade = quantidadeEntrada,
-                        Total = GetTotalProdPed(sessao, (int)item.IdProdPed),
                         AlterarMateriaPrima = tipoPedido != Pedido.TipoPedidoEnum.Producao || !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
                         BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                         AlterarProdutoBase = true,
@@ -1918,7 +1895,7 @@ namespace Glass.Data.DAL
             CompraDAO.Instance.MarcaEstoqueBaixado(sessao, idCompra);
         }
 
-        public void CreditaEstoqueLiberacao(GDASession sessao, uint idLiberarPedido, IEnumerable<ProdutosLiberarPedido> produtosLiberarPedido)
+        public void CreditaEstoqueCancelamentoLiberacao(GDASession sessao, uint idLiberarPedido, IEnumerable<ProdutosLiberarPedido> produtosLiberarPedido)
         {
             if (idLiberarPedido == 0)
             {
@@ -1986,7 +1963,6 @@ namespace Glass.Data.DAL
                             IdLiberarPedido = idLiberarPedido,
                             IdProdLiberarPedido = item.IdProdLiberarPedido,
                             Quantidade = quantidadeEntrada,
-                            Total = GetTotalProdLiberarPedido(sessao, (int)item.IdProdLiberarPedido),
                             AlterarMateriaPrima = !ProdutoDAO.Instance.IsProdutoProducao(sessao, (int)item.IdProd),
                             BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                             AlterarProdutoBase = true,

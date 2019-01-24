@@ -2991,7 +2991,7 @@ namespace Glass.Data.DAL
                         .Where(f => !string.IsNullOrWhiteSpace(f) && f != "0")
                         .Select(f => int.Parse(f));
 
-                    MovEstoqueDAO.Instance.BaixaEstoquePedidoProducao(sessao, idsProdutoPedidoProducao);
+                    MovEstoqueDAO.Instance.BaixaEstoqueEstornoPedidoProducao(sessao, idsProdutoPedidoProducao);
                 }
 
                 // Atualiza as peças repostas na tabela produto_impressao, voltando-as para a impressão anterior.

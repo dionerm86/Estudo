@@ -70,13 +70,7 @@ namespace Glass.UI.Web.Cadastros
                     uint idProdNf = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString().Split(';')[2]);
 
                     var dadosRetalho = ctrlRetalhoProducao1.Dados;
-
-                    if (dadosRetalho.Any())
-                    {
-                        MensagemAlerta.ShowMsg("Cancele o retalho gerado antes de cancelar a perda.", Page);
-                        return;
-                    }
-
+                    
                     PerdaChapaVidroDAO.Instance.MarcaPerdaChapaVidroComTransacao(etiqueta, ctrlTipoPerda1.IdTipoPerda.Value, ctrlTipoPerda1.IdSubtipoPerda, txtObsPerda.Text);
 
                     if (dadosRetalho.Any())

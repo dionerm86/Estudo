@@ -160,6 +160,12 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, uti
                                     </table>
                                 </td>
                             </tr>
+                            <tr align="center">
+                                <td>
+                                    &nbsp;</td>
+                                <td>
+                                    <asp:Label runat="server" Text="* Informe a liberação antes de utilizar o filtro do pedido." ForeColor="Red"></asp:Label></td>
+                            </tr>
                         </table>
                     </div>
                 </div>

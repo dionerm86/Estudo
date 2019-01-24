@@ -211,16 +211,6 @@ namespace Glass.UI.Web.Cadastros.Expedicao
 
         protected void btnEstorno_Click(object sender, EventArgs e)
         {
-            if (!grvProdutos.Columns[0].Visible || !gvrVolumes.Columns[0].Visible)
-            {
-                grvProdutos.Columns[0].Visible = true;
-                gvrVolumes.Columns[0].Visible = true;
-                return;
-            }
-
-            grvProdutos.Columns[0].Visible = false;
-            gvrVolumes.Columns[0].Visible = false;
-
             var idsItens = new List<uint>();
 
             foreach (GridViewRow row in grvProdutos.Rows)
@@ -244,6 +234,8 @@ namespace Glass.UI.Web.Cadastros.Expedicao
         protected void dtvItensCarregamento_DataBound(object sender, EventArgs e)
         {
             btnEstorno.Visible = btnEstornarTodos.Visible = ((WebGlass.Business.OrdemCarga.Entidade.InfoCarregamento)((DetailsView)sender).DataItem).EstornarVisivel;
+            grvProdutos.Columns[0].Visible = btnEstorno.Visible;
+            gvrVolumes.Columns[0].Visible = btnEstorno.Visible;
         }
 
         protected void ImageButton2_Click(object sender, ImageClickEventArgs e)
