@@ -30,7 +30,6 @@ namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Lista
             this.Espessura = (decimal)movimentacaoChapa.Espessura;
             this.Quantidades = new QuantidadesDto
             {
-                Inicial = movimentacaoChapa.Inicial,
                 Utilizada = movimentacaoChapa.Utilizado,
                 Disponivel = movimentacaoChapa.Disponivel,
             };
