@@ -16,9 +16,9 @@
                 ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma fornada encontrada." @atualizou-itens="atualizouItens">
                 <template slot="cabecalho">
                     <th></th>
-                    <th>
+                    <th style="text-align: center">
                         <a href="#" @click.prevent="ordenar('id')">
-                            Cód.
+                            Cód
                         </a>
                     </th>
                     <th>
@@ -26,27 +26,27 @@
                             Funcionário
                         </a>
                     </th>
-                    <th>
+                    <th style="text-align: center">
                         <a href="#" @click.prevent="ordenar('dataCadastro')">
                             Data
                         </a>
                     </th>
-                    <th>
+                    <th style="text-align: center">
                         <a href="#" @click.prevent="ordenar('capacidade')">
                             Capacidade
                         </a>
                     </th>
-                    <th>
+                    <th style="text-align: center">
                         <a href="#" @click.prevent="ordenar('metroQuadradoLido')">
                             Lido
                         </a>
                     </th>
-                    <th>
+                    <th style="text-align: center">
                         <a href="#" @click.prevent="ordenar('aproveitamento')">
                             Aproveitamento
                         </a>
                     </th>
-                    <th>
+                    <th style="text-align: center">
                         Etiquetas
                     </th>
                 </template>
@@ -64,19 +64,19 @@
                     <td>
                         {{ item.usuarioCadastro }}
                     </td>
-                    <td>
+                    <td style="text-align: center">
                         {{ item.dataCadastro | dataHora }}
                     </td>
-                    <td>
+                    <td style="text-align: center">
                         {{ item.capacidade | decimal }} M²
                     </td>
-                    <td>
+                    <td style="text-align: center">
                         {{ item.metroQuadradoLido | decimal }} M² ({{ item.quantidadeLida }})
                     </td>
-                    <td>
+                    <td style="text-align: center">
                         {{ item.aproveitamento | decimal }}%
                     </td>
-                    <td>
+                    <td style="text-align: center">
                         <span title="Ver etiquetas.">
                             <controle-tooltip :precisa-clicar="true" :titulo="'Etiquetas da fornada: ' + item.id">
                                 <template slot="botao">
