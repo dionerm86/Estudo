@@ -25,6 +25,8 @@ namespace Glass.UI.Web.Cadastros
                     WebGlass.Business.PedidoEspelho.Fluxo.BuscarEValidar.Instance.BuscarCompraPcp(Conversoes.StrParaUint(p));
 
                 cadastro.Visible = true;
+                btnBuscar.Visible = false;
+                btnNovaCompraMercadoria.Visible = true;
             }
             catch (Exception ex)
             {
