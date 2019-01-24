@@ -1270,10 +1270,6 @@ namespace Glass.Data.DAL
                     pp.Largura = 0;
                 }
 
-                // Exibe o percentual de desconto por qtd concatenado com a descrição
-                if (Geral.ConcatenarDescontoPorQuantidadeNaDescricaoDoProduto && pp.PercDescontoQtde > 0)
-                    pp.DescrProduto += "\r\n(Desc. Prod.: " + pp.PercDescontoQtde + "%)";
-
                 lstProdPedRetorno.Add(pp);
 
                 if (!incluirBeneficiamentos)

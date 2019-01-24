@@ -189,10 +189,6 @@ namespace Glass.Data.DAL
                         plp.DescrBeneficiamentos = benef.DescricaoBeneficiamentos;
                     }
 
-                    // Exibe o percentual de desconto por qtd concatenado com a descrição
-                    if (Geral.ConcatenarDescontoPorQuantidadeNaDescricaoDoProduto && plp.PercDescontoQtde > 0)
-                        plp.DescrProduto += "\r\n(Desc. Prod.: " + plp.PercDescontoQtde + "%)";
-
                     //Exibe as etiquetad de cavalete
                     if (PCPConfig.ControleCavalete && idProdPedEsp.GetValueOrDefault(0) > 0)
                     {
