@@ -14,13 +14,13 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        Funcionário
+                        <a href="#" @click.prevent="ordenar('funcionario')">Funcionário</a>
                     </th>
                     <th>
-                        Data
+                        <a href="#" @click.prevent="ordenar('data')">Data</a>
                     </th>
                     <th>
-                        Direção
+                        <a href="#" @click.prevente="ordenar('direcao')">Direção</a>
                     </th>
                 </template>
                 <template slot="item" slot-scope="{ item }">

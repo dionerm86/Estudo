@@ -21,13 +21,27 @@ namespace Glass.API.Backend.Helper.ArquivosOtimizacao
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "dataCad desc"; }
+            get { return "ao.dataCad desc"; }
         }
 
         /// <inheritdoc/>
         protected override string TraduzirCampo(string campo)
         {
-            return this.OrdenacaoPadrao;
+            switch (campo.ToLowerInvariant())
+            {
+                case "funcionario":
+                    return "NomeFunc";
+
+                case "data":
+                    return "DataCad";
+
+                case "direcao":
+                    return "Direcao";
+
+                case "datacadastro":
+                default:
+                    return this.OrdenacaoPadrao;
+            }
         }
     }
 }

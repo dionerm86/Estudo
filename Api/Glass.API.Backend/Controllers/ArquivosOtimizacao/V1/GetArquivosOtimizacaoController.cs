@@ -56,7 +56,7 @@ namespace Glass.API.Backend.Controllers.ArquivosOtimizacao.V1
                     (uint)(filtro.IdFuncionario ?? 0),
                     filtro.PeriodoCadastroInicio?.ToString(),
                     filtro.PeriodoCadastroFim?.ToString(),
-                    (int)filtro.Direcao,
+                    filtro.Direcao ?? 0,
                     (uint)(filtro.IdPedido ?? 0),
                     filtro.CodigoEtiqueta,
                     filtro.ObterTraducaoOrdenacao(),
@@ -70,7 +70,7 @@ namespace Glass.API.Backend.Controllers.ArquivosOtimizacao.V1
                         (uint)(filtro.IdFuncionario ?? 0),
                         filtro.PeriodoCadastroInicio?.ToString(),
                         filtro.PeriodoCadastroFim?.ToString(),
-                        (int)filtro.Direcao,
+                        filtro.Direcao ?? 0,
                         (uint)(filtro.IdPedido ?? 0),
                         filtro.CodigoEtiqueta));
             }

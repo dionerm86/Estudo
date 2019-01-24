@@ -1,6 +1,6 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('ao.dataCad', 'desc')],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('dataCadastro', 'desc')],
 
   data: {
     filtro: {},

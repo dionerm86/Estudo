@@ -15,7 +15,7 @@ namespace Glass.API.Backend.Models.ArquivosOtimizacao.V1.Lista
     public class DirecaoDto : IdDto
     {
         /// <summary>
-        /// Obtém ou define a descrição do arquivo de otimização.
+        /// Obtém ou define a descrição da direção do arquivo de otimização.
         /// </summary>
         [DataMember]
         [JsonProperty("descricao")]

@@ -211,8 +211,8 @@
     <Compile Include="Controllers\Aplicacoes\V1\DeleteAplicacoesController.cs" />
     <Compile Include="Controllers\Aplicacoes\V1\PatchAplicacoesController.cs" />
     <Compile Include="Controllers\Aplicacoes\V1\PostAplicacoesController.cs" />
-    <Compile Include="Controllers\ArquivoOtimizacao\V1\ArquivosOtimizacaoController.cs" />
-    <Compile Include="Controllers\ArquivoOtimizacao\V1\GetArquivosOtimizacaoController.cs" />
+    <Compile Include="Controllers\ArquivosOtimizacao\V1\ArquivosOtimizacaoController.cs" />
+    <Compile Include="Controllers\ArquivosOtimizacao\V1\GetArquivosOtimizacaoController.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\CarregamentosController.cs" />
