@@ -528,6 +528,9 @@
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.js" />
     <Content Include="Vue\Pagamentos\Templates\LstPagamentos.Filtro.html" />
     <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\ChapasDisponiveis\Componentes\LstChapasDisponiveis.Filtro.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\ChapasDisponiveis\Componentes\LstChapasDisponiveis.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\ChapasDisponiveis\Templates\LstChapasDisponiveis.Filtro.html" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Componentes\LstPosicoesMateriaPrima.Chapas.js" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Componentes\LstPosicoesMateriaPrima.Filtro.js" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Componentes\LstPosicoesMateriaPrima.js" />

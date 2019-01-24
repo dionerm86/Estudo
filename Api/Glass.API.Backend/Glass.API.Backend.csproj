@@ -260,6 +260,7 @@
     <Compile Include="Controllers\Producao\V1\Retalhos\GetRetalhosProducaoController.cs" />
     <Compile Include="Controllers\Producao\V1\Retalhos\RetalhosProducaoController.cs" />
     <Compile Include="Helper\Carregamentos\OrdensCarga\TraducaoOrdenacaoListaOrdensCarga.cs" />
+    <Compile Include="Helper\Produtos\MateriaPrima\ChapasDisponiveis\TraducaoOrdenacaoListaChapasDisponiveis.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\Associacoes\TraducaoOrdenacaoListaAssociacaoProprietariosVeiculos.cs" />
     <Compile Include="Helper\ConhecimentosTrasporte\Veiculos\Proprietarios\TraducaoOrdenacaoListaProprietariosDeVeiculos.cs" />
     <Compile Include="Helper\ContasPagar\Pagas\ConverterCadastroAtualizacaoParaContasPagas.cs" />
@@ -325,6 +326,8 @@
     <Compile Include="Helper\ContasPagar\ConverterCadastroAtualizacaoParaContasPagar.cs" />
     <Compile Include="Helper\ContasPagar\TraducaoOrdenacaoListaContasPagar.cs" />
     <Compile Include="Helper\Estoques\Movimentacoes\Reais\ConverterCadastroAtualizacaoParaMovimentacaoEstoqueReal.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\ChapasDisponiveis\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\V1\MateriaPrima\ChapasDisponiveis\Lista\ListaDto.cs" />
     <Compile Include="Models\ConhecimentosTransporte\V1\Veiculos\Proprietarios\Associacoes\FiltroDto.cs" />
     <Compile Include="Models\ConhecimentosTransporte\V1\Veiculos\Proprietarios\Associacoes\ListaDto.cs" />
     <Compile Include="Models\ConhecimentosTransporte\V1\Veiculos\Proprietarios\Lista\FiltroDto.cs" />
