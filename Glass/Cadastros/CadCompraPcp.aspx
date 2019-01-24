@@ -26,6 +26,12 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript">
         
+        window.onload = function () {  
+            document.onkeydown = function (e) {  
+                return (e.which || e.keyCode) != 116;  
+            };  
+        }
+
         // Variável de controle dos produtos selecionados
         var produtos = new Array();
         var linhas = new Array();
