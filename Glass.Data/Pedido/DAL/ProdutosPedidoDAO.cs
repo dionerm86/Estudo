@@ -1707,19 +1707,24 @@ namespace Glass.Data.DAL
         /// <param name="idSaidaEstoque">Identificador da saída do estoque.</param>
         /// <param name="metodo">Nome do método que efetuou a chamada do marcar saída.</param>
         /// <param name="numEtiqueta">Número da etiqueta utilizada para dar saída na produção.</param>
-        /// <param name="saidaConfirmacao">Variável booleana que indica se o método foi chamado através da saída em sistemas de Confirmação.</param>
-        public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta, bool saidaConfirmacao = false)
+        /// <param name="leituraProducao">Indica se o método foi chamado por algum método de leitura de produção.</param>
+        public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta, bool leituraProducao = false)
         {
             if (idProdPed == 0)
             {
                 return;
             }
 
+            if (leituraProducao
+                && !PedidoConfig.LiberarPedido
+                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar)
+            {
+                return;
+            }
+
             var idPedido = (int)this.ObtemIdPedido(sessao, idProdPed);
 
-            var saidaJaEfetuada = !saidaConfirmacao && PedidoDAO.Instance.VerificaSaidaEstoqueConfirmacao(sessao, idPedido);
-
-            if (saidaJaEfetuada || PedidoDAO.Instance.VerificarPedidoProducaoParaCorte(sessao, idPedido) || !this.ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
+            if (PedidoDAO.Instance.VerificarPedidoProducaoParaCorte(sessao, idPedido) || !ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
             {
                 return;
             }

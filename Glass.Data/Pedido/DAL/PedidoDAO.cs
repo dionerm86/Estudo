@@ -2108,19 +2108,6 @@ namespace Glass.Data.DAL
             return sql.Replace("$$$", criterio);
         }
 
-        /// <summary>
-        /// M�todo que verifica se o pedido informado j� deu sa�da de acordo com as configura��es
-        /// </summary>
-        /// <param name="sessao">Sess�o do GDA.</param>
-        /// <param name="idPedido">Identificador do pedido a ser verificado.</param>
-        /// <returns>Retorna o resultado de um teste l�gico que verifica se o pedido j� efetuou a sa�da de estoque.</returns>
-        internal bool VerificaSaidaEstoqueConfirmacao(GDASession sessao, int idPedido)
-        {
-            return !PedidoConfig.LiberarPedido
-                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar
-                && ObtemSituacao(sessao, (uint)idPedido) == Pedido.SituacaoPedido.Confirmado;
-        }
-
         #endregion
 
         #region Listagem/Relatório de vendas de pedidos
@@ -7277,8 +7264,7 @@ namespace Glass.Data.DAL
                                         p.Qtde - p.QtdSaida,
                                         idSaidaEstoque,
                                         System.Reflection.MethodBase.GetCurrentMethod().Name,
-                                        string.Empty,
-                                        saidaConfirmacao: true);
+                                        string.Empty);
 
                                     // Dá baixa no estoque da loja
                                     MovEstoqueDAO.Instance.BaixaEstoquePedido(trans, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed,

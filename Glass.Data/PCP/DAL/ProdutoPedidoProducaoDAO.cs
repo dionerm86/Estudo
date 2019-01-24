@@ -4608,7 +4608,7 @@ namespace Glass.Data.DAL
                                 Verifique se o pedido de revenda contém o produto da matéria-prima informada (código: { ProdutoDAO.Instance.GetCodInterno(sessao, (int)idProdChapa.Value) }).");
 
                         // Atualiza o Qtd Saída dos produtos do pedido de revenda.
-                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevendaSaida.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, ObtemEtiqueta(idProdPedProducao));
+                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevendaSaida.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, ObtemEtiqueta(idProdPedProducao), true);
 
                         // Verifica o tipo de cálculo do produto.
                         var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoRevendaSaida.IdProd);
@@ -4860,7 +4860,8 @@ namespace Glass.Data.DAL
                 1,
                 idSaidaEstoque,
                 System.Reflection.MethodBase.GetCurrentMethod().Name,
-                string.Empty);
+                string.Empty,
+                true);
 
             var idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(
                 sessao,
@@ -5022,11 +5023,11 @@ namespace Glass.Data.DAL
                     var numEtiqueta = ObtemEtiqueta(sessao, idProdPedProducao);
 
                     // Marca saída desta peça no ProdutosPedido do pedido de PRODUÇÃO
-                    ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiqueta);
+                    ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiqueta, true);
 
                     // Marca saída desta peça no ProdutosPedido do pedido de REVENDA desde que o pedido produção não seja para corte.
                     if (idProdPedRevenda > 0 && prodPed.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, idPedido))
-                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, idProdPedRevenda.Value, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiqueta);
+                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, idProdPedRevenda.Value, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiqueta, true);
 
                     if (idPedidoNovo != null)
                     {
@@ -6860,7 +6861,7 @@ namespace Glass.Data.DAL
                                 throw new Exception("Não foi possível estornar o estoque da chapa no pedido de revenda.");
 
                             // Atualiza o Qtd Saída dos produtos do pedido de revenda.
-                            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevenda.IdProdPed, -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiquetaChapa);
+                            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevenda.IdProdPed, -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiquetaChapa, true);
 
                             // Verifica o tipo de cálculo do produto.
                             var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoRevenda.IdProd);
