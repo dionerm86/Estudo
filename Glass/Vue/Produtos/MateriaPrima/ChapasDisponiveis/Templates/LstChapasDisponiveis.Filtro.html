@@ -8,12 +8,12 @@
         </span>
         <span class="form-group">
             <label>Espessura</label>
-            <input type="number" v-model="filtroAtual.espessura" style="width: 60px" />
+            <input type="number" v-model.number="filtroAtual.espessura" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Fornecedor</label>
-            <input type="number" v-model="filtroAtual.idFornecedor" style="width: 50px" />
+            <input type="number" v-model.number="filtroAtual.idFornecedor" style="width: 50px" />
             <input type="text" v-model="filtroAtual.nomeFornecedor" style="width: 200px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
@@ -21,22 +21,22 @@
     <div>
         <span class="form-group">
             <label>NF-e</label>
-            <input type="number" v-model="filtroAtual.numeroNotaFiscal" style="width: 80px"/>
+            <input type="number" v-model.number="filtroAtual.numeroNotaFiscal" style="width: 80px"/>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Lote</label>
-            <input type="number" v-model="filtroAtual.lote" style="width: 80px"/>
+            <input type="number" v-model.number="filtroAtual.lote" style="width: 80px"/>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Altura</label>
-            <input type="number" v-model="filtroAtual.altura" style="width: 80px"/>
+            <input type="number" v-model.number="filtroAtual.altura" style="width: 80px"/>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label>Largura</label>
-            <input type="number" v-model="filtroAtual.largura" style="width: 80px"/>
+            <input type="number" v-model.number="filtroAtual.largura" style="width: 80px"/>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
