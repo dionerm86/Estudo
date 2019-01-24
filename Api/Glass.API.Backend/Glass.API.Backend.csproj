@@ -221,6 +221,8 @@
     <Compile Include="Controllers\Aplicacoes\V1\DeleteAplicacoesController.cs" />
     <Compile Include="Controllers\Aplicacoes\V1\PatchAplicacoesController.cs" />
     <Compile Include="Controllers\Aplicacoes\V1\PostAplicacoesController.cs" />
+    <Compile Include="Controllers\ArquivosOtimizacao\V1\ArquivosOtimizacaoController.cs" />
+    <Compile Include="Controllers\ArquivosOtimizacao\V1\GetArquivosOtimizacaoController.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
     <Compile Include="Controllers\Carregamentos\V1\CarregamentosController.cs" />
@@ -251,6 +253,7 @@
     <Compile Include="Controllers\Produtos\V1\MateriaPrima\Extrato\GetExtratoMateriaPrimaController.cs" />
     <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\GetPrecosTabelaClienteController.cs" />
     <Compile Include="Controllers\Produtos\V1\PrecosTabelaCliente\PrecosTabelaClienteController.cs" />
+    <Compile Include="Helper\ArquivosOtimizacao\TraducaoOrdenacaoListaArquivosOtimizacao.cs" />
     <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\DeletePerdasChapasVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\GetPerdasChapasVidroController.cs" />
     <Compile Include="Controllers\Produtos\V1\ChapasVidro\Perdas\PerdasChapasVidroController.cs" />
@@ -264,6 +267,12 @@
     <Compile Include="Helper\Exportacao\TraducaoOrdenacaoExportacaoPedidos.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Extrato\TraducaoOrdenacaoExtratoMovimentacoesChapa.cs" />
     <Compile Include="Helper\Produtos\PrecosTabelaCliente\TraducaoOrdenacaoListaPrecoTabelaCliente.cs" />
+    <Compile Include="Models\ArquivosOtimizacao\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\ArquivosOtimizacao\V1\Lista\ArquivoDto.cs" />
+    <Compile Include="Models\ArquivosOtimizacao\V1\Lista\DirecaoDto.cs" />
+    <Compile Include="Models\ArquivosOtimizacao\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ArquivosOtimizacao\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\ArquivosOtimizacao\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Helper\Produtos\ChapasVidro\Perdas\TraducaoOrdenacaoListaPerdasChapasVidro.cs" />
     <Compile Include="Helper\Producao\Retalhos\TraducaoOrdenacaoListaRetalhosProducao.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Configuracoes\ListaDto.cs" />
