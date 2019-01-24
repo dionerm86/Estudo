@@ -530,6 +530,11 @@
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Componentes\LstPosicoesMateriaPrima.js" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Templates\LstPosicoesMateriaPrima.Chapas.html" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Templates\LstPosicoesMateriaPrima.Filtro.html" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.Filtro.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.Movimentacoes.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Templates\LstMovimentacoesChapas.Filtro.html" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Templates\LstMovimentacoesChapas.Movimentacoes.html" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.Filtro.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Templates\ListaPrecoTabelaCliente.Filtro.html" />
