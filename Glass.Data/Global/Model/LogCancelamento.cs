@@ -52,7 +52,8 @@ namespace Glass.Data.Model
             CartaoNaoIdentificado,
             ArquivoCartaoNaoIdentificado,
             Medicao,                   //40
-            ImpostoServico             //41 
+            ImpostoServico,            //41
+            Pagto                      //42
         }
 
         public static string GetDescrTabela(int tabela)
@@ -105,6 +106,7 @@ namespace Glass.Data.Model
                 case TabelaCancelamento.ArquivoCartaoNaoIdentificado: return "Arquivo cartão não identificado";
                 case TabelaCancelamento.Medicao: return "Medição";
                 case TabelaCancelamento.ImpostoServico: return "Imposto/Serviço";
+                case TabelaCancelamento.Pagto: return "Pagamento";
                 default: return "";
             }
         }

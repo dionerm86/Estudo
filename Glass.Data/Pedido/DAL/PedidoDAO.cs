@@ -9089,7 +9089,7 @@ namespace Glass.Data.DAL
                 idFunc = pedido.IdFunc;
             }
 
-            float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela);
+            float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, pedido.TipoVenda.GetValueOrDefault(), (int?)pedido.IdParcela);
 
             if (descontoMaximoPermitido == 100)
             {

@@ -1,0 +1,56 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Pedido</label>
+            <input type="number" v-model="filtroAtual.idPedido" style="width: 60px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span class="form-group">
+            <label>Número NF-e</label>
+            <input type="number" v-model="filtroAtual.numeroNotaFiscal" style="width: 60px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span class="form-group">
+            <label>Descrição Prod.</label>
+            <input type="text" v-model="filtroAtual.descricaoProduto" style="width: 60px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Num. Etiqueta</label>
+            <input type="text" v-model="filtroAtual.codigoEtiqueta" style="width: 60px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span class="form-group">
+            <label>Processo</label>
+            <lista-selecao-id-valor :funcao-recuperar-itens="obterItensFiltroProcessos" :ordenar="false"
+                :item-selecionado.sync="processoAtual" campoId="codigo" campoValor="codigo"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span class="form-group">
+            <label>Aplicação</label>
+            <lista-selecao-id-valor :funcao-recuperar-itens="obterItensFiltroAplicacoes" :ordenar="false"
+                :item-selecionado.sync="aplicacaoAtual" campoId="codigo" campoValor="codigo"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Altura início</label>
+            <input type="number" v-model="filtroAtual.alturaInicio" style="width: 60px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+            <label>Altura fim</label>
+            <input type="number" v-model="filtroAtual.alturaFim" style="width: 60px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span class="form-group">
+            <label>Largura início</label>
+            <input type="number" v-model="filtroAtual.larguraInicio" style="width: 60px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+            <label>Largura fim</label>
+            <input type="number" v-model="filtroAtual.larguraFim" style="width: 60px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+    </div>
+</section>
