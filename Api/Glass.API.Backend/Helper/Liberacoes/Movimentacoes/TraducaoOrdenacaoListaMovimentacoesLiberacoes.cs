@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.Liberacoes.Movimentacoes
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "IdLiberarPedido DESC"; }
+            get { return "IdLiberarPedido desc"; }
         }
 
         /// <inheritdoc/>
@@ -36,40 +36,18 @@ namespace Glass.API.Backend.Helper.Liberacoes.Movimentacoes
                     return "NomeCliente";
 
                 case "situacao":
-                    return "Situacao";
-
                 case "total":
-                    return "Total";
-
                 case "desconto":
-                    return "Desconto";
-
                 case "dinheiro":
-                    return "Dinheiro";
-
                 case "cheque":
-                    return "Cheque";
-
                 case "prazo":
-                    return "Prazo";
-
                 case "boleto":
-                    return "Boleto";
-
                 case "deposito":
-                    return "Deposito";
-
                 case "cartao":
-                    return "Cartao";
-
                 case "outros":
-                    return "Outros";
-
                 case "debito":
-                    return "Debito";
-
                 case "credito":
-                    return "Credito";
+                    return campo;
 
                 default:
                     return this.OrdenacaoPadrao;

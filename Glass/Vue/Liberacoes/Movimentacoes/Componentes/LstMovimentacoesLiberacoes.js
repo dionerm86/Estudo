@@ -1,6 +1,6 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('IdLiberarPedido', 'DESC')],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('IdLiberarPedido', 'desc')],
 
   data: {
     filtro: {
@@ -24,7 +24,7 @@
     },
 
     /**
-     * Formata os filtros para utlização na url.
+     * Retornar uma string com os filtros selecionados na tela.
      */
     formatarFiltros_: function () {
       var filtros = [];

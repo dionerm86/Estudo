@@ -1,15 +1,15 @@
-﻿// <copyright file="SituacoesMovimentacoesLiberacoesEnum.cs" company="Sync Softwares">
+﻿// <copyright file="TipoEnum.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using System.ComponentModel;
 
-namespace Glass.API.Backend.Models.Liberacoes.V1.SituacoesLiberacoesEnum
+namespace Glass.API.Backend.Models.Liberacoes.V1.Lista
 {
     /// <summary>
     /// Enumerador com as situações de liberações.
     /// </summary>
-    public enum SituacoesLiberacoesEnum
+    public enum Tipo
     {
         /// <summary>
         /// Liberado.

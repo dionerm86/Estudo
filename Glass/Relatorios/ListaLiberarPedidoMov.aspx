@@ -12,39 +12,25 @@
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" :numero-registros="15" mensagem-lista-vazia="Nenhuma movimentação de liberação encontrada">
                 <template slot="cabecalho">
                     <th>
-                        <a href="#" @click.prevent="ordenar('id')">
-                            Liberação
-                        </a>                        
+                        <a href="#" @click.prevent="ordenar('id')">Liberação</a>                        
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('cliente')">
-                            Cliente
-                        </a>
+                        <a href="#" @click.prevent="ordenar('cliente')">Cliente</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('situacao')">
-                            Situação
-                        </a>
+                        <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('total')">
-                            Total
-                        </a>
+                        <a href="#" @click.prevent="ordenar('total')">Total</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('desconto')">
-                            Desconto
-                        </a>
+                        <a href="#" @click.prevent="ordenar('desconto')">Desconto</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('dinheiro')">
-                            Dinheiro
-                        </a>
+                        <a href="#" @click.prevent="ordenar('dinheiro')">Dinheiro<a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('cheque')">
-                            Cheque
-                        </a>
+                        <a href="#" @click.prevent="ordenar('cheque')">Cheque</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('prazo')">
@@ -87,16 +73,16 @@
                     <td>{{ item.cliente }}</td>
                     <td>{{ item.situacao }}</td>
                     <td>{{ item.total | moeda }}</td>
-                    <td>{{ item.desconto | moeda }}</td>
-                    <td>{{ item.formasPagamento.dinheiro | moeda }}</td>
-                    <td>{{ item.formasPagamento.cheque | moeda }}</td>
-                    <td>{{ item.formasPagamento.boleto | moeda }}</td>
-                    <td>{{ item.formasPagamento.deposito | moeda }}</td>
-                    <td>{{ item.formasPagamento.cartao | moeda }}</td>
-                    <td>{{ item.formasPagamento.prazo | moeda }}</td>
-                    <td>{{ item.formasPagamento.outros | moeda }}</td>
-                    <td>{{ item.formasPagamento.debito | moeda }}</td>
-                    <td>{{ item.formasPagamento.credito | moeda }}</td>
+                    <td>{{ item.desconto | moeda }}</td>                    
+                    <td v-if="item.formasPagamento">{{ item.formasPagamento.dinheiro | moeda }}</td>
+                    <td v-if="item.formasPagamento">{{ item.formasPagamento.cheque | moeda }}</td>
+                    <td v-if="item.formasPagamento">{{ item.formasPagamento.boleto | moeda }}</td>
+                    <td v-if="item.formasPagamento">{{ item.formasPagamento.deposito | moeda }}</td>
+                    <td v-if="item.formasPagamento">{{ item.formasPagamento.cartao | moeda }}</td>
+                    <td v-if="item.formasPagamento">{{ item.formasPagamento.prazo | moeda }}</td>
+                    <td v-if="item.formasPagamento">{{ item.formasPagamento.outros | moeda }}</td>
+                    <td v-if="item.formasPagamento">{{ item.formasPagamento.debito | moeda }}</td>
+                    <td v-if="item.formasPagamento">{{ item.formasPagamento.credito | moeda }}</td>
                 </template>
             </lista-paginada>
         </section>

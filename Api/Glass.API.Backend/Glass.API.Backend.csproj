@@ -212,10 +212,10 @@
     <Compile Include="Helper\Liberacoes\Movimentacoes\TraducaoOrdenacaoListaMovimentacoesLiberacoes.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\ChapaMateriaPrima\TraducaoOrdenacaoListaChapasMateriaPrima.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\TraducaoOrdenacaoListaPosicoesMateriaPrima.cs" />
+    <Compile Include="Models\Liberacoes\V1\Lista\TipoEnum.cs" />
     <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\FormasPagamentoDto.cs" />
     <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\ListaDto.cs" />
-    <Compile Include="Models\Liberacoes\V1\SituacoesLiberacoesEnum\SituacoesLiberacoesEnum.cs" />
     <Compile Include="Models\Produtos\V1\MateriaPrima\Lista\FiltroDto.cs" />
     <Content Include="Web.config" />
   </ItemGroup>

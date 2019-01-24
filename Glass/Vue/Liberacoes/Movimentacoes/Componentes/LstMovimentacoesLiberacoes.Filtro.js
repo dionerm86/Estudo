@@ -15,7 +15,7 @@
   data: function () {
     return {
       filtroAtual: this.merge(
-        {          
+        {
           idCliente: null,
           nomeCliente: null,
           idFuncionario: null,
@@ -46,7 +46,7 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroFuncionarios: function () {
-        return Servicos.Funcionarios.obterFuncionariosLiberacoes();
+      return Servicos.Funcionarios.obterFinanceiros();
     },
 
     /**
@@ -54,7 +54,7 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroSituacoes: function () {
-        return Servicos.Liberacoes.obterSituacoes();
+      return Servicos.Liberacoes.obterSituacoes();
     }
   },
 

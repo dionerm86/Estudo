@@ -22,9 +22,7 @@ namespace Glass.API.Backend.Models.Liberacoes.V1.Movimentacoes.Lista
         internal ListaDto(LiberarPedidoMov liberarPedidoMov)
         {
             this.Id = (int)liberarPedidoMov.IdLiberarPedido;
-
             this.Cliente = liberarPedidoMov.NomeCliente;
-
             this.Situacao = liberarPedidoMov.Situacao;
             this.Total = liberarPedidoMov.Total;
             this.Desconto = liberarPedidoMov.Desconto;

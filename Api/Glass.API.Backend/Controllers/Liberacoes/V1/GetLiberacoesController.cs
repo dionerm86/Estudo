@@ -5,6 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
+using Glass.API.Backend.Models.Liberacoes.V1.Lista;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -102,7 +103,7 @@ namespace Glass.API.Backend.Controllers.Liberacoes.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var situacoes = new Helper.ConversorEnum<Models.Liberacoes.V1.SituacoesLiberacoesEnum.SituacoesLiberacoesEnum>()
+                var situacoes = new Helper.ConversorEnum<Tipo>()
                     .ObterTraducao();
 
                 return this.Lista(situacoes);
