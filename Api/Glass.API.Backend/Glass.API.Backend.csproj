@@ -200,7 +200,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Compile Include="Controllers\AcertosCheques\V1\AcertosChequesController.cs" />
+    <Compile Include="Controllers\AcertosCheques\V1\GetAcertosChequesController.cs" />
+    <Compile Include="Helper\AcertosCheques\TraducaoOrdenacaoListaAcertosCheques.cs" />
     <Compile Include="Helper\ImpressoesEtiquetas\Individual\TraducaoOrdenacaoListaImpressoesIndividuaisEtiquetas.cs" />
+    <Compile Include="Models\AcertosCheques\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\AcertosCheques\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\AcertosCheques\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\ListaDto.cs" />
