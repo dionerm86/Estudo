@@ -24,7 +24,7 @@ namespace Glass.Data.DAL
                     INNER JOIN produto p ON (ppe.IdProd = p.IdProd)
                     INNER JOIN cor_vidro cv ON (p.IdCorVidro = cv.IdCorVidro)
                     INNER JOIN leitura_producao lp ON (lp.IDPRODPEDPRODUCAO = ppp.IDPRODPEDPRODUCAO)
-                WHERE lp.IdSetor IN ({2}) AND ppp.Situacao={3} {1} OR true";
+                WHERE lp.IdSetor IN ({2}) AND ppp.Situacao={3} {1}";
 
             sql += " GROUP BY " + (agruparCorEspessura ? "p.IdCorVidro, p.Espessura" : "f.IdFornada");
 

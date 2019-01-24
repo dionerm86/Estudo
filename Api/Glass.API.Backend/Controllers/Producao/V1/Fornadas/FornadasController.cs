@@ -33,7 +33,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1.Fornadas
                 return this.NaoEncontrado("Fornada não encontrada.");
             }
 
-            return null;
+            return validacao;
         }
     }
 }
