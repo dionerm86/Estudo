@@ -1230,8 +1230,18 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cria o Log de Alterações para o limite de cheques por CPF/CNPJ.
         /// </summary>
-        /// <param name="limiteCheque"></param>
+        /// <param name="limiteCheque">A model de limite de cheque preenchida.</param>
         public void LogLimiteChequeCpfCnpj(LimiteChequeCpfCnpj limiteCheque)
+        {
+            this.LogLimiteChequeCpfCnpj(null, limiteCheque);
+        }
+
+        /// <summary>
+        /// Cria o Log de Alterações para o limite de cheques por CPF/CNPJ.
+        /// </summary>
+        /// <param name="sessao">A sessão atual.</param>
+        /// <param name="limiteCheque">A model de limite de cheque preenchida.</param>
+        public void LogLimiteChequeCpfCnpj(GDASession sessao, LimiteChequeCpfCnpj limiteCheque)
         {
             LimiteChequeCpfCnpj atual = LimiteChequeCpfCnpjDAO.Instance.GetElementByPrimaryKey(limiteCheque.IdLimiteCheque);
             InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.LimiteChequeCpfCnpj, limiteCheque.IdLimiteCheque, atual, limiteCheque);

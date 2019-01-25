@@ -43,17 +43,42 @@ namespace Glass.Data.DAL
 
         public IList<LimiteChequeCpfCnpj> ObtemItens(string cpfCnpj, string sortExpression, int startRow, int pageSize)
         {
-            sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "c.cpfCnpj asc";
+            sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "CpfCnpj asc";
 
             string filtroAdicional;
-            return LoadDataWithSortExpression(Sql(cpfCnpj, true, out filtroAdicional), sortExpression, startRow, 
-                pageSize, true, filtroAdicional, GetParams(cpfCnpj));
+            return this.objPersistence.LoadDataWithSortExpression(
+                Sql(cpfCnpj, true, out filtroAdicional).Replace(FILTRO_ADICIONAL, filtroAdicional),
+                new InfoSortExpression(sortExpression),
+                new InfoPaging(startRow, pageSize),
+                GetParams(cpfCnpj)).ToList();
         }
 
+        /// <summary>
+        /// Obtem o número de registros retornados pela consulta.
+        /// </summary>
+        /// <param name="cpfCnpj">O cpf/cnpj para busca dos limites de cheques.</param>
+        /// <returns>Um número inteiro que representa o número de registros retornados pela consulta.</returns>
         public int ObtemNumeroItens(string cpfCnpj)
         {
+            using (var sessao = new GDATransaction())
+            {
+                return this.ObtemNumeroItens(sessao, cpfCnpj);
+            }
+        }
+
+        /// <summary>
+        /// Obtem o número de registros retornados pela consulta.
+        /// </summary>
+        /// <param name="sessao">A sessão atual.</param>
+        /// <param name="cpfCnpj">O cpf/cnpj para busca dos limites de cheques.</param>
+        /// <returns>Um número inteiro que representa o número de registros retornados pela consulta.</returns>
+        public int ObtemNumeroItens(GDASession sessao, string cpfCnpj)
+        {
             string filtroAdicional;
-            return GetCountWithInfoPaging(Sql(cpfCnpj, true, out filtroAdicional), true, filtroAdicional, GetParams(cpfCnpj));
+            return this.objPersistence.ExecuteSqlQueryCount(
+                sessao,
+                this.Sql(cpfCnpj, false, out filtroAdicional).Replace(FILTRO_ADICIONAL, filtroAdicional),
+                this.GetParams(cpfCnpj));
         }
 
         public decimal ObtemLimite(string cpfCnpj)
@@ -125,7 +150,36 @@ namespace Glass.Data.DAL
             return limite - ObtemValorChequesAbertos(session, cpfCnpj, idCliente);
         }
 
+        /// <summary>
+        /// Insere ou atualiza um limite de cheque por cpf ou cnpj.
+        /// </summary>
+        /// <param name="objUpdate">O objeto com as informações a serem inseridas/atualizadas.</param>
         public override void InsertOrUpdate(LimiteChequeCpfCnpj objUpdate)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                try
+                {
+                    sessao.BeginTransaction();
+
+                    this.InsertOrUpdate(sessao, objUpdate);
+
+                    sessao.Commit();
+                }
+                catch
+                {
+                    sessao.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Insere ou atualiza um limite de cheque por cpf ou cnpj.
+        /// </summary>
+        /// <param name="sessao">A sessão atual.</param>
+        /// <param name="objUpdate">O objeto com as informações a serem inseridas/atualizadas.</param>
+        public override void InsertOrUpdate(GDASession sessao, LimiteChequeCpfCnpj objUpdate)
         {
             objUpdate.Observacao =
                 !string.IsNullOrEmpty(objUpdate.Observacao) && objUpdate.Observacao.Length > 300 ?
@@ -135,12 +189,12 @@ namespace Glass.Data.DAL
             {
                 decimal limite = objUpdate.Limite;
                 objUpdate.Limite = 0;
-                objUpdate.IdLimiteCheque = base.Insert(objUpdate);
+                objUpdate.IdLimiteCheque = base.Insert(sessao, objUpdate);
                 objUpdate.Limite = limite;
             }
 
-            LogAlteracaoDAO.Instance.LogLimiteChequeCpfCnpj(objUpdate);
-            Update(objUpdate);
+            LogAlteracaoDAO.Instance.LogLimiteChequeCpfCnpj(sessao, objUpdate);
+            Update(sessao, objUpdate);
         }
 
         public string[] ObtemCpfCnpj()

@@ -490,6 +490,9 @@
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.Filtro.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Templates\LstRegrasNaturezaOperacao.Filtro.html" />
+    <Content Include="Vue\Cheques\LimitePorCpfCnpj\Componentes\LstLimiteChequesCpfCnpj.Filtro.js" />
+    <Content Include="Vue\Cheques\LimitePorCpfCnpj\Componentes\LstLimiteChequesCpfCnpj.js" />
+    <Content Include="Vue\Cheques\LimitePorCpfCnpj\Templates\LstLimiteChequesCpfCnpj.Filtro.html" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
