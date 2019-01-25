@@ -72,6 +72,7 @@
     /**
      * Consulta a situação da exportação de um pedido.
      * @param {number} idPedido O identificador do pedido.
+     * @returns {Promise} Uma promise com o resultado da operação.
      */
     consultarSituacao: function (idPedido) {
       return Servicos.Pedidos.Exportacao.consultarSituacao(idPedido, this.fornecedorAtual.id);
@@ -79,6 +80,7 @@
 
     /**
      * Obtem os itens para o controle de fornecedores.
+     * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterItensControleFornecedores: function () {
       return Servicos.Fornecedores.obterParaControleExportacao();
@@ -86,21 +88,24 @@
 
     /**
      * Verifica se os produtos de um determinado pedido estão sendo exibidos.
+     * @param {number} indice O índice atual em que será realizada a verificação.
+     * @returns {boolean} Um valor que indica se os produtos estão sendo exibidos no indice informado.
      */
-    exibindoProdutos: function (indice) {
+    verificarExibicaoProdutos: function (indice) {
       return this.produtosEmExibicao.indexOf(indice) > -1;
     },
 
     /**
      * Retorna o número de colunas da lista paginada.
-     * @type {number}
+     * @returns {number} O número de colunas presentes na lista paginada.
      */
-    numeroColunasLista: function () {
+    obterNumeroColunasLista: function () {
       return this.$refs.lista.numeroColunas();
     },
 
     /**
      * Alterna a exibição dos produtos.
+     * @param {number} indice O índice que terá a exibição dos produtos alternada.
      */
     alternarExibicaoProdutos: function (indice) {
       var i = this.produtosEmExibicao.indexOf(indice);
@@ -115,9 +120,8 @@
     /**
      * Verifica se um dado pedido está marcado para exportação.
      * @param {number} id O identificador do pedido.
-     * @returns um valor booleano que indica se o pedido está marcado para exportação.
      */
-    marcado: function (id) {
+    verificarMarcado: function (id) {
       var vm = this;
       var itens = this.$refs['produtosPedido' + id].$refs.lista.itens;
       if (this.pedidosExportar.indexOf(id) > -1) {

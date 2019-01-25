@@ -65,7 +65,7 @@
                 <template slot="item" slot-scope="{ item, index }">
                     <td>
                         <span>
-                            <input type="checkbox" :id="'exportarPedido' + index" :value="item.id" v-model="pedidosExportar" @change="marcado(item.id)" />
+                            <input type="checkbox" :id="'exportarPedido' + index" :value="item.id" v-model="pedidosExportar" @change="verificarMarcado(item.id)" />
                         </span>
                         <span v-if="item.permissoes && item.permissoes.consultarSituacao">
                             <button @click.prevent="consultarSituacao(item.id)" title="Consultar situação">
@@ -75,12 +75,12 @@
                     </td>
                     <td>
                         <span v-if="configuracoes.exibirProdutos">
-                            <span v-if="!exibindoProdutos(index)">
+                            <span v-if="!verificarExibicaoProdutos(index)">
                                 <button @click.prevent="alternarExibicaoProdutos(index)" title="Exibir Produtos">
                                     <img border="0" src="../Images/mais.gif" />
                                 </button>
                             </span>
-                            <span v-if="exibindoProdutos(index)">
+                            <span v-if="verificarExibicaoProdutos(index)">
                                 <button @click.prevent="alternarExibicaoProdutos(index)" title="Esconder Produtos">
                                     <img border="0" src="../Images/menos.gif" />
                                 </button>
@@ -144,7 +144,7 @@
                 <template slot="novaLinhaItem" slot-scope="{ item, index, classe }">
                     <tr v-show="exibindoProdutos(index)">
                         <td></td>
-                        <td :colspan="numeroColunasLista() - 1">
+                        <td :colspan="obterNumeroColunasLista() - 1">
                             <exportacao-pedidos-produtos :filtro="{ idPedido: item.id }" :ref="'produtosPedido' + item.id"></exportacao-pedidos-produtos>
                         </td>
                     </tr>

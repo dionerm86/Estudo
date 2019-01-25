@@ -27,7 +27,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.Exportacao
         /// <returns>Um status HTTP indicando se o pedido foi exportado.</returns>
         [HttpPost]
         [Route("exportar")]
-        [SwaggerResponse(200, "Pedidos exportados.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(202, "Pedidos exportados.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.")]
         [SwaggerResponse(404, "Pedido não encontrado para o id informado.", Type = typeof(MensagemDto))]
         public IHttpActionResult ExportarPedidos(PedidosExportarDto dados)
@@ -140,7 +140,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.Exportacao
                     sessao.Commit();
                     sessao.Close();
 
-                    return this.Aceito("A Situação do pedido foi atualizada.");
+                    return this.Aceito("A situação do pedido foi atualizada.");
                 }
                 catch (Exception ex)
                 {

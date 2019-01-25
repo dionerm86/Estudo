@@ -64,10 +64,7 @@ namespace Glass.Data.DAL
         /// <returns>A model de fornecedor preenchida.</returns>
         public Fornecedor GetElement(uint idFornec)
         {
-            using (var sessao = new GDATransaction())
-            {
-                return this.GetElement(sessao, idFornec);
-            }
+            return this.GetElement(null, idFornec);
         }
 
         /// <summary>

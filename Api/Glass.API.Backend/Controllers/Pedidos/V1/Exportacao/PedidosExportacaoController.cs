@@ -153,12 +153,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.Exportacao
 
             var validacao = this.ValidarExistenciaIdsFornecedoresPedidosEProdutosPedidoExportacao(sessao, exportacao.Pedidos);
 
-            if (validacao != null)
-            {
-                return validacao;
-            }
-
-            return null;
+            return validacao;
         }
     }
 }

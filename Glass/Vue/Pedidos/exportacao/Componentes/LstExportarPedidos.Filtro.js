@@ -20,8 +20,8 @@
           idCliente: null,
           nomeCliente: null,
           codigoPedidoCliente: null,
-          periodoCadastroInicio: null,
-          periodoCadastroFim: null
+          periodoCadastroInicio: new Date(),
+          periodoCadastroFim: new Date()
         },
         this.filtro
       )

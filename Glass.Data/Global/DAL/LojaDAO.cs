@@ -36,10 +36,7 @@ namespace Glass.Data.DAL
         /// <returns>A model de loja preenchida.</returns>
         public Loja GetElement(uint idLoja)
         {
-            using (var sessao = new GDATransaction())
-            {
-                return this.GetElement(sessao, idLoja);
-            }
+            return this.GetElement(null, idLoja);
         }
 
         /// <summary>

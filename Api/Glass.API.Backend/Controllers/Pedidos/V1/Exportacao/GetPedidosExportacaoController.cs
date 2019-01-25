@@ -7,8 +7,8 @@ using Glass.API.Backend.Models.Pedidos.V1.Exportacao.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
-using System.Web.Http;
 using System.Linq;
+using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Pedidos.V1.Exportacao
 {
@@ -46,9 +46,9 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.Exportacao
         }
 
         /// <summary>
-        /// Recupera a lista de pedidos para exportação.
+        /// Recupera as configurações para a lista de pedidos para exportação.
         /// </summary>
-        /// <returns>Uma lista JSON com os dados dos pedidos.</returns>
+        /// <returns>Um objeto JSON com as configurações.</returns>
         [HttpGet]
         [Route("configuracoes")]
         [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Pedidos.V1.Exportacao.Configuracoes.ListaDto))]
