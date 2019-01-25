@@ -200,7 +200,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Compile Include="Controllers\EncontrosContas\V1\EncontrosContasController.cs" />
+    <Compile Include="Controllers\EncontrosContas\V1\GetEncontrosContasController.cs" />
+    <Compile Include="Helper\EncontrosContas\TraducaoOrdenacaoListaEncontrosContas.cs" />
     <Compile Include="Helper\ImpressoesEtiquetas\Individual\TraducaoOrdenacaoListaImpressoesIndividuaisEtiquetas.cs" />
+    <Compile Include="Models\EncontrosContas\V1\Lista\ValoresDto.cs" />
+    <Compile Include="Models\EncontrosContas\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\EncontrosContas\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\EncontrosContas\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\ListaDto.cs" />

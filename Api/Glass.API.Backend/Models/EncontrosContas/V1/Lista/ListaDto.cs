@@ -15,7 +15,7 @@ namespace Glass.API.Backend.Models.EncontrosContas.V1.Lista
     /// <summary>
     /// Classe que encapsula os dados dos encontros de contas para a tela de listagem.
     /// </summary>
-    [DataContract(Name = "EncontrosContas")]
+    [DataContract(Name = "Lista")]
     public class ListaDto : IdDto
     {
         /// <summary>
@@ -57,14 +57,14 @@ namespace Glass.API.Backend.Models.EncontrosContas.V1.Lista
         }
 
         /// <summary>
-        /// Obtém ou define os valores.
+        /// Obtém ou define dados básicos do cliente.
         /// </summary>
         [DataMember]
         [JsonProperty("cliente")]
         public IdNomeDto Cliente { get; set; }
 
         /// <summary>
-        /// Obtém ou define os valores.
+        /// Obtém ou define dados básicos do fornecedor.
         /// </summary>
         [DataMember]
         [JsonProperty("fornecedor")]
@@ -99,7 +99,7 @@ namespace Glass.API.Backend.Models.EncontrosContas.V1.Lista
         public string Observacao { get; set; }
 
         /// <summary>
-        /// Obtém ou define as permissões.
+        /// Obtém ou define as permissões da lista de encontro de contas.
         /// </summary>
         [DataMember]
         [JsonProperty("permissoes")]

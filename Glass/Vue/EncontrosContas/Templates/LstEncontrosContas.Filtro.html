@@ -1,0 +1,35 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Cód</label>
+            <input type="text" v-model="filtroAtual.id" style="width: 60px"/>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Cliente</label>
+            <input type="number" v-model.number="filtroAtual.idCliente" style="width: 60px"/>
+            <input type="text" v-model="filtroAtual.nomeCliente" style="width: 200px"/>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Fornecedor</label>
+            <input type="number" v-model.number="filtroAtual.idFornecedor" style="width: 60px"/>
+            <input type="text" v-model="filtroAtual.nomeCliente" style="width: 200px"/>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Período Cad.</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoCadastroInicio" v-bind:data-hora-final.sync="filtroAtual.periodoCadastroFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Obs.:</label>
+            <input type="text" v-model="filtroAtual.observacao" style="width: 200px"/>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>
