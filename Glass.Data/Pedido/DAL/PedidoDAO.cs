@@ -9273,6 +9273,7 @@ namespace Glass.Data.DAL
             string sql = @"
                 Select Count(*) From produtos_pedido pp
                 Where pp.idPedido=" + idPedido + @"
+                    AND COALESCE(pp.invisivelFluxo, 0) = 0
                     And pp.qtde<>Coalesce(pp.qtdSaida, 0)";
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
