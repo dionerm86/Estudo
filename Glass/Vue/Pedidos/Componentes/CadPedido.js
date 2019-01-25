@@ -491,7 +491,7 @@
               vm.exibirMensagem('Erro', erro.mensagem);
             }
           });
-      } 
+      }
 
       this.dataEntregaMinima = this.datasEntrega.dataMinimaCalculada;
     },
@@ -520,10 +520,7 @@
      */
     preencherEnderecoObra: function() {
       if (this.clienteAtual && this.clienteAtual.enderecoEntrega) {
-        this.pedido.enderecoObra.cep = this.clienteAtual.enderecoEntrega.cep;
-        this.pedido.enderecoObra.logradouro = this.clienteAtual.enderecoEntrega.logradouro;
-        this.pedido.enderecoObra.bairro = this.clienteAtual.enderecoEntrega.bairro;
-        this.pedido.enderecoObra.cidade = this.clienteAtual.enderecoEntrega.cidade;
+        this.pedido.enderecoObra = this.clienteAtual.enderecoEntrega;
       }
     },
 
