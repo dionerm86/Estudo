@@ -716,10 +716,26 @@ namespace Glass.UI.Web.Cadastros
             uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
             uint idFuncAtual = Glass.Conversoes.StrParaUint(idFuncAtualStr);
             uint idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(null, idPedido).GetValueOrDefault() : 0;
+            var idFuncVerificarDescontoMaximo = 0;
 
-            return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido)) :
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido))).ToString().Replace(",", ".");
+            if (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true")
+            {
+                idFuncVerificarDescontoMaximo = (int)idFuncAtual;
+            }
+            else
+            {
+                idFuncVerificarDescontoMaximo = (int)idFuncDesc;
+            }
+
+            var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(null, idPedido);
+            var idParcela = (int?)PedidoDAO.Instance.ObtemIdParcela(null, idPedido);
+            var descontoMaximoPedido = PedidoConfig.Desconto.GetDescontoMaximoPedido(
+                null,
+                (uint)idFuncVerificarDescontoMaximo,
+                tipoVenda,
+                idParcela);
+
+            return descontoMaximoPedido.ToString().Replace(",", ".");
         }
 
         protected void txtPercentual_Load(object sender, EventArgs e)
