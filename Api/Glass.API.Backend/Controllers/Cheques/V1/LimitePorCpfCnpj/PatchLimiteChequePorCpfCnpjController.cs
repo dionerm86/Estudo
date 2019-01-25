@@ -29,7 +29,7 @@ namespace Glass.API.Backend.Controllers.Cheques.V1.LimitePorCpfCnpj
         [SwaggerResponse(202, "Limite de cheque por CPF/CNPJ alterado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Limite de cheque por CPF/CNPJ não encontrado para o cpfCnpj informado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AtualizarLimiteCheque(int id, [FromBody] CadastroAtualizacaoDto dados)
+        public IHttpActionResult InserirOuAtualizarLimiteCheque(int id, [FromBody] CadastroAtualizacaoDto dados)
         {
             using (var sessao = new GDATransaction())
             {
