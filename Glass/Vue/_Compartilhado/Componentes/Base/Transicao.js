@@ -26,7 +26,7 @@
     return {
       estiloTransicao: {
         opacity: 0,
-        transition: 'opacity 0.2s ease-in-out',
+        transition: 'opacity 0.4s ease-in-out',
         padding: 0,
         margin: 0,
         border: 0
