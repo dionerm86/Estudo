@@ -1,4 +1,4 @@
-<%@ Page Title="Duplicar Produtos" Language="C#" MasterPageFile="~/Painel.master"
+Ôªø<%@ Page Title="Duplicar Produtos" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="CadDuplicarProduto.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadDuplicarProduto" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
@@ -90,7 +90,7 @@
                     return;
             }
 
-            var titulos = new Array("CÛd.", "DescriÁ„o", "Grupo/Subgrupo");
+            var titulos = new Array("C√≥d.", "Descri√ß√£o", "Grupo/Subgrupo");
             var itens = new Array(codInterno, descricao, grupo + (subgrupo != "" ? " - " + subgrupo : ""));
 
             addItem(itens, titulos, "tbProdutos", idProd, "hdfIdProd", null, null, "atualizaPreview", false);
@@ -98,10 +98,11 @@
 
         function substituiTexto(textoAtual, remover, substituir)
         {
-            var retorno = textoAtual.toUpperCase();
-            var pos = retorno.indexOf(remover.toUpperCase());
+            var retorno = textoAtual.toUpperCase().trim().replace(/\s{2,}/g, ' ');
+            var pos = retorno.indexOf(remover.toUpperCase().trim().replace(/\s{2,}/g, ' '));
+            var textoRemover = remover.indexOf(" ");
 
-            while (pos > -1)
+            while (pos > -1 && textoRemover != 0)
             {
 		        retorno = retorno.substr(0, pos) + substituir.toUpperCase() + retorno.substr(pos + remover.length);
 		        pos = retorno.indexOf(remover.toUpperCase(), pos + substituir.length);
@@ -187,7 +188,7 @@
             var codInternoSubstituir = FindControl("txtTextoCodigoNovo", "input").value;
             if (codInternoSubstituir == "")
             {
-                alert("Digite o texto que ser· acrescido ao final do cÛdigo do produto.");
+                alert("Digite o texto que ser√° acrescido ao final do c√≥digo do produto.");
                 return;
             }
 
@@ -260,7 +261,7 @@
                 </div>
                 <div style="margin-left: 360px; width: 350px;">
                     <p>
-                        Resultado (prÈ-visualizaÁ„o)</p>
+                        Resultado (pr√©-visualiza√ß√£o)</p>
                     <div>
                         <table id="tbPreview">
                         </table>
@@ -291,12 +292,12 @@
              <div>
                     <p>Substituir texto: </p>
                     <div>
-                        CÛdigo: de <asp:TextBox ID="txtTextoCodigoAtual" runat="server" Width="50px" onchange="atualizaPreview()"></asp:TextBox>
+                        C√≥digo: de <asp:TextBox ID="txtTextoCodigoAtual" runat="server" Width="50px" onchange="atualizaPreview()"></asp:TextBox>
                         para <asp:TextBox ID="txtTextoCodigoNovo" runat="server" Width="50px" onchange="atualizaPreview()"></asp:TextBox>
                     </div>
                     <br />
                     <div>
-                        DescriÁ„o: de <asp:TextBox ID="txtTextoDescricaoAtual" runat="server" Width="150px"
+                        Descri√ß√£o: de <asp:TextBox ID="txtTextoDescricaoAtual" runat="server" Width="150px"
                             onchange="atualizaPreview()"></asp:TextBox>
                         para <asp:TextBox ID="txtTextoDescricaoNovo" runat="server" Width="150px" onchange="atualizaPreview()"></asp:TextBox>
                     </div>
@@ -312,17 +313,17 @@
                     </div>
                     <br />
                     <div style="font-style: italic">
-                        se os campos "de" ficarem em branco o texto do campo "para" ser· acrescido ao final
+                        se os campos "de" ficarem em branco o texto do campo "para" ser√° acrescido ao final
                         do texto existente;
                         <br />
-                        caso contr·rio o texto do campo "para" substitui o texto do campo "de" no texto
+                        caso contr√°rio o texto do campo "para" substitui o texto do campo "de" no texto
                         existente.
                         <br />
-                        Se nada for definido nos campos Altura e Largura ser„o considerados os valores dos produtos originais.
+                        Se nada for definido nos campos Altura e Largura ser√£o considerados os valores dos produtos originais.
                         <br />
-                        Se nada for definido nos campos Proc e Apl ser„o considerados os valores dos produtos originais.
+                        Se nada for definido nos campos Proc e Apl ser√£o considerados os valores dos produtos originais.
                         <br />
-                        Nos campos de Proc. e Apl. devem ser inseridos cÛdigos dos processos e aplicaÁıes que ser„o utilizados.
+                        Nos campos de Proc. e Apl. devem ser inseridos c√≥digos dos processos e aplica√ß√µes que ser√£o utilizados.
                     </div>
                     <br />
                     <div>
@@ -412,7 +413,7 @@
                             &nbsp;&nbsp;&nbsp;
                         </th>
                         <th align="center">
-                            Resultado (prÈ-visualizaÁ„o)
+                            Resultado (pr√©-visualiza√ß√£o)
                         </th>
                     </tr>
                     <tr>
@@ -473,7 +474,7 @@
                             <table>
                                 <tr>
                                     <td align="left">
-                                        CÛdigo: de
+                                        C√≥digo: de
                                     </td>
                                     <td align="left">
                                         <asp:TextBox ID="txtTextoCodigoAtual" runat="server" Width="50px" onchange="atualizaPreview()"></asp:TextBox>
@@ -493,7 +494,7 @@
                             <table>
                                 <tr>
                                     <td align="left">
-                                        DescriÁ„o: de
+                                        Descri√ß√£o: de
                                     </td>
                                     <td align="left">
                                         <asp:TextBox ID="txtTextoDescricaoAtual" runat="server" Width="150px" onchange="atualizaPreview()"></asp:TextBox>
@@ -510,8 +511,8 @@
                     </tr>
                     <tr>
                         <td align="center" style="font-style: italic">
-                            se os campos "de" ficarem em branco o texto do campo "para" ser· acrescido ao final do texto existente; <br />
-                            caso contr·rio o texto do campo "para" substitui o texto do campo "de" no texto existente
+                            se os campos "de" ficarem em branco o texto do campo "para" ser√° acrescido ao final do texto existente; <br />
+                            caso contr√°rio o texto do campo "para" substitui o texto do campo "de" no texto existente
                         </td>
                     </tr>
                 </table>
