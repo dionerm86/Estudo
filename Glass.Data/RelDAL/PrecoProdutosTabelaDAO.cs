@@ -13,7 +13,9 @@ namespace Glass.Data.RelDAL
             string descrProduto, uint idGrupoProd, string idsSubgrupoProd, uint tipoValor, decimal alturaInicio,
             decimal alturaFim, decimal larguraInicio, decimal larguraFim, bool produtoDesconto)
         {
-            string criterio = "";
+            string criterio = string.Empty;
+
+            var valorOriginalProdutoUtilizar = tipoValor == 1 ? "p.ValorAtacado" : tipoValor == 2 ? "p.ValorBalcao" : "p.ValorObra";
 
             var select = $@"p.CODINTERNO AS CodInterno,
                     p.DESCRICAO AS DescProduto,
@@ -23,12 +25,12 @@ namespace Glass.Data.RelDAL
                     p.Largura,
                     tdac.ValorOriginalUtilizado AS ValorOriginal,
                     IFNULL(ROUND((tdac.ValorOriginalUtilizado * IF(tdac.Acrescimo > 0 OR tdac.Desconto > 0, IF(tdac.Acrescimo > tdac.Desconto, (1 + ((tdac.Acrescimo - tdac.Desconto) / 100)), (1 - ((tdac.Desconto - tdac.Acrescimo) / 100))), 1)), 2),
-                    (CASE {tipoValor} WHEN 1 THEN p.ValorAtacado WHEN 2 THEN p.ValorBalcao ELSE p.ValorObra END)) AS ValorTabela,
+                    {valorOriginalProdutoUtilizar} AS ValorTabela,
                     IF(tdac.Acrescimo > 0 OR tdac.Desconto > 0, IF(tdac.Acrescimo > tdac.Desconto, (1 + ((tdac.Acrescimo - tdac.Desconto) / 100)), (1 - ((tdac.Desconto - tdac.Acrescimo) / 100))), 1) AS PercDescAcrescimo,
                     '$$$' as criterio";
 
-            var sql = "SELECT " + select +
-                $@" from produto p
+            var sql = $@"SELECT {select}
+                    from produto p
                         LEFT JOIN
                     grupo_prod g ON p.IDGRUPOPROD = g.IDGRUPOPROD
                         LEFT JOIN
@@ -38,7 +40,7 @@ namespace Glass.Data.RelDAL
                         p.IDPROD,
                         dac.ACRESCIMO,
                         dac.DESCONTO,
-                        (CASE {tipoValor} WHEN 1 THEN p.ValorAtacado WHEN 2 THEN p.ValorBalcao ELSE p.ValorObra END) ValorOriginalUtilizado
+                        {valorOriginalProdutoUtilizar} ValorOriginalUtilizado
                     from produto p
                     LEFT JOIN desconto_acrescimo_cliente dac ON dac.IDCLIENTE IS NULL
                         AND((p.IDPROD = dac.IDPROD)
@@ -46,15 +48,15 @@ namespace Glass.Data.RelDAL
                         AND p.IDSUBGRUPOPROD = dac.IDSUBGRUPOPROD
                         AND dac.IDPROD IS NULL))
                     WHERE
-                        dac.IDTABELADESCONTO={idTabelaDescontoAcrescimo}) tdac ON p.IDPROD = tdac.IDPROD
-                    WHERE p.situacao=" + (int)Glass.Situacao.Ativo;
+                        dac.IDTABELADESCONTO = {idTabelaDescontoAcrescimo}) tdac ON p.IDPROD = tdac.IDPROD
+                    WHERE p.situacao = {(int)Situacao.Ativo}";
 
-            if (!String.IsNullOrEmpty(codInterno))
+            if (!string.IsNullOrEmpty(codInterno))
             {
                 sql += " and p.codInterno='" + codInterno + "'";
                 criterio += "Produto: " + ProdutoDAO.Instance.GetDescrProduto(codInterno) + "    ";
             }
-            else if (!String.IsNullOrEmpty(descrProduto))
+            else if (!string.IsNullOrEmpty(descrProduto))
             {
                 string ids = ProdutoDAO.Instance.ObtemIds(null, descrProduto);
                 sql += " And p.idProd In (" + ids + ")";
@@ -67,7 +69,7 @@ namespace Glass.Data.RelDAL
                 criterio += "Grupo: " + GrupoProdDAO.Instance.GetDescricao((int)idGrupoProd) + "    ";
             }
 
-            if (!String.IsNullOrEmpty(idsSubgrupoProd) && !new List<string>(idsSubgrupoProd.Split(',')).Contains("0"))
+            if (!string.IsNullOrEmpty(idsSubgrupoProd) && !new List<string>(idsSubgrupoProd.Split(',')).Contains("0"))
             {
                 sql += " and p.idSubgrupoProd in (" + idsSubgrupoProd + ")";
                 criterio += "Subgrupos: " + SubgrupoProdDAO.Instance.GetDescricao(idsSubgrupoProd) + "    ";
@@ -76,19 +78,23 @@ namespace Glass.Data.RelDAL
             if (alturaInicio > 0 || alturaFim > 0)
             {
                 sql += " and p.altura >= " + alturaInicio +
-                    (alturaFim > 0 ? " AND p.altura <= " + alturaFim : "");
+                    (alturaFim > 0 ? " AND p.altura <= " + alturaFim : string.Empty);
+
                 criterio += "Altura: " + alturaInicio + "Até" + alturaFim;
             }
 
             if (larguraInicio > 0 || larguraFim > 0)
             {
                 sql += " and p.largura >= " + larguraInicio +
-                    (larguraFim > 0 ? " AND p.largura <= " + larguraFim : "");
+                    (larguraFim > 0 ? " AND p.largura <= " + larguraFim : string.Empty);
+
                 criterio += "Largura: " + larguraInicio + "Até" + larguraFim;
             }
 
-            if(produtoDesconto)
+            if (produtoDesconto)
+            {
                 sql += @" AND (tdac.Acrescimo > 0 OR tdac.Desconto > 0) ";
+            }
 
             return sql.Replace("$$$", criterio);
         }
