@@ -35,9 +35,13 @@
     }
   },
 
-  data: function() {
+  data: function () {
+    var cidadeEndereco = (this.endereco || {}).cidade || {};
+
     return {
-      cidadeAtual: this.cidade || {}
+      ufAtual: cidadeEndereco.uf,
+      cidadeAtual: cidadeEndereco,
+      atualizandoUf: false
     };
   },
 
@@ -52,23 +56,7 @@
       },
       set: function (valor) {
         if (!this.equivalentes(valor, this.endereco)) {
-          this.nomeAtual = valor && valor.cidade ? valor.cidade.nome : null;
           this.$emit('update:endereco', valor);
-        }
-      }
-    },
-
-    /**
-     * Propriedade computada que retorna a UF normalizada e que
-     * atualiza a propriedade em caso de alteração.
-     */
-    ufAtual: {
-      get: function () {
-        return this.enderecoAtual.cidade.uf || '';
-      },
-      set: function (valor) {
-        if (!this.equivalentes(valor, this.enderecoAtual.cidade.uf)) {
-          this.enderecoAtual.cidade.uf = valor;
         }
       }
     }
@@ -81,29 +69,50 @@
      */
     endereco: {
       handler: function (valor) {
-        if (valor && valor.cidade) {
-          this.nomeAtual = valor.cidade.nome;
-          this.ufAtual = valor.cidade.uf;
-        } else {
-          this.nomeAtual = null;
-        }
-
+        this.enderecoAtual = valor;
         var vm = this;
 
         this.$nextTick(function () {
-          vm.enderecoAtual = valor;
+          vm.cidadeAtual = valor ? valor.cidade : null;
         });
       },
       deep: true
     },
 
     cidadeAtual: {
-      handler: function (valor) {
-        if (!this.equivalentes(valor, this.cidadeAtual)) {
-          this.enderecoAtual.cidade = valor;
+      handler: function (valor, anterior) {
+        if (this.atualizandoUf && !valor && anterior) {
+          this.cidadeAtual = anterior;
+          this.atualizandoUf = false;
+          return;
+        }
+
+        if (valor && this.ufAtual !== valor.uf) {
+          this.ufAtual = valor.uf;
+        }
+
+        if (!this.equivalentes(valor, this.enderecoAtual.cidade)) {
+          var novoEndereco = this.clonar(this.enderecoAtual);
+          novoEndereco.cidade = valor;
+
+          this.enderecoAtual = novoEndereco;
         }
       },
       deep: true
+    },
+    
+    ufAtual: function (valor) {
+      this.atualizandoUf = true;
+
+      if (valor !== (this.enderecoAtual.cidade || {}).uf) {
+        var novoEndereco = this.clonar(this.enderecoAtual);
+
+        if (novoEndereco.cidade) {
+          novoEndereco.cidade.uf = valor;
+
+          this.enderecoAtual = novoEndereco;
+        }
+      }
     }
   },
 

@@ -740,12 +740,7 @@
         },
         observacao: item ? item.observacao : null,
         observacaoLiberacao: item ? item.observacaoLiberacao : null,
-        enderecoObra: {
-          logradouro: item && item.enderecoObra ? item.enderecoObra.logradouro : null,
-          bairro: item && item.enderecoObra ? item.enderecoObra.bairro : null,
-          cidade: item && item.enderecoObra ? item.enderecoObra.cidade : null,
-          cep: item && item.enderecoObra ? item.enderecoObra.cep : null
-        },
+        enderecoObra: this.clonar(item.enderecoObra),
         total: item ? item.total : null,
         valorEntrada: item && item.sinal ? item.sinal.valor : null,
         textoSinal: item ? item.textoSinal : null
@@ -1015,11 +1010,11 @@
         this.pedido.desconto.valor = 0;
         this.pedido.comissionado.id = null;
         this.pedido.comissionado.percentualComissao = 0;
-        this.preencherEnderecoObra();
-
+        
         if (atual && (this.inserindo || (anterior && anterior.id && atual.id !== anterior.id))) {
+          this.preencherEnderecoObra();
           this.pedido.idCliente = atual.id;
-
+          
           if (atual.comissionado) {
             this.comissisonadoAtual = atual.comissionado;
           }

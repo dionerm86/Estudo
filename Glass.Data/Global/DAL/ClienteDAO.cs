@@ -1,4 +1,4 @@
-using Colosoft;
+Ôªøusing Colosoft;
 using GDA;
 using Glass.Configuracoes;
 using Glass.Data.Helper;
@@ -6,7 +6,6 @@ using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GDA;
 
 namespace Glass.Data.DAL
 {
@@ -35,7 +34,7 @@ namespace Glass.Data.DAL
             filtroAdicional = "";
             criterio = String.Empty;
 
-            // Campos que ser„o retornados pelo sql, se usu·rio tiver permiss„o, busca total comprado de cada cliente
+            // Campos que ser√£o retornados pelo sql, se usu√°rio tiver permiss√£o, busca total comprado de cada cliente
             string campos = selecionar ? @"c.*, fg.descricao As FormaPagamento, tc.descricao As TipoCliente, lj.nomeFantasia As Loja,
                 r.descricao As Rota, r.codInterno as CodigoRota, p.descricao As Parcela, da.descricao As DescontoAcrescimo,
                 If(c.idCidade Is Null, c.cidade, cid.nomeCidade) As NomeCidade, da.Descricao AS TabelaDescontoAcrescimo,
@@ -46,7 +45,7 @@ namespace Glass.Data.DAL
 
             param = new List<GDAParameter>();
             string sqlDataInativado = String.IsNullOrEmpty(dataInativadoIni) && String.IsNullOrEmpty(dataInativadoFim) ? "" :
-                "Left Join (" + LogAlteracaoDAO.Instance.SqlDataAlt((int)LogAlteracao.TabelaAlteracao.Cliente, null, "SituaÁ„o", "",
+                "Left Join (" + LogAlteracaoDAO.Instance.SqlDataAlt((int)LogAlteracao.TabelaAlteracao.Cliente, null, "Situa√ß√£o", "",
                 new object[] { "Inativo", "Cancelado", "Bloqueado" }, out param, false) + ") l On (l.idRegistroAlt=c.id_Cli)";
 
             string sql = @"
@@ -102,7 +101,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(endereco))
             {
                 filtroAdicional += " And c.Endereco Like ?endereco ";
-                criterio += "EndereÁo: " + endereco + "    ";
+                criterio += "Endere√ßo: " + endereco + "    ";
             }
 
             if (!String.IsNullOrEmpty(bairro))
@@ -134,7 +133,7 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And c.situacao=" + situacao;
                 Cliente temp = new Cliente();
                 temp.Situacao = situacao;
-                criterio += "SituaÁ„o: " + temp.DescrSituacao + "    ";
+                criterio += "Situa√ß√£o: " + temp.DescrSituacao + "    ";
             }
 
             if (idTipoCliente > 0)
@@ -158,13 +157,13 @@ namespace Glass.Data.DAL
             if (isRota)
             {
                 filtroAdicional += " And id_Cli not in (Select idCliente From rota_cliente Where 1)";
-                criterio += "Apenas clientes que n„o possuam rota    ";
+                criterio += "Apenas clientes que n√£o possuam rota    ";
             }
 
             if (!String.IsNullOrEmpty(dataCadIni))
             {
                 filtroAdicional += " And c.dataCad >= ?dataCadIni";
-                criterio += "Data inÌcio cad.: " + dataCadIni + "    ";
+                criterio += "Data in√≠cio cad.: " + dataCadIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataCadFim))
@@ -176,7 +175,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataSemCompraIni))
             {
                 filtroAdicional += " and id_Cli not in (select idCli from pedido where dataCad>=?dataSemCompraIni)";
-                criterio += "Data inÌcio sem compra: " + dataSemCompraIni + "    ";
+                criterio += "Data in√≠cio sem compra: " + dataSemCompraIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataSemCompraFim))
@@ -188,7 +187,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataInativadoIni))
             {
                 sql += " and l.dataAlt>=?dataInativadoIni";
-                criterio += "Data inÌcio inativado: " + dataInativadoIni + "    ";
+                criterio += "Data in√≠cio inativado: " + dataInativadoIni + "    ";
                 temFiltro = true;
             }
 
@@ -203,7 +202,7 @@ namespace Glass.Data.DAL
             {
                 string descr = TabelaDescontoAcrescimoClienteDAO.Instance.GetDescricao(idTabelaDesconto);
                 sql += " and c.idtabeladesconto = ?idtabeladesconto";
-                criterio += "Tabela Desconto/AcrÈscimo Cliente: " + descr + "    ";
+                criterio += "Tabela Desconto/Acr√©scimo Cliente: " + descr + "    ";
             }
 
             sql += " group by c.id_Cli";
@@ -266,8 +265,10 @@ namespace Glass.Data.DAL
                 return new Cliente[0];
             }
 
-            const string sql = "select cl.*, ci.nomeCidade as nomeCidadeEntrega from cliente cl "
-                + "left join cidade ci on (cl.idCidadeEntrega = ci.idCidade) "
+            const string sql = "select cl.*, ci.nomeCidade as nomeCidade, ci.nomeUf as uf, ce.nomeCidade as nomeCidadeEntrega, ce.nomeUf as ufEntrega "
+                + "from cliente cl "
+                + "left join cidade ci on (cl.idCidade = ci.idCidade) "
+                + "left join cidade ce on (cl.idCidadeEntrega = ce.idCidade) "
                 + "where ";
 
             string where;
@@ -293,7 +294,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca os clientes em ordem alfabÈtica
+        #region Busca os clientes em ordem alfab√©tica
 
         public IList<Cliente> GetOrdered()
         {
@@ -302,10 +303,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca cliente para relatÛrio
+        #region Busca cliente para relat√≥rio
 
         /// <summary>
-        /// QUALQUER MUDAN«A NESSE M…TODO MUDAR TAMB…M NO M…TODO DO FLUXO QUE GERA O RELAT”RIO.
+        /// QUALQUER MUDAN√áA NESSE M√âTODO MUDAR TAMB√âM NO M√âTODO DO FLUXO QUE GERA O RELAT√ìRIO.
         /// </summary>
         private string SqlRpt(string codRota, uint idLoja, uint idFunc, string endereco, string bairro, uint idCidade, string telefone,
             string cpfCnpj, string dataIni, string dataFim, int tipoPessoa, int revenda, int compra, uint idCli, string nomeCli,
@@ -317,7 +318,7 @@ namespace Glass.Data.DAL
             filtroAdicional = "";
 
             string custoPedido = $@"(Select Round(Sum(p.custoPedido), 2) From pedido p Where p.situacao={ (int)Pedido.SituacaoPedido.Confirmado }
-                 And p.tipovenda<>{ (int)Pedido.TipoVendaPedido.Garantia } And p.tipovenda<>{ (int)Pedido.TipoVendaPedido.ReposiÁ„o }
+                 And p.tipovenda<>{ (int)Pedido.TipoVendaPedido.Garantia } And p.tipovenda<>{ (int)Pedido.TipoVendaPedido.Reposi√ß√£o }
                  And p.IdCli=c.Id_Cli)";
 
             string campos = selecionar ? "c.*, if(c.idCidade is null, c.cidade, cid.NomeCidade) as nomeCidade, cid.NomeUf as uf, cast(" +
@@ -328,7 +329,7 @@ namespace Glass.Data.DAL
 
             param = new List<GDAParameter>();
             string sqlDataInativado = String.IsNullOrEmpty(dataInativadoIni) && String.IsNullOrEmpty(dataInativadoFim) ? "" :
-                "Left Join (" + LogAlteracaoDAO.Instance.SqlDataAlt((int)LogAlteracao.TabelaAlteracao.Cliente, null, "SituaÁ„o", "",
+                "Left Join (" + LogAlteracaoDAO.Instance.SqlDataAlt((int)LogAlteracao.TabelaAlteracao.Cliente, null, "Situa√ß√£o", "",
                 new object[] { "Inativo", "Cancelado", "Bloqueado" }, out param, false) + ") l On (l.idRegistroAlt=c.id_Cli)";
 
             string sql = $@"
@@ -344,7 +345,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataNiverIni))
             {
                 filtroAdicional += @" And MONTH(Data_nasc) * 100 + DAY(Data_Nasc) >= MONTH(?dataNiverIni) * 100 + DAY(?dataNiverIni)";
-                criterio = $"Data Anivers·rio InÌcio: { dataNiverIni }    ";
+                criterio = $"Data Anivers√°rio In√≠cio: { dataNiverIni }    ";
             }
 
             if (!String.IsNullOrEmpty(dataNiverFim))
@@ -352,13 +353,13 @@ namespace Glass.Data.DAL
                 filtroAdicional += !String.IsNullOrEmpty(dataNiverIni) && DateTime.Parse(dataNiverIni + " 00:00") <= DateTime.Parse(dataNiverFim + " 00:00") ?
                 "And MONTH(Data_nasc) * 100 + DAY(Data_Nasc) <= MONTH(?dataNiverFim) * 100 + DAY(?dataNiverFim)" :
                 "And (MONTH(Data_nasc) + 12) * 100 + DAY(Data_Nasc) <= (MONTH(?dataNiverFim) + 12) * 100 + DAY(?dataNiverFim))";
-                criterio = "Data Anivers·rio Fim: " + dataNiverFim + "    ";
+                criterio = "Data Anivers√°rio Fim: " + dataNiverFim + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataCadIni))
             {
                 filtroAdicional += " And c.dataCad >= ?dataCadIni";
-                criterio += $"Data inÌcio cad.: { dataCadIni }    ";
+                criterio += $"Data in√≠cio cad.: { dataCadIni }    ";
             }
 
             if (!String.IsNullOrEmpty(dataCadFim))
@@ -370,7 +371,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataSemCompraIni))
             {
                 filtroAdicional += " and id_Cli not in (select idCli from pedido where dataCad>=?dataSemCompraIni)";
-                criterio += $"Data inÌcio sem compra: { dataSemCompraIni }    ";
+                criterio += $"Data in√≠cio sem compra: { dataSemCompraIni }    ";
             }
 
             if (!String.IsNullOrEmpty(dataSemCompraFim))
@@ -382,7 +383,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataInativadoIni))
             {
                 sql += " and l.dataAlt>=?dataInativadoIni";
-                criterio += $"Data inÌcio inativado: { dataInativadoIni }    ";
+                criterio += $"Data in√≠cio inativado: { dataInativadoIni }    ";
             }
 
             if (!String.IsNullOrEmpty(dataInativadoFim))
@@ -409,7 +410,7 @@ namespace Glass.Data.DAL
             if (ApenasSemPrecoTabela)
             {
                 filtroAdicional += " And c.idTabelaDesconto IS NULL";
-                criterio += "Apenas Clientes sem Tabela de Desconto/AcrÈscimo    ";
+                criterio += "Apenas Clientes sem Tabela de Desconto/Acr√©scimo    ";
             }
 
             if (idLoja > 0)
@@ -451,7 +452,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(endereco))
             {
                 filtroAdicional += " And c.Endereco Like ?endereco ";
-                criterio += $"EndereÁo: { endereco }    ";
+                criterio += $"Endere√ßo: { endereco }    ";
             }
 
             if (!String.IsNullOrEmpty(bairro))
@@ -476,13 +477,13 @@ namespace Glass.Data.DAL
             {
                 string descr = TabelaDescontoAcrescimoClienteDAO.Instance.GetDescricao(idTabelaDesconto);
                 sql += " and c.idtabeladesconto = ?idtabeladesconto";
-                criterio += $"Tabela Desconto/AcrÈscimo Cliente: { descr }    ";
+                criterio += $"Tabela Desconto/Acr√©scimo Cliente: { descr }    ";
             }
 
             if (!string.IsNullOrEmpty(dataIni))
             {
                 filtroAdicional += " And c.Dt_Ult_Compra>=?dataIni";
-                criterio = $"Data InÌcio: { dataIni }    ";
+                criterio = $"Data In√≠cio: { dataIni }    ";
             }
 
             if (!string.IsNullOrEmpty(dataFim))
@@ -494,7 +495,7 @@ namespace Glass.Data.DAL
             if (tipoPessoa > 0)
             {
                 filtroAdicional += $" And c.Tipo_Pessoa='{ (tipoPessoa == 1 ? "F" : "J") }'";
-                criterio += $"Tipo Pessoa: { (tipoPessoa == 1 ? "FÌsica" : "JurÌdica") }    ";
+                criterio += $"Tipo Pessoa: { (tipoPessoa == 1 ? "F√≠sica" : "Jur√≠dica") }    ";
             }
 
             if (idCli > 0)
@@ -521,7 +522,7 @@ namespace Glass.Data.DAL
                     filtroAdicional += $" And c.situacao={ situacao }";
                     Cliente temp = new Cliente();
                     temp.Situacao = situacao;
-                    criterio += $"SituaÁ„o: { temp.DescrSituacao }    ";
+                    criterio += $"Situa√ß√£o: { temp.DescrSituacao }    ";
                 }
             }
 
@@ -548,7 +549,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// QUALQUER MUDAN«A NESSE M…TODO MUDAR TAMB…M NO M…TODO DO FLUXO QUE GERA O RELAT”RIO.
+        /// QUALQUER MUDAN√áA NESSE M√âTODO MUDAR TAMB√âM NO M√âTODO DO FLUXO QUE GERA O RELAT√ìRIO.
         /// </summary>
         public IList<Cliente> GetForListaRpt(string codRota, uint idFunc, string dataIni, string dataFim, int tipoPessoa, bool revenda, bool compra, uint idCli,
             string nomeCli, int situacao, bool apenasSemRota, bool apenasSemPrecoTabela, string dataNiverIni, string dataNiverFim, string dataCadIni,
@@ -658,7 +659,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca clientes vinculados ‡ um cliente
+        #region Busca clientes vinculados √† um cliente
 
         /// <summary>
         /// Busca clientes vinculados ao cliente passado
@@ -825,7 +826,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o nome do cliente a partir de uma liberaÁ„o de pedido
+        /// Retorna o nome do cliente a partir de uma libera√ß√£o de pedido
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
@@ -862,10 +863,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna o percentual de reduÁ„o que o cliente possui na NFe
+        #region Retorna o percentual de redu√ß√£o que o cliente possui na NFe
 
         /// <summary>
-        /// Retorna o percentual de reduÁ„o que o cliente possui na NFe
+        /// Retorna o percentual de redu√ß√£o que o cliente possui na NFe
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
@@ -879,7 +880,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o percentual de reduÁ„o que o cliente possui na NFe para produtos de revenda
+        /// Retorna o percentual de redu√ß√£o que o cliente possui na NFe para produtos de revenda
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
@@ -894,10 +895,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se cliente j· existe
+        #region Verifica se cliente j√° existe
 
         /// <summary>
-        /// Verifica se j· existe um cliente cadastrado com o CPF/CNPJ cadastrado
+        /// Verifica se j√° existe um cliente cadastrado com o CPF/CNPJ cadastrado
         /// </summary>
         /// <param name="cpfCnpj"></param>
         /// <returns></returns>
@@ -925,14 +926,14 @@ namespace Glass.Data.DAL
             filtroAdicional = "";
             criterio = String.Empty;
 
-            // Campos que ser„o retornados pelo sql, se usu·rio tiver permiss„o, busca total comprado de cada cliente
+            // Campos que ser√£o retornados pelo sql, se usu√°rio tiver permiss√£o, busca total comprado de cada cliente
             string campos = selecionar ? @"c.*, tc.descricao As TipoCliente, lj.nomeFantasia As Loja,
                 cid.nomeCidade, cid.nomeUf As Uf, cid.codIbgeUf as CodIbgeUf, f.nome As DescrUsuCad,
                 ff.nome As DescrUsuAlt, com.nome As NomeComissionado, fVend.nome As NomeFunc" : "Count(Distinct c.id_Cli)";
 
             param = new List<GDAParameter>();
             string sqlDataInativado = String.IsNullOrEmpty(dataInativadoIni) && String.IsNullOrEmpty(dataInativadoFim) ? "" :
-                "Left Join (" + LogAlteracaoDAO.Instance.SqlDataAlt((int)LogAlteracao.TabelaAlteracao.Cliente, null, "SituaÁ„o", "",
+                "Left Join (" + LogAlteracaoDAO.Instance.SqlDataAlt((int)LogAlteracao.TabelaAlteracao.Cliente, null, "Situa√ß√£o", "",
                 new object[] { "Inativo", "Cancelado", "Bloqueado" }, out param, false) + ") l On (l.idRegistroAlt=c.id_Cli)";
 
             string sql = @"
@@ -981,7 +982,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(endereco))
             {
                 filtroAdicional += " And c.Endereco Like ?endereco ";
-                criterio += "EndereÁo: " + endereco + "    ";
+                criterio += "Endere√ßo: " + endereco + "    ";
             }
 
             if (!String.IsNullOrEmpty(bairro))
@@ -1013,7 +1014,7 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And c.situacao=" + situacao;
                 Cliente temp = new Cliente();
                 temp.Situacao = situacao;
-                criterio += "SituaÁ„o: " + temp.DescrSituacao + "    ";
+                criterio += "Situa√ß√£o: " + temp.DescrSituacao + "    ";
             }
 
             if (idTipoCliente > 0)
@@ -1037,13 +1038,13 @@ namespace Glass.Data.DAL
             if (isRota)
             {
                 filtroAdicional += " And id_Cli not in (Select idCliente From rota_cliente Where 1)";
-                criterio += "Apenas clientes que n„o possuam rota    ";
+                criterio += "Apenas clientes que n√£o possuam rota    ";
             }
 
             if (!String.IsNullOrEmpty(dataCadIni))
             {
                 filtroAdicional += " And c.dataCad >= ?dataCadIni";
-                criterio += "Data inÌcio cad.: " + dataSemCompraIni + "    ";
+                criterio += "Data in√≠cio cad.: " + dataSemCompraIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataCadFim))
@@ -1055,7 +1056,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataSemCompraIni))
             {
                 filtroAdicional += " and id_Cli not in (select idCli from pedido where dataCad>=?dataSemCompraIni)";
-                criterio += "Data inÌcio sem compra: " + dataSemCompraIni + "    ";
+                criterio += "Data in√≠cio sem compra: " + dataSemCompraIni + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataSemCompraFim))
@@ -1067,7 +1068,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataInativadoIni))
             {
                 sql += " and l.dataAlt>=?dataInativadoIni";
-                criterio += "Data inÌcio inativado: " + dataInativadoIni + "    ";
+                criterio += "Data in√≠cio inativado: " + dataInativadoIni + "    ";
                 temFiltro = true;
             }
 
@@ -1082,7 +1083,7 @@ namespace Glass.Data.DAL
             {
                 string descr = TabelaDescontoAcrescimoClienteDAO.Instance.GetDescricao(idTabelaDesconto);
                 sql += " and c.idtabeladesconto = ?idtabeladesconto";
-                criterio += "Tabela Desconto/AcrÈscimo Cliente: " + descr + "    ";
+                criterio += "Tabela Desconto/Acr√©scimo Cliente: " + descr + "    ";
             }
 
             if (selecionar)
@@ -1092,7 +1093,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// </summary>
         /// <param name="codCliente"></param>
         /// <param name="nome"></param>
@@ -1336,7 +1337,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca Clientes que possuam crÈdito
+        #region Busca Clientes que possuam cr√©dito
 
         private string SqlListCredito(string codCliente, string nome, string bairro, string telefone, string cpfCnpj,
             bool selecionar, out string filtroAdicional)
@@ -1418,16 +1419,16 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca R·pida de Cliente
+        #region Busca R√°pida de Cliente
 
         #endregion
 
         /// <summary>
-        /// Retorna o Percentual de bonificaÁ„o do cliente.
+        /// Retorna o Percentual de bonifica√ß√£o do cliente.
         /// </summary>
-        /// <param name="sessao">TransaÁ„o.</param>
+        /// <param name="sessao">Transa√ß√£o.</param>
         /// <param name="idCliente">Identificador do cliente.</param>
-        /// <returns>Percentual de bonificaÁ„o do cliente.</returns>
+        /// <returns>Percentual de bonifica√ß√£o do cliente.</returns>
         public decimal GetPercentualBonificacao(GDASession sessao, uint idCliente)
         {
             if (idCliente == 0)
@@ -1438,11 +1439,11 @@ namespace Glass.Data.DAL
             return this.ObtemValorCampo<decimal>(sessao, "PercentualBonificacao", "id_Cli=" + idCliente);
         }
 
-        #region Retorna CrÈdito
+        #region Retorna Cr√©dito
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Retorna o crÈdito do cliente
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Retorna o cr√©dito do cliente
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
@@ -1452,7 +1453,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o crÈdito do cliente
+        /// Retorna o cr√©dito do cliente
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
@@ -1466,10 +1467,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Debita CrÈdito
+        #region Debita Cr√©dito
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// </summary>
         /// <param name="idCliente"></param>
         /// <param name="valor"></param>
@@ -1483,15 +1484,15 @@ namespace Glass.Data.DAL
             string sql = "Update cliente Set credito=coalesce(credito, 0)-" + valor.ToString().Replace(',', '.') + " Where id_Cli=" + idCliente;
 
             if (objPersistence.ExecuteCommand(sessao, sql, null) < 1)
-                throw new Exception("Falha ao debitar crÈdito do cliente. AtualizaÁ„o afetou 0 registros.");
+                throw new Exception("Falha ao debitar cr√©dito do cliente. Atualiza√ß√£o afetou 0 registros.");
         }
 
         #endregion
 
-        #region Credita CrÈdito
+        #region Credita Cr√©dito
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// </summary>
         /// <param name="idCliente"></param>
         /// <param name="valor"></param>
@@ -1505,15 +1506,15 @@ namespace Glass.Data.DAL
             string sql = "Update cliente Set credito=coalesce(credito, 0)+" + Math.Round(valor, 2).ToString().Replace(',', '.') + " Where id_Cli=" + idCliente;
 
             if (objPersistence.ExecuteCommand(sessao, sql, null) < 1)
-                throw new Exception("Falha ao creditar crÈdito do cliente. AtualizaÁ„o afetou 0 registros.");
+                throw new Exception("Falha ao creditar cr√©dito do cliente. Atualiza√ß√£o afetou 0 registros.");
         }
 
         #endregion
 
-        #region Verifica se o cliente È revendedor
+        #region Verifica se o cliente √© revendedor
 
         /// <summary>
-        /// Verifica se o cliente È revendedor.
+        /// Verifica se o cliente √© revendedor.
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
@@ -1523,7 +1524,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o cliente È revendedor.
+        /// Verifica se o cliente √© revendedor.
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idCliente"></param>
@@ -1540,10 +1541,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna prazo m·ximo de pagamento do cliente
+        #region Retorna prazo m√°ximo de pagamento do cliente
 
         /// <summary>
-        /// Retorna prazo m·ximo de pagamento do cliente
+        /// Retorna prazo m√°ximo de pagamento do cliente
         /// </summary>
         /// <param name="idCliente"></param>
         /// <param name="exibirRelatorio"></param>
@@ -1554,7 +1555,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna prazo m·ximo de pagamento do cliente
+        /// Retorna prazo m√°ximo de pagamento do cliente
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idCliente"></param>
@@ -1572,7 +1573,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna prazo m·ximo de pagamento do cliente
+        /// Retorna prazo m√°ximo de pagamento do cliente
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
@@ -1582,7 +1583,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna prazo m·ximo de pagamento do cliente
+        /// Retorna prazo m√°ximo de pagamento do cliente
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idCliente"></param>
@@ -1627,7 +1628,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se o cliente gera orÁamento ao finalizar PCP
+        #region Verifica se o cliente gera or√ßamento ao finalizar PCP
 
         /// <summary>
         /// Verifica se o cliente paga IPI.
@@ -1651,10 +1652,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se o cliente È consumidor final
+        #region Verifica se o cliente √© consumidor final
 
         /// <summary>
-        /// Verifica se o cliente È consumidor final
+        /// Verifica se o cliente √© consumidor final
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
@@ -1664,7 +1665,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o cliente È consumidor final
+        /// Verifica se o cliente √© consumidor final
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idCliente"></param>
@@ -1676,10 +1677,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Autentica usu·rio
+        #region Autentica usu√°rio
 
         /// <summary>
-        /// Autentica usu·rio pelo login e senha
+        /// Autentica usu√°rio pelo login e senha
         /// </summary>
         /// <param name="login"></param>
         /// <param name="senha"></param>
@@ -1711,17 +1712,17 @@ namespace Glass.Data.DAL
             }
 
             if (idCliente == null)
-                throw new Exception("Login ou senha inv·lidos ou cadastro inativado.");
+                throw new Exception("Login ou senha inv√°lidos ou cadastro inativado.");
 
             return GetLogin(Glass.Conversoes.StrParaUint(idCliente.ToString()));
         }
 
         #endregion
 
-        #region Retorna classe login do usu·rio
+        #region Retorna classe login do usu√°rio
 
         /// <summary>
-        /// Recupera o login do usu·rio com base no login informado.
+        /// Recupera o login do usu√°rio com base no login informado.
         /// </summary>
         /// <param name="login"></param>
         /// <returns></returns>
@@ -1760,7 +1761,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna informaÁıes do usu·rio logado
+        /// Retorna informa√ß√µes do usu√°rio logado
         /// </summary>
         /// <param name="idUser"></param>
         /// <returns></returns>
@@ -1770,7 +1771,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna informaÁıes do usu·rio logado
+        /// Retorna informa√ß√µes do usu√°rio logado
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idUser"></param>
@@ -1803,10 +1804,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera o percentual mÌnimo de sinal de pedido
+        #region Recupera o percentual m√≠nimo de sinal de pedido
 
         /// <summary>
-        /// Recupera o percentual mÌnimo de sinal de pedido.
+        /// Recupera o percentual m√≠nimo de sinal de pedido.
         /// </summary>
         public float? GetPercMinSinalPedido(uint idCliente)
         {
@@ -1814,7 +1815,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o percentual mÌnimo de sinal de pedido.
+        /// Recupera o percentual m√≠nimo de sinal de pedido.
         /// </summary>
         public float? GetPercMinSinalPedido(GDASession session, uint idCliente)
         {
@@ -1824,10 +1825,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region ObtÈm dados do cliente
+        #region Obt√©m dados do cliente
 
         /// <summary>
-        /// ObtÈm id da cidade do cliente
+        /// Obt√©m id da cidade do cliente
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
@@ -1841,7 +1842,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o id da conta banc·ria do cliente.
+        /// Obt√©m o id da conta banc√°ria do cliente.
         /// </summary>
         public int ObtemIdContaBanco(GDASession session, int idCliente)
         {
@@ -1940,8 +1941,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// ObtÈm a loja associada ao cliente.
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Obt√©m a loja associada ao cliente.
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
@@ -1951,7 +1952,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm a loja associada ao cliente.
+        /// Obt√©m a loja associada ao cliente.
         /// </summary>
         /// <param name="idCliente"></param>
         /// <returns></returns>
@@ -1970,7 +1971,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm uma rota associada ao cliente
+        /// Obt√©m uma rota associada ao cliente
         /// </summary>
         public uint ObtemIdRota(GDASession sessao, uint idCliente)
         {
@@ -1978,7 +1979,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se este cliente ignora o bloqueio de emiss„o de pedidos caso haja pedido pronto
+        /// Verifica se este cliente ignora o bloqueio de emiss√£o de pedidos caso haja pedido pronto
         /// </summary>
         public bool IgnorarBloqueioPedidoPronto(uint idCliente)
         {
@@ -1986,7 +1987,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se este cliente ignora o bloqueio de emiss„o de pedidos caso haja pedido pronto
+        /// Verifica se este cliente ignora o bloqueio de emiss√£o de pedidos caso haja pedido pronto
         /// </summary>
         public bool IgnorarBloqueioPedidoPronto(GDASession session, uint idCliente)
         {
@@ -2005,7 +2006,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o n˙mero do celular do cliente que ser· usado para envio de SMS
+        /// Retorna o n√∫mero do celular do cliente que ser√° usado para envio de SMS
         /// </summary>
         public string ObtemCelEnvioSMS(uint idCliente)
         {
@@ -2013,7 +2014,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o n˙mero do celular do cliente que ser· usado para envio de SMS
+        /// Retorna o n√∫mero do celular do cliente que ser√° usado para envio de SMS
         /// </summary>
         public string ObtemCelEnvioSMS(GDASession session, uint idCliente)
         {
@@ -2021,7 +2022,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a situaÁ„o de um cliente.
+        /// Retorna a situa√ß√£o de um cliente.
         /// </summary>
         public int GetSituacao(uint idCliente)
         {
@@ -2029,7 +2030,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a situaÁ„o de um cliente.
+        /// Retorna a situa√ß√£o de um cliente.
         /// </summary>
         public int GetSituacao(GDASession sessao, uint idCliente)
         {
@@ -2039,7 +2040,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o cliente n„o recebe e-mail de pedido finalizado no PCP.
+        /// Verifica se o cliente n√£o recebe e-mail de pedido finalizado no PCP.
         /// </summary>
         public bool NaoReceberEmailPedPcp(uint idCliente)
         {
@@ -2047,7 +2048,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o cliente n„o recebe e-mail de pedido finalizado no PCP.
+        /// Verifica se o cliente n√£o recebe e-mail de pedido finalizado no PCP.
         /// </summary>
         public bool NaoReceberEmailPedPcp(GDASession sessao, uint idCliente)
         {
@@ -2055,7 +2056,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o cliente n„o recebe e-mail de pedido pronto.
+        /// Verifica se o cliente n√£o recebe e-mail de pedido pronto.
         /// </summary>
         public bool NaoReceberEmailPedPronto(uint idCliente)
         {
@@ -2063,7 +2064,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o cliente n„o recebe e-mail de pedido pronto.
+        /// Verifica se o cliente n√£o recebe e-mail de pedido pronto.
         /// </summary>
         public bool NaoReceberEmailPedPronto(GDASession session, uint idCliente)
         {
@@ -2071,7 +2072,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o cliente n„o recebe e-mail de liberaÁ„o.
+        /// Verifica se o cliente n√£o recebe e-mail de libera√ß√£o.
         /// </summary>
         public bool NaoReceberEmailLiberacao(GDASession session, uint idCliente)
         {
@@ -2079,7 +2080,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o cliente n„o recebe SMS.
+        /// Verifica se o cliente n√£o recebe SMS.
         /// </summary>
         public bool NaoRecebeSMS(uint idCliente)
         {
@@ -2087,7 +2088,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o cliente n„o recebe SMS.
+        /// Verifica se o cliente n√£o recebe SMS.
         /// </summary>
         public bool NaoRecebeSMS(GDASession session, uint idCliente)
         {
@@ -2095,7 +2096,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a tabela que o cliente usa para desconto/acrÈscimo.
+        /// Retorna a tabela que o cliente usa para desconto/acr√©scimo.
         /// </summary>
         public uint? ObtemTabelaDescontoAcrescimo(GDASession sessao, uint idCliente)
         {
@@ -2103,7 +2104,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o percentual de comiss„o do vendedor associado ao cliente.
+        /// Retorna o percentual de comiss√£o do vendedor associado ao cliente.
         /// </summary>
         public float ObtemPercComissaoFunc(uint idCliente)
         {
@@ -2111,7 +2112,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o percentual de comiss„o do pedido.
+        /// Retorna o percentual de comiss√£o do pedido.
         /// </summary>
         public float ObtemPercentualComissao(uint idCliente)
         {
@@ -2119,7 +2120,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o percentual de comiss„o do pedido.
+        /// Retorna o percentual de comiss√£o do pedido.
         /// </summary>
         public float ObtemPercentualComissao(GDASession session, uint idCliente)
         {
@@ -2127,7 +2128,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o campo obs do cliente
+        /// Obt√©m o campo obs do cliente
         /// </summary>
         public string ObtemObs(uint idCliente)
         {
@@ -2135,7 +2136,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o campo obs de liberaÁ„o do cliente
+        /// Obt√©m o campo obs de libera√ß√£o do cliente
         /// </summary>
         public string ObtemObsLiberacao(uint idCliente)
         {
@@ -2160,15 +2161,15 @@ namespace Glass.Data.DAL
                 var isPagamentoAntesProducao = IsPagamentoAntesProducao(sessao, idCliente);
 
                 if (isPagamentoAntesProducao && PedidoConfig.LiberarPedido)
-                    obs += " <br />ESTE PEDIDO DEVE SER PAGO ANTES DA PRODU«√O.";
+                    obs += " <br />ESTE PEDIDO DEVE SER PAGO ANTES DA PRODU√á√ÉO.";
 
                 if (percSinalMinimo.GetValueOrDefault(0) > 0)
-                    obs += " <br />ESTE PEDIDO DEVE SER PAGO COM UM SINAL MÕNIMO DE " + percSinalMinimo + "%.";
+                    obs += " <br />ESTE PEDIDO DEVE SER PAGO COM UM SINAL M√çNIMO DE " + percSinalMinimo + "%.";
 
                 if (limite > 0)
                 {
                     var limiteDisp = limite - ContasReceberDAO.Instance.GetDebitos(sessao, idCliente, null);
-                    obs += " <br />LIMITE DISPONÕVEL PARA COMPRA: " + (limiteDisp > 0 ? limiteDisp : 0).ToString("C");
+                    obs += " <br />LIMITE DISPON√çVEL PARA COMPRA: " + (limiteDisp > 0 ? limiteDisp : 0).ToString("C");
                 }
 
                 obsCli = ((obsCli != null ? obsCli : "").Replace("\n", "<br />").Replace(";", ",") + obs).Trim();
@@ -2178,7 +2179,7 @@ namespace Glass.Data.DAL
             }
             catch (Exception ex)
             {
-                return MensagemAlerta.FormatErrorMsg("Falha ao recuperar observaÁ„o de cliente.", ex);
+                return MensagemAlerta.FormatErrorMsg("Falha ao recuperar observa√ß√£o de cliente.", ex);
             }
         }
 
@@ -2236,7 +2237,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o endereÁo completo de entrega do cliente, usado para salvar o endereÁo nas informaÁıes complementares
+        /// Retorna o endere√ßo completo de entrega do cliente, usado para salvar o endere√ßo nas informa√ß√µes complementares
         /// da nota fisca, solicitado pela Modelo e Termari, chamado 8892.
         /// </summary>
         public string ObtemEnderecoEntregaCompleto(uint idCliente)
@@ -2254,7 +2255,7 @@ namespace Glass.Data.DAL
                 UfEntrega = CidadeDAO.Instance.ObtemValorCampo<string>("nomeUf", "idCidade=" + idCidadeEntrega)
             };
 
-            // Caso o cliente n„o possua endereÁo de entrega dever· ser retornado um texto vazio.
+            // Caso o cliente n√£o possua endere√ßo de entrega dever√° ser retornado um texto vazio.
             if (String.IsNullOrEmpty(temp.EnderecoEntrega) && String.IsNullOrEmpty(temp.NumeroEntrega) && String.IsNullOrEmpty(temp.ComplEntrega) &&
                 String.IsNullOrEmpty(temp.BairroEntrega) && String.IsNullOrEmpty(temp.CidadeEntrega) && String.IsNullOrEmpty(temp.UfEntrega))
                 return String.Empty;
@@ -2282,7 +2283,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o campo que ser· usado no SQL para retornar o nome do cliente.
+        /// Retorna o campo que ser√° usado no SQL para retornar o nome do cliente.
         /// </summary>
         /// <param name="aliasCliente"></param>
         /// <returns></returns>
@@ -2344,7 +2345,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o CRT do cliente.
+        /// Obt√©m o CRT do cliente.
         /// </summary>
         public CrtCliente? ObterCrt(GDASession session, int idCliente)
         {
@@ -2354,7 +2355,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o complemento do endereÁo do cliente.
+        /// Retorna o complemento do endere√ßo do cliente.
         /// </summary>
         public string ObterComplementoEndereco(GDASession session, int idCliente)
         {
@@ -2362,7 +2363,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o indicador da IE do destinat·rio do cliente.
+        /// Retorna o indicador da IE do destinat√°rio do cliente.
         /// </summary>
         public IndicadorIEDestinatario ObterIndicadorIEDestinatario(GDASession session, int idCliente)
         {
@@ -2393,11 +2394,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Atualiza data da ˙ltima compra
+        #region Atualiza data da √∫ltima compra
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Atualiza data da ˙ltima compra
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Atualiza data da √∫ltima compra
         /// </summary>
         /// <param name="idCliente"></param>
         public void AtualizaUltimaCompra(uint idCliente)
@@ -2406,7 +2407,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza data da ˙ltima compra
+        /// Atualiza data da √∫ltima compra
         /// </summary>
         /// <param name="idCliente"></param>
         public void AtualizaUltimaCompra(GDASession sessao, uint idCliente)
@@ -2419,7 +2420,7 @@ namespace Glass.Data.DAL
         #region Atualiza total comprado
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// Atualiza o total comprado pelo cliente.
         /// </summary>
         /// <param name="idCliente"></param>
@@ -2438,7 +2439,7 @@ namespace Glass.Data.DAL
                 Update cliente set totalComprado=(
                     Select Round(Sum(p.total), 2) From pedido p Where p.situacao=" + (int)Pedido.SituacaoPedido.Confirmado + @"
                     And p.tipovenda<>" + (int)Pedido.TipoVendaPedido.Garantia + @"
-                    And p.tipovenda<>" + (int)Pedido.TipoVendaPedido.ReposiÁ„o + @"
+                    And p.tipovenda<>" + (int)Pedido.TipoVendaPedido.Reposi√ß√£o + @"
                     And p.IdCli=" + idCliente + @"
                 )
                 Where id_cli=" + idCliente;
@@ -2448,10 +2449,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Atualiza data da ˙ltima consulta no sintegra
+        #region Atualiza data da √∫ltima consulta no sintegra
 
         /// <summary>
-        /// Atualiza data da ˙ltima consulta no sintegra
+        /// Atualiza data da √∫ltima consulta no sintegra
         /// </summary>
         /// <param name="cpfCnpj"></param>
         public void AtualizaUltimaConsultaSintegra(string cpfCnpj)
@@ -2501,10 +2502,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region SituaÁ„o do cliente
+        #region Situa√ß√£o do cliente
 
         /// <summary>
-        /// Altera a situaÁ„o de um cliente, ativando ou inativando o cliente.
+        /// Altera a situa√ß√£o de um cliente, ativando ou inativando o cliente.
         /// </summary>
         /// <param name="idCliente"></param>
         public void AlteraSituacao(uint idCliente)
@@ -2513,13 +2514,13 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Altera a situaÁ„o de um cliente, ativando ou inativando o cliente.
+        /// Altera a situa√ß√£o de um cliente, ativando ou inativando o cliente.
         /// </summary>
         /// <param name="idCliente"></param>
         public void AlteraSituacao(GDASession sessao, uint idCliente)
         {
             if (GetNome(sessao, idCliente).ToLower() == "consumidor final" && GetSituacao(sessao, idCliente) == (int)SituacaoCliente.Ativo)
-                throw new Exception("Consumidor Final n„o pode ser inativado/cancelado.");
+                throw new Exception("Consumidor Final n√£o pode ser inativado/cancelado.");
 
             Cliente cli = GetElementByPrimaryKey(sessao, idCliente);
             cli.Situacao = cli.Situacao == 1 ? 2 : 1;
@@ -2530,10 +2531,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna o cliente usado nos pedidos de produÁ„o
+        #region Retorna o cliente usado nos pedidos de produ√ß√£o
 
         /// <summary>
-        /// Retorna o cliente usado nos pedidos de produÁ„o.
+        /// Retorna o cliente usado nos pedidos de produ√ß√£o.
         /// </summary>
         /// <returns></returns>
         public uint GetClienteProducao()
@@ -2546,7 +2547,7 @@ namespace Glass.Data.DAL
             if (retorno > 0)
                 return retorno.Value;
 
-            // Busca o cliente mais usado dos pedidos para produÁ„o
+            // Busca o cliente mais usado dos pedidos para produ√ß√£o
             sql = "select idCli from pedido where tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + " group by idCli order by count(*) desc limit 1";
             retorno = ExecuteScalar<uint?>(sql);
             if (retorno > 0)
@@ -2616,31 +2617,31 @@ namespace Glass.Data.DAL
             string idsPedidos, string idsContasR, string idsChequesR, bool validarLimite)
         {
             if (idCliente == 0 || objPersistence.ExecuteSqlQueryCount(sessao, "select count(*) from cliente where id_Cli=" + idCliente) == 0)
-                throw new Exception("Cliente n„o encontrado. Para inserir um cheque È necess·rio informar um cliente.");
+                throw new Exception("Cliente n√£o encontrado. Para inserir um cheque √© necess√°rio informar um cliente.");
 
             // Verifica se o cliente bloqueia os cheques
             decimal limite = ObtemValorCampo<decimal>(sessao, "limite", "id_Cli=" + idCliente);
 
             /* Chamado 15815.
-             * Esta condiÁ„o foi alterada para que a verificaÁ„o de limite de cheque prÛprio e cheque de terceiro
-             * seja separada da verificaÁ„o de limite por CPF/CNPJ. */
+             * Esta condi√ß√£o foi alterada para que a verifica√ß√£o de limite de cheque pr√≥prio e cheque de terceiro
+             * seja separada da verifica√ß√£o de limite por CPF/CNPJ. */
             if (limite > 0 && FinanceiroConfig.DebitosLimite.EmpresaConsideraChequeLimite)
             {
-                // Recupera o total de cheques que ser„o cadastrados
+                // Recupera o total de cheques que ser√£o cadastrados
                 decimal totalChequeTerceiro = 0, totalChequeProprio = 0;
-                // Separa os cheques pelos cÛdigos.
+                // Separa os cheques pelos c√≥digos.
                 string idsChequeTerceiro = string.Empty, idsChequeProprio = string.Empty;
-                // Recupera o CPF/CNPJ do cliente para verificar se o cheque È de terceiros ou prÛprio.
+                // Recupera o CPF/CNPJ do cliente para verificar se o cheque √© de terceiros ou pr√≥prio.
                 var cpfCnpjCliente = ClienteDAO.Instance.ObtemCpfCnpj(idCliente).Replace(".", "").Replace("/", "").Replace("-", "");
 
                 foreach (Cheques c in cheques)
                 {
-                    // Separa os cheques por terceiro e prÛprio, de acordo com o CPF/CNPJ.
+                    // Separa os cheques por terceiro e pr√≥prio, de acordo com o CPF/CNPJ.
                     var cpfCnpjCheque = !String.IsNullOrEmpty(c.CpfCnpj) ? c.CpfCnpj.Replace(".", "").Replace("/", "").Replace("-", "") : "";
-                    // Caso o CPF/CNPJ seja diferente do CPF/CNPJ do cliente ent„o o cheque È considerado como cheque de terceiros.
+                    // Caso o CPF/CNPJ seja diferente do CPF/CNPJ do cliente ent√£o o cheque √© considerado como cheque de terceiros.
                     if (String.IsNullOrEmpty(cpfCnpjCheque) || cpfCnpjCheque != cpfCnpjCliente)
                         totalChequeTerceiro += c.Valor;
-                    // Caso o CPF/CNPJ seja igual ao CPF/CNPJ do cliente ent„o o cheque È considerado como cheque prÛprio.
+                    // Caso o CPF/CNPJ seja igual ao CPF/CNPJ do cliente ent√£o o cheque √© considerado como cheque pr√≥prio.
                     else if (cpfCnpjCheque == cpfCnpjCliente)
                         totalChequeProprio += c.Valor;
                 }
@@ -2649,7 +2650,7 @@ namespace Glass.Data.DAL
                 var situacoesCheque = (int)Cheques.SituacaoCheque.EmAberto + ", " + (int)Cheques.SituacaoCheque.Devolvido + ", " +
                                 (int)Cheques.SituacaoCheque.Trocado + ", " + (int)Cheques.SituacaoCheque.Protestado;
 
-                /* Caso haja alteraÁ„o neste mÈtodo altere tambÈm o mÈtodo ContasReceberDAO.Instance.SqlDebitos */
+                /* Caso haja altera√ß√£o neste m√©todo altere tamb√©m o m√©todo ContasReceberDAO.Instance.SqlDebitos */
                 var sqlCheques = @"
                     SELECT SUM(c.Valor - COALESCE(c.ValorReceb, 0)) AS ValorVec
                     FROM cheques c
@@ -2661,51 +2662,51 @@ namespace Glass.Data.DAL
                         OR (c.Situacao=" + (int)Cheques.SituacaoCheque.Compensado + " AND DataVenc > DATE_ADD(NOW(), INTERVAL " +
                             diasConsiderarChequeCompensado + " DAY)))";
 
-                // Recupera o limite de cheque de terceiros e prÛprio utilizados.
+                // Recupera o limite de cheque de terceiros e pr√≥prio utilizados.
                 var debitoChequeProprio = Glass.Conversoes.StrParaDecimal(ChequesDAO.Instance.GetValoresCampo(String.Format(sqlCheques, "="), "ValorVec",
                     new GDAParameter("?IdCliente", idCliente)));
                 var debitoChequeTerceiro = Glass.Conversoes.StrParaDecimal(ChequesDAO.Instance.GetValoresCampo(String.Format(sqlCheques, "<>"), "ValorVec",
                     new GDAParameter("?IdCliente", idCliente)));
 
-                // Recupera o limite disponÌvel
+                // Recupera o limite dispon√≠vel
                 var limiteGasto = ContasReceberDAO.Instance.GetDebitos(sessao, idCliente, idsPedidos, idsContasR, idsChequesR);
                 var limiteDisp = limite - limiteGasto;
 
-                // Verifica se o valor dos cheques È maior que o limite disponÌvel
+                // Verifica se o valor dos cheques √© maior que o limite dispon√≠vel
                 if (validarLimite && (totalChequeTerceiro + totalChequeProprio) > limiteDisp)
                     throw new Exception("O valor do(s) cheque(s) cadastrados (" + (totalChequeTerceiro + totalChequeProprio).ToString("C") + ") " +
-                        "È maior que o limite disponÌvel " + limiteDisp.ToString("C") + ".");
+                        "√© maior que o limite dispon√≠vel " + limiteDisp.ToString("C") + ".");
 
                 // Valida o percentual de 50% se o cliente assim estiver indicado
                 else if (ObtemValorCampo<bool>(sessao, "bloquearRecebChequeLimite", "id_Cli=" + idCliente) ||
                     ObtemValorCampo<bool>(sessao, "bloquearRecebChequeProprioLimite", "id_Cli=" + idCliente))
                 {
-                    #region Valida cheque prÛprio
+                    #region Valida cheque pr√≥prio
 
-                    // Verifica se o valor dos cheques prÛprio È maior que a metade do limite total
+                    // Verifica se o valor dos cheques pr√≥prio √© maior que a metade do limite total
                     if (totalChequeProprio > (limite / 2))
-                        throw new Exception("O valor dos cheques prÛprio " + totalChequeProprio.ToString("C") + " È maior que 50% do limite total " +
+                        throw new Exception("O valor dos cheques pr√≥prio " + totalChequeProprio.ToString("C") + " √© maior que 50% do limite total " +
                             limite.ToString("C") + ".");
 
-                    // Verifica se o valor dos cheques prÛprio, somado aos cheques prÛprio em aberto, È maior que a metade do limite total
+                    // Verifica se o valor dos cheques pr√≥prio, somado aos cheques pr√≥prio em aberto, √© maior que a metade do limite total
                     else if (validarLimite && (debitoChequeProprio + totalChequeProprio) > (limite / 2))
-                        throw new Exception("O valor dos cheques prÛprio " + totalChequeProprio.ToString("C") + ", somado aos cheques prÛprio em aberto " +
-                            debitoChequeProprio.ToString("C") + ", È maior que 50% do limite total " + limite.ToString("C") + ".");
+                        throw new Exception("O valor dos cheques pr√≥prio " + totalChequeProprio.ToString("C") + ", somado aos cheques pr√≥prio em aberto " +
+                            debitoChequeProprio.ToString("C") + ", √© maior que 50% do limite total " + limite.ToString("C") + ".");
 
                     #endregion
 
                     #region Valida cheque terceiro
 
-                    // Verifica se o valor dos cheques de terceiros È maior que a metade do limite total
+                    // Verifica se o valor dos cheques de terceiros √© maior que a metade do limite total
                     if (totalChequeTerceiro > (limite / 2))
-                        throw new Exception("O valor dos cheques de terceiros " + totalChequeTerceiro.ToString("C") + " È maior que 50% do limite total " +
+                        throw new Exception("O valor dos cheques de terceiros " + totalChequeTerceiro.ToString("C") + " √© maior que 50% do limite total " +
                             limite.ToString("C") + ".");
 
-                    // Verifica se o valor dos cheques de terceiros, somado aos cheques de terceiros em aberto, È maior que a metade do limite total
+                    // Verifica se o valor dos cheques de terceiros, somado aos cheques de terceiros em aberto, √© maior que a metade do limite total
                     else if (validarLimite && (debitoChequeTerceiro + totalChequeTerceiro) > (limite / 2))
                         throw new Exception("O valor dos cheques de terceiros " + totalChequeTerceiro.ToString("C") +
                             ", somado aos cheques de terceiros em aberto " +
-                            debitoChequeTerceiro.ToString("C") + ", È maior que 50% do limite total " + limite.ToString("C") + ".");
+                            debitoChequeTerceiro.ToString("C") + ", √© maior que 50% do limite total " + limite.ToString("C") + ".");
 
                     #endregion
                 }
@@ -2841,7 +2842,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca v·rios clientes pelos seus ids.
+        /// Busca v√°rios clientes pelos seus ids.
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
@@ -2908,7 +2909,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos Sobrescritos
+        #region M√©todos Sobrescritos
 
         [Obsolete("Migrado para a entidade")]
         public override uint Insert(Cliente objInsert)
@@ -2917,27 +2918,27 @@ namespace Glass.Data.DAL
 
             try
             {
-                // Verifica se foi cadastrado um cliente com o mesmocpf/cnpj dos ˙ltimos 10 segundos, para evitar duplicidade
+                // Verifica se foi cadastrado um cliente com o mesmocpf/cnpj dos √∫ltimos 10 segundos, para evitar duplicidade
                 if (ExecuteScalar<bool>("Select Count(*)>0 from cliente Where cpf_cnpj=?cpfCnpj And dataCad>=DATE_ADD(now(), INTERVAL -10 second)",
                     new GDAParameter("?cpfCnpj", objInsert.CpfCnpj)))
                     return 0;
 
                 if (objInsert.DataLimiteCad.HasValue && objInsert.DataLimiteCad.Value < DateTime.Now.Date)
-                    throw new Exception("A data limite do cadastro n„o pode ser menor que a data atual");
+                    throw new Exception("A data limite do cadastro n√£o pode ser menor que a data atual");
 
                 objInsert.Usucad = UserInfo.GetUserInfo.CodUser;
                 objInsert.DataCad = DateTime.Now;
 
-                // N„o permite que o nome do cliente possua ' ou "
+                // N√£o permite que o nome do cliente possua ' ou "
                 objInsert.Nome = objInsert.Nome != null ? objInsert.Nome.Replace("'", "").Replace("\t", "").Replace("\n", "").Replace("\"", "") : null;
                 objInsert.NomeFantasia = objInsert.NomeFantasia != null ? objInsert.NomeFantasia.Replace("'", "").Replace("\t", "").Replace("\n", "").Replace("\"", "") : null;
 
-                // N„o permite que seja inserido "INSENTO"
+                // N√£o permite que seja inserido "INSENTO"
                 if (objInsert.RgEscinst != null && (objInsert.RgEscinst.ToLower().Contains("insento") || objInsert.RgEscinst.ToLower().Contains("insenta")))
                     objInsert.RgEscinst.Replace("INSENTO", "ISENTO").Replace("INSENTA", "ISENTO");
 
-                // CÛpia o endereÁo do cliente para o endereÁo de entrega caso o usu·rio
-                // n„o informe o endereÁo de entrega
+                // C√≥pia o endere√ßo do cliente para o endere√ßo de entrega caso o usu√°rio
+                // n√£o informe o endere√ßo de entrega
                 if (String.IsNullOrEmpty(objInsert.EnderecoEntrega))
                 {
                     objInsert.EnderecoEntrega = objInsert.Endereco;
@@ -2968,34 +2969,34 @@ namespace Glass.Data.DAL
         public override int Update(GDASession session, Cliente objUpdate)
         {
             if (objUpdate.Nome.ToLower() == "consumidor final" && objUpdate.Situacao != (int)SituacaoCliente.Ativo)
-                throw new Exception("Consumidor Final n„o pode ser inativado/cancelado.");
+                throw new Exception("Consumidor Final n√£o pode ser inativado/cancelado.");
 
             if (objUpdate.DataLimiteCad.HasValue && objUpdate.DataLimiteCad.Value < DateTime.Now.Date)
-                throw new Exception("A data limite do cadastro n„o pode ser menor que a data atual");
+                throw new Exception("A data limite do cadastro n√£o pode ser menor que a data atual");
 
-            // Se o funcion·rio n„o for administrador ou financeiro/financeiro geral, n„o pode alterar o limite do cliente
+            // Se o funcion√°rio n√£o for administrador ou financeiro/financeiro geral, n√£o pode alterar o limite do cliente
             LoginUsuario login = UserInfo.GetUserInfo;
             if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) &&
                 !Config.PossuiPermissao(Config.FuncaoMenuCadastro.AlterarLimiteCliente))
                 objUpdate.Limite = ObtemValorCampo<decimal>(session, "limite", "id_Cli=" + objUpdate.IdCli);
 
-            // Inclui as informaÁıes de alteraÁ„o
+            // Inclui as informa√ß√µes de altera√ß√£o
             objUpdate.DataAlt = DateTime.Now;
             objUpdate.UsuAlt = (int)UserInfo.GetUserInfo.CodUser;
 
-            // N„o permite que o nome do cliente possua ' ou "
+            // N√£o permite que o nome do cliente possua ' ou "
             objUpdate.Nome = objUpdate.Nome != null ? objUpdate.Nome.Replace("'", "").Replace("\"", "").Replace("\t", "").Replace("\n", "") : null;
             objUpdate.NomeFantasia = objUpdate.NomeFantasia != null ? objUpdate.NomeFantasia.Replace("'", "").Replace("\"", "").Replace("\t", "").Replace("\n", "") : null;
 
-            // Recupera crÈdito e data da ˙ltima compra
+            // Recupera cr√©dito e data da √∫ltima compra
             objUpdate.Credito = ObtemValorCampo<decimal>(session, "credito", "id_Cli=" + objUpdate.IdCli);
             objUpdate.DtUltCompra = ObtemValorCampo<DateTime?>(session, "dt_Ult_Compra", "id_Cli=" + objUpdate.IdCli);
 
-            //Recupera a data e usuario da ˙ltima consulta no sintegra
+            //Recupera a data e usuario da √∫ltima consulta no sintegra
             objUpdate.DtUltConSintegra = ObtemValorCampo<DateTime?>(session, "DTULTCONSINTEGRA", "id_Cli=" + objUpdate.IdCli);
             objUpdate.UsuUltConSintegra = ObtemValorCampo<int?>(session, "USUARIOULTCONSINTEGRA", "id_Cli=" + objUpdate.IdCli);
 
-            // N„o permite que seja inserido "INSENTO"
+            // N√£o permite que seja inserido "INSENTO"
             if (objUpdate.RgEscinst != null && (objUpdate.RgEscinst.ToLower().Contains("insento") || objUpdate.RgEscinst.ToLower().Contains("insenta")))
                 objUpdate.RgEscinst = objUpdate.RgEscinst.ToUpper().Replace("INSENTO", "ISENTO").Replace("INSENTA", "ISENTO");
 
@@ -3014,8 +3015,8 @@ namespace Glass.Data.DAL
             else if (idRotaAtual > 0)
                 RotaClienteDAO.Instance.DesassociaCliente(session, idRotaAtual, (uint)objUpdate.IdCli);
 
-            // CÛpia o endereÁo do cliente para o endereÁo de entrega caso o usu·rio
-            // n„o informe o endereÁo de entrega
+            // C√≥pia o endere√ßo do cliente para o endere√ßo de entrega caso o usu√°rio
+            // n√£o informe o endere√ßo de entrega
             if (String.IsNullOrEmpty(objUpdate.EnderecoEntrega))
             {
                 objUpdate.EnderecoEntrega = objUpdate.Endereco;
@@ -3053,19 +3054,19 @@ namespace Glass.Data.DAL
         {
             string sql = "select count(*) from pedido where idCli=" + key;
             if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
-                throw new Exception("H· pedidos associados ao mesmo.");
+                throw new Exception("H√° pedidos associados ao mesmo.");
 
             sql = "select count(*) from orcamento where idCliente=" + key;
             if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
-                throw new Exception("H· orÁamentos associados ao mesmo.");
+                throw new Exception("H√° or√ßamentos associados ao mesmo.");
 
             sql = "select count(*) from projeto where idCliente=" + key;
             if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
-                throw new Exception("H· projetos associados ao mesmo.");
+                throw new Exception("H√° projetos associados ao mesmo.");
 
             sql = "select count(*) from nota_fiscal where idCliente=" + key;
             if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
-                throw new Exception("H· notas fiscais associadas ao mesmo.");
+                throw new Exception("H√° notas fiscais associadas ao mesmo.");
 
             LogAlteracaoDAO.Instance.ApagaLogCliente((uint)key);
 
@@ -3095,7 +3096,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region ValidaÁıes
+        #region Valida√ß√µes
 
         /// <summary>
         /// Valida se o cliente pode usar o produto informado.
@@ -3121,7 +3122,7 @@ namespace Glass.Data.DAL
         #region Bloqueio de Clientes
 
         /// <summary>
-        /// Atualiza a situaÁ„o de um cliente.
+        /// Atualiza a situa√ß√£o de um cliente.
         /// </summary>
         public void AtualizaSituacaoComTransacao(SituacaoCliente situacao, string idsCliente, string motivo)
         {
@@ -3134,13 +3135,13 @@ namespace Glass.Data.DAL
                     //var idFunc = UserInfo.GetUserInfo.CodUser;
 
                     //if (idFunc == 0)
-                    //    throw new Exception("Falha ao alterar situaÁ„o do cliente, funcion·rio da alteraÁ„o nulo.");
+                    //    throw new Exception("Falha ao alterar situa√ß√£o do cliente, funcion√°rio da altera√ß√£o nulo.");
 
                     if (string.IsNullOrWhiteSpace(idsCliente))
-                        throw new Exception("Falha ao alterar situaÁ„o do cliente, nenhum cliente foi informado.");
+                        throw new Exception("Falha ao alterar situa√ß√£o do cliente, nenhum cliente foi informado.");
 
                     if (string.IsNullOrWhiteSpace(motivo))
-                        throw new Exception("Falha ao alterar situaÁ„o do cliente, nenhum motivo foi informado.");
+                        throw new Exception("Falha ao alterar situa√ß√£o do cliente, nenhum motivo foi informado.");
 
                     var situacaoStr = string.Format("{0} - {1}", situacao.Translate().Format(), motivo);
 
@@ -3163,7 +3164,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Bloqueia os clientes que tem pedidos prontos h· mais de X dias.
+        /// Bloqueia os clientes que tem pedidos prontos h√° mais de X dias.
         /// </summary>
         public void BloquearProntosNaoLiberados()
         {
@@ -3172,14 +3173,14 @@ namespace Glass.Data.DAL
             if (ids.Length > 0)
             {
                 var idsClientes = string.Join(",", ids.Select(f => f.ToString()));
-                var motivoBloqueio = "Possui um ou mais pedidos prontos n„o liberados h· mais dias do que o permitido.";
+                var motivoBloqueio = "Possui um ou mais pedidos prontos n√£o liberados h√° mais dias do que o permitido.";
 
                 AtualizaSituacaoComTransacao(SituacaoCliente.Bloqueado, idsClientes, motivoBloqueio);
             }
         }
 
         /// <summary>
-        /// Inativa os clientes de acordo com sua ˙ltima compra.
+        /// Inativa os clientes de acordo com sua √∫ltima compra.
         /// </summary>
         public void InativarPelaUltimaCompra()
         {
@@ -3190,8 +3191,8 @@ namespace Glass.Data.DAL
 
             var cnpjsLoja = LojaDAO.Instance.ObtemCnpj();
 
-            // Para verificar se o cliente n„o compra h· mais de x dias, alÈm de fazer esta verificaÁ„o, considera tambÈm
-            // os clientes que nunca fizeram compras e que foram cadastrados h· mais de x dias
+            // Para verificar se o cliente n√£o compra h√° mais de x dias, al√©m de fazer esta verifica√ß√£o, considera tamb√©m
+            // os clientes que nunca fizeram compras e que foram cadastrados h√° mais de x dias
             var sql = $@"SELECT c.Id_Cli FROM cliente c
                     { "{0}" }
                 WHERE REPLACE(REPLACE(REPLACE(c.Cpf_Cnpj, '.', ''), '-', ''), '/', '') NOT IN ({ string.Join(",", cnpjsLoja.Select(f => $"'{ f.Replace(".", "").Replace("-", "").Replace("/", "") }'").ToList()) })
@@ -3209,7 +3210,7 @@ namespace Glass.Data.DAL
 		                SELECT * FROM (
 			                SELECT IdRegistroAlt, DataAlt
 			                FROM log_alteracao
-			                WHERE Tabela={ (int)LogAlteracao.TabelaAlteracao.Cliente } AND Campo='SituaÁ„o' AND ValorAtual='Ativo'
+			                WHERE Tabela={ (int)LogAlteracao.TabelaAlteracao.Cliente } AND Campo='Situa√ß√£o' AND ValorAtual='Ativo'
 			                ORDER BY NumEvento DESC
 		                ) AS temp
 		                GROUP BY IdRegistroAlt
@@ -3223,13 +3224,13 @@ namespace Glass.Data.DAL
             // Inativa os clientes
             if (!string.IsNullOrWhiteSpace(idsClientes))
             {
-                var motivoBloqueio = string.Format("⁄ltima compra h· mais de {0} dias.", FinanceiroConfig.PeriodoInativarClienteUltimaCompra);
+                var motivoBloqueio = string.Format("√öltima compra h√° mais de {0} dias.", FinanceiroConfig.PeriodoInativarClienteUltimaCompra);
                 AtualizaSituacaoComTransacao(SituacaoCliente.Inativo, idsClientes, motivoBloqueio);
             }
         }
 
         /// <summary>
-        /// Inativa os clientes que n„o foram pesquisados no sintegra h· mais de X dias
+        /// Inativa os clientes que n√£o foram pesquisados no sintegra h√° mais de X dias
         /// </summary>
         public void InativaPelaUltConSintegra()
         {
@@ -3253,13 +3254,13 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrWhiteSpace(idsClientes))
             {
-                var motivoBloqueio = string.Format("⁄ltima pesquisa ao cadastro do sintegra h· mais de {0} dias. ", FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra);
+                var motivoBloqueio = string.Format("√öltima pesquisa ao cadastro do sintegra h√° mais de {0} dias. ", FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra);
                 AtualizaSituacaoComTransacao(SituacaoCliente.Inativo, idsClientes, motivoBloqueio);
             }
         }
 
         /// <summary>
-        /// Inativa os clientes que est„o com a data limite do cadastro vencidas
+        /// Inativa os clientes que est√£o com a data limite do cadastro vencidas
         /// </summary>
         public void InativaPelaDataLimiteCad()
         {

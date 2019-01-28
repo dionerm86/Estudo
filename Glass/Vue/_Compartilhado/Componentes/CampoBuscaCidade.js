@@ -1,4 +1,4 @@
-Vue.component('campo-busca-cidade', {
+﻿Vue.component('campo-busca-cidade', {
   mixins: [Mixins.Objetos],
   props: {
     /**
@@ -70,8 +70,20 @@ Vue.component('campo-busca-cidade', {
       if (!id && !nome) {
         return Promise.resolve();
       }
+      
+      var uf = this.ufAtual;
 
-      return Servicos.Cidades.obterListaPorUf(this.ufAtual, id, nome);
+      return Servicos.Cidades.obterListaPorUf(uf, id, nome)
+        .then(function (resposta) {
+          if (resposta.data) {
+            resposta.data = resposta.data.map(item => {
+              item.uf = uf;
+              return item;
+            });
+          }
+
+          return resposta;
+        });
     }
   },
 
