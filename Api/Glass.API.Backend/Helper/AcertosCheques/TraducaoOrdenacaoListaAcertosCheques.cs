@@ -29,7 +29,7 @@ namespace Glass.API.Backend.Helper.AcertosCheques
         {
             switch (campo.ToLowerInvariant())
             {
-                case "num":
+                case "id":
                     return "IdAcertoCheque";
 
                 case "funcionario":
@@ -45,7 +45,7 @@ namespace Glass.API.Backend.Helper.AcertosCheques
                     return "Obs";
 
                 case "situacao":
-                    return "Situacao";
+                    return campo;
 
                 default:
                     return this.OrdenacaoPadrao;

@@ -187,14 +187,6 @@ Servicos.Funcionarios = (function(http) {
     },
 
     /**
-     * Recupera a lista de funcionários para controle no filtro de acertos de cheques.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-    obterFuncAcertoCheque: function () {
-      return http().get(API + 'financeiros');
-    },
-
-    /**
      * Recupera a lista de funcionários.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de funcionários.
      * @param {number} pagina O número da página de resultados a ser exibida.

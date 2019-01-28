@@ -23,7 +23,7 @@ namespace Glass.API.Backend.Models.AcertosCheques.V1.Lista
         /// <param name="acertoCheque">O acerto do cheque que será retornado.</param>
         public ListaDto(AcertoCheque acertoCheque)
         {
-            this.Id = (int?)acertoCheque.IdAcertoCheque;
+            this.Id = (int)acertoCheque.IdAcertoCheque;
             this.Funcionario = acertoCheque.NomeFunc;
             this.Data = acertoCheque.DataAcerto;
             this.Valor = acertoCheque.ValorAcerto;

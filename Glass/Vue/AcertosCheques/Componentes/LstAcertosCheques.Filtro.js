@@ -9,7 +9,7 @@
       required: true,
       twoWay: true,
       validator: Mixins.Validacao.validarObjeto
-    },
+    }
   },
 
   data: function () {
@@ -41,11 +41,11 @@
     },
 
     /**
-     * Retorna os itens para o controle de funcionários para a lista de acertos de cheques.
+     * Retorna os funcionários para a lista de acertos de cheques.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroFuncionario: function () {
-      return Servicos.Funcionarios.obterFuncAcertoCheque();
+      return Servicos.Funcionarios.obterFinanceiros();
     }
   },
 

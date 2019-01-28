@@ -4,7 +4,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
-    "~/Vue/AcertosCheques/Templates/LstAcertosCheques.Filtro.html")
+           "~/Vue/AcertosCheques/Templates/LstAcertosCheques.Filtro.html")
     %>
     <div id="app">
         <acertos-cheques-filtros :filtro.sync="filtro"></acertos-cheques-filtros>
@@ -13,7 +13,7 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('num')">Núm.</a>
+                        <a href="#" @click.prevent="ordenar('id')">Núm.</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('funcionario')">Funcionário</a>

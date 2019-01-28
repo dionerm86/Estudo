@@ -7,7 +7,7 @@ using System.Web.Http;
 namespace Glass.API.Backend.Controllers.AcertosCheques.V1
 {
     /// <summary>
-    /// Controller de acertos.
+    /// Controller de acertos de cheques.
     /// </summary>
     [RoutePrefix("api/v1/acertosCheques")]
     public partial class AcertosChequesController : BaseController
