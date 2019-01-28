@@ -942,17 +942,17 @@
                 alert("Erro na recuperação do valor de tabela do produto.");
                 return;
             }
-            
+
             var hdfValorIns = FindControl('hdfValorIns', 'input');
 
             if(hdfValorIns != null) {
                 hdfValorIns.value = retorno.value.replace(".", ",");
-            } 
+            }
             else {
                 alert("Não foi possível encontrar o controle 'hdfValorIns'");
                 return false;
             }
-            
+
             var valorIns = FindControl('lblValorIns', 'span');
 
             if(valorIns != null) {
@@ -1063,7 +1063,7 @@
                 alert("Observação salva.");
                 window.opener.refreshPage();
             }
-        }   
+        }
 
     </script>
 
@@ -1839,17 +1839,17 @@
                                 <asp:Label ID="lblValorBenef" runat="server"></asp:Label>
                             </FooterTemplate>
                         </asp:TemplateField>
-<%--                        <asp:TemplateField HeaderText="Obs." SortExpression="ObsGrid">
+                        <asp:TemplateField HeaderText="Obs." SortExpression="Obs">
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtObsIns" runat="server" MaxLength="100" Text='<%# Bind("ObsGrid") %>'></asp:TextBox>
+                                <asp:TextBox ID="txtObsIns" runat="server" MaxLength="100" Text='<%# Bind("Obs") %>'></asp:TextBox>
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <asp:TextBox ID="txtObsIns" runat="server" MaxLength="100"></asp:TextBox>
                             </FooterTemplate>
                             <ItemTemplate>
-                                <asp:Label ID="Label12" runat="server" Text='<%# Bind("ObsGrid") %>'></asp:Label>
+                                <asp:Label ID="Label12" runat="server" Text='<%# Bind("Obs") %>'></asp:Label>
                             </ItemTemplate>
-                        </asp:TemplateField>--%>
+                        </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <asp:ImageButton ID="imbImagemPeca" runat="server" ImageUrl="~/Images/imagem.gif"
