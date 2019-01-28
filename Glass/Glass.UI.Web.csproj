@@ -521,6 +521,9 @@
     <Content Include="Vue\Exportacao\Lista\Componentes\LstPedidosExportacao.js" />
     <Content Include="Vue\Exportacao\Lista\Templates\LstPedidosExportacao.Filtro.html" />
     <Content Include="Vue\Funcionarios\Tipos\Componentes\LstTiposFuncionario.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Componentes\LstMovimentacoesLiberacoes.Filtro.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Componentes\LstMovimentacoesLiberacoes.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Templates\LstMovimentacoesLiberacoes.Filtro.html" />
     <Content Include="Vue\ImpressoesEtiquetas\Individual\Componentes\LstImpressoesIndividuaisEtiquetas.Filtro.js" />
     <Content Include="Vue\ImpressoesEtiquetas\Individual\Componentes\LstImpressoesIndividuaisEtiquetas.js" />
     <Content Include="Vue\ImpressoesEtiquetas\Individual\Templates\LstImpressoesIndividuaisEtiquetas.Filtro.html" />

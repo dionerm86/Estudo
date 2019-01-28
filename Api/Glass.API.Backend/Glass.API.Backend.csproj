@@ -207,8 +207,15 @@
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\FiltroDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\QuantidadeDto.cs" />
+    <Compile Include="Controllers\Liberacoes\V1\Movimentacoes\GetMovimentacoesLiberacoesController.cs" />
+    <Compile Include="Controllers\Liberacoes\V1\Movimentacoes\MovimentacoesLiberacoesController.cs" />
+    <Compile Include="Helper\Liberacoes\Movimentacoes\TraducaoOrdenacaoListaMovimentacoesLiberacoes.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\ChapaMateriaPrima\TraducaoOrdenacaoListaChapasMateriaPrima.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\TraducaoOrdenacaoListaPosicoesMateriaPrima.cs" />
+    <Compile Include="Models\Liberacoes\V1\Lista\TipoEnum.cs" />
+    <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\FormasPagamentoDto.cs" />
+    <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\ListaDto.cs" />
     <Compile Include="Models\Produtos\V1\MateriaPrima\Lista\FiltroDto.cs" />
     <Content Include="Web.config" />
   </ItemGroup>
