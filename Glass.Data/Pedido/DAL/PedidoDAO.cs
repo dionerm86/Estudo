@@ -10435,29 +10435,32 @@ namespace Glass.Data.DAL
         /// </summary>
         public void AtualizaPeso(GDASession sessao, uint idPedido)
         {
-            string sql = @"
-                UPDATE produtos_pedido pp
-                    LEFT JOIN
-                    (
-                        " + Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedido, idPedido, false, false, false) + @"
-                    ) as peso on (pp.idProdPed=peso.id)
-                    INNER JOIN produto prod ON (pp.idProd = prod.idProd)
-                    LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd)
-                    LEFT JOIN
-                    (
-                        SELECT pp1.IdProdPedParent, sum(pp1.peso) as peso
-                        FROM produtos_pedido pp1
-                        WHERE pp1.IdPedido={0}
-                        GROUP BY pp1.IdProdPedParent
-                    ) as pesoFilhos ON (pp.IdProdPed = pesoFilhos.IdProdPedParent)
-                SET pp.peso = coalesce(IF(sgp.TipoSubgrupo IN (" + (int)TipoSubgrupoProd.VidroDuplo + "," + (int)TipoSubgrupoProd.VidroLaminado + @"), pesoFilhos.peso * pp.Qtde, peso.peso), 0)
-                WHERE pp.idPedido={0};
+            if (idPedido == 0)
+            {
+                return;
+            }
 
-                UPDATE pedido
-                SET peso = coalesce((SELECT sum(peso) FROM produtos_pedido WHERE coalesce(IdProdPedParent, 0) = 0 AND idPedido={0} and !coalesce(invisivelPedido, false)), 0)
-                WHERE idPedido = {0}";
+            var pedidoPossuiProdutosComposicao = ProdutosPedidoDAO.Instance.TemProdutoLamComposicao(sessao, idPedido);
 
-            objPersistence.ExecuteCommand(sessao, String.Format(sql, idPedido));
+            if (pedidoPossuiProdutosComposicao)
+            {
+                ProdutosPedidoDAO.Instance.AtualizarPesoPedidoComProdutoComposicao(sessao, (int)idPedido);
+            }
+            else
+            {
+                ProdutosPedidoDAO.Instance.AtualizarPesoPedidoSemProdutoComposicao(sessao, (int)idPedido);
+            }
+
+            var sqlObterSomaPesoProdutosPedido = $@"SELECT SUM(COALESCE(pp.Peso, 0)) FROM produtos_pedido pp
+                WHERE pp.IdPedido = {idPedido}
+                    AND (pp.InvisivelPedido IS NULL OR pp.InvisivelPedido = 0)
+                    AND (pp.IdProdPedParent IS NULL OR pp.IdProdPedParent = 0);";
+
+            var pesoPedido = this.ExecuteScalar<decimal>(sessao, sqlObterSomaPesoProdutosPedido);
+
+            var sqlAtualizarPesoPedido = $"UPDATE pedido p SET p.Peso = ?peso WHERE p.IdPedido = {idPedido};";
+
+            this.objPersistence.ExecuteCommand(sessao, sqlAtualizarPesoPedido, new GDAParameter("?peso", pesoPedido));
         }
 
         #endregion
@@ -13633,7 +13636,7 @@ namespace Glass.Data.DAL
                             session,
                             UserInfo.GetUserInfo.CodUser,
                             objUpdate.TipoVenda.GetValueOrDefault(),
-                            (int?)objUpdate.IdParcela);
+                            (int)objUpdate.IdParcela.GetValueOrDefault());
 
                         if (descontoMaximoPedido != 100)
                         {

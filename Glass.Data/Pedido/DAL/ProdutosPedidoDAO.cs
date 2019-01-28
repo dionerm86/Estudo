@@ -5993,5 +5993,65 @@ namespace Glass.Data.DAL
 
             return $" AND ({aliasProdutosPedido}Invisivel{fluxo} IS NULL OR !{aliasProdutosPedido}Invisivel{fluxo})";
         }
+
+        /// <summary>
+        /// Atualiza o peso dos produtos de um pedido.
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <param name="idPedido">idPedido.</param>
+        public void AtualizarPesoPedidoSemProdutoComposicao(GDASession session, int idPedido)
+        {
+            var sqlAtualizarPesoProdutosPedido = $@"UPDATE produtos_pedido pp
+                    LEFT JOIN 
+                    (
+                        {Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedido, (uint)idPedido, false, false, false)}
+                    ) AS peso ON (pp.IdProdPed = peso.Id)
+                SET pp.Peso = peso.Peso
+                WHERE pp.IdPedido = {idPedido}
+                    AND (pp.InvisivelPedido IS NULL OR pp.InvisivelPedido = 0);";
+
+            this.objPersistence.ExecuteCommand(session, sqlAtualizarPesoProdutosPedido);
+        }
+
+        /// <summary>
+        /// Atualiza o peso dos produtos de um pedido que possua produtos de composição.
+        /// </summary>
+        /// <param name="session">session.</param>
+        /// <param name="idPedido">idPedido.</param>
+        public void AtualizarPesoPedidoComProdutoComposicao(GDASession session, int idPedido)
+        {
+            var sqlAtualizarPesoProdutosPedido = string.Empty;
+            var sqlAtualizarPesoProdutosPedidoComposicao = string.Empty;
+
+            sqlAtualizarPesoProdutosPedido = $@"UPDATE produtos_pedido pp
+                    LEFT JOIN 
+                    (
+                        {Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedido, (uint)idPedido, false, false, false)}
+                    ) AS peso ON (pp.IdProdPed = peso.Id)
+                    INNER JOIN produto prod ON (pp.IdProd = prod.IdProd)
+                    LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
+                SET pp.Peso = peso.Peso
+                WHERE pp.IdPedido = {idPedido}
+                    AND (pp.InvisivelPedido IS NULL OR pp.InvisivelPedido = 0)
+                    AND sgp.TipoSubgrupo NOT IN ({(int)TipoSubgrupoProd.VidroDuplo}, {(int)TipoSubgrupoProd.VidroLaminado});";
+
+            this.objPersistence.ExecuteCommand(session, sqlAtualizarPesoProdutosPedido);
+
+            sqlAtualizarPesoProdutosPedidoComposicao = $@"UPDATE produtos_pedido pp
+                    INNER JOIN produto prod ON (pp.IdProd = prod.IdProd)
+                    LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
+                    LEFT JOIN 
+                    (
+                        SELECT pp1.IdProdPedParent, SUM(pp1.Peso) AS Peso
+                        FROM produtos_pedido pp1
+                        GROUP BY pp1.IdProdPedParent
+                    ) AS pesoFilhos ON (pp.IdProdPed = pesoFilhos.IdProdPedParent)
+                SET pp.Peso = COALESCE(pesoFilhos.Peso * pp.Qtde, 0)
+                WHERE pp.IdPedido = {idPedido}
+                    AND (pp.InvisivelPedido IS NULL OR pp.InvisivelPedido = 0)
+                    AND sgp.TipoSubgrupo IN ({(int)TipoSubgrupoProd.VidroDuplo}, {(int)TipoSubgrupoProd.VidroLaminado});";
+
+            this.objPersistence.ExecuteCommand(session, sqlAtualizarPesoProdutosPedidoComposicao);
+        }
     }
 }
