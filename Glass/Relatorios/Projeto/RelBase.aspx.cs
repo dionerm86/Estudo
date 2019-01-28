@@ -75,7 +75,10 @@ namespace Glass.UI.Web.Relatorios.Projeto
 
                     if (projeto.IdPedido > 0)
                     {
-                        projeto.NomeCliente = ClienteDAO.Instance.GetNome(PedidoDAO.Instance.ObtemIdCliente(null, projeto.IdPedido));
+                        var idCliente = PedidoDAO.Instance.ObtemIdCliente(null, projeto.IdPedido);
+
+                        projeto.NomeCliente = ClienteDAO.Instance.GetNome(idCliente);
+                        projeto.Rota = RotaDAO.Instance.ObtemCodRota(idCliente);
                         projeto.NomeFunc = FuncionarioDAO.Instance.GetNome(PedidoDAO.Instance.ObtemIdFunc(null, projeto.IdPedido));
                         projeto.DataCad = PedidoDAO.Instance.ObtemDataPedido(null, projeto.IdPedido);
                         projeto.TipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(null, projeto.IdPedido);
