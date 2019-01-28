@@ -8,6 +8,7 @@ using Glass.Data.Model.Calculos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Glass.Data.DAL
 {
@@ -3922,6 +3923,10 @@ namespace Glass.Data.DAL
                 p.FlagsArqMesa = null;
 
                 idProd = p.IdProd;
+
+                //Chamado 89330.
+                Regex regex = new Regex(@"\s{2,}");
+                p.Descricao = regex.Replace(p.Descricao.Replace("/t", " ").Trim(), " ");
 
                 // Carrega os beneficiamentos do produto
                 p.SalvarBeneficiamentos = true;

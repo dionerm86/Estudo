@@ -98,11 +98,11 @@
 
         function substituiTexto(textoAtual, remover, substituir)
         {
-            var retorno = textoAtual.toUpperCase().trim().replace(/\s{2,}/g, ' ');
-            var pos = retorno.indexOf(remover.toUpperCase().trim().replace(/\s{2,}/g, ' '));
-            var textoRemover = remover.indexOf(" ");
+            var retorno = textoAtual.toUpperCase().trim().replace(/\s{2,}/g, ' ').replace(/\t/g, '');
+            var pos = retorno.indexOf(remover.toUpperCase().trim().replace(/\s{2,}/g, ' ').replace(/\t/g, ''));
+            var textoRemover = remover.replace(/\s{2,}/g, '').replace(/\t/g, '');
 
-            while (pos > -1 && textoRemover != 0)
+            while (pos > -1 && textoRemover != "")
             {
 		        retorno = retorno.substr(0, pos) + substituir.toUpperCase() + retorno.substr(pos + remover.length);
 		        pos = retorno.indexOf(remover.toUpperCase(), pos + substituir.length);
