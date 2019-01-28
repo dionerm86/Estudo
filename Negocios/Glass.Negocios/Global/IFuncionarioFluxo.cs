@@ -11,11 +11,16 @@ namespace Glass.Global.Negocios
         #region Funcionário
 
         /// <summary>
-        /// Recupera os funcionários ativos que são vendedores ou estão 
-        /// associados como vendedores para os clientes.
+        /// Recupera os funcionários ativos ou estão associados como atendentes para os clientes.
         /// </summary>
-        /// <returns></returns>
-        IList<Colosoft.IEntityDescriptor> ObterFuncionariosAtivosAssociadosAClientes();
+        /// <returns>Retorna os funcionários ativos ou estão associados como atendentes para os clientes.</returns>
+        IList<Colosoft.IEntityDescriptor> ObterAtendentesAtivosAssociadosAClientes();
+
+        /// <summary>
+        /// Recupera os funcionários ativos que são vendedores ou estão associados como vendedores para os clientes.
+        /// </summary>
+        /// <returns>Retorna os funcionários ativos que são vendedores ou estão associados como vendedores para os clientes.</returns>
+        IList<Colosoft.IEntityDescriptor> ObterVendedoresAtivosAssociadosAClientes();
 
         /// <summary>
         /// Recupera os descritores dos funcionários ativos
