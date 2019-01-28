@@ -1,4 +1,4 @@
-<section class="filtros">
+﻿<section class="filtros">
     <div>
         <span class="form-group">
             <label for="id">Pedido</label>
@@ -47,7 +47,7 @@
                 v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group" v-if="configuracoes.exibirFiltroPronto">
+        <span class="form-group">
             <label for="tipoPedido">Tipo</label>
             <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.tipoPedido" texto-selecionar="Selecione o tipo" v-bind:funcao-recuperar-itens="obterItensFiltroTiposPedido"
                 v-bind:ordenar="false" campo-id="id" campo-descricao="nome"></lista-selecao-multipla>
@@ -124,13 +124,13 @@
             <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoFinalizacaoInicio" v-bind:data-hora-final.sync="filtroAtual.periodoFinalizacaoFim"></campo-data-hora-periodo>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group" v-if="configuracoes.exibirFiltroPronto">
+        <span class="form-group">
             <label>Usuário Fin.</label>
             <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.codigoUsuarioFinalizacao" texto-selecionar="Selecione o usuário"
                 v-bind:funcao-recuperar-itens="recuperarUsuariosFinalizacao"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group" v-if="configuracoes.exibirFiltroPronto">
+        <span class="form-group">
             <label for="tipoVenda">Tipo Venda</label>
             <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoVendaAtual" v-bind:funcao-recuperar-itens="obterItensFiltroTiposVenda"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>

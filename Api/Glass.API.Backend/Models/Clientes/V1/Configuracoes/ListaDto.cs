@@ -29,7 +29,7 @@ namespace Glass.API.Backend.Models.Clientes.V1.Configuracoes
             this.CadastrarSugestoes = Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarSugestoesClientes);
             this.AtivarClientes = UserInfo.GetUserInfo.IsAdministrador;
             this.AlterarVendedor = UserInfo.GetUserInfo.IsAdministrador;
-            this.AlterarRota = UserInfo.GetUserInfo.IsAdministrador;
+            this.AlterarRota = Config.PossuiPermissao(Config.FuncaoMenuCadastro.PermitirAlterarRotaCliente);
             this.ConsultarPrecoTabela = this.ExibirPrecoTabela();
         }
 

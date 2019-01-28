@@ -26,6 +26,12 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript">
         
+        window.onload = function () {  
+            document.onkeydown = function (e) {  
+                return (e.which || e.keyCode) != 116;  
+            };  
+        }
+
         // Variável de controle dos produtos selecionados
         var produtos = new Array();
         var linhas = new Array();
@@ -396,6 +402,11 @@
             var hdfDadosProdutos = document.getElementById("<%= hdfDadosProdutos.ClientID %>");
             hdfDadosProdutos.value = valor.length > 0 ? valor.substr(1) : "";
         }
+
+        function novaCompra() {
+            redirectUrl('CadCompraPcp.aspx');
+            return false;
+        }
         
     </script>
 
@@ -438,6 +449,7 @@
                             <asp:Button ID="btnBuscar" runat="server" Text="Buscar pedido" 
                                 OnClientClick="return buscar()" OnClick="btnBuscar_Click" />
                             <asp:HiddenField ID="hdfIdAmbientesPedido" runat="server" />
+                            <asp:Button ID="btnNovaCompraMercadoria" runat="server" Text="Nova Compra" Visible="false" OnClientClick="return novaCompra();" />
                         </td>
                     </tr>
                 </table>

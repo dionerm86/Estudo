@@ -1,0 +1,31 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Cor</label>
+            <lista-selecao-multipla :funcao-recuperar-itens="obterItensFiltroCoresVidro"
+                :ids-selecionados.sync="filtroAtual.idsCorVidro"></lista-selecao-multipla>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span class="form-group">
+            <label>Espessura</label>
+            <input type="number" v-model="filtroAtual.espessura" style="width: 60px"/>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span class="form-group">
+            <label>Altura</label>
+            <input type="number" v-model="filtroAtual.altura" style="width: 60px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span class="form-group">
+            <label>Largura</label>
+            <input type="number" v-model="filtroAtual.largura" style="width: 60px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+        <span class="form-group">
+            <label>Data de Leitura</label>
+            <campo-data-hora-periodo :data-hora-inicial.sync="filtroAtual.periodoMovimentacaoInicio"
+                :data-hora-final.sync="filtroAtual.periodoMovimentacaoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" @click.prevent="filtrar"></button>
+        </span>
+    </div>
+</section>
