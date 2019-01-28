@@ -82,7 +82,7 @@ namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
                 {
                     sessao.BeginTransaction();
 
-                    var idNf = NotaFiscalDAO.Instance.GerarNfCompraComTransacao((uint)id, null, ProdutosCompraDAO.Instance.GetByCompra(sessao, (uint)id));
+                    var idNf = NotaFiscalDAO.Instance.GerarNfCompra(sessao, (uint)id, null, ProdutosCompraDAO.Instance.GetByCompra(sessao, (uint)id));
                     sessao.Commit();
 
                     return this.Criado("Nota fiscal gerada.", (int)idNf);

@@ -97,7 +97,7 @@ Servicos.Compras = (function (http) {
 
       /**
        * Realiza a reabertura de uma compra de mercadoria previamente finalizada.
-       * @param {number} idMercadoria A mercadoria que será reaberta.
+       * @param {!number} idMercadoria A mercadoria que será reaberta.
        * @returns {Promise} Uma promise com o resultado da busca.
        */
       reabrir: function (idMercadoria) {
@@ -110,7 +110,7 @@ Servicos.Compras = (function (http) {
 
       /**
        * Realiza o cancelamento de uma compra de mercadoria.
-       * @param {number} idMercadoria A mercadoria que será cancelada.
+       * @param {!number} idMercadoria A mercadoria que será cancelada.
        * @param {String} motivo O motivo do cancelamento.
        * @returns {Promise} Uma promise com o resultado da busca.
        */
@@ -124,10 +124,11 @@ Servicos.Compras = (function (http) {
 
       /**
        * Gera uma nota fiscal para a compra de mercadoria.
-       * @returns {Promise} Uma promisse com o resultado da busca.
+       * @param {!number} idMercadoria A compra de mercadoria que será gerada a nota fiscal.
+       * @returns {Promise} Uma promise com o resultado da busca.
        */
-      gerarNf: function (idMercadoria, motivo) {
-        return http().post(API + 'mercadorias/gerarNotaFiscal/' + idMercadoria, motivo)
+      gerarNf: function (idMercadoria) {
+        return http().post(API + 'mercadorias/gerarNotaFiscal/' + idMercadoria)
       }
     }
   };

@@ -48,13 +48,13 @@ namespace Glass.API.Backend.Helper.Compras.Mercadorias
                     return "Total";
 
                 case "pagamento":
-                    return "DescrTipoCompra";
+                    return "TipoCompra";
 
                 case "data":
                     return "DataCad";
 
                 case "situacao":
-                    return "DescrSituacao";
+                    return "Situacao";
 
                 case "contabil":
                     return campo;

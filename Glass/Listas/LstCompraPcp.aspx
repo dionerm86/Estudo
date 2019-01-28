@@ -68,11 +68,7 @@
                         </button>
                     </td>
                     <td>{{ item.id }}</td>
-                    <td>
-                        <template v-if="item.idPedido">
-                            {{ item.idPedido }}
-                        </template>
-                    </td>                                               
+                    <td>{{ item.idPedido }}</td>                                               
                     <td>{{ item.fornecedor }}</td>
                     <td>{{ item.loja }}</td>
                     <td>{{ item.usuarioCadastro }}</td>
@@ -89,7 +85,7 @@
                             <img src="../Images/basket_add.gif" title="Estoque Creditado" v-if="item.estoqueCreditado"/>
                         </div>
                         <div>
-                            <a href="#" @click.prevent="produtoChegou(item)" v-if="item.permissoes.exibirProdutoChegou">
+                            <a href="#" @click.prevent="obterProdutoChegou(item)" v-if="item.permissoes.exibirProdutoChegou">
                                 Produto chegou
                             </a>
                         </div>

@@ -23,7 +23,7 @@ namespace Glass.API.Backend.Models.Compras.V1.Mercadorias.Lista
         public ListaDto(Compra compraMercadoria)
         {
             this.Id = (int)compraMercadoria.IdCompra;
-            this.IdPedido = (int)(compraMercadoria.IdPedidoEspelho ?? 0);
+            this.IdPedido = (int?)compraMercadoria.IdPedidoEspelho;
             this.Fornecedor = compraMercadoria.IdNomeFornec;
             this.Loja = compraMercadoria.NomeLoja;
             this.UsuarioCadastro = compraMercadoria.DescrUsuCad;
@@ -102,7 +102,7 @@ namespace Glass.API.Backend.Models.Compras.V1.Mercadorias.Lista
         public string Situacao { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se a compra de mercadotia é contábil.
+        /// Obtém ou define um valor que indica se a compra de mercadoria é contábil.
         /// </summary>
         [DataMember]
         [JsonProperty("contabil")]

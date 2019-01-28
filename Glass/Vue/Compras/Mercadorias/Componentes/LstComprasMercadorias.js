@@ -30,10 +30,10 @@
 
     /**
      * Exibe os dados detalhados da compra de mercadoria em um relatório.
-     * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
+     * @param {Objetc} item A compra de mercadoria que será exibida.
      */
-    abrirRelatorioComprasMercadorias: function (id) {
-      var url = '../Relatorios/RelBase.aspx?rel=Compra&idCompra=' + id;
+    abrirRelatorioComprasMercadorias: function (item) {
+      var url = '../Relatorios/RelBase.aspx?rel=Compra&idCompra=' + item.id;
       this.abrirJanela(600, 800, url);
     },
 
@@ -50,19 +50,19 @@
       var vm = this;
 
       return Servicos.Compras.Mercadorias.cancelar(item.id)
-      .then(function (resposta) {
-        vm.atualizarLista();
-      })
-      .cath(function (erro) {
-        if (erro && erro.mensagem) {
-          vm.exibirMensagem('Erro', erro.mensagem)
-        }
-      });      
+        .then(function (resposta) {
+          vm.atualizarLista();
+        })
+        .cath(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem)
+          }
+        });
     },
 
     /**
      * Abre um popup com o gerenciamento de fotos para a compra de mercadoria.
-     * @param {Object} item A compra que terá as fotos gerenciadas.
+     * @param {Object} item A compra de mercadoria que terá as fotos gerenciadas.
      */
     abrirGerenciamentoDeFotos: function (item) {
       this.abrirJanela(600, 700, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=compra');
@@ -79,13 +79,15 @@
 
     /**
      * Abre uma tela informando se o produto chegou.
+     * @param {Object} item O identificador da compra de mercadoria.
      */
-    produtoChegou: function (item) {
+    obterProdutoChegou: function (item) {
       this.abrirJanela(600, 800, '../Utils/ProdutoCompraChegou.aspx?idCompra=' + item.id);
     },
 
     /**
      * Obtem o link para gerar a nota fiscal da compra de mercadoria.
+     * @param {number} item A compra de marcadoria que será gerada a nota fiscal.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     gerarNotaFiscal: function (item) {
@@ -110,8 +112,7 @@
 
     /**
      * Reabre uma compra de mercadoria já finalizada.
-     * @param {Object} item A compra que será reaberta.
-     * @returns {Promise} Uma Promise com o resultado da busca.
+     * @param {Object} item A compra de mercadoria que será reaberta.
      */
     reabrir: function (item) {
       if (!this.perguntar('Deseja reabrir a compra de mercadoria de número ' + item.id + '?')) {
