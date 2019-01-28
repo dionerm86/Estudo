@@ -474,6 +474,9 @@
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Utils\AlertaAdministrador.aspx" />
+    <Content Include="Vue\ArquivosOtimizacao\Componentes\LstArquivosOtimizacao.Filtro.js" />
+    <Content Include="Vue\ArquivosOtimizacao\Componentes\LstArquivosOtimizacao.js" />
+    <Content Include="Vue\ArquivosOtimizacao\Templates\LstArquivosOtimizacao.Filtro.html" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.OrdensCarga.js" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.Filtro.js" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.js" />
@@ -525,6 +528,9 @@
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.js" />
     <Content Include="Vue\Pagamentos\Templates\LstPagamentos.Filtro.html" />
     <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\ChapasDisponiveis\Componentes\LstChapasDisponiveis.Filtro.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\ChapasDisponiveis\Componentes\LstChapasDisponiveis.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\ChapasDisponiveis\Templates\LstChapasDisponiveis.Filtro.html" />
     <Content Include="Vue\Producao\Fornadas\Componentes\LstFornadas.Filtro.js" />
     <Content Include="Vue\Producao\Fornadas\Componentes\LstFornadas.js" />
     <Content Include="Vue\Producao\Fornadas\Componentes\LstFornadas.Pecas.js" />
@@ -535,6 +541,11 @@
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Componentes\LstPosicoesMateriaPrima.js" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Templates\LstPosicoesMateriaPrima.Chapas.html" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Templates\LstPosicoesMateriaPrima.Filtro.html" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.Filtro.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.Movimentacoes.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Templates\LstMovimentacoesChapas.Filtro.html" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Templates\LstMovimentacoesChapas.Movimentacoes.html" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.Filtro.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Templates\ListaPrecoTabelaCliente.Filtro.html" />
@@ -1900,6 +1911,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Modal.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\ArquivosOtimizacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Carregamentos.js" />

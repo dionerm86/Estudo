@@ -276,6 +276,14 @@ Servicos.Funcionarios = (function(http) {
       }
 
       return http().patch(API + idFuncionario, funcionario);
+    },
+
+    /**
+     * Busca os funcionários de um tipo específico para a lista de arquivos de otimização.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    obterParaControleArquivosOtimizacao: function () {
+      return http().get(API + 'arquivosOtimizacao');
     }
   };
 })(function() {

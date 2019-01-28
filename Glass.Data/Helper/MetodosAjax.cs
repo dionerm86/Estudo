@@ -369,7 +369,7 @@ namespace Glass.Data.Helper
 
         public static string GetDescMaxPedido(string idFunc, string tipoVendaPedido, string idParcela)
         {
-            return PedidoConfig.Desconto.GetDescontoMaximoPedido(Conversoes.StrParaUint(idFunc), Conversoes.StrParaInt(tipoVendaPedido), idParcela.StrParaInt()).ToString();
+            return PedidoConfig.Desconto.GetDescontoMaximoPedido(Conversoes.StrParaUint(idFunc), Conversoes.StrParaInt(tipoVendaPedido), idParcela.StrParaIntNullable()).ToString();
         }
 
         /// <summary>
