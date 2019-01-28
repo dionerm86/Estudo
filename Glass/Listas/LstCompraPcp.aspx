@@ -36,13 +36,13 @@
                         <a href="#" @click.prevent="ordenar('total')">Total</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('pagamento')">Pagto</a>
+                        Pagto
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('data')">Data</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
+                        Situação
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('contabil')">Contábil</a>
