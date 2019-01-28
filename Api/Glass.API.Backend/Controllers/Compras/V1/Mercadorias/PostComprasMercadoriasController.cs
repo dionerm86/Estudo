@@ -22,7 +22,7 @@ namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
         /// <param name="id">O identificador da compra de mercadoria que será reaberta.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPost]
-        [Route("{id:int}/reabrir")]
+        [Route("reabrir/{id:int}")]
         [SwaggerResponse(202, "Compra de mercadoria reaberta.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Compra de mercadoria não encontrada para o id informado.", Type = typeof(MensagemDto))]
@@ -34,7 +34,7 @@ namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
                 {
                     sessao.BeginTransaction();
 
-                    var validacao = this.ValidarExistenciaIdCompra(sessao, id);
+                    var validacao = this.ValidarExistenciaIdCompraMercadorias(sessao, id);
 
                     if (validacao != null)
                     {
@@ -63,7 +63,7 @@ namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
         /// <param name="id">O identificador da compra de mercadoria que será gerada a nota fiscal.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPost]
-        [Route("{id:int}/gerarNotaFiscal")]
+        [Route("gerarNotaFiscal/{id:int}")]
         [SwaggerResponse(201, "Nota fiscal gerada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Compra não encontrada para o id informado.", Type = typeof(MensagemDto))]
@@ -71,7 +71,7 @@ namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
         {
             using (var sessao = new GDATransaction())
             {
-                var validacao = this.ValidarExistenciaIdNotaFiscal(sessao, id);
+                var validacao = this.ValidarExistenciaIdCompraMercadorias(sessao, id);
 
                 if (validacao != null)
                 {

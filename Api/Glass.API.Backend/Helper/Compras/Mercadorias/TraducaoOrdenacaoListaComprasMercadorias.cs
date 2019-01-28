@@ -29,35 +29,35 @@ namespace Glass.API.Backend.Helper.Compras.Mercadorias
         {
             switch (campo.ToLowerInvariant())
             {
-                case "num":
-                    return "Id";
+                case "id":
+                    return "IdCompra";
 
                 case "pedido":
-                    return "IdPedido";
+                    return "IdPedidoEspelho";
 
                 case "fornecedor":
-                    return "Fornecedor";
+                    return "NomeFornec";
 
                 case "loja":
-                    return "Loja";
+                    return "NomeLoja";
 
                 case "funcionario":
-                    return "UsuarioCadastro";
+                    return "DescrUsuCad";
 
                 case "total":
                     return "Total";
 
-                case "pagto":
-                    return "TipoCompra";
+                case "pagamento":
+                    return "DescrTipoCompra";
 
                 case "data":
-                    return "DataCadastro";
+                    return "DataCad";
 
                 case "situacao":
-                    return "Situacao";
+                    return "DescrSituacao";
 
                 case "contabil":
-                    return "Contabil";
+                    return campo;
 
                 default:
                     return this.OrdenacaoPadrao;

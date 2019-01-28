@@ -14,7 +14,7 @@ namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
     [RoutePrefix("api/v1/compras/mercadorias")]
     public partial class ComprasMercadoriasController : BaseController
     {
-        private IHttpActionResult ValidarIdCompra(int id)
+        private IHttpActionResult ValidarIdCompraMercadorias(int id)
         {
             if (id <= 0)
             {
@@ -24,9 +24,9 @@ namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
             return null;
         }
 
-        private IHttpActionResult ValidarExistenciaIdCompra(GDASession sessao, int id)
+        private IHttpActionResult ValidarExistenciaIdCompraMercadorias(GDASession sessao, int id)
         {
-            var validacao = this.ValidarIdCompra(id);
+            var validacao = this.ValidarIdCompraMercadorias(id);
 
             if (validacao == null && !CompraDAO.Instance.Exists(sessao, id))
             {
@@ -34,28 +34,6 @@ namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
             }
 
             return validacao;
-        }
-
-        private IHttpActionResult ValidarIdNotaFiscal(int id)
-        {
-            if (id <= 0)
-            {
-                return this.ErroValidacao("Identificador da nota fiscal deve ser um número maior que zero.");
-            }
-
-            return null;
-        }
-
-        private IHttpActionResult ValidarExistenciaIdNotaFiscal (GDASession sessao, int id)
-        {
-            var validacao = this.ValidarIdNotaFiscal(id);
-
-            if (validacao == null && !NotaFiscalDAO.Instance.Exists(sessao, id))
-            {
-                return this.NaoEncontrado("Nota fiscal não encontrada.");
-            }
-
-            return null;
         }
     }
 }

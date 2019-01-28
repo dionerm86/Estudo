@@ -18,7 +18,7 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('num')">Num</a>
+                        <a href="#" @click.prevent="ordenar('id')">Num</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('pedido')">Pedido</a>
@@ -36,7 +36,7 @@
                         <a href="#" @click.prevent="ordenar('total')">Total</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('pagto')">Pagto</a>
+                        <a href="#" @click.prevent="ordenar('pagamento')">Pagto</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('data')">Data</a>
@@ -57,10 +57,10 @@
                         <button @click.prevent="abrirRelatorioComprasMercadorias(item)" title="Visualizar dados da compra">
                             <img src="../Images/relatorio.gif" />
                         </button>
-                        <button @click.prevent="abrirGerenciamentoDeFotos(item)" title="Gerenciar Fotos">
+                        <button @click.prevent="abrirGerenciamentoDeFotos(item)" v-if="item.permissoes.gerenciarFotos" title="Gerenciar Fotos">
                             <img src="../Images/Clipe.gif"/>
                         </button>
-                        <button @click.prevent="cancelar(item)" title="Cancelar">
+                        <button @click.prevent="cancelar(item)" v-if="item.permissoes.cancelar" title="Cancelar">
                             <img src="../Images/ExcluirGrid.gif" />
                         </button>
                         <button @click.prevent="gerarNotaFiscal(item)" v-if="item.permissoes.gerarNotaFiscal" title="Gerar NF de entrada">
@@ -68,7 +68,11 @@
                         </button>
                     </td>
                     <td>{{ item.id }}</td>
-                    <td>{{ item.idPedido }}</td>
+                    <td>
+                        <template v-if="item.idPedido">
+                            {{ item.idPedido }}
+                        </template>
+                    </td>                                               
                     <td>{{ item.fornecedor }}</td>
                     <td>{{ item.loja }}</td>
                     <td>{{ item.usuarioCadastro }}</td>

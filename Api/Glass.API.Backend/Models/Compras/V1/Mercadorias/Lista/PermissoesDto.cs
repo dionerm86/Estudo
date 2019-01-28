@@ -13,42 +13,42 @@ namespace Glass.API.Backend.Models.Compras.V1.Mercadorias.Lista
     public class PermissoesDto
     {
         /// <summary>
-        /// Obtém ou define um valor que indica se pode ser editada.
+        /// Obtém ou define um valor que indica se a compra de mercadoria pode ser editada.
         /// </summary>
         [DataMember]
         [JsonProperty("editar")]
         public bool Editar { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se pode ser cancelada.
+        /// Obtém ou define um valor que indica se a compra de mercadoria pode ser cancelada.
         /// </summary>
         [DataMember]
         [JsonProperty("cancelar")]
         public bool Cancelar { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se pode gerenciar as fotos.
+        /// Obtém ou define um valor que indica se pode gerenciar as fotos da compra de mercadoria.
         /// </summary>
         [DataMember]
         [JsonProperty("gerenciarFotos")]
         public bool GerenciarFotos { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se pode ser gerada a nota fiscal.
+        /// Obtém ou define um valor que indica se pode ser gerada a nota fiscal da compra de mercadoria.
         /// </summary>
         [DataMember]
         [JsonProperty("gerarNotaFiscal")]
         public bool GerarNotaFiscal { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se pode ser reaberta.
+        /// Obtém ou define um valor que indica se a compra de mercadoria pode ser reaberta.
         /// </summary>
         [DataMember]
         [JsonProperty("reabrir")]
         public bool Reabrir { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se o produto chegou.
+        /// Obtém ou define um valor que indica se o produto da compra de mercadoria chegou.
         /// </summary>
         [DataMember]
         [JsonProperty("exibirProdutoChegou")]

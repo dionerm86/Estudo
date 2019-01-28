@@ -80,47 +80,55 @@ Servicos.Compras = (function (http) {
     /**
      * Objeto com os serviços para a API de compras de mercadorias.
      */
-    ComprasMercadorias: {
-    /**
-     * Recupera a lista de compras de mercadorias.
-     * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
-     * @param {number} pagina O número da página de resultados a ser exibida.
-     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
-     * @param {string} ordenacao A ordenação para o resultado.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-      obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+    Mercadorias: {
+      /**
+       * Recupera a lista de compras de mercadorias.
+       * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos itens.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterListaComprasMercadorias: function (filtro, pagina, numeroRegistros, ordenacao) {
         return http().get(API + 'mercadorias', {
           params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
         });
       },
 
-    /**
-     * Realiza a reabertura de uma compra de mercadoria previamente finalizada.
-     * @param {Object} mercadoria A mercadoria que será reaberta.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-      reabrir: function (mercadoria) {
-        if (!mercadoria) {
+      /**
+       * Realiza a reabertura de uma compra de mercadoria previamente finalizada.
+       * @param {number} idMercadoria A mercadoria que será reaberta.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      reabrir: function (idMercadoria) {
+        if (!idMercadoria) {
           throw new Error('Compra da mercadoria é obrigatória.');
         }
 
-        return http().post(API + mercadoria + '/reabrir');
+        return http().post(API + 'mercadorias/reabrir/' + idMercadoria);
       },
 
-    /**
-     * Realiza o cancelamento de uma compra de mercadoria.
-     * @param {Object} mercadoria A mercadoria que será cancelada.
-     * @param {String} motivo O motivo do cancelamento.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-      cancelar: function (mercadoria, motivo) {
-        if (!mercadoria) {
+      /**
+       * Realiza o cancelamento de uma compra de mercadoria.
+       * @param {number} idMercadoria A mercadoria que será cancelada.
+       * @param {String} motivo O motivo do cancelamento.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      cancelar: function (idMercadoria, motivo) {
+        if (!idMercadoria) {
           throw new Error('Compra da mercadoria é obrigatória.');
         }
 
-        return http().delete(API + mercadoria, motivo);
+        return http().delete(API + 'mercadorias/' + idMercadoria, motivo);
       },
+
+      /**
+       * Gera uma nota fiscal para a compra de mercadoria.
+       * @returns {Promise} Uma promisse com o resultado da busca.
+       */
+      gerarNf: function (idMercadoria, motivo) {
+        return http().post(API + 'mercadorias/gerarNotaFiscal/' + idMercadoria, motivo)
+      }
     }
   };
 })(function () {

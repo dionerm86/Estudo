@@ -23,7 +23,7 @@ namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
         /// <param name="motivo">O motivo do cancelamento da compra de mercadoria.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpDelete]
-        [Route("{id:int}")]
+        [Route("{id}")]
         [SwaggerResponse(202, "Compra de mercadoria cancelada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Compra de mercadoria não encontrada para o id informado.", Type = typeof(MensagemDto))]
@@ -35,7 +35,7 @@ namespace Glass.API.Backend.Controllers.Compras.V1.Mercadorias
                 {
                     sessao.BeginTransaction();
 
-                    var validacao = this.ValidarExistenciaIdCompra(sessao, id);
+                    var validacao = this.ValidarExistenciaIdCompraMercadorias(sessao, id);
 
                     if (validacao != null)
                     {

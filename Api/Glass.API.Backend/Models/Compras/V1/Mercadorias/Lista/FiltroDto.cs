@@ -22,7 +22,7 @@ namespace Glass.API.Backend.Models.Compras.V1.Mercadorias.Lista
         }
 
         /// <summary>
-        /// Obtém ou define o identificador da mercadoria.
+        /// Obtém ou define o identificador das compras de mercadoria.
         /// </summary>
         [JsonProperty("id")]
         public int? Id { get; set; }
