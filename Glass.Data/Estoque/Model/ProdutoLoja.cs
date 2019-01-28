@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using GDA;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
@@ -28,7 +28,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("QTDESTOQUE")]
         public double QtdEstoque { get; set; }
 
-        [Log("Estoque Mínimo")]
+        [Log("Estoque MÃ­nimo")]
         [PersistenceProperty("ESTMINIMO")]
         public double EstMinimo { get; set; }
 
@@ -38,7 +38,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("Liberacao")]
         public double Liberacao { get; set; }
 
-        [Log("M²")]
+        [Log("MÂ²")]
         [PersistenceProperty("M2")]
         public double M2 { get; set; }
 
@@ -529,6 +529,11 @@ namespace Glass.Data.Model
         int? Sync.Fiscal.EFD.Entidade.IProdutoLoja.CodigoTransportador
         {
             get { return IdTransportador; }
+        }
+
+        int? Sync.Fiscal.EFD.Entidade.IProdutoLoja.CodigoAdministradoraCartao
+        {
+            get { return IdAdminCartao; }
         }
 
         #endregion
