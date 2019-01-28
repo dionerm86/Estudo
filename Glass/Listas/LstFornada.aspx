@@ -84,7 +84,9 @@
                                 </template>
 
                                 <div style="max-width: 400px; font-size: 1.1em">
-                                    {{ item.etiquetas.toString() }}
+                                    <template v-if="item.etiquetas">
+                                        {{ item.etiquetas.toString() }}
+                                    </template>
                                 </div>
                             </controle-tooltip>
                         </span>

@@ -417,6 +417,10 @@ Servicos.Producao = (function(http) {
        * @returns {Promise} Uma promise com o resultado da busca.
        */
       obterPecasFornada: function (idFornada) {
+        if (!idFornada) {
+          throw new Error('Identificador da fornada é obrigatório.');
+        }
+
         return http().get(API + 'fornadas/' + idFornada + '/pecas');
       }
     },

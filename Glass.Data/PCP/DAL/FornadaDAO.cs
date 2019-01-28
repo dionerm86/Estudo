@@ -33,7 +33,7 @@ namespace Glass.Data.DAL
                 FROM produtos_pedido_espelho pp1
 	                INNER JOIN produto p ON (pp1.IdProd = p.IdProd)
 	                INNER JOIN produto_pedido_producao ppp1 ON (pp1.IdProdPed = ppp1.IdProdPed)
-                WHERE ppp1.IdFornada = f.IdFornada {0} OR true";
+                WHERE ppp1.IdFornada = f.IdFornada {0}";
 
             var where = "";
             var wherePedido = "";

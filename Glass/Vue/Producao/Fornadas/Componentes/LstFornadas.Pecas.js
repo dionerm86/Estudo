@@ -14,7 +14,7 @@
 
   methods: {
     /**
-     * Obtem a lista de peças de fornada.
+     * Obtém a lista de peças de fornada.
      * @returns {Promise} Uma promise com a busca dos itens, de acordo com o filtro.
      */
     obterLista: function () {

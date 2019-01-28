@@ -19,11 +19,27 @@
             </th>
         </template>
         <template slot="item" slot-scope="{ item }">
-            <td>{{ item.produto.codigo }}</td>
-            <td>{{ item.produto.nome }}</td>
+            <td>
+                <template v-if="item.produto">
+                    {{ item.produto.codigo }}
+                </template>        
+            </td>
+            <td>
+                <template v-if="item.produto">
+                    {{ item.produto.nome }}
+                </template>
+            </td>
             <td>{{ item.codigoEtiqueta }}</td>
-            <td>{{ item.medidas.altura }}</td>
-            <td>{{ item.medidas.largura }}</td>
+            <td>
+                <template v-if="item.medidas">
+                    {{ item.medidas.altura }}
+                </template>
+            </td>
+            <td>
+                <template v-if="item.medidas">
+                    {{ item.medidas.largura }}
+                </template>
+            </td>
         </template>
     </lista-paginada>
 </section>

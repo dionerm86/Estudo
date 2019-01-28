@@ -31,7 +31,8 @@
     },
 
     /**
-     * Retorna uma string com os filtros selecionados na tela
+     * Retorna uma string com os filtros selecionados na tela.
+     * @returns {string} uma string com os parâmetros que serão passados para o relatório.
      */
     formatarFiltros_: function () {
       var filtros = [];
@@ -59,14 +60,8 @@
     },
 
     /**
-     * Obtem o link para o cadastro de ordens de carga.
-     */
-    obterLinkInserirOrdemCarga: function () {
-      return '../Cadastros/CadOrdemCarga.aspx';
-    },
-
-    /**
      * Alterna a exibição das peças de fornada.
+     * @param {number} indice O número da linha que terá a exibição de suas peças alternada.
      */
     alternarExibicaoPecas: function (indice) {
       var i = this.pecasEmExibicao.indexOf(indice);
@@ -80,7 +75,7 @@
 
     /**
      * Retorna o número de colunas da lista paginada.
-     * @type {number}
+     * @returns {number} O número de colunas existente na lista.
      */
     numeroColunasLista: function () {
       return this.$refs.lista.numeroColunas();
