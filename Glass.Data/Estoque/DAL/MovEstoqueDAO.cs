@@ -1632,8 +1632,8 @@ namespace Glass.Data.DAL
                         BaixarProprioProdutoSeNaoTiverMateriaPrima = true,
                         AlterarProdutoBase = true,
                     });
-
-                ProdutosPedidoDAO.Instance.MarcarSaida(sessao, item.IdProdPed, -item.QtdeSaida, saidaEstoque.IdSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
+                
+                ProdutosPedidoDAO.Instance.EstornoSaida(sessao, item.IdProdPed, item.QtdeSaida, System.Reflection.MethodBase.GetCurrentMethod().Name, null);
 
                 if (!idsProduto.Contains((int)produtoPedido.IdProd))
                 {

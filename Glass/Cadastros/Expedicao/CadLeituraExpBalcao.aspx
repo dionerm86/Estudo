@@ -330,7 +330,7 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, uti
                                                                 EditRowStyle-CssClass="edit" AllowPaging="true" AllowSorting="true">
                                                                 <PagerSettings PageButtonCount="20" />
                                                                 <Columns>
-                                                                    <asp:TemplateField HeaderText="Estornar" Visible="false">
+                                                                    <asp:TemplateField HeaderText="Estornar">
                                                                         <ItemTemplate>
                                                                             <asp:CheckBox ID="chkSelEstorno" runat="server" Visible='<%# Eval("Expedido") %>' />
                                                                         </ItemTemplate>
@@ -469,7 +469,7 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, uti
                                                                             AllowPaging="true" PageSize="3" AllowSorting="true">
                                                                             <PagerSettings PageButtonCount="20" />
                                                                             <Columns>
-                                                                                <asp:TemplateField HeaderText="Estornar" Visible="false">
+                                                                                <asp:TemplateField HeaderText="Estornar">
                                                                                     <ItemTemplate>
                                                                                         <asp:CheckBox ID="chkSelEstorno" runat="server" Visible='<%# Eval("Expedido") %>' />
                                                                                     </ItemTemplate>
@@ -581,7 +581,6 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, uti
 
             <asp:HiddenField ID="hdfTempoLogin" runat="server" />
             <asp:HiddenField ID="hdfCorTela" runat="server" />
-            <asp:HiddenField ID="hdfEstornar" runat="server" Value="false" />
             <audio id="sndOk" src="../../Images/ok.wav"></audio>
             <audio id="sndError" src="../../Images/error.wav"></audio>
             <asp:HiddenField ID="hdfFunc" runat="server" />
