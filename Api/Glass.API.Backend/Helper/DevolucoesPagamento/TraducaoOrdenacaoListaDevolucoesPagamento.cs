@@ -29,7 +29,7 @@ namespace Glass.API.Backend.Helper.DevolucoesPagamento
         {
             switch (campo.ToLowerInvariant())
             {
-                case "cod":
+                case "id":
                     return "IdDevolucaoPagto";
 
                 case "cliente":
@@ -42,7 +42,7 @@ namespace Glass.API.Backend.Helper.DevolucoesPagamento
                     return "Valor";
 
                 case "situacao":
-                    return "Situacao";
+                    return campo;
 
                 case "funcionario":
                     return "NomeFunc";

@@ -18,7 +18,7 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('cod')">Cód.</a>
+                        <a href="#" @click.prevent="ordenar('id')">Cód.</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('cliente')">Cliente</a>
@@ -50,7 +50,11 @@
                         </button>
                     </td>
                     <td>{{ item.id }}</td>
-                    <td>{{ item.cliente.nome }}</td>
+                    <td>
+                        <template v-if="item.cliente">
+                            {{ item.cliente.nome }}
+                        </template>
+                    </td>
                     <td>{{ item.dataCadastro | data }}</td>
                     <td>{{ item.valor | moeda }}</td>
                     <td>{{ item.situacao }}</td>

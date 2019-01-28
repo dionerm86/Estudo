@@ -15,7 +15,7 @@ namespace Glass.API.Backend.Models.DevolucoesPagamento.V1.Lista
     /// Classe que encapsula os dados da devolução do pagamento para a tela de listagem.
     /// </summary>
     [DataContract(Name = "Lista")]
-    public class ListaDto : IdNomeDto
+    public class ListaDto : IdDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
@@ -23,10 +23,10 @@ namespace Glass.API.Backend.Models.DevolucoesPagamento.V1.Lista
         /// <param name="devolucaoPagto">A model de devolução de pagamento.</param>
         internal ListaDto(DevolucaoPagto devolucaoPagto)
         {
-            this.Id = (int?)devolucaoPagto.IdDevolucaoPagto;
+            this.Id = (int)devolucaoPagto.IdDevolucaoPagto;
             this.Cliente = new IdNomeDto
             {
-                Id = (int?)devolucaoPagto.IdCliente,
+                Id = (int)devolucaoPagto.IdCliente,
                 Nome = devolucaoPagto.NomeCliente,
             };
 

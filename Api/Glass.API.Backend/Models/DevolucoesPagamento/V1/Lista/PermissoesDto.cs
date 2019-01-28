@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Models.DevolucoesPagamento.V1.Lista
         public bool Cancelar { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se a devolução já foi cancelada.
+        /// Obtém ou define um valor que indica se a devolução possui log de cancelamento.
         /// </summary>
         [DataMember]
         [JsonProperty("logCancelamento")]

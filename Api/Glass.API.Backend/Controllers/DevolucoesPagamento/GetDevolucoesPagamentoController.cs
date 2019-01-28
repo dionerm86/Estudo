@@ -13,7 +13,7 @@ using System.Web.Http;
 namespace Glass.API.Backend.Controllers.DevolucoesPagamento
 {
     /// <summary>
-    /// Controller de devoluções de pagamento.
+    /// Controller de devoluções de pagamentos.
     /// </summary>
     public partial class DevolucoesPagamentoController : BaseController
     {
