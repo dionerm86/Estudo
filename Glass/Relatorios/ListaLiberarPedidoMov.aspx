@@ -73,16 +73,52 @@
                     <td>{{ item.cliente }}</td>
                     <td>{{ item.situacao }}</td>
                     <td>{{ item.total | moeda }}</td>
-                    <td>{{ item.desconto | moeda }}</td>                    
-                    <td v-if="item.formasPagamento">{{ item.formasPagamento.dinheiro | moeda }}</td>
-                    <td v-if="item.formasPagamento">{{ item.formasPagamento.cheque | moeda }}</td>
-                    <td v-if="item.formasPagamento">{{ item.formasPagamento.boleto | moeda }}</td>
-                    <td v-if="item.formasPagamento">{{ item.formasPagamento.deposito | moeda }}</td>
-                    <td v-if="item.formasPagamento">{{ item.formasPagamento.cartao | moeda }}</td>
-                    <td v-if="item.formasPagamento">{{ item.formasPagamento.prazo | moeda }}</td>
-                    <td v-if="item.formasPagamento">{{ item.formasPagamento.outros | moeda }}</td>
-                    <td v-if="item.formasPagamento">{{ item.formasPagamento.debito | moeda }}</td>
-                    <td v-if="item.formasPagamento">{{ item.formasPagamento.credito | moeda }}</td>
+                    <td>{{ item.desconto | moeda }}</td>                
+                    <td>
+                        <template v-if="item.formasPagamento">
+                            {{ item.formasPagamento.dinheiro | moeda }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.formasPagamento">
+                            {{ item.formasPagamento.cheque | moeda }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.formasPagamento">
+                            {{ item.formasPagamento.boleto | moeda }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.formasPagamento">
+                            {{ item.formasPagamento.deposito | moeda }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.formasPagamento">
+                            {{ item.formasPagamento.cartao | moeda }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.formasPagamento">
+                            {{ item.formasPagamento.prazo | moeda }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.formasPagamento">
+                            {{ item.formasPagamento.outros | moeda }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.formasPagamento">
+                            {{ item.formasPagamento.debito | moeda }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.formasPagamento">
+                            {{ item.formasPagamento.credito | moeda }}
+                        </template>
+                    </td>
                 </template>
             </lista-paginada>
         </section>

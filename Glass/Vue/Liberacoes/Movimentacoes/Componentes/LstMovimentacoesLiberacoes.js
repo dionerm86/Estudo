@@ -24,7 +24,8 @@
     },
 
     /**
-     * Retornar uma string com os filtros selecionados na tela.
+     * Formata os filtros para utilização na url.
+     * @returns {Promise} Uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
       var filtros = [];
