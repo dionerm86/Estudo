@@ -4,7 +4,7 @@
 
 using Glass.API.Backend.Helper.Produtos.MateriaPrima.Posicao;
 using Glass.API.Backend.Models.Genericas.V1;
-using Glass.API.Backend.Models.Pedidos.V1.TipoPedidoPCPEnum;
+using Glass.API.Backend.Models.Produtos.MateriaPrima.Posicao.Lista.TipoPedidoPCP;
 using Glass.Data.Model;
 using Newtonsoft.Json;
 using System;
@@ -35,7 +35,7 @@ namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Posicao.Lista
         /// Obtém ou define os tipos de Pedido.
         /// </summary>
         [JsonProperty("tiposPedido")]
-        public IEnumerable<TipoPedidoPCPEnum> TiposPedido { get; set; }
+        public IEnumerable<TipoPedidoPCP> TiposPedido { get; set; }
 
         /// <summary>
         /// Obtém ou define as situações de pedido.

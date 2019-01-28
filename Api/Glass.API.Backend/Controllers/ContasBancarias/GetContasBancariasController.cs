@@ -6,6 +6,7 @@ using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas.V1;
+using Glass.Data.DAL;
 using Glass.Data.Model;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
@@ -94,6 +95,29 @@ namespace Glass.API.Backend.Controllers.ContasBancarias.V1
                     .ObterTraducao();
 
                 return this.Lista(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de contas bancárias.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos das contas bancárias.</returns>
+        [HttpGet]
+        [Route("filtro")]
+        [SwaggerResponse(200, "Contas bancárias encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Contas bancárias não encontradas.")]
+        public IHttpActionResult ObterFiltro()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var contasBancarias = ContaBancoDAO.Instance.GetOrdered()
+                    .Select(cb => new IdNomeDto
+                    {
+                        Id = cb.IdContaBanco,
+                        Nome = cb.Descricao,
+                    });
+
+                return this.Lista(contasBancarias);
             }
         }
     }

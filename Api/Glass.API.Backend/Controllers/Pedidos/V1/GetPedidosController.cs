@@ -655,7 +655,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var tiposPedidosPcp = new ConversorEnum<Models.Pedidos.V1.TipoPedidoPCPEnum.TipoPedidoPCPEnum>()
+                var tiposPedidosPcp = new ConversorEnum<Models.Produtos.MateriaPrima.Posicao.Lista.TipoPedidoPCP.TipoPedidoPCP>()
                     .ObterTraducao();
 
                 return this.Lista(tiposPedidosPcp);

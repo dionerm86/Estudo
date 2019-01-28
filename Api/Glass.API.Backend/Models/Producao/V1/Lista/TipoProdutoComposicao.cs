@@ -1,4 +1,4 @@
-﻿// <copyright file="TipoProdutoComposicaoEnum.cs" company="Sync Softwares">
+﻿// <copyright file="TipoProdutoComposicao.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 

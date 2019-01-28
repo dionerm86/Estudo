@@ -1,4 +1,4 @@
-﻿// <copyright file="TipoSituacaoProducaoEnum.cs" company="Sync Softwares">
+﻿// <copyright file="TipoSituacaoProducao.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
