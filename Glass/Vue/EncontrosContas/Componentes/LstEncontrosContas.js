@@ -1,6 +1,6 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('idEncontroContas', 'asc')],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('idEncontroContas', 'asc')],
   data: {
     filtro: {}
   },
@@ -21,6 +21,7 @@
 
     /**
      * Obtem o link para inserção de encontros de contas.
+     * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterLinkInserirEncontrosContas: function () {
       return '../Cadastros/CadEncontroContas.aspx';
@@ -37,6 +38,7 @@
 
     /**
      * Obtem o link para editar um encontro de contas.
+     * @returns {Promise} Uma Promisse com o resultado da busca.
      */
     editar: function (item) {
       return obterLinkInserir() + '&idEncontroContas=' + item.id;
@@ -52,26 +54,22 @@
     },
 
     /**
-     * Retorna uma string com os filtros selecionados na tela.
+     * Formata os filtros para utilização na url.
+     * @returns {string} Uma string com os filtros selecionados na tela.
      */
     formatarFiltros_: function () {
       var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
 
-      incluirFiltro('idEncontroContas', this.filtro.id);
-      incluirFiltro('idCliente', this.filtro.idCliente);
-      incluirFiltro('nomeCliente', this.filtro.nomeCliente);
-      incluirFiltro('idFornecedor', this.filtro.idFornecedor);
-      incluirFiltro('nomeFornecedor', this.filtro.nomeFornecedor);
-      incluirFiltro('obs', this.filtro.observacao);
-      incluirFiltro('dataCadIni', this.filtro.periodoCadastroInicio ? this.filtro.periodoCadastroInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataCadFim', this.filtro.periodoCadastroFim ? this.filtro.periodoCadastroFim.toLocaleDateString('pt-BR') : null);
+      this.incluirFiltroComLista(filtros, 'idEncontroContas', this.filtro.id);
+      this.incluirFiltroComLista(filtros, 'idCliente', this.filtro.idCliente);
+      this.incluirFiltroComLista(filtros, 'nomeCliente', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtros, 'idFornecedor', this.filtro.idFornecedor);
+      this.incluirFiltroComLista(filtros, 'nomeFornecedor', this.filtro.nomeFornecedor);
+      this.incluirFiltroComLista(filtros, 'obs', this.filtro.observacao);
+      this.incluirFiltroComLista(filtros, 'dataCadIni', this.filtro.periodoCadastroInicio ? this.filtro.periodoCadastroInicio.toLocaleDateString('pt-BR') : null);
+      this.incluirFiltroComLista(filtros, 'dataCadFim', this.filtro.periodoCadastroFim ? this.filtro.periodoCadastroFim.toLocaleDateString('pt-BR') : null);
 
-      return filtros.length > 0
+      return filtros.length
         ? '&' + filtro.join('&')
         : '';
     },

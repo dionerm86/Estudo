@@ -26,7 +26,7 @@
           periodoCadastroFim: null,
         },
         this.filtro
-      ),
+      )
     };
   },
 

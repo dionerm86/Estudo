@@ -24,16 +24,16 @@ namespace Glass.API.Backend.Models.EncontrosContas.V1.Lista
         /// <param name="encontroContas">A model de encontros de contas.</param>
         internal ListaDto(EncontroContas encontroContas)
         {
-            this.Id = (int?)encontroContas.IdEncontroContas;
+            this.Id = (int)encontroContas.IdEncontroContas;
             this.Cliente = new IdNomeDto
             {
-                Id = (int?)encontroContas.IdCliente,
+                Id = (int)encontroContas.IdCliente,
                 Nome = encontroContas.NomeCliente,
             };
 
             this.Fornecedor = new IdNomeDto
             {
-                Id = (int?)encontroContas.IdFornecedor,
+                Id = (int)encontroContas.IdFornecedor,
                 Nome = encontroContas.NomeFornecedor,
             };
 

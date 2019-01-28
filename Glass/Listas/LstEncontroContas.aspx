@@ -1,11 +1,11 @@
 <%@ Page Title="Encontro de Contas a Pagar/Receber" Language="C#" MasterPageFile="~/Painel.master"
-    AutoEventWireup="true" CodeBehind="LstEncontroContas.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEncontroContas" %>
+    AutoEventWireup="true" CodeBehind="LstEncontroContas.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEncontroContas" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <%=
-      Glass.UI.Web.IncluirTemplateTela.Script(
-    "~/Vue/EncontrosContas/Templates/LstEncontrosContas.Filtro.html")
-        %>
+         Glass.UI.Web.IncluirTemplateTela.Script(
+            "~/Vue/EncontrosContas/Templates/LstEncontrosContas.Filtro.html")
+    %>
     <div id="app">
         <encontros-contas-filtros :filtro.sync="filtro" ></encontros-contas-filtros>
         <section>
@@ -18,7 +18,7 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('cod')">Cód.</a>
+                        <a href="#" @click.prevent="ordenar('id')">Cód.</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('cliente')">Cliente</a>
@@ -59,11 +59,31 @@
                         </button>
                     </td>
                     <td>{{ item.id }}</td>
-                    <td v-if="item.cliente">{{ item.cliente.id }} - {{ item.cliente.nome }}</td>
-                    <td v-if="item.fornecedor">{{ item.fornecedor.id }} - {{ item.fornecedor.nome }}</td>
-                    <td v-if="item.valores">{{ item.valores.pagar | moeda }}</td>
-                    <td v-if="item.valores">{{ item.valores.receber | moeda }}</td>
-                    <td v-if="item.valores">{{ item.valores.saldo | moeda }}</td>
+                    <td>
+                        <template v-if="item.cliente">
+                            {{ item.cliente.id }} - {{ item.cliente.nome }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.fornecedor">
+                            {{ item.fornecedor.id }} - {{ item.fornecedor.nome }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.valores">
+                            {{ item.valores.pagar | moeda }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.valores">
+                            {{ item.valores.receber | moeda }}
+                        </template>
+                    </td>
+                    <td>
+                        <template v-if="item.valores">
+                            {{ item.valores.saldo | moeda }}
+                        </template>
+                    </td>
                     <td>{{ item.dataCadastro | dataHora }}</td>
                     <td>{{ item.situacao }}</td>
                     <td>{{ item.observacao }}</td>
