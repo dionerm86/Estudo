@@ -61,6 +61,14 @@ Servicos.Fornecedores = (function (http) {
      */
     obterSituacoes: function () {
       return http().get(API + 'situacoes');
+    },
+
+    /**
+     * Recupera a lista de fornecedores para o controle de busca.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterParaControleExportacao: function () {
+      return http().get(API + 'exportacao');
     }
   };
 })(function() {

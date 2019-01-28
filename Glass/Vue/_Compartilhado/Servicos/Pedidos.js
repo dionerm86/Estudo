@@ -197,6 +197,67 @@ Servicos.Pedidos = (function (http) {
         return http().patch(API + idPedido + '/produtos/' + idProduto + '/observacao', {
           observacao: observacao || ''
         });
+      },
+      
+      /**
+       * Obtem a lista de produtos para um determinado pedido para a tela de listagem de pedidos para exportação.
+       * @param {number} idPedido O identificador do pedido.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterListaProdutosPedidoExportacao: function (idPedido) {
+        return http().get(API + idPedido + '/produtos/exportacao');
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de exportação de pedidos.
+     */
+    Exportacao: {
+      /**
+       * Recupera a lista de pedidos para exportação.
+       * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de pedidos.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'exportacao', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Obtém as configurações para a tela de listagem de pedidos para exportação.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterConfiguracoes: function () {
+        return http().get(API + 'exportacao/configuracoes');
+      },
+
+      /**
+       * Exporta um ou mais pedidos para um dado fornecedor.
+       * @param {Object} dados Os dados para exportação.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      exportar: function (dados) {
+        if (!dados) {
+          this.exibirMensagem('Dados para exportação são obrigatórios.');
+        }
+
+        return http().post(API + 'exportacao/exportar', dados);
+      },
+
+      /**
+       * Consulta a situação da exportação de um pedido.
+       * @param {number} idPedido O identificador do pedido.
+       * @param {number} idFornecedor O identificador do fornecedor.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      consultarSituacao: function (idPedido, idFornecedor) {
+        return http().post(API + 'exportacao/consultarSituacao', {
+          'idPedido': idPedido, 'idFornecedor': idFornecedor
+        });
       }
     },
 

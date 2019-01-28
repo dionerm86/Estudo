@@ -1525,10 +1525,9 @@ namespace Glass.Data.DAL
                     Referencia = idCompra.ToString(),
                     IdFuncAlt = UserInfo.GetUserInfo.CodUser,
                     ValorAnterior = compra.Situacao.ToString(),
-                    ValorAtual = Glass.Data.Model.Compra.SituacaoEnum.Ativa.ToString(),
-                    NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(sessao, LogAlteracao.TabelaAlteracao.Compra, (int)idCompra),
-                    DataAlt = DateTime.Now
-
+                    ValorAtual = situacaoFinal.ToString(),
+                    NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.Compra, (int)idCompra),
+                    DataAlt = DateTime.Now,
                 };
 
                 LogAlteracaoDAO.Instance.Insert(sessao, logFuncReabrir);

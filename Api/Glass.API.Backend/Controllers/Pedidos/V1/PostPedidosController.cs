@@ -27,7 +27,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="id">O identificador do pedido a ser finalizado.</param>
         /// <returns>Um status HTTP indicando se o pedido foi finalizado.</returns>
         [HttpPost]
-        [Route("{id}/finalizar")]
+        [Route("{id:int}/finalizar")]
         [SwaggerResponse(202, "Pedido finalizado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(300, "Necessário definir se o pedido será enviado para validação no financeiro.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na finalização do pedido.", Type = typeof(MensagemDto))]
@@ -79,7 +79,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="finalizarConferencia">Define se após gerar a conferência a mesma será finalizada.</param>
         /// <returns>Um status HTTP indicando se o pedido foi finalizado.</returns>
         [HttpPost]
-        [Route("{id}/confirmarGerandoConferencia")]
+        [Route("{id:int}/confirmarGerandoConferencia")]
         [SwaggerResponse(202, "Pedido finalizado e gerado conferência.", Type = typeof(MensagemDto))]
         [SwaggerResponse(300, "Necessário definir se o pedido será enviado para validação no financeiro.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na finalização do pedido.", Type = typeof(MensagemDto))]
@@ -142,7 +142,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="dadosEntrada">Dados de entrada do método.</param>
         /// <returns>Um status HTTP indicando se o pedido foi enviado para o financeiro.</returns>
         [HttpPost]
-        [Route("{id}/enviarValidacaoFinanceiro")]
+        [Route("{id:int}/enviarValidacaoFinanceiro")]
         [SwaggerResponse(202, "Pedido enviado para o financeiro.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação no envio do pedido para o financeiro.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado para o filtro informado.", Type = typeof(MensagemDto))]
@@ -183,7 +183,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="id">O identificador do pedido a ser gerado um pedido de produção.</param>
         /// <returns>Um status HTTP indicando se o pedido de produção foi criado.</returns>
         [HttpPost]
-        [Route("{id}/criarProducaoRevenda")]
+        [Route("{id:int}/criarProducaoRevenda")]
         [SwaggerResponse(201, "Pedido de produção criado.", Type = typeof(CriadoDto<int>))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na criação do pedido de produção.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado para o filtro informado.", Type = typeof(MensagemDto))]
@@ -221,7 +221,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="id">O identificador do pedido a ser reaberto.</param>
         /// <returns>Um status HTTP indicando se o pedido foi reaberto.</returns>
         [HttpPost]
-        [Route("{id}/reabrir")]
+        [Route("{id:int}/reabrir")]
         [SwaggerResponse(202, "Pedido reaberto.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na reabertura do pedido.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado para o filtro informado.", Type = typeof(MensagemDto))]
@@ -300,7 +300,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="dados">Dados de entrada do método.</param>
         /// <returns>Um status HTTP que indica se a liberação financeira do pedido foi alterada.</returns>
         [HttpPost]
-        [Route("{id}/alterarLiberacaoFinanceira")]
+        [Route("{id:int}/alterarLiberacaoFinanceira")]
         [SwaggerResponse(202, "Alteração na liberação financeira do pedido feita sem erros.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na liberação financeira do pedido.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado para o filtro informado.", Type = typeof(MensagemDto))]
@@ -348,7 +348,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="id">O identificador do pedido.</param>
         /// <returns>Um status HTTP que indica se o pedido foi colocado em conferência.</returns>
         [HttpPost]
-        [Route("{id}/colocarEmConferencia")]
+        [Route("{id:int}/colocarEmConferencia")]
         [SwaggerResponse(202, "Pedido colocado em conferência sem erros.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado para o filtro informado.", Type = typeof(MensagemDto))]
