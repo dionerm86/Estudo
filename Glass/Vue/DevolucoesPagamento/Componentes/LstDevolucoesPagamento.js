@@ -26,13 +26,12 @@
      */
     obterLinkInserirDevolucao: function () {
       var caixaDiario = GetQueryString('caixaDiario') == 'true';
-      return ('../Cadastros/CadDevolucaoPagto.aspx' + caixaDiario ? '?caixaDiario=true' : '');
+      return '../Cadastros/CadDevolucaoPagto.aspx' + (caixaDiario ? '?caixaDiario=true' : '');
     },
 
     /**
      * Cancela uma devolução de pagamento.
      * @param {Object} item A devolução que será cancelada.
-     * @returns {Promise} Uma Promise com o resultado da busca.
      */
     cancelar: function (item) {
       this.abrirJanela(200, 500, '../Utils/SetMotivoCancReceb.aspx?tipo=devolucaoPagto&id=' + item.id);
@@ -40,17 +39,15 @@
 
     /**
      * Exibe os dados detalhados da devolução do pagamento em um relatório.
-     * @param {number} id A devolução do pagamento que será exibida.
+     * @param {Object} item A devolução do pagamento que será exibida.
      */
-    abrirRelatorioDevolucao: function (id) {
-      var url = '../Relatorios/RelBase.aspx?rel=DevolucaoPagto&idDevolucaoPagto=' + id;
-      this.abrirJanela(600, 800, url);
+    abrirRelatorioDevolucao: function (item) {
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=DevolucaoPagto&idDevolucaoPagto=' + item.id);
     },
 
     /**
      * Abre um popup com o gerenciamento de fotos para a devolução do pagamento.
      * @param {Object} item A devolução do pagamento que terá as fotos gerenciadas.
-     * @returns {Promise} Uma Promise com o resultado da busca.
      */
     abrirGerenciamentoDeFotos: function (item) {
       this.abrirJanela(600, 700, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=devolucaoPagto');

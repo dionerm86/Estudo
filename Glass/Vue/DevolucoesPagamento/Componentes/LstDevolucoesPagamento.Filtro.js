@@ -9,7 +9,7 @@
       required: true,
       twoWay: true,
       validator: Mixins.Validacao.validarObjeto
-    },
+    }
   },
 
   data: function () {

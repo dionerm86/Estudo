@@ -42,7 +42,7 @@
                         <button @click.prevent="cancelar(item)" title="Cancelar" v-if="item.permissoes.cancelar">
                             <img src="../Images/ExcluirGrid.gif"/>
                         </button>
-                        <button @click.prevent="abrirRelatorioDevolucao(item.id)">
+                        <button @click.prevent="abrirRelatorioDevolucao(item)">
                             <img src="../Images/Relatorio.gif" />
                         </button>
                         <button @click.prevent="abrirGerenciamentoDeFotos(item)">

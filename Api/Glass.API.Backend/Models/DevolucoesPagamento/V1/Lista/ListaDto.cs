@@ -42,7 +42,7 @@ namespace Glass.API.Backend.Models.DevolucoesPagamento.V1.Lista
         }
 
         /// <summary>
-        /// Obtém ou define o cliente referente a devolução do pagamento.
+        /// Obtém ou define o cliente referente à devolução do pagamento.
         /// </summary>
         [DataMember]
         [JsonProperty("cliente")]
