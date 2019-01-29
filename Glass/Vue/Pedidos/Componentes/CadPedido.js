@@ -792,6 +792,30 @@
       }
 
       return true;
+    },
+
+    /**
+     * Função que indica se o usuário pode ou não editar pedido do tipo de Reposição
+     * @returns {boolean} Um valor que indica se o o pedido pode ser editado pelo usuário de acordo com a pemissão.
+     */
+    verificarPermissaoEdicaoReposicao: function () {
+      if (this.pedido.tipoVenda === this.configuracoes.tipoVendaReposicao) {
+        return this.configuracoes.emitirPedidoReposicao;
+      } else {
+        return true;
+      }
+    },
+
+    /**
+     * Função que indica se o usuário pode ou não editar pedido do tipo de Reposição
+     * @returns {boolean} Um valor que indica se o o pedido pode ser editado pelo usuário de acordo com a pemissão.
+     */
+    verificarPermissaoEdicaoGarantia: function () {
+      if (this.pedido.tipoVenda === this.configuracoes.tipoVendaGarantia) {
+        return this.configuracoes.emitirPedidoGarantia;
+      } else {
+        return true;
+      }
     }
   },
 
@@ -818,6 +842,9 @@
       this.buscarPedido(id)
         .then(function () {
           if (!vm.pedido || !vm.pedido.permissoes.podeEditar) {
+            vm.redirecionarParaListagem();
+          } else if (!vm.verificarPermissaoEdicaoReposicao() || !vm.verificarPermissaoEdicaoGarantia()) {
+            vm.exibirMensagem('Bloqueio', 'Você não possui permissão para alterar pedidos do tipo ' + vm.pedido.tipoVenda === this.configuracoes.tipoVendaGarantia ? 'Garantia' : 'Reposição' + 'Contate o administrador');
             vm.redirecionarParaListagem();
           }
         });
