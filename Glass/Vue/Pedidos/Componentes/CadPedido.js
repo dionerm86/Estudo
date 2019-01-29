@@ -799,8 +799,9 @@
      * @returns {boolean} Um valor que indica se o o pedido pode ser editado pelo usuário de acordo com a pemissão.
      */
     verificarPermissaoEdicaoReposicao: function () {
-      return this.pedido.tipoVenda === this.configuracoes.tipoVendaReposicao
-        && this.configuracoes.emitirPedidoReposicao;
+      return this.pedido.tipoVenda !== this.configuracoes.tipoVendaReposicao
+        || (this.pedido.tipoVenda === this.configuracoes.tipoVendaReposicao
+        && this.configuracoes.emitirPedidoReposicao);
     },
 
     /**
@@ -808,8 +809,9 @@
      * @returns {boolean} Um valor que indica se o o pedido pode ser editado pelo usuário de acordo com a pemissão.
      */
     verificarPermissaoEdicaoGarantia: function () {
-      return this.pedido.tipoVenda === this.configuracoes.tipoVendaGarantia
-        && this.configuracoes.emitirPedidoGarantia;
+      return this.pedido.tipoVenda !== this.configuracoes.tipoVendaGarantia
+        || (this.pedido.tipoVenda === this.configuracoes.tipoVendaGarantia
+        && this.configuracoes.emitirPedidoGarantia);
     }
   },
 
