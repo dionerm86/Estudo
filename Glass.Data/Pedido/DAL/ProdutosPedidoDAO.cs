@@ -5263,7 +5263,7 @@ namespace Glass.Data.DAL
             // Busca os produtos de pedido inclusos na ordem de carga informada, com os dados que são utilizados para recuperar os totais da ordem de carga.
             var sql = $@"
                 SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={(int)Pedido.TipoPedidoEnum.MaoDeObra}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, 0 AS QtdeVolume, pp.TotM, pp.Peso, {totalProdComDesconto},
-                    pp.ValorIpi, pp.ValorIcms
+                    pp.ValorIpi, pp.ValorIcms, pp.ValorBenef
                 FROM produtos_pedido pp
                     INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
                     INNER JOIN pedido_ordem_carga poc ON (pp.IdPedido = poc.IdPedido)
@@ -5283,7 +5283,7 @@ namespace Glass.Data.DAL
                 UNION ALL
 
                 SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={(int)Pedido.TipoPedidoEnum.MaoDeObra}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, 0 AS QtdeVolume, pp.TotM, pp.Peso, {totalProdComDesconto},
-                    pp.ValorIpi, pp.ValorIcms
+                    pp.ValorIpi, pp.ValorIcms, pp.ValorBenef
                 FROM produtos_pedido pp
                     INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
                     INNER JOIN pedido_ordem_carga poc ON (pp.IdPedido = poc.IdPedido)
@@ -5303,7 +5303,7 @@ namespace Glass.Data.DAL
                 UNION ALL
 
                 SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={(int)Pedido.TipoPedidoEnum.MaoDeObra}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, pp.Qtde AS QtdeVolume, pp.TotM, pp.Peso, {totalProdComDesconto},
-                    pp.ValorIpi, pp.ValorIcms
+                    pp.ValorIpi, pp.ValorIcms, pp.ValorBenef
                 FROM produtos_pedido pp
                     INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
                     INNER JOIN pedido_ordem_carga poc ON (pp.IdPedido = poc.IdPedido)
@@ -5332,7 +5332,8 @@ namespace Glass.Data.DAL
                     Total = f["Total"],
                     ValorIpi = f["ValorIpi"],
                     ValorIcms = f["ValorIcms"],
-                    QtdeVolume = f["QtdeVolume"]
+                    QtdeVolume = f["QtdeVolume"],
+                    ValorBenef = f["ValorBenef"]
                 });
         }
 

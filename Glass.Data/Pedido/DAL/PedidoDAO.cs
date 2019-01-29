@@ -5417,7 +5417,7 @@ namespace Glass.Data.DAL
                         TotM2PendenteTotal = (f.TotM / f.Qtde) * (QtdeProdPed - quantidadePecasProntas),
                         PesoTotal = (f.Peso / f.Qtde) * QtdeProdPed,
                         PesoPendenteTotal = (f.Peso / f.Qtde) * (QtdeProdPed - quantidadePecasProntas),
-                        ValorTotal = (((f.Total + f.ValorIpi + f.ValorIcms) / (decimal)f.Qtde) * (decimal)QtdeProdPed) * (decimal)(1 + (ObtemTaxaFastDelivery(null, f.IdPedido) / 100))
+                        ValorTotal = (((f.Total + f.ValorIpi + f.ValorIcms + f.ValorBenef) / (decimal)f.Qtde) * (decimal)QtdeProdPed) * (decimal)(1 + (ObtemTaxaFastDelivery(null, f.IdPedido) / 100))
                     };
                 }).GroupBy(f => f.IdPedido))
                 {
