@@ -994,33 +994,6 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.Button btnApagarMovEstoqueTrocaDev;
         
         /// <summary>
-        /// txtGerarEstoqueRealNotas control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtGerarEstoqueRealNotas;
-        
-        /// <summary>
-        /// btnGerarEstoqueRealNotas control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnGerarEstoqueRealNotas;
-        
-        /// <summary>
-        /// txtLogGerarEstoqueRealNotas control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLogGerarEstoqueRealNotas;
-        
-        /// <summary>
         /// txtNumNf control.
         /// </summary>
         /// <remarks>
@@ -1165,33 +1138,6 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.TextBox txtLogAtualizarProducaoPedido;
         
         /// <summary>
-        /// lbl2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbl2;
-        
-        /// <summary>
-        /// txtIdNf control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtIdNf;
-        
-        /// <summary>
-        /// btnAlterarEstoque control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAlterarEstoque;
-        
-        /// <summary>
         /// btnAtualizaItensRevendaCarregamento control.
         /// </summary>
         /// <remarks>
@@ -1262,24 +1208,6 @@ namespace Glass.UI.Web.Utils {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtLogEstoqueInicialCliente;
-        
-        /// <summary>
-        /// btnEstoquePosicaoMateriaPrima control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnEstoquePosicaoMateriaPrima;
-        
-        /// <summary>
-        /// txtLogEstoquePosicaoMateriaPrima control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtLogEstoquePosicaoMateriaPrima;
         
         /// <summary>
         /// btnCriarPagtoContasRecebidas control.

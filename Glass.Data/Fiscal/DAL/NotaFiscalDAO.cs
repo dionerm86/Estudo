@@ -1339,59 +1339,6 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica em qual loja o produto deve dar saída.
-        /// Este método foi criado com o intuito de centralizar a decisão da saída do produto conforme a origem da Nota Fiscal.
-        /// Sempre que possível a manutenção do método deve ser feita para garantir que a decisão da movimentação vai ser mantida
-        /// </summary>
-        /// <param name="sessao">Sessão do GDA</param>
-        /// <param name="idLoja">Id da loja que até o momento movimentará o estoque</param>
-        /// <param name="idProdImpressaoChapa"> Id do Produto de Impressao que irá movimentar o estoque</param>
-        /// <param name="idNf">Id da Nota Fiscal</param>
-        /// <param name="idProdPedProducao">Id do Produto Pedido de Produção que irá movimentar o Estoque</param>
-        /// <returns></returns>
-        internal int ObterIdLojaParaMovEstoque(GDASession sessao, uint idLoja, uint idProd, uint? idProdImpressaoChapa, uint? idNf, uint? idProdPedProducao, uint? idTrocaDevolucao)
-        {
-            var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)idProd);
-
-            if ((tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado) || EstoqueConfig.EntradaEstoqueManual)
-            {
-                return (int)idLoja;
-            }
-
-            if (idNf > 0)
-            {
-                return (int)ObtemIdLoja(sessao, (uint)idNf);
-            }
-
-            if (idTrocaDevolucao > 0)
-            {
-                var etiquetasTrocadas = ChapaTrocadaDevolvidaDAO.Instance.BuscarEtiquetasJaEntreguesPelaTrocaDevolucao(sessao, (int)idTrocaDevolucao).Split(',').Where(f => !string.IsNullOrWhiteSpace(f.ToString())).ToList();
-                foreach (var etiqueta in etiquetasTrocadas)
-                {
-                    var idProdNf = ProdutoImpressaoDAO.Instance.ObtemIdProdNf(sessao, etiqueta, ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal);
-                    var idProdEtiqueta = ProdutosNfDAO.Instance.GetIdProdByEtiqueta(sessao, etiqueta);
-                    if (idProdEtiqueta == idProd)
-                        idNf = ProdutosNfDAO.Instance.ObtemIdNf(sessao, idProdNf);
-                }
-            }
-
-            if (idProdImpressaoChapa > 0)
-            {
-                idNf = (uint)ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, (uint)idProdImpressaoChapa);
-            }
-
-            if (idProdPedProducao > 0)
-            {
-                var numEtiqueta = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<string>(sessao, "NumEtiqueta", $"IdProdPedProducao={idProdPedProducao}");
-                var idProdImpressaoPeca = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(sessao, numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
-                idProdImpressaoChapa = (uint)ChapaCortePecaDAO.Instance.ObtemIdProdImpressaoChapa(sessao, (int)idProdImpressaoPeca);
-                idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, (uint)idProdImpressaoChapa) ?? 0;
-            }
-
-            return idNf > 0 ? (int)ObtemIdLoja(sessao, (uint)idNf) : (int)idLoja;
-        }
-
-        /// <summary>
         /// Cria o PagtoNotaFiscal para a NFe ou NFCe.
         /// </summary>
         private void CriarPagtoNotaFiscal(GDATransaction sessao, NotaFiscal notaFiscal, List<int> idsLiberarPedido, ContasReceber[] contasReceber, string idsPedidos)
@@ -3101,7 +3048,7 @@ namespace Glass.Data.DAL
                     // Recupera a quantidade que deverá ser mostrada na NF
                     decimal qtdPnf =
                         !nfeComplAjuste ?
-                            (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(pnf) :
+                            (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(null, pnf, false) :
                             /* Chamado 32888. */
                             nf.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Complementar ?
                                 (decimal)pnf.Qtde : 1;
@@ -5616,9 +5563,9 @@ namespace Glass.Data.DAL
                 #region Baixa/Credita estoque fiscal/real
 
                 // Se for entrada e ainda não tiver dado entrada no estoque, credita estoque fiscal
-                if (nf.TipoDocumento == 1)
+                if (nf.TipoDocumento == (int)NotaFiscal.TipoDoc.Entrada)
                 {
-                    if (nf.EntrouEstoque == false)
+                    if (!nf.EntrouEstoque)
                     {
                         var mensagemLog = string.Empty;
 
@@ -5671,7 +5618,7 @@ namespace Glass.Data.DAL
                             // Altera o estoque real dos produtos
                             if (nf.GerarEstoqueReal && !EstoqueConfig.EntradaEstoqueManual)
                             {
-                                if (!MovEstoqueDAO.Instance.AlteraEstoque(session, p.IdProd))
+                                if (!GrupoProdDAO.Instance.AlterarEstoque(session, (int)p.IdProd))
                                 {
                                     var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
                                     logMovNotaFiscal.IdNf = nf.IdNf;
@@ -5682,96 +5629,80 @@ namespace Glass.Data.DAL
                                     LogMovimentacaoNotaFiscalDAO.Instance.Insert(session, logMovNotaFiscal);
                                 }
 
-                                bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-
-                                MovEstoqueDAO.Instance.CreditaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
-                                    (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
-
-                                objPersistence.ExecuteCommand(session, "Update produtos_nf Set qtdeEntrada=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p).ToString().Replace(",", ".") +
+                                objPersistence.ExecuteCommand(session, "Update produtos_nf Set qtdeEntrada=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p, false).ToString().Replace(",", ".") +
                                     " Where idProdNf=" + p.IdProdNf);
                             }
-
-                            //Altera o estoque da materia-prima
+                            
                             MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaNotaFiscal(session, (int)p.IdProd, (int)p.IdNf, (int)p.IdProdNf, (decimal)p.TotM, MovEstoque.TipoMovEnum.Entrada);
+                        }
+
+                        if (!EstoqueConfig.EntradaEstoqueManual)
+                        {
+                            MovEstoqueDAO.Instance.CreditaEstoqueNotaFiscal(session, nf, lstProd);
                         }
 
                         objPersistence.ExecuteCommand(session, "Update nota_fiscal Set entrouEstoque=true Where idNf=" + nf.IdNf);
                     }
                 }
-                // Se for saída e ainda não tiver dado saída no estoque, baixa estoque fiscal
-                else if (nf.TipoDocumento == 2)
+                else if (nf.TipoDocumento == (int)NotaFiscal.TipoDoc.Saída && !nf.SaiuEstoque)
                 {
-                    if (nf.SaiuEstoque == false)
+                    MovEstoqueDAO.Instance.BaixaEstoqueRealNotaFiscal(session, nf, lstProd);
+
+                    if (!nf.GerarEstoqueReal)
                     {
-                        if (!nf.GerarEstoqueReal)
+                        var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
+                        logMovNotaFiscal.IdNf = nf.IdNf;
+                        logMovNotaFiscal.MensagemLog = "Nota não está configurada para geração de estoque Real. ";
+                        logMovNotaFiscal.DataCad = DateTime.Now;
+                        logMovNotaFiscal.Usucad = UserInfo.GetUserInfo.CodUser;
+                        LogMovimentacaoNotaFiscalDAO.Instance.Insert(session, logMovNotaFiscal);
+                    }
+
+                    foreach (ProdutosNf p in lstProd)
+                    {
+                        var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd((int)p.IdProd);
+                        var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)p.IdProd);
+
+                        var mensagemLog = string.Empty;
+
+                        // Altera o estoque somente se estiver marcado para alterar no cadastro de subgrupo, no cadastro de CFOP e
+                        // se o tipo de ambiente da NFe estiver em produção
+                        if (Glass.Data.DAL.GrupoProdDAO.Instance.NaoAlterarEstoqueFiscal(idGrupoProd, idSubgrupoProd))
+                            mensagemLog += "Grupo/Subgrupo do produto está configurado para não gerar estoque fiscal. ";
+                        if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+                            mensagemLog += "O tipo de ambiente da nota está configurado como Homologação, o que impede a geração estoque fiscal. ";
+                        if ((nf.IdNaturezaOperacao != null && !NaturezaOperacaoDAO.Instance.AlterarEstoqueFiscal(nf.IdNaturezaOperacao.Value)))
+                            mensagemLog += "A natureza de operação da nota está configurada para não gerar estoque fiscal. ";
+
+                        if (!string.IsNullOrEmpty(mensagemLog))
                         {
                             var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
                             logMovNotaFiscal.IdNf = nf.IdNf;
-                            logMovNotaFiscal.MensagemLog = "Nota não está configurada para geração de estoque Real. ";
+                            logMovNotaFiscal.IdProdNf = p.IdProdNf;
+                            logMovNotaFiscal.MensagemLog = mensagemLog;
                             logMovNotaFiscal.DataCad = DateTime.Now;
                             logMovNotaFiscal.Usucad = UserInfo.GetUserInfo.CodUser;
                             LogMovimentacaoNotaFiscalDAO.Instance.Insert(session, logMovNotaFiscal);
                         }
 
-                        foreach (ProdutosNf p in lstProd)
+                        MovEstoqueFiscalDAO.Instance.BaixaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value,
+                            p.IdNaturezaOperacao > 0 ? p.IdNaturezaOperacao.Value : nf.IdNaturezaOperacao.Value, p.IdNf, p.IdProdNf,
+                            (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p, true), false);
+
+                        // Altera o estoque real dos produtos
+                        if (nf.GerarEstoqueReal && !GrupoProdDAO.Instance.AlterarEstoque(session, (int)p.IdProd))
                         {
-                            var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd((int)p.IdProd);
-                            var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)p.IdProd);
-
-                            var mensagemLog = string.Empty;
-
-                            // Altera o estoque somente se estiver marcado para alterar no cadastro de subgrupo, no cadastro de CFOP e
-                            // se o tipo de ambiente da NFe estiver em produção
-                            if (Glass.Data.DAL.GrupoProdDAO.Instance.NaoAlterarEstoqueFiscal(idGrupoProd, idSubgrupoProd))
-                                mensagemLog += "Grupo/Subgrupo do produto está configurado para não gerar estoque fiscal. ";
-                            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
-                                mensagemLog += "O tipo de ambiente da nota está configurado como Homologação, o que impede a geração estoque fiscal. ";
-                            if ((nf.IdNaturezaOperacao != null && !NaturezaOperacaoDAO.Instance.AlterarEstoqueFiscal(nf.IdNaturezaOperacao.Value)))
-                                mensagemLog += "A natureza de operação da nota está configurada para não gerar estoque fiscal. ";
-
-                            if (!string.IsNullOrEmpty(mensagemLog))
-                            {
-                                var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
-                                logMovNotaFiscal.IdNf = nf.IdNf;
-                                logMovNotaFiscal.IdProdNf = p.IdProdNf;
-                                logMovNotaFiscal.MensagemLog = mensagemLog;
-                                logMovNotaFiscal.DataCad = DateTime.Now;
-                                logMovNotaFiscal.Usucad = UserInfo.GetUserInfo.CodUser;
-                                LogMovimentacaoNotaFiscalDAO.Instance.Insert(session, logMovNotaFiscal);
-                            }
-
-                            MovEstoqueFiscalDAO.Instance.BaixaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value,
-                                p.IdNaturezaOperacao > 0 ? p.IdNaturezaOperacao.Value : nf.IdNaturezaOperacao.Value, p.IdNf, p.IdProdNf,
-                                (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p, true), false);
-
-                            // Altera o estoque real dos produtos
-                            if (nf.GerarEstoqueReal)
-                            {
-                                if (!MovEstoqueDAO.Instance.AlteraEstoque(session, p.IdProd))
-                                {
-                                    var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
-                                    logMovNotaFiscal.IdNf = nf.IdNf;
-                                    logMovNotaFiscal.IdProdNf = p.IdProdNf;
-                                    logMovNotaFiscal.MensagemLog = "Grupo/Subgrupo do produto está configurado para não gerar estoque real. ";
-                                    logMovNotaFiscal.DataCad = DateTime.Now;
-                                    logMovNotaFiscal.Usucad = UserInfo.GetUserInfo.CodUser;
-                                    LogMovimentacaoNotaFiscalDAO.Instance.Insert(session, logMovNotaFiscal);
-                                }
-
-                                bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-
-                                MovEstoqueDAO.Instance.BaixaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
-                                    (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
-
-                                objPersistence.ExecuteCommand(session, "Update produtos_nf Set qtdeSaida=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(p).ToString().Replace(",", ".") +
-                                    " Where idProdNf=" + p.IdProdNf);
-                            }
+                            var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
+                            logMovNotaFiscal.IdNf = nf.IdNf;
+                            logMovNotaFiscal.IdProdNf = p.IdProdNf;
+                            logMovNotaFiscal.MensagemLog = "Grupo/Subgrupo do produto está configurado para não gerar estoque real. ";
+                            logMovNotaFiscal.DataCad = DateTime.Now;
+                            logMovNotaFiscal.Usucad = UserInfo.GetUserInfo.CodUser;
+                            LogMovimentacaoNotaFiscalDAO.Instance.Insert(session, logMovNotaFiscal);
                         }
-
-                        objPersistence.ExecuteCommand(session, "Update nota_fiscal Set saiuEstoque=true Where idNf=" + nf.IdNf);
                     }
+
+                    objPersistence.ExecuteCommand(session, "Update nota_fiscal Set saiuEstoque=true Where idNf=" + nf.IdNf);
                 }
 
                 #endregion
@@ -5783,52 +5714,39 @@ namespace Glass.Data.DAL
                 #region Estorna estoque fiscal/real
 
                 // Se for entrada, estorna produtos baixando estoque fiscal
-                if (nf.TipoDocumento == 1)
+                if (nf.TipoDocumento == (int)NotaFiscal.TipoDoc.Entrada && !nf.SaiuEstoque)
                 {
-                    if (nf.SaiuEstoque == false)
+                    MovEstoqueDAO.Instance.BaixaEstoqueRealNotaFiscal(session, nf, lstProd);
+
+                    foreach (ProdutosNf p in lstProd)
                     {
-                        foreach (ProdutosNf p in lstProd)
-                        {
-                            MovEstoqueFiscalDAO.Instance.BaixaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value,
-                                p.IdNaturezaOperacao > 0 ? p.IdNaturezaOperacao.Value : nf.IdNaturezaOperacao.Value, p.IdNf, p.IdProdNf,
-                                (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p, true), false);
+                        MovEstoqueFiscalDAO.Instance.BaixaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value,
+                            p.IdNaturezaOperacao > 0 ? p.IdNaturezaOperacao.Value : nf.IdNaturezaOperacao.Value, p.IdNf, p.IdProdNf,
+                            (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p, true), false);
 
-                            if (nf.GerarEstoqueReal)
-                            {
-                                MovEstoqueDAO.Instance.BaixaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
-                                    (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
-                            }
-
-                            //Altera o estoque da materia-prima
-                            MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaNotaFiscal(session, (int)p.IdProd, (int)p.IdNf, (int)p.IdProdNf, (decimal)p.TotM, MovEstoque.TipoMovEnum.Saida);
-                        }
-
-                        objPersistence.ExecuteCommand(session, "Update nota_fiscal Set saiuEstoque=true Where idNf=" + nf.IdNf);
+                        MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaNotaFiscal(session, (int)p.IdProd, (int)p.IdNf, (int)p.IdProdNf, (decimal)p.TotM, MovEstoque.TipoMovEnum.Saida);
                     }
+
+                    objPersistence.ExecuteCommand(session, "Update nota_fiscal Set saiuEstoque=true Where idNf=" + nf.IdNf);
                 }
-                // Se for saída, estorna produtos creditando estoque fiscal
-                else if (nf.TipoDocumento == 2)
+                else if (nf.TipoDocumento == (int)NotaFiscal.TipoDoc.Saída && !nf.EntrouEstoque)
                 {
-                    if (nf.EntrouEstoque == false)
+                    MovEstoqueDAO.Instance.CreditaEstoqueNotaFiscal(session, nf, lstProd);
+
+                    foreach (ProdutosNf p in lstProd)
                     {
-                        foreach (ProdutosNf p in lstProd)
+                        MovEstoqueFiscalDAO.Instance.CreditaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value,
+                            p.IdNaturezaOperacao > 0 ? p.IdNaturezaOperacao.Value : nf.IdNaturezaOperacao.Value, nf.IdNf, p.IdProdNf,
+                            (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p, true), false, true);
+
+                        // Credita o estoque real
+                        if (nf.GerarEstoqueReal)
                         {
-                            MovEstoqueFiscalDAO.Instance.CreditaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value,
-                                p.IdNaturezaOperacao > 0 ? p.IdNaturezaOperacao.Value : nf.IdNaturezaOperacao.Value, nf.IdNf, p.IdProdNf,
-                                (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p, true), false, true);
-
-                            // Credita o estoque real
-                            if (nf.GerarEstoqueReal)
-                            {
-                                MovEstoqueDAO.Instance.CreditaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
-                                    (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
-
-                                objPersistence.ExecuteCommand(session, "Update produtos_nf Set qtdeSaida=0 Where idProdNf=" + p.IdProdNf);
-                            }
+                            objPersistence.ExecuteCommand(session, "Update produtos_nf Set qtdeSaida=0 Where idProdNf=" + p.IdProdNf);
                         }
-
-                        objPersistence.ExecuteCommand(session, "Update nota_fiscal Set entrouEstoque=true Where idNf=" + nf.IdNf);
                     }
+
+                    objPersistence.ExecuteCommand(session, "Update nota_fiscal Set entrouEstoque=true Where idNf=" + nf.IdNf);
                 }
 
                 #endregion
@@ -8983,7 +8901,7 @@ namespace Glass.Data.DAL
                             // Credita o estoque real
                             if (nf.GerarEstoqueReal && !EstoqueConfig.EntradaEstoqueManual)
                             {
-                                if (!MovEstoqueDAO.Instance.AlteraEstoque(transaction, p.IdProd))
+                                if (!GrupoProdDAO.Instance.AlterarEstoque(transaction, (int)p.IdProd))
                                 {
                                     var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
                                     logMovNotaFiscal.IdNf = nf.IdNf;
@@ -8994,18 +8912,17 @@ namespace Glass.Data.DAL
                                     LogMovimentacaoNotaFiscalDAO.Instance.Insert(transaction, logMovNotaFiscal);
                                 }
 
-                                bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-
-                                MovEstoqueDAO.Instance.CreditaEstoqueNotaFiscal(transaction, p.IdProd, nf.IdLoja.Value, idNf, p.IdProdNf,
-                                    (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(transaction, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
-
-                                objPersistence.ExecuteCommand(transaction, "update produtos_nf set qtdeEntrada=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(transaction, p).ToString().Replace(",", ".") +
+                                objPersistence.ExecuteCommand(transaction, "update produtos_nf set qtdeEntrada=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(transaction, p, false).ToString().Replace(",", ".") +
                                     " where idProdNf=" + p.IdProdNf);
                             }
 
                             //Altera o estoque da materia-prima
                             MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaNotaFiscal(transaction, (int)p.IdProd, (int)p.IdNf, (int)p.IdProdNf, (decimal)p.TotM, MovEstoque.TipoMovEnum.Entrada);
+                        }
+
+                        if (!EstoqueConfig.EntradaEstoqueManual)
+                        {
+                            MovEstoqueDAO.Instance.CreditaEstoqueNotaFiscal(transaction, nf, lstProdNf);
                         }
 
                         // Altera a situação da nota

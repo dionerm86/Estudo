@@ -636,6 +636,13 @@
     <Compile Include="Helper\Calculos\Extensoes\ContainerCalculoExtensions.cs" />
     <Compile Include="Helper\Calculos\ValorBruto.cs" />
     <Compile Include="Helper\Calculos\ValorUnitario.cs" />
+    <Compile Include="Helper\Estoque\EstoqueStrategyFactory.cs" />
+    <Compile Include="Helper\Estoque\Estrategia\BaseStrategy.cs" />
+    <Compile Include="Helper\Estoque\Estrategia\Cenarios\GenericaStrategy.cs" />
+    <Compile Include="Helper\Estoque\Estrategia\Enum\Cenario.cs" />
+    <Compile Include="Helper\Estoque\Estrategia\IEstoqueStrategy.cs" />
+    <Compile Include="Helper\Estoque\Estrategia\Models\MovimentacaoDto.cs" />
+    <Compile Include="Helper\Estoque\Estrategia\SemImplementacaoStrategy.cs" />
     <Compile Include="Helper\ICalculoIcmsSt.cs" />
     <Compile Include="Helper\IntermacConfig.cs" />
     <Compile Include="Helper\LogArquivo.cs" />

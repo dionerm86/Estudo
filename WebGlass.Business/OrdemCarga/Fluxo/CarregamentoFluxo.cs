@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using GDA;
+using Glass;
+using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
-using System.Web;
-using GDA;
-using Glass.Configuracoes;
 using Glass.Data.Model;
 using Glass.Estoque.Negocios.Entidades;
-using Glass;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 
 namespace WebGlass.Business.OrdemCarga.Fluxo
 {
@@ -189,8 +189,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
             uint idVolume = 0;
             uint idProdImpressaoChapa = 0;
             uint idLoja = 0;
-            uint idLojaTransferencia = 0;
-            List<DetalhesBaixaEstoque> dados = null;
 
             #region Multiplas Leituras com "P"
 
@@ -326,7 +324,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     //Valida os filtros
                     ValidaFiltros(trans, idCliente.GetValueOrDefault(), nomeCli, etiqueta, idPedidoExp, idOc, idPedidoFiltro, altura, largura, numEtqFiltro, idClienteExterno, nomeClienteExterno, idPedidoExterno);
 
-                    //Faz a validação da leitura
                     ValidaLeitura(trans, idCarregamento, etiqueta, idPedidoExp);
 
                     var etiquetaPedido = !etiqueta.ToUpper().Substring(0, 1).Equals("N")
@@ -335,36 +332,13 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                     #region Volume
 
-                    //Realiza a leitura
-                    //Verifica se é etiqueta de volume
                     if (etiqueta.ToUpper().Substring(0, 1).Equals("V"))
                     {
                         idVolume = Glass.Conversoes.StrParaUint(etiqueta.Substring(1));
                         var idPedido = VolumeDAO.Instance.GetIdPedido(trans, idVolume);
-                        idLoja = PedidoDAO.Instance.ObtemIdLoja(trans, idPedido);
                         var produtos = VolumeProdutosPedidoDAO.Instance.GetList(trans, idVolume.ToString());
-                        var transferencia = OrdemCargaDAO.Instance.TemTransferencia(trans, idCarregamento, idPedido);
 
-                        dados = produtos.Select(prod => new DetalhesBaixaEstoque()
-                        {
-                            IdProdPed = (int)prod.IdProdPed,
-                            Qtde = prod.Qtde,
-                            DescricaoBaixa = prod.DescProd
-                        }).ToList();
-
-                        //Se for transferencia usa a loja de quem esta fazendo a leitura.
-                        if (transferencia)
-                            idLoja = UserInfo.GetUserInfo.IdLoja;
-
-                        //Baixa o estoque
-                        Pedido.Fluxo.AlterarEstoque.Instance.BaixarEstoque(trans, idLoja, dados, idVolume, null, false);
-
-                        //Se for transferencia credita o estoque para a loja que for transferir
-                        if (transferencia)
-                        {
-                            idLojaTransferencia = PedidoDAO.Instance.ObtemIdLoja(trans, idPedido);
-                            Pedido.Fluxo.AlterarEstoque.Instance.CreditaEstoque(trans, idLojaTransferencia, dados);
-                        }
+                        MovEstoqueDAO.Instance.BaixaEstoqueVolume(trans, idPedido, produtos);
                     }
 
                     #endregion
@@ -378,8 +352,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         var idRetalho = tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho ?
                             Glass.Conversoes.StrParaUint(etiqueta.Substring(1, etiqueta.IndexOf('-') - 1)) : 0;
 
-                        idLoja = PedidoDAO.Instance.ObtemIdLoja(trans, idPedidoExp.Value);
-                        var transferencia = OrdemCargaDAO.Instance.TemTransferencia(trans, idCarregamento, idPedidoExp.Value);
                         var idProd = tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal ?
                             ProdutosNfDAO.Instance.GetIdProdByEtiqueta(trans, etiqueta) : RetalhoProducaoDAO.Instance.ObtemIdProd(trans, idRetalho);
 
@@ -391,35 +363,20 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         if (prodsPed == null)
                             throw new Exception("Produto não encontrado.");
 
-                        var prodPed = Glass.MetodosExtensao.Agrupar(prodsPed.Where(f => f.Qtde > f.QtdSaida), new string[] { "IdProd" }, new string[] { "Qtde" }).Where(f => f.IdProd == idProd).FirstOrDefault();
+                        var prodPed = Glass.MetodosExtensao.Agrupar(prodsPed.Where(f => f.Qtde > f.QtdSaida), new string[] { "IdProd" }, new string[] { "Qtde" }).FirstOrDefault(f => f.IdProd == idProd);
                         idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(trans, etiqueta, tipoEtiqueta);
 
                         if (prodPed == null)
                             throw new Exception("Produto não encontrado.");
 
-                        //Dados que seram feitos a baixa no estoque
-                        dados = new List<DetalhesBaixaEstoque>()
+                        MovEstoqueDAO.Instance.BaixaEstoqueChapa(trans, (int)prodPed.IdProdPed, idProdImpressaoChapa);
+
+                        PedidoDAO.Instance.MarcaPedidoEntregue(trans, prodPed.IdPedido);
+
+                        if (PedidoDAO.Instance.GetTipoPedido(trans, prodPed.IdPedido) != Glass.Data.Model.Pedido.TipoPedidoEnum.Producao)
                         {
-                            new DetalhesBaixaEstoque()
-                            {
-                                IdProdPed = (int)prodPed.IdProdPed,
-                                DescricaoBaixa = prodPed.DescrProduto,
-                                Qtde = 1
-                            }
-                        };
-
-                        //Se for transferencia usa a loja de quem esta fazendo a leitura.
-                        if (transferencia)
-                            idLoja = UserInfo.GetUserInfo.IdLoja;
-
-                        //Baixa o estoque
-                        Pedido.Fluxo.AlterarEstoque.Instance.BaixarEstoque(trans, idLoja, dados, null, idProdImpressaoChapa, false);
-
-                        //Se for transferencia credita o estoque para a loja que for transferir
-                        if (transferencia)
-                        {
-                            idLojaTransferencia = PedidoDAO.Instance.ObtemIdLoja(trans, idPedidoExp.Value);
-                            Pedido.Fluxo.AlterarEstoque.Instance.CreditaEstoque(trans, idLojaTransferencia, dados);
+                            ProdutoLojaDAO.Instance.RecalcularReserva(trans, (int)idLoja, new List<int> { (int)prodPed.IdProd });
+                            ProdutoLojaDAO.Instance.RecalcularLiberacao(trans, (int)idLoja, new List<int> { (int)prodPed.IdProd });
                         }
 
                         //Faz o vinculo da chapa no corte para que a mesma não possa ser usada novamente
@@ -543,82 +500,46 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     {
                         transaction.BeginTransaction();
 
-                        if (string.IsNullOrEmpty(idsItensCarregamento) &&
-                            idCarregamentoEstornar.GetValueOrDefault(0) > 0)
-                            idsItensCarregamento = ItemCarregamentoDAO.Instance.GetIdsItemCarregamento(transaction, idCarregamentoEstornar.Value,
-                               idCliente, idOrdemCarga, idPedido, numEtiqueta, altura, largura);
+                        if (string.IsNullOrEmpty(idsItensCarregamento) && idCarregamentoEstornar.GetValueOrDefault(0) > 0)
+                        {
+                            idsItensCarregamento = ItemCarregamentoDAO.Instance.GetIdsItemCarregamento(
+                               transaction,
+                               idCarregamentoEstornar.Value,
+                               idCliente,
+                               idOrdemCarga,
+                               idPedido,
+                               numEtiqueta,
+                               altura,
+                               largura);
+                        }
 
                         /* Chamado 51701.
                          * Variável criada para salvar o ID do pedido com a situação de produção dele,
                          * dessa forma, o pedido será atualizado somente uma vez, ao invés de ser atualizado após o estorno de cada peça. */
                         var idsPedidoSituacaoProducao = new Dictionary<int, SituacaoProdutoProducao>();
 
-                        //Credita o estoque
                         foreach (var item in idsItensCarregamento.Split(','))
                         {
                             var itemCarregamento = ItemCarregamentoDAO.Instance.GetElement(transaction, Glass.Conversoes.StrParaUint(item));
 
                             if (!itemCarregamento.Carregado)
+                            {
                                 continue;
+                            }
 
-                            var idLoja = PedidoDAO.Instance.ObtemIdLoja(transaction, itemCarregamento.IdPedido);
-                            var dados = new List<DetalhesBaixaEstoque>();
-                            var transferencia = false;
-
-                            if (itemCarregamento.IdVolume.GetValueOrDefault(0) > 0)
+                            if (itemCarregamento.IdVolume > 0)
                             {
                                 var produtos = VolumeProdutosPedidoDAO.Instance.GetList(transaction, itemCarregamento.IdVolume.Value.ToString());
-                                transferencia = OrdemCargaDAO.Instance.TemTransferencia
-                                    (transaction, itemCarregamento.IdCarregamento, itemCarregamento.IdPedido);
-
-                                foreach (var prod in produtos)
-                                    dados.Add
-                                        (new DetalhesBaixaEstoque()
-                                        {
-                                            IdProdPed = (int)prod.IdProdPed,
-                                            Qtde = prod.Qtde,
-                                            DescricaoBaixa = prod.DescProd
-                                        });
-
-                                //Se for transferencia usa a loja de quem esta fazendo a leitura.
-                                if (transferencia)
-                                    idLoja = UserInfo.GetUserInfo.IdLoja;
-
-                                Pedido.Fluxo.AlterarEstoque.Instance.EstornaBaixaEstoque
-                                    (transaction, idLoja, dados, itemCarregamento.IdVolume.Value, null);
-
-                                //Se for transferencia estorna o estoque para da loja da transferencia
-                                if (transferencia)
-                                {
-                                    var idLojaTransferencia = PedidoDAO.Instance.ObtemIdLoja(transaction, itemCarregamento.IdPedido);
-                                    Pedido.Fluxo.AlterarEstoque.Instance.EstornoCreditaEstoque(transaction, idLojaTransferencia, dados);
-                                }
+                                MovEstoqueDAO.Instance.CreditaEstoqueEstornoVolume(transaction, (int)itemCarregamento.IdPedido, (int)itemCarregamento.IdVolume, produtos);
                             }
                             else if (itemCarregamento.IdProdImpressaoChapa.GetValueOrDefault(0) > 0)
                             {
                                 var prodsPed = ProdutosPedidoDAO.Instance.GetByPedidoProdutoForExpCarregamento(transaction, itemCarregamento.IdPedido, itemCarregamento.IdProd.Value, true);
                                 var prodPed = MetodosExtensao.Agrupar(prodsPed.Where(f => f.QtdSaida > 0), new string[] { "IdProd" }, new string[] { "Qtde" })
-                                    .Where(f => f.IdProd == itemCarregamento.IdProd)
-                                    .FirstOrDefault();
-                                transferencia = OrdemCargaDAO.Instance.TemTransferencia(transaction, itemCarregamento.IdCarregamento, itemCarregamento.IdPedido);
+                                    .FirstOrDefault(f => f.IdProd == itemCarregamento.IdProd);
 
                                 if (prodPed == null)
                                     throw new Exception("Produto não encontrado.");
-
-                                //Dados que seram feitos a baixa no estoque
-                                dados = new List<DetalhesBaixaEstoque>()
-                                {
-                                    new DetalhesBaixaEstoque()
-                                    {
-                                        IdProdPed = (int)prodPed.IdProdPed,
-                                        DescricaoBaixa = prodPed.DescrProduto,
-                                        Qtde = 1
-                                    }
-                                };
-
-                                //Se for transferencia usa a loja de quem esta fazendo a leitura.
-                                if (transferencia)
-                                    idLoja = UserInfo.GetUserInfo.IdLoja;
 
                                 //Remove no produto_impressão o id do pedido de expedição
                                 ProdutoImpressaoDAO.Instance.AtualizaPedidoExpedicao
@@ -630,16 +551,11 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                 //Remove o vinculo no corte
                                 ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoChapa(transaction, itemCarregamento.IdProdImpressaoChapa.Value);
 
-                                //Estorna a baixa do estoque
-                                Pedido.Fluxo.AlterarEstoque.Instance.EstornaBaixaEstoque
-                                    (transaction, idLoja, dados, null, itemCarregamento.IdProdImpressaoChapa.Value);
-
-                                //Se for transferencia estorna o estoque para da loja da transferencia
-                                if (transferencia)
-                                {
-                                    var idLojaTransferencia = PedidoDAO.Instance.ObtemIdLoja(transaction, itemCarregamento.IdPedido);
-                                    Pedido.Fluxo.AlterarEstoque.Instance.EstornoCreditaEstoque(transaction, idLojaTransferencia, dados);
-                                }
+                                MovEstoqueDAO.Instance.CreditaEstoqueEstornoCarregamentoExpedicaoChapa(
+                                    transaction,
+                                    (int)itemCarregamento.IdPedido,
+                                    (int)itemCarregamento.IdProdImpressaoChapa.Value,
+                                    new List<ProdutosPedido> { prodPed });
 
                                 //Marca o retalho como vendido
                                 var idRetalho = ProdutoImpressaoDAO.Instance.ObtemIdRetalho
@@ -655,9 +571,11 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                             }
 
                             if (itemCarregamento.IdProdPedProducao.GetValueOrDefault() > 0)
+                            {
                                 LogAlteracaoDAO.Instance.LogProdPedProducao(transaction,
                                     ProdutoPedidoProducaoDAO.Instance.GetElementByPrimaryKey(transaction, itemCarregamento.IdProdPedProducao.Value),
                                     LogAlteracaoDAO.SequenciaObjeto.Novo);
+                            }
                         }
 
                         // Percorre cada pedido salvo no dicionário de ID de pedido com a situação de produção dele.

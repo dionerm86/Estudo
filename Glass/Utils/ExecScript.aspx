@@ -685,25 +685,6 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:TextBox ID="txtGerarEstoqueRealNotas" runat="server"></asp:TextBox>
-                </td>
-                <td class="style1">
-                    <asp:Button ID="btnGerarEstoqueRealNotas" runat="server" Text="Gerar movimentações estoque notas"
-                        OnClick="btnGerarEstoqueRealNotas_Click" />
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <asp:TextBox ID="txtLogGerarEstoqueRealNotas" runat="server" Height="100px" Width="600px"
-                        TextMode="MultiLine"></asp:TextBox>
-                </td>
-            </tr>
-        </table>
-        <br />
-        <br />
-        <table cellspacing="5" cellpadding="5">
-            <tr>
-                <td class="style1">
                     Num. Nota Fiscal
                     <asp:TextBox ID="txtNumNf" runat="server"></asp:TextBox>
                 </td>
@@ -797,8 +778,8 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnAtualizarProducaoPedido" runat="server"
-                        Text="Atualizar setor e situação do produto na produção"
+                    <asp:Button ID="btnAtualizarProducaoPedido" runat="server" 
+                        Text="Atualizar setor e situação do produto na produção" 
                         onclick="btnAtualizarProducaoPedido_Click"  />
                 </td>
             </tr>
@@ -811,28 +792,9 @@
         </table>
         <table cellspacing="5" cellpadding="5">
             <tr>
-                <td>
-                    <asp:Label ID="lbl2" runat="server"
-                        Text="Id NF dar saída/entrada estoque (Autorizadas na Sefaz em outro PC)"></asp:Label>
-                    <asp:TextBox ID="txtIdNf" runat="server"></asp:TextBox>
-                </td>
-                <td>
-                    <asp:Button ID="btnAlterarEstoque" runat="server" Text="Alterar Estoque"
-                        OnClick="btnAlterarEstoque_Click" />
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    &nbsp;</td>
-            </tr>
-        </table>
-        <br />
-        <br />
-        <table cellspacing="5" cellpadding="5">
-            <tr>
                 <td class="style1">
-                    <asp:Button ID="btnAtualizaItensRevendaCarregamento" runat="server"
-                        Text="Atualizar itens revenda carregamento"
+                    <asp:Button ID="btnAtualizaItensRevendaCarregamento" runat="server" 
+                        Text="Atualizar itens revenda carregamento" 
                         onclick="btnAtualizaItensRevendaCarregamento_Click"   />
                 </td>
             </tr>
@@ -848,7 +810,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnCorrigirProducaoCarregamento" runat="server"
+                    <asp:Button ID="btnCorrigirProducaoCarregamento" runat="server" 
                         Text="Corrigir Produção Carregamento" OnClick="btnCorrigirProducaoCarregamento_Click" />
                 </td>
             </tr>
@@ -878,7 +840,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnEstoqueInicialCliente" runat="server"
+                    <asp:Button ID="btnEstoqueInicialCliente" runat="server" 
                         Text="Corrigir Estoque Inicial Cliente" OnClick="btnEstoqueInicialCliente_Click"  />
                 </td>
             </tr>
@@ -894,23 +856,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnEstoquePosicaoMateriaPrima" runat="server"
-                        Text="Ajustar estoque com posição da materia-prima" OnClick="btnEstoquePosicaoMateriaPrima_Click"   />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <asp:TextBox ID="txtLogEstoquePosicaoMateriaPrima" runat="server" Height="100px" Width="600px"
-                        TextMode="MultiLine"></asp:TextBox>
-                </td>
-            </tr>
-        </table>
-        <br />
-        <br />
-        <table cellspacing="5" cellpadding="5">
-            <tr>
-                <td class="style1">
-                    <asp:Button ID="btnCriarPagtoContasRecebidas" runat="server"
+                    <asp:Button ID="btnCriarPagtoContasRecebidas" runat="server" 
                         Text="Criar pagamento contas recebidas" OnClick="btnCriarPagtoContasRecebidas_Click"    />
                 </td>
             </tr>
@@ -945,7 +891,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnClientesCreditoIncorreto" runat="server"
+                    <asp:Button ID="btnClientesCreditoIncorreto" runat="server" 
                         Text="Buscar clientes com crédito incorreto" OnClick="btnClientesCreditoIncorreto_Click"    />
                 </td>
             </tr>
@@ -961,7 +907,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnGerarSqlLimparBanco" runat="server"
+                    <asp:Button ID="btnGerarSqlLimparBanco" runat="server" 
                         Text="Gerar SQL para Limpar o Banco" OnClick="btnGerarSqlLimparBanco_Click" />
                 </td>
             </tr>
@@ -987,7 +933,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnAjustePagtoContasReceberDeAcerto" runat="server"
+                    <asp:Button ID="btnAjustePagtoContasReceberDeAcerto" runat="server" 
                         Text="Ajustar pagamento contas recebidas, de acerto, do dia 09/12/2016 em diante (chamado 50768)" OnClick="btnAjustePagtoContasReceberDeAcerto_Click" />
                 </td>
             </tr>
@@ -1003,7 +949,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnLocalizacaoContas" runat="server"
+                    <asp:Button ID="btnLocalizacaoContas" runat="server" 
                         Text="Ajustar Localização das contas pagas" OnClick="btnLocalizacaoContas_Click" />
                 </td>
             </tr>
@@ -1011,7 +957,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnLocalizacaoContasReceber" runat="server"
+                    <asp:Button ID="btnLocalizacaoContasReceber" runat="server" 
                         Text="Ajustar Localização das contas recebidas" OnClick="btnLocalizacaoContasReceber_Click" />
                 </td>
             </tr>
@@ -1019,7 +965,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnAtualizaExpressaoCalculo" runat="server"
+                    <asp:Button ID="btnAtualizaExpressaoCalculo" runat="server" 
                         Text="Ajustar Expressões de cálculo" OnClick="btnAtualizaExpressaoCalculo_Click" />
                 </td>
             </tr>
@@ -1037,27 +983,6 @@
             OnClick="btnAjustaMudarSaldoCaixaGeral_Click" />
                   </td>
               </tr>
-        </table>
-        <table cellspacing="5" cellpadding="5">
-            <tr>
-                <td class="style1">
-                    <asp:Button ID="Button4" runat="server"
-                       Text="Ajustar Movimentação Estoque" OnClick="btnAjustarMovimentaçãoEstoque_Click" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Id´s Produtos (Separados por Virgula)
-                    <asp:TextBox ID="txtidsProdAjusteEstoque" runat="server" Height="100px" Width="600px"
-                        TextMode="MultiLine"></asp:TextBox>
-                </td>
-                <td>
-                    Loja:
-                </td>
-                <td>
-                    <uc3:ctrlLoja runat="server" ID="drpLojaAjusteEstoque" AutoPostBack="false" MostrarTodas="false" />
-                </td>
-            </tr>
         </table>
     </div>
     </form>

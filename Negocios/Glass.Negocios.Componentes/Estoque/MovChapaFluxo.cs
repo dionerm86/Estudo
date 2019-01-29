@@ -1,4 +1,6 @@
-﻿using Glass.Estoque.Negocios.Entidades;
+﻿using Glass.Data.DAL;
+using Glass.Data.Model;
+using Glass.Estoque.Negocios.Entidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +9,31 @@ namespace Glass.Estoque.Negocios.Componentes
 {
     public class MovChapaFluxo : IMovChapaFluxo
     {
+        private class DadosEstoque
+        {
+            public int IdProduto { get; set; }
+
+            public int IdLoja { get; set; }
+
+            public DateTime DataMovimentacao { get; set; }
+
+            public long SaldoQuantidade { get; set; }
+
+            public int IdCorVidro { get; set; }
+
+            public float Espessura { get; set; }
+
+            public int Altura { get; set; }
+
+            public int Largura { get; set; }
+        }
+
         public IList<MovChapa> ObtemMovChapa(string idsCorVidro, float espessura, int altura, int largura, DateTime dataIni, DateTime dataFim)
         {
             #region Variaveis Locais
 
             var resultado = new List<MovChapaDetalhe>();
-            var movEstoqueIni = new List<Tuple<int, int, DateTime, Int64>>();
+            var movEstoqueIni = new List<DadosEstoque>();
             var chapas = new List<Tuple<int, decimal, string, string>>();
 
             #endregion
@@ -36,14 +57,14 @@ namespace Glass.Estoque.Negocios.Componentes
 
             var consultaMovEstoqueIni =
                SourceContext.Instance.CreateQuery()
-               .From(
-                        SourceContext.Instance.CreateQuery()
-                       .Select(@"mv.IdProd, mv.IdLoja, mv.DataMov, mv.SaldoQtdeMov")
-                       .From<Data.Model.MovEstoque>("mv")
-                       .OrderBy("mv.DataMov DESC, mv.IdMovEstoque DESC"), "tmp"
-                    )
-               .GroupBy("IdProd, IdLoja, date(DataMov)")
-               .Select("IdProd, IdLoja, Date(DataMov) as DataMov, SaldoQtdeMov");
+                    .From<Data.Model.MovEstoque>("mv")
+                    .InnerJoin<Data.Model.Produto>("mv.IdProd = p.IdProd", "p")
+                    .InnerJoin<Data.Model.SubgrupoProd>("p.IdSubgrupoProd = sg.IdSubgrupoProd", "sg")
+                    .Where($"DATE(mv.DataMov)<=DATE(?dataIni) AND sg.TipoSubgrupo={(int)TipoSubgrupoProd.ChapasVidro}")
+                        .Add("?dataIni", dataIni)
+                    .OrderBy("mv.DataMov DESC, mv.IdMovEstoque DESC")
+                    .GroupBy("mv.IdProd")
+                    .Select(@"mv.IdProd, mv.IdLoja, mv.DataMov, mv.SaldoQtdeMov, p.IdCorVidro, p.Espessura, p.Altura, p.Largura");
 
             var consultaChapas =
                SourceContext.Instance.CreateQuery()
@@ -80,8 +101,20 @@ namespace Glass.Estoque.Negocios.Componentes
                 })
                 .Add(consultaMovEstoqueIni, (sender, query, result) =>
                 {
-                    movEstoqueIni.AddRange(result.Select(f => new Tuple<int, int, DateTime, Int64>(f[0], f[1], f[2], f[3])).ToList());
-                    movEstoqueIni = movEstoqueIni.OrderByDescending(f => f.Item3).ToList();
+                    movEstoqueIni.AddRange(result
+                        .Select(f => new DadosEstoque
+                        {
+                            IdProduto = f[0],
+                            IdLoja = f[1],
+                            DataMovimentacao = f[2],
+                            SaldoQuantidade = f[3],
+                            IdCorVidro = f[4],
+                            Espessura = f[5],
+                            Altura = f[6],
+                            Largura = f[7],
+                        })
+                        .OrderByDescending(f => f.DataMovimentacao)
+                        .ToList());
                 })
                 .Add(consultaChapas, (sender, query, result) =>
                 {
@@ -112,7 +145,7 @@ namespace Glass.Estoque.Negocios.Componentes
                     .Execute()
                     .Select(f => f.GetString(0).StrParaIntNullable().GetValueOrDefault()).ToList();
 
-                outrasLeituras = outrasLeiturasA.Select(f => outrasLeiturasB.Contains(f) ? f : 0).ToList().Where(f => f > 0).ToList();
+                outrasLeituras = outrasLeiturasA.Select(f => outrasLeiturasB.Contains(f) ? f : 0).Where(f => f > 0).ToList();
             }
 
             #endregion
@@ -130,50 +163,30 @@ namespace Glass.Estoque.Negocios.Componentes
                 r.M2Lido = chs.Sum(f => f.Item2);
                 r.PlanosCorte = string.Join(", ", chs.Select(f => f.Item3).Distinct().ToArray());
                 r.Etiquetas = string.Join(", ", chs.Select(f => f.Item4).ToArray());
-                r.TemOutrasLeituras = outrasLeituras != null ? outrasLeituras.Count(f => f == r.IdProdImpressaoChapa) > 0 : false;
+                r.TemOutrasLeituras = outrasLeituras != null && outrasLeituras.Any(f => f == r.IdProdImpressaoChapa);
             }
 
             var retorno = resultado.GroupBy(f => string.Format("{0}|{1}", f.IdCorVidro, f.Espessura))
                 .Select(f =>
                 {
                     var first = f.First();
-                    var prods = (from p in f
-                                 group p by new
-                                 {
-                                     p.IdLoja,
-                                     p.IdProd
-                                 } into g
-                                 select new
-                                 {
-                                     IdLoja = g.Key.IdLoja,
-                                     IdProd = g.Key.IdProd,
-                                     M2 = g.First().M2Utilizado,
-                                     MinData = g.Min(x => x.DataLeitura)
-                                 }).ToList();
 
-                    Int64 qtdeIni = 0;
-                    decimal m2 = 0;
+                    var estoqueAtual = ProdutoLojaDAO.Instance.ObterEstoqueAtualChapasPorCorEspessura(first.IdCorVidro, first.Espessura);
+                    int quantidadeDisponivel = estoqueAtual.Item1;
+                    decimal metroQuadradoDisponivel = estoqueAtual.Item2;
 
-                    foreach (var p in prods)
-                    {
-                        var qtde = movEstoqueIni
-                            .Where(x => x.Item1 == p.IdProd && x.Item2 == p.IdLoja && x.Item3.Date < p.MinData.Date)
-                            .Select(x => x.Item4)
-                            .FirstOrDefault();
-
-                        qtdeIni += qtde;
-                        m2 += qtde * p.M2;
-                    }
+                    var quantidadeUtilizada = f.Count();
+                    var metroQuadradoUtilizado = f.Sum(x => x.M2Utilizado);
 
                     return new MovChapa()
                     {
                         IdCorVidro = first.IdCorVidro,
                         Espessura = first.Espessura,
                         CorVidro = first.CorVidro,
-                        QtdeInicial = qtdeIni,
-                        M2Inicial = m2,
-                        QtdeUtilizado = f.Count(),
-                        M2Utilizado = f.Sum(x => x.M2Utilizado),
+                        QtdeDisponivel = quantidadeDisponivel,
+                        M2Disponivel = metroQuadradoDisponivel,
+                        QtdeUtilizado = quantidadeUtilizada,
+                        M2Utilizado = metroQuadradoUtilizado,
                         M2Lido = Math.Round(f.Sum(x => x.M2Lido), 2),
                         Chapas = f.OrderByDescending(x => x.DataLeitura).ToList()
                     };

@@ -79,19 +79,7 @@ namespace Glass.UI.Web.Cadastros.Expedicao
         {
             var grvProdutos = (GridView)dtvExpBalcao.FindControl("grvProdutos");
             var gvrVolumes = (GridView)dtvExpBalcao.FindControl("gvrVolumes");
-
-            if (!bool.Parse(hdfEstornar.Value))
-            {
-                grvProdutos.Columns[0].Visible = true;
-                gvrVolumes.Columns[0].Visible = true;
-                hdfEstornar.Value = "true";
-                return;
-            }
-
-            grvProdutos.Columns[0].Visible = false;
-            gvrVolumes.Columns[0].Visible = false;
-            hdfEstornar.Value = "false";
-
+            
             var idsItens = new Dictionary<int, int>();
 
             foreach (GridViewRow row in grvProdutos.Rows)

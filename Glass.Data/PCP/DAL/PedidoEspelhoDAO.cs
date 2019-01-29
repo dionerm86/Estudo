@@ -1345,7 +1345,7 @@ namespace Glass.Data.DAL
                     pe.Largura = pipLargura > 0 ? pipLargura.Value : mipLargura > 0 ? mipLargura.Value : p.Largura;
 
                     pe.TotM = pipAltura > 0 && pipLargura > 0
-                        ? Glass.Global.CalculosFluxo.ArredondaM2(transaction, pipLargura.Value, pipAltura.Value, pe.Qtde, (int)pe.IdProd, pe.Redondo)
+                        ? Glass.Global.CalculosFluxo.ArredondaM2(transaction, pipLargura.Value, pipAltura.Value, pe.Qtde, (int)pe.IdProd, pe.Redondo, 0, true)
                         : mipTotM > 0
                             ? mipTotM.Value
                             : p.TotM;
@@ -2311,7 +2311,7 @@ namespace Glass.Data.DAL
 
             var obrigaInformarProcApl = PedidoConfig.DadosPedido.ObrigarProcAplVidros;
             var lstAmbientePedido = new List<uint>();
-            var idsProdQtdeColocarReserva = new Dictionary<int, float>();
+            var idsProduto = new List<int>();
             var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false, false);
 
             /* Chamado 56301. */
@@ -2351,8 +2351,8 @@ namespace Glass.Data.DAL
                     throw new Exception(retorno);
 
                 /* Chamado 15834.
-                    * Esta verificação irá obrigar o usuário a excluir o ambiente vazio, que por sua vez, faz com que
-                    * a exportação de pedido gere vários produtos incorretos com quantidade "0,5". */
+                * Esta verificação irá obrigar o usuário a excluir o ambiente vazio, que por sua vez, faz com que
+                * a exportação de pedido gere vários produtos incorretos com quantidade "0,5". */
                 if (prod.IdAmbientePedido.GetValueOrDefault() > 0 && !lstAmbientePedido.Contains(prod.IdAmbientePedido.Value))
                 {
                     // Adiciona o id do ambiente para evitar que a verificação seja feita mais de uma vez para o mesmo ambiente.
@@ -2368,7 +2368,7 @@ namespace Glass.Data.DAL
                                 "IdAmbientePedido=" + prod.IdAmbientePedido.Value) + " está vazio, exclua-o.");
                 }
 
-                var tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd);
+                var tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd, false);
 
                 // Verifica se o processo e a aplicação foram informados
                 if (obrigaInformarProcApl && Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro((int)prod.IdGrupoProd) &&
@@ -2381,53 +2381,21 @@ namespace Glass.Data.DAL
                         throw new Exception("Informe a aplicação do produto " + prod.DescrProduto + ".");
                 }
 
-                /* Chamado 25432. */
-                if (PedidoConfig.LiberarPedido && !PedidoDAO.Instance.IsProducao(session, idPedido))
+                if (PedidoConfig.LiberarPedido && !idsProduto.Contains((int)prod.IdProd) && !PedidoDAO.Instance.IsProducao(session, idPedido))
                 {
-                    var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-                    var ml = tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6;
-
-                    if (!idsProdQtdeColocarReserva.ContainsKey((int)prod.IdProd))
-                        idsProdQtdeColocarReserva.Add((int)prod.IdProd,
-                            m2 ? prod.TotM : ml ? prod.Qtde * prod.Altura : prod.Qtde);
-                    else
-                        idsProdQtdeColocarReserva[(int)prod.IdProd] +=
-                            m2 ? prod.TotM : ml ? prod.Qtde * prod.Altura : prod.Qtde;
+                    idsProduto.Add((int)prod.IdProd);
                 }
             }
 
-            if (idsProdQtdeColocarReserva.Count > 0 && !PedidoDAO.Instance.IsProducao(session, idPedido) && !FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar)
+            if (idsProduto.Count > 0 && !PedidoDAO.Instance.IsProducao(session, idPedido) && !FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar)
             {
                 var idLoja = PedidoDAO.Instance.ObtemIdLoja(session, idPedido);
-                ProdutoLojaDAO.Instance.ColocarReserva(session, (int)idLoja, idsProdQtdeColocarReserva, null, null, (int)idPedido, null,
-                    null, null, null, "PedidoEspelhoDAO - FinalizarPedido");
-                var idsProdQtdeTirarReserva = new Dictionary<int, float>();
 
-                foreach (var produtoPedido in ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false))
-                {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoPedido.IdProd);
+                idsProduto.AddRange(ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false)
+                    ?.Select(f => (int)f.IdProd)
+                    ?.Distinct());
 
-                    var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-                    var ml = tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6;
-
-                    if (!idsProdQtdeTirarReserva.ContainsKey((int)produtoPedido.IdProd))
-                        idsProdQtdeTirarReserva.Add((int)produtoPedido.IdProd,
-                            m2 ? produtoPedido.TotM : ml ? produtoPedido.Qtde * produtoPedido.Altura : produtoPedido.Qtde);
-                    else
-                        idsProdQtdeTirarReserva[(int)produtoPedido.IdProd] +=
-                            m2 ? produtoPedido.TotM : ml ? produtoPedido.Qtde * produtoPedido.Altura : produtoPedido.Qtde;
-                }
-
-                ProdutoLojaDAO.Instance.TirarReserva(session, (int)idLoja, idsProdQtdeTirarReserva, null, null, (int)idPedido, null,
-                    null, null, null, "PedidoEspelhoDAO - FinalizarPedido");
+                ProdutoLojaDAO.Instance.RecalcularReserva(session, (int)idLoja, idsProduto);
             }
 
             // Obra
@@ -2729,7 +2697,7 @@ namespace Glass.Data.DAL
 
                     if (prodOrca.IdProduto != null)
                     {
-                        prodOrca.TipoCalculoUsado = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodOrca.IdProduto.Value);
+                        prodOrca.TipoCalculoUsado = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodOrca.IdProduto.Value, false);
                         prodOrca.Custo = mip.Custo;
                         prodOrca.Espessura = mip.Espessura;
 
@@ -2989,66 +2957,18 @@ namespace Glass.Data.DAL
                 }
             }
 
-            var idsProdQtde = new Dictionary<int, float>();
-
-            // Se tipoPedido diferente de Produção e não realiza saída de estoque ao confirmar
             if (PedidoDAO.Instance.GetTipoPedido(session, idPedido) != Pedido.TipoPedidoEnum.Producao && !FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar)
             {
-                // Insere na reserva peças do pedido original
-                foreach (var ppe in ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false))
-                {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd);
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(session, idPedido);
 
-                    var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-                    var ml = tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6;
+                var idsProduto = ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false)
+                    .Select(f => (int)f.IdProd)
+                    .ToList();
 
-                    if (!idsProdQtde.ContainsKey((int)ppe.IdProd))
-                        idsProdQtde.Add((int)ppe.IdProd,
-                            m2 ? ppe.TotM : ml ? ppe.Qtde * ppe.Altura : ppe.Qtde);
-                    else
-                        idsProdQtde[(int)ppe.IdProd] +=
-                            m2 ? ppe.TotM : ml ? ppe.Qtde * ppe.Altura : ppe.Qtde;
-                }
+                idsProduto.AddRange(ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false)
+                    .Select(f => (int)f.IdProd));
 
-                if (idsProdQtde.Count > 0)
-                {
-                    var idLoja = PedidoDAO.Instance.ObtemIdLoja(session, idPedido);
-                    ProdutoLojaDAO.Instance.ColocarReserva(session, (int)idLoja, idsProdQtde, null, null, (int)idPedido, null, null, null,
-                        null, "PedidoEspelhoDAO - ReabrirPedido");
-                }
-
-                idsProdQtde.Clear();
-
-                // Remove da reserva peças da conferência
-                foreach (var ppe in ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, idPedido, false))
-                {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd);
-
-                    var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-                    var ml = tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6;
-
-                    if (!idsProdQtde.ContainsKey((int)ppe.IdProd))
-                        idsProdQtde.Add((int)ppe.IdProd,
-                            m2 ? ppe.TotM : ml ? ppe.Qtde * ppe.Altura : ppe.Qtde);
-                    else
-                        idsProdQtde[(int)ppe.IdProd] +=
-                            m2 ? ppe.TotM : ml ? ppe.Qtde * ppe.Altura : ppe.Qtde;
-                }
-
-                if (idsProdQtde.Count > 0)
-                {
-                    var idLoja = PedidoDAO.Instance.ObtemIdLoja(session, idPedido);
-                    ProdutoLojaDAO.Instance.TirarReserva(session, (int)idLoja, idsProdQtde, null, null, (int)idPedido, null, null, null,
-                        null, "PedidoEspelhoDAO - ReabrirPedido");
-                }
+                ProdutoLojaDAO.Instance.RecalcularReserva(session, (int)idLoja, idsProduto.Distinct());
             }
         }
 
@@ -3303,9 +3223,12 @@ namespace Glass.Data.DAL
 
             // Exclui dados relacionados à cálculos de projeto
             if (!String.IsNullOrEmpty(idsItemProjeto))
+            {
                 objPersistence.ExecuteCommand(session, "delete from medida_item_projeto where idItemProjeto in (" + idsItemProjeto + @")");
-            objPersistence.ExecuteCommand(session, "delete from material_item_projeto where idItemProjeto in (" + idsItemProjeto + @")");
-            objPersistence.ExecuteCommand(session, "delete from peca_item_projeto where idItemProjeto in (" + idsItemProjeto + @")");
+                objPersistence.ExecuteCommand(session, "delete from material_item_projeto where idItemProjeto in (" + idsItemProjeto + @")");
+                objPersistence.ExecuteCommand(session, "delete from peca_item_projeto where idItemProjeto in (" + idsItemProjeto + @")");
+            }
+
             objPersistence.ExecuteCommand(session, "delete from item_projeto where idPedidoEspelho=?id;", new GDAParameter("?id", idPedido));
 
             // Exclui o pedido
@@ -3328,42 +3251,22 @@ namespace Glass.Data.DAL
 
             if (PedidoDAO.Instance.GetTipoPedido(session, idPedido) != Pedido.TipoPedidoEnum.Producao)
             {
-                var idsProdQtde = new Dictionary<int, float>();
+                var idsProduto = ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false)
+                    .Select(f => (int)f.IdProd)
+                    .Distinct();
 
-                foreach (var ppe in ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido, false))
-                {
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)ppe.IdProd);
-
-                    var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-                    var ml = tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 ||
-                                tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6;
-
-                    if (!idsProdQtde.ContainsKey((int)ppe.IdProd))
-                        idsProdQtde.Add((int)ppe.IdProd,
-                            m2 ? ppe.TotM : ml ? ppe.Qtde * ppe.Altura : ppe.Qtde);
-                    else
-                        idsProdQtde[(int)ppe.IdProd] +=
-                            m2 ? ppe.TotM : ml ? ppe.Qtde * ppe.Altura : ppe.Qtde;
-                }
-
-                if (idsProdQtde.Count > 0)
+                if (idsProduto.Any())
                 {
                     var idLoja = PedidoDAO.Instance.ObtemIdLoja(session, idPedido);
-                    ProdutoLojaDAO.Instance.TirarReserva(session, (int)idLoja, idsProdQtde, null, null, (int)idPedido, null, null, null,
-                        null, "PedidoEspelhoDAO - CancelarEspelho");
+                    ProdutoLojaDAO.Instance.RecalcularReserva(session, (int)idLoja, idsProduto);
                 }
 
-                //Salva cancelamento no log do pedido
                 var logAlteracaoCancelamento = new LogAlteracao();
                 logAlteracaoCancelamento.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
                 logAlteracaoCancelamento.IdRegistroAlt = (int)idPedido;
                 logAlteracaoCancelamento.DataAlt = DateTime.Now;
                 logAlteracaoCancelamento.IdFuncAlt = UserInfo.GetUserInfo.CodUser;
-                logAlteracaoCancelamento.Referencia = LogAlteracao.GetReferencia(session, logAlteracaoCancelamento.Tabela,
-                    (uint)logAlteracaoCancelamento.IdRegistroAlt);
+                logAlteracaoCancelamento.Referencia = LogAlteracao.GetReferencia(session, logAlteracaoCancelamento.Tabela, (uint)logAlteracaoCancelamento.IdRegistroAlt);
                 logAlteracaoCancelamento.Campo = "Situação";
                 logAlteracaoCancelamento.ValorAnterior = PedidoDAO.Instance.GetSituacaoPedido((int)Pedido.SituacaoPedido.ConfirmadoLiberacao);
                 logAlteracaoCancelamento.ValorAtual = PedidoDAO.Instance.GetSituacaoPedido((int)Pedido.SituacaoPedido.Conferido);
