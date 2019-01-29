@@ -521,6 +521,9 @@
     <Content Include="Vue\Exportacao\Lista\Componentes\LstPedidosExportacao.js" />
     <Content Include="Vue\Exportacao\Lista\Templates\LstPedidosExportacao.Filtro.html" />
     <Content Include="Vue\Funcionarios\Tipos\Componentes\LstTiposFuncionario.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Componentes\LstMovimentacoesLiberacoes.Filtro.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Componentes\LstMovimentacoesLiberacoes.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Templates\LstMovimentacoesLiberacoes.Filtro.html" />
     <Content Include="Vue\ImpressoesEtiquetas\Individual\Componentes\LstImpressoesIndividuaisEtiquetas.Filtro.js" />
     <Content Include="Vue\ImpressoesEtiquetas\Individual\Componentes\LstImpressoesIndividuaisEtiquetas.js" />
     <Content Include="Vue\ImpressoesEtiquetas\Individual\Templates\LstImpressoesIndividuaisEtiquetas.Filtro.html" />
@@ -546,6 +549,11 @@
     <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.Movimentacoes.js" />
     <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Templates\LstMovimentacoesChapas.Filtro.html" />
     <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Templates\LstMovimentacoesChapas.Movimentacoes.html" />
+    <Content Include="Vue\Pedidos\exportacao\Componentes\LstExportarPedidos.Filtro.js" />
+    <Content Include="Vue\Pedidos\exportacao\Componentes\LstExportarPedidos.js" />
+    <Content Include="Vue\Pedidos\exportacao\Componentes\LstExportarPedidos.Produtos.js" />
+    <Content Include="Vue\Pedidos\exportacao\Templates\LstExportarPedidos.Filtro.html" />
+    <Content Include="Vue\Pedidos\exportacao\Templates\LstExportarPedidos.Produtos.html" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.Filtro.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Templates\ListaPrecoTabelaCliente.Filtro.html" />
@@ -1867,6 +1875,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoLargura.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoTotal.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CheckboxTodos.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentos.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentosSetor.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBoleto.js" />
@@ -2009,6 +2018,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoLargura.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoQuantidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoTotal.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CheckboxTodos.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentos.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentosSetor.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBoleto.html" />
