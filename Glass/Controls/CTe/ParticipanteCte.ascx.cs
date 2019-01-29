@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Data;
 using System.Linq;
 using System.Web.UI.WebControls;
@@ -32,10 +32,10 @@ namespace Glass.UI.Web.Controls.CTe
                 {
                     participantes.Add(new WebGlass.Business.ConhecimentoTransporte.Entidade.ParticipanteCte()
                     {
-                        IdCliente = ctrlParticipanteEmitente.IdCliente,
-                        IdFornec = ctrlParticipanteEmitente.IdFornec,
-                        IdLoja = ctrlParticipanteEmitente.IdLoja,
-                        IdTransportador = ctrlParticipanteEmitente.IdTransportador,
+                        IdCliente = (uint?)ctrlParticipanteEmitente.IdCliente,
+                        IdFornec = (uint?)ctrlParticipanteEmitente.IdFornec,
+                        IdLoja = (uint?)ctrlParticipanteEmitente.IdLoja,
+                        IdTransportador = (uint?)ctrlParticipanteEmitente.IdTransportador,
                         NumSeq = numSeq++,
                         TipoParticipante = Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Emitente,
                         Tomador = drpTipoTomador.SelectedValue == "emitente"
@@ -46,10 +46,10 @@ namespace Glass.UI.Web.Controls.CTe
                 {
                     participantes.Add(new WebGlass.Business.ConhecimentoTransporte.Entidade.ParticipanteCte()
                     {
-                        IdCliente = ctrlParticipanteDestinatario.IdCliente,
-                        IdFornec = ctrlParticipanteDestinatario.IdFornec,
-                        IdLoja = ctrlParticipanteDestinatario.IdLoja,
-                        IdTransportador = ctrlParticipanteDestinatario.IdTransportador,
+                        IdCliente = (uint?)ctrlParticipanteDestinatario.IdCliente,
+                        IdFornec = (uint?)ctrlParticipanteDestinatario.IdFornec,
+                        IdLoja = (uint?)ctrlParticipanteDestinatario.IdLoja,
+                        IdTransportador = (uint?)ctrlParticipanteDestinatario.IdTransportador,
                         NumSeq = numSeq++,
                         TipoParticipante = Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Destinatario,
                         Tomador = drpTipoTomador.SelectedValue == "destinatario"
@@ -60,10 +60,10 @@ namespace Glass.UI.Web.Controls.CTe
                 {
                     participantes.Add(new WebGlass.Business.ConhecimentoTransporte.Entidade.ParticipanteCte()
                     {
-                        IdCliente = ctrlParticipanteRemetente.IdCliente,
-                        IdFornec = ctrlParticipanteRemetente.IdFornec,
-                        IdLoja = ctrlParticipanteRemetente.IdLoja,
-                        IdTransportador = ctrlParticipanteRemetente.IdTransportador,
+                        IdCliente = (uint?)ctrlParticipanteRemetente.IdCliente,
+                        IdFornec = (uint?)ctrlParticipanteRemetente.IdFornec,
+                        IdLoja = (uint?)ctrlParticipanteRemetente.IdLoja,
+                        IdTransportador = (uint?)ctrlParticipanteRemetente.IdTransportador,
                         NumSeq = numSeq++,
                         TipoParticipante = Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Remetente,
                         Tomador = drpTipoTomador.SelectedValue == "remetente"
@@ -74,10 +74,10 @@ namespace Glass.UI.Web.Controls.CTe
                 {
                     participantes.Add(new WebGlass.Business.ConhecimentoTransporte.Entidade.ParticipanteCte()
                     {
-                        IdCliente = ctrlParticipanteExpedidor.IdCliente,
-                        IdFornec = ctrlParticipanteExpedidor.IdFornec,
-                        IdLoja = ctrlParticipanteExpedidor.IdLoja,
-                        IdTransportador = ctrlParticipanteExpedidor.IdTransportador,
+                        IdCliente = (uint?)ctrlParticipanteExpedidor.IdCliente,
+                        IdFornec = (uint?)ctrlParticipanteExpedidor.IdFornec,
+                        IdLoja = (uint?)ctrlParticipanteExpedidor.IdLoja,
+                        IdTransportador = (uint?)ctrlParticipanteExpedidor.IdTransportador,
                         NumSeq = numSeq++,
                         TipoParticipante = Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Expedidor,
                         Tomador = drpTipoTomador.SelectedValue == "expedidor"
@@ -88,10 +88,10 @@ namespace Glass.UI.Web.Controls.CTe
                 {
                     participantes.Add(new WebGlass.Business.ConhecimentoTransporte.Entidade.ParticipanteCte()
                     {
-                        IdCliente = ctrlParticipanteRecebedor.IdCliente,
-                        IdFornec = ctrlParticipanteRecebedor.IdFornec,
-                        IdLoja = ctrlParticipanteRecebedor.IdLoja,
-                        IdTransportador = ctrlParticipanteRecebedor.IdTransportador,
+                        IdCliente = (uint?)ctrlParticipanteRecebedor.IdCliente,
+                        IdFornec = (uint?)ctrlParticipanteRecebedor.IdFornec,
+                        IdLoja = (uint?)ctrlParticipanteRecebedor.IdLoja,
+                        IdTransportador = (uint?)ctrlParticipanteRecebedor.IdTransportador,
                         NumSeq = numSeq++,
                         TipoParticipante = Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Recebedor,
                         Tomador = drpTipoTomador.SelectedValue == "recebedor"
@@ -108,38 +108,38 @@ namespace Glass.UI.Web.Controls.CTe
                     switch (i.TipoParticipante)
                     {
                         case Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Emitente:
-                            ctrlParticipanteEmitente.IdLoja = i.IdLoja;
-                            ctrlParticipanteEmitente.IdCliente = i.IdCliente;
-                            ctrlParticipanteEmitente.IdFornec = i.IdFornec;
-                            ctrlParticipanteEmitente.IdTransportador = i.IdTransportador;
+                            ctrlParticipanteEmitente.IdLoja = (int?)i.IdLoja;
+                            ctrlParticipanteEmitente.IdCliente = (int?)i.IdCliente;
+                            ctrlParticipanteEmitente.IdFornec = (int?)i.IdFornec;
+                            ctrlParticipanteEmitente.IdTransportador = (int?)i.IdTransportador;
                             break;
 
                         case Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Destinatario:
-                            ctrlParticipanteDestinatario.IdLoja = i.IdLoja;
-                            ctrlParticipanteDestinatario.IdCliente = i.IdCliente;
-                            ctrlParticipanteDestinatario.IdFornec = i.IdFornec;
-                            ctrlParticipanteDestinatario.IdTransportador = i.IdTransportador;
+                            ctrlParticipanteDestinatario.IdLoja = (int?)i.IdLoja;
+                            ctrlParticipanteDestinatario.IdCliente = (int?)i.IdCliente;
+                            ctrlParticipanteDestinatario.IdFornec = (int?)i.IdFornec;
+                            ctrlParticipanteDestinatario.IdTransportador = (int?)i.IdTransportador;
                             break;
 
                         case Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Remetente:
-                            ctrlParticipanteRemetente.IdLoja = i.IdLoja;
-                            ctrlParticipanteRemetente.IdCliente = i.IdCliente;
-                            ctrlParticipanteRemetente.IdFornec = i.IdFornec;
-                            ctrlParticipanteRemetente.IdTransportador = i.IdTransportador;
+                            ctrlParticipanteRemetente.IdLoja = (int?)i.IdLoja;
+                            ctrlParticipanteRemetente.IdCliente = (int?)i.IdCliente;
+                            ctrlParticipanteRemetente.IdFornec = (int?)i.IdFornec;
+                            ctrlParticipanteRemetente.IdTransportador = (int?)i.IdTransportador;
                             break;
 
                         case Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Expedidor:
-                            ctrlParticipanteExpedidor.IdLoja = i.IdLoja;
-                            ctrlParticipanteExpedidor.IdCliente = i.IdCliente;
-                            ctrlParticipanteExpedidor.IdFornec = i.IdFornec;
-                            ctrlParticipanteExpedidor.IdTransportador = i.IdTransportador;
+                            ctrlParticipanteExpedidor.IdLoja = (int?)i.IdLoja;
+                            ctrlParticipanteExpedidor.IdCliente = (int?)i.IdCliente;
+                            ctrlParticipanteExpedidor.IdFornec = (int?)i.IdFornec;
+                            ctrlParticipanteExpedidor.IdTransportador = (int?)i.IdTransportador;
                             break;
 
                         case Glass.Data.Model.Cte.ParticipanteCte.TipoParticipanteEnum.Recebedor:
-                            ctrlParticipanteRecebedor.IdLoja = i.IdLoja;
-                            ctrlParticipanteRecebedor.IdCliente = i.IdCliente;
-                            ctrlParticipanteRecebedor.IdFornec = i.IdFornec;
-                            ctrlParticipanteRecebedor.IdTransportador = i.IdTransportador;
+                            ctrlParticipanteRecebedor.IdLoja = (int?)i.IdLoja;
+                            ctrlParticipanteRecebedor.IdCliente = (int?)i.IdCliente;
+                            ctrlParticipanteRecebedor.IdFornec = (int?)i.IdFornec;
+                            ctrlParticipanteRecebedor.IdTransportador = (int?)i.IdTransportador;
                             break;
                     }
 
@@ -151,22 +151,22 @@ namespace Glass.UI.Web.Controls.CTe
 
                         if (i.IdLoja > 0)
                         {
-                            ctrlParticipanteTomador.IdLoja = i.IdLoja;
+                            ctrlParticipanteTomador.IdLoja = (int?)i.IdLoja;
                             hdfTomadorSelecionado.Value = i.IdLoja.ToString();
                         }
                         else if (i.IdCliente > 0)
                         {
-                            ctrlParticipanteTomador.IdCliente = i.IdCliente;
+                            ctrlParticipanteTomador.IdCliente = (int?)i.IdCliente;
                             hdfTomadorSelecionado.Value = i.IdCliente.ToString();
                         }
                         else if (i.IdFornec > 0)
                         {
-                            ctrlParticipanteTomador.IdFornec = i.IdFornec;
+                            ctrlParticipanteTomador.IdFornec = (int?)i.IdFornec;
                             hdfTomadorSelecionado.Value = i.IdFornec.ToString();
                         }
                         else if (i.IdTransportador > 0)
                         {
-                            ctrlParticipanteTomador.IdTransportador = i.IdTransportador;
+                            ctrlParticipanteTomador.IdTransportador = (int?)i.IdTransportador;
                             hdfTomadorSelecionado.Value = i.IdTransportador.ToString();
                         }
                     }
@@ -199,11 +199,11 @@ namespace Glass.UI.Web.Controls.CTe
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            var errorMessage = "{0} - Campo obrigatÛrio";
+            var errorMessage = "{0} - Campo obrigat√≥rio";
             ctrlParticipanteTomador.Validador.ErrorMessage = String.Format(errorMessage, "Tomador");
             ctrlParticipanteEmitente.Validador.ErrorMessage = String.Format(errorMessage, "Emitente");
             ctrlParticipanteRemetente.Validador.ErrorMessage = String.Format(errorMessage, "Remetente");
-            ctrlParticipanteDestinatario.Validador.ErrorMessage = String.Format(errorMessage, "Destinat·rio");
+            ctrlParticipanteDestinatario.Validador.ErrorMessage = String.Format(errorMessage, "Destinat√°rio");
         }
 
         protected void Page_PreRender(object sender, EventArgs e)

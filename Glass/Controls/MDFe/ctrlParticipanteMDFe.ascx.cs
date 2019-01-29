@@ -58,17 +58,17 @@ namespace Glass.UI.Web.Controls.MDFe
                     switch (i.TipoParticipante)
                     {
                         case Glass.Data.Model.TipoParticipanteEnum.Emitente:
-                            ctrlParticipanteEmitente.IdLoja = (uint?)i.IdLoja;
-                            ctrlParticipanteEmitente.IdCliente = (uint?)i.IdCliente;
-                            ctrlParticipanteEmitente.IdFornec = (uint?)i.IdFornecedor;
-                            ctrlParticipanteEmitente.IdTransportador = (uint?)i.IdTransportador;
+                            ctrlParticipanteEmitente.IdLoja = i.IdLoja;
+                            ctrlParticipanteEmitente.IdCliente = i.IdCliente;
+                            ctrlParticipanteEmitente.IdFornec = i.IdFornecedor;
+                            ctrlParticipanteEmitente.IdTransportador = i.IdTransportador;
                             break;
 
                         case Glass.Data.Model.TipoParticipanteEnum.Contratante:
-                            ctrlParticipanteContratante.IdLoja = (uint?)i.IdLoja;
-                            ctrlParticipanteContratante.IdCliente = (uint?)i.IdCliente;
-                            ctrlParticipanteContratante.IdFornec = (uint?)i.IdFornecedor;
-                            ctrlParticipanteContratante.IdTransportador = (uint?)i.IdTransportador;
+                            ctrlParticipanteContratante.IdLoja = i.IdLoja;
+                            ctrlParticipanteContratante.IdCliente = i.IdCliente;
+                            ctrlParticipanteContratante.IdFornec = i.IdFornecedor;
+                            ctrlParticipanteContratante.IdTransportador = i.IdTransportador;
                             break;
                     }
                 }

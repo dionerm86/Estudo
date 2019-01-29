@@ -200,9 +200,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Compile Include="Controllers\DevolucoesPagamento\DevolucoesPagamentoController.cs" />
+    <Compile Include="Controllers\DevolucoesPagamento\GetDevolucoesPagamentoController.cs" />
+    <Compile Include="Helper\DevolucoesPagamento\TraducaoOrdenacaoListaDevolucoesPagamento.cs" />
     <Compile Include="Controllers\Producao\V1\Fornadas\FornadasController.cs" />
     <Compile Include="Controllers\Producao\V1\Fornadas\GetFornadasController.cs" />
     <Compile Include="Helper\ImpressoesEtiquetas\Individual\TraducaoOrdenacaoListaImpressoesIndividuaisEtiquetas.cs" />
+    <Compile Include="Models\DevolucoesPagamento\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\DevolucoesPagamento\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\DevolucoesPagamento\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Helper\Producao\Fornadas\TraducaoOrdenacaoListaFornadas.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\FiltroDto.cs" />
