@@ -265,6 +265,11 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, utilizan
                                         </tr>
                                     </table>
                                     <table>
+                                        <tr>
+                                            <td>
+                                                <asp:Label runat="server" Text="* Informe o carregamento antes de utilizar os filtros acima." ForeColor="Red" ID="Label56"></asp:Label>
+                                            </td>
+                                        </tr>
                                         <tr align="center">
                                             <td><asp:LinkButton runat="server" ID="lnkPedProntoSemCarregamento" OnClientClick="return exibirPedidosSemCarregamento();">Pedidos prontos sem carregamento</asp:LinkButton> </td>
                                         </tr>

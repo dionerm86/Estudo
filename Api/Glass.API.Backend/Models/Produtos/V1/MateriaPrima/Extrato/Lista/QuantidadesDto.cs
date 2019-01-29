@@ -14,13 +14,6 @@ namespace Glass.API.Backend.Models.Produtos.V1.MateriaPrima.Extrato.Lista
     public class QuantidadesDto
     {
         /// <summary>
-        /// Obtém ou define a quantidade inicial referente as chapas associadas a uma determinada espessura e cor do vidro.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("inicial")]
-        public string Inicial { get; set; }
-
-        /// <summary>
         /// Obtém ou define a a quantidade utilizada referente as chapas associadas a uma determinada espessura e cor do vidro.
         /// </summary>
         [DataMember]

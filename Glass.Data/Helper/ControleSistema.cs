@@ -284,6 +284,7 @@ namespace Glass.Data.Helper
             #region "V"
 
             VarandaLivre,
+            VbaTemper,
             Vdram,
             VetroRio,
             Vidrex,

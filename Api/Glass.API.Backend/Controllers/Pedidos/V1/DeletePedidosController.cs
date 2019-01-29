@@ -22,7 +22,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="id">O identificador do pedido que será excluído.</param>
         /// <returns>Um status HTTP indicando se o pedido foi excluído.</returns>
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:int}")]
         [SwaggerResponse(202, "Pedido excluído.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na exclusão do pedido.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado para o filtro informado.", Type = typeof(MensagemDto))]

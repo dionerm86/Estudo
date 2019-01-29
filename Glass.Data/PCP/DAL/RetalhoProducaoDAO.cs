@@ -608,15 +608,9 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        public List<uint> CriarRetalho(string altura, string largura, string quantidade, string observacao, string numEtiqueta)
-        {
-            return CriarRetalho(altura, largura, quantidade, observacao, numEtiqueta, null);
-        }
-
         private static readonly object _criarRetalhoLock = new object();
 
-        public List<uint> CriarRetalho(string altura, string largura, string quantidade, string observacao, string numEtiqueta,
-            LoginUsuario usuario)
+        public List<uint> CriarRetalho(string altura, string largura, string quantidade, string observacao, string numEtiqueta, LoginUsuario usuario)
         {
             lock (_criarRetalhoLock)
             {
@@ -718,8 +712,10 @@ namespace Glass.Data.DAL
                                             (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Ativa, new GDAParameter("?etiq", numEtiqueta));
 
                                 retalho.IdProdNf = retalho.IdProdNf == 0 ? null : retalho.IdProdNf;
-                                uint id = Insert(transaction, retalho);
-                                idsRetalho.Add(id);
+                                retalho.IdRetalhoProducao = (int)Insert(transaction, retalho);
+                                idsRetalho.Add((uint)retalho.IdRetalhoProducao);
+
+                                MovEstoqueDAO.Instance.CreditaEstoqueRetalho(transaction, retalho.IdProd, retalho, retalho.Usuario);
                             }
                         }
 
@@ -734,15 +730,10 @@ namespace Glass.Data.DAL
                         transaction.Close();
 
                         ErroDAO.Instance.InserirFromException(string.Format("Falha ao criar retalho. Etiqueta: {0}.", numEtiqueta), ex);
-                        throw ex;
+                        throw;
                     }
                 }
             }
-        }
-
-        public List<uint> CriarRetalho(List<RetalhoProducaoAuxiliar> dadosRetalho, uint idProd, uint idProdNf)
-        {
-            return CriarRetalho(dadosRetalho, idProd, idProdNf, null);
         }
 
         public List<uint> CriarRetalho(List<RetalhoProducaoAuxiliar> dadosRetalho, uint idProd, uint idProdNf, LoginUsuario usuario)
@@ -829,8 +820,10 @@ namespace Glass.Data.DAL
                                 /* Chamado 31821. */
                                 retalho.Usuario = usuario != null ? usuario : UserInfo.GetUserInfo;
 
-                                uint id = Insert(transaction, retalho);
-                                idsRetalho.Add(id);
+                                retalho.IdRetalhoProducao = (int)Insert(transaction, retalho);
+                                idsRetalho.Add((uint)retalho.IdRetalhoProducao);
+
+                                MovEstoqueDAO.Instance.CreditaEstoqueRetalho(transaction, retalho.IdProd, retalho, retalho.Usuario);
                             }
                         }
 
@@ -886,20 +879,6 @@ namespace Glass.Data.DAL
             }
 
             LogAlteracaoDAO.Instance.LogRetalhoProducao(session, retalho, idFunc);
-        }
-
-        public override uint Insert(RetalhoProducao objInsert)
-        {
-            return Insert(null, objInsert);
-        }
-
-        public override uint Insert(GDASession session, RetalhoProducao objInsert)
-        {
-            uint id = base.Insert(session, objInsert);
-            var idLoja = objInsert.Usuario != null ? objInsert.Usuario.IdLoja : UserInfo.GetUserInfo.IdLoja;
-            MovEstoqueDAO.Instance.CreditaEstoqueRetalho(session, (uint)objInsert.IdProd, idLoja, id, 1, objInsert.Usuario);
-
-            return id;
         }
 
         public override int Delete(RetalhoProducao objDelete)
@@ -982,8 +961,7 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand(session, "update retalho_producao set situacao=" + (int)SituacaoRetalhoProducao.Cancelado +
                 " where idRetalhoProducao=" + idRetalhoProducao);
 
-            if (retalho.Situacao == SituacaoRetalhoProducao.Disponivel)
-                MovEstoqueDAO.Instance.BaixaEstoqueRetalho(session, (uint)retalho.IdProd, UserInfo.GetUserInfo.IdLoja, idRetalhoProducao, 1);
+            MovEstoqueDAO.Instance.BaixaEstoqueRetalho(session, retalho);
 
             LogCancelamentoDAO.Instance.LogRetalhoProducao(session, idFunc, retalho, "Cancelamento do retalho " +
                 retalho.NumeroEtiqueta + " - " + motivo, manual);
@@ -1029,8 +1007,7 @@ namespace Glass.Data.DAL
 
                         objPersistence.ExecuteCommand(transaction, "update retalho_producao set situacao=" + (int)SituacaoRetalhoProducao.Perda + " where idRetalhoProducao=" + idRetalhoProducao);
 
-                        if (retalho.Situacao == SituacaoRetalhoProducao.Disponivel)
-                            MovEstoqueDAO.Instance.BaixaEstoqueRetalho(transaction, (uint)retalho.IdProd, UserInfo.GetUserInfo.IdLoja, idRetalhoProducao, 1);
+                        MovEstoqueDAO.Instance.BaixaEstoqueRetalho(transaction, retalho);
 
                         LogCancelamentoDAO.Instance.LogRetalhoProducao(transaction, idFunc, retalho, "Perda do retalho " + retalho.NumeroEtiqueta + " - " + motivo, true);
 
