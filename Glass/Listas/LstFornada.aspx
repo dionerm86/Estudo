@@ -13,7 +13,7 @@
         <fornadas-filtros :filtro.sync="filtro"></fornadas-filtros>
         <section>
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro"
-                ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma fornada encontrada." @atualizou-itens="atualizouItens">
+                ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma fornada encontrada." @atualizou-itens="limparPecasEmExibicao">
                 <template slot="cabecalho">
                     <th></th>
                     <th style="text-align: center">
@@ -54,7 +54,7 @@
                     <td>
                         <span>
                             <a href="#" @click.prevent="alternarExibicaoPecas(index)">
-                                <img border="0" :src="exibindoPecasFornada(index) ? '../Images/menos.gif' : '../Images/mais.gif'" />
+                                <img border="0" :src="verificarExibicaoPecasFornada(index) ? '../Images/menos.gif' : '../Images/mais.gif'" />
                             </a>
                         </span>
                     </td>
@@ -92,10 +92,10 @@
                         </span>
                     </td>
                 </template>
-                <template slot="novaLinhaItem" slot-scope="{ item, index, classe }" v-if="exibindoPecasFornada(index)">
+                <template slot="novaLinhaItem" slot-scope="{ item, index, classe }" v-if="verificarExibicaoPecasFornada(index)">
                     <tr>
                         <td></td>
-                        <td :colspan="numeroColunasLista() - 1">
+                        <td :colspan="obterNumeroColunasLista() - 1">
                             <fornadas-pecas :filtro="{ idFornada: item.id }"></fornadas-pecas>
                         </td>
                     </tr>

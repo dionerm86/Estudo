@@ -55,7 +55,7 @@
      * @param {!number} indice O número da linha que está sendo verificada.
      * @returns {boolean} Verdadeiro, se os itens estiverem sendo exibidos.
      */
-    exibindoPecasFornada: function (indice) {
+    verificarExibicaoPecasFornada: function (indice) {
       return this.pecasEmExibicao.indexOf(indice) > -1;
     },
 
@@ -77,14 +77,14 @@
      * Retorna o número de colunas da lista paginada.
      * @returns {number} O número de colunas existente na lista.
      */
-    numeroColunasLista: function () {
+    obterNumeroColunasLista: function () {
       return this.$refs.lista.numeroColunas();
     },
 
     /**
      * Limpa a lista de peças de fornada em exibição ao realizar paginação da lista principal.
      */
-    atualizouItens: function () {
+    limparPecasEmExibicao: function () {
       this.pecasEmExibicao.splice(0, this.pecasEmExibicao.length);
     },
 
