@@ -20,7 +20,7 @@
         },
         this.filtro
       ),
-      buscaCpf: true
+      tipoPessoaAtual: {}
     };
   },
 
@@ -33,10 +33,6 @@
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
       }
-    },
-
-    limparFiltro: function () {
-      this.filtroAtual.cpfCnpj = null;
     }
   },
 
