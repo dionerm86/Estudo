@@ -36,5 +36,14 @@
     }
   },
 
+  watch: {
+    tipoPessoaAtual: {
+      handler: function () {
+        this.filtroAtual.cpfCnpj = null;
+      },
+      deep: true
+    }
+  },
+
   template: '#LstLimiteChequesCpfCnpj-Filtro-template'
 });
