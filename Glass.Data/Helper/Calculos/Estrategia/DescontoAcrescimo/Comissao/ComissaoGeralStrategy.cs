@@ -11,7 +11,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
 
         protected override bool PermiteAplicar()
         {
-            return PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor;
+            return PedidoConfig.Comissao.ComissaoPedido;
         }
 
         protected override decimal CalcularValorAplicar(TipoValor tipo, decimal valorAplicar, decimal totalAtual)
@@ -47,6 +47,16 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
         {
             produto.Total -= produto.ValorComissao;
             produto.ValorComissao = 0;
+        }
+
+        protected override decimal BaseCalculoTotalProduto(IProdutoCalculo produto)
+        {
+            decimal valorDescontoAcrescimoProduto = 0;
+            if (PedidoConfig.Comissao.ComissaoAlteraValor)
+            {
+                valorDescontoAcrescimoProduto = produto.ValorAcrescimo - produto.ValorDesconto;
+            }
+            return base.BaseCalculoTotalProduto(produto) + valorDescontoAcrescimoProduto;
         }
     }
 }
