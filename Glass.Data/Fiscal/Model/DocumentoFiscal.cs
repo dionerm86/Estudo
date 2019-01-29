@@ -18,19 +18,19 @@ namespace Glass.Data.Model
         public uint IdNf { get; set; }
 
         [PersistenceProperty("IDLOJA")]
-        public uint? IdLoja { get; set; }
+        public int? IdLoja { get; set; }
 
         [PersistenceProperty("IDTRANSPORTADOR")]
-        public uint? IdTransportador { get; set; }
+        public int? IdTransportador { get; set; }
 
         [PersistenceProperty("IDFORNEC")]
-        public uint? IdFornec { get; set; }
+        public int? IdFornec { get; set; }
 
         [PersistenceProperty("ID_CLI")]
-        public uint? IdCliente { get; set; }
+        public int? IdCliente { get; set; }
 
         [PersistenceProperty("IDADMINCARTAO")]
-        public uint? IdAdminCartao { get; set; }
+        public int? IdAdminCartao { get; set; }
 
         [PersistenceProperty("TIPO")]
         public int Tipo { get; set; }
@@ -109,7 +109,7 @@ namespace Glass.Data.Model
             set { _tipoPart = (DataSourcesEFD.TipoPartEnum)value; }
         }
 
-        public uint? IdPart
+        public int? IdPart
         {
             get
             {
@@ -185,32 +185,32 @@ namespace Glass.Data.Model
 
         int? Sync.Fiscal.EFD.Entidade.IParticipante.CodigoLoja
         {
-            get { return (int?)IdLoja; }
-            set { IdLoja = (uint?)value; }
+            get { return IdLoja; }
+            set { IdLoja = value; }
         }
 
         int? Sync.Fiscal.EFD.Entidade.IParticipante.CodigoCliente
         {
-            get { return (int?)IdCliente; }
-            set { IdCliente = (uint?)value; }
+            get { return IdCliente; }
+            set { IdCliente = value; }
         }
 
         int? Sync.Fiscal.EFD.Entidade.IParticipante.CodigoFornecedor
         {
-            get { return (int?)IdFornec; }
-            set { IdFornec = (uint?)value; }
+            get { return IdFornec; }
+            set { IdFornec = value; }
         }
 
         int? Sync.Fiscal.EFD.Entidade.IParticipante.CodigoTransportador
         {
-            get { return (int?)IdTransportador; }
-            set { IdTransportador = (uint?)value; }
+            get { return IdTransportador; }
+            set { IdTransportador = value; }
         }
 
         int? Sync.Fiscal.EFD.Entidade.IParticipante.CodigoAdministradoraCartao
         {
             get { return (int?)IdAdminCartao; }
-            set { IdAdminCartao = (uint?)value; }
+            set { IdAdminCartao = value; }
         }
 
         #endregion

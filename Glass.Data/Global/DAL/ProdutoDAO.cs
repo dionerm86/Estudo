@@ -2385,28 +2385,19 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
         /// Verifica se o produto pode ser usado para o Pedido Produção.
         /// </summary>
-        /// <param name="idProd"></param>
-        /// <returns></returns>
-        public bool IsProdutoProducao(int idProd)
+        /// <param name="sessao">Sessão do banco de dados.</param>
+        /// <param name="idProduto">O identificador do prdotuo.</param>
+        /// <returns>Valor booleano indicando se o produto é de produção.</returns>
+        public bool IsProdutoProducao(GDASession sessao, int idProduto)
         {
-            return IsProdutoProducao(null, idProd);
-        }
-
-        /// <summary>
-        /// Verifica se o produto pode ser usado para o Pedido Produção.
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <returns></returns>
-        public bool IsProdutoProducao(GDASession sessao, int idProd)
-        {
-            string sql = @"select count(*) from produto where idSubgrupoProd in (
-                select idSubgrupoProd from subgrupo_prod where idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @"
-                and produtosEstoque=true) and idProd=" + idProd;
-
-            return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
+            return ExecuteScalar<bool>(sessao, $@"
+                SELECT COUNT(*)>0 FROM produto p
+                    INNER JOIN subgrupo_prod sg ON (p.IdSubgrupoProd=sg.IdSubgrupoProd)
+                WHERE p.IdProd={idProduto}
+                    AND sg.IdGrupoProd={(int)NomeGrupoProd.Vidro}
+                    AND sg.ProdutosEstoque");
         }
 
         /// <summary>

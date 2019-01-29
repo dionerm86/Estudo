@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using Glass.Data.DAL;
+﻿using GDA;
 using Glass.Configuracoes;
+using Glass.Data.DAL;
 using Glass.Estoque.Negocios.Entidades;
-using GDA;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace WebGlass.Business.OrdemCarga.Fluxo
 {
@@ -316,47 +316,24 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 }
             }
 
-            //Faz a baixa dos produtos
             var produtos = VolumeProdutosPedidoDAO.Instance.GetList(sessao, idVolume.ToString());
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
-            var dados = new List<DetalhesBaixaEstoque>();
-
-            foreach (var prod in produtos)
-                dados.Add(new DetalhesBaixaEstoque()
-                {
-                    IdProdPed = (int)prod.IdProdPed,
-                    Qtde = prod.Qtde,
-                    DescricaoBaixa = prod.DescProd
-                });
-
-            //Efetua a saida dos produtos
-            Pedido.Fluxo.AlterarEstoque.Instance.BaixarEstoque(sessao, idLoja, dados, idVolume, null, false);
-
-            //Marca volume como expedido
+            MovEstoqueDAO.Instance.BaixaEstoqueVolume(sessao, idPedido, produtos);
             VolumeDAO.Instance.MarcaExpedicaoVolume(sessao, idVolume);
 
             return "Volume " + codEtiquetaVolume + " Pedido " + idPedido;
         }
 
         /// <summary>
-        /// Estorna a expedição balcão de um volume
+        /// Estorna a expedição balcão de um volume.
         /// </summary>
         public void EstornaExpedicaoVolume(GDASession sessao, uint idVolume)
         {
-            var idPedido = VolumeDAO.Instance.GetIdPedido(sessao, idVolume);
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
-            var produtos = VolumeProdutosPedidoDAO.Instance.GetList(sessao, idVolume.ToString());
-            var dados = new List<DetalhesBaixaEstoque>();
+            MovEstoqueDAO.Instance.CreditaEstoqueEstornoVolume(
+                sessao,
+                (int)VolumeDAO.Instance.GetIdPedido(sessao, idVolume),
+                (int)idVolume,
+                VolumeProdutosPedidoDAO.Instance.GetList(sessao, idVolume.ToString()));
 
-            foreach (var prod in produtos)
-                dados.Add(new DetalhesBaixaEstoque()
-                {
-                    IdProdPed = (int)prod.IdProdPed,
-                    Qtde = prod.Qtde,
-                    DescricaoBaixa = prod.DescProd
-                });
-
-            Pedido.Fluxo.AlterarEstoque.Instance.EstornaBaixaEstoque(sessao, idLoja, dados, idVolume, null);
             VolumeDAO.Instance.EstornaExpedicaoVolume(sessao, idVolume);
         }
 
@@ -381,20 +358,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 if (VolumeDAO.Instance.TemExpedicao(sessao, objDelete.IdVolume))
                 {
                     var produtos = VolumeProdutosPedidoDAO.Instance.GetList(sessao, objDelete.IdVolume.ToString());
-                    var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
-                    var dados = new List<DetalhesBaixaEstoque>();
-
-                    foreach (var prod in produtos)
-                    {
-                        dados.Add(new DetalhesBaixaEstoque()
-                        {
-                            IdProdPed = (int)prod.IdProdPed,
-                            Qtde = prod.Qtde,
-                            DescricaoBaixa = prod.DescProd,
-                        });
-                    }
-
-                    Pedido.Fluxo.AlterarEstoque.Instance.EstornaBaixaEstoque(sessao, idLoja, dados, objDelete.IdVolume, null);
+                    MovEstoqueDAO.Instance.CreditaEstoqueEstornoVolume(sessao, (int)idPedido, (int)objDelete.IdVolume, produtos);
                     VolumeDAO.Instance.EstornaExpedicaoVolume(sessao, objDelete.IdVolume);
                 }
 

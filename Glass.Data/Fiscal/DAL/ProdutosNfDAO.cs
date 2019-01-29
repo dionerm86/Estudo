@@ -87,7 +87,8 @@ namespace Glass.Data.DAL
         public ProdutosNf GetElement(GDASession sessao, uint idProdNf)
         {
             string sql = @"
-                Select pnf.*, p.codInterno, p.descricao as DescrProduto, um.codigo as unidade, umt.codigo as unidadeTrib
+                Select pnf.*, p.codInterno, p.descricao as DescrProduto, um.codigo as unidade, umt.codigo as unidadeTrib,
+                    p.IdGrupoProd, p.IdSubgrupoProd
                 From produtos_nf pnf
                     Left Join produto p On (pnf.idProd=p.idProd)
                     Left Join unidade_medida um On (p.idUnidadeMedida=um.idUnidadeMedida)

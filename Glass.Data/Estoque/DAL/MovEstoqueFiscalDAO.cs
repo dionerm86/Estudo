@@ -307,7 +307,7 @@ namespace Glass.Data.DAL
                 foreach (ProdutoNfItemProjeto item in itens)
                     foreach (MaterialItemProjeto m in MaterialItemProjetoDAO.Instance.GetByItemProjeto(sessao, item.IdItemProjeto))
                     {
-                        decimal qtdMaterial = (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(m.IdProd, m.TotM, m.Qtde, m.Altura, m.Largura, true, true);
+                        decimal qtdMaterial = (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(sessao, m.IdProd, m.TotM, m.Qtde, m.Altura, m.Largura, true, true);
 
                         // Gera sobra na produção
                         if (isNotaDeSaida)

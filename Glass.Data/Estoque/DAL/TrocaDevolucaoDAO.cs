@@ -294,106 +294,31 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Altera o estoque
-
-        private void AlteraEstoqueFinalizar(uint idTrocaDevolucao)
-        {
-            AlteraEstoqueFinalizar(null, idTrocaDevolucao);
-        }
-
+        
         private void AlteraEstoqueFinalizar(GDASession session, uint idTrocaDevolucao)
         {
-            // Credita o estoque dos produtos trocados/devolvidos
-            foreach (ProdutoTrocado pt in ProdutoTrocadoDAO.Instance.GetByTrocaDevolucao(session, idTrocaDevolucao))
-            {
-                bool m2 = pt.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || pt.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
+            MovEstoqueDAO.Instance.CreditaEstoqueProdutoTrocadoTrocaDevolucao(
+                session,
+                (int)idTrocaDevolucao,
+                ProdutoTrocadoDAO.Instance.GetByTrocaDevolucao(session, idTrocaDevolucao));
 
-                int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)pt.IdProd);
-                float qtdCredito = pt.Qtde;
-
-                if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
-                    tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6 ||
-                    tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML)
-                    qtdCredito *= pt.Altura;
-
-                if (pt.ComDefeito)
-                    ProdutoLojaDAO.Instance.CreditaDefeito(session, pt.IdProd, UserInfo.GetUserInfo.IdLoja, m2 ? pt.TotM : qtdCredito);
-                else if (pt.AlterarEstoque)
-                    MovEstoqueDAO.Instance.CreditaEstoqueTrocaDevolucao(session, pt.IdProd, UserInfo.GetUserInfo.IdLoja, idTrocaDevolucao, null,
-                        pt.IdProdTrocado, (decimal)(m2 ? pt.TotM : qtdCredito));
-            }
-
-            if (!ObtemUsarPedidoReposicao(session, idTrocaDevolucao))
-            {
-                // Baixa o estoque dos produtos novos
-                foreach (ProdutoTrocaDevolucao ptd in ProdutoTrocaDevolucaoDAO.Instance.GetByTrocaDevolucao(session, idTrocaDevolucao))
-                {
-                    if (!ptd.AlterarEstoque)
-                        continue;
-
-                    bool m2 = ptd.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || ptd.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-
-                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)ptd.IdProd);
-                    float qtdSaida = ptd.Qtde;
-
-                    if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
-                        tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6 ||
-                        tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML)
-                        qtdSaida *= ptd.Altura;
-
-                    MovEstoqueDAO.Instance.BaixaEstoqueTrocaDevolucao(session, ptd.IdProd, UserInfo.GetUserInfo.IdLoja, idTrocaDevolucao,
-                        ptd.IdProdTrocaDev, null, (decimal)(m2 ? ptd.TotM : qtdSaida));
-                }
-            }
-        }
-
-        private void AlteraEstoqueCancelar(uint idTrocaDevolucao)
-        {
-            AlteraEstoqueCancelar(null, idTrocaDevolucao);
+            MovEstoqueDAO.Instance.BaixaEstoqueProdutoDevolvidoTrocaDevolucao(
+                session,
+                (int)idTrocaDevolucao,
+                ProdutoTrocaDevolucaoDAO.Instance.GetByTrocaDevolucao(session, idTrocaDevolucao));
         }
 
         private void AlteraEstoqueCancelar(GDASession session, uint idTrocaDevolucao)
         {
-            // Baixa o estoque dos produtos trocados/devolvidos
-            foreach (ProdutoTrocado pt in ProdutoTrocadoDAO.Instance.GetByTrocaDevolucao(session, idTrocaDevolucao))
-            {
-                bool m2 = pt.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || pt.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
+            MovEstoqueDAO.Instance.BaixaEstoqueProdutoTrocadoTrocaDevolucao(
+                session,
+                (int)idTrocaDevolucao,
+                ProdutoTrocadoDAO.Instance.GetByTrocaDevolucao(session, idTrocaDevolucao));
 
-                int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)pt.IdProd);
-                float qtdSaida = pt.Qtde;
-
-                if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
-                    tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6 ||
-                    tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML)
-                    qtdSaida *= pt.Altura;
-
-                if (pt.ComDefeito)
-                    ProdutoLojaDAO.Instance.BaixaDefeito(session, pt.IdProd, UserInfo.GetUserInfo.IdLoja, m2 ? pt.TotM : qtdSaida);
-                else if (pt.AlterarEstoque)
-                    MovEstoqueDAO.Instance.BaixaEstoqueTrocaDevolucao(session, pt.IdProd, UserInfo.GetUserInfo.IdLoja, idTrocaDevolucao, null,
-                        pt.IdProdTrocado, (decimal)(m2 ? pt.TotM : qtdSaida));
-            }
-
-            if (!ObtemUsarPedidoReposicao(session, idTrocaDevolucao))
-            {
-                // Credita o estoque dos produtos novos
-                foreach (ProdutoTrocaDevolucao ptd in ProdutoTrocaDevolucaoDAO.Instance.GetByTrocaDevolucao(session, idTrocaDevolucao))
-                {
-                    if (!ptd.AlterarEstoque)
-                        continue;
-
-                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)ptd.IdProd);
-                    float qtdCredito = ptd.Qtde;
-
-                    if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
-                        tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6 ||
-                        tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML)
-                        qtdCredito *= ptd.Altura;
-
-                    bool m2 = tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-                    MovEstoqueDAO.Instance.CreditaEstoqueTrocaDevolucao(session, ptd.IdProd, UserInfo.GetUserInfo.IdLoja, idTrocaDevolucao,
-                        ptd.IdProdTrocaDev, null, (decimal)(m2 ? ptd.TotM : qtdCredito));
-                }
-            }
+            MovEstoqueDAO.Instance.CreditaEstoqueProdutoDevolvidoTrocaDevolucao(
+                session,
+                (int)idTrocaDevolucao,
+                ProdutoTrocaDevolucaoDAO.Instance.GetByTrocaDevolucao(session, idTrocaDevolucao));
         }
 
         #endregion
@@ -540,23 +465,9 @@ namespace Glass.Data.DAL
 
                         try
                         {
-                            #region Indica o valor do pagamento antecipado
-
-                            if (troca.UsarPedidoReposicao && troca.CreditoGerado > 0)
-                            {
-                                foreach (var dados in ValorPagtoAntecipadoPedido(transaction, troca))
-                                {
-                                    objPersistence.ExecuteCommand(transaction, @"update pedido set valorPagamentoAntecipado=
-                                        coalesce(valorPagamentoAntecipado, 0)+?valor where idPedido=" + dados.Key,
-                                        new GDAParameter("?valor", dados.Value));
-                                }
-                            }
-
-                            #endregion
-
                             #region Gera o crédito para o cliente
 
-                            else if (troca.CreditoGerado > 0)
+                            if (troca.CreditoGerado > 0)
                             {
                                 if (ClienteDAO.Instance.GetNome(transaction, troca.IdCliente).ToLower().Contains("consumidor final"))
                                     throw new Exception("Não é possível finalizar uma troca/devolução que gere crédito para consumidor final.");
@@ -904,34 +815,21 @@ namespace Glass.Data.DAL
                             }
                         }
 
-                        if (!trocaDevolucao.UsarPedidoReposicao)
+                        try
                         {
-                            try
-                            {
-                                UtilsFinanceiro.CancelaRecebimento(transaction, UtilsFinanceiro.TipoReceb.TrocaDevolucao, null, null,
-                                    null, null, null, 0, null, trocaDevolucao, null, null, dataEstornoBanco, false, false);
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao cancelar troca/devolução.", ex));
-                            }
+                            UtilsFinanceiro.CancelaRecebimento(transaction, UtilsFinanceiro.TipoReceb.TrocaDevolucao, null, null,
+                                null, null, null, 0, null, trocaDevolucao, null, null, dataEstornoBanco, false, false);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao cancelar troca/devolução.", ex));
                         }
 
                         if (trocaDevolucao.Situacao == (int)TrocaDevolucao.SituacaoTrocaDev.Finalizada)
                         {
                             // Altera o estoque
                             AlteraEstoqueCancelar(transaction, idTrocaDevolucao);
-
-                            if (trocaDevolucao.UsarPedidoReposicao)
-                            {
-                                foreach (var dados in ValorPagtoAntecipadoPedido(transaction, trocaDevolucao))
-                                {
-                                    objPersistence.ExecuteCommand(transaction, @"update pedido set valorPagamentoAntecipado=
-                                        greatest(coalesce(valorPagamentoAntecipado, 0)-?valor, 0) where idPedido=" + dados.Key,
-                                        new GDAParameter("?valor", dados.Value));
-                                }
-                            }
-
+                            
                             foreach (var p in produtos.Where(f => !string.IsNullOrEmpty(f.Etiquetas)))
                             {
                                 foreach (var etq in p.Etiquetas.Split('|'))
@@ -1071,44 +969,16 @@ namespace Glass.Data.DAL
             string totalTrocado, totalTroca;
 
             var idPedido = ObtemValorCampo<uint?>(session, "idPedido", "idTrocaDevolucao=" + idTrocaDevolucao);
+            
+            totalTrocado =
+                @"SELECT COALESCE(SUM(pt.Total + COALESCE(pt.ValorBenef,0)),0)
+                FROM produto_trocado pt
+                WHERE pt.IdTrocaDevolucao=td.IdTrocaDevolucao";
 
-            var isMoEspecial = idPedido.GetValueOrDefault(0) > 0 &&
-                PedidoDAO.Instance.GetTipoPedido(session, idPedido.Value) == Pedido.TipoPedidoEnum.MaoDeObraEspecial;
-
-            /*// Chamado 16807: Mudamos a forma de calcular o crédito gerado para evitar o problema deste chamado, 
-            // no qual o usuário inseria um produto, mudava a quantidade dele para menos e em seguida para mais fazendo com que o crédito gerado
-            // não fosse recalculado para cima, devido à condição que existia abaixo ", creditoGerado=least(creditoGerado, creditoGeradoMax)"
-            if (!isMoEspecial)
-                objPersistence.ExecuteCommand(@"
-                    update troca_devolucao td
-                        set creditoGerado=(
-                            Select Sum(total+coalesce(valorBenef,0)) 
-                            From produto_trocado pt 
-                            Where pt.idTrocaDevolucao=td.idTrocaDevolucao
-                        ) 
-                    where creditoGeradoMax>0 and idTrocaDevolucao=" + idTrocaDevolucao);*/
-
-            if (!ObtemUsarPedidoReposicao(session, idTrocaDevolucao))
-            {
-                totalTrocado =
-                    @"SELECT COALESCE(SUM(pt.Total + COALESCE(pt.ValorBenef,0)),0)
-                    FROM produto_trocado pt
-                    WHERE pt.IdTrocaDevolucao=td.IdTrocaDevolucao";
-
-                totalTroca =
-                    @"SELECT COALESCE(SUM(ptd.Total + COALESCE(ptd.ValorBenef,0)),0)
-                    FROM produto_troca_dev ptd
-                    WHERE ptd.IdTrocaDevolucao=td.IdTrocaDevolucao";
-            }
-            else
-            {
-                totalTrocado =
-                    @"SELECT COALESCE(SUM(ptd.Total + COALESCE(ptd.ValorBenef,0)),0)
-                    FROM produto_troca_dev ptd
-                    WHERE ptd.IdTrocaDevolucao=td.IdTrocaDevolucao";
-
-                totalTroca = "0";
-            }
+            totalTroca =
+                @"SELECT COALESCE(SUM(ptd.Total + COALESCE(ptd.ValorBenef,0)),0)
+                FROM produto_troca_dev ptd
+                WHERE ptd.IdTrocaDevolucao=td.IdTrocaDevolucao";
 
             var sql =
                 @"UPDATE troca_devolucao td
@@ -1201,16 +1071,6 @@ namespace Glass.Data.DAL
         public string ObtemIdTrocaDevPorPedido(uint idPedido)
         {
             return ObtemValorCampo<string>("Cast(group_concat(idTrocaDevolucao) as char)", "idPedido=" + idPedido + " And situacao<>" + (int)TrocaDevolucao.SituacaoTrocaDev.Cancelada);
-        }
-
-        public bool ObtemUsarPedidoReposicao(uint idTrocaDevolucao)
-        {
-            return ObtemUsarPedidoReposicao(null, idTrocaDevolucao);
-        }
-
-        public bool ObtemUsarPedidoReposicao(GDASession session, uint idTrocaDevolucao)
-        {
-            return ObtemValorCampo<bool>(session, "usarPedidoReposicao", "idTrocaDevolucao=" + idTrocaDevolucao);
         }
 
         public uint? ObtemIdTipoPerda(uint idTrocaDevolucao)

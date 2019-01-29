@@ -513,10 +513,8 @@ namespace Glass.PCP.Negocios.Componentes
                     else if (!numEtiqueta.ToUpper().Substring(0, 1).Equals("V"))
                         ValidaLeituraPeca(transaction, idLiberarPedido, numEtiqueta, idPedidoExp);
 
-                    //Realiza a leitura
                     #region Volume
 
-                    //Verifica se é etiqueta de volume
                     if (numEtiqueta.ToUpper().Substring(0, 1).Equals("V"))
                     {
                         ServiceLocator.Current.GetInstance<Glass.PCP.Negocios.IVolumeFluxo>()
@@ -533,8 +531,7 @@ namespace Glass.PCP.Negocios.Componentes
 
                         var idRetalho = tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho ?
                             Glass.Conversoes.StrParaUint(numEtiqueta.Substring(1, numEtiqueta.IndexOf('-') - 1)) : 0;
-
-                        var idLoja = Glass.Data.DAL.PedidoDAO.Instance.ObtemIdLoja(transaction, (uint)idPedidoExp.Value);
+                        
                         var idProd = tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal ?
                             ProdutosNfDAO.Instance.GetIdProdByEtiqueta(transaction, numEtiqueta) : RetalhoProducaoDAO.Instance.ObtemIdProd(transaction, idRetalho);
 
@@ -555,17 +552,6 @@ namespace Glass.PCP.Negocios.Componentes
                                 throw new Exception("Produto não encontrado no pedido ou já expedido.");
                         }
 
-                        //Dados que serão feitos a baixa no estoque
-                        var dados = new List<DetalhesBaixaEstoque>()
-                        {
-                            new DetalhesBaixaEstoque()
-                            {
-                                IdProdPed = (int)prodPed.IdProdPed,
-                                DescricaoBaixa = prodPed.DescrProduto,
-                                Qtde = 1
-                            }
-                        };
-
                         //Faz o vinculo da chapa no corte para que a mesma não possa ser usada novamente
                         Glass.Data.DAL.ChapaCortePecaDAO.Instance.Inserir(transaction, numEtiqueta, null, false, true);
 
@@ -585,9 +571,16 @@ namespace Glass.PCP.Negocios.Componentes
                         //Atualiza a chapa_trocada_devolvida marcando a mesma como utilizada
                         ChapaTrocadaDevolvidaDAO.Instance.MarcarChapaComoUtilizada(transaction, numEtiqueta);
 
-                        //Baixa o estoque
-                        ServiceLocator.Current.GetInstance<Glass.Estoque.Negocios.IProvedorBaixaEstoque>()
-                            .BaixarEstoque(transaction, idLoja, dados, null, idProdImpressaoChapa, false);
+                        MovEstoqueDAO.Instance.BaixaEstoqueChapa(transaction, (int)prodPed.IdProdPed, idProdImpressaoChapa);
+
+                        PedidoDAO.Instance.MarcaPedidoEntregue(transaction, prodPed.IdPedido);
+                        var idLoja = PedidoDAO.Instance.ObtemIdLoja(transaction, prodPed.IdPedido);
+
+                        if (PedidoDAO.Instance.GetTipoPedido(transaction, prodPed.IdPedido) != Glass.Data.Model.Pedido.TipoPedidoEnum.Producao)
+                        {
+                            ProdutoLojaDAO.Instance.RecalcularReserva(transaction, (int)idLoja, new List<int> { (int)prodPed.IdProd });
+                            ProdutoLojaDAO.Instance.RecalcularLiberacao(transaction, (int)idLoja, new List<int> { (int)prodPed.IdProd });
+                        }
 
                         //Marca o retalho como vendido
                         if (tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
@@ -664,7 +657,6 @@ namespace Glass.PCP.Negocios.Componentes
                             {
                                 var prodImpressao = ProdutoImpressaoDAO.Instance.GetElementByPrimaryKey(transaction, item.Key);
                                 var idPedidoExp = Glass.Data.DAL.ExpedicaoChapaDAO.Instance.ObtemPedidoExpedicao(transaction, (uint)item.Key);
-                                var idLoja = Glass.Data.DAL.PedidoDAO.Instance.ObtemIdLoja(transaction, (uint)idPedidoExp);
                                 var tipoEtiqueta = ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(prodImpressao.NumEtiqueta);
                                 var idProd = tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal ?
                                     ProdutosNfDAO.Instance.GetIdProdByEtiqueta(transaction, prodImpressao.NumEtiqueta) : RetalhoProducaoDAO.Instance.ObtemIdProd(transaction, (uint)prodImpressao.IdRetalhoProducao);
@@ -673,23 +665,12 @@ namespace Glass.PCP.Negocios.Componentes
                                     throw new Exception("Pedido não encontrado.");
 
                                 var prodsPed = Glass.Data.DAL.ProdutosPedidoDAO.Instance.GetByPedidoProdutoForExpCarregamento(transaction, (uint)idPedidoExp, idProd, true);
-                                var prodPed = Glass.MetodosExtensao.Agrupar(prodsPed, new string[] { "IdProd" }, new string[] { "Qtde" }).Where(f => f.IdProd == idProd).FirstOrDefault();
+                                var prodPed = Glass.MetodosExtensao.Agrupar(prodsPed, new string[] { "IdProd" }, new string[] { "Qtde" }).FirstOrDefault(f => f.IdProd == idProd);
                                 var idRetalho = tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho ?
                                     Glass.Conversoes.StrParaUint(prodImpressao.NumEtiqueta.Substring(1, prodImpressao.NumEtiqueta.IndexOf('-') - 1)) : 0;
 
                                 if (prodPed == null)
                                     return new Colosoft.Business.SaveResult(false, "Produto não encontrado.".GetFormatter());
-
-                                //Dados que serão feitos a baixa no estoque
-                                var dados = new List<DetalhesBaixaEstoque>()
-                                {
-                                    new DetalhesBaixaEstoque()
-                                    {
-                                        IdProdPed = (int)prodPed.IdProdPed,
-                                        DescricaoBaixa = prodPed.DescrProduto,
-                                        Qtde = 1
-                                    }
-                                };
 
                                 //Remove o vinculo da chapa no corte para que a mesma possa ser usada novamente
                                 Glass.Data.DAL.ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoChapa(transaction, (uint)item.Key);
@@ -703,9 +684,7 @@ namespace Glass.PCP.Negocios.Componentes
                                 //Remove o pedido de expedicao
                                 Glass.Data.DAL.ProdutoImpressaoDAO.Instance.AtualizaPedidoExpedicao(transaction, null, (uint)item.Key);
 
-                                //Credita o estoque
-                                ServiceLocator.Current.GetInstance<Glass.Estoque.Negocios.IProvedorBaixaEstoque>()
-                                    .EstornaBaixaEstoque(transaction, idLoja, dados, null, (uint)item.Key);
+                                MovEstoqueDAO.Instance.CreditaEstoqueEstornoCarregamentoExpedicaoChapa(transaction, (int)prodPed.IdPedido, item.Key, new List<ProdutosPedido> { prodPed });
 
                                 //Marca o retalho como disponivel
                                 if (tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)

@@ -40,13 +40,11 @@ namespace Glass.Data.DAL
         /// <param name="saidaRevenda"></param>
         public void Inserir(GDASession sessao, string codChapa, string codEtiqueta, bool salvarPlanoCorte, bool saidaRevenda)
         {
-            ChapaCortePeca nova = new ChapaCortePeca();
+            var nova = new ChapaCortePeca();
 
             ProdutoImpressaoDAO.TipoEtiqueta tipoEtiquetaChapa = ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(codChapa);
 
             uint idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(sessao, codChapa, tipoEtiquetaChapa);
-            bool chapaPossiuLeitura = ChapaPossuiLeitura(sessao, idProdImpressaoChapa);
-
             nova.IdProdImpressaoChapa = idProdImpressaoChapa;
             nova.IdProdImpressaoPeca = !string.IsNullOrEmpty(codEtiqueta) ? ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(sessao, codEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido) : 0;
             nova.NumSeq = GetNumSeq(sessao, nova.IdProdImpressaoChapa, nova.IdProdImpressaoPeca);
@@ -54,16 +52,18 @@ namespace Glass.Data.DAL
             nova.DataCad = DateTime.Now;
             nova.SaidaRevenda = saidaRevenda;
 
-            var idChapaCortePeca = Insert(sessao, nova);
+            Insert(sessao, nova);
+        }
 
-            if (tipoEtiquetaChapa == ProdutoImpressaoDAO.TipoEtiqueta.Retalho && !saidaRevenda)
+        public void BaixarEstoqueChapa(GDASession sessao, ProdutoImpressaoDAO.TipoEtiqueta tipoEtiquetaChapa, uint idProdImpressaoChapa, string codEtiqueta, bool chapaPossuiLeitura)
+        {
+            if (tipoEtiquetaChapa == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
             {
-                uint idRetalhoProducao = ProdutoImpressaoDAO.Instance.ObtemValorCampo<uint>(sessao, "idRetalhoProducao", "idProdImpressao=" + nova.IdProdImpressaoChapa);
+                uint idRetalhoProducao = ProdutoImpressaoDAO.Instance.ObtemValorCampo<uint>(sessao, "idRetalhoProducao", "idProdImpressao=" + idProdImpressaoChapa);
 
                 if (idRetalhoProducao > 0)
                 {
                     var situacaoRetalho = RetalhoProducaoDAO.Instance.ObtemSituacao(sessao, idRetalhoProducao);
-                    var idProdRetalho = RetalhoProducaoDAO.Instance.ObtemValorCampo<uint>(sessao, "IdProd", "IdRetalhoProducao=" + idRetalhoProducao);
 
                     if (situacaoRetalho != SituacaoRetalhoProducao.Cancelado)
                     {
@@ -71,27 +71,19 @@ namespace Glass.Data.DAL
 
                         RetalhoProducaoDAO.Instance.AlteraSituacao(sessao, idRetalhoProducao, SituacaoRetalhoProducao.EmUso);
                         if (!UsoRetalhoProducaoDAO.Instance.PossuiAssociacao(sessao, idRetalhoProducao, idProdPedProducao.GetValueOrDefault(0)))
+                        {
                             UsoRetalhoProducaoDAO.Instance.AssociarRetalho(sessao, idRetalhoProducao, idProdPedProducao.GetValueOrDefault(0), false);
+                        }
                     }
 
-                    if (!chapaPossiuLeitura)
-                        MovEstoqueDAO.Instance.BaixaEstoqueRetalho(sessao, idProdRetalho, UserInfo.GetUserInfo.IdLoja, idRetalhoProducao, 1);
+                    MovEstoqueDAO.Instance.BaixaEstoqueChapaRetalho(sessao, idRetalhoProducao, chapaPossuiLeitura);
                 }
             }
-            else if (tipoEtiquetaChapa != ProdutoImpressaoDAO.TipoEtiqueta.Retalho && !chapaPossiuLeitura && !saidaRevenda)
+            else if (!chapaPossuiLeitura)
             {
-                uint? idProdPedProd = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(sessao, codEtiqueta);
-                uint? idProd = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, idProdImpressaoChapa);
-                uint? idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
+                var idProdPedProd = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(sessao, codEtiqueta);
 
-                var idLojaMovEstoque = (uint?)MovEstoqueDAO.Instance.ObterIdLojaPeloIdNf(sessao, (int)idNf.Value, (int)idProd.Value, MovEstoque.TipoMovEnum.Entrada);
-
-                var idLojaFuncionario = UserInfo.GetUserInfo.IdLoja;
-                var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault());
-
-                var idLoja = idLojaMovEstoque ?? (idLojaNf == 0 ? idLojaFuncionario : idLojaNf);
-
-                MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, idProd.Value, idLoja, idProdPedProd.Value, 1, 0, false, false, false);
+                MovEstoqueDAO.Instance.BaixaEstoqueCorteChapa(sessao, idProdPedProd.Value, (int)idProdImpressaoChapa);
             }
         }
 
@@ -325,7 +317,7 @@ namespace Glass.Data.DAL
             }
 
             #endregion
-        }        
+        }
 
         /// <summary>
         /// Remove a leitura da chapa das peças informadas.
@@ -341,10 +333,41 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(session, $"DELETE FROM chapa_corte_peca WHERE COALESCE(PecaReposta,FALSE) = FALSE AND IdProdImpressaoPeca IN ({ids})");
 
                 foreach (var id in idsProdImpressaoChapa)
+                {
                     MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaChapaCortePeca(session, id, MovEstoque.TipoMovEnum.Entrada);
+                }
 
                 foreach (var id in idsProdImpressaoPeca)
                     MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaChapaCortePeca(session, id, MovEstoque.TipoMovEnum.Saida);
+            }
+        }
+
+        /// <summary>
+        /// Estorna a chapa no estoque
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idsProdImpressaoPeca"></param>
+        public void EstornarEstoqueChapa(GDASession sessao, List<int> idsProdImpressaoPeca)
+        {
+            if (idsProdImpressaoPeca != null && idsProdImpressaoPeca.Any())
+            {
+                foreach (var id in ObtemIdProdImpressaoChapa(sessao, string.Join(",", idsProdImpressaoPeca)))
+                {
+                    if (!this.ChapaPossuiLeitura(sessao, (uint)id))
+                    {
+                        var produtoImpressao = ProdutoImpressaoDAO.Instance.GetElementByPrimaryKey(sessao, id);
+
+                        if (produtoImpressao.IdRetalhoProducao > 0)
+                        {
+                            var retalho = RetalhoProducaoDAO.Instance.GetElementByPrimaryKey(produtoImpressao.IdRetalhoProducao.Value);
+                            MovEstoqueDAO.Instance.CreditaEstoqueRetalho(sessao, retalho.IdProd, retalho, UserInfo.GetUserInfo);
+                        }
+                        else
+                        {
+                            MovEstoqueDAO.Instance.CreditaEstoqueChapaCancelamentoImpressaoEtiqueta(sessao, produtoImpressao);
+                        }
+                    }
+                }
             }
         }
 
