@@ -1711,13 +1711,6 @@ namespace Glass.Data.DAL
                 return false;
             }
 
-            if (leituraProducao
-                && !PedidoConfig.LiberarPedido
-                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar)
-            {
-                return;
-            }
-
             var idPedido = (int)this.ObtemIdPedido(sessao, idProdPed);
 
             var saidaJaEfetuada = !saidaConfirmacao && PedidoDAO.Instance.VerificaSaidaEstoqueConfirmacao(sessao, idPedido);

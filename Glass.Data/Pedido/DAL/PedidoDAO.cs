@@ -2110,6 +2110,19 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        /// <summary>
+        /// Método que verifica se o pedido informado já deu saída de acordo com as configurações
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA.</param>
+        /// <param name="idPedido">Identificador do pedido a ser verificado.</param>
+        /// <returns>Retorna o resultado de um teste lógico que verifica se o pedido já efetuou a saída de estoque.</returns>
+        internal bool VerificaSaidaEstoqueConfirmacao(GDASession sessao, int idPedido)
+        {
+            return !PedidoConfig.LiberarPedido
+                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar
+                && ObtemSituacao(sessao, (uint)idPedido) == Pedido.SituacaoPedido.Confirmado;
+        }
+
         #region Listagem/Relatório de vendas de pedidos
 
         #region SQL
