@@ -36,6 +36,8 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Configuracoes
             this.ControlarProducao = PCPConfig.ControlarProducao;
             this.ExibirBotoesTotais = UserInfo.GetUserInfo.IsAdministrador || !PedidoConfig.TelaListagem.ApenasAdminVisualizaTotais;
             this.EmitirPedido = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedido);
+            this.EmitirPedidoGarantia = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+            this.EmitirPedidoReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
         }
 
         /// <summary>
@@ -135,5 +137,19 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Configuracoes
         [DataMember]
         [JsonProperty("emitirPedido")]
         public bool EmitirPedido { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se deverá ser exibido o link para emissão de pedido.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("emitirPedidoGarantia")]
+        public bool EmitirPedidoGarantia { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se deverá ser exibido o link para emissão de pedido.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("emitirPedidoReposicao")]
+        public bool EmitirPedidoReposicao { get; set; }
     }
 }
