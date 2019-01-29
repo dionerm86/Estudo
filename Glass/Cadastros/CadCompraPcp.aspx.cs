@@ -1,10 +1,12 @@
-using System;
+﻿using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Data.DAL;
 using Glass.Data.Model;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -25,6 +27,8 @@ namespace Glass.UI.Web.Cadastros
                     WebGlass.Business.PedidoEspelho.Fluxo.BuscarEValidar.Instance.BuscarCompraPcp(Conversoes.StrParaUint(p));
 
                 cadastro.Visible = true;
+                btnBuscar.Visible = false;
+                btnNovaCompraMercadoria.Visible = true;
             }
             catch (Exception ex)
             {
@@ -51,6 +55,23 @@ namespace Glass.UI.Web.Cadastros
                 e.Cancel = true;
                 return;
             }
+            else
+            {
+                // O controle hdfDadosProdutos possui dados de mais de um produto.
+                // Cada produto é separado por "|", cada campo do produto é separado por ";".
+                // O ID do produto de pedido espelho, é sempre o primeiro campo dos dados do produto.
+                // A lógica abaixo recupera todos os primeiros campos, dos dados de todos os produtos selecionados na tela.
+                var idsProdPedEsp = hdfDadosProdutos?.Value?.Split('|')?.Select(f => f?.Split(';')?[0]?.StrParaInt() ?? 0)?.Where(f => f > 0)?.ToList() ?? new List<int>();
+
+                // Como um produto de pedido espelho pode estar associado a somente um produto de compra, essa validação é correta.
+                // Independente da quantidade do produto de pedido espelho, o sistema não permite que a compra seja gerada com uma quantidade diferente da original.
+                // Ex.: IdProdPed 123456, quantidade 10, o usuário não consegue gerar uma compra de mercadoria com a quantidade menor que 10, para o produto 123456.
+                if (ProdutosCompraDAO.Instance.VerificarProdutosPedidoEspelhoGeraramProdutosCompra(null, idsProdPedEsp))
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
 
             var pedidos = hdfIdsPedidos.Value.Substring(0, hdfIdsPedidos.Value.LastIndexOf(','));
 
@@ -75,7 +96,7 @@ namespace Glass.UI.Web.Cadastros
                     WebGlass.Business.Compra.Fluxo.Compra.Instance.CompraPcpInserted(Glass.Conversoes.StrParaUint(e.ReturnValue.ToString()), hdfDadosProdutos.Value.Trim(' ', '|').Split('|'));
 
                     Page.ClientScript.RegisterStartupScript(GetType(), "pergunta", @"
-                    if (!confirm('Compra gerada com sucesso! N�mero da compra: " + e.ReturnValue + @"\nDeseja continuar nesta tela?'))
+                    if (!confirm('Compra gerada com sucesso! Número da compra: " + e.ReturnValue + @"\nDeseja continuar nesta tela?'))
                         window.location.href = '" + this.ResolveClientUrl("~/Listas/LstCompraPcp.aspx") + "';\n", true);
                 }
                 catch (Exception ex)
@@ -168,14 +189,14 @@ namespace Glass.UI.Web.Cadastros
 
                 if (situacao == PedidoEspelho.SituacaoPedido.Processando ||
                     situacao == PedidoEspelho.SituacaoPedido.Aberto)
-                    return "Erro\tA confer�ncia deste pedido ainda n�o foi finalizada.";
+                    return "Erro\tA conferência deste pedido ainda não foi finalizada.";
 
                 return "Ok\t";
             }
             catch (Exception ex)
             {
-                if (ex.Message.IndexOf("Registro n�o encontrado.") > -1)
-                    return "Erro\tErro: Pedido n�o encontrado. Verifique se foi gerada confer�ncia desse pedido.";
+                if (ex.Message.IndexOf("Registro não encontrado.") > -1)
+                    return "Erro\tErro: Pedido não encontrado. Verifique se foi gerada conferência desse pedido.";
                 else
                     return Glass.MensagemAlerta.FormatErrorMsg("Erro\t", ex);
             }

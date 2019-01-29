@@ -1191,85 +1191,105 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
-        /// Processa o retorno da exportação
+        /// Processa o retorno da exportação.
         /// </summary>
+        /// <param name="dados">Os dados que serão processados.</param>
+        /// <param name="listaPedidos">A lista de pedidos que terão ou não sua situação alterada.</param>
         public static void ProcessarDadosExportacao(string[] dados, Dictionary<uint, bool> listaPedidos)
         {
-            using (var transaction = new GDATransaction())
+            using (var sessao = new GDATransaction())
             {
                 try
                 {
-                    transaction.BeginTransaction();
+                    sessao.BeginTransaction();
 
-                    uint[] idsPedidosExportados;
+                    ProcessarDadosExportacao(sessao, dados, listaPedidos);
 
-                    if (dados[0] == "0")
+                    sessao.Commit();
+                    sessao.Close();
+                }
+                catch
+                {
+                    sessao.Rollback();
+                    sessao.Close();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Processa o retorno da exportação.
+        /// </summary>
+        /// <param name="sessao">A sessão atual.</param>
+        /// <param name="dados">Os dados que serão processados.</param>
+        /// <param name="listaPedidos">A lista de pedidos que terão ou não sua situação alterada.</param>
+        public static void ProcessarDadosExportacao(GDASession sessao, string[] dados, Dictionary<uint, bool> listaPedidos)
+        {
+            try
+            {
+                uint[] idsPedidosExportados;
+
+                if (dados[0] == "0")
+                {
+                    if (dados.Length > 2 && dados[2] != null)
                     {
-                        if (dados.Length > 2 && dados[2] != null)
-                        {
-                            idsPedidosExportados = Array.ConvertAll<string, uint>(dados[2].Split(','),
-                                delegate (string x) { return Glass.Conversoes.StrParaUint(x.Replace(" (PCP)", "")); });
-                        }
-                        else
-                        {
-                            idsPedidosExportados = new uint[listaPedidos.Count];
-                            listaPedidos.Keys.CopyTo(idsPedidosExportados, 0);
-                        }
-
-                        foreach (uint item in idsPedidosExportados)
-                        {
-                            PedidoExportacaoDAO.Instance.AtualizarSituacao(transaction, item,
-                                (int)PedidoExportacao.SituacaoExportacaoEnum.Exportado);
-
-                            listaPedidos.Remove(item);
-                        }
-
-                        foreach (var item in listaPedidos)
-                        {
-                            PedidoExportacaoDAO.Instance.AtualizarSituacao(transaction, item.Key,
-                                (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
-                        }
+                        idsPedidosExportados = Array.ConvertAll<string, uint>(
+                            dados[2].Split(','),
+                            delegate(string x) { return Glass.Conversoes.StrParaUint(x.Replace(" (PCP)", string.Empty)); });
                     }
                     else
                     {
-                        foreach (var item in listaPedidos)
-                            PedidoExportacaoDAO.Instance.AtualizarSituacao(transaction, item.Key,
-                                (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+                        idsPedidosExportados = new uint[listaPedidos.Count];
+                        listaPedidos.Keys.CopyTo(idsPedidosExportados, 0);
                     }
 
-                    transaction.Commit();
-                    transaction.Close();
+                    foreach (uint item in idsPedidosExportados)
+                    {
+                        PedidoExportacaoDAO.Instance.AtualizarSituacao(sessao, item, (int)PedidoExportacao.SituacaoExportacaoEnum.Exportado);
+
+                        listaPedidos.Remove(item);
+                    }
+
+                    foreach (var item in listaPedidos)
+                    {
+                        PedidoExportacaoDAO.Instance.AtualizarSituacao(sessao, item.Key, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+                    }
                 }
-                catch
+                else
                 {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
+                    foreach (var item in listaPedidos)
+                    {
+                        PedidoExportacaoDAO.Instance.AtualizarSituacao(sessao, item.Key, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+                    }
                 }
+            }
+            catch
+            {
+                throw;
             }
         }
 
         /// <summary>
         /// Atualiza a situação dos pedidos no cliente.
         /// </summary>
-        /// <param name="dados">Dados para exportação.</param>
+        /// <param name="dados">Os dados que serão processados para atualização dos pedidos.</param>
         public static void AtualizarPedidosExportacao(string[] dados)
         {
-            using (var transaction = new GDATransaction())
+            using (var sessao = new GDATransaction())
             {
                 try
                 {
-                    transaction.BeginTransaction();
+                    sessao.BeginTransaction();
 
-                    AtualizarPedidosExportacao(transaction, dados);
+                    AtualizarPedidosExportacao(sessao, dados);
 
-                    transaction.Commit();
-                    transaction.Close();
+                    sessao.Commit();
+                    sessao.Close();
                 }
                 catch
                 {
-                    transaction.Rollback();
-                    transaction.Close();
+                    sessao.Rollback();
+                    sessao.Close();
                     throw;
                 }
             }
@@ -1278,9 +1298,9 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Atualiza a situação dos pedidos no cliente.
         /// </summary>
-        /// <param name="session">A sessão atual para transação.</param>
-        /// <param name="dados">Dados para exportação.</param>
-        public static void AtualizarPedidosExportacao(GDASession session, string[] dados)
+        /// <param name="sessao">A sessão atual.</param>
+        /// <param name="dados">Os dados que serão processados para atualização dos pedidos.</param>
+        public static void AtualizarPedidosExportacao(GDASession sessao, string[] dados)
         {
             try
             {
@@ -1292,16 +1312,16 @@ namespace Glass.Data.Helper
 
                     if (situacao == 0)
                     {
-                        throw new Exception($"Não há registro de exportação para o pedido {pedidoExportado.Item1} no sistema, crie uma exportação para ele para que a mesma possa ser atualizada. ");
+                        throw new Exception($"Não há registro de exportação para o pedido {pedidoExportado.Item1} no sistema, crie uma exportação para ele para que a mesma possa ser atualizada.");
                     }
 
                     if (pedidoExportado.Item2 && (situacao == PedidoExportacao.SituacaoExportacaoEnum.Exportando || situacao == PedidoExportacao.SituacaoExportacaoEnum.Cancelado))
                     {
-                        PedidoExportacaoDAO.Instance.AtualizarSituacao(session, pedidoExportado.Item1, (int)PedidoExportacao.SituacaoExportacaoEnum.Exportado);
+                        PedidoExportacaoDAO.Instance.AtualizarSituacao(sessao, pedidoExportado.Item1, (int)PedidoExportacao.SituacaoExportacaoEnum.Exportado);
                     }
                     else if (!pedidoExportado.Item2 && (situacao != PedidoExportacao.SituacaoExportacaoEnum.Cancelado))
                     {
-                        PedidoExportacaoDAO.Instance.AtualizarSituacao(session, pedidoExportado.Item1, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+                        PedidoExportacaoDAO.Instance.AtualizarSituacao(sessao, pedidoExportado.Item1, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
                     }
                 }
             }

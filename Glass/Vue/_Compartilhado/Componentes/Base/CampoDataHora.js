@@ -97,6 +97,8 @@ Vue.component('campo-data-hora', {
 
         if (isNaN(dataHoraAtual.getTime())) {
           dataHoraAtual = null;
+        } else {
+          dataHoraAtual = new Date(dataHoraAtual.getTime() + Data.offset);
         }
 
         if (dataHoraAtual !== this.dataHora) {

@@ -25,7 +25,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="dadosParaAtualizacao">Os dados que serão atualizados no pedido.</param>
         /// <returns>Um status HTTP que indica se o pedido foi atualizado.</returns>
         [HttpPatch]
-        [Route("{id}")]
+        [Route("{id:int}")]
         [SwaggerResponse(202, "Pedido atualizado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
@@ -75,7 +75,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="dadosEntrada">Objeto com as novas observações do pedido.</param>
         /// <returns>Um status HTTP com o resultado da operação.</returns>
         [HttpPatch]
-        [Route("{id}/alterarObservacoes")]
+        [Route("{id:int}/alterarObservacoes")]
         [SwaggerResponse(202, "Observação do pedido atualizada sem erros.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido dos campos idPedido ou id.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]

@@ -1178,7 +1178,7 @@
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:DropDownList ID="drpFuncionario" runat="server" AppendDataBoundItems="True"
-                                                            DataSourceID="odsFuncionario" DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdFunc") %>'
+                                                            DataSourceID="odsFuncionarioVendedor" DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdFunc") %>'
                                                             OnDataBound="drpFuncionario_DataBound">
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
@@ -1387,7 +1387,7 @@
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:DropDownList ID="drpAtendente" runat="server" AppendDataBoundItems="True"
-                                                            DataSourceID="odsFuncionario" DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdFuncAtendente") %>'
+                                                            DataSourceID="odsFuncionarioAtendente" DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdFuncAtendente") %>'
                                                             OnDataBound="drpFuncionario_DataBound">
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
@@ -2142,7 +2142,7 @@
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:DropDownList ID="drpFuncionario" runat="server" AppendDataBoundItems="True"
-                                                            DataSourceID="odsFuncionario" DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdFunc") %>'
+                                                            DataSourceID="odsFuncionarioVendedor" DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdFunc") %>'
                                                             OnDataBound="drpFuncionario_DataBound">
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
@@ -2350,7 +2350,7 @@
                                                     </td>
                                                     <td align="left" style="width: 381px">
                                                         <asp:DropDownList ID="drpAtendente" runat="server" AppendDataBoundItems="True"
-                                                            DataSourceID="odsFuncionario" DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdFuncAtendente") %>'
+                                                            DataSourceID="odsFuncionarioAtendente" DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdFuncAtendente") %>'
                                                             OnDataBound="drpFuncionario_DataBound">
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
@@ -2501,8 +2501,11 @@
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTabelaDescontoAcrescimo" runat="server"
         SelectMethod="ObtemDescritoresTabelaDescontoAcrescimo" TypeName="Glass.Global.Negocios.IClienteFluxo">
     </colo:VirtualObjectDataSource>
-    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFuncionario" runat="server"
-        SelectMethod="ObterFuncionariosAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
+    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFuncionarioVendedor" runat="server"
+        SelectMethod="ObterVendedoresAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
+    </colo:VirtualObjectDataSource>
+    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFuncionarioAtendente" runat="server"
+        SelectMethod="ObterAtendentesAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCliente" runat="server"
         DataObjectTypeName="Glass.Global.Negocios.Entidades.Cliente"
