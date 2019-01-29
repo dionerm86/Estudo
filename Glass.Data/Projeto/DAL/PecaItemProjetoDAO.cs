@@ -16,17 +16,15 @@ namespace Glass.Data.DAL
         {
             var nomeTabelaProdutosPedido = pcp ? "produtos_pedido_espelho" : "produtos_pedido";
 
-            string sql = $@"
+            string sql = @"
                 Select pip.*, p.Descricao as descrProduto, p.codInterno, COALESCE(ncm.ncm, p.ncm) as ncm, ea.codInterno as codAplicacao, 
-                    ep.codInterno As CodProcesso, ppe.IdProdPed, ped.IdPedido,
-                    {(pcp ? "(pp.Qtde - coalesce(pp.QtdeInvisivel, 0))" : "pip.Qtde")} AS QtdeExibirRelatorio
+                    ep.codInterno As CodProcesso, ppe.IdProdPed, ped.IdPedido
                 From peca_item_projeto pip 
                     Left Join produto p On (pip.idProd=p.idProd)
                     Left Join material_item_projeto mip On (pip.idPecaItemProj=mip.idPecaItemProj)
                     Left Join etiqueta_aplicacao ea ON (mip.idAplicacao=ea.idAplicacao)
                     Left Join etiqueta_processo ep ON (mip.idProcesso=ep.idProcesso)
-                    Left Join {nomeTabelaProdutosPedido} ppe On (mip.idMaterItemProj = ppe.idMaterItemProj)
-                    {(pcp ? "Left Join produtos_pedido pp On (ppe.idProdPed = pp.idProdPedEsp)" : string.Empty)}
+                    Left Join " + nomeTabelaProdutosPedido + @" ppe On (mip.idMaterItemProj = ppe.idMaterItemProj)
                     left join pedido ped on (ppe.idPedido=ped.idPedido)
                     LEFT JOIN
                     (

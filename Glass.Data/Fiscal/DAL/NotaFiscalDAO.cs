@@ -9406,6 +9406,11 @@ namespace Glass.Data.DAL
 
         #region Métodos sobrescritos
 
+        private void TravarTransacao(GDASession session, bool iniciando)
+        {
+            this.objPersistence.ExecuteCommand(session, "UPDATE nota_fiscal_transacao SET EmTransacao = ?iniciando;", new GDAParameter("?iniciando", iniciando));
+        }
+
         /// <summary>
         /// Insere a nota fiscal.
         /// </summary>
@@ -9416,6 +9421,8 @@ namespace Glass.Data.DAL
                 try
                 {
                     transaction.BeginTransaction();
+
+                    this.TravarTransacao(transaction, true);
 
                     // Verifica se foi emitida uma nota fiscal com os mesmos dados há menos de 30 segundos.
                     var idNfGerada = ObtemValorCampo<int>(transaction, "IdNf", string.Format("DataCad>=?data{0}{1}{2}",
@@ -9429,6 +9436,8 @@ namespace Glass.Data.DAL
                         throw new Exception("Foi gerada uma nota fiscal com os mesmos dados há poucos segundos. Aguarde um minuto e tente novamente.");
 
                     var retorno = Insert(transaction, objInsert);
+
+                    this.TravarTransacao(transaction, false);
 
                     transaction.Commit();
                     transaction.Close();

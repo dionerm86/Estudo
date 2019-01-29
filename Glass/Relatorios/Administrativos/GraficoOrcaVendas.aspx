@@ -1,4 +1,4 @@
-<%@ Page Title="Gráfico de Orçamentos e Vendas" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+ï»¿<%@ Page Title="GrÃ¡fico de OrÃ§amentos e Vendas" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="GraficoOrcaVendas.aspx.cs" Inherits="Glass.UI.Web.Relatorios.Administrativos.GraficoOrcaVendas" %>
 
 <%@ Register Src="../../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
@@ -65,7 +65,7 @@
                             </asp:DropDownList>
                         </td>
                         <td>
-                            <asp:Label ID="Label1" runat="server" Text="Tipo Funcionário" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label1" runat="server" Text="Tipo FuncionÃ¡rio" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpTipoFunc" runat="server" AutoPostBack="True">
@@ -74,7 +74,7 @@
                             </asp:DropDownList>
                         </td>
                         <td>
-                            <asp:Label ID="Label8" runat="server" Text="Funcionário" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label8" runat="server" Text="FuncionÃ¡rio" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpVendedor" runat="server" DataSourceID="odsVendedor" AppendDataBoundItems="true"
@@ -87,7 +87,7 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:Label ID="Label2" runat="server" Text="Situação" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label2" runat="server" Text="SituaÃ§Ã£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <sync:CheckBoxListDropDown runat="server" ID="drpSituacao" DataSourceID="odsSituacaoOrca"
@@ -129,7 +129,7 @@
                             </asp:Legend>
                         </Legends>
                         <Series>
-                            <asp:Series Name="Orçamentos" Legend="Legenda" LegendText="#SERIESNAME" ChartArea="ChartArea1"
+                            <asp:Series Name="OrÃ§amentos" Legend="Legenda" LegendText="#SERIESNAME" ChartArea="ChartArea1"
                                 LabelToolTip="#VALX #VAL">
                             </asp:Series>
                             <asp:Series ChartArea="ChartArea1" Legend="Legenda" Name="Vendas" LegendText="#SERIESNAME">
@@ -154,7 +154,7 @@
                 <colo:VirtualObjectDataSource  culture="pt-BR"  ID="odsLoja" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.LojaDAO">
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsVendedor" runat="server"
-                    SelectMethod="ObterFuncionariosAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
+                    SelectMethod="ObterVendedoresAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource  culture="pt-BR"  ID="odsSituacaoOrca" runat="server" SelectMethod="GetSituacaoOrcamento"
                     TypeName="Glass.Data.Helper.DataSources">

@@ -96,12 +96,12 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .OrderBy("CodMaterial")
                 .Add("?tipoChapaVidro", Data.Model.TipoSubgrupoProd.ChapasVidro)
                 .Add("?tipoChapaVidroLaminado", Data.Model.TipoSubgrupoProd.ChapasVidroLaminado)
-                .Select(@"MIN(pref.CodOtimizacao) AS CodMaterial, 
+                .Select(@"MIN(pref.CodOtimizacao) AS CodMaterial,
                          p.Altura, p.Largura, SUM(pl.QtdEstoque) AS Qtde, 0 AS Retalho"));
 
             var consulta = consultas.First();
 
-            if (consultas.Count > 0)
+            if (consultas.Count > 1)
             {
                 consulta.UnionAll(consultas[1]);
             }
@@ -148,9 +148,9 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .From<Data.Model.Produto>("p")
                 .Where($"p.TipoMercadoria=?tipo AND p.IdProd IN({idsProd2})")
                 .Add("?tipo", Data.Model.TipoMercadoria.MateriaPrima)
-                .Select(@"p.CodOtimizacao, p.Descricao, p.Espessura, 
+                .Select(@"p.CodOtimizacao, p.Descricao, p.Espessura,
                           p.RecorteX1, p.RecorteY1, p.RecorteX2, p.RecorteY2,
-                          p.TransversalMaxX, p.TransversalMaxY, 
+                          p.TransversalMaxX, p.TransversalMaxY,
                           p.DesperdicioMinX, p.DesperdicioMinY,
                           p.DistanciaMin, p.RecorteAutomaticoForma,
                           p.AnguloRecorteAutomatico")
@@ -340,11 +340,11 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .InnerJoin<Data.Model.EtiquetaAplicacao>("ea.IdAplicacao=ppe.IdAplicacao", "ea")
                 .Where("so.IdSolucaoOtimizacao=?id")
                 .Add("?id", idSolucaoOtimizacao)
-                .Select(@"ppe.IdProdPed, ppe.IdPedido, p.Descricao AS DescricaoProduto, 
+                .Select(@"ppe.IdProdPed, ppe.IdPedido, p.Descricao AS DescricaoProduto,
                          ppp.PecaReposta, ep.CodInterno AS CodProcesso, ea.CodInterno AS CodAplicacao,
                          ppe.Qtde, ppe.QtdImpresso, ppe.AlturaReal, ppe.Altura, ppe.LarguraReal, ppe.Largura,
-                         ppe.Obs, ppe.TotM, ppe.TotM2Calc, ppp.NumEtiqueta, 
-                         po.IdPlanoOtimizacao, pc.IdPlanoCorte, po.Nome AS PlanoOtimizacao, pc.Posicao AS PosicaoPlanoCorte, 
+                         ppe.Obs, ppe.TotM, ppe.TotM2Calc, ppp.NumEtiqueta,
+                         po.IdPlanoOtimizacao, pc.IdPlanoCorte, po.Nome AS PlanoOtimizacao, pc.Posicao AS PosicaoPlanoCorte,
                          cv.Sigla AS Cor,
                          ppe.Espessura")
                 .Execute()
@@ -441,8 +441,8 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .InnerJoin<Data.Model.Produto>("p.IdProd=po.IdProduto", "p")
                 .Where("so.IdSolucaoOtimizacao=?id")
                 .Add("?id", idSolucaoOtimizacao)
-                .Select(@"p.Descricao AS DescricaoProduto, 
-                         rpc.Altura, rpc.Largura, pi.NumEtiqueta, 
+                .Select(@"p.Descricao AS DescricaoProduto,
+                         rpc.Altura, rpc.Largura, pi.NumEtiqueta,
                          po.IdPlanoOtimizacao, pc.IdPlanoCorte, po.Nome AS PlanoOtimizacao, pc.Posicao AS PosicaoPlanoCorte")
                 .Execute()
                 .Select(f => new

@@ -4575,7 +4575,7 @@ namespace Glass.Data.DAL
                                 Verifique se o pedido de revenda contém o produto da matéria-prima informada (código: { ProdutoDAO.Instance.GetCodInterno(sessao, (int)idProdChapa.Value) }).");
 
                         // Atualiza o Qtd Saída dos produtos do pedido de revenda.
-                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevendaSaida.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, ObtemEtiqueta(idProdPedProducao));
+                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevendaSaida.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, ObtemEtiqueta(idProdPedProducao), true);
 
                         ProdutoLojaDAO.Instance.RecalcularReserva(sessao, idLojaPedidoRevenda, new List<int> { (int)produtoPedidoRevendaSaida.IdProd });
 
@@ -6551,7 +6551,7 @@ namespace Glass.Data.DAL
                                 throw new Exception("Não foi possível estornar o estoque da chapa no pedido de revenda.");
 
                             // Atualiza o Qtd Saída dos produtos do pedido de revenda.
-                            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevenda.IdProdPed, -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiquetaChapa);
+                            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevenda.IdProdPed, -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiquetaChapa, true);
 
                             ProdutoLojaDAO.Instance.RecalcularReserva(sessao,
                                 idLojaPedidoRevenda,
