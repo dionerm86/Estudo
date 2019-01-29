@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Data.EFD;
@@ -15,12 +15,12 @@ namespace Glass.UI.Web.Controls
             get { return IdCliente > 0 || IdFornec > 0 || IdTransportador > 0 || IdLoja > 0 || IdAdminCartao > 0; }
         }
     
-        public uint? IdCliente
+        public int? IdCliente
         {
             get 
             { 
-                return TipoPart == DataSourcesEFD.TipoPartEnum.Cliente ? 
-                    Glass.Conversoes.StrParaUintNullable(hdfIdPart.Value) : null; 
+                return TipoPart == DataSourcesEFD.TipoPartEnum.Cliente ?
+                    hdfIdPart.Value.StrParaIntNullable() : null;
             }
             set 
             {
@@ -32,12 +32,12 @@ namespace Glass.UI.Web.Controls
             }
         }
     
-        public uint? IdFornec
+        public int? IdFornec
         {
             get
             {
                 return TipoPart == DataSourcesEFD.TipoPartEnum.Fornecedor ?
-                    Glass.Conversoes.StrParaUintNullable(hdfIdPart.Value) : null;
+                    hdfIdPart.Value.StrParaIntNullable() : null;
             }
             set
             {
@@ -49,12 +49,12 @@ namespace Glass.UI.Web.Controls
             }
         }
     
-        public uint? IdTransportador
+        public int? IdTransportador
         {
             get
             {
                 return TipoPart == DataSourcesEFD.TipoPartEnum.Transportador ?
-                    Glass.Conversoes.StrParaUintNullable(hdfIdPart.Value) : null;
+                    hdfIdPart.Value.StrParaIntNullable() : null;
             }
             set
             {
@@ -66,12 +66,12 @@ namespace Glass.UI.Web.Controls
             }
         }
     
-        public uint? IdLoja
+        public int? IdLoja
         {
             get
             {
                 return TipoPart == DataSourcesEFD.TipoPartEnum.Loja ?
-                    Glass.Conversoes.StrParaUintNullable(hdfIdPart.Value) : null;
+                    hdfIdPart.Value.StrParaIntNullable() : null;
             }
             set
             {
@@ -83,12 +83,12 @@ namespace Glass.UI.Web.Controls
             }
         }
     
-        public uint? IdAdminCartao
+        public int? IdAdminCartao
         {
             get
             {
                 return TipoPart == DataSourcesEFD.TipoPartEnum.AdministradoraCartao ?
-                    Glass.Conversoes.StrParaUintNullable(hdfIdPart.Value) : null;
+                    hdfIdPart.Value.StrParaIntNullable() : null;
             }
             set
             {
@@ -118,7 +118,7 @@ namespace Glass.UI.Web.Controls
             }
         }
     
-        protected uint? IdPart
+        protected int? IdPart
         {
             get
             {
@@ -152,7 +152,7 @@ namespace Glass.UI.Web.Controls
     
         #endregion
     
-        #region MÈtodos Ajax
+        #region M√©todos Ajax
     
         [Ajax.AjaxMethod]
         public string GetNomePart(string tipoPart, string idPartStr)
@@ -169,7 +169,7 @@ namespace Glass.UI.Web.Controls
                     case DataSourcesEFD.TipoPartEnum.AdministradoraCartao: return "Ok;" + AdministradoraCartaoDAO.Instance.GetNome(idPart);
                 }
     
-                throw new Exception("Tipo de participante inv·lido.");
+                throw new Exception("Tipo de participante inv√°lido.");
             }
             catch (Exception ex)
             {
