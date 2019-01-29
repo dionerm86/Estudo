@@ -1711,11 +1711,16 @@ namespace Glass.Data.DAL
                 return false;
             }
 
+            if (saidaConfirmacao
+                && !PedidoConfig.LiberarPedido
+                && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar)
+            {
+                return false;
+            }
+
             var idPedido = (int)this.ObtemIdPedido(sessao, idProdPed);
 
-            var saidaJaEfetuada = !saidaConfirmacao && PedidoDAO.Instance.VerificaSaidaEstoqueConfirmacao(sessao, idPedido);
-
-            if (saidaJaEfetuada || PedidoDAO.Instance.VerificarPedidoProducaoParaCorte(sessao, idPedido) || !this.ValidarSaidaProduto(sessao, idProdPed, Math.Abs(qtdSaida), (uint)idPedido))
+            if (PedidoDAO.Instance.VerificarPedidoProducaoParaCorte(sessao, idPedido) || !ValidarSaidaProduto(sessao, idProdPed, qtdSaida, (uint)idPedido))
             {
                 return false;
             }
