@@ -11,10 +11,7 @@
             </div>
         </span>
     </div>
-    <div v-else-if="processando" v-bind:style="processamento">
-        <img v-bind:src="caminhoRelativo('/Images/load.gif')" height="16px" />
-        <span>
-            Aguarde...
-        </span>
+    <div v-else-if="processando" v-bind:style="bloqueio">
+        <iframe frameborder="0" v-bind:style="frame"></iframe>
     </div>
 </div>
