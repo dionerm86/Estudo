@@ -17,7 +17,7 @@ using WebGlass.Business.Cheque.Fluxo;
 namespace Glass.API.Backend.Controllers.Cheques.V1.LimitePorCpfCnpj
 {
     /// <summary>
-    /// Controller limite de cheques.
+    /// Controller de limite de cheques.
     /// </summary>
     public partial class LimiteChequePorCpfCnpjController : BaseController
     {

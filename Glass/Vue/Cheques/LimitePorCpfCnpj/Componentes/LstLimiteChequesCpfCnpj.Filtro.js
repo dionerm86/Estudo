@@ -19,7 +19,8 @@
           cpfCnpj: null
         },
         this.filtro
-      )
+      ),
+      buscaCpf: true
     };
   },
 
@@ -32,6 +33,10 @@
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
       }
+    },
+
+    limparFiltro: function () {
+      this.filtroAtual.cpfCnpj = null;
     }
   },
 

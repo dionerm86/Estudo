@@ -1,8 +1,12 @@
 ﻿<section class="filtros">
     <div>
         <span>
-            <label>CPF/CNPJ</label>
-            <input type="text" v-model="filtroAtual.cpfCnpj" />
+            <select v-model.boolean="buscaCpf" @change="limparFiltro">
+                <option :value="true">CPF</option>
+                <option :value="false">CNPJ</option>
+            </select>
+            <campo-cpf :cpf.sync="filtroAtual.cpfCnpj" v-if="buscaCpf"></campo-cpf>
+            <campo-cnpj :cnpj.sync="filtroAtual.cpfCnpj" v-if="!buscaCpf"></campo-cnpj>
             <button class="botaoPesquisar" @click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>

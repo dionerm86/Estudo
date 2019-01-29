@@ -14,7 +14,7 @@
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" :numero-registros="30" :linha-editando="numeroLinhaEdicao"
                 mensagem-lista-vazia="Ainda não há CPF/CNPJ cadastrados nos cheques. Ao cadastrar, serão gerados automaticamente registros para controle do limite.">
                 <template slot="cabecalho">
-                    <th></th>
+                    <th v-if="configuracoes && configuracoes.alterarLimiteDeChequesPorCpfCnpj"></th>
                     <th>
                         <a href="#" @click.prevent="ordenar('cpf/cnpj')">
                             CPF/CNPJ
@@ -39,7 +39,7 @@
                     <th></th>
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
-                    <td>
+                    <td v-if="configuracoes && configuracoes.alterarLimiteDeChequesPorCpfCnpj">
                         <span v-if="numeroLinhaEdicao === -1">
                             <a href="#" @click.prevent="editar(item, index)">
                                 <img border="0" src="../Images/EditarGrid.gif">
@@ -50,13 +50,19 @@
                         {{ item.cpfCnpj }}
                     </td>
                     <td>
-                        {{ item.limite.total | moeda }}
+                        <template v-if="item && item.limite">
+                            {{ item.limite.total | moeda }}
+                        </template>
                     </td>
                     <td>
-                        {{ item.limite.utilizado | moeda }}
+                        <template v-if="item && item.limite">
+                            {{ item.limite.utilizado | moeda }}
+                        </template>
                     </td>
                     <td :style="{ color: item.corLinha }">
-                        {{ item.limite.restante | moeda }}
+                        <template v-if="item && item.limite">
+                            {{ item.limite.restante | moeda }}
+                        </template>
                     </td>
                     <td>
                         {{ item.observacao }}
@@ -67,7 +73,7 @@
                     </td>
                 </template>
                 <template slot="itemEditando">
-                    <td>
+                    <td v-if="configuracoes && configuracoes.alterarLimiteDeChequesPorCpfCnpj">
                         <span style="white-space: nowrap">
                             <a href="#" @click.prevent="atualizar" title="Atualizar">
                                 <img border="0" src="../Images/ok.gif">
@@ -81,9 +87,7 @@
                         {{ limiteChequeAtual.cpfCnpj }}
                     </td>
                     <td>
-                        <template v-if="limiteCheque.limite != null">
-                            <input type="number" min="0" step="any" v-model.number="limiteCheque.limite" />
-                        </template>
+                        <input type="number" min="0" step="any" v-model.number="limiteCheque.limite" />
                     </td>
                     <td>
                         <template v-if="limiteChequeAtual.limite">
@@ -110,7 +114,7 @@
                     </a>
                 </span>
                 <span>
-                    <a href="#" @click.prevent="abrirRelatorio(false)">
+                    <a href="#" @click.prevent="abrirRelatorio(true)">
                         <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel
                     </a>
                 </span>

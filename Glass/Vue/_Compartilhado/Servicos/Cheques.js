@@ -35,7 +35,7 @@ Servicos.Cheques = (function(http) {
 
       /**
        * Altera os dados do limite de cheque.
-       * @param {!number} id O identificador do limite de cheque que será alterado.
+       * @param {number} id O identificador do limite de cheque que será alterado.
        * @param {!Object} limiteCheque O objeto com os dados de um limite de cheque a serem alterados.
        * @returns {Promise} Uma promise com o resultado da operação.
        */

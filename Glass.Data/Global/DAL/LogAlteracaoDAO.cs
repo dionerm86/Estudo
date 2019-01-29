@@ -1243,8 +1243,8 @@ namespace Glass.Data.DAL
         /// <param name="limiteCheque">A model de limite de cheque preenchida.</param>
         public void LogLimiteChequeCpfCnpj(GDASession sessao, LimiteChequeCpfCnpj limiteCheque)
         {
-            LimiteChequeCpfCnpj atual = LimiteChequeCpfCnpjDAO.Instance.GetElementByPrimaryKey(limiteCheque.IdLimiteCheque);
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.LimiteChequeCpfCnpj, limiteCheque.IdLimiteCheque, atual, limiteCheque);
+            LimiteChequeCpfCnpj atual = LimiteChequeCpfCnpjDAO.Instance.GetElementByPrimaryKey(sessao, limiteCheque.IdLimiteCheque);
+            this.InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.LimiteChequeCpfCnpj, limiteCheque.IdLimiteCheque, atual, limiteCheque);
         }
 
         /// <summary>

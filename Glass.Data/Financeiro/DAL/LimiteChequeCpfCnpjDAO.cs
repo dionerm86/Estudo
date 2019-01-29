@@ -60,10 +60,7 @@ namespace Glass.Data.DAL
         /// <returns>Um número inteiro que representa o número de registros retornados pela consulta.</returns>
         public int ObtemNumeroItens(string cpfCnpj)
         {
-            using (var sessao = new GDATransaction())
-            {
-                return this.ObtemNumeroItens(sessao, cpfCnpj);
-            }
+            return this.ObtemNumeroItens(null, cpfCnpj);
         }
 
         /// <summary>
