@@ -674,7 +674,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void dtvPedido_ItemCommand(object sender, DetailsViewCommandEventArgs e)
         {
-            if (e.CommandName == "Atualizar")
+            if (e.CommandName == "Atualizar" || e.CommandName == "Recalcular")
             {
                 try
                 {
@@ -692,20 +692,31 @@ namespace Glass.UI.Web.Cadastros
                     pe.IdComissionado = ((HiddenField)dtvPedido.FindControl("hdfIdComissionado")) != null ? ((HiddenField)dtvPedido.FindControl("hdfIdComissionado")).Value.StrParaUintNullable() : pedidoEspelho.IdComissionado;
                     pe.PercComissao = ((HiddenField)dtvPedido.FindControl("hdfPercComissao")) != null ? ((HiddenField)dtvPedido.FindControl("hdfPercComissao")).Value.StrParaFloat() : pedidoEspelho.PercComissao;
 
-                    PedidoEspelhoDAO.Instance.UpdateDadosComTransacao(pe);
+                    PedidoEspelhoDAO.Instance.UpdateDados(null, pe, e.CommandName == "Recalcular");
 
                     dtvPedido.DataBind();
                     grdAmbiente.DataBind();
                     grdProdutos.DataBind();
 
-                    if (e.CommandArgument == null)
+                    if (e.CommandName == "Recalcular")
                     {
-                        Glass.MensagemAlerta.ShowMsg("Pedido atualizado/recalculado com sucesso!", Page);
+                        MensagemAlerta.ShowMsg("Pedido recalculado com sucesso!", Page);
+                    }
+                    else
+                    {
+                        MensagemAlerta.ShowMsg("Pedido atualizado com sucesso!", Page);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar/recalcular o pedido.", ex, Page);
+                    if (e.CommandName == "Recalcular")
+                    {
+                        MensagemAlerta.ErrorMsg("Falha ao recalcular o pedido.", ex, Page);
+                    }
+                    else
+                    {
+                        MensagemAlerta.ErrorMsg("Falha ao atualizar o pedido.", ex, Page);
+                    }
                 }
             }
         }
