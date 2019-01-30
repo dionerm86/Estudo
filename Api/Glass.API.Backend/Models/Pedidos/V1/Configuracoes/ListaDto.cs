@@ -139,14 +139,14 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Configuracoes
         public bool EmitirPedido { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se deverá ser exibido o link para emissão de pedido.
+        /// Obtém ou define um valor que indica se o usuário pode emitir pedidos de garantia.
         /// </summary>
         [DataMember]
         [JsonProperty("emitirPedidoGarantia")]
         public bool EmitirPedidoGarantia { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se deverá ser exibido o link para emissão de pedido.
+        /// Obtém ou define um valor que indica se o usuário pode emitir pedidos de reposição.
         /// </summary>
         [DataMember]
         [JsonProperty("emitirPedidoReposicao")]
