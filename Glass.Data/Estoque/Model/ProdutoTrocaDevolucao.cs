@@ -286,6 +286,24 @@ namespace Glass.Data.Model
             }
         }
 
+        decimal IProdutoCalculo.PercentualComissao
+        {
+            get
+            {
+                if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor && IdProdPed > 0)
+                {
+                    var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(null, IdProdPed.Value);
+
+                    if (IdPedido > 0)
+                    {
+                        return (decimal)PedidoDAO.Instance.ObterPercentualComissao(null, (int)IdPedido);
+                    }
+                }
+
+                return 0;
+            }
+        }
+
         float IProdutoCalculo.AlturaCalc
         {
             get { return Altura; }

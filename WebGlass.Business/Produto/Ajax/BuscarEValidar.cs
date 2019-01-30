@@ -749,6 +749,16 @@ namespace WebGlass.Business.Produto.Ajax
                     float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
                     valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true", pedidoReposicao, percDescontoQtde, (int?)idPedido, null, null);
 
+                    decimal valorComissaoProduto = 0;
+                    if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor)
+                    {
+                        var valorTabela = valorProduto;
+                        var percComissao = PedidoEspelhoDAO.Instance.ObterPercentualComissao(null, (int)idPedido);
+
+                        valorProduto = valorProduto / (decimal)((100 - percComissao) / 100);
+                        valorComissaoProduto = Math.Round(valorProduto - valorTabela, 2);
+                    }
+
                     retorno += ";" + valorProduto.ToString("F2");
 
                     retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(prod.IdGrupoProd).ToString().ToLower() + ";" +

@@ -1,4 +1,4 @@
-<%@ Page Title="Duplicar orçamento" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadDuplicarOrcamento.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadDuplicarOrcamento" %>
+ï»¿<%@ Page Title="Duplicar orÃ§amento" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadDuplicarOrcamento.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadDuplicarOrcamento" %>
 
 <%@ Register src="../Controls/ctrlBenef.ascx" tagname="ctrlBenef" tagprefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" Runat="Server">
@@ -21,11 +21,11 @@
             var idOrcamento = FindControl("txtIdOrcamento", "input").value;
             if (idOrcamento == "")
             {
-                alert("Digite o número do orçamento.");
+                alert("Digite o nÃºmero do orÃ§amento.");
                 return;
             }
             
-            if (!confirm('Duplicar orçamento?'))
+            if (!confirm('Duplicar orÃ§amento?'))
                 return;
             
             duplicando = true;
@@ -55,28 +55,9 @@
                 alert(resposta[1]);
                 return;
             }
-            
-            if (recalcular(resposta[1]))
-            {
-                alert("Orçamento duplicado com sucesso! Novo orçamento: " + resposta[1]);
-                redirectUrl("CadOrcamento.aspx?idorca=" + resposta[1]);
-            }
-        }
-        
-        function recalcular(idOrcamento)
-        {
-            var nomeControleBenef = "<%= ctrlBenef1.ClientID %>";
-            var campoAltura = "<%= hdfBenefAltura.ClientID %>";
-            var campoEspessura = "<%= hdfBenefEspessura.ClientID %>";
-            var campoLargura = "<%= hdfBenefLargura.ClientID %>";
-            var campoIdProd = "<%= hdfBenefIdProd.ClientID %>";
-            var campoQtde = "<%= hdfBenefQtde.ClientID %>";
-            var campoTotM = "<%= hdfBenefTotM.ClientID %>";
-            var campoValorUnit = "<%= hdfBenefValorUnit.ClientID %>";
-            var campoTipoEntrega = document.getElementById("<%= hdfTipoEntrega.ClientID %>");
-           
-            return recalcularOrcamento(idOrcamento, false, null, nomeControleBenef, campoAltura, campoEspessura,
-                campoLargura, campoIdProd, campoQtde, campoTotM, campoValorUnit, campoTipoEntrega != undefined && campoTipoEntrega != null ? campoTipoEntrega.value : "");
+
+            alert("OrÃ§amento duplicado com sucesso! Novo orÃ§amento: " + resposta[1]);
+            redirectUrl("CadOrcamento.aspx?idorca=" + resposta[1] + "&atualizar=true");
         }
     </script>
     <table>
@@ -85,7 +66,7 @@
                 <table>
                     <tr>
                         <td>
-                            Número do orçamento
+                            NÃºmero do orÃ§amento
                         </td>
                         <td>
                             <asp:TextBox ID="txtIdOrcamento" runat="server" Width="70px"

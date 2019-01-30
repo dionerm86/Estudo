@@ -533,6 +533,39 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
+        decimal IProdutoCalculo.PercentualComissao
+        {
+            get
+            {
+                if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor)
+                {
+                    var idOrcamento = IdOrcamento > 0 ? IdOrcamento : ItemProjetoDAO.Instance.GetIdOrcamento(null, IdItemProjeto);
+
+                    if (IdOrcamento > 0)
+                    {
+                        return (decimal)OrcamentoDAO.Instance.RecuperaPercComissao(null, idOrcamento);
+                    }
+
+                    var idPedido = ItemProjetoDAO.Instance.ObtemIdPedido(null, IdItemProjeto);
+
+                    if (idPedido > 0)
+                    {
+                        return (decimal)PedidoDAO.Instance.ObterPercentualComissao(null, (int)idPedido);
+                    }
+
+                    var idPedidoEspelho = ItemProjetoDAO.Instance.ObtemIdPedidoEspelho(null, IdItemProjeto);
+
+                    if (idPedidoEspelho > 0)
+                    {
+                        return (decimal)PedidoEspelhoDAO.Instance.RecuperaPercComissao(null, idPedidoEspelho.Value);
+                    }
+                }
+
+                return 0;
+            }
+        }
+
+        [XmlIgnore]
         int? IProdutoCalculo.AlturaBenef
         {
             get { return 0; }

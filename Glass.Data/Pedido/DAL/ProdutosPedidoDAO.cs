@@ -4593,14 +4593,14 @@ namespace Glass.Data.DAL
                 if (pedido.Desconto > 0)
                     PedidoDAO.Instance.RemoverDesconto(session, pedido, produtosPedido);
 
-                if (pedido.PercComissao > 0)
-                    PedidoDAO.Instance.AplicarComissao(session, pedido, pedido.PercComissao, produtosPedido);
-
                 if (pedido.Acrescimo > 0)
                     PedidoDAO.Instance.AplicarAcrescimo(session, pedido, pedido.TipoAcrescimo, pedido.Acrescimo, produtosPedido);
 
                 if (pedido.Desconto > 0)
                     PedidoDAO.Instance.AplicarDesconto(session, pedido, pedido.TipoDesconto, pedido.Desconto, produtosPedido);
+
+                if (pedido.PercComissao > 0)
+                    PedidoDAO.Instance.AplicarComissao(session, pedido, pedido.PercComissao, produtosPedido);
 
                 PedidoDAO.Instance.FinalizarAplicacaoComissaoAcrescimoDesconto(session, pedido, produtosPedido, true);
                 PedidoDAO.Instance.UpdateTotalPedido(session, pedido);
@@ -5956,9 +5956,22 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         private bool VerificarDeveAtualizarDataEntrega(GDASession sessao, int idPedido)
         {
+            if (idPedido == 0)
+            {
+                return false;
+            }
+
             var pedido = PedidoDAO.Instance.ObterDataEntregaEDataEntregaSistema(sessao, (int)idPedido);
 
-            return pedido.DataEntregaSistema != null && (pedido.DataEntregaSistema.Value.Date == pedido.DataEntrega.Value.Date || !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega));
+            if (!pedido.DataEntregaSistema.HasValue
+                || pedido.DataEntregaSistema.Value == DateTime.MinValue
+                || !pedido.DataEntrega.HasValue
+                || pedido.DataEntrega.Value == DateTime.MinValue)
+            {
+                return false;
+            }
+
+            return pedido.DataEntregaSistema.Value.Date == pedido.DataEntrega.Value.Date || !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega);
         }
 
         /// <summary>
