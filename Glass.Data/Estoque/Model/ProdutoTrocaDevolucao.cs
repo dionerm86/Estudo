@@ -292,11 +292,11 @@ namespace Glass.Data.Model
             {
                 if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor && IdProdPed > 0)
                 {
-                    var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(null, IdProdPed.Value);
+                    var idPedido = IdPedido > 0 ? IdPedido : ProdutosPedidoDAO.Instance.ObtemIdPedido(null, IdProdPed.Value);
 
-                    if (IdPedido > 0)
+                    if (idPedido > 0)
                     {
-                        return (decimal)PedidoDAO.Instance.ObterPercentualComissao(null, (int)IdPedido);
+                        return (decimal)PedidoDAO.Instance.ObterPercentualComissao(null, (int)idPedido);
                     }
                 }
 
