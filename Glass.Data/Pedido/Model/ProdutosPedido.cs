@@ -1529,6 +1529,20 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
+        decimal IProdutoCalculo.PercentualComissao
+        {
+            get
+            {
+                if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor)
+                {
+                    return (decimal)PedidoDAO.Instance.ObterPercentualComissao(null, (int)IdPedido);
+                }
+
+                return 0;
+            }
+        }
+
+        [XmlIgnore]
         public int QtdeAmbiente
         {
             get

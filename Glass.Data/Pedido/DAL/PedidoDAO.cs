@@ -10890,9 +10890,6 @@ namespace Glass.Data.DAL
             {
                 foreach (var produtoPedido in produtosPedido)
                 {
-                    //Chamado 74310 - Solução paliativa
-                    produtoPedido.Beneficiamentos = produtoPedido.Beneficiamentos;
-
                     ProdutosPedidoDAO.Instance.Update(sessao, produtoPedido, pedido, false, false, false);
                     ProdutosPedidoDAO.Instance.AtualizaBenef(sessao, produtoPedido.IdProdPed, produtoPedido.Beneficiamentos, pedido);
                 }
@@ -16360,8 +16357,11 @@ namespace Glass.Data.DAL
 
             produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(transaction, pedido.IdPedido, false, true).ToList();
 
-            RemoveComissaoDescontoAcrescimo(transaction, pedido, produtosPedido);
-            AplicaComissaoDescontoAcrescimo(transaction, pedido, Geral.ManterDescontoAdministrador, produtosPedido);
+            if (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)
+            {
+                RemoveComissaoDescontoAcrescimo(transaction, pedido, produtosPedido);
+                AplicaComissaoDescontoAcrescimo(transaction, pedido, Geral.ManterDescontoAdministrador, produtosPedido);
+            }
 
             foreach (var a in (pedido as IContainerCalculo).Ambientes.Obter().Cast<AmbientePedido>())
             {

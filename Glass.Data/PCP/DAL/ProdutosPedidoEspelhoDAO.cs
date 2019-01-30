@@ -4115,6 +4115,9 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var retorno = Insert(transaction, objInsert);
+                    var pedido = PedidoEspelhoDAO.Instance.GetElementByPrimaryKey(transaction, objInsert.IdPedido);
+
+                    this.AplicarComissaoDescontoAcrescimo(transaction, pedido);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4308,6 +4311,9 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var retorno = Delete(transaction, objDelete);
+                    var pedidoEspelho = PedidoEspelhoDAO.Instance.GetElement(transaction, objDelete.IdPedido);
+
+                    this.AplicarComissaoDescontoAcrescimo(transaction, pedidoEspelho);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4382,6 +4388,51 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Comissão, Desconto e Acréscimo
+
+        private void AplicarComissaoDescontoAcrescimo(GDASession session, PedidoEspelho pedido)
+        {
+            if (pedido.PercComissao > 0 || pedido.Acrescimo > 0 || pedido.Desconto > 0)
+            {
+                var produtosPedido = this.GetByPedido(session, pedido.IdPedido, false).ToList();
+
+                if (pedido.PercComissao > 0)
+                {
+                    PedidoEspelhoDAO.Instance.RemoverComissao(session, pedido, produtosPedido);
+                }
+
+                if (pedido.Acrescimo > 0)
+                {
+                    PedidoEspelhoDAO.Instance.RemoverAcrescimo(session, pedido, produtosPedido);
+                }
+
+                if (pedido.Desconto > 0)
+                {
+                    PedidoEspelhoDAO.Instance.RemoverDesconto(session, pedido, produtosPedido);
+                }
+
+                if (pedido.Acrescimo > 0)
+                {
+                    PedidoEspelhoDAO.Instance.AplicarAcrescimo(session, pedido, pedido.TipoAcrescimo, pedido.Acrescimo, produtosPedido);
+                }
+
+                if (pedido.Desconto > 0)
+                {
+                    PedidoEspelhoDAO.Instance.AplicarDesconto(session, pedido, pedido.TipoDesconto, pedido.Desconto, produtosPedido);
+                }
+
+                if (pedido.PercComissao > 0)
+                {
+                    PedidoEspelhoDAO.Instance.AplicarComissao(session, pedido, pedido.PercComissao, produtosPedido);
+                }
+
+                PedidoEspelhoDAO.Instance.FinalizarAplicacaoComissaoAcrescimoDesconto(session, pedido, produtosPedido, true);
+                PedidoEspelhoDAO.Instance.UpdateTotalPedido(session, pedido);
+            }
+        }
+
+        #endregion
+
         #region Update
 
         internal int UpdateBase(GDASession sessao, ProdutosPedidoEspelho objUpdate, IContainerCalculo container)
@@ -4414,7 +4465,8 @@ namespace Glass.Data.DAL
 
                     var pedidoEspelho = PedidoEspelhoDAO.Instance.GetElement(transaction, objUpdate.IdPedido);
                     var retorno = Update(transaction, objUpdate, pedidoEspelho);
-                    PedidoEspelhoDAO.Instance.UpdateDados(transaction, pedidoEspelho);
+
+                    this.AplicarComissaoDescontoAcrescimo(transaction, pedidoEspelho);
 
                     transaction.Commit();
                     transaction.Close();
