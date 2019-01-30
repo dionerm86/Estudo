@@ -394,6 +394,38 @@ Servicos.Producao = (function(http) {
     },
 
     /**
+     * Objeto com os serviços para a API de fornadas.
+     */
+    Fornadas: {
+      /**
+       * Recupera a lista de fornadas para a tela de listagem de fornadas.
+       * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de peças.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+        return http().get(API + 'fornadas', {
+          params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+        });
+      },
+
+      /**
+       * Obtem a lista de peças de uma dada fornada.
+       * @param {!number} idFornada O identificador da fornada.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterPecasFornada: function (idFornada) {
+        if (!idFornada) {
+          throw new Error('Identificador da fornada é obrigatório.');
+        }
+
+        return http().get(API + 'fornadas/' + idFornada + '/pecas');
+      }
+    },
+
+    /**
      * Recupera a lista de peças para a tela de consulta de produção.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de peças.
      * @param {number} pagina O número da página de resultados a ser exibida.

@@ -203,10 +203,13 @@
     <Compile Include="Controllers\DevolucoesPagamento\DevolucoesPagamentoController.cs" />
     <Compile Include="Controllers\DevolucoesPagamento\GetDevolucoesPagamentoController.cs" />
     <Compile Include="Helper\DevolucoesPagamento\TraducaoOrdenacaoListaDevolucoesPagamento.cs" />
+    <Compile Include="Controllers\Producao\V1\Fornadas\FornadasController.cs" />
+    <Compile Include="Controllers\Producao\V1\Fornadas\GetFornadasController.cs" />
     <Compile Include="Helper\ImpressoesEtiquetas\Individual\TraducaoOrdenacaoListaImpressoesIndividuaisEtiquetas.cs" />
     <Compile Include="Models\DevolucoesPagamento\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\DevolucoesPagamento\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\DevolucoesPagamento\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Helper\Producao\Fornadas\TraducaoOrdenacaoListaFornadas.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\ListaDto.cs" />
@@ -222,6 +225,11 @@
     <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\FormasPagamentoDto.cs" />
     <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\PecasFornada\MedidasDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\PecasFornada\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\PecasFornada\ProdutoDto.cs" />
     <Compile Include="Models\Produtos\V1\MateriaPrima\Lista\FiltroDto.cs" />
     <Content Include="Web.config" />
   </ItemGroup>
