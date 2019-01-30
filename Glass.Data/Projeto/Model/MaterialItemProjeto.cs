@@ -541,7 +541,7 @@ namespace Glass.Data.Model
                 {
                     var idOrcamento = IdOrcamento > 0 ? IdOrcamento : ItemProjetoDAO.Instance.GetIdOrcamento(null, IdItemProjeto);
 
-                    if (IdOrcamento > 0)
+                    if (idOrcamento > 0)
                     {
                         return (decimal)OrcamentoDAO.Instance.RecuperaPercComissao(null, idOrcamento);
                     }
