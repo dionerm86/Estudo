@@ -92,10 +92,10 @@ namespace Glass.Data.DAL
         /// <param name="idEncontroContas"></param>
         public void GeraVinculoContaPagar(GDASession sessao, uint idEncontroContas)
         {
-            string sql = @"UPDATE contas_pagar set paga=true, dataPagto=?dtNow, valorPago=0
+            string sql = $@"UPDATE contas_pagar set paga=true, dataPagto=?dtNow, valorPago=0, Obs=concat(coalesce(obs, ''), ' (Encontro de Contas: {idEncontroContas})')
                            WHERE idContaPg IN (SELECT idContaPg 
                                                FROM contas_pagar_encontro_contas
-                                               WHERE idEncontroContas=" + idEncontroContas + @")";
+                                               WHERE idEncontroContas={idEncontroContas})";
 
             objPersistence.ExecuteCommand(sessao, sql, new GDA.GDAParameter[] { new GDA.GDAParameter("?dtNow", DateTime.Now) });
         }
