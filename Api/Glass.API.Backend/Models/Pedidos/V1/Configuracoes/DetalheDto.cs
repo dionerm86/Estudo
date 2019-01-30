@@ -252,6 +252,20 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Configuracoes
         public bool IgnorarBloqueioDataEntrega { get; set; }
 
         /// <summary>
+        /// Obtém ou define um valor que indica se deve ignorar o bloqueio de data de entrega.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("emitirPedidoGarantia")]
+        public bool EmitirPedidoGarantia { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se deve ignorar o bloqueio de data de entrega.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("emitirPedidoReposicao")]
+        public bool EmitirPedidoReposicao { get; set; }
+
+        /// <summary>
         /// Obtém ou define um valor que indica se deve usar o controle de desconto por forma de pagamento.
         /// </summary>
         [DataMember]
