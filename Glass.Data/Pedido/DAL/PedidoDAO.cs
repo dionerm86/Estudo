@@ -5634,7 +5634,7 @@ namespace Glass.Data.DAL
             {
                 if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
                 {
-                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem), motivo);
+                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem?.Where(f => !f.Contains("demais pedidos"))?.ToList()), motivo);
                 }
             }
             // Chamado 13112.
@@ -5643,7 +5643,7 @@ namespace Glass.Data.DAL
             {
                 if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
                 {
-                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem), motivo);
+                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem?.Where(f => !f.Contains("demais pedidos"))?.ToList()), motivo);
                 }
             }
             else
