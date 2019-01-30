@@ -3107,8 +3107,15 @@ namespace Glass.Data.DAL
                             codInterno += string.Join("", caracteresBeneficiamento);
                     }
 
+                    var gtin = ProdutoDAO.Instance.ObtemValorCampo<string>("GTINPRODUTO", "idProd=" + pnf.IdProd);
+
+                    if (nf.Consumidor && string.IsNullOrWhiteSpace(gtin))
+                    {
+                        gtin = "SEM GTIN";
+                    }
+
                     ManipulacaoXml.SetNode(doc, prod, "cProd", Formatacoes.TrataTextoDocFiscal(codInterno));
-                    ManipulacaoXml.SetNode(doc, prod, "cEAN", Formatacoes.TrataStringDocFiscal(ProdutoDAO.Instance.ObtemValorCampo<string>("GTINPRODUTO", "idProd=" + pnf.IdProd)));
+                    ManipulacaoXml.SetNode(doc, prod, "cEAN", Formatacoes.TrataStringDocFiscal(gtin));
                     ManipulacaoXml.SetNode(doc, prod, "xProd", nf.TipoAmbiente == 2 ? "NOTA FISCAL EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL" : Formatacoes.TrataTextoDocFiscal(pnf.DescrProduto));
                     ManipulacaoXml.SetNode(doc, prod, "NCM", pnf.Ncm);
 
@@ -3145,12 +3152,19 @@ namespace Glass.Data.DAL
                         ManipulacaoXml.SetNode(doc, prod, "CEST", cest.Codigo);
                     }
 
+                    var gtinTrib = ProdutoDAO.Instance.ObtemValorCampo<string>("GTINUNIDTRIB", "idProd=" + pnf.IdProd);
+
+                    if (nf.Consumidor && string.IsNullOrWhiteSpace(gtinTrib))
+                    {
+                        gtinTrib = "SEM GTIN";
+                    }
+
                     ManipulacaoXml.SetNode(doc, prod, "CFOP", cfop.CodInterno);
                     ManipulacaoXml.SetNode(doc, prod, "uCom", Formatacoes.TrataStringDocFiscal(pnf.Unidade));
                     ManipulacaoXml.SetNode(doc, prod, "qCom", Formatacoes.TrataValorDecimal(qtdPnf, 4));
                     ManipulacaoXml.SetNode(doc, prod, "vUnCom", Formatacoes.TrataValorDecimal(valorUnitCom, 10));
                     ManipulacaoXml.SetNode(doc, prod, "vProd", Formatacoes.TrataValorDecimal(pnf.Total, 2));
-                    ManipulacaoXml.SetNode(doc, prod, "cEANTrib", Formatacoes.TrataStringDocFiscal(ProdutoDAO.Instance.ObtemValorCampo<string>("GTINUNIDTRIB", "idProd=" + pnf.IdProd)));
+                    ManipulacaoXml.SetNode(doc, prod, "cEANTrib", Formatacoes.TrataStringDocFiscal(gtinTrib));
                     ManipulacaoXml.SetNode(doc, prod, "uTrib", Formatacoes.TrataStringDocFiscal(pnf.UnidadeTrib));
                     ManipulacaoXml.SetNode(doc, prod, "qTrib", Formatacoes.TrataValorDecimal(qtdPnfTrib, 4));
                     ManipulacaoXml.SetNode(doc, prod, "vUnTrib", Formatacoes.TrataValorDecimal(valorUnitTrib, 10));
@@ -10392,39 +10406,6 @@ namespace Glass.Data.DAL
 
             return link;
         }
-
-        ///// <summary>
-        ///// Obtem o modelo da nota
-        ///// </summary>
-        ///// <param name="idNf"></param>
-        ///// <returns></returns>
-        //public int ObtemModelo(uint idNf)
-        //{
-        //    return ExecuteScalar<int>("SELECT modelo FROM nota_fiscal where IdNf = " + idNf);
-        //}
-
-        ///// <summary>
-        ///// Marca que houve um erro de conexão ao tentar emitir uma NFC-e, para poder posteriormente ser possivel
-        ///// emitir em modo offline
-        ///// </summary>
-        ///// <param name="idNf"></param>
-        //public void MarcarFalhaEmissao(uint idNf)
-        //{
-        //    objPersistence.ExecuteCommand("UPDATE TABLE nota_fiscal set FalhaEmitir = 1 WHERE idNf = " + idNf);
-        //}
-
-        ///// <summary>
-        ///// Verifica se houve falha de conexão ao tentar emitir a NFC-e
-        ///// </summary>
-        ///// <param name="idNf"></param>
-        ///// <returns></returns>
-        //public bool ObtemFalhaEmissao(uint idNf)
-        //{
-        //    if (idNf == 0)
-        //        return false;
-
-        //    return objPersistence.ExecuteSqlQueryCount("Select Count(*) from nota_fiscal Where FalhaEmitir And idNF=" + idNf) > 0;
-        //}
 
         #endregion
 
