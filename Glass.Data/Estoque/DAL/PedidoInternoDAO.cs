@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using GDA;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -253,7 +254,7 @@ namespace Glass.Data.DAL
         /// Confirma um pedido finalizado.
         /// </summary>
         /// <param name="qtdeProdutos">As quantidades dos produtos que serão liberados, com código e quantidade.</param>
-        public void Confirmar(uint idPedidoInterno, Dictionary<uint, float> qtdeProdutos)
+        public void Confirmar(uint idPedidoInterno, Dictionary<int, float> qtdeProdutos)
         {
             lock(ConfirmarPedidoInternoLock)
             {
@@ -264,60 +265,18 @@ namespace Glass.Data.DAL
                         transaction.BeginTransaction();
 
                         if (!PodeConfirmar(transaction, idPedidoInterno))
-                            throw new Exception("O pedido deve estar autorizado para ser confirmado.");
-
-                        PedidoInterno pedido = GetElement(transaction, idPedidoInterno);
-
-                        int prodConfirmados = 0;
-                        var produtos = ProdutoPedidoInternoDAO.Instance.GetByPedidoInterno(transaction, idPedidoInterno);
-
-                        // Baixa o estoque dos produtos
-                        foreach (ProdutoPedidoInterno p in produtos)
                         {
-                            // Só deixa confirmar até o máximo permitido para o produto
-                            qtdeProdutos[p.IdProdPedInterno] = Math.Min(qtdeProdutos[p.IdProdPedInterno], p.QtdeConfirmar);
-
-                            if (qtdeProdutos[p.IdProdPedInterno] <= 0)
-                                continue;
-
-                            bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdGrupoProd, (int?)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                                Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdGrupoProd, (int?)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-
-                            prodConfirmados++;
-                            float qtdeBaixa = p.ConfirmarQtde ? qtdeProdutos[p.IdProdPedInterno] : 1;
-                            float m2Baixa = p.ConfirmarQtde ? 0 : qtdeProdutos[p.IdProdPedInterno];
-
-                            MovEstoqueDAO.Instance.BaixaEstoquePedidoInterno(transaction, p.IdProd, pedido.IdLoja, idPedidoInterno, p.IdProdPedInterno, (decimal)(m2 ? m2Baixa : qtdeBaixa));
-
-                            // Atualiza no produto a quantidade confirmada
-                            objPersistence.ExecuteCommand(transaction, "update produto_pedido_interno set qtdeConfirmada=coalesce(qtdeConfirmada,0)+?qtde where idProdPedInterno=" + p.IdProdPedInterno,
-                                new GDAParameter("?qtde", qtdeProdutos[p.IdProdPedInterno]));
-
-                            #region Centro de Custo
-
-                            var idCentroCusto = ObtemIdCentroCusto(transaction, (int)idPedidoInterno);
-
-                            if (FiscalConfig.UsarControleCentroCusto && CentroCustoDAO.Instance.GetCountReal(transaction) > 0 && idCentroCusto.GetValueOrDefault(0) > 0 && !m2)
-                            {
-                                var idLoja = ObtemIdLoja(transaction, (int)idPedidoInterno);
-
-                                CentroCustoAssociadoDAO.Instance.Insert(transaction, new CentroCustoAssociado()
-                                {
-                                    IdCentroCusto = idCentroCusto.Value,
-                                    IdPedidoInterno = (int)idPedidoInterno,
-                                    IdConta = MovEstoqueCentroCustoDAO.Instance.ObtemUltimoIdConta(transaction, idLoja, (int)p.IdProd).GetValueOrDefault(),
-                                    Valor = (decimal)qtdeBaixa * MovEstoqueCentroCustoDAO.Instance.ObtemValorUnitarioProd(transaction, idLoja, (int)p.IdProd)
-                                });
-
-                                MovEstoqueCentroCustoDAO.Instance.BaixaEstoquePedidoInterno(transaction, (int)idPedidoInterno, (int)p.IdProd, idLoja, (decimal)qtdeBaixa);
-                            }
-
-                            #endregion
+                            throw new InvalidOperationException("O pedido deve estar autorizado para ser confirmado.");
                         }
 
-                        // Verifica se houve algum produto confirmado
-                        if (prodConfirmados == 0)
-                            throw new Exception("Selecione a quantidade a ser liberada de algum produto.");
+                        if (qtdeProdutos.Sum(f => f.Value) == 0)
+                        {
+                            throw new InvalidOperationException("Selecione a quantidade a ser liberada de algum produto.");
+                        }
+
+                        var produtos = ProdutoPedidoInternoDAO.Instance.GetByPedidoInterno(transaction, idPedidoInterno);
+
+                        MovEstoqueDAO.Instance.BaixaEstoquePedidoInterno(transaction, ObtemIdLoja(transaction, (int)idPedidoInterno), qtdeProdutos, produtos);
 
                         // Altera a situação do pedido interno
                         int situacao = ExecuteScalar<bool>(transaction, "select sum(qtde>coalesce(qtdeConfirmada,0))=0 from produto_pedido_interno where idPedidoInterno=" + idPedidoInterno) ?

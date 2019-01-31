@@ -4,6 +4,7 @@ using System.Text;
 using Glass.Data.Model;
 using GDA;
 using Glass.Data.Helper;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -117,22 +118,20 @@ namespace Glass.Data.DAL
                         if (inventario.Situacao == InventarioEstoque.SituacaoEnum.Confirmado)
                             throw new Exception("Este inventário já foi confirmado.");
 
-                        var produtosInventario = ProdutoInventarioEstoqueDAO.Instance.ObtemPorInventarioEstoque(transaction, idInventarioEstoque);
+                        var produtosInventario = ProdutoInventarioEstoqueDAO.Instance.ObtemPorInventarioEstoque(transaction, idInventarioEstoque)
+                            .Where(f => f.QtdeFim != null);
 
-                        foreach (var p in produtosInventario)
-                        {
-                            // Se a quantidade não tiver sido informada, ignora a alteração
-                            if (p.QtdeFim == null)
-                                continue;
+                        MovEstoqueDAO.Instance.CreditaEstoqueInventario(
+                            transaction,
+                            inventario.IdLoja,
+                            produtosInventario
+                                .Where(f => f.QtdeFim > f.QtdeIni));
 
-                            if (p.QtdeFim > p.QtdeIni)
-                                MovEstoqueDAO.Instance.CreditaEstoqueInventario(transaction, p.IdProd, inventario.IdLoja,
-                                    inventario.IdInventarioEstoque, (decimal)(p.QtdeFim.GetValueOrDefault() - p.QtdeIni));
-
-                            else if (p.QtdeFim < p.QtdeIni)
-                                MovEstoqueDAO.Instance.BaixaEstoqueInventario(transaction, p.IdProd, inventario.IdLoja,
-                                    inventario.IdInventarioEstoque, (decimal)(p.QtdeIni - p.QtdeFim.GetValueOrDefault()));
-                        }
+                        MovEstoqueDAO.Instance.BaixaEstoqueInventario(
+                            transaction,
+                            inventario.IdLoja,
+                            produtosInventario
+                                .Where(f => f.QtdeFim < f.QtdeIni));
 
                         AlterarSituacao(transaction, idInventarioEstoque, InventarioEstoque.SituacaoEnum.Confirmado);
 

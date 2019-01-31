@@ -200,6 +200,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Compile Include="Controllers\DevolucoesPagamento\DevolucoesPagamentoController.cs" />
+    <Compile Include="Controllers\DevolucoesPagamento\GetDevolucoesPagamentoController.cs" />
+    <Compile Include="Helper\DevolucoesPagamento\TraducaoOrdenacaoListaDevolucoesPagamento.cs" />
+    <Compile Include="Controllers\Producao\V1\Fornadas\FornadasController.cs" />
+    <Compile Include="Controllers\Producao\V1\Fornadas\GetFornadasController.cs" />
+    <Compile Include="Controllers\Cheques\V1\LimitePorCpfCnpj\GetLimiteChequePorCpfCnpjController.cs" />
+    <Compile Include="Controllers\Cheques\V1\LimitePorCpfCnpj\LimiteChequePorCpfCnpjController.cs" />
+    <Compile Include="Controllers\Cheques\V1\LimitePorCpfCnpj\PatchLimiteChequePorCpfCnpjController.cs" />
+    <Compile Include="Helper\Cheques\LimitePorCpfCnpj\ConverterCadastroAtualizacaoParaLimiteChequeCpfCnpj.cs" />
+    <Compile Include="Helper\Cheques\LimitePorCpfCnpj\TraducaoOrdenacaoListaLimiteChequeCpfCnpj.cs" />
     <Compile Include="Controllers\AcertosCheques\V1\AcertosChequesController.cs" />
     <Compile Include="Controllers\AcertosCheques\V1\GetAcertosChequesController.cs" />
     <Compile Include="Helper\AcertosCheques\TraducaoOrdenacaoListaAcertosCheques.cs" />
@@ -207,14 +217,36 @@
     <Compile Include="Models\AcertosCheques\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\AcertosCheques\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\AcertosCheques\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\DevolucoesPagamento\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\DevolucoesPagamento\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\DevolucoesPagamento\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Helper\Producao\Fornadas\TraducaoOrdenacaoListaFornadas.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\LimiteDto.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\ListaDto.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\FiltroDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Individual\Lista\QuantidadeDto.cs" />
+    <Compile Include="Controllers\Liberacoes\V1\Movimentacoes\GetMovimentacoesLiberacoesController.cs" />
+    <Compile Include="Controllers\Liberacoes\V1\Movimentacoes\MovimentacoesLiberacoesController.cs" />
+    <Compile Include="Helper\Liberacoes\Movimentacoes\TraducaoOrdenacaoListaMovimentacoesLiberacoes.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\ChapaMateriaPrima\TraducaoOrdenacaoListaChapasMateriaPrima.cs" />
     <Compile Include="Helper\Produtos\MateriaPrima\Posicao\TraducaoOrdenacaoListaPosicoesMateriaPrima.cs" />
+    <Compile Include="Models\Liberacoes\V1\Lista\TipoEnum.cs" />
+    <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\FormasPagamentoDto.cs" />
+    <Compile Include="Models\Liberacoes\V1\Movimentacoes\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\PecasFornada\MedidasDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\PecasFornada\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Fornadas\PecasFornada\ProdutoDto.cs" />
     <Compile Include="Models\Produtos\V1\MateriaPrima\Lista\FiltroDto.cs" />
     <Content Include="Web.config" />
   </ItemGroup>

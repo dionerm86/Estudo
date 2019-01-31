@@ -7,29 +7,13 @@ namespace Glass.Estoque.Negocios.Entidades
     {
         public int IdCorVidro { get; set; }
 
-        public Int64 QtdeInicial { get; set; }
-
-        public decimal M2Inicial { get; set; }
-
         public int QtdeUtilizado { get; set; }
 
         public decimal M2Utilizado { get; set; }
 
-        public Int64 QtdeDisponivel
-        {
-            get
-            {
-                return QtdeInicial - QtdeUtilizado;
-            }
-        }
+        public int QtdeDisponivel { get; set; }
 
-        public decimal M2Disponivel
-        {
-            get
-            {
-                return M2Inicial - M2Utilizado;
-            }
-        }
+        public decimal M2Disponivel { get; set; }
 
 
         /// <summary>
@@ -41,17 +25,6 @@ namespace Glass.Estoque.Negocios.Entidades
         /// Espessura
         /// </summary>
         public float Espessura { get; set; }
-
-        /// <summary>
-        /// Qtde. e M² inicial (Dia Anterior)
-        /// </summary>
-        public string Inicial
-        {
-            get
-            {
-                return QtdeInicial + " (" + M2Inicial + "m²)";
-            }
-        }
 
         /// <summary>
         /// Qtde. e M² utilizado

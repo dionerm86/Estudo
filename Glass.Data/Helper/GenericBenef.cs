@@ -145,6 +145,8 @@ namespace Glass.Data.Helper
 
         public decimal ValorComissao { get; set; }
 
+        public decimal PercentualComissao { get; set; }
+
         public decimal ValorAcrescimo { get; set; }
 
         public decimal ValorAcrescimoProd { get; set; }

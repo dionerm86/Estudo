@@ -377,7 +377,6 @@
     <Compile Include="Pedido\Ajax\ProdutosPedido.cs" />
     <Compile Include="Pedido\Entidade\MotivoFinalizacaoFinanceiro.cs" />
     <Compile Include="Pedido\Entidade\PedidoFinalizarFinanceiro.cs" />
-    <Compile Include="Pedido\Fluxo\AlterarEstoque.cs" />
     <Compile Include="Pedido\Fluxo\DadosPedido.cs" />
     <Compile Include="Pedido\Fluxo\BuscarEValidar.cs" />
     <Compile Include="Pedido\Fluxo\ConfirmarPedido.cs" />

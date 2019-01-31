@@ -1020,6 +1020,19 @@ namespace Glass.Data.Model
 
         decimal IProdutoCalculo.CustoProd { get; set; }
 
+        decimal IProdutoCalculo.PercentualComissao
+        {
+            get
+            {
+                if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor)
+                {
+                    return (decimal)PedidoEspelhoDAO.Instance.RecuperaPercComissao(null, IdPedido);
+                }
+
+                return 0;
+            }
+        }
+
         #endregion
     }
 }

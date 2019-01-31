@@ -2955,7 +2955,7 @@ namespace Glass.UI.Web.Relatorios
                 case "LimiteChequeCpfCnpj":
                     {
                         report.ReportPath = "Relatorios/rptLimiteChequeCpfCnpj.rdlc";
-                        var limites = WebGlass.Business.Cheque.Fluxo.LimiteCheque.Instance.ObtemItens(Request["cpfCnpj"], null, 0, 0);
+                        var limites = WebGlass.Business.Cheque.Fluxo.LimiteCheque.Instance.ObtemItens(Request["cpfCnpj"], null, 0, int.MaxValue);
                         report.DataSources.Add(new ReportDataSource("Limite", limites));
 
                         break;

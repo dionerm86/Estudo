@@ -40,10 +40,9 @@ namespace Glass.UI.Web.Cadastros
                 uint idPedidoInterno = Glass.Conversoes.StrParaUint(selPedidoInterno.Valor);
     
                 Glass.Data.Model.PedidoInterno pedido = PedidoInternoDAO.Instance.GetElement(idPedidoInterno);
-    
-                // Cria o dicionário para o parâmetro do método
-                Dictionary<uint, float> qtdeProd = new Dictionary<uint, float>();
-    
+
+                var qtdeProd = new Dictionary<int, float>();
+
                 for (int i = 0; i < grdProdutos.Rows.Count; i++) 
                 {
                     uint idProdPedInterno = Glass.Conversoes.StrParaUint(((HiddenField)grdProdutos.Rows[i].FindControl("hdfIdProdPedInterno")).Value);
@@ -92,7 +91,7 @@ namespace Glass.UI.Web.Cadastros
                     }
                     else
                     {
-                        qtdeProd.Add(idProdPedInterno, qtde);
+                        qtdeProd.Add((int)idProdPedInterno, qtde);
                     }
                 }
     

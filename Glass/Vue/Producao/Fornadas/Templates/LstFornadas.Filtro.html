@@ -1,0 +1,38 @@
+﻿<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Cód</label>
+            <input type="number" v-model="filtroAtual.id" style="width: 50px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Pedido</label>
+            <input type="number" v-model="filtroAtual.idPedido" style="width: 50px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Período</label>
+            <campo-data-hora-periodo :data-hora-inicial.sync="filtroAtual.periodoCadastroInicio"
+                :data-hora-final.sync="filtroAtual.periodoCadastroFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" @click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Num. Etiqueta</label>
+            <input type="text" v-model="filtroAtual.codigoEtiqueta" style="width: 50px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Espessura</label>
+            <input type="number" v-model="filtroAtual.espessura" style="width: 50px" />
+            <button class="botaoPesquisar" @click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Cor</label>
+            <lista-selecao-multipla :funcao-recuperar-itens="obterItensFiltroCoresVidro" 
+                :ids-selecionados.sync="filtroAtual.idsCorVidro"></lista-selecao-multipla>
+            <button class="botaoPesquisar" @click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

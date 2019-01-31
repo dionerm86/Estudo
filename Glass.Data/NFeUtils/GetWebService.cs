@@ -1197,7 +1197,7 @@ namespace Glass.Data.NFeUtils
                     case "PB": return "http://www.receita.pb.gov.br/nfce/consulta?";
                     case "PE": return "http://www.sefaz.pe.gov.br/nfce/consulta?";
                     case "PI": return "http://www.sefaz.pi.gov.br/nfce/consulta?";
-                    case "PR": return "http://www.fazenda.pr.gov.br/nfce/consulta?";
+                    case "PR": return "http://www.fazenda.pr.gov.br/nfce/consulta";
                     case "RJ": return "http://www.fazenda.rj.gov.br/nfce/consulta?";
                     case "RN": return "http://www.set.rn.gov.br/nfce/consulta?";
                     case "RO": return "http://www.sefin.ro.gov.br/nfce/consulta?";
@@ -1229,7 +1229,7 @@ namespace Glass.Data.NFeUtils
                     case "PB": return "http://www.receita.pb.gov.br/nfcehom?";
                     case "PE": return "http://www.sefaz.pe.gov.br/nfce/consulta?";
                     case "PI": return "http://www.sefaz.pi.gov.br/nfce/consulta?";
-                    case "PR": return "http://www.fazenda.pr.gov.br/nfce/consulta?";
+                    case "PR": return "http://www.fazenda.pr.gov.br/nfce/consulta";
                     case "RJ": return "http://www.fazenda.rj.gov.br/nfce/consulta?";
                     case "RN": return "http://www.set.rn.gov.br/nfce/consulta?";
                     case "RO": return "http://www.sefin.ro.gov.br/nfce/consulta?";
