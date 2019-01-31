@@ -892,7 +892,7 @@
     <Compile Include="Models\Pedidos\V1\ListaVolumes\ListaDto.cs" />
     <Compile Include="Models\Pedidos\V1\ListaVolumes\PermissoesDto.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Pedidos\ListaDto.cs" />
-    <Compile Include="Models\Produtos\V1\MateriaPrima\Posicao\Lista\TipoPedidoPCP\TipoPedidoPCP.cs" />
+    <Compile Include="Models\Pedidos\V1\Lista\TipoPedidoPCP.cs" />
     <Compile Include="Models\Pedidos\V1\ProdutosPedido\Exportacao\Lista\ListaDto.cs" />
     <Compile Include="Models\Pedidos\V1\ProdutosPedido\Exportacao\Lista\ProdutoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />

@@ -22,11 +22,13 @@
 
     /**
      * Exclui um arquivo de remessa.
-     * @param {number} id O identificador do arquivo de remessa que será excluido.
+     * @param {!number} id O identificador do arquivo de remessa que será excluido.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     excluir: function (id) {
-      if (!this.perguntar('Tem certeza que deseja excluir este arquivo remessa?')) {
+      if (!id) {
+        this.exibirMensagem("O identificador do arquivo de remessa é obrigatório.");
+      } else if (!this.perguntar('Tem certeza que deseja excluir este arquivo remessa?')) {
         return;
       }
 

@@ -4,7 +4,7 @@
 
 using System.ComponentModel;
 
-namespace Glass.API.Backend.Models.Produtos.MateriaPrima.Posicao.Lista.TipoPedidoPCP
+namespace Glass.API.Backend.Models.Pedidos.V1.Lista
 {
     /// <summary>
     /// Enumerador com os tipos de pedido PCP.

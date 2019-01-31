@@ -39,7 +39,7 @@ namespace Glass.API.Backend.Helper.ArquivosRemessa
                     return "DataCad";
 
                 case "tipo":
-                    return "Tipo";
+                    return campo;
 
                 case "numeroremessa":
                     return "NumRemessa";

@@ -23,14 +23,10 @@ Servicos.ArquivosRemessa = (function (http) {
 
     /**
      * Recupera os tipos de arquivos de remessa para uso no controle da tela.
-     * @param {number} id O identificador do arquivo de remessa.
+     * @param {!number} id O identificador do arquivo de remessa.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     excluir: function (id) {
-      if (!id) {
-        throw new Error('identificador do arquivo de remessa é obrigatório.');
-      }
-
       return http().delete(API + id);
     },
 
