@@ -125,17 +125,19 @@ namespace Glass.Data.SIntegra
         {
             get
             {
-                Cidade _cidade;
-                var indicadorIEDestinatario = NotaFiscalDAO.Instance.ObterIndicadorIE(null, null, _cliente, _fornecedor, out _cidade);
+                Cidade cidade;
+                var indicadorIEDestinatario = NotaFiscalDAO.Instance.ObterIndicadorIE(null, null, _cliente, _fornecedor, out cidade);
 
                 if (_cliente == null && _fornecedor == null)
                 {
                     throw new Exception(string.Format("Nota Fiscal: {0} não possui cliente ou fornecedor. Favor Informar!", _nf.NumeroNFe));
                 }
+
                 if (_nf.IdNaturezaOperacao.GetValueOrDefault() == 0)
                 {
-                    throw new Exception("A natureza de operação não pode ser nula.");
+                    throw new Exception($"A Nota Fiscal: {_nf.NumeroNFe} não possui natureza de operação. Favor informar!");
                 }
+
                 var cfopDevolucao = CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(_nf.IdNaturezaOperacao.Value));
                 bool pj = _cliente != null && (!cfopDevolucao || _fornecedor == null) ? _cliente.TipoPessoa.ToUpper() == "J" : _fornecedor.TipoPessoa.ToUpper() == "J";
                 bool produtorRural = _cliente != null && (!cfopDevolucao || _fornecedor == null) ? _cliente.ProdutorRural : _fornecedor.ProdutorRural;
@@ -147,7 +149,7 @@ namespace Glass.Data.SIntegra
                     {
                         if (String.IsNullOrEmpty(inscEstadual))
                         {
-                            throw new Exception("Informe a inscrição estadual do cliente.");
+                            throw new Exception($"O cliente {_cliente.Nome}, da nota fiscal {_nf.NumeroNFe}, não possui inscrição estadual. Favor informar!");
                         }
                         else
                         {
@@ -168,7 +170,8 @@ namespace Glass.Data.SIntegra
                 {
                     return Formatacoes.TrataStringDocFiscal(inscEstadual.ToUpper());
                 }
-            return string.Empty;
+
+                return string.Empty;
             }
         }
 
