@@ -80,7 +80,6 @@ namespace Glass.Data.SIntegra
         private Loja _loja = null;
         private Cliente _cliente = null;
         private Fornecedor _fornecedor = null;
-        private Cidade _cidade;
 
         #endregion
 
