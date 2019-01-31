@@ -21,8 +21,8 @@
     },
 
     /**
-     * Obtem o link para inserção de compras de mercadorias.
-     * @returns {Promise} Uma Promise com o resultado da busca.
+     * Obtém o link para inserção de compras de mercadorias.
+     * @returns {string} Uma string com o link para a inserção de compras de mercadoria.
      */
     obterLinkInserirCompraMercadoria: function () {
       return '../Cadastros/CadCompraPcp.aspx';
@@ -30,7 +30,7 @@
 
     /**
      * Exibe os dados detalhados da compra de mercadoria em um relatório.
-     * @param {Objetc} item A compra de mercadoria que será exibida.
+     * @param {Object} item A compra de mercadoria que será exibida.
      */
     abrirRelatorioComprasMercadorias: function (item) {
       var url = '../Relatorios/RelBase.aspx?rel=Compra&idCompra=' + item.id;
@@ -38,7 +38,7 @@
     },
 
     /**
-     * Exibe um prompt para inserir o motivo do cancelamento uma compra de mercadoria.
+     * Exibe um prompt para inserir o motivo do cancelamento de uma compra de mercadoria.
      * @param {Object} item A compra de mercadoria que será cancelada.
      */
     cancelar: function (item) {
@@ -53,7 +53,7 @@
         .then(function (resposta) {
           vm.atualizarLista();
         })
-        .cath(function (erro) {
+        .catch(function (erro) {
           if (erro && erro.mensagem) {
             vm.exibirMensagem('Erro', erro.mensagem)
           }
@@ -69,12 +69,12 @@
     },
 
     /**
-     * Obtem o link para edição de compras de mercadorias.
-     * @param {number} id O identificador da compra de mercadoria que será editada.
+     * Obtém o link para edição de compras de mercadorias.
+     * @param {Object} A compra de mercadoria que será editada.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterLinkEditarCompraMercadoria: function (id) {
-      return this.obterLinkInserirCompraMercadoria() + '?idCompra=' + id;
+    obterLinkEditarCompraMercadoria: function (item) {
+      return this.obterLinkInserirCompraMercadoria() + '?idCompra=' + item.id;
     },
 
     /**
@@ -86,8 +86,8 @@
     },
 
     /**
-     * Obtem o link para gerar a nota fiscal da compra de mercadoria.
-     * @param {number} item A compra de marcadoria que será gerada a nota fiscal.
+     * Obtém o link para gerar a nota fiscal da compra de mercadoria.
+     * @param {Object} item A compra de marcadoria que será gerada a nota fiscal.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     gerarNotaFiscal: function (item) {
@@ -97,7 +97,7 @@
 
       var vm = this;
 
-      return Servicos.Compras.Mercadorias.gerarNf(item.id)
+      return Servicos.Compras.Mercadorias.gerarNotaFiscal(item.id)
         .then(function (resposta) {
           vm.exibirMensagem(resposta.data.mensagem);
           var idNf = resposta.data.idNf;

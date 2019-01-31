@@ -127,7 +127,11 @@ Servicos.Compras = (function (http) {
        * @param {!number} idMercadoria A compra de mercadoria que será gerada a nota fiscal.
        * @returns {Promise} Uma promise com o resultado da busca.
        */
-      gerarNf: function (idMercadoria) {
+      gerarNotaFiscal: function (idMercadoria) {
+        if (!idMercadoria) {
+          throw new Error('Compra de mercadoria é obrigatória.');
+        }
+
         return http().post(API + 'mercadorias/gerarNotaFiscal/' + idMercadoria)
       }
     }
