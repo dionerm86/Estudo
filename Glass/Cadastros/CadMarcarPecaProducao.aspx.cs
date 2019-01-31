@@ -108,11 +108,9 @@ namespace Glass.UI.Web.Cadastros
                             false, null, null, null, null, idRota, null, null, false, null, idFornada);
                     else
                     {
-                        string obsPerda = txtObsPerda.Text;
-                        bool retornarEstoque = drpRetornarEstoque.SelectedValue == "1";
-    
+                        string obsPerda = txtObsPerda.Text;    
                         ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(UserInfo.GetUserInfo.CodUser, txtCodChapa.Text, e.CommandArgument.ToString().Split(';')[0], idSetor, true,
-                            retornarEstoque, ctrlTipoPerda1.IdTipoPerda.Value, ctrlTipoPerda1.IdSubtipoPerda, obsPerda, null, idRota, null, null, false, null, idFornada);
+                            false, ctrlTipoPerda1.IdTipoPerda.Value, ctrlTipoPerda1.IdSubtipoPerda, obsPerda, null, idRota, null, null, false, null, idFornada);
                     }
     
                     if (dadosRetalho.Count > 0)
@@ -156,8 +154,7 @@ namespace Glass.UI.Web.Cadastros
                     else
                     {
                         string obsPerda = txtObsPerda.Text;
-                        bool retornarEstoque = drpRetornarEstoque.SelectedValue == "1";
-    
+                            
                         ProdutoPedidoProducao[] lstProdPed = ((ProdutoPedidoProducao[])odsProdPedProducao.Select());
                         string[] numeroEtiqueta = new string[lstProdPed.Length];
     
@@ -171,7 +168,7 @@ namespace Glass.UI.Web.Cadastros
     
                             numeroEtiqueta[i] = lstProdPed[i].NumEtiqueta;
                             ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(UserInfo.GetUserInfo.CodUser, txtCodChapa.Text, lstProdPed[i].NumEtiqueta, idSetor,
-                                true, retornarEstoque, ctrlTipoPerda1.IdTipoPerda.Value, ctrlTipoPerda1.IdSubtipoPerda, obsPerda, null, idRota, null, null, false, null, idFornada);
+                                true, false, ctrlTipoPerda1.IdTipoPerda.Value, ctrlTipoPerda1.IdSubtipoPerda, obsPerda, null, idRota, null, null, false, null, idFornada);
                         }
     
                         if (dadosRetalho.Count > 0)

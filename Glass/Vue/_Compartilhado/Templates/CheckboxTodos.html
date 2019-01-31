@@ -1,0 +1,4 @@
+﻿<span>
+    <input v-bind:id="uuid" type="checkbox" v-model="todos" v-on:change.prevent="selecionarItens" />
+    <label v-bind:for="uuid" v-if="titulo">{{ titulo }}</label>
+</span>

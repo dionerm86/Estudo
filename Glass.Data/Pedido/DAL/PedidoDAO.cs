@@ -2108,20 +2108,20 @@ namespace Glass.Data.DAL
             return sql.Replace("$$$", criterio);
         }
 
+        #endregion
+
         /// <summary>
-        /// M�todo que verifica se o pedido informado j� deu sa�da de acordo com as configura��es
+        /// Método que verifica se o pedido informado já deu saída de acordo com as configurações
         /// </summary>
-        /// <param name="sessao">Sess�o do GDA.</param>
+        /// <param name="sessao">Sessão do GDA.</param>
         /// <param name="idPedido">Identificador do pedido a ser verificado.</param>
-        /// <returns>Retorna o resultado de um teste l�gico que verifica se o pedido j� efetuou a sa�da de estoque.</returns>
+        /// <returns>Retorna o resultado de um teste lógico que verifica se o pedido já efetuou a saída de estoque.</returns>
         internal bool VerificaSaidaEstoqueConfirmacao(GDASession sessao, int idPedido)
         {
             return !PedidoConfig.LiberarPedido
                 && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar
                 && ObtemSituacao(sessao, (uint)idPedido) == Pedido.SituacaoPedido.Confirmado;
         }
-
-        #endregion
 
         #region Listagem/Relatório de vendas de pedidos
 
@@ -5430,7 +5430,7 @@ namespace Glass.Data.DAL
                         TotM2PendenteTotal = (f.TotM / f.Qtde) * (QtdeProdPed - quantidadePecasProntas),
                         PesoTotal = (f.Peso / f.Qtde) * QtdeProdPed,
                         PesoPendenteTotal = (f.Peso / f.Qtde) * (QtdeProdPed - quantidadePecasProntas),
-                        ValorTotal = (((f.Total + f.ValorIpi + f.ValorIcms) / (decimal)f.Qtde) * (decimal)QtdeProdPed) * (decimal)(1 + (ObtemTaxaFastDelivery(null, f.IdPedido) / 100))
+                        ValorTotal = (((f.Total + f.ValorIpi + f.ValorIcms + f.ValorBenef) / (decimal)f.Qtde) * (decimal)QtdeProdPed) * (decimal)(1 + (ObtemTaxaFastDelivery(null, f.IdPedido) / 100))
                     };
                 }).GroupBy(f => f.IdPedido))
                 {
@@ -5634,7 +5634,7 @@ namespace Glass.Data.DAL
             {
                 if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
                 {
-                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem), motivo);
+                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem?.Where(f => !f.Contains("demais pedidos"))?.ToList()), motivo);
                 }
             }
             // Chamado 13112.
@@ -5643,7 +5643,7 @@ namespace Glass.Data.DAL
             {
                 if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
                 {
-                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem), motivo);
+                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem?.Where(f => !f.Contains("demais pedidos"))?.ToList()), motivo);
                 }
             }
             else
@@ -6061,7 +6061,7 @@ namespace Glass.Data.DAL
                         throw new Exception(retorno);
 
                     float qtdProd = 0;
-                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd);
+                    var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd, false);
 
                     // É necessário refazer o loop nos produtos do pedido para que caso tenha sido inserido o mesmo produto 2 ou mais vezes,
                     // seja somada a quantidade total inserida no pedido
@@ -6850,7 +6850,7 @@ namespace Glass.Data.DAL
                             foreach (var prod in lstProd)
                             {
                                 var qtdProd = 0F;
-                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(trans, (int)prod.IdProd);
+                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(trans, (int)prod.IdProd, false);
 
                                 // É necessário refazer o loop nos produtos do pedido para que caso tenha sido inserido o mesmo produto 2 ou mais vezes,
                                 // seja somada a quantidade total inserida no pedido
@@ -7245,54 +7245,11 @@ namespace Glass.Data.DAL
 
                         try
                         {
-                            uint idSaidaEstoque = 0;
-                            if (FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar)
-                                idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(trans, ped.IdLoja, idPedido, null, null, false);
+                            MovEstoqueDAO.Instance.BaixaEstoqueConfirmacaoPedido(trans, idPedido, lstProdPed);
 
-                            var idsProdQtde = new Dictionary<int, float>();
-
-                            foreach (var p in lstProdPed)
+                            if (!ped.Producao && FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar)
                             {
-                                var m2 = new List<int> { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto }.Contains(GrupoProdDAO.Instance.TipoCalculo(trans, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd));
-
-                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(trans, (int)p.IdProd);
-                                var qtdSaida = p.Qtde - p.QtdSaida;
-
-                                if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                                    tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6 ||
-                                    tipoCalculo == (int)TipoCalculoGrupoProd.ML)
-                                    qtdSaida *= p.Altura;
-
-                                // Salva produto e qtd de saída para executar apenas um sql de atualização de estoque
-                                if (!idsProdQtde.ContainsKey((int)p.IdProd))
-                                    idsProdQtde.Add((int)p.IdProd, m2 ? p.TotM : qtdSaida);
-                                else
-                                    idsProdQtde[(int)p.IdProd] += m2 ? p.TotM : qtdSaida;
-
-                                if (FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar && qtdSaida > 0)
-                                {
-                                    ProdutosPedidoDAO.Instance.MarcarSaida(
-                                        trans,
-                                        p.IdProdPed,
-                                        p.Qtde - p.QtdSaida,
-                                        idSaidaEstoque,
-                                        System.Reflection.MethodBase.GetCurrentMethod().Name,
-                                        string.Empty,
-                                        saidaConfirmacao: true);
-
-                                    // Dá baixa no estoque da loja
-                                    MovEstoqueDAO.Instance.BaixaEstoquePedido(trans, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed,
-                                        (decimal)(m2 ? p.TotM : qtdSaida), (decimal)(m2 ? p.TotM2Calc : 0), true, null, null, null);
-                                }
-                            }
-
-                            if (!ped.Producao)
-                            {
-                                if (!FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar)
-                                    ProdutoLojaDAO.Instance.ColocarReserva(trans, (int)ped.IdLoja, idsProdQtde, null, null, null, null,
-                                        (int)idPedido, null, null, "PedidoDAO - ConfirmarPedido");
-                                else
-                                    MarcaPedidoEntregue(trans, idPedido);
+                                MarcaPedidoEntregue(trans, idPedido);
                             }
                         }
                         catch (Exception ex)
@@ -7665,9 +7622,8 @@ namespace Glass.Data.DAL
                     pedidos = GetByString(sessao, string.Join(",", idsPedidoOk));
                 }
 
-                var idsProdQtde = new Dictionary<int, float>();
+                var idsProdQtde = new List<int>();
 
-                // Se houver alteração neste método alterar também na confirmação de garantia/reposição
                 #region Coloca produtos na reserva no estoque da loja
 
                 var produtosPedidosEstoque = new Dictionary<uint, Dictionary<uint, float>>();
@@ -7687,7 +7643,7 @@ namespace Glass.Data.DAL
 
                         float qtdProd = 0;
 
-                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)idProd);
+                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)idProd, false);
 
                         if (tipoCalc == (int)TipoCalculoGrupoProd.M2 || tipoCalc == (int)TipoCalculoGrupoProd.M2Direto)
                         {
@@ -7733,14 +7689,9 @@ namespace Glass.Data.DAL
                             }
                         }
 
-                        // Salva produto e qtd de saída para executar apenas um sql de atualização de estoque
-                        if (!idsProdQtde.ContainsKey((int)idProd))
+                        if (!idsProdQtde.Contains((int)idProd))
                         {
-                            idsProdQtde.Add((int)idProd, produtosPedidosEstoque[idPedido][idProd]);
-                        }
-                        else
-                        {
-                            idsProdQtde[(int)idProd] += produtosPedidosEstoque[idPedido][idProd];
+                            idsProdQtde.Add((int)idProd);
                         }
                     }
                 }
@@ -7801,23 +7752,13 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                // Coloca produtos na reserva do estoque da loja (Deve ser feito depois de alterar a situação do pedido)
-                if (idsProdQtde.Count > 0)
+                if (idsProdQtde.Any())
                 {
-                    var idsLojaReserva = new List<int>();
-
-                    foreach (var pedido in pedidos)
-                    {
-                        if (!idsLojaReserva.Contains((int)pedido.IdLoja))
-                        {
-                            idsLojaReserva.Add((int)pedido.IdLoja);
-                        }
-                    }
+                    var idsLojaReserva = pedidos.Select(f => (int)f.IdLoja).Distinct();
 
                     foreach (var idLojaReserva in idsLojaReserva)
                     {
-                        ProdutoLojaDAO.Instance.ColocarReserva(sessao, idLojaReserva, idsProdQtde, null, null, null, null, null,
-                              string.Join(",", pedidos.Select(f => f.IdPedido).ToList()), null, "PedidoDAO - ConfirmarLiberacaoPedido");
+                        ProdutoLojaDAO.Instance.RecalcularReserva(sessao, idLojaReserva, idsProdQtde);
                     }
                 }
 
@@ -7990,43 +7931,6 @@ namespace Glass.Data.DAL
                 {
                     try
                     {
-                        var login = UserInfo.GetUserInfo;
-
-                        var idsProdQtde = new Dictionary<int, float>();
-
-                        // Pedido de produção não deve tirar nem colocar na reserva
-                        if (pedido.TipoPedido != (int)Pedido.TipoPedidoEnum.Producao)
-                        {
-                            foreach (var pp in ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido))
-                            {
-                                var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)pp.IdGrupoProd,
-                                    (int)pp.IdSubgrupoProd);
-                                var m2 = tipoCalc == (int)TipoCalculoGrupoProd.M2 ||
-                                    tipoCalc == (int)TipoCalculoGrupoProd.M2Direto;
-
-                                var qtdEstornoEstoque = pp.Qtde;
-
-                                if (tipoCalc == (int)TipoCalculoGrupoProd.MLAL0 ||
-                                    tipoCalc == (int)TipoCalculoGrupoProd.MLAL05 ||
-                                    tipoCalc == (int)TipoCalculoGrupoProd.MLAL1 ||
-                                    tipoCalc == (int)TipoCalculoGrupoProd.MLAL6)
-                                {
-                                    var altura = ProdutosPedidoDAO.Instance.ObtemValorCampo<float>(sessao, "altura",
-                                        "idProdPed=" + pp.IdProdPed);
-                                    qtdEstornoEstoque = pp.Qtde * altura;
-                                }
-
-                                // Salva produto e qtd de saída para executar apenas um sql de atualização de estoque
-                                if (!idsProdQtde.ContainsKey((int)pp.IdProd))
-                                    idsProdQtde.Add((int)pp.IdProd, m2 ? pp.TotM : qtdEstornoEstoque);
-                                else
-                                    idsProdQtde[(int)pp.IdProd] += m2 ? pp.TotM : qtdEstornoEstoque;
-                            }
-                        }
-
-                        /* Chamado 17824. */
-                        // Zera o campo pagamento antecipado
-                        //objPersistence.ExecuteCommand("update pedido set valorPagamentoAntecipado=0, dataConf=null, usuConf=null where idPedido=" + idPedido);
                         objPersistence.ExecuteCommand(sessao,
                             "update pedido set dataConf=null, usuConf=null where idPedido=" + idPedido);
 
@@ -8034,8 +7938,14 @@ namespace Glass.Data.DAL
                         if (idObra > 0)
                             ObraDAO.Instance.AtualizaSaldo(sessao, idObra, false);
 
-                        ProdutoLojaDAO.Instance.TirarReserva(sessao, (int)ObtemIdLoja(sessao, idPedido), idsProdQtde,
-                            null, null, null, null, (int)idPedido, null, null, "PedidoDAO - Reabrir");
+                        if (pedido.TipoPedido != (int)Pedido.TipoPedidoEnum.Producao)
+                        {
+                            var idsProduto = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido)
+                                .Select(f => (int)f.IdProd)
+                                .Distinct();
+
+                            ProdutoLojaDAO.Instance.RecalcularReserva(sessao, (int)ObtemIdLoja(sessao, idPedido), idsProduto);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -8355,43 +8265,16 @@ namespace Glass.Data.DAL
 
             #region Coloca produtos na reserva no estoque da loja
 
-            /* Chamado 39942. */
-            var idsProdQtde = new Dictionary<int, float>();
-
             try
             {
                 if (GetTipoPedido(session, idPedido) != Pedido.TipoPedidoEnum.Producao)
                 {
-                    foreach (var prodPed in ProdutosPedidoDAO.Instance.GetByPedidoLite(session, idPedido))
-                    {
-                        var idProd = ProdutosPedidoDAO.Instance.ObtemIdProd(session, prodPed.IdProdPed);
-                        var totM = ProdutosPedidoDAO.Instance.ObtemTotM(session, prodPed.IdProdPed);
-                        var qtde = ProdutosPedidoDAO.Instance.ObtemQtde(session, prodPed.IdProdPed);
-
-                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(session, (int)idProd);
-                        var m2 = tipoCalc == (int)TipoCalculoGrupoProd.M2 ||
-                            tipoCalc == (int)TipoCalculoGrupoProd.M2Direto;
-
-                        var qtdEstornoEstoque = qtde;
-
-                        if (tipoCalc == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalc == (int)TipoCalculoGrupoProd.MLAL05 ||
-                            tipoCalc == (int)TipoCalculoGrupoProd.MLAL1 || tipoCalc == (int)TipoCalculoGrupoProd.MLAL6)
-                        {
-                            var altura = ProdutosPedidoDAO.Instance.ObtemValorCampo<float>(session, "altura", "idProdPed=" + prodPed.IdProdPed);
-                            qtdEstornoEstoque = qtde * altura;
-                        }
-
-                        // Salva produto e qtd de saída para executar apenas um sql de atualização de estoque
-                        if (!idsProdQtde.ContainsKey((int)idProd))
-                            idsProdQtde.Add((int)idProd, m2 ? totM : qtdEstornoEstoque);
-                        else
-                            idsProdQtde[(int)idProd] += m2 ? totM : qtdEstornoEstoque;
-                    }
-
-                    // Coloca produtos na reserva do estoque da loja (Deve ser feito depois de alterar a situação do pedido)
-                    if (idsProdQtde.Count > 0)
-                        ProdutoLojaDAO.Instance.ColocarReserva(session, (int)ObtemIdLoja(session, idPedido), idsProdQtde, null, null, null,
-                            null, (int)idPedido, null, null, "PedidoDAO - ConfirmarGarantiaReposicao");
+                    ProdutoLojaDAO.Instance.RecalcularReserva(
+                        session,
+                        (int)ObtemIdLoja(session, idPedido),
+                        ProdutosPedidoDAO.Instance.GetByPedidoLite(session, idPedido)
+                            .Select(f => (int)f.IdProd)
+                            .Distinct());
                 }
             }
             catch
@@ -8638,70 +8521,24 @@ namespace Glass.Data.DAL
 
                 #region Estorna/Tira da reserva ou liberação produtos deste pedido
 
+                var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(session, idPedido);
+
                 if (situacaoAtual == Pedido.SituacaoPedido.Confirmado ||
                     situacaoAtual == Pedido.SituacaoPedido.ConfirmadoLiberacao ||
                     situacaoAtual == Pedido.SituacaoPedido.LiberadoParcialmente)
                 {
-                    var idsProdQtde = new Dictionary<int, float>();
-
-                    // Tira produtos da reserva ou estorna se já tiver dado baixa
-                    foreach (var p in ProdutosPedidoDAO.Instance.GetByPedidoLite(session, idPedido))
-                    {
-                        var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session,
-                            (int)p.IdProd);
-
-                        var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
-
-                        var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
-                                  tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-
-                        var m2Saida = CalculosFluxo.ArredondaM2(session, (int)p.Largura,
-                            (int)p.Altura, p.QtdSaida, (int)p.IdProd, p.Redondo, 0,
-                            tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto);
-
-                        var qtdSaida = p.Qtde - p.QtdSaida;
-                        var qtdCreditoEstoque = p.QtdSaida;
-
-                        if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 ||
-                            tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                            tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 ||
-                            tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6 ||
-                            tipoCalculo == (int)TipoCalculoGrupoProd.ML)
-                        {
-                            qtdSaida *= p.Altura;
-                            qtdCreditoEstoque *= p.Altura;
-                        }
-
-                        // Salva produto e qtd de saída para executar apenas um sql de atualização de estoque
-                        if (!PedidoDAO.Instance.IsProducao(session, idPedido))
-                        {
-                            if (!idsProdQtde.ContainsKey((int)p.IdProd))
-                                idsProdQtde.Add((int)p.IdProd, m2 ? p.TotM - m2Saida : qtdSaida);
-                            else
-                                idsProdQtde[(int)p.IdProd] += m2 ? p.TotM - m2Saida : qtdSaida;
-                        }
-
-                        if (p.QtdSaida > 0)
-                            MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdCreditoEstoque),
-                                (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)TipoCalculoGrupoProd.Qtd) &&
-                                tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado, null, null);
-
-                        if (situacaoAtual == Pedido.SituacaoPedido.Confirmado && ProdutoDAO.Instance.IsVidro(session, (int)p.IdProd))
-                            MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaPedido(null, (int)p.IdProdPed, (decimal)p.TotM, MovEstoque.TipoMovEnum.Entrada);
-                    }
+                    MovEstoqueDAO.Instance.CreditaEstoqueCancelamentoPedido(session, ped.IdLoja, idPedido, produtosPedido);
 
                     if (situacaoAtual == Pedido.SituacaoPedido.Confirmado)
                     {
-                        if (PedidoConfig.LiberarPedido)
-                            ProdutoLojaDAO.Instance.TirarLiberacao(session, (int)ped.IdLoja, idsProdQtde, null, null, null, null,
-                                (int)idPedido, null, null, "PedidoDAO - CancelarPedido");
-                        else
-                            ProdutoLojaDAO.Instance.TirarReserva(session, (int)ped.IdLoja, idsProdQtde, null, null, null, null,
-                                (int)idPedido, null, null, "PedidoDAO - CancelarPedido");
+                        foreach (var item in produtosPedido)
+                        {
+                            if (GrupoProdDAO.Instance.IsVidro((int)item.IdGrupoProd))
+                            {
+                                MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaPedido(null, (int)item.IdProdPed, (decimal)item.TotM, MovEstoque.TipoMovEnum.Entrada);
+                            }
+                        }
                     }
-                    else
-                        ProdutoLojaDAO.Instance.TirarReserva(session, (int)ped.IdLoja, idsProdQtde, null, null, null, null,
-                                (int)idPedido, null, null, "PedidoDAO - CancelarPedido");
                 }
 
                 #endregion
@@ -8717,10 +8554,8 @@ namespace Glass.Data.DAL
 
                 #endregion
             }
-            else // Se o pedido estiver confirmado e for a vista ou a prazo ou obra
+            else
             {
-                List<ProdutosPedido> lstProdPed = new List<ProdutosPedido>();
-
                 if (!gerarCredito)
                 {
                     // Realiza os estornos/cancelamentos financeiros
@@ -8779,116 +8614,8 @@ namespace Glass.Data.DAL
                         situacaoAtual == Pedido.SituacaoPedido.ConfirmadoLiberacao ||
                         situacaoAtual == Pedido.SituacaoPedido.LiberadoParcialmente)
                     {
-                        // Estorna produtos ao estoque da loja
-                        lstProdPed =
-                            new List<ProdutosPedido>(ProdutosPedidoDAO.Instance.GetByPedidoLite(session,
-                                idPedido, true));
-
-                        if (ped.TipoPedido == (int)Pedido.TipoPedidoEnum.Producao)
-                        {
-                            // Tira produtos do estoque
-                            foreach (ProdutosPedido p in lstProdPed)
-                            {
-                                // Busca a quantidade que foi dado baixa deste produto no estoque
-                                int qtdBaixa = objPersistence.ExecuteSqlQueryCount(session,
-                                    @"Select Count(*) From produto_pedido_producao
-                                        Where idProdPed In (Select idProdPed from produtos_pedido_espelho Where idPedido=" +
-                                    idPedido + @"
-                                        And idProd=" + p.IdProd +
-                                    ") And idSetor in (select idSetor from setor where forno)");
-
-                                bool m2 =
-                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session,
-                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) ==
-                                    (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session,
-                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) ==
-                                    (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-
-                                Single m2Saida = Glass.Global.CalculosFluxo.ArredondaM2(session, (int)p.Largura,
-                                    (int)p.Altura, qtdBaixa, (int)p.IdProd, p.Redondo, 0,
-                                    Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session,
-                                        (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) !=
-                                    (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto);
-
-                                float areaMinimaProd = ProdutoDAO.Instance.ObtemAreaMinima(session,
-                                    (int)p.IdProd);
-
-                                uint idCliente = PedidoDAO.Instance.ObtemIdCliente(session, idPedido);
-
-                                float m2CalcAreaMinima = Glass.Global.CalculosFluxo.CalcM2Calculo(session,
-                                    idCliente, (int)p.Altura, p.Largura,
-                                    qtdBaixa, (int)p.IdProd, p.Redondo,
-                                    p.Beneficiamentos.CountAreaMinimaSession(session), areaMinimaProd, false,
-                                    p.Espessura, true);
-
-                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdProd);
-                                var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
-
-                                MovEstoqueDAO.Instance.BaixaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdBaixa), (decimal)(m2 ? m2CalcAreaMinima : 0), false, null, null, null);
-
-                                MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdBaixa),
-                                    (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) &&
-                                    tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado, null, null);
-                            }
-                        }
-                        else
-                        {
-                            var idsProdQtde = new Dictionary<int, float>();
-
-                            // Tira produtos da reserva ou estorna se já tiver dado baixa
-                            foreach (var p in lstProdPed)
-                            {
-                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session,
-                                    (int)p.IdProd);
-
-                                var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
-
-                                var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
-                                          tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
-
-                                var m2Saida = CalculosFluxo.ArredondaM2(session, (int)p.Largura,
-                                    (int)p.Altura, p.QtdSaida, (int)p.IdProd, p.Redondo, 0,
-                                    tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto);
-
-                                var qtdSaida = p.Qtde - p.QtdSaida;
-                                var qtdCreditoEstoque = p.QtdSaida;
-
-                                if (tipoCalculo == (int)TipoCalculoGrupoProd.MLAL0 ||
-                                    tipoCalculo == (int)TipoCalculoGrupoProd.MLAL05 ||
-                                    tipoCalculo == (int)TipoCalculoGrupoProd.MLAL1 ||
-                                    tipoCalculo == (int)TipoCalculoGrupoProd.MLAL6 ||
-                                    tipoCalculo == (int)TipoCalculoGrupoProd.ML)
-                                {
-                                    qtdSaida *= p.Altura;
-                                    qtdCreditoEstoque *= p.Altura;
-                                }
-
-                                // Salva produto e qtd de saída para executar apenas um sql de atualização de estoque
-                                if (!idsProdQtde.ContainsKey((int)p.IdProd))
-                                    idsProdQtde.Add((int)p.IdProd, m2 ? p.TotM - m2Saida : qtdSaida);
-                                else
-                                    idsProdQtde[(int)p.IdProd] += m2 ? p.TotM - m2Saida : qtdSaida;
-
-                                if (p.QtdSaida > 0)
-                                    MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdCreditoEstoque),
-                                        (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)TipoCalculoGrupoProd.Qtd) &&
-                                        tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado, null, null);
-                            }
-
-                            if (situacaoAtual == Pedido.SituacaoPedido.Confirmado)
-                            {
-                                if (PedidoConfig.LiberarPedido)
-                                    ProdutoLojaDAO.Instance.TirarLiberacao(session, (int)ped.IdLoja, idsProdQtde, null, null, null, null,
-                                        (int)idPedido, null, null, "PedidoDAO - CancelarPedido");
-                                else
-                                    ProdutoLojaDAO.Instance.TirarReserva(session, (int)ped.IdLoja, idsProdQtde, null, null, null, null,
-                                        (int)idPedido, null, null, "PedidoDAO - CancelarPedido");
-                            }
-                            else
-                                ProdutoLojaDAO.Instance.TirarReserva(session, (int)ped.IdLoja, idsProdQtde, null, null, null, null,
-                                        (int)idPedido, null, null, "PedidoDAO - CancelarPedido");
-                        }
+                        var lstProdPed = new List<ProdutosPedido>(ProdutosPedidoDAO.Instance.GetByPedidoLite(session, idPedido, true));
+                        MovEstoqueDAO.Instance.CreditaEstoqueCancelamentoPedido(session, ped.IdLoja, idPedido, lstProdPed);
                     }
                 }
                 catch (Exception ex)
@@ -9273,6 +9000,7 @@ namespace Glass.Data.DAL
             string sql = @"
                 Select Count(*) From produtos_pedido pp
                 Where pp.idPedido=" + idPedido + @"
+                    AND COALESCE(pp.invisivelFluxo, 0) = 0
                     And pp.qtde<>Coalesce(pp.qtdSaida, 0)";
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
@@ -10448,29 +10176,32 @@ namespace Glass.Data.DAL
         /// </summary>
         public void AtualizaPeso(GDASession sessao, uint idPedido)
         {
-            string sql = @"
-                UPDATE produtos_pedido pp
-                    LEFT JOIN
-                    (
-                        " + Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedido, idPedido, false, false, false) + @"
-                    ) as peso on (pp.idProdPed=peso.id)
-                    INNER JOIN produto prod ON (pp.idProd = prod.idProd)
-                    LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd)
-                    LEFT JOIN
-                    (
-                        SELECT pp1.IdProdPedParent, sum(pp1.peso) as peso
-                        FROM produtos_pedido pp1
-                        WHERE pp1.IdPedido={0}
-                        GROUP BY pp1.IdProdPedParent
-                    ) as pesoFilhos ON (pp.IdProdPed = pesoFilhos.IdProdPedParent)
-                SET pp.peso = coalesce(IF(sgp.TipoSubgrupo IN (" + (int)TipoSubgrupoProd.VidroDuplo + "," + (int)TipoSubgrupoProd.VidroLaminado + @"), pesoFilhos.peso * pp.Qtde, peso.peso), 0)
-                WHERE pp.idPedido={0};
+            if (idPedido == 0)
+            {
+                return;
+            }
 
-                UPDATE pedido
-                SET peso = coalesce((SELECT sum(peso) FROM produtos_pedido WHERE coalesce(IdProdPedParent, 0) = 0 AND idPedido={0} and !coalesce(invisivelPedido, false)), 0)
-                WHERE idPedido = {0}";
+            var pedidoPossuiProdutosComposicao = ProdutosPedidoDAO.Instance.TemProdutoLamComposicao(sessao, idPedido);
 
-            objPersistence.ExecuteCommand(sessao, String.Format(sql, idPedido));
+            if (pedidoPossuiProdutosComposicao)
+            {
+                ProdutosPedidoDAO.Instance.AtualizarPesoPedidoComProdutoComposicao(sessao, (int)idPedido);
+            }
+            else
+            {
+                ProdutosPedidoDAO.Instance.AtualizarPesoPedidoSemProdutoComposicao(sessao, (int)idPedido);
+            }
+
+            var sqlObterSomaPesoProdutosPedido = $@"SELECT SUM(COALESCE(pp.Peso, 0)) FROM produtos_pedido pp
+                WHERE pp.IdPedido = {idPedido}
+                    AND (pp.InvisivelPedido IS NULL OR pp.InvisivelPedido = 0)
+                    AND (pp.IdProdPedParent IS NULL OR pp.IdProdPedParent = 0);";
+
+            var pesoPedido = this.ExecuteScalar<decimal>(sessao, sqlObterSomaPesoProdutosPedido);
+
+            var sqlAtualizarPesoPedido = $"UPDATE pedido p SET p.Peso = ?peso WHERE p.IdPedido = {idPedido};";
+
+            this.objPersistence.ExecuteCommand(sessao, sqlAtualizarPesoPedido, new GDAParameter("?peso", pesoPedido));
         }
 
         #endregion
@@ -11159,9 +10890,6 @@ namespace Glass.Data.DAL
             {
                 foreach (var produtoPedido in produtosPedido)
                 {
-                    //Chamado 74310 - Solução paliativa
-                    produtoPedido.Beneficiamentos = produtoPedido.Beneficiamentos;
-
                     ProdutosPedidoDAO.Instance.Update(sessao, produtoPedido, pedido, false, false, false);
                     ProdutosPedidoDAO.Instance.AtualizaBenef(sessao, produtoPedido.IdProdPed, produtoPedido.Beneficiamentos, pedido);
                 }
@@ -13646,7 +13374,7 @@ namespace Glass.Data.DAL
                             session,
                             UserInfo.GetUserInfo.CodUser,
                             objUpdate.TipoVenda.GetValueOrDefault(),
-                            (int?)objUpdate.IdParcela);
+                            (int)objUpdate.IdParcela.GetValueOrDefault());
 
                         if (descontoMaximoPedido != 100)
                         {
@@ -13809,40 +13537,14 @@ namespace Glass.Data.DAL
 
                     #region Atualização de estoque reserva/liberação
 
-                    if (ped.IdLoja != objUpdate.IdLoja)
+                    if (ped.IdLoja != objUpdate.IdLoja && !ped.Producao)
                     {
-                        if (!ped.Producao)
-                        {
-                            var idsProdQtde = new Dictionary<int, float>();
+                        var idsProduto = ProdutosPedidoDAO.Instance.GetByPedido(session, ped.IdPedido)
+                            .Select(f => (int)f.IdProd)
+                            .Distinct();
 
-                            foreach (var prodPed in ProdutosPedidoDAO.Instance.GetByPedido(session, ped.IdPedido))
-                            {
-                                var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(session, (int)prodPed.IdProd);
-                                var m2 = tipoCalc == (int)TipoCalculoGrupoProd.M2 || tipoCalc == (int)TipoCalculoGrupoProd.M2Direto;
-                                var qtdEstornoEstoque = prodPed.Qtde;
-
-                                if (tipoCalc == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalc == (int)TipoCalculoGrupoProd.MLAL05 ||
-                                    tipoCalc == (int)TipoCalculoGrupoProd.MLAL1 || tipoCalc == (int)TipoCalculoGrupoProd.MLAL6)
-                                {
-                                    qtdEstornoEstoque = prodPed.Qtde * prodPed.Altura;
-                                }
-
-                                // Salva produto e qtd de saída para executar apenas um sql de atualização de estoque
-
-                                if (!idsProdQtde.ContainsKey((int)prodPed.IdProd))
-                                {
-                                    idsProdQtde.Add((int)prodPed.IdProd, m2 ? prodPed.TotM : qtdEstornoEstoque);
-                                }
-                                else
-                                {
-                                    idsProdQtde[(int)prodPed.IdProd] += m2 ? prodPed.TotM : qtdEstornoEstoque;
-                                }
-
-                            }
-
-                            ProdutoLojaDAO.Instance.ColocarReserva(session, (int)objUpdate.IdLoja, idsProdQtde, null, null, null, null, (int)ped.IdPedido, null, null, "PedidoDAO - UpdateDesconto");
-                            ProdutoLojaDAO.Instance.TirarReserva(session, (int)ped.IdLoja, idsProdQtde, null, null, null, null, (int)ped.IdPedido, null, null, "PedidoDAO - UpdateDesconto");
-                        }
+                        ProdutoLojaDAO.Instance.RecalcularReserva(session, (int)objUpdate.IdLoja, idsProduto);
+                        ProdutoLojaDAO.Instance.RecalcularReserva(session, (int)ped.IdLoja, idsProduto);
                     }
 
                     #endregion
@@ -15176,8 +14878,6 @@ namespace Glass.Data.DAL
 
         public override int Update(GDASession session, Pedido objUpdate)
         {
-            this.ForcarTransacaoPedido(session, objUpdate.IdPedido, true);
-
             #region Declaração de variáveis
 
             var ped = GetElementByPrimaryKey(session, objUpdate.IdPedido);
@@ -15642,8 +15342,6 @@ namespace Glass.Data.DAL
             }
 
             #endregion
-
-            this.ForcarTransacaoPedido(session, objUpdate.IdPedido, false);
 
             return retorno;
         }
@@ -16659,8 +16357,11 @@ namespace Glass.Data.DAL
 
             produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(transaction, pedido.IdPedido, false, true).ToList();
 
-            RemoveComissaoDescontoAcrescimo(transaction, pedido, produtosPedido);
-            AplicaComissaoDescontoAcrescimo(transaction, pedido, Geral.ManterDescontoAdministrador, produtosPedido);
+            if (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)
+            {
+                RemoveComissaoDescontoAcrescimo(transaction, pedido, produtosPedido);
+                AplicaComissaoDescontoAcrescimo(transaction, pedido, Geral.ManterDescontoAdministrador, produtosPedido);
+            }
 
             foreach (var a in (pedido as IContainerCalculo).Ambientes.Obter().Cast<AmbientePedido>())
             {
@@ -17418,17 +17119,12 @@ namespace Glass.Data.DAL
 
         public void ForcarTransacaoPedido(GDASession sessao, uint idPedido, bool inicio)
         {
-            if (idPedido == 0)
-            {
-                return;
-            }
-
             string sql = $@"
                 UPDATE pedido
                 SET TRANSACAO = {inicio}
                 WHERE idPedido = {idPedido}";
 
-            this.objPersistence.ExecuteCommand(sessao, sql);
+            objPersistence.ExecuteCommand(sessao, sql);
         }
 
         public Pedido ObterDataEntregaEDataEntregaSistema(GDASession sessao, int idPedido)

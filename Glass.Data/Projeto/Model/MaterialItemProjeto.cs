@@ -264,13 +264,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDORCAMENTO", DirectionParameter.InputOptional)]
         public uint IdOrcamento { get; set; }
 
-        /// <summary>
-        /// Quantidade que será exibida no relatório de projetos.
-        /// </summary>
-        [XmlIgnore]
-        [PersistenceProperty("QTDEEXIBIRRELATORIO", DirectionParameter.InputOptional)]
-        public int QtdeExibirRelatorio { get; set; }
-
         #endregion
 
         #region Propriedades de Suporte
@@ -536,6 +529,39 @@ namespace Glass.Data.Model
             set
             {
                 // não faz nada
+            }
+        }
+
+        [XmlIgnore]
+        decimal IProdutoCalculo.PercentualComissao
+        {
+            get
+            {
+                if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor)
+                {
+                    var idOrcamento = IdOrcamento > 0 ? IdOrcamento : ItemProjetoDAO.Instance.GetIdOrcamento(null, IdItemProjeto);
+
+                    if (idOrcamento > 0)
+                    {
+                        return (decimal)OrcamentoDAO.Instance.RecuperaPercComissao(null, idOrcamento);
+                    }
+
+                    var idPedido = ItemProjetoDAO.Instance.ObtemIdPedido(null, IdItemProjeto);
+
+                    if (idPedido > 0)
+                    {
+                        return (decimal)PedidoDAO.Instance.ObterPercentualComissao(null, (int)idPedido);
+                    }
+
+                    var idPedidoEspelho = ItemProjetoDAO.Instance.ObtemIdPedidoEspelho(null, IdItemProjeto);
+
+                    if (idPedidoEspelho > 0)
+                    {
+                        return (decimal)PedidoEspelhoDAO.Instance.RecuperaPercComissao(null, idPedidoEspelho.Value);
+                    }
+                }
+
+                return 0;
             }
         }
 

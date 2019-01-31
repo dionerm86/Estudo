@@ -247,21 +247,18 @@ namespace Glass.Data.Helper
             get
             {
                 if (Count == 0)
-                    return "";
-
-                string retorno = "";
-
-                GenericBenef[] itens = this.ToArray();
-                Array.Sort(itens, (x, y) => x.DescricaoBeneficiamento.CompareTo(y.DescricaoBeneficiamento));
-
-                retorno = string.Join(", ", itens.Select(benef =>
                 {
-                    string textoQtd = benef.TipoCalculo == TipoCalculoBenef.Quantidade
-                        ? benef.Qtd + " "
-                        : string.Empty;
+                    return "";
+                }
 
-                    return textoQtd + benef.DescricaoBeneficiamento;
-                }));
+                var retorno = string.Join(", ", this
+                    .Select(benef =>
+                    {
+                        return benef.TipoCalculo == TipoCalculoBenef.Quantidade
+                            ? $"{benef.Qtd} {benef.DescricaoBeneficiamento}"
+                            : benef.DescricaoBeneficiamento;
+                    })
+                    .OrderBy(f => f));
 
                 return "(" + retorno + ")";
             }

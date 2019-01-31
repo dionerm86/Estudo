@@ -290,19 +290,12 @@ namespace Glass.Financeiro.Negocios.Componentes
         /// <returns></returns>
         public IList<Colosoft.IEntityDescriptor> ObtemGruposContaCadastro()
         {
-            var consulta = SourceContext.Instance.CreateQuery()
+            return SourceContext.Instance.CreateQuery()
                 .From<Data.Model.GrupoConta>()
-                .Where(string.Format("IdGrupo NOT IN ({0})",
-                    Glass.Data.Helper.UtilsPlanoConta.GetGruposSistema + "," +
-                    Glass.Data.Helper.UtilsPlanoConta.GetGruposExcluirFluxoSistema))
-                .OrderBy("Descricao");
-
-            consulta
-                .WhereClause
-                .And("Situacao = ?sit")
-                .Add("?sit", Glass.Situacao.Ativo);
-
-            return consulta.ProcessResultDescriptor<Entidades.GrupoConta>()
+                .OrderBy("Descricao")
+                .Where("Situacao = ?sit")
+                .Add("?sit", Glass.Situacao.Ativo)
+                .ProcessResultDescriptor<Entidades.GrupoConta>()
                 .ToList();
         }
 

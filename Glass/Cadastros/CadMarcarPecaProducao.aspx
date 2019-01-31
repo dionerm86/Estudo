@@ -89,14 +89,6 @@
                 return confirm("Deseja marcar essa peça no setor '" + setor + "'?");
             else
             {
-                // Verifica se a opção de retornar ao estoque foi marcada
-                if (FindControl("drpRetornarEstoque", "select") != null && 
-                    FindControl("drpRetornarEstoque", "select").value == "")
-                {
-                    alert("Informe se a peça deverá retornar ao estoque.");
-                    return false;
-                }
-            
                 return confirm("Deseja marcar essa peça como Perda?");
             }
         }
@@ -126,14 +118,6 @@
                 return confirm("Deseja marcar todas as peças no setor '" + setor + "'?");
             else
             {
-                // Verifica se a opção de retornar ao estoque foi marcada
-                if (FindControl("drpRetornarEstoque", "select") != null &&
-                    FindControl("drpRetornarEstoque", "select").value == "")
-                {
-                    alert("Informe se a peça deverá retornar ao estoque.");
-                    return false;
-                }
-            
                 return confirm("Deseja marcar todas as peças como Perda?");
             }
         }
@@ -303,11 +287,6 @@
                             <asp:Label ID="Label4" runat="server" Text="Retornar peça ao estoque?" Visible="False"></asp:Label>
                         </td>
                         <td align="left">
-                            <asp:DropDownList ID="drpRetornarEstoque" runat="server" Visible="False">
-                                <asp:ListItem></asp:ListItem>
-                                <asp:ListItem Value="1">Sim</asp:ListItem>
-                                <asp:ListItem Value="2">Não</asp:ListItem>
-                            </asp:DropDownList>
                         </td>
                     </tr>
                     <tr>

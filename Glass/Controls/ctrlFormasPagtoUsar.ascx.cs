@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Web.UI.WebControls;
 using Glass.Data.Model;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace Glass.UI.Web.Controls
 
         public int? FormaPagtoPadrao
         {
-            get { return drpFormaPagto.SelectedValue.StrParaIntNullable(); }
+            get { return Request.Form[drpFormaPagto.UniqueID].StrParaIntNullable(); }
             set { _formaPagtoPadrao = value; }
         }
 
@@ -69,7 +69,7 @@ namespace Glass.UI.Web.Controls
                 return;
             }
 
-            // Marca as formas de pagamento que o cliente tem permissão
+            // Marca as formas de pagamento que o cliente tem permissÃ£o
             foreach (ListItem item in this.cblFormasPagto.Items)
             {
                 var p = itens.FirstOrDefault(x => x.IdFormaPagto == item.Value.StrParaInt());
@@ -87,7 +87,7 @@ namespace Glass.UI.Web.Controls
         {
             var itens = this._formasPagto ?? new Financeiro.Negocios.Entidades.FormaPagtoCliente[0];
 
-            // Marca as formas de pagamento que o cliente tem permissão
+            // Marca as formas de pagamento que o cliente tem permissÃ£o
             foreach (ListItem item in this.cblFormasPagto.Items)
             {
                 var p = itens.FirstOrDefault(x => x.IdFormaPagto == item.Value.StrParaInt());

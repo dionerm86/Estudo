@@ -193,6 +193,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDPRODPEDPARENT", DirectionParameter.InputOptional)]
         public uint? IdProdPedParent { get; set; }
 
+        [PersistenceProperty("IDPRODPEDESP", DirectionParameter.InputOptional)]
+        public uint? IdProdPedEsp { get; set; }
+
         [PersistenceProperty("ISPRODUTOLAMINADOCOMPOSICAO", DirectionParameter.InputOptional)]
         public bool IsProdutoLaminadoComposicao { get; set; }
 
@@ -255,8 +258,8 @@ namespace Glass.Data.Model
                 // Soma o desconto por quantidade pois na impressão da liberação o desconto será deduzido do total do pedido,
                 // se não somar o desconto por qtd, ficará como se o relatório estivesse aplicando o desconto 2 vezes
                 var valorProd = TotalProd + ValorBenefProd + ValorDescontoQtde;
-                var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(null, IdPedido);
-                var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(null, IdPedido);
+                var pedidoCalculouIcmsSt = Pedido.ValorIcms > 0;
+                var pedidoCalculouIpi = Pedido.ValorIpi > 0;
 
                 if (pedidoCalculouIcmsSt)
                 {
@@ -280,7 +283,7 @@ namespace Glass.Data.Model
                 // QtdeAmbiente * QtdeProd, devido ao fato do ValorProd ser calculado já considerando o valor unitário do produto * QtdeAmbiente e 
                 // QtdeProd e o QtdeTotal já considerar QtdeAmbiente * QtdeProd, a menos que a liberação seja por produtos prontos,
                 // onde deverá utilizar somente QtdeAmbiente (Cálculo baseado na propriedade QtdeDisponivelLiberacao de ProdutosPedido)
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, IdPedido);
+                var idLoja = Pedido.IdLoja;
                 var NaoIgnorar = !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
 
                 decimal divisor = PedidoMaoDeObra && QtdeAmbiente > 0 ?
@@ -305,7 +308,7 @@ namespace Glass.Data.Model
                 // QtdeAmbiente * QtdeProd, devido ao fato do ValorProd ser calculado já considerando o valor unitário do produto * QtdeAmbiente e 
                 // QtdeProd e o QtdeTotal já considerar QtdeAmbiente * QtdeProd, a menos que a liberação seja por produtos prontos,
                 // onde deverá utilizar somente QtdeAmbiente (Cálculo baseado na propriedade QtdeDisponivelLiberacao de ProdutosPedido)
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, IdPedido);
+                var idLoja = Pedido.IdLoja;
                 var naoIgnorar = !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
 
                 decimal divisor = PedidoMaoDeObra && QtdeAmbiente > 0 ?
@@ -338,6 +341,22 @@ namespace Glass.Data.Model
             }
         }
 
+        private Pedido pedido = null;
+
+        public Pedido Pedido
+        {
+            get
+            {
+                if (pedido == null)
+                {
+                    pedido = PedidoDAO.Instance.GetElementByPrimaryKey(IdPedido);
+                }
+
+                return pedido;
+            }
+            set { pedido = value; }
+        }
+
         private List<ProdutoPedidoBenef> _beneficiamentos = null;
 
         public GenericBenefCollection Beneficiamentos
@@ -360,7 +379,7 @@ namespace Glass.Data.Model
             {
                 if (_valorUnit == null)
                 {
-                    var totM2 = ProdutosPedidoDAO.Instance.ObtemTotM(null, IdProdPed);
+                    var totM2 = ProdutoPedido.TotM;
 
                     // Recupera o valor unitário do beneficiamento e soma ao valor unitário final, o motivo disso é evitar que o cálculo do
                     // valor unitário fique incorreto caso esteja usando área mínima, situação na qual o beneficiamento calculado por m²
@@ -371,8 +390,6 @@ namespace Glass.Data.Model
                         return b.Valor / divisor;
                     });
 
-                    var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(IdPedido);
-
                     var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(null, IdPedido);
 
                     decimal? valorUnitario;
@@ -382,7 +399,7 @@ namespace Glass.Data.Model
                         var calcMult5 = ProdutoPedido.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
                         ValorTotal.Instance.Calcular(null,
-                            pedido,
+                            Pedido,
                             ProdutoPedido,
                             Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
                             calcMult5,
@@ -392,7 +409,7 @@ namespace Glass.Data.Model
 
                         valorUnitario = ValorUnitario.Instance.CalcularValor(
                             null,
-                            pedido,
+                            Pedido,
                             ProdutoPedido,
                             ValorProd - ValorBenefProd);
                     }
@@ -520,7 +537,7 @@ namespace Glass.Data.Model
             {
                 // Subtrai o desconto do pedido no cálculo do total do produto, para que o resumo da liberação fique correto
                 decimal total = ((TotalProd + ValorBenefProd) / (decimal)(QtdeProd > 0 ? QtdeProd : 1)) * (decimal)QtdeTotal;
-                decimal percDescPed = (decimal)PedidoDAO.Instance.GetPercDesc(null, IdPedido);
+                decimal percDescPed = Pedido.Desconto > 0 ? (decimal)PedidoDAO.Instance.GetPercDesc(null, IdPedido) : 1;
 
                 return total - (total * percDescPed);
             }

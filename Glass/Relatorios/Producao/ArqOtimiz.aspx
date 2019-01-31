@@ -1,162 +1,48 @@
-<%@ Page Title="Arquivos de Otimização" Language="C#" MasterPageFile="~/Painel.master"
-    AutoEventWireup="true" CodeBehind="ArqOtimiz.aspx.cs" Inherits="Glass.UI.Web.Relatorios.Producao.ArqOtimiz" %>
-
-<%@ Register Src="../../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
+ï»¿<%@ Page Title="Arquivos de OtimizaÃ§Ã£o" Language="C#" MasterPageFile="~/Painel.master"
+    AutoEventWireup="true" CodeBehind="ArqOtimiz.aspx.cs" Inherits="Glass.UI.Web.Relatorios.Producao.ArqOtimiz" EnableViewState ="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
+    <%=
+        Glass.UI.Web.IncluirTemplateTela.Script(
+            "~/Vue/ArquivosOtimizacao/Templates/LstArquivosOtimizacao.Filtro.html")
+    %>
 
-    <script type="text/javascript">
-        function formatarData(data)
-        {
-            while (data.indexOf("/") > -1)
-                data = data.replace("/", "-");
-
-            while (data.indexOf(":") > -1)
-                data = data.replace(":", "_");
-
-            return data;
-        }
-        
-        function download(funcionario, data, arquivo, extensao)
-        {
-            var nomeArquivo = funcionario + " " + formatarData(data) + extensao;
-            redirectUrl("../../Handlers/Download.ashx?filePath=" + arquivo +
-                "&fileName=" + nomeArquivo);
-        }
-
-        function ecutter(id) {
-            redirectUrl('<%= MontarEnderecoECutter() %>' + id);
-        }
-    </script>
-
-    <table>
-        <tr>
-            <td align="center">
-                <table>
-                    <tr>
-                        <td>
-                            <asp:Label ID="Label3" runat="server" Text="Funcionário" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:DropDownList ID="ddlFuncionario" runat="server" DataSourceID="odsFuncionario"
-                                DataTextField="Descr" DataValueField="Id" AppendDataBoundItems="True">
-                                <asp:ListItem Value="0">Todos</asp:ListItem>
-                            </asp:DropDownList>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" />
-                        </td>
-                        <td>
-                            <asp:Label ID="Label4" runat="server" Text="Data" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <uc1:ctrlData ID="ctrlDataIni" runat="server" ExibirHoras="True" ReadOnly="ReadWrite" />
-                        </td>
-                        <td>
-                            a
-                        </td>
-                        <td>
-                            <uc1:ctrlData ID="ctrlDataFim" runat="server" ExibirHoras="True" ReadOnly="ReadWrite" />
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton3" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" />
-                        </td>
-                    </tr>
-                </table>
-                <table>
-                    <tr>
-                        <td>
-                            <asp:Label ID="Label5" runat="server" Text="Direção" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:DropDownList ID="ddlDirecao" runat="server">
-                                <asp:ListItem></asp:ListItem>
-                                <asp:ListItem Value="1">Exportação</asp:ListItem>
-                                <asp:ListItem Value="2">Importação</asp:ListItem>
-                            </asp:DropDownList>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton4" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" />
-                        </td>
-                        <td>
-                            <asp:Label ID="Label1" runat="server" Text="Pedido" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtPedido" runat="server" onkeypress="return soNumeros(event, true, true)"
-                                Width="50px"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="imgPesq" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click" />
-                        </td>
-                        <td>
-                            <asp:Label ID="Label2" runat="server" Text="Etiqueta" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtEtiqueta" runat="server" Width="100px"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                OnClick="imgPesq_Click" />
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                &nbsp;
-            </td>
-        </tr>
-        <tr>
-            <td align="center">
-                <asp:GridView ID="grdArqOtimiz" runat="server" AllowPaging="True" AllowSorting="True"
-                    AutoGenerateColumns="False" CssClass="gridStyle" DataKeyNames="IdArquivoOtimizacao"
-                    DataSourceID="odsArqOtimiz" EmptyDataText="Ainda não há arquivos de otimização gerados."
-                    GridLines="None">
-                    <Columns>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:ImageButton ID="imgRelatorio" runat="server" ImageUrl="~/Images/Relatorio.gif"
-                                    Visible='<%# Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta != Glass.Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter || ((int)Eval("Direcao")) == 2 %>'
-                                    OnClientClick='<%# "download(\"" + Eval("NomeFunc") + "\", \"" + Eval("DataCad") + "\", \"" + Eval("CaminhoArquivo") + "\", \"" + Eval("ExtensaoArquivo") + "\"); return false" %>'
-                                    ToolTip="Download do arquivo" />
-                                <asp:ImageButton ID="ImageButton5" runat="server" ImageUrl="~/Images/Relatorio.gif"
-                                    Visible='<%# Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == Glass.Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter && ((int)Eval("Direcao")) == 1 %>'
-                                    OnClientClick='<%# "ecutter(\"" + Eval("IdArquivoOtimizacao") + "\"); return false" %>'
-                                    ToolTip="Download do arquivo" />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:BoundField DataField="NomeFunc" HeaderText="Funcionário" SortExpression="NomeFunc" />
-                        <asp:BoundField DataField="DataCad" HeaderText="Data" SortExpression="DataCad" />
-                        <asp:BoundField DataField="DescrDirecao" HeaderText="Direção" SortExpression="Direcao" />
-                    </Columns>
-                    <PagerStyle CssClass="pgr" />
-                    <AlternatingRowStyle CssClass="alt" />
-                </asp:GridView>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsArqOtimiz" runat="server" EnablePaging="True" MaximumRowsParameterName="pageSize"
-                    SelectCountMethod="GetCount" SelectMethod="GetList" SortParameterName="sortExpression"
-                    StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ArquivoOtimizacaoDAO">
-                    <SelectParameters>
-                        <asp:ControlParameter ControlID="ddlFuncionario" Name="idFunc" PropertyName="SelectedValue"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="ddlDirecao" Name="direcao" PropertyName="SelectedValue"
-                            Type="Int32" />
-                        <asp:ControlParameter ControlID="txtPedido" Name="idPedido" PropertyName="Text" Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtEtiqueta" Name="numEtiqueta" PropertyName="Text"
-                            Type="String" />
-                    </SelectParameters>
-                </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFuncionario" runat="server" SelectMethod="GetFuncionarios"
-                    TypeName="Glass.Data.DAL.ArquivoOtimizacaoDAO">
-                </colo:VirtualObjectDataSource>
-            </td>
-        </tr>
-    </table>
+    <div id="app">
+        <arquivos-otimizacao-filtros v-bind:filtro.sync="filtro"></arquivos-otimizacao-filtros>
+        <section>
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum arquivo de otimizaÃ§Ã£o encontrado.">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('funcionario')">FuncionÃ¡rio</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('data')">Data</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevente="ordenar('direcao')">DireÃ§Ã£o</a>
+                    </th>
+                </template>
+                <template slot="item" slot-scope="{ item }">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="abrirLinkDownload(item)" title="Download do arquivo" v-if="item.permissoes.exibirLinkDownload">
+                            <img src="../../Images/Relatorio.gif" />
+                        </button>
+                        <button @click.prevent="abrirLinkDownloadECutter(item.id)" title="Download do arquivo" v-if="item.permissoes.exibirLinkECutter">
+                            <img src="../../Images/Relatorio.gif" />
+                        </button>
+                    </td>
+                    <td>{{ item.funcionario }}</td>
+                    <td>{{ item.dataCadastro | dataHora }}</td>
+                    <td>{{ item.direcao.descricao }}</td>
+                </template>
+            </lista-paginada>
+        </section>
+    </div>
+    <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/ArquivosOtimizacao/Componentes/LstArquivosOtimizacao.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/ArquivosOtimizacao/Componentes/LstArquivosOtimizacao.js" />
+        </Scripts>
+    </asp:ScriptManager>
 </asp:Content>

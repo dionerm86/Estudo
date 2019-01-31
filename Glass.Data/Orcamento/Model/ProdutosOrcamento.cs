@@ -960,6 +960,11 @@ namespace Glass.Data.Model
             set { Custo = value; }
         }
 
+        decimal IProdutoCalculo.PercentualComissao
+        {
+            get { return (decimal)OrcamentoDAO.Instance.RecuperaPercComissao(null, IdOrcamento); }
+        }
+
         #endregion
 
         #region IAmbienteCalculo

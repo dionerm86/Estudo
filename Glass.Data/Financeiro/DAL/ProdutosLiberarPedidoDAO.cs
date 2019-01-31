@@ -26,7 +26,7 @@ namespace Glass.Data.DAL
                     a.ambiente, ae.ambiente as ambientePedidoEspelho, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, 
                     g.descricao as descrGrupoProd, s.descricao as descrSubgrupoProd, (coalesce(pp.valorDesconto,0) + coalesce(pp.valorDescontoProd,0) + 
                     coalesce(pp.valorDescontoQtde,0) + coalesce(pp.valorDescontoCliente,0)) as valorDescontoTotal, pp.valorUnitBruto, pp.totalBruto, pp.alturaBenef, pp.larguraBenef,
-                    pp.percDescontoQtde
+                    pp.percDescontoQtde, pp.IdProdPedEsp
                 from produtos_liberar_pedido plp 
                     left join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido)
                     left join produtos_pedido pp on (plp.idProdPed=pp.idProdPed)
@@ -140,7 +140,7 @@ namespace Glass.Data.DAL
             string sql = "Select * From (" + Sql(idLiberarPedido, 0, null) + ") as tbl Order By totM2 Desc";
 
             List<ProdutosLiberarPedido> retorno = objPersistence.LoadData(sql).ToList();
-            
+
             foreach (ProdutosLiberarPedido plp in retorno)
             {
                 // Alterações neste trecho devem ser feitas também em ProdutosPedidoDAO.GetForRpt(uint, bool, bool)
@@ -151,20 +151,18 @@ namespace Glass.Data.DAL
 
                     plp.LarguraProd = 0;
                     plp.LarguraReal = 0;
-                }    
+                }
 
                 try
                 {
-                    uint? idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(plp.IdProdPed);
-
                     // Empresas que devem exibir o número da etiqueta na impressão da liberação
-                    if (FinanceiroConfig.DadosLiberacao.ExibirNumeroEtiquetaLiberacao && idProdPedEsp != null)
+                    if (FinanceiroConfig.DadosLiberacao.ExibirNumeroEtiquetaLiberacao && plp.IdProdPedEsp != null)
                     {
                         var exibirTodasEtiquetas = !FinanceiroConfig.DadosLiberacao.ExibirAsQuatroPrimeirasEtiquetasNaLiberacao;
 
-                        string etiquetas = ProdutoPedidoProducaoDAO.Instance.GetEtiquetasByIdProdPedLiberacao(idProdPedEsp.Value, idLiberarPedido);
+                        string etiquetas = ProdutoPedidoProducaoDAO.Instance.GetEtiquetasByIdProdPedLiberacao(plp.IdProdPedEsp.Value, idLiberarPedido);
                         if (String.IsNullOrEmpty(etiquetas))
-                            etiquetas = ProdutoPedidoProducaoDAO.Instance.GetEtiquetasByIdProdPed(idProdPedEsp.Value);
+                            etiquetas = ProdutoPedidoProducaoDAO.Instance.GetEtiquetasByIdProdPed(plp.IdProdPedEsp.Value);
 
                         if (!String.IsNullOrEmpty(etiquetas))
                         {
@@ -189,14 +187,10 @@ namespace Glass.Data.DAL
                         plp.DescrBeneficiamentos = benef.DescricaoBeneficiamentos;
                     }
 
-                    // Exibe o percentual de desconto por qtd concatenado com a descrição
-                    if (Geral.ConcatenarDescontoPorQuantidadeNaDescricaoDoProduto && plp.PercDescontoQtde > 0)
-                        plp.DescrProduto += "\r\n(Desc. Prod.: " + plp.PercDescontoQtde + "%)";
-
                     //Exibe as etiquetad de cavalete
-                    if (PCPConfig.ControleCavalete && idProdPedEsp.GetValueOrDefault(0) > 0)
+                    if (PCPConfig.ControleCavalete && plp.IdProdPedEsp.GetValueOrDefault(0) > 0)
                     {
-                        var numCavaletes = ProdutoPedidoProducaoDAO.Instance.GetCavaletesByIdProdPed(idProdPedEsp.Value);
+                        var numCavaletes = ProdutoPedidoProducaoDAO.Instance.GetCavaletesByIdProdPed(plp.IdProdPedEsp.Value);
                         if (!string.IsNullOrEmpty(numCavaletes))
                             plp.NumCavaletes = "Cavalete" + (numCavaletes.IndexOf(", ") > -1 ? "s" : "") + ": " + numCavaletes;
                     }

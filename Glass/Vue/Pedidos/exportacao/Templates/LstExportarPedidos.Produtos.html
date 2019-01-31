@@ -1,0 +1,57 @@
+﻿<section>
+    <lista-paginada ref="lista" :funcao-recuperar-itens="buscarProdutos" :filtro="filtro" ordenacao="ordenacao"
+        mensagem-lista-vazia="Não foram encontrados produtos do grupo Vidro que não sejam de estoque ou que não foram exportados.">
+        <template slot="cabecalho">
+            <th>
+                <checkbox-todos id-considerar="exportarProdutosPedido" titulo=""></checkbox-todos>
+            </th>
+            <th>
+                Cod.
+            </th>
+            <th>
+                Produto
+            </th>
+            <th>
+                Qtde
+            </th>
+            <th>
+                Altura
+            </th>
+            <th>
+                Largura
+            </th>
+            <th>
+                Tot. m²
+            </th>
+            <th>
+                Total
+            </th>
+        </template>
+        <template slot="item" slot-scope="{ item }">
+            <td>
+                <input type="checkbox" :id="'exportarProdutosPedido' + item.id" :value="item.id" v-model="produtosPedidoExportar" />
+            </td>
+            <td>
+                {{ item.produto.codigo }}
+            </td>
+            <td>
+                {{ item.produto.descricao }}
+            </td>
+            <td>
+                {{ item.quantidade }}
+            </td>
+            <td>
+                {{ item.altura }}
+            </td>
+            <td>
+                {{ item.largura }}
+            </td>
+            <td>
+                {{ item.totalMetroQuadrado | decimal }}
+            </td>
+            <td>
+                {{ item.total | moeda }}
+            </td>
+        </template>
+    </lista-paginada>
+</section>
