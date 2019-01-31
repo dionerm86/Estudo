@@ -477,6 +477,9 @@
     <Content Include="Vue\ArquivosOtimizacao\Componentes\LstArquivosOtimizacao.Filtro.js" />
     <Content Include="Vue\ArquivosOtimizacao\Componentes\LstArquivosOtimizacao.js" />
     <Content Include="Vue\ArquivosOtimizacao\Templates\LstArquivosOtimizacao.Filtro.html" />
+    <Content Include="Vue\ArquivosRemessa\Componentes\LstArquivosRemessa.Filtro.js" />
+    <Content Include="Vue\ArquivosRemessa\Componentes\LstArquivosRemessa.js" />
+    <Content Include="Vue\ArquivosRemessa\Templates\LstArquivosRemessa.Filtro.html" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.OrdensCarga.js" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.Filtro.js" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.js" />
@@ -1929,6 +1932,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ArquivosOtimizacao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\ArquivosRemessa.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Carregamentos.js" />

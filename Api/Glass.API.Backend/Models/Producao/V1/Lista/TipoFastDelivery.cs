@@ -1,4 +1,4 @@
-﻿// <copyright file="TipoFastDeliveryEnum.cs" company="Sync Softwares">
+﻿// <copyright file="TipoFastDelivery.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 

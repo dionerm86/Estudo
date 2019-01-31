@@ -1,4 +1,4 @@
-// <copyright file="AdvogadoEnum.cs" company="Sync Softwares">
+// <copyright file="Advogado.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
