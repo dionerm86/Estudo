@@ -104,6 +104,11 @@ namespace Glass.Data.RelDAL
                         AND (VencPassadoPagasPeriodo=0 OR VencPassadoPagasPeriodo IS NULL)) AS tbl2)
                     { filtroGrupos }";
 
+            if (tipoMov == 2)
+            {
+                filtro += " AND false";
+            }
+
             if (idCategoriaConta > 0)
             {
                 filtro += $" AND g.IdCategoriaConta={ idCategoriaConta }";
