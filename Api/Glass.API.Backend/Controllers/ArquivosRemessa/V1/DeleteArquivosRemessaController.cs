@@ -41,7 +41,7 @@ namespace Glass.API.Backend.Controllers.ArquivosRemessa.V1
 
                     var arquivoRemessa = ArquivoRemessaDAO.Instance.GetElementByPrimaryKey(sessao, id);
 
-                    ArquivoRemessaDAO.Instance.Delete(arquivoRemessa);
+                    ArquivoRemessaDAO.Instance.Delete(sessao, arquivoRemessa);
 
                     sessao.Commit();
                     return this.Aceito($"Arquivo de remessa excluído.");
