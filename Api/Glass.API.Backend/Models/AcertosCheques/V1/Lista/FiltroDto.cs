@@ -61,13 +61,13 @@ namespace Glass.API.Backend.Models.AcertosCheques.V1.Lista
         public DateTime? PeriodoCadastroFim { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se existem acertos de cheques próprios.
+        /// Obtém ou define um valor que indica se serão buscados acertos de cheques próprios.
         /// </summary>
         [JsonProperty("buscarAcertosChequesProprios")]
         public string BuscarAcertosChequesProprios { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se existem acertos de cheques do caixa diário.
+        /// Obtém ou define um valor que indica se serão buscados acertos de cheques do caixa diário.
         /// </summary>
         [JsonProperty("buscarAcertosCaixaDiario")]
         public bool BuscarAcertosCaixaDiario { get; set; }

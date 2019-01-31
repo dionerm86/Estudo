@@ -41,7 +41,7 @@
     },
 
     /**
-     * Retorna os funcionários para a lista de acertos de cheques.
+     * Retorna os funcionários para controle de funcionários da tela de acertos de cheques.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroFuncionario: function () {
