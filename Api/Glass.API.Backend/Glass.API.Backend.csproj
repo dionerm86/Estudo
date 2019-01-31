@@ -210,6 +210,11 @@
     <Compile Include="Controllers\Cheques\V1\LimitePorCpfCnpj\PatchLimiteChequePorCpfCnpjController.cs" />
     <Compile Include="Helper\Cheques\LimitePorCpfCnpj\ConverterCadastroAtualizacaoParaLimiteChequeCpfCnpj.cs" />
     <Compile Include="Helper\Cheques\LimitePorCpfCnpj\TraducaoOrdenacaoListaLimiteChequeCpfCnpj.cs" />
+    <Compile Include="Controllers\Compras\V1\Mercadorias\ComprasMercadoriasController.cs" />
+    <Compile Include="Controllers\Compras\V1\Mercadorias\DeleteComprasMercadoriasController.cs" />
+    <Compile Include="Controllers\Compras\V1\Mercadorias\GetComprasMercadoriasController.cs" />
+    <Compile Include="Controllers\Compras\V1\Mercadorias\PostComprasMercadoriasController.cs" />
+    <Compile Include="Helper\Compras\Mercadorias\TraducaoOrdenacaoListaComprasMercadorias.cs" />
     <Compile Include="Helper\ImpressoesEtiquetas\Individual\TraducaoOrdenacaoListaImpressoesIndividuaisEtiquetas.cs" />
     <Compile Include="Models\DevolucoesPagamento\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\DevolucoesPagamento\V1\Lista\ListaDto.cs" />
@@ -221,6 +226,9 @@
     <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\LimiteDto.cs" />
     <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\ListaDto.cs" />
     <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Compras\V1\Mercadorias\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Compras\V1\Mercadorias\Lista\ListaDto.cs" />
+    <Compile Include="Models\Compras\V1\Mercadorias\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\ListaDto.cs" />
