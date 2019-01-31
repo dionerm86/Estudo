@@ -2078,7 +2078,7 @@ namespace Glass.Data.DAL
                 return new List<int>();
             }
 
-            var sql = $@"SELECT IdProdPed 
+            var sql = $@"SELECT IdProdPed
                 FROM produtos_pedido
                 WHERE IdPedido IN ({ string.Join(",", idsPedido) });";
 
@@ -4550,7 +4550,7 @@ namespace Glass.Data.DAL
                     objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao),
                     primeiroCalculo: true
                 );
- 
+
                 /* Chamado 28687. */
                 if (PedidoDAO.Instance.IsPedidoImportado(sessao, objUpdate.IdPedido) && objUpdate.Obs == null)
                     objUpdate.Obs = ObtemObs(sessao, objUpdate.IdProdPed);
@@ -4628,9 +4628,9 @@ namespace Glass.Data.DAL
         public void AtualizarPesoPedidoSemProdutoComposicao(GDASession session, int idPedido)
         {
             var sqlAtualizarPesoProdutosPedido = $@"UPDATE produtos_pedido_espelho ppe
-                    LEFT JOIN 
+                    LEFT JOIN
                     (
-                        {Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedido, (uint)idPedido, false, false, false)}
+                        {Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedidoEspelho, (uint)idPedido, false, false, false)}
                     ) AS peso ON (ppe.IdProdPed = peso.Id)
                 SET ppe.Peso = peso.Peso
                 WHERE ppe.IdPedido = {idPedido}
@@ -4650,9 +4650,9 @@ namespace Glass.Data.DAL
             var sqlAtualizarPesoProdutosPedidoComposicao = string.Empty;
 
             sqlAtualizarPesoProdutosPedido = $@"UPDATE produtos_pedido_espelho ppe
-                    LEFT JOIN 
+                    LEFT JOIN
                     (
-                        {Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedido, (uint)idPedido, false, false, false)}
+                        {Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedidoEspelho, (uint)idPedido, false, false, false)}
                     ) AS peso ON (ppe.IdProdPed = peso.Id)
                     INNER JOIN produto prod ON (ppe.IdProd = prod.IdProd)
                     LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
@@ -4666,7 +4666,7 @@ namespace Glass.Data.DAL
             sqlAtualizarPesoProdutosPedidoComposicao = $@"UPDATE produtos_pedido_espelho ppe
                     INNER JOIN produto prod ON (ppe.IdProd = prod.IdProd)
                     LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
-                    LEFT JOIN 
+                    LEFT JOIN
                     (
                         SELECT pp1.IdProdPedParent, SUM(pp1.Peso) AS Peso
                         FROM produtos_pedido_espelho pp1
