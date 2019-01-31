@@ -79,6 +79,10 @@
       deep: true
     },
 
+    /**
+     * Observador para a variável 'cidadeAtual'.
+     * Atualiza o endereço com os dados da cidade, se houver mudança.
+     */
     cidadeAtual: {
       handler: function (valor, anterior) {
         if (this.atualizandoUf && !valor && anterior) {
@@ -100,7 +104,11 @@
       },
       deep: true
     },
-    
+
+    /**
+     * Observador para a variável 'ufAtual'.
+     * Atualiza o endereço com a UF, se houver mudança.
+     */
     ufAtual: function (valor) {
       this.atualizandoUf = true;
 

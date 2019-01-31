@@ -70,7 +70,7 @@
       if (!id && !nome) {
         return Promise.resolve();
       }
-      
+
       var uf = this.ufAtual;
 
       return Servicos.Cidades.obterListaPorUf(uf, id, nome)
@@ -104,6 +104,11 @@
       }
     },
 
+    /**
+     * Propriedade computada que retorna a UF e que atualiza
+     * a propriedade principal em caso de alteração.
+     * @type {String}
+     */
     ufAtual: {
       get: function () {
         return this.uf;
@@ -119,6 +124,10 @@
   },
 
   watch: {
+    /**
+     * Observador para a propriedade 'cidade'.
+     * Altera a variável interna, em caso de mudança externa.
+     */
     cidade: {
       handler: function (valor) {
         this.cidadeAtual = valor;
@@ -126,6 +135,10 @@
       deep: true
     },
 
+    /**
+     * Observador para a propriedade 'uf'.
+     * Altera a variável interna, em caso de mudança externa.
+     */
     uf: function (valor) {
       this.ufAtual = valor;
     }
