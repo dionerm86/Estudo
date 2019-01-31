@@ -38,6 +38,7 @@
 
     /**
      * Obtem o link para editar um encontro de contas.
+     * @param {Object} item O encontro de contas que será editado.
      * @returns {Promise} Uma Promisse com o resultado da busca.
      */
     editar: function (item) {

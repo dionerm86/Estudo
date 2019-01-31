@@ -39,7 +39,7 @@
                         <a href="#" @click.prevent="ordenar('dataCadastro')">Data de Cad.</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
+                        Situação
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('observacao')">Obs</a>

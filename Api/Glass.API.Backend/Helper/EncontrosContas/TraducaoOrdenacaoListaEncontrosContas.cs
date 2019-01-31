@@ -41,7 +41,6 @@ namespace Glass.API.Backend.Helper.EncontrosContas
                 case "datacadastro":
                     return "DataCad";
 
-                case "situacao":
                 case "observacao":
                     return campo;
 
