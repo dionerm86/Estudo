@@ -44,16 +44,35 @@ namespace Glass.Global.Negocios.Componentes
         }
 
         /// <summary>
-        /// Recupera os funcionários ativos que são vendedores ou estão
-        /// associados como vendedores para os clientes.
+        /// Recupera os funcionários ativos ou estão associados como atendentes para os clientes.
         /// </summary>
-        /// <returns></returns>
-        public IList<Colosoft.IEntityDescriptor> ObterFuncionariosAtivosAssociadosAClientes()
+        /// <returns>Retorna os funcionários ativos ou estão associados como atendentes para os clientes.</returns>
+        public IList<Colosoft.IEntityDescriptor> ObterAtendentesAtivosAssociadosAClientes()
         {
             return SourceContext.Instance.CreateQuery()
                 .From<Data.Model.Funcionario>("f")
                 .Where("(Situacao=?situacao) OR EXISTS (?sqlFuncCliente)")
                     .Add("?situacao", Situacao.Ativo)
+                    .Add("?sqlFuncCliente", SourceContext.Instance.CreateQuery()
+                        .From<Data.Model.Cliente>()
+                        .Where("IdFunc=f.IdFunc")
+                        .Select("IdCli"))
+                .OrderBy("Nome")
+                .ProcessResultDescriptor<Entidades.Funcionario>()
+                .ToList();
+        }
+
+        /// <summary>
+        /// Recupera os funcionários ativos que são vendedores ou estão associados como vendedores para os clientes.
+        /// </summary>
+        /// <returns>Retorna os funcionários ativos que são vendedores ou estão associados como vendedores para os clientes.</returns>
+        public IList<Colosoft.IEntityDescriptor> ObterVendedoresAtivosAssociadosAClientes()
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.Funcionario>("f")
+                .Where("(Situacao=?situacao AND IdTipoFunc=?tipoFunc) OR EXISTS (?sqlFuncCliente)")
+                    .Add("?situacao", Situacao.Ativo)
+                    .Add("?tipoFunc", Data.Helper.Utils.TipoFuncionario.Vendedor)
                     .Add("?sqlFuncCliente", SourceContext.Instance.CreateQuery()
                         .From<Data.Model.Cliente>()
                         .Where("IdFunc=f.IdFunc")

@@ -244,22 +244,16 @@ namespace Glass.Data.DAL
         /// <param name="idItemProjeto"></param>
         /// <param name="buscarPecas">Identifica se é para buscar as peças de vidro também</param>
         /// <returns></returns>
-        public List<MaterialItemProjeto> GetForRptItemProjeto(uint idItemProjeto, bool buscarPecas, bool pcp)
+        public List<MaterialItemProjeto> GetForRptItemProjeto(uint idItemProjeto, bool buscarPecas)
         {
-            var nomeTabelaProdutosPedido = pcp ? "produtos_pedido_espelho" : "produtos_pedido";
-
             string sql = "Select mip.*, p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd, " +
                 "p.idSubgrupoProd, if(p.AtivarAreaMinima=1, Cast(p.AreaMinima as char), '0') as AreaMinima, apl.CodInterno as CodAplicacao, " +
-                "prc.CodInterno as CodProcesso, mpm.qtde as qtdModelo, pp.codInterno as codMaterial, " +
-                (pcp ? "(pped.Qtde - coalesce(pped.QtdeInvisivel, 0))" : "mip.Qtde") + " AS QtdeExibirRelatorio " +
-                "From material_item_projeto mip " +
+                "prc.CodInterno as CodProcesso, mpm.qtde as qtdModelo, pp.codInterno as codMaterial From material_item_projeto mip " +
                 "Left Join produto p On (mip.idProd=p.idProd) " +
                 "Left Join material_projeto_modelo mpm On (mip.idMaterProjMod=mpm.idMaterProjMod) " +
                 "Left Join produto_projeto pp On (mpm.idProdProj=pp.idProdProj) " +
                 "Left Join etiqueta_aplicacao apl On (mip.idAplicacao=apl.idAplicacao) " +
                 "Left Join etiqueta_processo prc On (mip.idProcesso=prc.idProcesso) " +
-                "Left Join " + nomeTabelaProdutosPedido + @" ppe On(mip.idMaterItemProj = ppe.idMaterItemProj)" +
-                (pcp ? "Left Join produtos_pedido pped On (ppe.idProdPed = pped.idProdPedEsp)" : string.Empty) +
                 "Where mip.idItemProjeto=" + idItemProjeto;
 
             if (!buscarPecas)

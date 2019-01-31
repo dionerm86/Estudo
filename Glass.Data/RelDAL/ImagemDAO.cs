@@ -14,14 +14,15 @@ namespace Glass.Data.RelDAL
     {
         //private ImagemDAO() { }
 
-        public Imagem[] GetPecasAlteradas(uint idItemProjeto, float percentualImagem, PecaItemProjeto[] pecas)
+        public Imagem[] GetPecasAlteradas(uint idItemProjeto, float percentualImagem)
         {
-            return GetPecasAlteradas(null, idItemProjeto, percentualImagem, pecas);
+            return GetPecasAlteradas(null, idItemProjeto, percentualImagem);
         }
 
-        public Imagem[] GetPecasAlteradas(GDASession sessao, uint idItemProjeto, float percentualImagem, PecaItemProjeto[] pecas)
+        public Imagem[] GetPecasAlteradas(GDASession sessao, uint idItemProjeto, float percentualImagem)
         {
             ItemProjeto itemProj = ItemProjetoDAO.Instance.GetElementByPrimaryKey(sessao, idItemProjeto);
+            PecaItemProjeto[] pecas = PecaItemProjetoDAO.Instance.GetByItemProjetoRpt(sessao, idItemProjeto, itemProj.IdProjetoModelo).ToArray();
 
             List<Imagem> retorno = new List<Imagem>();
             foreach (PecaItemProjeto p in pecas)
@@ -29,7 +30,7 @@ namespace Glass.Data.RelDAL
                 if (p.Tipo != 1)
                     continue;
 
-                ProdutosPedidoEspelho ppe = !itemProj.IdPedidoEspelho.HasValue || p.IdProdPed.GetValueOrDefault() == 0 ? null :
+                ProdutosPedidoEspelho ppe = p.IdProdPed.GetValueOrDefault() == 0 ? null :
                     ProdutosPedidoEspelhoDAO.Instance.GetForImagemPeca(sessao, p.IdProdPed.Value);
 
                 foreach (int item in Array.ConvertAll(UtilsProjeto.GetItensFromPeca(p.Item), x => Glass.Conversoes.StrParaInt(x)))

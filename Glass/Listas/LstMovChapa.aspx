@@ -23,9 +23,6 @@
                         Espessura
                     </th>
                     <th>
-                        Qtde. Inicial
-                    </th>
-                    <th>
                         Qtde. Utilizada
                     </th>
                     <th>
@@ -56,9 +53,6 @@
                     </td>
                     <td>
                         {{ item.espessura }} MM
-                    </td>
-                    <td>
-                        {{ item.quantidades.inicial }}
                     </td>
                     <td>
                         {{ item.quantidades.utilizada }}

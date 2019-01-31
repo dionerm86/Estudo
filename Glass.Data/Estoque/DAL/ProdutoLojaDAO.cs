@@ -1,4 +1,4 @@
-using GDA;
+Ôªøusing GDA;
 using Glass.Configuracoes;
 using Glass.Data.Model;
 using Glass.Data.NFeUtils;
@@ -12,7 +12,7 @@ namespace Glass.Data.DAL
     {
         //private ProdutoLojaDAO() { }
 
-        #region Busca padr„o
+        #region Busca padr√£o
 
         private string Sql(uint idLoja, uint idProd, bool selecionar)
         {
@@ -22,7 +22,9 @@ namespace Glass.Data.DAL
                 l.nomeFantasia as nomeLoja, a.nome as nomeAdminCartao" : "Count(*)";
 
             if (selecionar)
+            {
                 campos += ", pc.totMComprando, pc.qtdeComprando, pped.totMProduzindo, pped.qtdeProduzindo";
+            }
 
             bool agruparEstoqueLoja = idLoja > 0;
             string sql = "Select " + campos + @" From produto_loja pl
@@ -41,10 +43,14 @@ namespace Glass.Data.DAL
                 Where 1";
 
             if (idLoja > 0)
+            {
                 sql += " and pl.idLoja=" + idLoja;
+            }
 
             if (idProd > 0)
+            {
                 sql += " and pl.idProd=" + idProd;
+            }
 
             return sql;
         }
@@ -96,12 +102,12 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm um produto de loja com base nos par‚metros informados.
+        /// Obt√©m um produto de loja com base nos par√¢metros informados.
         /// </summary>
         /// <param name="session">session.</param>
         /// <param name="idLoja">idLoja.</param>
         /// <param name="idProd">idProd.</param>
-        /// <returns>Retorna um produto de loja com base nos par‚metros informados.</returns>
+        /// <returns>Retorna um produto de loja com base nos par√¢metros informados.</returns>
         public ProdutoLoja ObterParaEfd(GDASession session, int idLoja, int idProd)
         {
             if (idLoja == 0 || idProd == 0)
@@ -117,8 +123,8 @@ namespace Glass.Data.DAL
         #region Novo ProdutoLoja
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Verifica se o produto existe, se n„o existir, insere
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Verifica se o produto existe, se n√£o existir, insere
         /// </summary>
         /// <param name="idProd"></param>
         /// <param name="idLoja"></param>
@@ -128,13 +134,13 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o produto existe, se n„o existir, insere
+        /// Verifica se o produto existe, se n√£o existir, insere
         /// </summary>
         /// <param name="idProd"></param>
         /// <param name="idLoja"></param>
         public void NewProd(GDASession sessao, int idProd, int idLoja)
         {
-            // Se o produtos ainda n„o estiver vinculado com a loja, faz o vÌnculo
+            // Se o produtos ainda n√£o estiver vinculado com a loja, faz o v√≠nculo
             if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From produto_loja where idProd=" + idProd + " And idLoja=" + idLoja) <= 0)
             {
                 ProdutoLoja prodLoja = new ProdutoLoja();
@@ -206,7 +212,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(codInternoProd))
             {
                 sql += " and p.CodInterno=?codInterno";
-                criterio += "CÛd. Produto: " + codInternoProd + "    ";
+                criterio += "C√≥d. Produto: " + codInternoProd + "    ";
             }
             else if (!String.IsNullOrEmpty(descricao))
             {
@@ -255,7 +261,7 @@ namespace Glass.Data.DAL
             if (aguardandoSaidaEstoque)
             {
                 sql += PedidoConfig.LiberarPedido ? " and pl.liberacao>0" : " and pl.reserva>0";
-                criterio += "Produtos aguardando saÌda de estoque    ";
+                criterio += "Produtos aguardando sa√≠da de estoque    ";
             }
 
             if (idCorVidro > 0)
@@ -273,13 +279,13 @@ namespace Glass.Data.DAL
             if (idCorAluminio > 0)
             {
                 sql += " and p.idCorAluminio=" + idCorAluminio;
-                criterio += "Cor alumÌnio: " + CorAluminioDAO.Instance.GetNome(idCorAluminio.Value) + "    ";
+                criterio += "Cor alum√≠nio: " + CorAluminioDAO.Instance.GetNome(idCorAluminio.Value) + "    ";
             }
 
             if (situacao > 0)
             {
                 sql += " and p.situacao=" + situacao;
-                criterio += "SituaÁ„o: " + (situacao == 1 ? "Ativo" : "Inativo") + "    ";
+                criterio += "Situa√ß√£o: " + (situacao == 1 ? "Ativo" : "Inativo") + "    ";
             }
 
             sql += " group by p.idProd";
@@ -357,7 +363,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca para Estoque mÌnimo
+        #region Busca para Estoque m√≠nimo
 
         private string SqlEstoqueMin(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd, uint idSubgrupoProd,
             bool abaixoEstMin, uint? idCorVidro, uint? idCorFerragem, uint? idCorAluminio, string tipoBox, bool selecionar)
@@ -447,7 +453,7 @@ namespace Glass.Data.DAL
         #region Retorna a quantidade em estoque
 
         /// <summary>
-        /// Retorna a quantidade em estoque do produto passado na loja passada, considerando o que estiver na reserva e na liberaÁ„o
+        /// Retorna a quantidade em estoque do produto passado na loja passada, considerando o que estiver na reserva e na libera√ß√£o
         /// </summary>
         public float GetEstoque(GDASession sessao, uint idLoja, uint idProd)
         {
@@ -455,7 +461,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a quantidade em estoque do produto passado na loja passada, considerando o que estiver na reserva e na liberaÁ„o
+        /// Retorna a quantidade em estoque do produto passado na loja passada, considerando o que estiver na reserva e na libera√ß√£o
         /// </summary>
         public float GetEstoque(uint idLoja, uint idProd, bool isPedidoProducao)
         {
@@ -468,7 +474,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a quantidade em estoque do produto passado na loja passada, considerando o que estiver na reserva e na liberaÁ„o
+        /// Retorna a quantidade em estoque do produto passado na loja passada, considerando o que estiver na reserva e na libera√ß√£o
         /// </summary>
         public float GetEstoque(GDASession sessao, uint idLoja, uint idProd, uint? idPedidoIgnorar, bool isPedidoProducao, bool estoqueReal, bool considerarProdBaixa)
         {
@@ -491,8 +497,8 @@ namespace Glass.Data.DAL
             if (idLoja > 0)
                 sql += " and idLoja=" + idLoja;
 
-            // Verifica se È necess·rio retornar o estoque da matÈria-prima
-            // Retorna o menor valor em estoque dentre as matÈrias-primas configuradas
+            // Verifica se √© necess√°rio retornar o estoque da mat√©ria-prima
+            // Retorna o menor valor em estoque dentre as mat√©rias-primas configuradas
             if (considerarProdBaixa && idProd > 0 && ProdutoBaixaEstoqueDAO.Instance.TemProdutoBaixa(sessao, idProd) &&
                 ((isPedidoProducao && SubgrupoProdDAO.Instance.IsSubgrupoProducao((int)idProd)) || (!isPedidoProducao && !SubgrupoProdDAO.Instance.IsSubgrupoProducao((int)idProd))))
             {
@@ -529,7 +535,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a quantidade em estoque do produto passado na loja passada, considerando o que estiver na reserva e na liberaÁ„o
+        /// Retorna a quantidade em estoque do produto passado na loja passada, considerando o que estiver na reserva e na libera√ß√£o
         /// </summary>
         public float GetEstoque(uint idLoja, uint idProd, uint? idPedidoIgnorar, bool isPedidoProducao, bool estoqueReal, bool considerarProdBaixa)
         {
@@ -537,7 +543,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o estoque mÌnimo do produto passado na loja passada
+        /// Retorna o estoque m√≠nimo do produto passado na loja passada
         /// </summary>
         /// <param name="idLoja"></param>
         /// <param name="idProd"></param>
@@ -554,86 +560,66 @@ namespace Glass.Data.DAL
             return (int)Single.Parse(obj.ToString().Replace('.', ','));
         }
 
-        #endregion
-
-        #region Atualiza reserva/liberaÁ„o
-
-        #region Credita estoque reserva
-
         /// <summary>
-        /// Credita a quantidade em reserva do produto na loja informada.
+        /// Retorna o estoque atual de chapas pela cor e espessura informadas
         /// </summary>
-        public void ColocarReserva(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
-            int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
+        /// <param name="idCorVidro"></param>
+        /// <param name="espessura"></param>
+        /// <returns></returns>
+        public Tuple<int, decimal> ObterEstoqueAtualChapasPorCorEspessura(int idCorVidro, float espessura)
         {
-            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
+            if (idCorVidro == 0 || espessura == 0)
             {
-                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                    idPedido, idsPedido, idProdPed, classeMetodo, false, true);
+                throw new InvalidOperationException("A cor do vidro e a espessura devem ser informadas.");
             }
+
+            var sql = $@"
+                SELECT SUM(pl.{{0}})
+                FROM produto_loja pl
+                    INNER JOIN produto p ON (pl.IdProd=p.IdProd)
+                    INNER JOIN subgrupo_prod sg ON (p.IdSubgrupoProd=sg.IdSubgrupoProd)
+                WHERE p.IdCorVidro={idCorVidro}
+                    AND Espessura=?espessura
+                    AND sg.TipoSubgrupo={(int)TipoSubgrupoProd.ChapasVidro}";
+
+            var quantidadeEstoque = ExecuteScalar<int>(string.Format(sql, "QtdEstoque"), new GDAParameter("?espessura", espessura));
+            var metroQuadradoEstoque = ExecuteScalar<decimal>(string.Format(sql, "M2"), new GDAParameter("?espessura", espessura));
+
+            return new Tuple<int, decimal>(quantidadeEstoque, metroQuadradoEstoque);
         }
 
         #endregion
 
-        #region Baixa estoque reserva
-
+        #region Atualiza reserva/libera√ß√£o
+        
         /// <summary>
-        /// Baixa a quantidade em reserva do produto na loja informada.
+        /// Recalcula a quantidade em reserva.
         /// </summary>
-        public void TirarReserva(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
-            int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
+        /// <param name="sessao"></param>
+        /// <param name="idLoja"></param>
+        /// <param name="idsProdQtde"></param>
+        public void RecalcularReserva(GDASession sessao, int idLoja, IEnumerable<int> idsProdQtde)
         {
-            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
-            {
-                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                    idPedido, idsPedido, idProdPed, classeMetodo, false, false);
-            }
+            AtualizaReservaLiberacao(sessao, idLoja, idsProdQtde, false);
         }
 
-        #endregion
-
-        #region Credita estoque liberaÁ„o
-
         /// <summary>
-        /// Credita a quantidade em liberaÁ„o do produto na loja informada.
+        /// Recalcula a quantidade em libera√ß√£o.
         /// </summary>
-        public void ColocarLiberacao(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
-            int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
+        /// <param name="sessao"></param>
+        /// <param name="idLoja"></param>
+        /// <param name="idsProdQtde"></param>
+        public void RecalcularLiberacao(GDASession sessao, int idLoja, IEnumerable<int> idsProdQtde)
         {
-            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
-            {
-                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                    idPedido, idsPedido, idProdPed, classeMetodo, true, true);
-            }
+            AtualizaReservaLiberacao(sessao, idLoja, idsProdQtde, true);
         }
-
-        #endregion
-
-        #region Baixa estoque liberaÁ„o
-
-        /// <summary>
-        /// Baixa a quantidade em liberaÁ„o do produto na loja informada.
-        /// </summary>
-        public void TirarLiberacao(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque, int? idLiberarPedido,
-            int? idPedidoEspelho, int? idProdPedProducao, int? idPedido, string idsPedido, int? idProdPed, string classeMetodo)
-        {
-            foreach (var idLojaSistema in LojaDAO.Instance.GetIdsLojasAtivas())
-            {
-                AtualizaReservaLiberacao(sessao, (int)idLojaSistema, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
-                    idPedido, idsPedido, idProdPed, classeMetodo, true, false);
-            }
-        }
-
-        #endregion
 
         static volatile object _atualizarReservaLiberacaoLock = new object();
 
         /// <summary>
         /// Credita/Baixa a quantidade do produto na loja informada.
         /// </summary>
-        private void AtualizaReservaLiberacao(GDASession sessao, int idLoja, Dictionary<int, float> idsProdQtde, int? idSaidaEstoque,
-            int? idLiberarPedido, int? idPedidoEspelho, int? idProdPedProducao, int? idPedidoParam, string idsPedido, int? idProdPedParam,
-            string classeMetodo, bool atualizarLiberacao, bool creditar)
+        private void AtualizaReservaLiberacao(GDASession sessao, int idLoja, IEnumerable<int> idsProdQtde, bool atualizarLiberacao)
         {
             lock (_atualizarReservaLiberacaoLock)
             {
@@ -642,10 +628,10 @@ namespace Glass.Data.DAL
                     (int)TipoCalculoGrupoProd.QtdDecimal,
                 };
 
-                // Controla reserva/liberaÁ„o apenas de produtos calculados por QTD e QTD Decimal
-                var idsProd = idsProdQtde.Keys
+                // Controla reserva/libera√ß√£o apenas de produtos calculados por QTD e QTD Decimal
+                var idsProd = idsProdQtde
                     .Distinct()
-                    .Where(f => lstTipoCalculo.Contains(GrupoProdDAO.Instance.TipoCalculo(sessao, f)))
+                    .Where(f => lstTipoCalculo.Contains(GrupoProdDAO.Instance.TipoCalculo(sessao, f, false)))
                     .ToList();
 
                 if (idsProd.Count == 0)
@@ -655,10 +641,10 @@ namespace Glass.Data.DAL
 
                 var invisivelFluxoPedido = PCPConfig.UsarConferenciaFluxo ? "InvisivelFluxo" : "InvisivelPedido";
 
-                // Atualiza a reserva e liberaÁ„o de cada produto
+                // Atualiza a reserva e libera√ß√£o de cada produto
                 foreach (var idProd in idsProd)
                 {
-                    // Cria um registro na tabela produto_loja caso n„o exista.
+                    // Cria um registro na tabela produto_loja caso n√£o exista.
                     NewProd(sessao, idProd, idLoja);
 
                     var reserva = objPersistence.ExecuteScalar(sessao,
@@ -740,7 +726,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm a quantidade do produtos passado em posse de terceiros
+        /// Obt√©m a quantidade do produtos passado em posse de terceiros
         /// </summary>
         public float ObtemEstoqueTerceiros(uint idProd, uint idLoja)
         {
@@ -748,7 +734,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm a quantidade do produtos passado em posse de terceiros
+        /// Obt√©m a quantidade do produtos passado em posse de terceiros
         /// </summary>
         public float ObtemEstoqueTerceiros(GDASession session, uint idProd, uint idLoja)
         {
@@ -773,7 +759,7 @@ namespace Glass.Data.DAL
         #region Defeito
 
         /// <summary>
-        /// D· baixa no estoque de defeito no produto da loja passados
+        /// D√° baixa no estoque de defeito no produto da loja passados
         /// </summary>
         public int BaixaDefeito(uint idProd, uint idLoja, Single qtdeBaixa)
         {
@@ -781,7 +767,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// D· baixa no estoque de defeito no produto da loja passados
+        /// D√° baixa no estoque de defeito no produto da loja passados
         /// </summary>
         public int BaixaDefeito(GDASession session, uint idProd, uint idLoja, Single qtdeBaixa)
         {
@@ -828,7 +814,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MÈtodo usado apenas na tela de LanÁamento inicial de estoque (LstEstoque.aspx)
+        /// M√©todo usado apenas na tela de Lan√ßamento inicial de estoque (LstEstoque.aspx)
         /// </summary>
         public int AtualizaEstoque(GDASession sessao, ProdutoLoja objUpdate)
         {
@@ -839,7 +825,7 @@ namespace Glass.Data.DAL
             {
                 atual = GetElement(sessao, (uint)objUpdate.IdLoja, (uint)objUpdate.IdProd);
 
-                // N„o atualiza o estoque/estoque fiscal, o mesmo ser· modificado na funÁ„o da MovEstoqueDAO logo abaixo
+                // N√£o atualiza o estoque/estoque fiscal, o mesmo ser√° modificado na fun√ß√£o da MovEstoqueDAO logo abaixo
                 string sql = "Update produto_loja Set estMinimo=" + objUpdate.EstMinimo.ToString().Replace(",", ".") +
                     ", M2=" + objUpdate.M2.ToString().Replace(',', '.') +
                     /* ", EstoqueFiscal=" + objUpdate.EstoqueFiscal.ToString().Replace(",", ".") +
@@ -869,25 +855,37 @@ namespace Glass.Data.DAL
             var possuiMovReal = MovEstoqueDAO.Instance.VerificarIdProdIdLojaPossuiMovimentacao(sessao, objUpdate.IdProd, objUpdate.IdLoja);
             bool possuiMovFiscal = ExecuteScalar<bool>(sessao, "Select Count(*)>0 From mov_estoque_fiscal Where idProd=" + objUpdate.IdProd + " And idLoja=" + objUpdate.IdLoja);
 
-            // Se a quantidade alterada for maior que a quantidade atual, gera uma movimentaÁ„o de estoque creditando o estoque,
-            // mas caso a quantidade modificada seja menor que a atual, gera uma movimentaÁ„o de estoque debitando o estoque
+            // Se a quantidade alterada for maior que a quantidade atual, gera uma movimenta√ß√£o de estoque creditando o estoque,
+            // mas caso a quantidade modificada seja menor que a atual, gera uma movimenta√ß√£o de estoque debitando o estoque
             if (Math.Round(objUpdate.QtdEstoque, 2) > Math.Round(atual.QtdEstoque, 2) || (!possuiMovReal && objUpdate.QtdEstoque > 0))
             {
                 decimal qtdMov = possuiMovReal ? (decimal)(objUpdate.QtdEstoque - atual.QtdEstoque) : (decimal)objUpdate.QtdEstoque;
 
-                MovEstoqueDAO.Instance.CreditaEstoqueManual(sessao, (uint)objUpdate.IdProd, (uint)objUpdate.IdLoja,
-                    qtdMov, null, DateTime.Now, null);
+                MovEstoqueDAO.Instance.CreditaEstoqueManual(
+                    sessao,
+                    (uint)objUpdate.IdProd,
+                    (uint)objUpdate.IdLoja,
+                    qtdMov,
+                    null,
+                    DateTime.Now,
+                    null);
             }
             else if (Math.Round(objUpdate.QtdEstoque, 2) < Math.Round(atual.QtdEstoque, 2))
             {
                 decimal qtdMov = possuiMovReal ? (decimal)(atual.QtdEstoque - objUpdate.QtdEstoque) : (decimal)objUpdate.QtdEstoque;
 
-                MovEstoqueDAO.Instance.BaixaEstoqueManual(sessao, (uint)objUpdate.IdProd, (uint)objUpdate.IdLoja,
-                    qtdMov, null, DateTime.Now, null);
+                MovEstoqueDAO.Instance.BaixaEstoqueManual(
+                    sessao,
+                    (uint)objUpdate.IdProd,
+                    (uint)objUpdate.IdLoja,
+                    qtdMov,
+                    null,
+                    DateTime.Now,
+                    null);
             }
 
-            // Se a quantidade alterada for maior que a quantidade atual, gera uma movimentaÁ„o de estoque creditando o estoque,
-            // mas caso a quantidade modificada seja menor que a atual, gera uma movimentaÁ„o de estoque debitando o estoque
+            // Se a quantidade alterada for maior que a quantidade atual, gera uma movimenta√ß√£o de estoque creditando o estoque,
+            // mas caso a quantidade modificada seja menor que a atual, gera uma movimenta√ß√£o de estoque debitando o estoque
             if (Math.Round(objUpdate.EstoqueFiscal, 2) > Math.Round(atual.EstoqueFiscal, 2) || (!possuiMovFiscal && objUpdate.EstoqueFiscal > 0))
             {
                 decimal qtdMov = possuiMovFiscal ? (decimal)(objUpdate.EstoqueFiscal - atual.EstoqueFiscal) : (decimal)objUpdate.EstoqueFiscal;
@@ -907,7 +905,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MÈtodo utilizado apenas na tela de Estoque MÌnimo (ListaEstoqueMinimo.aspx) e ajuste de estoque mÌnimo
+        /// M√©todo utilizado apenas na tela de Estoque M√≠nimo (ListaEstoqueMinimo.aspx) e ajuste de estoque m√≠nimo
         /// </summary>
         /// <param name="objUpdate"></param>
         /// <returns></returns>
@@ -934,7 +932,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// MÈtodo utlizado para limpar as quantidades em estoque dos produtos do grupo/subgrupo desejado.
+        /// M√©todo utlizado para limpar as quantidades em estoque dos produtos do grupo/subgrupo desejado.
         /// </summary>
         /// <param name="idGrupoProd"></param>
         /// <param name="idSubgrupoProd"></param>
@@ -981,10 +979,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Atualiza o estoque mÌnimo por grupo/subgrupo
+        #region Atualiza o estoque m√≠nimo por grupo/subgrupo
 
         /// <summary>
-        /// Atualiza o estoque mÌnimo por grupo/subgrupo.
+        /// Atualiza o estoque m√≠nimo por grupo/subgrupo.
         /// </summary>
         public void AtualizaEstoqueMinimo(float qtdeMin, uint idLoja, uint idGrupo, uint? idSubgrupo)
         {
@@ -1001,10 +999,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region ObtÈm a quantidade de produtos abaixo do/no estoque mÌnimo
+        #region Obt√©m a quantidade de produtos abaixo do/no estoque m√≠nimo
 
         /// <summary>
-        /// ObtÈm a quantidade de produtos abaixo do/no estoque mÌnimo.
+        /// Obt√©m a quantidade de produtos abaixo do/no estoque m√≠nimo.
         /// </summary>
         public int ObtemQuantidadeProdutosAbaixoOuNoEstoqueMinimo(int idLoja)
         {

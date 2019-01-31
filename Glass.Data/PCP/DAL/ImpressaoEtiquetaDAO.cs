@@ -2949,6 +2949,7 @@ namespace Glass.Data.DAL
                 /* Chamado 32174. */
                 if (!idsProdImpressao.Any(f => f > 0) && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
+                    ChapaCortePecaDAO.Instance.EstornarEstoqueChapa(sessao, idsProdImpressao);
                     ChapaCortePecaDAO.Instance.DeleteByIdsProdImpressaoPeca(sessao, idsProdImpressao);
                 }
 
@@ -2986,32 +2987,11 @@ namespace Glass.Data.DAL
                         LeituraProducaoDAO.Instance.ApagarPelosIdsProdPedProducao(sessao, ids?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>());
                     }
 
-                    /* Chamado 45146. */
-                    foreach (var id in ids.Split(','))
-                    {
-                        var idProdPedProducao = id.StrParaInt();
+                    var idsProdutoPedidoProducao = ids.Split(',')
+                        .Where(f => !string.IsNullOrWhiteSpace(f) && f != "0")
+                        .Select(f => int.Parse(f));
 
-                        if (idProdPedProducao > 0 && PedidoDAO.Instance.IsProducao(sessao, ProdutoPedidoProducaoDAO.Instance.ObtemIdPedido(sessao, (uint)idProdPedProducao)))
-                        {
-                            var codEtiqueta = ProdutoPedidoProducaoDAO.Instance.ObtemEtiqueta(sessao, (uint)idProdPedProducao);
-
-                            if (ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, codEtiqueta))
-                            {
-                                var login = UserInfo.GetUserInfo;
-                                var idProdPed = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(sessao, (uint)idProdPedProducao);
-                                var passouSetorLaminado = !ProdutoPedidoProducaoDAO.Instance.PecaPassouSetorLaminado(sessao, codEtiqueta);
-                                var prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(sessao, null, idProdPed, true);
-                                var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
-
-                                MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, prodPedEsp.IdProd, login.IdLoja, (uint)idProdPedProducao, 1, 0, false, false, true);
-                                // Só baixa apenas se a peça possuir produto para baixa associado
-                                MovEstoqueDAO.Instance.CreditaEstoqueProducao(sessao, prodPedEsp.IdProd, login.IdLoja, (uint)idProdPedProducao, (decimal)(m2Calc > 0 && passouSetorLaminado ? m2Calc : 1), true, true);
-
-                                // Marca que este produto entrou em estoque
-                                objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET EntrouEstoque = 0 WHERE IdProdPedProducao = { idProdPedProducao }");
-                            }
-                        }
-                    }
+                    MovEstoqueDAO.Instance.BaixaEstoqueEstornoPedidoProducao(sessao, idsProdutoPedidoProducao);
                 }
 
                 // Atualiza as peças repostas na tabela produto_impressao, voltando-as para a impressão anterior.

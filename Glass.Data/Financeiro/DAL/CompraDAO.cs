@@ -1058,8 +1058,10 @@ namespace Glass.Data.DAL
             if (!FinanceiroConfig.Compra.UsarControleFinalizacaoCompra || situacao == Compra.SituacaoEnum.AguardandoEntrega || situacao == Compra.SituacaoEnum.EmAndamento)
             {
                 // Se o estoque já não tiver sido baixado pelo almoxarifado e se a empresa não dá baixa manual, baixa
-                if (!compra.EstoqueBaixado && !EstoqueConfig.EntradaEstoqueManual)
-                    CreditarEstoqueCompra(session, compra);
+                if (!compra.EstoqueBaixado)
+                {
+                    MovEstoqueDAO.Instance.CreditaEstoqueCompra(session, compra);
+                }
 
                 objPersistence.ExecuteCommand(session, "update compra set dataFinalizada=now(), idFuncFinal=" +
                     UserInfo.GetUserInfo.CodUser + " where idCompra=" + idCompra);
@@ -1406,54 +1408,6 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Creditar Estoque Compra
-
-        /// <summary>
-        /// Credita no estoque os produtos desta compra
-        /// </summary>
-        /// <param name="compra"></param>
-        public void CreditarEstoqueCompra(GDASession sessao, Compra compra)
-        {
-            try
-            {
-                var lstProdCompra = ProdutosCompraDAO.Instance.GetByCompra(sessao, compra.IdCompra);
-
-                foreach (ProdutosCompra p in lstProdCompra)
-                {
-                    int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd);
-
-                    bool m2 = tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-
-                    float qtdEntrada = p.Qtde - p.QtdeEntrada;
-
-                    if (qtdEntrada > 0)
-                    {
-                        if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
-                            tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6 ||
-                            tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML)
-                        {
-                            qtdEntrada = p.Qtde * p.Altura;
-                            p.TotM = 0;
-                        }
-
-                        MovEstoqueDAO.Instance.CreditaEstoqueCompra(sessao, p.IdProd, compra.IdLoja, compra.IdCompra, p.IdProdCompra, 
-                            (decimal)(m2 ? (p.TotM / p.Qtde) * qtdEntrada : qtdEntrada));
-
-                        objPersistence.ExecuteCommand(sessao, "update produtos_compra set qtdeEntrada=" + p.Qtde.ToString().Replace(",", ".") +
-                            " where idProdCompra=" + p.IdProdCompra);
-                    }
-                }
-
-                objPersistence.ExecuteCommand(sessao, "Update compra Set EstoqueBaixado=true Where idCompra=" + compra.IdCompra);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao creditar estoque.", ex));
-            }
-        }
-
-        #endregion
-
         #region Cancelar/reabrir Compra
 
         private void EstornarCompra(uint idCompra, Compra.SituacaoEnum situacaoFinal, string obs)
@@ -1479,13 +1433,13 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cancela a compra.
+        /// Cancela a compra
         /// </summary>
-        private void EstornarCompra(GDATransaction session, uint idCompra, Compra.SituacaoEnum situacaoFinal, string obs)
+        private void EstornarCompra(GDASession sessao, uint idCompra, Compra.SituacaoEnum situacaoFinal, string obs)
         {
             try
             {
-                Compra compra = GetElementByPrimaryKey(session, idCompra);
+                Compra compra = GetElementByPrimaryKey(sessao, idCompra);
 
                 #region Operações de cancelamento da compra
 
@@ -1498,25 +1452,24 @@ namespace Glass.Data.DAL
                     // Se a compra estiver ativa, apenas altera sua situação para cancelada
                     if (compra.Situacao == Compra.SituacaoEnum.Ativa)
                     {
-                        objPersistence.ExecuteCommand(session, "update compra set obs=?obs where idCompra=" + idCompra,
+                        objPersistence.ExecuteCommand(sessao, "update compra set obs=?obs where idCompra=" + idCompra,
                             new GDAParameter("?obs", obs));
 
-                        AlteraSituacao(session, idCompra, Compra.SituacaoEnum.Cancelada);
+                        AlteraSituacao(sessao, idCompra, Compra.SituacaoEnum.Cancelada);
                     }
                     else
                     {
                         // Se a compra possuir alguma conta paga, não permite cancelamento
-                        if (ContasPagarDAO.Instance.GetPagasCount(session, idCompra) > 0)
+                        if (ContasPagarDAO.Instance.GetPagasCount(sessao, idCompra) > 0)
                             throw new Exception("Esta compra possui contas pagas, cancele os pagamentos antes de cancelar a compra.");
 
-                        objPersistence.ExecuteCommand(session, "update compra set obs=?obs where idCompra=" + idCompra,
+                        objPersistence.ExecuteCommand(sessao, "update compra set obs=?obs where idCompra=" + idCompra,
                             new GDAParameter("?obs", obs));
                     }
                 }
-
                 // Se a compra possuir alguma conta paga, não permite a reabertura.
                 else if (situacaoFinal == Compra.SituacaoEnum.Ativa &&
-                    ContasPagarDAO.Instance.GetPagasCount(session, idCompra) > 0)
+                    ContasPagarDAO.Instance.GetPagasCount(sessao, idCompra) > 0)
                     throw new Exception("Esta compra possui contas pagas, cancele os pagamentos antes de reabrir a compra.");
 
                 #endregion
@@ -1526,11 +1479,11 @@ namespace Glass.Data.DAL
                 try
                 {
                     // Busca as contas pagas relacionadas à esta compra
-                    ContasPagar[] lstContas = ContasPagarDAO.Instance.GetByCompra(session, idCompra);
+                    ContasPagar[] lstContas = ContasPagarDAO.Instance.GetByCompra(sessao, idCompra);
 
                     // Exclui contas a pagar que não foram pagas
                     foreach (ContasPagar c in lstContas)
-                        if (!c.Paga) ContasPagarDAO.Instance.DeleteByPrimaryKey(session, c.IdContaPg);
+                        if (!c.Paga) ContasPagarDAO.Instance.DeleteByPrimaryKey(sessao, c.IdContaPg);
                 }
                 catch (Exception ex)
                 {
@@ -1543,40 +1496,10 @@ namespace Glass.Data.DAL
 
                 try
                 {
-                    var lstProdCompra = ProdutosCompraDAO.Instance.GetByCompra(session, idCompra);
-
-                    foreach (ProdutosCompra p in lstProdCompra)
-                    {
-                        p.TotM = Glass.Global.CalculosFluxo.ArredondaM2Compra(p.Largura, (int)p.Altura, (int)p.QtdeEntrada);
-
-                            int tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdProd);
-                            var m2 = tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
-                            decimal qtdBaixa = (decimal)p.QtdeEntrada;
-
-                        if (tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 ||
-                            tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 || tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6 ||
-                            tipoCalculo == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML)
-                        {
-                            qtdBaixa *= (decimal)p.Altura;
-                            p.TotM = 0;
-                        }
-
-                        if (qtdBaixa > 0)
-                        {
-                            var idLoja = (uint?)MovEstoqueDAO.Instance.ObterIdLojaPeloIdCompra(session, (int)idCompra);
-
-                            if (idLoja.GetValueOrDefault() == 0)
-                            {
-                                idLoja = UserInfo.GetUserInfo.IdLoja;
-                            }
-
-                            MovEstoqueDAO.Instance.BaixaEstoqueCompra(session, p.IdProd, idLoja.Value, compra.IdCompra, p.IdProdCompra, (m2 ? (decimal)p.TotM : qtdBaixa));
-                        }
-
-                        objPersistence.ExecuteCommand(session, "update produtos_compra set qtdeEntrada=0 where idProdCompra=" + p.IdProdCompra);
-                    }
-
-                    objPersistence.ExecuteCommand(session, "update compra set estoqueBaixado=false where idCompra=" + idCompra);
+                    MovEstoqueDAO.Instance.BaixaEstoqueCancelamentoCompra(
+                        sessao,
+                        (int)idCompra,
+                        ProdutosCompraDAO.Instance.GetByCompra(sessao, idCompra));
                 }
                 catch (Exception ex)
                 {
@@ -1585,22 +1508,14 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                #region Exclui os registros da tabela pedidos_compra
+                objPersistence.ExecuteCommand(sessao, "Delete From pedidos_compra Where idCompra=" + idCompra);
 
-                try
-                {
-                    objPersistence.ExecuteCommand(session, "Delete From pedidos_compra Where idCompra=" + idCompra);
-                }
-                catch { }
-
-                #endregion
-
-                objPersistence.ExecuteCommand(session, "update compra set dataFinalizada=null, idFuncFinal=null, dataSaida=null where idCompra=" + idCompra);
-                AlteraSituacao(session, idCompra, situacaoFinal);
+                objPersistence.ExecuteCommand(sessao, "update compra set dataFinalizada=null, idFuncFinal=null, dataSaida=null where idCompra=" + idCompra);
+                AlteraSituacao(sessao, idCompra, situacaoFinal);
 
                 //Se foi paga com antecipação, atualiza o saldo.
                 if (compra.TipoCompra == (uint)Compra.TipoCompraEnum.AntecipFornec)
-                    AntecipacaoFornecedorDAO.Instance.AtualizaSaldo(session, compra.IdAntecipFornec.GetValueOrDefault(0));
+                    AntecipacaoFornecedorDAO.Instance.AtualizaSaldo(sessao, compra.IdAntecipFornec.GetValueOrDefault(0));
 
                 var logFuncReabrir = new LogAlteracao
                 {
@@ -1611,16 +1526,16 @@ namespace Glass.Data.DAL
                     IdFuncAlt = UserInfo.GetUserInfo.CodUser,
                     ValorAnterior = compra.Situacao.ToString(),
                     ValorAtual = situacaoFinal.ToString(),
-                    NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.Compra, (int)idCompra),
+                    NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(sessao, LogAlteracao.TabelaAlteracao.Compra, (int)idCompra),
                     DataAlt = DateTime.Now,
                 };
 
-                LogAlteracaoDAO.Instance.Insert(session, logFuncReabrir);
+                LogAlteracaoDAO.Instance.Insert(sessao, logFuncReabrir);
             }
             catch (Exception ex)
             {
                 ErroDAO.Instance.InserirFromException("Cancelar Compra: " + idCompra, ex);
-                throw ex;
+                throw;
             }
         }
 

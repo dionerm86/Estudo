@@ -1,0 +1,45 @@
+﻿<section>
+    <lista-paginada ref="lista" v-bind:funcao-recuperar-itens="obterLista" v-bind:filtro="filtro"
+        ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma peça encontrada.">
+        <template slot="cabecalho">
+            <th>
+                Cód. Produto
+            </th>
+            <th>
+                Descrição
+            </th>
+            <th>
+                Etiqueta
+            </th>
+            <th>
+                Altura
+            </th>
+            <th>
+                Largura
+            </th>
+        </template>
+        <template slot="item" slot-scope="{ item }">
+            <td>
+                <template v-if="item.produto">
+                    {{ item.produto.codigo }}
+                </template>        
+            </td>
+            <td>
+                <template v-if="item.produto">
+                    {{ item.produto.nome }}
+                </template>
+            </td>
+            <td>{{ item.codigoEtiqueta }}</td>
+            <td>
+                <template v-if="item.medidas">
+                    {{ item.medidas.altura }}
+                </template>
+            </td>
+            <td>
+                <template v-if="item.medidas">
+                    {{ item.medidas.largura }}
+                </template>
+            </td>
+        </template>
+    </lista-paginada>
+</section>

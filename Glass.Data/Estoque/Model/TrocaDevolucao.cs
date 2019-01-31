@@ -94,10 +94,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("OBS")]
         public string Obs { get; set; }
 
-        [Log("Usar Pedidos Reposição")]
-        [PersistenceProperty("USARPEDIDOREPOSICAO")]
-        public bool UsarPedidoReposicao { get; set; }
-
         [PersistenceProperty("IDORIGEMTROCADEVOLUCAO")]
         public uint? IdOrigemTrocaDevolucao { get; set; }
 
@@ -291,17 +287,7 @@ namespace Glass.Data.Model
         {
             get { return Obs + (IdFuncCanc > 0 ? " Cancelada por " + FuncionarioDAO.Instance.GetNome(IdFuncCanc.Value) : ""); }
         }
-
-        public bool ExibirUsarPedidoReposicao
-        {
-            get
-            {
-                return IdPedido > 0 &&
-                    PedidoDAO.Instance.IsPedidoReposto(null, IdPedido.Value) &&
-                    PedidoReposicaoDAO.Instance.PedidoParaTroca(PedidoDAO.Instance.IdReposicao(IdPedido.Value).GetValueOrDefault());
-            }
-        }
-
+        
         public bool EditarPedido
         {
             get { return ProdutoTrocadoDAO.Instance.GetCountReal(IdTrocaDevolucao) == 0; }

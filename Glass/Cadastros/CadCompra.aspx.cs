@@ -137,13 +137,20 @@ namespace Glass.UI.Web.Cadastros
                 Glass.MensagemAlerta.ErrorMsg("Falha ao finalizar compra.", ex, Page);
             }
         }
-    
+
         protected void btnBaixarEstoque_Click(object sender, EventArgs e)
         {
             try
             {
-                WebGlass.Business.Compra.Fluxo.AlterarEstoque.Instance.BaixarEstoque(Glass.Conversoes.StrParaUint(Request["idCompra"]));
-                
+                var idCompra = Conversoes.StrParaUint(Request["idCompra"]);
+
+                if (ProdutosCompraDAO.Instance.CountInCompra(idCompra) == 0)
+                {
+                    throw new Exception("Inclua pelo menos um produto na compra para creditar o estoque.");
+                }
+
+                MovEstoqueDAO.Instance.CreditaEstoqueCompra(null, CompraDAO.Instance.GetElementByPrimaryKey(idCompra));
+
                 if (Request["pcp"] != "1")
                     Response.Redirect("../Listas/LstCompras.aspx");
                 else
