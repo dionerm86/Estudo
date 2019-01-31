@@ -37,7 +37,7 @@ namespace Glass.API.Backend.Models.Pedidos.V1.Configuracoes
             this.ExibirBotoesTotais = UserInfo.GetUserInfo.IsAdministrador || !PedidoConfig.TelaListagem.ApenasAdminVisualizaTotais;
             this.EmitirPedido = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedido);
             this.EmitirPedidoGarantia = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
-            this.EmitirPedidoReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+            this.EmitirPedidoReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao);
         }
 
         /// <summary>
