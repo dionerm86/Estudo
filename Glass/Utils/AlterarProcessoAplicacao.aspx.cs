@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -29,7 +29,7 @@ namespace Glass.UI.Web.Utils
 
             if (isMaoDeObra)
             {
-                grdAmbiente.Columns[1].HeaderText = "PeÁa de vidro";
+                grdAmbiente.Columns[1].HeaderText = "Pe√ßa de vidro";
                 grdAmbiente.Columns[2].Visible = false;
                 grdAmbiente.Columns[3].Visible = true;
                 grdAmbiente.Columns[4].Visible = true;
@@ -51,7 +51,7 @@ namespace Glass.UI.Web.Utils
 
 
 
-            // Se a empresa n„o possuir acesso ao mÛdulo PCP, esconde colunas Apl e Proc
+            // Se a empresa n√£o possuir acesso ao m√≥dulo PCP, esconde colunas Apl e Proc
             if (!Geral.ControlePCP)
             {
                 grdProdutos.Columns[9].Visible = false;
@@ -70,11 +70,11 @@ namespace Glass.UI.Web.Utils
             if (!IsPostBack)
                 hdfNaoVendeVidro.Value = Glass.Configuracoes.Geral.NaoVendeVidro().ToString().ToLower();
 
-            // Se a empresa trabalha com ambiente de pedido e n„o houver nenhum ambiente cadastrado, esconde grid de produtos
+            // Se a empresa trabalha com ambiente de pedido e n√£o houver nenhum ambiente cadastrado, esconde grid de produtos
             bool exibirAmbiente = PedidoConfig.DadosPedido.AmbientePedido || isMaoDeObra;
             grdProdutos.Visible = (exibirAmbiente && !String.IsNullOrEmpty(hdfIdAmbiente.Value) && hdfIdAmbiente.Value != "0") || !exibirAmbiente;
 
-            // Se a empresa n„o trabalha com Ambiente no pedido, esconde grdAmbiente
+            // Se a empresa n√£o trabalha com Ambiente no pedido, esconde grdAmbiente
             grdAmbiente.Visible = exibirAmbiente;
 
             if (!exibirAmbiente && !String.IsNullOrEmpty(Request["idPedido"]) && PedidoDAO.Instance.PossuiCalculoProjeto(Glass.Conversoes.StrParaUint(Request["idPedido"])))
@@ -107,7 +107,7 @@ namespace Glass.UI.Web.Utils
         {
             string ambiente = hdfIdAmbiente.Value;
 
-            // Se n„o houver nenhum produto cadastrado no pedido (e no ambiente passado)
+            // Se n√£o houver nenhum produto cadastrado no pedido (e no ambiente passado)
             if (ProdutosPedidoDAO.Instance.CountInPedidoAmbiente(Glass.Conversoes.StrParaUint(Request["idPedido"]), !String.IsNullOrEmpty(ambiente) ? Glass.Conversoes.StrParaUint(ambiente) : 0) == 0)
                 grdProdutos.Rows[0].Visible = false;
         }
@@ -127,7 +127,7 @@ namespace Glass.UI.Web.Utils
 
         #endregion
 
-        #region MÈtodos Ajax
+        #region M√©todos Ajax
 
         [Ajax.AjaxMethod()]
         public bool SubgrupoProdComposto(int idProd)
@@ -143,7 +143,7 @@ namespace Glass.UI.Web.Utils
         }
 
         /// <summary>
-        /// Retorna o CÛdigo/DescriÁ„o do produto.
+        /// Retorna o C√≥digo/Descri√ß√£o do produto.
         /// </summary>
         [Ajax.AjaxMethod()]
         public string GetProduto(string idPedidoStr, string codInterno, string tipoEntrega, string revenda,
@@ -175,10 +175,10 @@ namespace Glass.UI.Web.Utils
         }
 
         /// <summary>
-        /// Verifica se o produto possui aplicaÁ„o prÈ-cadastrada.
+        /// Verifica se o produto possui aplica√ß√£o pr√©-cadastrada.
         /// </summary>
-        /// <param name="codInterno">CÛdigo interno do produto.</param>
-        /// <returns>Retorna "true" ou "false", de acordo com o cadastro de aplicaÁ„o do produto.</returns>
+        /// <param name="codInterno">C√≥digo interno do produto.</param>
+        /// <returns>Retorna "true" ou "false", de acordo com o cadastro de aplica√ß√£o do produto.</returns>
         [Ajax.AjaxMethod]
         public string ProdutoPossuiAplPadrao(string codInterno)
         {
@@ -207,7 +207,7 @@ namespace Glass.UI.Web.Utils
                 grdProdutos.Visible = true;
                 grdProdutos.DataBind();
 
-                // Mostra no label qual ambiente est· sendo incluido produtos
+                // Mostra no label qual ambiente est√° sendo incluido produtos
                 bool maoDeObra = IsPedidoMaoDeObra();
                 AmbientePedido ambiente = AmbientePedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(hdfIdAmbiente.Value));
                 lblAmbiente.Text = "<br />" + ambiente.Ambiente;
@@ -226,14 +226,14 @@ namespace Glass.UI.Web.Utils
 
         protected void grdAmbiente_PreRender(object sender, EventArgs e)
         {
-            // Se n„o houver nenhum ambiente cadastrado para este pedido, esconde a primeira linha
+            // Se n√£o houver nenhum ambiente cadastrado para este pedido, esconde a primeira linha
             if (AmbientePedidoDAO.Instance.CountInPedido(Conversoes.StrParaUint(Request["idPedido"])) == 0)
                 grdAmbiente.Rows[0].Visible = false;
 
-            // Se a empresa trabalha com ambiente de pedido e n„o houver nenhum ambiente cadastrado, esconde grid de produtos
+            // Se a empresa trabalha com ambiente de pedido e n√£o houver nenhum ambiente cadastrado, esconde grid de produtos
             var exibirAmbiente = PedidoConfig.DadosPedido.AmbientePedido || IsPedidoMaoDeObra();
 
-            // Se a empresa n„o trabalha com Ambiente no pedido, esconde grdAmbiente
+            // Se a empresa n√£o trabalha com Ambiente no pedido, esconde grdAmbiente
             grdAmbiente.Visible = exibirAmbiente;
 
             if (!exibirAmbiente &&
@@ -262,7 +262,7 @@ namespace Glass.UI.Web.Utils
 
         #endregion
 
-        #region TÍmpera Fora
+        #region T√™mpera Fora
 
         protected void TemperaFora_Load(object sender, EventArgs e)
         {
@@ -271,7 +271,7 @@ namespace Glass.UI.Web.Utils
 
         #endregion
 
-        #region MÈtodos usados para iniciar valores na p·gina
+        #region M√©todos usados para iniciar valores na p√°gina
 
         protected string GetPosValor()
         {
@@ -282,12 +282,12 @@ namespace Glass.UI.Web.Utils
                 int tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
                 bool isRevenda = ClienteDAO.Instance.IsRevenda(PedidoDAO.Instance.ObtemIdCliente(null, idPedido));
 
-                // Verifica qual valor ser· utilizado
+                // Verifica qual valor ser√° utilizado
                 if (isRevenda) // Se for cliente revenda, valor de atacado
                     return "1";
-                else if (tipoEntrega == 1 || tipoEntrega == 4) // Balc„o ou Entrega
+                else if (tipoEntrega == 1 || tipoEntrega == 4) // Balc√£o ou Entrega
                     return "2";
-                else if (tipoEntrega == 2 || tipoEntrega == 3 || tipoEntrega == 5 || tipoEntrega == 6) // ColocaÁ„o Comum e Temperado
+                else if (tipoEntrega == 2 || tipoEntrega == 3 || tipoEntrega == 5 || tipoEntrega == 6) // Coloca√ß√£o Comum e Temperado
                     return "3";
                 else
                     return "1";
@@ -437,7 +437,7 @@ namespace Glass.UI.Web.Utils
 
         protected void lblQtdeAmbiente_PreRender(object sender, EventArgs e)
         {
-            ((Label)sender).Text = IsPedidoMaoDeObra() ? " x " + hdfQtdeAmbiente.Value + " peÁa(s) de vidro" : "";
+            ((Label)sender).Text = IsPedidoMaoDeObra() ? " x " + hdfQtdeAmbiente.Value + " pe√ßa(s) de vidro" : "";
         }
 
         protected string NomeControleBenef()
@@ -446,7 +446,7 @@ namespace Glass.UI.Web.Utils
         }
 
         /// <summary>
-        /// Mostra/Esconde campos do total bruto e lÌquido
+        /// Mostra/Esconde campos do total bruto e l√≠quido
         /// </summary>
         protected void lblTotalBrutoLiquido_Load(object sender, EventArgs e)
         {
@@ -492,15 +492,31 @@ namespace Glass.UI.Web.Utils
             uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
             uint idFuncAtual = Glass.Conversoes.StrParaUint(idFuncAtualStr);
             uint idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(null, idPedido).GetValueOrDefault() : 0;
+            var idFuncVerificarDescontoMaximo = 0;
 
-            return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido)) :
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido))).ToString().Replace(",", ".");
+            if (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true")
+            {
+                idFuncVerificarDescontoMaximo = (int)idFuncAtual;
+            }
+            else
+            {
+                idFuncVerificarDescontoMaximo = (int)idFuncDesc;
+            }
+
+            var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(null, idPedido);
+            var idParcela = (int?)PedidoDAO.Instance.ObtemIdParcela(null, idPedido);
+            var descontoMaximoPedido = PedidoConfig.Desconto.GetDescontoMaximoPedido(
+                null,
+                (uint)idFuncVerificarDescontoMaximo,
+                tipoVenda,
+                idParcela);
+
+            return descontoMaximoPedido.ToString().Replace(",", ".");
         }
 
         protected bool IsReposicao(object tipoVenda)
         {
-            return Convert.ToInt32(tipoVenda) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.ReposiÁ„o;
+            return Convert.ToInt32(tipoVenda) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposi√ß√£o;
         }
 
         protected bool UtilizarRoteiroProducao()

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Helper;
@@ -31,7 +31,7 @@ namespace Glass.Data.Model
         public int Largura { get; set; }
 
         /// <summary>
-        /// 1-Instalação
+        /// 1-InstalaÃ§Ã£o
         /// 2-Caixilho
         /// </summary>
         [PersistenceProperty("TIPO")]
@@ -217,7 +217,7 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Usado para exportação de pedido.
+        /// Usado para exportaÃ§Ã£o de pedido.
         /// </summary>
         public string ServicosInfoBenef
         {
@@ -242,10 +242,10 @@ namespace Glass.Data.Model
         }
 
         /// <summary>
-        /// Propriedade com o tipo de alteração feita.
-        /// Usara para o Log de alterações.
+        /// Propriedade com o tipo de alteraÃ§Ã£o feita.
+        /// Usara para o Log de alteraÃ§Ãµes.
         /// </summary>
-        [Log("Tipo de Alteração")]
+        [Log("Tipo de AlteraÃ§Ã£o")]
         public string TipoAlteracao { get; set; }
 
         Guid IPecaItemProjeto.IdPecaItemProj

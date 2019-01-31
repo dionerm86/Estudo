@@ -97,7 +97,7 @@ namespace Glass.UI.Web.Cadastros
                 }
     
                 WebGlass.Business.Compra.Fluxo.AlterarEstoque.Instance.AumentarEstoque(
-                    Glass.Conversoes.StrParaUint(drpTipo.SelectedValue == "0" ? drpLojaCompra.SelectedValue : drpLojaNf.SelectedValue), lstProdCompra, true);
+                    Glass.Conversoes.StrParaUint(drpTipo.SelectedValue == "0" ? drpLojaCompra.SelectedValue : drpLojaNf.SelectedValue), lstProdCompra);
     
                 Glass.MensagemAlerta.ShowMsg("Entrada de produtos efetuada com sucesso.", Page);
     

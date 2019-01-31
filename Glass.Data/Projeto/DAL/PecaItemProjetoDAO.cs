@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
@@ -24,7 +24,7 @@ namespace Glass.Data.DAL
                     Left Join material_item_projeto mip On (pip.idPecaItemProj=mip.idPecaItemProj)
                     Left Join etiqueta_aplicacao ea ON (mip.idAplicacao=ea.idAplicacao)
                     Left Join etiqueta_processo ep ON (mip.idProcesso=ep.idProcesso)
-                    Left Join "+ nomeTabelaProdutosPedido + @" ppe On (mip.idMaterItemProj = ppe.idMaterItemProj)
+                    Left Join " + nomeTabelaProdutosPedido + @" ppe On (mip.idMaterItemProj = ppe.idMaterItemProj)
                     left join pedido ped on (ppe.idPedido=ped.idPedido)
                     LEFT JOIN
                     (
@@ -38,7 +38,7 @@ namespace Glass.Data.DAL
             List<PecaProjetoModelo> lstPecaMod = PecaProjetoModeloDAO.Instance.GetByModelo(sessao, idProjetoModelo);
 
             if (lstPecaItem.Count > lstPecaMod.Count)
-                throw new Exception("Falha ao recuperar peÁa. Existe mais de um material para a mesma peÁa. iditemprojeto " + idItemProjeto);
+                throw new Exception("Falha ao recuperar pe√ßa. Existe mais de um material para a mesma pe√ßa. iditemprojeto " + idItemProjeto);
 
             for (int i = 0; i < lstPecaItem.Count; i++)
             {
@@ -63,7 +63,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca peÁas de um item_projeto
+        /// Busca pe√ßas de um item_projeto
         /// </summary>
         /// <param name="idItemProjeto"></param>
         /// <returns></returns>
@@ -121,7 +121,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca peÁas de um item_projeto para relatÛrio
+        /// Busca pe√ßas de um item_projeto para relat√≥rio
         /// </summary>
         /// <param name="idItemProjeto"></param>
         /// <returns></returns>
@@ -131,7 +131,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca peÁas de um item_projeto para relatÛrio
+        /// Busca pe√ßas de um item_projeto para relat√≥rio
         /// </summary>
         /// <param name="idItemProjeto"></param>
         /// <returns></returns>
@@ -142,7 +142,7 @@ namespace Glass.Data.DAL
         }
         
         /// <summary>
-        /// Busca peÁas de um item_projeto para relatÛrio
+        /// Busca pe√ßas de um item_projeto para relat√≥rio
         /// </summary>
         /// <param name="idItemProjeto"></param>
         /// <returns></returns>
@@ -152,7 +152,7 @@ namespace Glass.Data.DAL
         }
         
         /// <summary>
-        /// Busca peÁas de um item_projeto para relatÛrio
+        /// Busca pe√ßas de um item_projeto para relat√≥rio
         /// </summary>
         /// <param name="idItemProjeto"></param>
         /// <returns></returns>
@@ -180,7 +180,7 @@ namespace Glass.Data.DAL
 
                 lstPecaRetorno.Add(pip);
 
-                // Se o material relacionado ‡ peca do foreach n„o tiver beneficiamento, continua o loop
+                // Se o material relacionado √† peca do foreach n√£o tiver beneficiamento, continua o loop
                 if (mip == null) continue;
 
                 // Carrega os beneficiamentos deste material, se houver
@@ -226,7 +226,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca peÁas de um item projeto para a tela de totais de marcaÁ„o.
+        /// Busca pe√ßas de um item projeto para a tela de totais de marca√ß√£o.
         /// </summary>
         public List<PecaItemProjeto> ObtemPecaItemProjetoParaTotalMarcacao(uint idItemProjeto, uint idProjetoModelo)
         {
@@ -244,7 +244,7 @@ namespace Glass.Data.DAL
 
             if (pecasItemProjeto.Count > pecasProjetoModelo.Count)
                 throw new Exception(
-                    string.Format("Falha ao recuperar peÁa. Existe mais de um material para a mesma peÁa. IdItemProjeto: {0}.",
+                    string.Format("Falha ao recuperar pe√ßa. Existe mais de um material para a mesma pe√ßa. IdItemProjeto: {0}.",
                         idItemProjeto));
 
             for (int i = 0; i < pecasItemProjeto.Count; i++)
@@ -265,7 +265,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca a peÁa de um material item projeto.
+        /// Busca a pe√ßa de um material item projeto.
         /// </summary>
         /// <param name="idItemProjeto"></param>
         /// <returns></returns>
@@ -275,7 +275,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca a peÁa de um material item projeto.
+        /// Busca a pe√ßa de um material item projeto.
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idItemProjeto"></param>
@@ -287,7 +287,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca a peÁa de um produto pedido.
+        /// Busca a pe√ßa de um produto pedido.
         /// </summary>
         public PecaItemProjeto GetByProdPed(uint idProdPed)
         {
@@ -295,7 +295,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca a peÁa de um produto pedido.
+        /// Busca a pe√ßa de um produto pedido.
         /// </summary>
         public PecaItemProjeto GetByProdPed(GDASession session, uint idProdPed)
         {
@@ -304,7 +304,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca a peÁa de um produto pedido espelho.
+        /// Busca a pe√ßa de um produto pedido espelho.
         /// </summary>
         /// <param name="idProdPedEsp"></param>
         /// <returns></returns>
@@ -314,7 +314,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca a peÁa de um produto pedido espelho.
+        /// Busca a pe√ßa de um produto pedido espelho.
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idProdPedEsp"></param>
@@ -332,7 +332,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna os itens de uma peÁa pelo seu produto pedido.
+        /// Retorna os itens de uma pe√ßa pelo seu produto pedido.
         /// </summary>
         /// <param name="idProdPed"></param>
         /// <returns></returns>
@@ -343,7 +343,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna os itens de uma peÁa pelo seu produto pedido espelho.
+        /// Retorna os itens de uma pe√ßa pelo seu produto pedido espelho.
         /// </summary>
         /// <param name="idProdPed"></param>
         /// <returns></returns>
@@ -354,7 +354,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca qtd de peÁas de vidro de um item_projeto
+        /// Busca qtd de pe√ßas de vidro de um item_projeto
         /// </summary>
         /// <param name="idItemProjeto"></param>
         /// <returns></returns>
@@ -364,7 +364,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca qtd de peÁas de vidro de um item_projeto
+        /// Busca qtd de pe√ßas de vidro de um item_projeto
         /// </summary>
         /// <param name="idItemProjeto"></param>
         /// <returns></returns>
@@ -376,7 +376,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Exclui todas as peÁas de um item_projeto
+        /// Exclui todas as pe√ßas de um item_projeto
         /// </summary>
         /// <param name="idItemProjeto"></param>
         public void DeleteByItemProjeto(uint idItemProjeto)
@@ -385,7 +385,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Exclui todas as peÁas de um item_projeto
+        /// Exclui todas as pe√ßas de um item_projeto
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idItemProjeto"></param>
@@ -397,7 +397,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Insere peÁas do item_projeto passado a partir da lista de peÁas passada, guardando o id gerado na
+        /// Insere pe√ßas do item_projeto passado a partir da lista de pe√ßas passada, guardando o id gerado na
         /// lista lstPecaModelo
         /// </summary>
         public void InsertFromPecaModelo(ItemProjeto itemProj, ref List<PecaProjetoModelo> lstPecaModelo)
@@ -406,7 +406,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Insere peÁas do item_projeto passado a partir da lista de peÁas passada, guardando o id gerado na
+        /// Insere pe√ßas do item_projeto passado a partir da lista de pe√ßas passada, guardando o id gerado na
         /// lista lstPecaModelo
         /// </summary>
         public void InsertFromPecaModelo(GDASession sessao, ItemProjeto itemProj, ref List<PecaProjetoModelo> lstPecaModelo)
@@ -415,7 +415,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Insere peÁas do item_projeto passado a partir da lista de peÁas passada, guardando o id gerado na
+        /// Insere pe√ßas do item_projeto passado a partir da lista de pe√ßas passada, guardando o id gerado na
         /// lista lstPecaModelo
         /// </summary>
         public void InsertFromPecaModelo(GDASession sessao, ItemProjeto itemProj, ref List<PecaProjetoModelo> lstPecaModelo, bool eCommerce)
@@ -426,9 +426,9 @@ namespace Glass.Data.DAL
             {
                 /* Chamado 48920. */
                 if (eCommerce && ppm.IdPecaItemProj > 0 && ppm.Tipo != ObtemTipo(sessao, ppm.IdPecaItemProj))
-                    throw new Exception("N„o È possÌvel alterar o tipo de peÁa do projeto pelo E-Commerce.");
+                    throw new Exception("N√£o √© poss√≠vel alterar o tipo de pe√ßa do projeto pelo E-Commerce.");
                 
-                // Verifica se h· fÛrmula para calcular a qtd de peÁas
+                // Verifica se h√° f√≥rmula para calcular a qtd de pe√ßas
                 var qtdPeca = !string.IsNullOrEmpty(ppm.CalculoQtde) && !itemProj.MedidaExata ? (int)UtilsProjeto.CalcExpressao(sessao, ppm.CalculoQtde, itemProj) : ppm.Qtde;
 
                 /* Chamado 22322. */
@@ -440,8 +440,8 @@ namespace Glass.Data.DAL
 
                 if (qtdPeca == 0)
                 {
-                    // A quantidade de peÁas deve ser zerada, pois pode ser que o usu·rio esteja tentando zerar a peÁa 
-                    // mas como entra neste continue n„o estava zerando
+                    // A quantidade de pe√ßas deve ser zerada, pois pode ser que o usu√°rio esteja tentando zerar a pe√ßa 
+                    // mas como entra neste continue n√£o estava zerando
                     if (!inserirPecas)
                         objPersistence.ExecuteCommand(sessao, "Update peca_item_projeto set qtde=0 where idPecaItemProj=" + ppm.IdPecaItemProj);
 
@@ -469,7 +469,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            // Atualiza este item_projeto com a qtd e m≤ V„o
+            // Atualiza este item_projeto com a qtd e m¬≤ V√£o
             ItemProjetoDAO.Instance.AtualizaQtdM2(sessao, itemProj.IdItemProjeto, itemProj.Qtde, UtilsProjeto.CalculaAreaVao(sessao, itemProj.IdItemProjeto, itemProj.MedidaExata));
         }
 
@@ -507,7 +507,7 @@ namespace Glass.Data.DAL
             else
                 foreach (var pecaProjetoModelo in pecasProjetoModelo)
                 {
-                    // Verifica se h· fÛrmula para calcular a qtd de peÁas
+                    // Verifica se h√° f√≥rmula para calcular a qtd de pe√ßas
                     var qtdPeca = !string.IsNullOrEmpty(pecaProjetoModelo.CalculoQtde) && !itemProjeto.MedidaExata ?
                         (int)UtilsProjeto.CalcExpressao(sessao, pecaProjetoModelo.CalculoQtde, itemProjeto, null, medidasProjetoModelo, medidasItemProjeto, null) : pecaProjetoModelo.Qtde;
 
@@ -539,7 +539,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a peÁa È redonda
+        /// Verifica se a pe√ßa √© redonda
         /// </summary>
         /// <param name="idPecaItemProj"></param>
         /// <returns></returns>
@@ -549,11 +549,11 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se deve gerar arquivo SAG para a peÁa informada.
+        /// Verifica se deve gerar arquivo SAG para a pe√ßa informada.
         /// </summary>
-        /// <param name="sessao">Sess„o com banco de dados que ser· usada.</param>
-        /// <param name="peca">PeÁa que ser· verificada.</param>
-        /// <returns>True caso seja necess·rio gerar um arquivo sag para a peÁa.</returns>
+        /// <param name="sessao">Sess√£o com banco de dados que ser√° usada.</param>
+        /// <param name="peca">Pe√ßa que ser√° verificada.</param>
+        /// <returns>True caso seja necess√°rio gerar um arquivo sag para a pe√ßa.</returns>
         public bool DeveGerarArquivoSag(GDASession sessao, PecaItemProjeto peca)
         {
             var tipoArquivo = (TipoArquivoMesaCorte?)peca.TipoArquivoMesaCorte;
@@ -577,7 +577,7 @@ namespace Glass.Data.DAL
                     sessao,
                     ItemProjetoDAO.Instance.GetIdProjetoModelo(null, peca.IdItemProjeto), item);
 
-                // Verifica se esta peÁa possui arquivo de mesa corte, n„o h· associaÁ„o com o arquivo de mesa de corte vindo do projeto
+                // Verifica se esta pe√ßa possui arquivo de mesa corte, n√£o h√° associa√ß√£o com o arquivo de mesa de corte vindo do projeto
                 if (pecaProjMod.IdArquivoMesaCorte != null)
                 {
                     idArquivoMesaCorte = pecaProjMod.IdArquivoMesaCorte;
@@ -597,7 +597,7 @@ namespace Glass.Data.DAL
                 return true;
             }
 
-            // Se n„o houver associaÁ„o do arquivo de mesa de corte com o projeto, procura associaÁ„o no produto
+            // Se n√£o houver associa√ß√£o do arquivo de mesa de corte com o projeto, procura associa√ß√£o no produto
             if (idArquivoMesaCorte <= 0 || idArquivoMesaCorte == null)
             {
                 idArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(sessao, peca.IdProd.GetValueOrDefault(0));
@@ -626,7 +626,7 @@ namespace Glass.Data.DAL
             return tipoArquivo == TipoArquivoMesaCorte.SAG;
         }
 
-        #region Verifica se peÁa possui associaÁ„o com alguma figura
+        #region Verifica se pe√ßa possui associa√ß√£o com alguma figura
 
         public bool PossuiFiguraAssociada(uint idPecaItemProj)
         {
@@ -634,7 +634,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se peÁa possui associaÁ„o com alguma figura
+        /// Verifica se pe√ßa possui associa√ß√£o com alguma figura
         /// </summary>
         /// <param name="idPecaItemProj"></param>
         /// <returns></returns>
@@ -650,10 +650,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region ObtÈm peÁa atravÈs de suas propriedades
+        #region Obt√©m pe√ßa atrav√©s de suas propriedades
 
         /// <summary>
-        /// ObtÈm peÁa inserida em pedido atravÈs de propriedades da peca inserida no orÁamento/projeto
+        /// Obt√©m pe√ßa inserida em pedido atrav√©s de propriedades da peca inserida no or√ßamento/projeto
         /// </summary>
         public uint? ObtemIdPecaNova(uint idPecaItemProjOld, uint idItemProjeto, string idsPecaUsados)
         {
@@ -661,7 +661,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm peÁa inserida em pedido atravÈs de propriedades da peca inserida no orÁamento/projeto
+        /// Obt√©m pe√ßa inserida em pedido atrav√©s de propriedades da peca inserida no or√ßamento/projeto
         /// </summary>
         public uint? ObtemIdPecaNova(GDASession session, uint idPecaItemProjOld, uint idItemProjeto, string idsPecaUsados)
         {
@@ -677,10 +677,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region ObtÈm as etiquetas da peÁa passada
+        #region Obt√©m as etiquetas da pe√ßa passada
                 
         /// <summary>
-        /// ObtÈm as etiquetas da peÁa passada
+        /// Obt√©m as etiquetas da pe√ßa passada
         /// </summary>
         /// <param name="idPecaItemProj"></param>
         /// <returns></returns>
@@ -691,7 +691,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm as etiquetas da peÁa passada
+        /// Obt√©m as etiquetas da pe√ßa passada
         /// </summary>
         /// <param name="idPedido"></param>
         /// <param name="idProdPed"></param>
@@ -703,7 +703,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm as etiquetas da peÁa passada
+        /// Obt√©m as etiquetas da pe√ßa passada
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idPedido"></param>
@@ -792,7 +792,7 @@ namespace Glass.Data.DAL
                     string.Format("SELECT IdPedidoEspelho FROM item_projeto WHERE IdItemProjeto={0}", idItemProjeto));
 
                 throw new Exception(
-                    string.Format("Projeto possui mais de uma peÁa para o mesmo item. Erro: IdPecaItemProj: {0} - IdPedido: {1}.",
+                    string.Format("Projeto possui mais de uma pe√ßa para o mesmo item. Erro: IdPecaItemProj: {0} - IdPedido: {1}.",
                     idPecaItemProj, idPedidoEspelho));
             }
 
@@ -801,7 +801,7 @@ namespace Glass.Data.DAL
         
         #endregion
 
-        #region MÈtodos sobrescritos
+        #region M√©todos sobrescritos
 
         public override uint Insert(PecaItemProjeto objInsert)
         {
@@ -860,7 +860,7 @@ namespace Glass.Data.DAL
         #region CADProject
 
         /// <summary>
-        /// Atualiza o GUID utilizado para identificar a peÁa no CADProject
+        /// Atualiza o GUID utilizado para identificar a pe√ßa no CADProject
         /// </summary>
         /// <param name="idPecaItemProj"></param>
         /// <param name="guid"></param>

@@ -31,6 +31,7 @@ namespace Glass.Data.Model.Calculos
         public decimal ValorAcrescimoProd { get; set; }
         public decimal ValorBenef { get; set; }
         public decimal ValorComissao { get; set; }
+        public decimal PercentualComissao { get; set; }
         public decimal ValorDesconto { get; set; }
         public decimal ValorDescontoCliente { get; set; }
         public decimal ValorDescontoProd { get; set; }

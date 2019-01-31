@@ -26,25 +26,6 @@
                 campo.value = valor;
         }
 
-        function marcarReposicao()
-        {
-            var reposicao = FindControl("chkUsarPedidoReposicao", "input");
-            if (!reposicao)
-                return;
-
-            var tipo = FindControl("drpTipoTroca", "select");
-            if (!tipo)
-                return;
-
-            if (reposicao.checked)
-            {
-                tipo.disabled = true;
-                tipo.value = "1";
-            }
-            else
-                tipo.disabled = false;
-        }
-
         var clicouInserir = false;
 
         function onInsert()
@@ -190,14 +171,7 @@
 
         function setPedido(idPedido)
         {
-            var pedidoReposicao = FindControl("chkUsarPedidoReposicao", "input").parentNode;
-
             FindControl("txtIdPedido", "input").value = idPedido;
-            if (idPedido == "")
-            {
-                pedidoReposicao.style.display = "none";
-                return;
-            }
 
             var idTrocaDev = '<%= Request["idTrocaDev"] %>';
             var dadosPedido = CadTrocaDev.GetDadosPedido(idPedido, idTrocaDev).value.split(";");
@@ -211,8 +185,6 @@
 
             if (dadosPedido[2] != "")
                 alert("Atenção: Já foram geradas as seguintes trocas/devoluções para este pedido: " + dadosPedido[2]);
-
-            pedidoReposicao.style.display = dadosPedido[3] == "true" ? "" : "none";
 
             getCli(dadosPedido[1]);
         }
@@ -825,10 +797,6 @@
                                                             OnClientClick="getPedido(); return false;" />
                                                     </td>
                                                     <td nowrap="nowrap">
-                                                        &nbsp;
-                                                        <asp:CheckBox ID="chkUsarPedidoReposicao" runat="server" Text="Usar pedidos de reposição"
-                                                            Style='<%# (bool)Eval("ExibirUsarPedidoReposicao") ? "": "display: none" %>'
-                                                            Checked='<%# Bind("UsarPedidoReposicao") %>' onclick="marcarReposicao()" Enabled='<%# Eval("EditarUsarPedidoReposicao") %>' />
                                                     </td>
                                                 </tr>
                                             </table>
@@ -942,11 +910,6 @@
                                 </table>
                                 <asp:HiddenField ID="hdfSituacao" runat="server" Value='<%# Bind("Situacao") %>' />
                                 <asp:HiddenField ID="hdfCreditoGeradoMax" runat="server" Value='<%# Bind("CreditoGeradoMax") %>' />
-
-                                <script type="text/javascript">
-                                    marcarReposicao();
-                                </script>
-
                             </EditItemTemplate>
                             <ItemTemplate>
                                 <table cellpadding="4" cellspacing="0">
@@ -963,8 +926,6 @@
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="lblIdPedido" runat="server" Text='<%# Eval("IdPedido") %>' Font-Size="Medium"></asp:Label>
-                                            <asp:Label ID="Label29" runat="server" ForeColor="Blue" Style="white-space: nowrap"
-                                                Text="Usar pedidos de reposição" Visible='<%# Eval("UsarPedidoReposicao") %>'></asp:Label>
                                         </td>
                                     </tr>
                                     <tr>
@@ -1070,9 +1031,6 @@
                                                             OnClientClick="getPedido(); return false;" />
                                                     </td>
                                                     <td nowrap="nowrap">
-                                                        &nbsp;
-                                                        <asp:CheckBox ID="chkUsarPedidoReposicao" runat="server" Text="Usar pedidos de reposição"
-                                                            Style="display: none" Checked='<%# Bind("UsarPedidoReposicao") %>' onclick="marcarReposicao()" />
                                                     </td>
                                                 </tr>
                                             </table>

@@ -15,6 +15,8 @@ namespace Glass.Data.RelDAL
         {
             string criterio = "";
 
+            var valorOriginalProdutoUtilizar = tipoValor == 1 ? "p.ValorAtacado" : tipoValor == 2 ? "p.ValorBalcao" : "p.ValorObra";
+
             var select = $@"p.CODINTERNO AS CodInterno,
                     p.DESCRICAO AS DescProduto,
                     g.DESCRICAO AS DescGrupo,
@@ -23,7 +25,7 @@ namespace Glass.Data.RelDAL
                     p.Largura,
                     tdac.ValorOriginalUtilizado AS ValorOriginal,
                     IFNULL(ROUND((tdac.ValorOriginalUtilizado * IF(tdac.Acrescimo > 0 OR tdac.Desconto > 0, IF(tdac.Acrescimo > tdac.Desconto, (1 + ((tdac.Acrescimo - tdac.Desconto) / 100)), (1 - ((tdac.Desconto - tdac.Acrescimo) / 100))), 1)), 2),
-                    (CASE {tipoValor} WHEN 1 THEN p.ValorAtacado WHEN 2 THEN p.ValorBalcao ELSE p.ValorObra END)) AS ValorTabela,
+                    {valorOriginalProdutoUtilizar} AS ValorTabela,
                     IF(tdac.Acrescimo > 0 OR tdac.Desconto > 0, IF(tdac.Acrescimo > tdac.Desconto, (1 + ((tdac.Acrescimo - tdac.Desconto) / 100)), (1 - ((tdac.Desconto - tdac.Acrescimo) / 100))), 1) AS PercDescAcrescimo,
                     '$$$' as criterio";
 
@@ -38,7 +40,7 @@ namespace Glass.Data.RelDAL
                         p.IDPROD,
                         dac.ACRESCIMO,
                         dac.DESCONTO,
-                        (CASE {tipoValor} WHEN 1 THEN p.ValorAtacado WHEN 2 THEN p.ValorBalcao ELSE p.ValorObra END) ValorOriginalUtilizado
+                        {valorOriginalProdutoUtilizar} ValorOriginalUtilizado
                     from produto p
                     LEFT JOIN desconto_acrescimo_cliente dac ON dac.IDCLIENTE IS NULL
                         AND((p.IDPROD = dac.IDPROD)
@@ -46,15 +48,15 @@ namespace Glass.Data.RelDAL
                         AND p.IDSUBGRUPOPROD = dac.IDSUBGRUPOPROD
                         AND dac.IDPROD IS NULL))
                     WHERE
-                        dac.IDTABELADESCONTO={idTabelaDescontoAcrescimo}) tdac ON p.IDPROD = tdac.IDPROD
+                       dac.IDTABELADESCONTO={idTabelaDescontoAcrescimo}) tdac ON p.IDPROD = tdac.IDPROD
                     WHERE p.situacao=" + (int)Glass.Situacao.Ativo;
 
-            if (!String.IsNullOrEmpty(codInterno))
+            if (!string.IsNullOrEmpty(codInterno))
             {
                 sql += " and p.codInterno='" + codInterno + "'";
                 criterio += "Produto: " + ProdutoDAO.Instance.GetDescrProduto(codInterno) + "    ";
             }
-            else if (!String.IsNullOrEmpty(descrProduto))
+            else if (!string.IsNullOrEmpty(descrProduto))
             {
                 string ids = ProdutoDAO.Instance.ObtemIds(null, descrProduto);
                 sql += " And p.idProd In (" + ids + ")";
@@ -87,7 +89,7 @@ namespace Glass.Data.RelDAL
                 criterio += "Largura: " + larguraInicio + "Até" + larguraFim;
             }
 
-            if(produtoDesconto)
+            if (produtoDesconto)
                 sql += @" AND (tdac.Acrescimo > 0 OR tdac.Desconto > 0) ";
 
             return sql.Replace("$$$", criterio);

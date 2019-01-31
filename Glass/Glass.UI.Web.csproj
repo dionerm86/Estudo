@@ -474,6 +474,9 @@
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Utils\AlertaAdministrador.aspx" />
+    <Content Include="Vue\ArquivosOtimizacao\Componentes\LstArquivosOtimizacao.Filtro.js" />
+    <Content Include="Vue\ArquivosOtimizacao\Componentes\LstArquivosOtimizacao.js" />
+    <Content Include="Vue\ArquivosOtimizacao\Templates\LstArquivosOtimizacao.Filtro.html" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.OrdensCarga.js" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.Filtro.js" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.js" />
@@ -490,6 +493,9 @@
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.Filtro.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Componentes\LstRegrasNaturezaOperacao.js" />
     <Content Include="Vue\Cfops\NaturezasOperacao\RegrasNaturezaOperacao\Templates\LstRegrasNaturezaOperacao.Filtro.html" />
+    <Content Include="Vue\Cheques\LimitePorCpfCnpj\Componentes\LstLimiteChequesCpfCnpj.Filtro.js" />
+    <Content Include="Vue\Cheques\LimitePorCpfCnpj\Componentes\LstLimiteChequesCpfCnpj.js" />
+    <Content Include="Vue\Cheques\LimitePorCpfCnpj\Templates\LstLimiteChequesCpfCnpj.Filtro.html" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.Filtro.js" />
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
@@ -505,6 +511,9 @@
     <Content Include="Vue\ContasPagar\Pagas\Templates\ListaContasPagas.Filtro.html" />
     <Content Include="Vue\ContasPagar\Templates\ListaContasPagar.Filtro.html" />
     <Content Include="Vue\ConhecimentosTransporte\Veiculos\Proprietarios\Componentes\ListaProprietariosVeiculo.js" />
+    <Content Include="Vue\DevolucoesPagamento\Componentes\LstDevolucoesPagamento.Filtro.js" />
+    <Content Include="Vue\DevolucoesPagamento\Componentes\LstDevolucoesPagamento.js" />
+    <Content Include="Vue\DevolucoesPagamento\Templates\LstDevolucoesPagamento.Filtro.html" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.Filtro.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Componentes\LstTrocaDevolucao.js" />
     <Content Include="Vue\Estoques\TrocasDevolucoes\Templates\LstTrocaDevolucao.Filtro.html" />
@@ -521,6 +530,9 @@
     <Content Include="Vue\Exportacao\Lista\Componentes\LstPedidosExportacao.js" />
     <Content Include="Vue\Exportacao\Lista\Templates\LstPedidosExportacao.Filtro.html" />
     <Content Include="Vue\Funcionarios\Tipos\Componentes\LstTiposFuncionario.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Componentes\LstMovimentacoesLiberacoes.Filtro.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Componentes\LstMovimentacoesLiberacoes.js" />
+    <Content Include="Vue\Liberacoes\Movimentacoes\Templates\LstMovimentacoesLiberacoes.Filtro.html" />
     <Content Include="Vue\ImpressoesEtiquetas\Individual\Componentes\LstImpressoesIndividuaisEtiquetas.Filtro.js" />
     <Content Include="Vue\ImpressoesEtiquetas\Individual\Componentes\LstImpressoesIndividuaisEtiquetas.js" />
     <Content Include="Vue\ImpressoesEtiquetas\Individual\Templates\LstImpressoesIndividuaisEtiquetas.Filtro.html" />
@@ -528,11 +540,29 @@
     <Content Include="Vue\Pagamentos\Componentes\LstPagamentos.js" />
     <Content Include="Vue\Pagamentos\Templates\LstPagamentos.Filtro.html" />
     <Content Include="Vue\Parcelas\Componentes\CadParcelas.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\ChapasDisponiveis\Componentes\LstChapasDisponiveis.Filtro.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\ChapasDisponiveis\Componentes\LstChapasDisponiveis.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\ChapasDisponiveis\Templates\LstChapasDisponiveis.Filtro.html" />
+    <Content Include="Vue\Producao\Fornadas\Componentes\LstFornadas.Filtro.js" />
+    <Content Include="Vue\Producao\Fornadas\Componentes\LstFornadas.js" />
+    <Content Include="Vue\Producao\Fornadas\Componentes\LstFornadas.Pecas.js" />
+    <Content Include="Vue\Producao\Fornadas\Templates\LstFornadas.Filtro.html" />
+    <Content Include="Vue\Producao\Fornadas\Templates\LstFornadas.Pecas.html" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Componentes\LstPosicoesMateriaPrima.Chapas.js" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Componentes\LstPosicoesMateriaPrima.Filtro.js" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Componentes\LstPosicoesMateriaPrima.js" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Templates\LstPosicoesMateriaPrima.Chapas.html" />
     <Content Include="Vue\Produtos\MateriaPrima\Posicao\Templates\LstPosicoesMateriaPrima.Filtro.html" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.Filtro.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Componentes\LstMovimentacoesChapas.Movimentacoes.js" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Templates\LstMovimentacoesChapas.Filtro.html" />
+    <Content Include="Vue\Produtos\MateriaPrima\Extrato\Totalizadores\Templates\LstMovimentacoesChapas.Movimentacoes.html" />
+    <Content Include="Vue\Pedidos\exportacao\Componentes\LstExportarPedidos.Filtro.js" />
+    <Content Include="Vue\Pedidos\exportacao\Componentes\LstExportarPedidos.js" />
+    <Content Include="Vue\Pedidos\exportacao\Componentes\LstExportarPedidos.Produtos.js" />
+    <Content Include="Vue\Pedidos\exportacao\Templates\LstExportarPedidos.Filtro.html" />
+    <Content Include="Vue\Pedidos\exportacao\Templates\LstExportarPedidos.Produtos.html" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.Filtro.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Componentes\ListaPrecoTabelaCliente.js" />
     <Content Include="Vue\Produtos\PrecosTabelaCliente\Templates\ListaPrecoTabelaCliente.Filtro.html" />
@@ -1853,6 +1883,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoLargura.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoTotal.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CheckboxTodos.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentos.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentosSetor.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBoleto.js" />
@@ -1897,12 +1928,14 @@
     <Content Include="Vue\_Compartilhado\Mixins\Modal.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\ArquivosOtimizacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Carregamentos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Compras.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ContasPagar.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ConhecimentosTransporte.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\DevolucoesPagamento.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Exportacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ImpressoesEtiquetas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Pagamentos.js" />
@@ -1994,6 +2027,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoLargura.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoQuantidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoTotal.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CheckboxTodos.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentos.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentosSetor.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBoleto.html" />
@@ -9085,9 +9119,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Relatorios\rptLimiteChequeCpfCnpj.rdlc">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Relatorios\rptListaClientes.rdlc">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Relatorios\rptLstPedidos.rdlc">

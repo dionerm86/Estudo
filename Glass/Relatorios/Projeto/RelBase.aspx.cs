@@ -142,7 +142,7 @@ namespace Glass.UI.Web.Relatorios.Projeto
                         if (itemProjeto[i].IdPedido == null)
                             itemProjeto[i].IdPedido = itemProjeto[i].IdPedidoEspelho;
     
-                        lstImagens.AddRange(ImagemDAO.Instance.GetPecasAlteradas(itemProjeto[i].IdItemProjeto, 
+                        lstImagens.AddRange(ImagemDAO.Instance.GetPecasAlteradas(itemProjeto[i].IdItemProjeto,
                             Glass.Configuracoes.ProjetoConfig.RelatorioImagemProjeto.PercentualTamanhoImagemRelatorio));
                         lstMedidas.AddRange(MedidaItemProjetoDAO.Instance.GetListByItemProjeto(itemProjeto[i].IdItemProjeto));
                     }

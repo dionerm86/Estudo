@@ -149,26 +149,55 @@ namespace Glass.Data.RelDAL
             if (idLoja > 0)
                 sqlLoja = " and idloja = " + idLoja;
 
-            string sqlPrevisaoCustoFixo = @"
-                SELECT sum(valorvenc) AS custoFixo
+            string sqlPrevisaoCustoFixo = $@"SELECT SUM(ValorVenc) AS CustoFixo
                 FROM
-                    (SELECT c.valorvenc, c.situacao, c.idcustofixo, c.diavenc, c.idLoja
-                     FROM custo_fixo c where 1 " + sqlLoja + @") 
-                AS dados,
-                    (SELECT DISTINCT cast(date_sub(dataVenc, interval day(dataVenc)-1 DAY) AS date) AS DATA
-                     FROM contas_pagar c
-                     WHERE (paga=FALSE OR paga IS NULL) 
-                        " + sqlLoja + @"
-                        AND DATEDIFF(DataVenc, ?data){0}) 
-                AS DATA
-                WHERE situacao=" + (int)CustoFixo.SituacaoEnum.Ativo + sqlLoja +
-                      @" AND cast(concat(idCustoFixo, ',', month(DATA), ',', year(DATA)) AS char) NOT IN
-                            (SELECT *
-                             FROM (SELECT DISTINCT cast(concat(idCustoFixo, ',', month(dataVenc), ',', year(dataVenc)) AS char)
-                                    FROM contas_pagar c
-                                    WHERE idCustoFixo IS NOT NULL AND DATEDIFF(DataVenc, ?data){0} " + sqlLoja + @") 
-                            AS tbl )
-                         AND DATEDIFF(((DATA.DATA - interval DAY(DATA.DATA) DAY)+interval diaVenc DAY),?data){1}";
+                    (SELECT c.Valorvenc, c.Situacao, c.IdCustoFixo, c.DiaVenc, c.IdLoja FROM custo_fixo c WHERE 1 {sqlLoja}) AS dados
+                WHERE Situacao = {(int)CustoFixo.SituacaoEnum.Ativo}{sqlLoja}
+	                AND
+                        /* Verifica se a data de geracao do custo fixo se encaixa no primeiro mes da previsao. */
+                        (IF((DATE_ADD(DATE_SUB(DATE_ADD(?data, INTERVAL {"{0}"} DAY),
+                                INTERVAL DAY (DATE_ADD(?data, INTERVAL {"{0}"} DAY)) - 1 DAY),
+                                INTERVAL DiaVenc - 1 DAY)
+                                > DATE_ADD(?data, INTERVAL {"{0}"} DAY)
+                            AND DATE_ADD(DATE_SUB(DATE_ADD(?data, INTERVAL {"{0}"} DAY),
+                                INTERVAL DAY(DATE_ADD(?data, INTERVAL {"{0}"} DAY)) - 1 DAY),
+                                INTERVAL DiaVenc - 1 DAY)
+                                <= DATE_ADD(?data, INTERVAL {"{1}"} DAY)),
+
+                            /* Caso o dia e o mes, do custo fixo, estejam dentro do primeiro mes da previsao, o SQL verifica se ele possui conta a pagar gerada.
+                             * Ex.: Data filtrada 13/06. Dia do custo fixo 25. Periodo da previsao 60 dias.
+                             * O SQL verifica se o custo fixo se encaixa entre as datas 13-07 e 12-08. Nesse caso, o custo fixo aparecera no dia 25-07.
+                             * O comando abaixo verifica se existe conta a pagar para o custo fixo, no mes 07. Se tiver, ele nao sera buscado na tela de previsao financeira. */
+                            IdCustoFixo NOT IN
+                                (SELECT IdCustoFixo FROM contas_pagar
+                                WHERE IdCustoFixo > 0
+                                    AND MONTH(DataVenc) = MONTH(DATE_ADD(?data, INTERVAL {"{0}"} DAY))
+                                    AND YEAR(DataVenc) = YEAR(DATE_ADD(?data, INTERVAL {"{0}"} DAY))
+                                    {sqlLoja}),
+                            0)
+                        OR
+
+                        /* Verifica se a data de geracao do custo fixo se encaixa no segundo mes da previsao. */
+                        IF((DATE_ADD(DATE_SUB(DATE_ADD(?data, INTERVAL {"{1}"} DAY),
+                                INTERVAL DAY(DATE_ADD(?data, INTERVAL {"{1}"} DAY)) - 1 DAY),
+                                INTERVAL DiaVenc - 1 DAY)
+                                > DATE_ADD(?data, INTERVAL {"{0}"} DAY)
+                            AND DATE_ADD(DATE_SUB(DATE_ADD(?data, INTERVAL {"{1}"} DAY),
+                                INTERVAL DAY(DATE_ADD(?data, INTERVAL {"{1}"} DAY)) - 1 DAY),
+                                INTERVAL DiaVenc - 1 DAY)
+                                <= DATE_ADD(?data, INTERVAL {"{1}"} DAY)),
+
+                            /* Caso o dia e o mes, do custo fixo, estejam dentro do segundo mes da previsao, o SQL verifica se ele possui conta a pagar gerada.
+                             * Ex.: Data filtrada 13/06. Dia do custo fixo 11. Periodo da previsao 60 dias.
+                             * O SQL verifica se o custo fixo se encaixa entre as datas 13-07 e 12-08. Nesse caso, o custo fixo aparecera no dia 11-08.
+                             * O comando abaixo verifica se existe conta a pagar para o custo fixo, no mes 08. Se tiver, ele nao sera buscado na tela de previsao financeira. */
+                            IdCustoFixo NOT IN
+                                (SELECT IdCustoFixo FROM contas_pagar
+                                WHERE IdCustoFixo > 0
+                                    AND MONTH(DataVenc) = MONTH(DATE_ADD(?data, INTERVAL {"{1}"} DAY))
+                                    AND YEAR(DataVenc) = YEAR(DATE_ADD(?data, INTERVAL {"{1}"} DAY))
+                                    {sqlLoja}),
+                            0))";
 
             string vencidasMais90Dias = String.Format(sqlBase, "<-90");
             string vencidas90Dias = String.Format(sqlBase, "<-60 and datediff(dataVenc, ?data)>=-90");
@@ -190,12 +219,9 @@ namespace Glass.Data.RelDAL
             string chequesVencer90Dias = String.Format(sqlBaseCheques, ">60 and datediff(dataVenc, ?data)<=90");
             string chequesVencerMais90Dias = String.Format(sqlBaseCheques, ">60");
 
-            string previsaoCustoFixoVencer30Dias = String.Format(sqlPrevisaoCustoFixo, ">0 and datediff(dataVenc, ?data)<=30",
-                ">0 AND DATEDIFF(((DATA.DATA - interval DAY(DATA.DATA) DAY)+interval diaVenc DAY),?data)<=30");
-            string previsaoCustoFixoVencer60Dias = String.Format(sqlPrevisaoCustoFixo, ">30 and datediff(dataVenc, ?data)<=60",
-                ">30 AND DATEDIFF(((DATA.DATA - interval DAY(DATA.DATA) DAY)+interval diaVenc DAY),?data)<=60");
-            string previsaoCustoFixoVencer90Dias = String.Format(sqlPrevisaoCustoFixo, ">60 and datediff(dataVenc, ?data)<=90",
-                ">60 AND DATEDIFF(((DATA.DATA - interval DAY(DATA.DATA) DAY)+interval diaVenc DAY),?data)<=90");
+            string previsaoCustoFixoVencer30Dias = String.Format(sqlPrevisaoCustoFixo, "0", "30");
+            string previsaoCustoFixoVencer60Dias = String.Format(sqlPrevisaoCustoFixo, "30", "60");
+            string previsaoCustoFixoVencer90Dias = String.Format(sqlPrevisaoCustoFixo, "60", "90");
 
             string sql = "select cast((" + vencidasMais90Dias + ") as decimal(12,2)) as VencidasMais90Dias, " +
                 "cast((" + vencidas90Dias + ") as decimal(12,2)) as Vencidas90Dias, " +

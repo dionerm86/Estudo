@@ -29,14 +29,25 @@ namespace Glass.Data.DAL
             return sql;
         }
 
+        /// <summary>
+        /// Retorna uma loja.
+        /// </summary>
+        /// <param name="idLoja">O identificador da loja.</param>
+        /// <returns>A model de loja preenchida.</returns>
         public Loja GetElement(uint idLoja)
         {
-            return GetElement(null, idLoja);
+            return this.GetElement(null, idLoja);
         }
 
+        /// <summary>
+        /// Retorna uma loja.
+        /// </summary>
+        /// <param name="sessao">A sessão atual.</param>
+        /// <param name="idLoja">O identificador da loja.</param>
+        /// <returns>A model de loja preenchida.</returns>
         public Loja GetElement(GDASession sessao, uint idLoja)
         {
-            return objPersistence.LoadOneData(sessao, Sql(idLoja, 0, true));
+            return this.objPersistence.LoadOneData(sessao, this.Sql(idLoja, 0, true));
         }
 
         public IList<Loja> GetList(string sortExpression, int startRow, int pageSize)

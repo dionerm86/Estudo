@@ -52,7 +52,7 @@ namespace Glass.UI.Web.Cadastros
                 if (produtos.Visible)
                 {
                     lkbInserir.Visible = TrocaDevolucaoDAO.Instance.TemPedido(idTrocaDevolucao);
-                    lkbInserirNovo.Visible = lkbInserir.Visible && TrocaDevolucaoDAO.Instance.ObtemUsarPedidoReposicao(idTrocaDevolucao);
+                    lkbInserirNovo.Visible = false;
 
                     grdProdutosTrocados.ShowFooter = !lkbInserir.Visible;
                     grdProdutosNovos.ShowFooter = !lkbInserirNovo.Visible;
@@ -62,8 +62,6 @@ namespace Glass.UI.Web.Cadastros
 
                     if (grdProdutosTrocados.Rows.Count == 1)
                         grdProdutosTrocados.Rows[0].Visible = ProdutoTrocadoDAO.Instance.GetCountReal(idTrocaDevolucao) != 0;
-
-                    grdProdutosTrocados.Columns[13].Visible = !TrocaDevolucaoDAO.Instance.ObtemUsarPedidoReposicao(idTrocaDevolucao);
                 }
             }
 

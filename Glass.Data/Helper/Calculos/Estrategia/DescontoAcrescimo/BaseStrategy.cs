@@ -31,8 +31,10 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
             decimal valorAplicado = Aplicar(sessao, produtos, percentualAplicar);
 
-            var produtoValorResidual = ObterProdutoValorResidual(produtos);
-            AplicarValorResidual(sessao, produtoValorResidual, valor - valorAplicado);
+            var produtoValorResidual = this.ObterProdutoValorResidual(produtos);
+            var valorResidual = this.ObterValorResidual(sessao, produtos, tipo, valorAplicar, valorAplicado);
+
+            this.AplicarValorResidual(sessao, produtoValorResidual, valorResidual);
 
             return true;
         }
@@ -86,6 +88,11 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return PrecoTabelaCliente(produto);
         }
 
+        protected virtual decimal BaseCalculoTotalResidualProduto(IProdutoCalculo produto)
+        {
+            return this.BaseCalculoTotalProduto(produto);
+        }
+
         protected virtual decimal AplicarProduto(decimal percentual, IProdutoCalculo produto)
         {
             decimal valorCalculado = Math.Round(percentual / 100 * PrecoTabelaCliente(produto), 2);
@@ -94,12 +101,12 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return valorCalculado;
         }
 
-        private decimal PrecoTabelaCliente(IProdutoCalculo produto)
+        protected virtual decimal PrecoTabelaCliente(IProdutoCalculo produto)
         {
             return produto.TotalBruto - produto.ValorDescontoCliente + produto.ValorAcrescimoCliente;
         }
 
-        private decimal AplicarBeneficiamentos(decimal percentual, IProdutoCalculo produto)
+        protected virtual decimal AplicarBeneficiamentos(decimal percentual, IProdutoCalculo produto)
         {
             decimal valorAplicado = 0;
             var beneficiamentos = produto.Beneficiamentos ?? GenericBenefCollection.Empty;
@@ -150,7 +157,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return totalAtual;
         }
 
-        private decimal CalcularTotalBeneficiamentosProduto(IProdutoCalculo produto)
+        protected virtual decimal CalcularTotalBeneficiamentosProduto(IProdutoCalculo produto)
         {
             decimal totalAtual = 0;
 
@@ -177,6 +184,22 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             }
 
             return Math.Round(valorAplicado, 2);
+        }
+
+        private decimal ObterValorResidual(GDASession sessao, IEnumerable<IProdutoCalculo> produtos, TipoValor tipo, decimal valorAplicar, decimal valorAplicado)
+        {
+            decimal totalAtual = 0;
+            decimal valor = 0;
+
+            foreach (var produto in produtos)
+            {
+                totalAtual += BaseCalculoTotalResidualProduto(produto);
+                totalAtual += CalcularTotalBeneficiamentosProduto(produto);
+            }
+
+            valor = this.CalcularValorAplicar(tipo, valorAplicar, totalAtual);
+
+            return valor - valorAplicado;
         }
 
         private IProdutoCalculo ObterProdutoValorResidual(IEnumerable<IProdutoCalculo> produtos)
@@ -208,7 +231,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             }
         }
 
-        private void RemoverBeneficiamentos(IProdutoCalculo produto)
+        protected virtual void RemoverBeneficiamentos(IProdutoCalculo produto)
         {
             var beneficiamentos = produto.Beneficiamentos ?? GenericBenefCollection.Empty;
 

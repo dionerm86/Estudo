@@ -5,6 +5,7 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using System.Linq;
 using Glass.Configuracoes;
+using GDA;
 
 namespace Glass.Data.DAL
 {
@@ -56,9 +57,25 @@ namespace Glass.Data.DAL
             return sql.Replace("$$$", criterio);    
         }
 
+        /// <summary>
+        /// Retorna um fornecedor.
+        /// </summary>
+        /// <param name="idFornec">O identificador do fornecedor.</param>
+        /// <returns>A model de fornecedor preenchida.</returns>
         public Fornecedor GetElement(uint idFornec)
         {
-            return objPersistence.LoadOneData(Sql(idFornec, null, 0, null, false, true));
+            return this.GetElement(null, idFornec);
+        }
+
+        /// <summary>
+        /// Retorna um fornecedor.
+        /// </summary>
+        /// <param name="sessao">A sessão atual.</param>
+        /// <param name="idFornec">O identificador do fornecedor.</param>
+        /// <returns>A model de fornecedor preenchida.</returns>
+        public Fornecedor GetElement(GDASession sessao, uint idFornec)
+        {
+            return this.objPersistence.LoadOneData(sessao, this.Sql(idFornec, null, 0, null, false, true));
         }
 
         public IList<Fornecedor> GetList(uint idFornec, string nomeFornec, int situacao, string cnpj, bool comCredito, string sortExpression, int startRow, int pageSize)

@@ -98,5 +98,28 @@ namespace Glass.API.Backend.Controllers.Fornecedores.V1
                 return this.Lista(situacoes);
             }
         }
+
+        /// <summary>
+        /// Recupera os fornecedores para o controle de pesquisa da tela de exportação de pedidos.
+        /// </summary>
+        /// <returns>Uma lista JSON com os fornecedores para uso no controle de busca.</returns>
+        [HttpGet]
+        [Route("exportacao")]
+        [SwaggerResponse(200, "Fornecedores encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Fornecedores não encontrados.")]
+        public IHttpActionResult ObterParaControleExportacao()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var fornecedores = Data.DAL.FornecedorDAO.Instance.ObterFornecedoresComUrlSistema()
+                    .Select(f => new IdNomeDto
+                    {
+                        Id = f.IdFornec,
+                        Nome = f.Nome,
+                    });
+
+                return this.Lista(fornecedores);
+            }
+        }
     }
 }

@@ -245,6 +245,9 @@ function atualizaParcCliFornec(nomeControle)
     if (resposta[0] == "Ok")
     {
         if (resposta[2] == "") resposta[2] = "[]";
+
+        drpParcelas.innerHTML = resposta[1];
+
         eval(nomeControle + ".Parcelas = " + resposta[2]);
         
         for (var i = 0; i < drpParcelas.options.length; i++)

@@ -674,7 +674,7 @@ namespace Glass.UI.Web.Cadastros
 
         protected void dtvPedido_ItemCommand(object sender, DetailsViewCommandEventArgs e)
         {
-            if (e.CommandName == "Atualizar")
+            if (e.CommandName == "Atualizar" || e.CommandName == "Recalcular")
             {
                 try
                 {
@@ -692,20 +692,31 @@ namespace Glass.UI.Web.Cadastros
                     pe.IdComissionado = ((HiddenField)dtvPedido.FindControl("hdfIdComissionado")) != null ? ((HiddenField)dtvPedido.FindControl("hdfIdComissionado")).Value.StrParaUintNullable() : pedidoEspelho.IdComissionado;
                     pe.PercComissao = ((HiddenField)dtvPedido.FindControl("hdfPercComissao")) != null ? ((HiddenField)dtvPedido.FindControl("hdfPercComissao")).Value.StrParaFloat() : pedidoEspelho.PercComissao;
 
-                    PedidoEspelhoDAO.Instance.UpdateDados(null, pe);
+                    PedidoEspelhoDAO.Instance.UpdateDados(null, pe, e.CommandName == "Recalcular");
 
                     dtvPedido.DataBind();
                     grdAmbiente.DataBind();
                     grdProdutos.DataBind();
 
-                    if (e.CommandArgument == null)
+                    if (e.CommandName == "Recalcular")
                     {
-                        Glass.MensagemAlerta.ShowMsg("Pedido atualizado/recalculado com sucesso!", Page);
+                        MensagemAlerta.ShowMsg("Pedido recalculado com sucesso!", Page);
+                    }
+                    else
+                    {
+                        MensagemAlerta.ShowMsg("Pedido atualizado com sucesso!", Page);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar/recalcular o pedido.", ex, Page);
+                    if (e.CommandName == "Recalcular")
+                    {
+                        MensagemAlerta.ErrorMsg("Falha ao recalcular o pedido.", ex, Page);
+                    }
+                    else
+                    {
+                        MensagemAlerta.ErrorMsg("Falha ao atualizar o pedido.", ex, Page);
+                    }
                 }
             }
         }
@@ -716,10 +727,26 @@ namespace Glass.UI.Web.Cadastros
             uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
             uint idFuncAtual = Glass.Conversoes.StrParaUint(idFuncAtualStr);
             uint idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(null, idPedido).GetValueOrDefault() : 0;
+            var idFuncVerificarDescontoMaximo = 0;
 
-            return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido)) :
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido))).ToString().Replace(",", ".");
+            if (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true")
+            {
+                idFuncVerificarDescontoMaximo = (int)idFuncAtual;
+            }
+            else
+            {
+                idFuncVerificarDescontoMaximo = (int)idFuncDesc;
+            }
+
+            var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(null, idPedido);
+            var idParcela = (int?)PedidoDAO.Instance.ObtemIdParcela(null, idPedido);
+            var descontoMaximoPedido = PedidoConfig.Desconto.GetDescontoMaximoPedido(
+                null,
+                (uint)idFuncVerificarDescontoMaximo,
+                tipoVenda,
+                idParcela);
+
+            return descontoMaximoPedido.ToString().Replace(",", ".");
         }
 
         protected void txtPercentual_Load(object sender, EventArgs e)

@@ -28,6 +28,7 @@ namespace Glass.Data.Model
         decimal ValorDescontoCliente { get; set; }
         decimal ValorAcrescimoCliente { get; set; }
         decimal ValorComissao { get; set; }
+        decimal PercentualComissao { get; }
         float PercDescontoQtde { get; }
 
         uint IdProduto { get; }
