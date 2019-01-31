@@ -1,4 +1,4 @@
-Vue.component('pedido-ambientes', {
+﻿Vue.component('pedido-ambientes', {
   mixins: [Mixins.Objetos, Mixins.OrdenacaoLista()],
 
   props: {
@@ -54,7 +54,8 @@ Vue.component('pedido-ambientes', {
       dadosValidacaoProduto: {},
       processoAtual: null,
       aplicacaoAtual: null,
-      numeroItensLista: 0
+      numeroItensLista: 0,
+      exibirAmbientes: false
     };
   },
 
@@ -72,7 +73,13 @@ Vue.component('pedido-ambientes', {
         return Promise.reject();
       }
 
-      return Servicos.Pedidos.Ambientes.obter(filtroOriginal.idPedido, pagina, numeroRegistros, ordenacao);
+      var vm = this;
+      var promise = Servicos.Pedidos.Ambientes.obter(filtroOriginal.idPedido, pagina, numeroRegistros, ordenacao);
+      
+      return promise.then(function (resposta) {
+        vm.exibirAmbientes = true;
+        return resposta;
+      });
     },
 
     /**

@@ -388,9 +388,9 @@ section {
       top: 3px;
     }
 
-    div.filtros span > input[type="checkbox"] + label, section.filtros span > input[type="checkbox"] + label {
-      color: initial;
-    }
+      div.filtros span > input[type="checkbox"] + label, section.filtros span > input[type="checkbox"] + label {
+        color: initial;
+      }
 
     div.filtros .botaoPesquisar, section.filtros .botaoPesquisar {
       position: relative;
@@ -416,6 +416,46 @@ section {
     grid-gap: 8px 20px;
     grid-template-columns: repeat(6, max-content);
   }
+
+    div.detalhes > .colspan5, section.detalhes > .colspan5 {
+      grid-column: span 5;
+    }
+
+    div.detalhes > .colspan6, section.detalhes > .colspan6 {
+      grid-column: span 6;
+      text-align: center;
+    }
+
+    div.detalhes *.botoes, section.detalhes *.botoes {
+      grid-column: span 6;
+    }
+
+    div.detalhes *.edicao, section.edicao *.botoes {
+      grid-column: span 4;
+    }
+
+  div.edicao, section.edicao {
+    display: inline-grid;
+    grid-gap: 0px 6px;
+    grid-template-columns: repeat(4, max-content);
+    align-items: stretch;
+  }
+
+    div.edicao *.cabecalho, section.edicao *.cabecalho {
+      background-color: #E9ECF1;
+      margin: 0;
+      padding: 0 3px;
+      display: inline-grid;
+    }
+
+      div.edicao *.cabecalho > *, section.edicao *.cabecalho > * {
+        margin: auto 0;
+      }
+
+    div.edicao input[type="checkbox"] + label, section.edicao input[type="checkbox"] + label {
+      background-color: transparent;
+      font-weight: normal;
+    }
 
     div.detalhes span, section.detalhes span,
     div.edicao span, section.edicao span {
@@ -451,27 +491,10 @@ section {
       grid-column: span 4;
     }
 
-    div.detalhes > .colspan5, section.detalhes > .colspan5 {
-      grid-column: span 5;
-    }
-
-    div.detalhes > .colspan6, section.detalhes > .colspan6 {
-      grid-column: span 6;
-      text-align: center;
-    }
-
     div.detalhes *.botoes, section.detalhes *.botoes,
     div.edicao *.botoes, section.edicao *.botoes {
       text-align: center;
       padding-top: 4px;
-    }
-
-    div.detalhes *.botoes, section.detalhes *.botoes {
-      grid-column: span 6;
-    }
-
-    div.detalhes *.edicao, section.edicao *.botoes {
-      grid-column: span 4;
     }
 
     div.detalhes > *:not([class*="botoes"]) button, section.detalhes > *:not([class*="botoes"]) button,
@@ -482,29 +505,6 @@ section {
       padding: 0;
     }
 
-  div.edicao, section.edicao {
-    display: inline-grid;
-    grid-gap: 0px 6px;
-    grid-template-columns: repeat(4, max-content);
-    align-items: stretch;
-  }
-
-    div.edicao *.cabecalho, section.edicao *.cabecalho {
-      background-color: #E9ECF1;
-      margin: 0;
-      padding: 0 3px;
-      display: inline-grid;
-    }
-
-      div.edicao *.cabecalho > *, section.edicao *.cabecalho > * {
-        margin: auto 0;
-      }
-
-    div.edicao input[type="checkbox"] + label, section.edicao input[type="checkbox"] + label {
-      background-color: transparent;
-      font-weight: normal;
-    }
-
 div.links > div, section.links > div {
   padding-top: 8px;
 }
@@ -512,3 +512,7 @@ div.links > div, section.links > div {
   div.links > div:first-child, section.links > div:first-child {
     padding-top: initial;
   }
+
+[v-cloak] > * {
+  opacity: 0;
+}

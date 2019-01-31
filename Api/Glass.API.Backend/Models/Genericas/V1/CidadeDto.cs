@@ -18,7 +18,7 @@ namespace Glass.API.Backend.Models.Genericas.V1
         /// Obtém ou define o nome da cidade.
         /// </summary>
         [DataMember]
-        [JsonProperty("nome")]
+        [JsonProperty("id")]
         public int Id
         {
             get { return this.ObterValor(c => c.Id); }
