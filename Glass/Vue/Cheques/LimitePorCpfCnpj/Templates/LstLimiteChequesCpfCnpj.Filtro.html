@@ -1,0 +1,17 @@
+﻿<section class="filtros">
+    <div>
+        <span>
+            <label>Tipo Pessoa</label>
+            <lista-selecao-tipos-pessoa :tipo-pessoa.sync="tipoPessoaAtual"></lista-selecao-tipos-pessoa>
+            <template v-if="tipoPessoaAtual && tipoPessoaAtual.codigo && tipoPessoaAtual.codigo == 'F'">
+                <label>CPF</label>
+                <campo-cpf :cpf.sync="filtroAtual.cpfCnpj"></campo-cpf>
+            </template>
+            <template v-if="tipoPessoaAtual && tipoPessoaAtual.codigo && tipoPessoaAtual.codigo == 'J'">
+                <label>CNPJ</label>
+                <campo-cnpj :cnpj.sync="filtroAtual.cpfCnpj"></campo-cnpj>
+            </template>
+            <button class="botaoPesquisar" @click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

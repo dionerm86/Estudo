@@ -206,6 +206,11 @@
     <Compile Include="Helper\DevolucoesPagamento\TraducaoOrdenacaoListaDevolucoesPagamento.cs" />
     <Compile Include="Controllers\Producao\V1\Fornadas\FornadasController.cs" />
     <Compile Include="Controllers\Producao\V1\Fornadas\GetFornadasController.cs" />
+    <Compile Include="Controllers\Cheques\V1\LimitePorCpfCnpj\GetLimiteChequePorCpfCnpjController.cs" />
+    <Compile Include="Controllers\Cheques\V1\LimitePorCpfCnpj\LimiteChequePorCpfCnpjController.cs" />
+    <Compile Include="Controllers\Cheques\V1\LimitePorCpfCnpj\PatchLimiteChequePorCpfCnpjController.cs" />
+    <Compile Include="Helper\Cheques\LimitePorCpfCnpj\ConverterCadastroAtualizacaoParaLimiteChequeCpfCnpj.cs" />
+    <Compile Include="Helper\Cheques\LimitePorCpfCnpj\TraducaoOrdenacaoListaLimiteChequeCpfCnpj.cs" />
     <Compile Include="Controllers\ArquivosRemessa\V1\ArquivosRemessaController.cs" />
     <Compile Include="Controllers\ArquivosRemessa\V1\GetArquivosRemessaController.cs" />
     <Compile Include="Helper\ArquivosRemessa\TraducaoOrdenacaoListaArquivosRemessa.cs" />
@@ -214,6 +219,12 @@
     <Compile Include="Models\DevolucoesPagamento\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\DevolucoesPagamento\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Helper\Producao\Fornadas\TraducaoOrdenacaoListaFornadas.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\LimiteDto.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\ListaDto.cs" />
+    <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ArquivosRemessa\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\ArquivosRemessa\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\ArquivosRemessa\V1\Lista\PermissoesDto.cs" />

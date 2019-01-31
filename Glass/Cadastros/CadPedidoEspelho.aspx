@@ -1248,7 +1248,8 @@
                         </asp:TemplateField>
                         <asp:TemplateField ShowHeader="False">
                             <ItemTemplate>
-                                <asp:Button ID="btnAtualizar" runat="server" Text="Atualizar/Recalcular" CommandName="Atualizar" />
+                                <asp:Button ID="btnAtualizar" runat="server" Text="Atualizar" CommandName="Atualizar" />
+                                <asp:Button ID="btnRecalcular" runat="server" Text="Recalcular" CommandName="Recalcular" />
                                 <asp:Button ID="btnFinalizar" runat="server" CommandArgument='<%# Eval("IdPedido") %>'
                                     Text="Finalizar" OnClientClick="if (!finalizar()) return false" OnClick="btnFinalizar_Click" />
                                 <asp:Button ID="btnExcedente" runat="server" OnClick="btnExcedente_Click" OnClientClick="return confirm('Tem certeza que deseja gerar uma conta a receber com o valor excedente da Conferência?');"

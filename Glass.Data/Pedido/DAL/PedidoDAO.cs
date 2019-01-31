@@ -5430,7 +5430,7 @@ namespace Glass.Data.DAL
                         TotM2PendenteTotal = (f.TotM / f.Qtde) * (QtdeProdPed - quantidadePecasProntas),
                         PesoTotal = (f.Peso / f.Qtde) * QtdeProdPed,
                         PesoPendenteTotal = (f.Peso / f.Qtde) * (QtdeProdPed - quantidadePecasProntas),
-                        ValorTotal = (((f.Total + f.ValorIpi + f.ValorIcms) / (decimal)f.Qtde) * (decimal)QtdeProdPed) * (decimal)(1 + (ObtemTaxaFastDelivery(null, f.IdPedido) / 100))
+                        ValorTotal = (((f.Total + f.ValorIpi + f.ValorIcms + f.ValorBenef) / (decimal)f.Qtde) * (decimal)QtdeProdPed) * (decimal)(1 + (ObtemTaxaFastDelivery(null, f.IdPedido) / 100))
                     };
                 }).GroupBy(f => f.IdPedido))
                 {
@@ -5634,7 +5634,7 @@ namespace Glass.Data.DAL
             {
                 if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
                 {
-                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem), motivo);
+                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem?.Where(f => !f.Contains("demais pedidos"))?.ToList()), motivo);
                 }
             }
             // Chamado 13112.
@@ -5643,7 +5643,7 @@ namespace Glass.Data.DAL
             {
                 if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
                 {
-                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem), motivo);
+                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem?.Where(f => !f.Contains("demais pedidos"))?.ToList()), motivo);
                 }
             }
             else
@@ -10890,9 +10890,6 @@ namespace Glass.Data.DAL
             {
                 foreach (var produtoPedido in produtosPedido)
                 {
-                    //Chamado 74310 - Solução paliativa
-                    produtoPedido.Beneficiamentos = produtoPedido.Beneficiamentos;
-
                     ProdutosPedidoDAO.Instance.Update(sessao, produtoPedido, pedido, false, false, false);
                     ProdutosPedidoDAO.Instance.AtualizaBenef(sessao, produtoPedido.IdProdPed, produtoPedido.Beneficiamentos, pedido);
                 }
@@ -16360,8 +16357,11 @@ namespace Glass.Data.DAL
 
             produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(transaction, pedido.IdPedido, false, true).ToList();
 
-            RemoveComissaoDescontoAcrescimo(transaction, pedido, produtosPedido);
-            AplicaComissaoDescontoAcrescimo(transaction, pedido, Geral.ManterDescontoAdministrador, produtosPedido);
+            if (PedidoConfig.DadosPedido.AlterarValorUnitarioProduto)
+            {
+                RemoveComissaoDescontoAcrescimo(transaction, pedido, produtosPedido);
+                AplicaComissaoDescontoAcrescimo(transaction, pedido, Geral.ManterDescontoAdministrador, produtosPedido);
+            }
 
             foreach (var a in (pedido as IContainerCalculo).Ambientes.Obter().Cast<AmbientePedido>())
             {

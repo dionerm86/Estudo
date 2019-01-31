@@ -4554,14 +4554,14 @@ namespace Glass.Data.DAL
                 if (pedido.Desconto > 0)
                     PedidoDAO.Instance.RemoverDesconto(session, pedido, produtosPedido);
 
-                if (pedido.PercComissao > 0)
-                    PedidoDAO.Instance.AplicarComissao(session, pedido, pedido.PercComissao, produtosPedido);
-
                 if (pedido.Acrescimo > 0)
                     PedidoDAO.Instance.AplicarAcrescimo(session, pedido, pedido.TipoAcrescimo, pedido.Acrescimo, produtosPedido);
 
                 if (pedido.Desconto > 0)
                     PedidoDAO.Instance.AplicarDesconto(session, pedido, pedido.TipoDesconto, pedido.Desconto, produtosPedido);
+
+                if (pedido.PercComissao > 0)
+                    PedidoDAO.Instance.AplicarComissao(session, pedido, pedido.PercComissao, produtosPedido);
 
                 PedidoDAO.Instance.FinalizarAplicacaoComissaoAcrescimoDesconto(session, pedido, produtosPedido, true);
                 PedidoDAO.Instance.UpdateTotalPedido(session, pedido);
@@ -5224,7 +5224,7 @@ namespace Glass.Data.DAL
             // Busca os produtos de pedido inclusos na ordem de carga informada, com os dados que são utilizados para recuperar os totais da ordem de carga.
             var sql = $@"
                 SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={(int)Pedido.TipoPedidoEnum.MaoDeObra}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, 0 AS QtdeVolume, pp.TotM, pp.Peso, {totalProdComDesconto},
-                    pp.ValorIpi, pp.ValorIcms
+                    pp.ValorIpi, pp.ValorIcms, pp.ValorBenef
                 FROM produtos_pedido pp
                     INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
                     INNER JOIN pedido_ordem_carga poc ON (pp.IdPedido = poc.IdPedido)
@@ -5244,7 +5244,7 @@ namespace Glass.Data.DAL
                 UNION ALL
 
                 SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={(int)Pedido.TipoPedidoEnum.MaoDeObra}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, 0 AS QtdeVolume, pp.TotM, pp.Peso, {totalProdComDesconto},
-                    pp.ValorIpi, pp.ValorIcms
+                    pp.ValorIpi, pp.ValorIcms, pp.ValorBenef
                 FROM produtos_pedido pp
                     INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
                     INNER JOIN pedido_ordem_carga poc ON (pp.IdPedido = poc.IdPedido)
@@ -5264,7 +5264,7 @@ namespace Glass.Data.DAL
                 UNION ALL
 
                 SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={(int)Pedido.TipoPedidoEnum.MaoDeObra}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, pp.Qtde AS QtdeVolume, pp.TotM, pp.Peso, {totalProdComDesconto},
-                    pp.ValorIpi, pp.ValorIcms
+                    pp.ValorIpi, pp.ValorIcms, pp.ValorBenef
                 FROM produtos_pedido pp
                     INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
                     INNER JOIN pedido_ordem_carga poc ON (pp.IdPedido = poc.IdPedido)
@@ -5293,7 +5293,8 @@ namespace Glass.Data.DAL
                     Total = f["Total"],
                     ValorIpi = f["ValorIpi"],
                     ValorIcms = f["ValorIcms"],
-                    QtdeVolume = f["QtdeVolume"]
+                    QtdeVolume = f["QtdeVolume"],
+                    ValorBenef = f["ValorBenef"]
                 });
         }
 
@@ -5917,9 +5918,22 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         private bool VerificarDeveAtualizarDataEntrega(GDASession sessao, int idPedido)
         {
+            if (idPedido == 0)
+            {
+                return false;
+            }
+
             var pedido = PedidoDAO.Instance.ObterDataEntregaEDataEntregaSistema(sessao, (int)idPedido);
 
-            return pedido.DataEntregaSistema != null && (pedido.DataEntregaSistema.Value.Date == pedido.DataEntrega.Value.Date || !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega));
+            if (!pedido.DataEntregaSistema.HasValue
+                || pedido.DataEntregaSistema.Value == DateTime.MinValue
+                || !pedido.DataEntrega.HasValue
+                || pedido.DataEntrega.Value == DateTime.MinValue)
+            {
+                return false;
+            }
+
+            return pedido.DataEntregaSistema.Value.Date == pedido.DataEntrega.Value.Date || !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega);
         }
 
         /// <summary>

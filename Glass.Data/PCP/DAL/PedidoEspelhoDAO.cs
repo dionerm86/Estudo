@@ -3500,6 +3500,11 @@ namespace Glass.Data.DAL
 
         public void UpdateDadosComTransacao(PedidoEspelho objUpdate)
         {
+            this.UpdateDadosComTransacao(objUpdate, true);
+        }
+
+        public void UpdateDadosComTransacao(PedidoEspelho objUpdate, bool atualizarTotais)
+        {
             using (var transaction = new GDATransaction())
             {
                 try
@@ -3522,27 +3527,50 @@ namespace Glass.Data.DAL
 
         public void UpdateDados(GDASession session, PedidoEspelho objUpdate)
         {
+            UpdateDados(session, objUpdate, true);
+        }
+
+        public void UpdateDados(GDASession session, PedidoEspelho objUpdate, bool atualizarTotais)
+        {
             PedidoEspelho atual = GetElementByPrimaryKey(session, objUpdate.IdPedido);
-            RemoveComissaoDescontoAcrescimo(session, atual, objUpdate);
-            AplicaComissaoDescontoAcrescimo(session, atual, objUpdate);
+
+            if (atualizarTotais)
+            {
+                RemoveComissaoDescontoAcrescimo(session, atual, objUpdate);
+                AplicaComissaoDescontoAcrescimo(session, atual, objUpdate);
+            }
 
             if (objUpdate.DataFabrica != null)
             {
                 VerificaCapacidadeProducaoSetor(session, objUpdate.IdPedido, objUpdate.DataFabrica.Value, 0, 0);
 
-                // Atualiza a data de fábrica e a observação
-                string sql = @"update pedido_espelho set dataFabrica=?df, obs=?obs, percComissao=?pc, valorComissao=(select sum(valorComissao)
+                // Atualiza a data de fábrica e a observação.
+                var sqlObsDataFabrica = $"UPDATE pedido_espelho SET DataFabrica = ?dataFabrica, Obs = ?obs WHERE IdPedido = {objUpdate.IdPedido}";
+                this.objPersistence.ExecuteCommand(
+                    session,
+                    sqlObsDataFabrica,
+                    new GDAParameter("?dataFabrica", objUpdate.DataFabrica),
+                    new GDAParameter("?obs", objUpdate.Obs));
+
+                if (atualizarTotais)
+                {
+                    // Atualiza a data de fábrica e a observação
+                    string sql = @"update pedido_espelho set dataFabrica=?df, obs=?obs, percComissao=?pc, valorComissao=(select sum(valorComissao)
                     from produtos_pedido_espelho where idPedido=" + objUpdate.IdPedido + @"), idComissionado=?idCom,
                     tipoAcrescimo=?ta, acrescimo=?a, tipoDesconto=?td, desconto=?d where idPedido=" + objUpdate.IdPedido;
 
-                objPersistence.ExecuteCommand(session, sql, new GDAParameter("?df", objUpdate.DataFabrica),
-                    new GDAParameter("?obs", objUpdate.Obs), new GDAParameter("?ta", objUpdate.TipoAcrescimo),
-                    new GDAParameter("?a", objUpdate.Acrescimo), new GDAParameter("?td", objUpdate.TipoDesconto),
-                    new GDAParameter("?d", objUpdate.Desconto), new GDAParameter("?pc", objUpdate.PercComissao),
-                    new GDAParameter("?idCom", objUpdate.IdComissionado));
+                    objPersistence.ExecuteCommand(session, sql, new GDAParameter("?df", objUpdate.DataFabrica),
+                        new GDAParameter("?obs", objUpdate.Obs), new GDAParameter("?ta", objUpdate.TipoAcrescimo),
+                        new GDAParameter("?a", objUpdate.Acrescimo), new GDAParameter("?td", objUpdate.TipoDesconto),
+                        new GDAParameter("?d", objUpdate.Desconto), new GDAParameter("?pc", objUpdate.PercComissao),
+                        new GDAParameter("?idCom", objUpdate.IdComissionado));
+                }
             }
 
-            UpdateTotalPedido(session, objUpdate, true);
+            if (atualizarTotais)
+            {
+                UpdateTotalPedido(session, objUpdate, true);
+            }
 
             LogAlteracaoDAO.Instance.LogPedidoEspelho(atual, LogAlteracaoDAO.SequenciaObjeto.Atual);
         }
