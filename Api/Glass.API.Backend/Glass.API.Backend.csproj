@@ -219,6 +219,9 @@
     <Compile Include="Controllers\ArquivosRemessa\V1\ArquivosRemessaController.cs" />
     <Compile Include="Controllers\ArquivosRemessa\V1\GetArquivosRemessaController.cs" />
     <Compile Include="Helper\ArquivosRemessa\TraducaoOrdenacaoListaArquivosRemessa.cs" />
+    <Compile Include="Controllers\EncontrosContas\V1\EncontrosContasController.cs" />
+    <Compile Include="Controllers\EncontrosContas\V1\GetEncontrosContasController.cs" />
+    <Compile Include="Helper\EncontrosContas\TraducaoOrdenacaoListaEncontrosContas.cs" />
     <Compile Include="Controllers\AcertosCheques\V1\AcertosChequesController.cs" />
     <Compile Include="Controllers\AcertosCheques\V1\GetAcertosChequesController.cs" />
     <Compile Include="Helper\AcertosCheques\TraducaoOrdenacaoListaAcertosCheques.cs" />
@@ -226,6 +229,10 @@
     <Compile Include="Models\AcertosCheques\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\AcertosCheques\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\AcertosCheques\V1\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\EncontrosContas\V1\Lista\ValoresDto.cs" />
+    <Compile Include="Models\EncontrosContas\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\EncontrosContas\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\EncontrosContas\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\DevolucoesPagamento\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\DevolucoesPagamento\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\DevolucoesPagamento\V1\Lista\PermissoesDto.cs" />
