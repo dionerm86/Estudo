@@ -233,6 +233,11 @@ namespace Glass.Data.Model
             }
         }
 
+        /// <summary>
+        /// Rota vinculada ao cliente do projeto.
+        /// </summary>
+        public string Rota { get; set; }
+
         #endregion
 
         #region IContainerCalculo
