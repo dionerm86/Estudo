@@ -14,15 +14,15 @@ namespace Glass.Data.DAL
 
         #region Busca sinais do cliente
 
-        private string SqlList(uint idSinal, uint idPedido, uint idCli, uint idFunc, string dataIni, string dataFim, uint idFormaPagto, 
+        private string SqlList(uint idSinal, uint idPedido, uint idCli, uint idFunc, string dataIni, string dataFim, uint idFormaPagto,
             bool? isPagtoAntecipado, int situacao, bool selecionar)
         {
             string campos = selecionar ? @"s.*, cli.Nome as NomeCliente, l.Telefone as TelefoneLoja, f.Nome as Funcionario" : "count(distinct s.idSinal)";
 
             string sql = @"
-                Select " + campos + @" 
+                Select " + campos + @"
                 From sinal s
-                    Left Join cliente cli on (s.IdCliente=cli.Id_Cli) 
+                    Left Join cliente cli on (s.IdCliente=cli.Id_Cli)
                     Left Join funcionario f On (s.UsuCad=f.IdFunc)
                     Left Join Loja l on (f.Idloja = l.Idloja)
                 Where 1";
@@ -116,7 +116,7 @@ namespace Glass.Data.DAL
             return lstSinal;
         }
 
-        public Sinal[] GetList(uint idSinal, uint idPedido, uint idCli, string dataIni, string dataFim, uint idFormaPagto, 
+        public Sinal[] GetList(uint idSinal, uint idPedido, uint idCli, string dataIni, string dataFim, uint idFormaPagto,
             bool isPagtoAntecipado, int ordenacao, string sortExpression, int startRow, int pageSize)
         {
             var filtro = sortExpression;
@@ -142,7 +142,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            var lstSinal = ((List<Sinal>)LoadDataWithSortExpression(SqlList(idSinal, idPedido, idCli, 0, dataIni, dataFim, idFormaPagto, isPagtoAntecipado, 0, true), 
+            var lstSinal = ((List<Sinal>)LoadDataWithSortExpression(SqlList(idSinal, idPedido, idCli, 0, dataIni, dataFim, idFormaPagto, isPagtoAntecipado, 0, true),
                 filtro, startRow, pageSize, GetParam(dataIni, dataFim))).ToArray();
 
             PreencheTotal(ref lstSinal);
@@ -161,7 +161,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca apenas sinais abertos que tem mais de um pedido vinculado, o motivo disso é que a retificação de sinal apenas remove um 
+        /// Busca apenas sinais abertos que tem mais de um pedido vinculado, o motivo disso é que a retificação de sinal apenas remove um
         /// pedido no qual seu sinal foi pago junto com outro, cancelando o recebimento desse e mantendo o recebimento do outro, se o sinal
         /// possuir apenas um pedido, bastas cancelar o sinal
         /// </summary>
@@ -257,11 +257,11 @@ namespace Glass.Data.DAL
             PersistenceObject<Pedido> obj = new PersistenceObject<Pedido>(GDA.GDASettings.GetProviderConfiguration("WebGlass"));
 
             string sql = @"
-                Select p.*, c.Nome as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja 
-                From pedido p 
-                    Left Join cliente c On (p.idCli=c.id_Cli) 
-                    Left Join funcionario f On (p.IdFunc=f.IdFunc) 
-                    Left Join loja l On (p.IdLoja = l.IdLoja) 
+                Select p.*, c.Nome as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja
+                From pedido p
+                    Left Join cliente c On (p.idCli=c.id_Cli)
+                    Left Join funcionario f On (p.IdFunc=f.IdFunc)
+                    Left Join loja l On (p.IdLoja = l.IdLoja)
                 Where p.idSinal=" + idSinal;
 
             return obj.LoadData(sql).ToList();
@@ -371,7 +371,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Validação dos pedidos para recebimento de sinal/pagamento antecipado
-        
+
         /// <summary>
         /// Valida os pedidos para o pagamento.
         /// </summary>
@@ -577,7 +577,8 @@ namespace Glass.Data.DAL
             var pedidos = PedidoDAO.Instance.GetByString(session, string.Join(",", idsPedido));
             var sinal = new Sinal(pedidos[0].IdCli);
             var contadorPagamento = 1;
-            var idLoja = ComissaoDAO.Instance.VerificarComissaoContasRecebidas() ? (int?)pedidos.ElementAtOrDefault(0)?.IdLoja ?? 0 : (int)usuarioLogado.IdLoja;
+            var idLoja = (ComissaoDAO.Instance.VerificarComissaoContasRecebidas() || Geral.ConsiderarLojaClientePedidoFluxoSistema)
+                ? (int?)pedidos.ElementAtOrDefault(0)?.IdLoja ?? 0 : (int)usuarioLogado.IdLoja;
             decimal totalPagar = 0;
             decimal totalPago = 0;
 
@@ -750,7 +751,7 @@ namespace Glass.Data.DAL
 
             foreach (var pedido in pedidos)
             {
-                if (ComissaoDAO.Instance.VerificarComissaoContasRecebidas() && pedido.IdLoja != pedidos.ElementAtOrDefault(0)?.IdLoja)
+                if ((ComissaoDAO.Instance.VerificarComissaoContasRecebidas() || Geral.ConsiderarLojaClientePedidoFluxoSistema) && pedido.IdLoja != pedidos.ElementAtOrDefault(0)?.IdLoja)
                 {
                     throw new Exception(string.Format("Não é possivel receber o {0} de pedidos de lojas diferentes", tipoRecebimento));
                 }
@@ -759,7 +760,7 @@ namespace Glass.Data.DAL
                 {
                     throw new Exception(string.Format("O tipo de venda do pedido {0} é à vista, para receber um sinal do mesmo altere o tipo de venda para à prazo.", pedido.IdPedido));
                 }
-                
+
                 if (!sinal.IsPagtoAntecipado && pedido.IdSinal > 0)
                 {
                     throw new Exception(string.Format("O sinal do pedido {0} já foi recebido.", pedido.IdPedido));
@@ -1257,7 +1258,7 @@ namespace Glass.Data.DAL
                 // Se a empresa libera os pedidos: não cancela o sinal se há uma conferência no PCP
                 if (PedidoConfig.LiberarPedido)
                 {
-                    // Se o pedido possuir espelho não pode cancelar o sinal, uma vez que o sinal só pode efetuado 
+                    // Se o pedido possuir espelho não pode cancelar o sinal, uma vez que o sinal só pode efetuado
                     // se o pedido estiver na situação conferido COM (se for pagamento antes da produção)
                     if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && PedidoEspelhoDAO.Instance.ExisteEspelho(session, pedido.IdPedido) && ClienteDAO.Instance.IsPagamentoAntesProducao(session, pedido.IdCli))
                     {
@@ -1316,7 +1317,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cancela o recebimento de sinal de um pedido.
         /// </summary>
-        public void CancelarComTransacao(uint idSinal, uint? idPedido, bool confirmandoPedido, 
+        public void CancelarComTransacao(uint idSinal, uint? idPedido, bool confirmandoPedido,
             bool gerarCredito, string motivo, DateTime dataEstornoBanco, bool cancelamentoErroTef, bool gerarCreditoEstorno)
         {
             lock(_cancelarLock)
@@ -1401,7 +1402,7 @@ namespace Glass.Data.DAL
                 // Se a empresa libera os pedidos: não cancela o sinal se há uma conferência no PCP
                 if (PedidoConfig.LiberarPedido)
                 {
-                    // Se o pedido possuir espelho não pode cancelar o sinal, uma vez que o sinal só pode efetuado 
+                    // Se o pedido possuir espelho não pode cancelar o sinal, uma vez que o sinal só pode efetuado
                     // se o pedido estiver na situação conferido COM (se for pagamento antes da produção)
                     if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento &&
                         PedidoEspelhoDAO.Instance.ExisteEspelho(session, ped.IdPedido) &&
@@ -1483,13 +1484,13 @@ namespace Glass.Data.DAL
                     var pagtos = PagtoSinalDAO.Instance.GetBySinal(transaction, idSinal);
                     var lstMovBanco = MovBancoDAO.Instance.GetBySinal(transaction, sinal.IdSinal);
 
-                    if (pagtos.Any(f => 
+                    if (pagtos.Any(f =>
                             f.IdFormaPagto != (uint)Pagto.FormaPagto.Deposito &&
                             f.IdFormaPagto != (uint)Pagto.FormaPagto.Boleto &&
                             f.IdFormaPagto != (uint)Pagto.FormaPagto.Cartao &&
                             f.IdFormaPagto != (uint)Pagto.FormaPagto.Construcard))
-                        throw new Exception(@"Não é possível retificar a data deste pagamento 
-                                              antecipado pois o mesmo possui formas de pagamento 
+                        throw new Exception(@"Não é possível retificar a data deste pagamento
+                                              antecipado pois o mesmo possui formas de pagamento
                                               que não geram movimentações bancárias.");
 
                     foreach (var item in lstMovBanco)
@@ -1561,7 +1562,7 @@ namespace Glass.Data.DAL
                             // Se a empresa libera os pedidos: não cancela o sinal se há uma conferência no PCP
                             if (PedidoConfig.LiberarPedido)
                             {
-                                // Se o pedido possuir espelho não pode cancelar o sinal, uma vez que o sinal só pode efetuado 
+                                // Se o pedido possuir espelho não pode cancelar o sinal, uma vez que o sinal só pode efetuado
                                 // se o pedido estiver na situação conferido COM (se for pagamento antes da produção)
                                 if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && PedidoEspelhoDAO.Instance.ExisteEspelho(transaction, idPedidoRemover) &&
                                     ClienteDAO.Instance.IsPagamentoAntesProducao(transaction, ped[0].IdCli))
@@ -1653,7 +1654,7 @@ namespace Glass.Data.DAL
                         Sinal s = GetElementByPrimaryKey(transaction, idSinal);
                         s.DadosRetificar = dados;
                         LogAlteracaoDAO.Instance.LogSinal(transaction, s);
-                        
+
                         transaction.Commit();
                         transaction.Close();
                     }
