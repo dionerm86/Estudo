@@ -1,4 +1,4 @@
-// <copyright file="ProtestoEnum.cs" company="Sync Softwares">
+// <copyright file="Protesto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -15,18 +15,18 @@ namespace Glass.API.Backend.Models.Acertos.V1.Lista
         /// Inclui no resultado acertos com contas protestadas.
         /// </summary>
         [Description("Incluir contas em jurídico/cartório")]
-        IncluirContaProtestada,
+        IncluirContaProtestada = 0,
 
         /// <summary>
         /// Busca apenas acertos com contas protestadas.
         /// </summary>
         [Description("Somente contas em jurídico/cartório")]
-        ApenasComContaProtestada,
+        ApenasComContaProtestada = 1,
 
         /// <summary>
         /// Busca apenas acertos sem contas protestadas.
         /// </summary>
         [Description("Não incluir contas em jurídico/cartório")]
-        ApenasSemContaProtestada,
+        ApenasSemContaProtestada = 2,
     }
 }

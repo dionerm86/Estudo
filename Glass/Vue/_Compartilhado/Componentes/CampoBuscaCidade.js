@@ -1,4 +1,4 @@
-Vue.component('campo-busca-cidade', {
+﻿Vue.component('campo-busca-cidade', {
   mixins: [Mixins.Objetos],
   props: {
     /**
@@ -25,7 +25,6 @@ Vue.component('campo-busca-cidade', {
   data: function() {
     return {
       idAtual: (this.cidade || {}).id || 0,
-      ufAtual: (this.cidade || {}).uf || this.uf || '',
       nomeAtual: (this.cidade || {}).nome || '',
       ufs: []
     };
@@ -72,7 +71,19 @@ Vue.component('campo-busca-cidade', {
         return Promise.resolve();
       }
 
-      return Servicos.Cidades.obterListaPorUf(this.ufAtual, id, nome);
+      var uf = this.ufAtual;
+
+      return Servicos.Cidades.obterListaPorUf(uf, id, nome)
+        .then(function (resposta) {
+          if (resposta.data) {
+            resposta.data = resposta.data.map(item => {
+              item.uf = uf;
+              return item;
+            });
+          }
+
+          return resposta;
+        });
     }
   },
 
@@ -91,20 +102,45 @@ Vue.component('campo-busca-cidade', {
           this.$emit('update:cidade', valor);
         }
       }
+    },
+
+    /**
+     * Propriedade computada que retorna a UF e que atualiza
+     * a propriedade principal em caso de alteração.
+     * @type {String}
+     */
+    ufAtual: {
+      get: function () {
+        return this.uf;
+      },
+      set: function (valor) {
+        this.cidadeAtual = null;
+
+        if (valor !== this.uf) {
+          this.$emit("update:uf", valor);
+        }
+      }
     }
   },
 
   watch: {
     /**
-     * Observador para a variável 'ufAtual'.
-     * Limpa as variáveis de ID e nome atual se alterar a UF.
+     * Observador para a propriedade 'cidade'.
+     * Altera a variável interna, em caso de mudança externa.
      */
-    ufAtual: function(atual) {
-      this.cidadeAtual = null;
+    cidade: {
+      handler: function (valor) {
+        this.cidadeAtual = valor;
+      },
+      deep: true
+    },
 
-      if (atual !== this.uf) {
-        this.$emit("update:uf", atual);
-      }
+    /**
+     * Observador para a propriedade 'uf'.
+     * Altera a variável interna, em caso de mudança externa.
+     */
+    uf: function (valor) {
+      this.ufAtual = valor;
     }
   },
 

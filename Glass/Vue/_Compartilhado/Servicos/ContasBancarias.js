@@ -75,6 +75,14 @@ Servicos.ContasBancarias = (function(http) {
      */
     obterSituacoes: function () {
       return http().get(API + 'situacoes');
+    },
+
+    /**
+     * Recupera as contas bancárias para o controle.
+     * @return {Promise} Uma promise com o resultado da busca.
+     */
+    obterParaControle: function () {
+      return http().get(API + 'filtro');
     }
   };
 })(function() {

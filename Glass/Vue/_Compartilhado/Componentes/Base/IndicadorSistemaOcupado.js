@@ -11,7 +11,7 @@
     const bloqueio = Object.assign({
       zIndex: 99999,
       backgroundColor: 'white',
-      opacity: 0.75,
+      opacity: 0.95,
       display: 'grid',
       alignItems: 'center',
       justifyItems: 'center'
@@ -22,23 +22,9 @@
       display: 'inline-block'
     };
 
-    const processamento = {
-      position: 'fixed',
-      backgroundColor: 'white',
-      border: '1px solid #E2E2E4',
-      padding: '3px',
-      display: 'inline-grid',
-      gridTemplateColumns: 'repeat(2, max-content)',
-      alignItems: 'center',
-      gridGap: '0 4px',
-      bottom: '0px',
-      left: '0px'
-    };
-
     return {
       frame,
       bloqueio,
-      processamento,
       mensagem,
       processando: false,
       bloqueado: false

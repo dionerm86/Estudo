@@ -1907,6 +1907,8 @@ namespace Glass.Data.Model
                 bool flagAuxAdm = true;
                 bool flagSupervisorTemperado = false;
                 bool flagCliente = true;
+                bool flagPedidoReposicao = true;
+                bool flagPedidoGarantia = true;
 
                 // Apenas Ativo e Conferido podem ser editados, mas se estiver Ativo/Em Conferência ou Em Conferencia
                 // e não tiver ido para conferência, pode editar.
@@ -1930,13 +1932,22 @@ namespace Glass.Data.Model
                 if (Config.PossuiPermissao(Config.FuncaoMenuConferencia.ControleConferenciaMedicao))
                     flagSupervisorTemperado = (_situacao == SituacaoPedido.Ativo || _situacao == SituacaoPedido.AtivoConferencia)
                         && (TipoEntrega == (int)Pedido.TipoEntregaPedido.Temperado ||
-                        TipoEntrega == (int)Pedido.TipoEntregaPedido.ManutencaoTemperado);
+                    TipoEntrega == (int)Pedido.TipoEntregaPedido.ManutencaoTemperado);
 
                 // Se o pedido for de cliente
                 if (GeradoParceiro)
                     flagCliente = PedidoConfig.PodeEditarPedidoGeradoParceiro || (PedidoConfig.ParceiroPodeEditarPedido && IdCli == UserInfo.GetUserInfo.IdCliente);
 
-                return (flagSituacao && flagVendedor && flagAuxAdm && flagCliente) || (flagSupervisorTemperado && !GeradoParceiro);
+
+                flagPedidoReposicao = this.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia
+                    || (this.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia
+                    && Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia));
+
+                flagPedidoReposicao = this.TipoVenda != (int)Pedido.TipoVendaPedido.Reposição
+                    || (this.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição
+                    && Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao));
+
+                return (flagSituacao && flagVendedor && flagAuxAdm && flagCliente && flagPedidoGarantia && flagPedidoReposicao) || (flagSupervisorTemperado && !GeradoParceiro);
             }
         }
 

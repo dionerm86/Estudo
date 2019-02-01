@@ -1243,24 +1243,35 @@ namespace Glass.Data.DAL
 
         public override int Delete(ArquivoRemessa objDelete)
         {
-            if (!PodeDeletar(objDelete.IdArquivoRemessa))
-                throw new Exception("Não é possível cancelar este arquivo.");
+            return this.Delete(null, objDelete);
+        }
 
-            //Apaga a referencia das contas a receber
-            objPersistence.ExecuteCommand(@"
+        public override int Delete(GDASession session, ArquivoRemessa objDelete)
+        {
+            if (!this.PodeDeletar(objDelete.IdArquivoRemessa))
+            {
+                throw new Exception("Não é possível cancelar este arquivo.");
+            }
+
+            // Apaga a referencia das contas a receber
+            this.objPersistence.ExecuteCommand(
+                session,
+                $@"
                     UPDATE contas_receber cr
                         INNER JOIN arquivo_remessa ar ON (cr.IdArquivoRemessa = ar.IdArquivoRemessa)
                     SET
                         cr.numeroDocumentoCnab = null,
                         cr.numArquivoRemessaCnab = null,
                         cr.IdArquivoRemessa = null
-                    WHERE ar.idArquivoRemessa=" + objDelete.IdArquivoRemessa);
+                    WHERE ar.idArquivoRemessa={objDelete.IdArquivoRemessa}");
 
-            //Cancela o arquivo
-            objPersistence.ExecuteCommand(@"
+            // Cancela o arquivo
+            this.objPersistence.ExecuteCommand(
+                session,
+                $@"
                     UPDATE arquivo_remessa
-                        SET situacao=" + (int)ArquivoRemessa.SituacaoEnum.Cancelado + @"
-                        WHERE idArquivoRemessa=" + objDelete.IdArquivoRemessa);
+                        SET situacao={(int)ArquivoRemessa.SituacaoEnum.Cancelado}
+                        WHERE idArquivoRemessa={objDelete.IdArquivoRemessa}");
 
             return 0;
         }

@@ -1,4 +1,4 @@
-﻿// <copyright file="TipoValorTabelaEnum.cs" company="Sync Softwares">
+﻿// <copyright file="TipoValorTabela.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
