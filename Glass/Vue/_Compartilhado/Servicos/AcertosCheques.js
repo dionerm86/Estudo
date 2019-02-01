@@ -4,7 +4,7 @@
  * Objeto com os serviços para a API de acertos de cheques.
  */
 Servicos.AcertosCheques = (function (http) {
-    const API = '/api/v1/acertosCheques/';
+  const API = '/api/v1/acertosCheques/';
 
     return {
         /**

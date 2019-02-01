@@ -34,7 +34,7 @@
                 </template>
                 <template slot="item" slot-scope="{ item }">
                     <td>
-                        <button @click.prevent="abrirRelatorio(item.id)">
+                        <button @click.prevent="abrirRelatorio(item)">
                             <img src="../Images/Relatorio.gif"/>
                         </button>
                         <button @click.prevent="cancelar(item)" v-if="item.permissoes.cancelar">

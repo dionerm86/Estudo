@@ -37,8 +37,7 @@
      * @param {Object} item O acerto de cheque que será exibido.
      */
     abrirRelatorio: function (item) {
-      var url = '../Relatorios/RelBase.aspx?rel=AcertoCheque&idAcertoCheque=' + item.id;
-      this.abrirJanela(600, 800, url);
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=AcertoCheque&idAcertoCheque=' + item.id);
     },
 
     /**
