@@ -4,8 +4,9 @@
         <slot name="botao">
         </slot>
     </span>
-    <transition name="fade" v-on:enter="calcularPosicao__" v-on:after-enter="mostrar__" v-on:before-leave="esconder__">
-        <div ref="popup" v-bind:style="estiloPopup" v-show="exibir">
+    <transicao v-bind:exibir="exibir" v-bind:exibir-como-bloco="false"
+        v-on:entrar="calcularPosicao__" v-on:exibir="mostrar__" v-on:esconder="esconder__">
+        <div ref="popup" v-bind:style="estiloPopup">
             <div v-if="titulo || precisaClicar" v-bind:style="estiloTitulo">
                 <span style="color: white; white-space: nowrap; text-align: left; font-size: 8pt" v-if="titulo">
                     {{ titulo }}
@@ -20,5 +21,5 @@
                 <slot></slot>
             </div>
         </div>
-    </transition>
+    </transicao>
 </span>

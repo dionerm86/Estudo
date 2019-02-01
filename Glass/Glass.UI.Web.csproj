@@ -477,6 +477,9 @@
     <Content Include="Vue\ArquivosOtimizacao\Componentes\LstArquivosOtimizacao.Filtro.js" />
     <Content Include="Vue\ArquivosOtimizacao\Componentes\LstArquivosOtimizacao.js" />
     <Content Include="Vue\ArquivosOtimizacao\Templates\LstArquivosOtimizacao.Filtro.html" />
+    <Content Include="Vue\ArquivosRemessa\Componentes\LstArquivosRemessa.Filtro.js" />
+    <Content Include="Vue\ArquivosRemessa\Componentes\LstArquivosRemessa.js" />
+    <Content Include="Vue\ArquivosRemessa\Templates\LstArquivosRemessa.Filtro.html" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.OrdensCarga.js" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.Filtro.js" />
     <Content Include="Vue\Carregamentos\Componentes\LstCarregamentos.js" />
@@ -500,6 +503,9 @@
     <Content Include="Vue\Clientes\Sugestoes\Componentes\LstSugestaoCliente.js" />
     <Content Include="Vue\Clientes\Sugestoes\Templates\LstSugestaoCliente.Filtro.html" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Compras\Mercadorias\Componentes\LstComprasMercadorias.Filtro.js" />
+    <Content Include="Vue\Compras\Mercadorias\Componentes\LstComprasMercadorias.js" />
+    <Content Include="Vue\Compras\Mercadorias\Templates\LstComprasMercadorias.Filtro.html" />
     <Content Include="Vue\ConhecimentosTransporte\Veiculos\Proprietarios\Associacoes\Componentes\ListaAssociacaoProprietariosVeiculos.js" />
     <Content Include="Vue\ContasPagar\Componentes\ListaContasPagar.Filtro.js" />
     <Content Include="Vue\ContasPagar\Componentes\ListaContasPagar.js" />
@@ -1768,7 +1774,6 @@
     <Content Include="Utils\SetMotivoCancCartaoNaoIdentificado.aspx" />
     <Content Include="Utils\SetMotivoCancArquivoCartaoNaoIdentificado.aspx" />
     <Content Include="Utils\SetMotivoCancAntecipContaRec.aspx" />
-    <Content Include="Utils\SetMotivoCancCompra.aspx" />
     <Content Include="Utils\SetMotivoCancConciliacao.aspx" />
     <Content Include="Utils\SetMotivoCancCotacaoCompra.aspx" />
     <Content Include="Utils\SetMotivoCancCTe.aspx" />
@@ -1863,6 +1868,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoUpload.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ControleTooltip.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\IndicadorSistemaOcupado.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\Transicao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaPaginada.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaSelecao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaSelecaoIdValor.js" />
@@ -1930,6 +1936,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ArquivosOtimizacao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\ArquivosRemessa.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Carregamentos.js" />
@@ -1991,6 +1998,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Volumes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Veiculos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Transportadores.js" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\Transicao.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoBisote.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoLapidacao.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoListaSelecao.html" />
@@ -8362,13 +8370,6 @@
     </Compile>
     <Compile Include="Utils\SetMotivoCancAntecipContaRec.aspx.designer.cs">
       <DependentUpon>SetMotivoCancAntecipContaRec.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Utils\SetMotivoCancCompra.aspx.cs">
-      <DependentUpon>SetMotivoCancCompra.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Utils\SetMotivoCancCompra.aspx.designer.cs">
-      <DependentUpon>SetMotivoCancCompra.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\SetMotivoCancConciliacao.aspx.cs">
       <DependentUpon>SetMotivoCancConciliacao.aspx</DependentUpon>

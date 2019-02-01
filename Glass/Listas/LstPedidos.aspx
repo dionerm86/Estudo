@@ -232,6 +232,16 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                 </template>
             </lista-paginada>
         </section>
+        <section class="info">
+            <span>
+                <p v-if="!configuracoes.emitirPedidoGarantia">
+                    <font color="red">Você não possui permissão para editar pedidos do tipo Garantia.</font>
+                </p>
+                <p v-if="!configuracoes.emitirPedidoReposicao">
+                    <font color="red">Você não possui permissão para editar pedidos do tipo Reposição.</font>
+                </p>
+            </span>
+        </section>
         <section class="links">
             <div>
                 <span>

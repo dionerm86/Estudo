@@ -199,6 +199,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ArquivosRemessa\V1\DeleteArquivosRemessaController.cs" />
     <Content Include="Global.asax" />
     <Compile Include="Controllers\DevolucoesPagamento\DevolucoesPagamentoController.cs" />
     <Compile Include="Controllers\DevolucoesPagamento\GetDevolucoesPagamentoController.cs" />
@@ -210,6 +211,14 @@
     <Compile Include="Controllers\Cheques\V1\LimitePorCpfCnpj\PatchLimiteChequePorCpfCnpjController.cs" />
     <Compile Include="Helper\Cheques\LimitePorCpfCnpj\ConverterCadastroAtualizacaoParaLimiteChequeCpfCnpj.cs" />
     <Compile Include="Helper\Cheques\LimitePorCpfCnpj\TraducaoOrdenacaoListaLimiteChequeCpfCnpj.cs" />
+    <Compile Include="Controllers\Compras\V1\Mercadorias\ComprasMercadoriasController.cs" />
+    <Compile Include="Controllers\Compras\V1\Mercadorias\DeleteComprasMercadoriasController.cs" />
+    <Compile Include="Controllers\Compras\V1\Mercadorias\GetComprasMercadoriasController.cs" />
+    <Compile Include="Controllers\Compras\V1\Mercadorias\PostComprasMercadoriasController.cs" />
+    <Compile Include="Helper\Compras\Mercadorias\TraducaoOrdenacaoListaComprasMercadorias.cs" />
+    <Compile Include="Controllers\ArquivosRemessa\V1\ArquivosRemessaController.cs" />
+    <Compile Include="Controllers\ArquivosRemessa\V1\GetArquivosRemessaController.cs" />
+    <Compile Include="Helper\ArquivosRemessa\TraducaoOrdenacaoListaArquivosRemessa.cs" />
     <Compile Include="Controllers\EncontrosContas\V1\EncontrosContasController.cs" />
     <Compile Include="Controllers\EncontrosContas\V1\GetEncontrosContasController.cs" />
     <Compile Include="Helper\EncontrosContas\TraducaoOrdenacaoListaEncontrosContas.cs" />
@@ -228,6 +237,12 @@
     <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\LimiteDto.cs" />
     <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\ListaDto.cs" />
     <Compile Include="Models\Cheques\V1\LimitePorCpfCnpj\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Compras\V1\Mercadorias\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Compras\V1\Mercadorias\Lista\ListaDto.cs" />
+    <Compile Include="Models\Compras\V1\Mercadorias\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\ArquivosRemessa\V1\Lista\FiltroDto.cs" />
+    <Compile Include="Models\ArquivosRemessa\V1\Lista\ListaDto.cs" />
+    <Compile Include="Models\ArquivosRemessa\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\ImpressoesEtiquetas\V1\Lista\ListaDto.cs" />
@@ -924,7 +939,7 @@
     <Compile Include="Models\Pedidos\V1\ListaVolumes\ListaDto.cs" />
     <Compile Include="Models\Pedidos\V1\ListaVolumes\PermissoesDto.cs" />
     <Compile Include="Models\Carregamentos\V1\OrdensCarga\Lista\Pedidos\ListaDto.cs" />
-    <Compile Include="Models\Pedidos\V1\TipoPedidoPCPEnum\TipoPedidoPCPEnum.cs" />
+    <Compile Include="Models\Pedidos\V1\Lista\TipoPedidoPCP.cs" />
     <Compile Include="Models\Pedidos\V1\ProdutosPedido\Exportacao\Lista\ListaDto.cs" />
     <Compile Include="Models\Pedidos\V1\ProdutosPedido\Exportacao\Lista\ProdutoDto.cs" />
     <Compile Include="Models\PlanosConta\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
@@ -993,7 +1008,7 @@
     <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\Lista\ListaDto.cs" />
-    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\TipoValorTabelaEnum.cs" />
+    <Compile Include="Models\Produtos\V1\PrecosTabelaCliente\TipoValorTabela.cs" />
     <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\DadosPerdaDto.cs" />
     <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\V1\ChapasVidro\Perdas\Lista\ListaDto.cs" />
@@ -1052,12 +1067,12 @@
     <Compile Include="Models\Producao\V1\Lista\ProdutoPedidoDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\SetorDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\SituacaoProducaoDto.cs" />
-    <Compile Include="Models\Producao\V1\Lista\TipoPedidoEnum.cs" />
-    <Compile Include="Models\Producao\V1\Lista\TipoFastDeliveryEnum.cs" />
-    <Compile Include="Models\Producao\V1\Lista\TipoPecaExibirEnum.cs" />
-    <Compile Include="Models\Producao\V1\Lista\TipoProdutoComposicaoEnum.cs" />
-    <Compile Include="Models\Producao\V1\Lista\SituacaoProducaoEnum.cs" />
-    <Compile Include="Models\Producao\V1\Lista\TipoSituacaoProducaoEnum.cs" />
+    <Compile Include="Models\Producao\V1\Lista\TipoPedido.cs" />
+    <Compile Include="Models\Producao\V1\Lista\TipoFastDelivery.cs" />
+    <Compile Include="Models\Producao\V1\Lista\TipoPecaExibir.cs" />
+    <Compile Include="Models\Producao\V1\Lista\TipoProdutoComposicao.cs" />
+    <Compile Include="Models\Producao\V1\Lista\SituacaoProducao.cs" />
+    <Compile Include="Models\Producao\V1\Lista\TipoSituacaoProducao.cs" />
     <Compile Include="Models\Clientes\V1\Tipos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Clientes\V1\Tipos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Clientes\V1\Tipos\Lista\ListaDto.cs" />
@@ -1070,7 +1085,7 @@
     <Compile Include="Models\Comissionados\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Comissionados\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Fornecedores\V1\Lista\VendedorDto.cs" />
-    <Compile Include="Models\PlanosConta\V1\Lista\TipoEnum.cs" />
+    <Compile Include="Models\PlanosConta\V1\Lista\Tipo.cs" />
     <Compile Include="Models\Fornecedores\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Fornecedores\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Fornecedores\V1\Lista\ListaDto.cs" />
@@ -1125,7 +1140,7 @@
     <Compile Include="Models\Sinais\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Sinais\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Cheques\V1\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Acertos\V1\Lista\ProtestoEnum.cs" />
+    <Compile Include="Models\Acertos\V1\Lista\Protesto.cs" />
     <Compile Include="Models\Beneficiamentos\V1\Configuracoes\ControleDto.cs" />
     <Compile Include="Models\Beneficiamentos\V1\Filtro\BeneficiamentoDto.cs" />
     <Compile Include="Models\Beneficiamentos\V1\Total\DadosBeneficiamentosDto.cs" />
@@ -1152,7 +1167,7 @@
     <Compile Include="Models\Cep\V1\Endereco\ResultadoServicoDto.cs" />
     <Compile Include="Models\Cheques\V1\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Cheques\V1\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Cheques\V1\Lista\AdvogadoEnum.cs" />
+    <Compile Include="Models\Cheques\V1\Lista\Advogado.cs" />
     <Compile Include="Models\Cheques\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Cheques\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Acertos\V1\Lista\PermissoesDto.cs" />
@@ -1185,7 +1200,7 @@
     <Compile Include="Models\Acertos\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Acertos\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Imagens\V1\Exibicao\DadosImagemDto.cs" />
-    <Compile Include="Models\Imagens\V1\Exibicao\TipoItemEnum.cs" />
+    <Compile Include="Models\Imagens\V1\Exibicao\TipoItem.cs" />
     <Compile Include="Models\Liberacoes\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Liberacoes\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Liberacoes\V1\Lista\ListaDto.cs" />

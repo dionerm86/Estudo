@@ -1,15 +1,15 @@
-﻿// <copyright file="TipoPedidoPCPEnum.cs" company="Sync Softwares">
+﻿// <copyright file="TipoPedidoPCP.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using System.ComponentModel;
 
-namespace Glass.API.Backend.Models.Pedidos.V1.TipoPedidoPCPEnum
+namespace Glass.API.Backend.Models.Pedidos.V1.Lista
 {
     /// <summary>
     /// Enumerador com os tipos de pedido PCP.
     /// </summary>
-    public enum TipoPedidoPCPEnum
+    public enum TipoPedidoPCP
     {
         /// <summary>
         /// Tipo de pedido PCP produção.

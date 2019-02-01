@@ -217,7 +217,7 @@
                         <button @click.prevent="preencherEnderecoObra">
                             <img src="../Images/home.gif" title="Buscar endereço do cliente" />
                         </button>
-                        <campo-endereco :endereco="pedido.enderecoObra" :exibir-complemento="false" required>
+                        <campo-endereco :endereco.sync="pedido.enderecoObra" :exibir-complemento="false" required>
                     </span>
                 </template>
                 <span class="colspan4" style="padding: 8px 0" v-if="vIfControleParcelas">
@@ -570,7 +570,7 @@
                 </div>
             </section>
             <pedido-ambientes :pedido="pedido" :ambiente.sync="ambiente" :configuracoes="configuracoes" :pedido-mao-de-obra="pedidoMaoDeObra"
-                 @lista-atualizada="atualizarPedidoEAmbientes"></pedido-ambientes>
+                    @lista-atualizada="atualizarPedidoEAmbientes"></pedido-ambientes>
             <pedido-produtos :pedido="pedido" :ambiente="ambiente" :configuracoes="configuracoes" :pedido-mao-de-obra="pedidoMaoDeObra"
                 :pedido-producao-corte="pedidoProducaoCorte" :pedido-mao-de-obra-especial="pedidoMaoDeObraEspecial" @lista-atualizada="atualizarPedidoEAmbientes"></pedido-produtos>
         </div>

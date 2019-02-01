@@ -1,4 +1,4 @@
-﻿// <copyright file="TipoPedidoEnum.cs" company="Sync Softwares">
+﻿// <copyright file="TipoPedido.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 

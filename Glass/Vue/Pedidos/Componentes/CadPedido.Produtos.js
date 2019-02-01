@@ -1,4 +1,4 @@
-Vue.component('pedido-produtos', {
+﻿Vue.component('pedido-produtos', {
   mixins: [Mixins.Objetos],
   props: {
     /**
@@ -61,7 +61,8 @@ Vue.component('pedido-produtos', {
     return {
       atualizar_: 0,
       dadosValidacaoProduto: {},
-      controleTooltipAtual: null
+      controleTooltipAtual: null,
+      exibirProdutos: false
     };
   },
 
@@ -79,7 +80,8 @@ Vue.component('pedido-produtos', {
         return Promise.reject();
       }
 
-      return Servicos.Pedidos.Produtos.obter(
+      var vm = this;
+      var promise = Servicos.Pedidos.Produtos.obter(
         filtroOriginal.idPedido,
         filtroOriginal.idAmbiente,
         filtroOriginal.idProdutoPai,
@@ -87,6 +89,11 @@ Vue.component('pedido-produtos', {
         numeroRegistros,
         ordenacao
       );
+
+      return promise.then(function (resposta) {
+        vm.exibirProdutos = true;
+        return resposta;
+      });
     },
 
     /**
