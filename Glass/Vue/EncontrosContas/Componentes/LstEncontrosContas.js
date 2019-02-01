@@ -42,7 +42,7 @@
      * @returns {Promise} Uma Promisse com o resultado da busca.
      */
     editar: function (item) {
-      return obterLinkInserir() + '&idEncontroContas=' + item.id;
+      return '../Cadastros/CadEncontroContas.aspx?idEncontroContas=' + item.id;
     },
 
     /**
@@ -71,7 +71,7 @@
       this.incluirFiltroComLista(filtros, 'dataCadFim', this.filtro.periodoCadastroFim ? this.filtro.periodoCadastroFim.toLocaleDateString('pt-BR') : null);
 
       return filtros.length
-        ? '&' + filtro.join('&')
+        ? '&' + filtros.join('&')
         : '';
     },
 

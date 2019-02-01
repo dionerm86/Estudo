@@ -26,7 +26,7 @@ namespace Glass.API.Backend.Controllers.EncontrosContas.V1
         [Route("")]
         [SwaggerResponse(200, "Encontros de contas encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<ListaDto>))]
         [SwaggerResponse(204, "Encontros de contas não encontrados.")]
-        [SwaggerResponse(206, "Acertos paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<ListaDto>))]
+        [SwaggerResponse(206, "Encontros de contas encontrados paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<ListaDto>))]
         public IHttpActionResult ObterEncontrosContas([FromUri] FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())

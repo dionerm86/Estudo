@@ -5,7 +5,7 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Acertos.V1.Lista
+namespace Glass.API.Backend.Models.EncontrosContas.V1.Lista
 {
     /// <summary>
     /// Classe que encapsula os dados de valores da lista de encontros de contas.

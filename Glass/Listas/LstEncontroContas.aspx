@@ -48,9 +48,9 @@
                 </template>
                 <template slot="item" slot-scope="{ item }">
                     <td style="white-space: nowrap">
-                        <button @click.prevent="editar(item)" title="Editar" v-if="item.permissoes.editar">
+                        <a :href="editar(item)" title="Editar" v-if="item.permissoes.editar">
                             <img src="../Images/EditarGrid.gif"/>
-                        </button>
+                        </a>
                         <button @click.prevent="imprimirEncontrosContas(item)" title="Imprimir" v-if="item.permissoes.imprimir">
                             <img src="../Images/Relatorio.gif"/>
                         </button>

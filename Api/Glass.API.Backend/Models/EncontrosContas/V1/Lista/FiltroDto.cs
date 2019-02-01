@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 namespace Glass.API.Backend.Models.EncontrosContas.V1.Lista
 {
     /// <summary>
-    /// Classe com os itens para o filtro de lista de acertos.
+    /// Classe com os itens para o filtro de lista de encontros de contas
     /// </summary>
     [DataContract(Name = "Filtro")]
     public class FiltroDto : PaginacaoDto
