@@ -124,10 +124,53 @@ namespace Glass.Data.SIntegra
         {
             get
             {
-                if (_cliente != null || _fornecedor != null)
-                    return FormatCpfCnpjInscEst(_cliente != null ? (_cliente.TipoPessoa == "J" ? _cliente.RgEscinst : "ISENTO") : _fornecedor.RgInscEst);
-                else
+                Cidade cidade;
+                var indicadorIEDestinatario = NotaFiscalDAO.Instance.ObterIndicadorIE(null, null, _cliente, _fornecedor, out cidade);
+
+                if (_cliente == null && _fornecedor == null)
+                {
                     throw new Exception(string.Format("Nota Fiscal: {0} não possui cliente ou fornecedor. Favor Informar!", _nf.NumeroNFe));
+                }
+
+                if (_nf.IdNaturezaOperacao.GetValueOrDefault() == 0)
+                {
+                    throw new Exception($"A Nota Fiscal: {_nf.NumeroNFe} não possui natureza de operação. Favor informar!");
+                }
+
+                var cfopDevolucao = CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(_nf.IdNaturezaOperacao.Value));
+                bool pj = _cliente != null && (!cfopDevolucao || _fornecedor == null) ? _cliente.TipoPessoa.ToUpper() == "J" : _fornecedor.TipoPessoa.ToUpper() == "J";
+                bool produtorRural = _cliente != null && (!cfopDevolucao || _fornecedor == null) ? _cliente.ProdutorRural : _fornecedor.ProdutorRural;
+                string inscEstadual = _cliente != null && (!cfopDevolucao || _fornecedor == null) ? _cliente.RgEscinst : _fornecedor.RgInscEst;
+
+                if (indicadorIEDestinatario.ToString() == IndicadorIEDestinatario.ContribuinteICMS.ToString())
+                {
+                    if (pj || produtorRural)
+                    {
+                        if (String.IsNullOrEmpty(inscEstadual))
+                        {
+                            throw new Exception($"O cliente {_cliente.Nome}, da nota fiscal {_nf.NumeroNFe}, não possui inscrição estadual. Favor informar!");
+                        }
+                        else
+                        {
+                            return Formatacoes.TrataStringDocFiscal(inscEstadual.ToUpper());
+                        }
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
+                }
+                else if (indicadorIEDestinatario == IndicadorIEDestinatario.ContribuinteIsento && inscEstadual != null &&
+                    (inscEstadual.ToLower() == "isento" || inscEstadual != "") && (pj || produtorRural))
+                {
+                    return "ISENTO";
+                }
+                else if (indicadorIEDestinatario == IndicadorIEDestinatario.NaoContribuinte && !string.IsNullOrEmpty(inscEstadual) && (pj || produtorRural))
+                {
+                    return Formatacoes.TrataStringDocFiscal(inscEstadual.ToUpper());
+                }
+
+                return string.Empty;
             }
         }
 
