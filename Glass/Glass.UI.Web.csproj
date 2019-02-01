@@ -474,6 +474,9 @@
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Scripts\ResizeObserverPolyfill.js" />
     <Content Include="Utils\AlertaAdministrador.aspx" />
+    <Content Include="Vue\AcertosCheques\Componentes\LstAcertosCheques.Filtro.js" />
+    <Content Include="Vue\AcertosCheques\Componentes\LstAcertosCheques.js" />
+    <Content Include="Vue\AcertosCheques\Templates\LstAcertosCheques.Filtro.html" />
     <Content Include="Vue\ArquivosOtimizacao\Componentes\LstArquivosOtimizacao.Filtro.js" />
     <Content Include="Vue\ArquivosOtimizacao\Componentes\LstArquivosOtimizacao.js" />
     <Content Include="Vue\ArquivosOtimizacao\Templates\LstArquivosOtimizacao.Filtro.html" />
@@ -1935,6 +1938,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Modal.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\AcertosCheques.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ArquivosOtimizacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ArquivosRemessa.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Base.js" />

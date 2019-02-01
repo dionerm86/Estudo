@@ -9,13 +9,6 @@ namespace Glass.UI.Web.Listas
         {
             if (Request["pagto"] == "1")
                 Page.Title = "Acerto de Cheques Próprios Devolvidos/Abertos";
-    
-            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
-        }
-    
-        protected void imgPesq_Click(object sender, EventArgs e)
-        {
-            grdAcertoCheque.PageIndex = 0;
         }
     }
 }

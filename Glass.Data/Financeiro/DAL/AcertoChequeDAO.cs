@@ -136,7 +136,7 @@ namespace Glass.Data.DAL
             string dataFim, string chequesProprios, bool chequesCaixaDiario, string sortExpression, int startRow, int pageSize)
         {
             return LoadDataWithSortExpression(Sql(idAcertoCheque, idFunc, idCliente, nomeCliente, dataIni, dataFim, chequesProprios == "1", chequesCaixaDiario, 
-                true) + " order by idAcertoCheque desc", sortExpression, startRow, pageSize, GetParams(nomeCliente, dataIni, dataFim));
+                true), sortExpression, startRow, pageSize, GetParams(nomeCliente, dataIni, dataFim));
         }
 
         public IList<AcertoCheque> GetListForRpt(uint idAcertoCheque, uint idFunc, uint idCliente, string nomeCliente, string dataIni,
