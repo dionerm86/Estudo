@@ -6,6 +6,7 @@ using GDA;
 using Glass.API.Backend.Models.Pedidos.V1.Exportacao.PedidoExportar;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
+using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -149,6 +150,19 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.Exportacao
             if (!Config.PossuiPermissao(Config.FuncaoMenuPedido.ExportarImportarPedido))
             {
                 return this.ErroValidacao("Exportação desativada no sistema.");
+            }
+
+            foreach (var pedido in exportacao.Pedidos)
+            {
+                if (pedido.IdPedido.GetValueOrDefault() > 0)
+                {
+                    var situacao = PedidoExportacaoDAO.Instance.GetSituacaoExportacao(sessao, (uint)pedido.IdPedido);
+
+                    if (situacao == PedidoExportacao.SituacaoExportacaoEnum.Exportando)
+                    {
+                        return this.ErroValidacao($"O pedido num.: {pedido.IdPedido} está com situacao Exportando, consulte a situação do pedido.");
+                    }
+                }
             }
 
             var validacao = this.ValidarExistenciaIdsFornecedoresPedidosEProdutosPedidoExportacao(sessao, exportacao.Pedidos);

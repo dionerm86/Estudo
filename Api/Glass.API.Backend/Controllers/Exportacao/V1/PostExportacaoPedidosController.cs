@@ -67,7 +67,16 @@ namespace Glass.API.Backend.Controllers.Exportacao.V1
                 }
                 catch (Exception ex)
                 {
-                    return this.ErroValidacao("Erro ao consultar situação da exportação.", ex);
+                    var idsPedido = PedidoExportacaoDAO.Instance.PesquisarPedidosExportacao(sessao, (uint)id);
+                    var situacaoPedidos = string.Empty;
+
+                    foreach (var item in idsPedido)
+                    {
+                        var situacao = PedidoExportacaoDAO.Instance.GetSituacaoExportacao((uint)item).ToString();
+                        situacaoPedidos += $" O Pedido {item.ToString()} se encontra {situacao}. \n ";
+                    }
+
+                    return this.ErroValidacao($"Erro ao consultar situação da exportação. {situacaoPedidos}", ex);
                 }
             }
         }
